@@ -22,7 +22,7 @@ function TermsPage() {
 
       <main className="mx-auto max-w-3xl px-6 py-12">
         <h1 className="font-display text-3xl font-bold text-foreground">Termos de Uso</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Última atualização: abril de 2026</p>
+        <p className="mt-2 text-sm text-muted-foreground">Leia as condições de uso da plataforma Paz em Canção.</p>
 
         <div className="mt-8 space-y-6 text-sm leading-relaxed text-foreground/80">
           <section>
@@ -31,22 +31,27 @@ function TermsPage() {
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-foreground mb-2">2. Acesso à Plataforma</h2>
-            <p>O acesso é individual e intransferível. Cada compra garante acesso exclusivo ao e-mail cadastrado no momento da aquisição. É proibido compartilhar credenciais de acesso.</p>
+            <h2 className="text-lg font-semibold text-foreground mb-2">2. Uso Individual</h2>
+            <p>O acesso é individual e intransferível. Cada compra garante acesso exclusivo ao e-mail cadastrado no momento da aquisição. O acesso é pessoal e não pode ser compartilhado com terceiros.</p>
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-foreground mb-2">3. Conteúdo</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-2">3. Proteção de Conteúdo</h2>
             <p>Todo o conteúdo disponível na plataforma — incluindo músicas, letras, arranjos e gravações — é protegido por direitos autorais. O download é permitido exclusivamente para uso pessoal e privado.</p>
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-foreground mb-2">4. Proibições</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-2">4. Proibição de Compartilhamento</h2>
             <p>É expressamente proibido redistribuir, revender, publicar, transmitir ou disponibilizar o conteúdo da plataforma em qualquer meio, físico ou digital, sem autorização prévia por escrito.</p>
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-foreground mb-2">5. Contato</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-2">5. Direitos Autorais</h2>
+            <p>Todos os direitos autorais são reservados. A violação destes termos pode resultar no cancelamento imediato do acesso, sem reembolso.</p>
+          </section>
+
+          <section>
+            <h2 className="text-lg font-semibold text-foreground mb-2">6. Contato</h2>
             <p>Em caso de dúvidas, entre em contato pelo e-mail <a href="mailto:suporte@pazemcancao.com" className="text-gold underline">suporte@pazemcancao.com</a>.</p>
           </section>
         </div>

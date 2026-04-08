@@ -22,32 +22,32 @@ function PrivacyPage() {
 
       <main className="mx-auto max-w-3xl px-6 py-12">
         <h1 className="font-display text-3xl font-bold text-foreground">Política de Privacidade</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Última atualização: abril de 2026</p>
+        <p className="mt-2 text-sm text-muted-foreground">Saiba como protegemos seus dados e seu acesso à plataforma.</p>
 
         <div className="mt-8 space-y-6 text-sm leading-relaxed text-foreground/80">
           <section>
-            <h2 className="text-lg font-semibold text-foreground mb-2">1. Dados Coletados</h2>
-            <p>Coletamos apenas os dados necessários para garantir o acesso à plataforma: nome, e-mail e informações de pagamento processadas por terceiros seguros.</p>
+            <h2 className="text-lg font-semibold text-foreground mb-2">1. Dados de Login</h2>
+            <p>Coletamos apenas os dados necessários para garantir o acesso à plataforma: nome, e-mail e informações de autenticação. Dados de pagamento são processados por terceiros seguros.</p>
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-foreground mb-2">2. Uso dos Dados</h2>
-            <p>Seus dados são utilizados exclusivamente para autenticação na plataforma, envio de comunicações relacionadas à sua compra e suporte ao cliente.</p>
+            <h2 className="text-lg font-semibold text-foreground mb-2">2. Proteção de Acesso</h2>
+            <p>Seu acesso é individual e protegido por senha. Utilizamos criptografia e práticas de segurança atualizadas para proteger sua conta.</p>
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-foreground mb-2">3. Compartilhamento</h2>
+            <h2 className="text-lg font-semibold text-foreground mb-2">3. Segurança da Conta</h2>
             <p>Não compartilhamos, vendemos ou cedemos seus dados pessoais a terceiros, exceto quando exigido por lei ou para processamento de pagamento.</p>
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-foreground mb-2">4. Segurança</h2>
-            <p>Utilizamos criptografia e práticas de segurança atualizadas para proteger seus dados. Seu acesso é individual e protegido por senha.</p>
+            <h2 className="text-lg font-semibold text-foreground mb-2">4. Privacidade do Usuário</h2>
+            <p>Seus dados são utilizados exclusivamente para autenticação na plataforma e suporte ao cliente. Respeitamos integralmente a sua privacidade.</p>
           </section>
 
           <section>
-            <h2 className="text-lg font-semibold text-foreground mb-2">5. Contato</h2>
-            <p>Para questões relacionadas à privacidade, entre em contato pelo e-mail <a href="mailto:suporte@pazemcancao.com" className="text-gold underline">suporte@pazemcancao.com</a>.</p>
+            <h2 className="text-lg font-semibold text-foreground mb-2">5. Comunicação</h2>
+            <p>Podemos enviar comunicações relacionadas à sua compra e atualizações importantes sobre a plataforma. Para questões de privacidade, entre em contato pelo e-mail <a href="mailto:suporte@pazemcancao.com" className="text-gold underline">suporte@pazemcancao.com</a>.</p>
           </section>
         </div>
       </main>

@@ -1,5 +1,4 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { motion } from "framer-motion";
 import { Music, Mail, Lock, ArrowRight, ShieldCheck } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -35,7 +34,6 @@ function LoginPage() {
       setError(result.error);
       setLoading(false);
     }
-    // On success, the auth state change will trigger the redirect via useEffect
   };
 
   return (
@@ -43,12 +41,7 @@ function LoginPage() {
       {/* Left — decorative panel */}
       <div className="hidden lg:flex lg:w-1/2 relative items-center justify-center bg-primary overflow-hidden">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,var(--color-gold)/0.15,transparent_60%)]" />
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8 }}
-          className="relative z-10 max-w-sm text-center px-8"
-        >
+        <div className="relative z-10 max-w-sm text-center px-8 animate-in fade-in slide-in-from-left-6 duration-700">
           <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full border border-primary-foreground/20 bg-primary-foreground/10">
             <Music className="h-8 w-8 text-primary-foreground" />
           </div>
@@ -62,17 +55,12 @@ function LoginPage() {
             Sua biblioteca espiritual privada com louvores preparados para
             trazer paz, cura e presença de Deus.
           </p>
-        </motion.div>
+        </div>
       </div>
 
       {/* Right — login form */}
       <div className="flex flex-1 items-center justify-center px-6 py-12 bg-background">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="w-full max-w-sm"
-        >
+        <div className="w-full max-w-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
           {/* Mobile logo */}
           <div className="lg:hidden mb-10 text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gold/10 border border-gold/30">
@@ -94,13 +82,9 @@ function LoginPage() {
 
           {/* Error message */}
           {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-6 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
-            >
+            <div className="mb-6 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive animate-in fade-in slide-in-from-top-2 duration-300">
               {error}
-            </motion.div>
+            </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -162,7 +146,7 @@ function LoginPage() {
               Fale conosco
             </a>
           </p>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
