@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Music, Lock, Download, Headphones, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { FooterLinks } from "@/components/FooterLinks";
 
 export const Route = createFileRoute("/")({
@@ -9,62 +9,49 @@ export const Route = createFileRoute("/")({
 function LandingPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
-      {/* Multi-layer atmospheric background */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--color-gold)/0.06,transparent_60%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,var(--color-gold)/0.03,transparent_50%)]" />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_30%_80%,var(--color-primary)/0.04,transparent_40%)]" />
+      {/* Atmospheric depth layers — like candlelight in darkness */}
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_30%,var(--color-gold)/0.05,transparent_70%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_40%_60%_at_80%_70%,var(--color-gold)/0.025,transparent_60%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_80%,var(--color-gold)/0.018,transparent_40%)]" />
 
-      {/* Floating orbs */}
-      <div className="pointer-events-none absolute top-1/4 right-[15%] h-64 w-64 rounded-full bg-gold/[0.03] blur-[80px]" />
-      <div className="pointer-events-none absolute bottom-1/3 left-[10%] h-48 w-48 rounded-full bg-gold/[0.025] blur-[60px]" />
+      {/* Breathing orbs — gentle, alive */}
+      <div className="pointer-events-none absolute top-[20%] right-[20%] h-80 w-80 rounded-full bg-gold/[0.02] blur-[100px] animate-breathe" />
+      <div className="pointer-events-none absolute bottom-[25%] left-[15%] h-56 w-56 rounded-full bg-gold/[0.018] blur-[80px] animate-breathe" style={{ animationDelay: '3s' }} />
 
       {/* Hero */}
-      <section className="relative flex-1 flex items-center justify-center px-6 py-24 overflow-hidden">
-        <div className="relative z-10 max-w-2xl text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-2xl border border-gold/20 bg-gold/10 shadow-xl shadow-gold/10 animate-in zoom-in duration-500 delay-200">
-            <Music className="h-9 w-9 text-gold" />
-          </div>
+      <section className="relative flex-1 flex items-center justify-center px-6 py-28 overflow-hidden">
+        <div className="relative z-10 max-w-xl text-center animate-in fade-in slide-in-from-bottom-6 duration-1000">
+          {/* Delicate golden cross / spiritual mark */}
+          <div className="mx-auto mb-10 w-px h-12 bg-gradient-to-b from-transparent via-gold/30 to-transparent" />
 
-          <p className="mb-4 text-xs sm:text-sm font-bold uppercase tracking-[0.3em] text-gold/70">
-            Biblioteca Espiritual Privada
+          <p className="mb-5 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.35em] text-gold/50">
+            Uma experiência íntima de adoração
           </p>
 
-          <h1 className="font-display text-5xl font-bold leading-[1.1] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+          <h1 className="font-display text-5xl font-bold leading-[1.08] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
             Paz em Canção
           </h1>
 
-          <div className="mx-auto mt-5 h-px w-20 bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
+          <div className="mx-auto mt-6 h-px w-16 bg-gradient-to-r from-transparent via-gold/25 to-transparent" />
 
-          <p className="mx-auto mt-6 max-w-lg text-base sm:text-lg leading-relaxed text-muted-foreground/80">
-            30 louvores inéditos que tocam a alma. Uma experiência exclusiva de
-            adoração preparada com carinho para você.
+          <p className="mx-auto mt-7 max-w-md text-base leading-[1.8] text-muted-foreground/70">
+            30 louvores inéditos, criados para os momentos em que
+            a alma precisa de silêncio, cura e presença.
           </p>
 
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
-            {[
-              { icon: Headphones, label: "Ouça online" },
-              { icon: Download, label: "Baixe tudo" },
-              { icon: Lock, label: "Acesso exclusivo" },
-            ].map(({ icon: Icon, label }) => (
-              <div
-                key={label}
-                className="flex items-center gap-2 rounded-full border border-border/40 bg-card/40 backdrop-blur-sm px-5 py-2.5 text-sm text-muted-foreground/70 shadow-sm"
-              >
-                <Icon className="h-4 w-4 text-gold/70" />
-                {label}
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-12 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-500">
+          <div className="mt-14 animate-in fade-in duration-700 delay-700">
             <Link
               to="/login"
-              className="group inline-flex items-center gap-2.5 rounded-full bg-gold text-gold-foreground px-9 py-4 text-base font-bold shadow-xl shadow-gold/20 transition-all duration-300 hover:brightness-110 hover:shadow-2xl hover:shadow-gold/25 active:scale-[0.97]"
+              className="group inline-flex items-center gap-3 rounded-full bg-gold/90 text-gold-foreground px-10 py-4 text-sm font-bold tracking-wide shadow-2xl shadow-gold/15 transition-all duration-500 hover:bg-gold hover:shadow-gold/25 active:scale-[0.97]"
             >
               Acessar Minha Área
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
             </Link>
           </div>
+
+          <p className="mt-8 text-[11px] text-muted-foreground/35 tracking-wide">
+            Acesso exclusivo para compradores
+          </p>
         </div>
       </section>
 
