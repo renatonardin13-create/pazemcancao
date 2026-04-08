@@ -279,7 +279,7 @@ function LoginPage() {
         <div className="flex flex-1 items-center justify-center px-6 py-12">
           <div className="w-full max-w-[360px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
             {/* Mobile header */}
-            <div className="lg:hidden mb-16 text-center">
+            <div className="lg:hidden mb-12 text-center">
               <div className="mx-auto mb-10 w-px h-14 bg-gradient-to-b from-transparent via-gold/15 to-transparent" />
               <h1 className="font-display text-3xl font-bold text-foreground/90 tracking-tight">
                 Paz em Canção
