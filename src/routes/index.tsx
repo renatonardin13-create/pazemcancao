@@ -1,5 +1,4 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
 import { Music, Lock, Download, Headphones } from "lucide-react";
 
 export const Route = createFileRoute("/")({
@@ -14,21 +13,11 @@ function LandingPage() {
         {/* Subtle radial glow */}
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--color-gold)/0.08,transparent_70%)]" />
 
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, ease: "easeOut" }}
-          className="relative z-10 max-w-2xl text-center"
-        >
+        <div className="relative z-10 max-w-2xl text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
           {/* Cross / music icon */}
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.8 }}
-            className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full border border-gold/30 bg-gold/10"
-          >
+          <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full border border-gold/30 bg-gold/10 animate-in zoom-in duration-500 delay-200">
             <Music className="h-9 w-9 text-gold" />
-          </motion.div>
+          </div>
 
           <p className="mb-3 text-sm font-medium uppercase tracking-[0.25em] text-gold">
             Biblioteca Espiritual Privada
@@ -61,24 +50,24 @@ function LandingPage() {
           </div>
 
           {/* CTA */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6, duration: 0.6 }}
-            className="mt-12"
-          >
+          <div className="mt-12 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-500">
             <Link
               to="/login"
               className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-lg transition-all hover:shadow-xl hover:brightness-110"
             >
               Acessar Minha Área
             </Link>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </section>
 
       {/* Footer */}
       <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
+        <div className="flex items-center justify-center gap-4 mb-2">
+          <Link to="/termos" className="hover:text-foreground transition-colors">Termos de Uso</Link>
+          <span>·</span>
+          <Link to="/privacidade" className="hover:text-foreground transition-colors">Privacidade</Link>
+        </div>
         © {new Date().getFullYear()} Paz em Canção · Todos os direitos reservados
       </footer>
     </div>

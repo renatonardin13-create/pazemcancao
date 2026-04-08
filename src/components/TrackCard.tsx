@@ -1,6 +1,5 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Play, Pause, Download, Music, Volume2 } from "lucide-react";
-import { motion } from "framer-motion";
 import type { Track } from "@/lib/sample-tracks";
 
 interface TrackCardProps {
@@ -32,7 +31,6 @@ export function TrackCard({ track, index }: TrackCardProps) {
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  // Simulate progress when playing
   useEffect(() => {
     if (!playing) return;
     const interval = setInterval(() => {
@@ -57,24 +55,18 @@ export function TrackCard({ track, index }: TrackCardProps) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.04, duration: 0.5, ease: "easeOut" }}
-      className="group relative rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm p-4 sm:p-5 transition-all duration-300 hover:bg-card hover:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.12)] hover:border-gold/20"
+    <div
+      className="group relative rounded-2xl border border-border/60 bg-card/80 backdrop-blur-sm p-4 sm:p-5 transition-all duration-300 hover:bg-card hover:shadow-[0_8px_30px_-12px_rgba(0,0,0,0.12)] hover:border-gold/20 animate-in fade-in slide-in-from-bottom-2 duration-500"
+      style={{ animationDelay: `${index * 40}ms`, animationFillMode: "backwards" }}
     >
       {/* Progress bar background */}
       {playing && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none"
-        >
+        <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
           <div
             className="h-full bg-gold/[0.04] transition-all duration-100 ease-linear"
             style={{ width: `${progress}%` }}
           />
-        </motion.div>
+        </div>
       )}
 
       <div className="relative flex items-center gap-3 sm:gap-4">
@@ -93,9 +85,9 @@ export function TrackCard({ track, index }: TrackCardProps) {
           }`}
         >
           {playing ? (
-            <Pause className="h-4.5 w-4.5" />
+            <Pause className="h-5 w-5" />
           ) : (
-            <Play className="h-4.5 w-4.5 ml-0.5" />
+            <Play className="h-5 w-5 ml-0.5" />
           )}
         </button>
 
@@ -103,13 +95,7 @@ export function TrackCard({ track, index }: TrackCardProps) {
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             {playing && (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                className="shrink-0"
-              >
-                <Volume2 className="h-3.5 w-3.5 text-gold animate-pulse" />
-              </motion.div>
+              <Volume2 className="h-3.5 w-3.5 text-gold animate-pulse shrink-0" />
             )}
             <h3 className={`text-sm sm:text-base font-semibold truncate transition-colors ${playing ? "text-gold" : "text-foreground"}`}>
               {track.title}
@@ -130,7 +116,6 @@ export function TrackCard({ track, index }: TrackCardProps) {
 
         {/* Actions */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-          {/* Ouvir — mobile-friendly large tap target */}
           <button
             onClick={togglePlay}
             className="flex h-10 sm:h-9 items-center gap-1.5 rounded-xl px-3 sm:px-4 text-xs font-medium text-muted-foreground transition-all hover:bg-gold/10 hover:text-gold active:scale-95"
@@ -138,7 +123,6 @@ export function TrackCard({ track, index }: TrackCardProps) {
             <Music className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Ouvir</span>
           </button>
-          {/* Baixar */}
           <button className="flex h-10 sm:h-9 items-center gap-1.5 rounded-xl px-3 sm:px-4 text-xs font-medium text-muted-foreground transition-all hover:bg-gold/10 hover:text-gold active:scale-95">
             <Download className="h-3.5 w-3.5" />
             <span className="hidden sm:inline">Baixar</span>
@@ -148,17 +132,13 @@ export function TrackCard({ track, index }: TrackCardProps) {
 
       {/* Mini progress bar */}
       {playing && (
-        <motion.div
-          initial={{ opacity: 0, scaleX: 0 }}
-          animate={{ opacity: 1, scaleX: 1 }}
-          className="mt-3 h-1 rounded-full bg-muted/50 overflow-hidden origin-left"
-        >
+        <div className="mt-3 h-1 rounded-full bg-muted/50 overflow-hidden">
           <div
             className="h-full rounded-full bg-gold/60 transition-all duration-100 ease-linear"
             style={{ width: `${progress}%` }}
           />
-        </motion.div>
+        </div>
       )}
-    </motion.div>
+    </div>
   );
 }
