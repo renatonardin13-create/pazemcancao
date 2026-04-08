@@ -1,13 +1,86 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { motion } from "framer-motion";
+import { Music, Lock, Download, Headphones } from "lucide-react";
 
 export const Route = createFileRoute("/")({
-  component: Index,
+  component: LandingPage,
 });
 
-function Index() {
+function LandingPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <p className="text-muted-foreground text-sm">Seu novo projeto começa aqui.</p>
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Hero */}
+      <section className="relative flex-1 flex items-center justify-center px-6 py-24 overflow-hidden">
+        {/* Subtle radial glow */}
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--color-gold)/0.08,transparent_70%)]" />
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 1, ease: "easeOut" }}
+          className="relative z-10 max-w-2xl text-center"
+        >
+          {/* Cross / music icon */}
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ delay: 0.2, duration: 0.8 }}
+            className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full border border-gold/30 bg-gold/10"
+          >
+            <Music className="h-9 w-9 text-gold" />
+          </motion.div>
+
+          <p className="mb-3 text-sm font-medium uppercase tracking-[0.25em] text-gold">
+            Biblioteca Espiritual Privada
+          </p>
+
+          <h1 className="font-display text-5xl font-bold leading-tight tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+            Paz em Canção
+          </h1>
+
+          <p className="mx-auto mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground">
+            30 louvores inéditos que tocam a alma. Uma experiência exclusiva de
+            adoração preparada com carinho para você.
+          </p>
+
+          {/* Feature pills */}
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+            {[
+              { icon: Headphones, label: "Ouça online" },
+              { icon: Download, label: "Baixe tudo" },
+              { icon: Lock, label: "Acesso exclusivo" },
+            ].map(({ icon: Icon, label }) => (
+              <div
+                key={label}
+                className="flex items-center gap-2 rounded-full border border-border bg-card px-5 py-2.5 text-sm text-muted-foreground shadow-sm"
+              >
+                <Icon className="h-4 w-4 text-gold" />
+                {label}
+              </div>
+            ))}
+          </div>
+
+          {/* CTA */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+            className="mt-12"
+          >
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-base font-semibold text-primary-foreground shadow-lg transition-all hover:shadow-xl hover:brightness-110"
+            >
+              Acessar Minha Área
+            </Link>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
+        © {new Date().getFullYear()} Paz em Canção · Todos os direitos reservados
+      </footer>
     </div>
   );
 }
