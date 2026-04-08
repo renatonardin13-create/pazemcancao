@@ -9,7 +9,7 @@ export function GlobalPlayer() {
   useEffect(() => {
     if (!playing) return;
     const interval = setInterval(() => {
-      setProgress((prev: number) => {
+      setProgress((prev) => {
         if (prev >= 100) {
           pause();
           return 0;
