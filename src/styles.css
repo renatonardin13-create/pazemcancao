@@ -46,6 +46,7 @@
   --color-sidebar-ring: var(--sidebar-ring);
   --color-gold: var(--gold);
   --color-gold-foreground: var(--gold-foreground);
+  --color-gold-soft: var(--gold-soft);
   --color-warm: var(--warm);
   --font-display: var(--font-display);
   --font-body: var(--font-body);
@@ -56,45 +57,48 @@
   --font-display: "Playfair Display", Georgia, serif;
   --font-body: "DM Sans", system-ui, sans-serif;
 
-  /* Deep black — rich, cinematic */
-  --background: oklch(0.08 0.008 250);
-  --foreground: oklch(0.93 0.012 70);
-  --card: oklch(0.12 0.010 250);
-  --card-foreground: oklch(0.93 0.012 70);
-  --popover: oklch(0.12 0.010 250);
-  --popover-foreground: oklch(0.93 0.012 70);
-  --primary: oklch(0.76 0.145 65);
-  --primary-foreground: oklch(0.08 0.008 250);
-  --secondary: oklch(0.15 0.010 250);
-  --secondary-foreground: oklch(0.90 0.010 70);
-  --muted: oklch(0.15 0.010 250);
-  --muted-foreground: oklch(0.52 0.012 250);
-  --accent: oklch(0.15 0.010 250);
-  --accent-foreground: oklch(0.90 0.010 70);
-  --destructive: oklch(0.65 0.20 25);
+  /* Abismo — preto profundo cinematográfico */
+  --background: oklch(0.06 0.006 260);
+  --foreground: oklch(0.91 0.015 65);
+  --card: oklch(0.10 0.008 260);
+  --card-foreground: oklch(0.91 0.015 65);
+  --popover: oklch(0.10 0.008 260);
+  --popover-foreground: oklch(0.91 0.015 65);
+
+  /* Ouro velho — quente, como luz de vela */
+  --primary: oklch(0.72 0.14 60);
+  --primary-foreground: oklch(0.06 0.006 260);
+  --secondary: oklch(0.13 0.008 260);
+  --secondary-foreground: oklch(0.88 0.012 65);
+  --muted: oklch(0.13 0.008 260);
+  --muted-foreground: oklch(0.48 0.010 260);
+  --accent: oklch(0.13 0.008 260);
+  --accent-foreground: oklch(0.88 0.012 65);
+  --destructive: oklch(0.60 0.18 25);
   --destructive-foreground: oklch(0.95 0.01 80);
-  --border: oklch(0.18 0.008 250);
-  --input: oklch(0.16 0.008 250);
-  --ring: oklch(0.76 0.145 65);
+  --border: oklch(0.15 0.006 260);
+  --input: oklch(0.13 0.006 260);
+  --ring: oklch(0.72 0.14 60);
 
-  /* Warm amber gold — like the reference */
-  --gold: oklch(0.76 0.155 65);
-  --gold-foreground: oklch(0.08 0.008 250);
-  --warm: oklch(0.16 0.015 50);
+  /* Ouro — luz íntima, calor espiritual */
+  --gold: oklch(0.72 0.14 60);
+  --gold-foreground: oklch(0.06 0.006 260);
+  --gold-soft: oklch(0.72 0.14 60 / 0.12);
+  --warm: oklch(0.14 0.012 50);
 
-  --chart-1: oklch(0.76 0.155 65);
+  --chart-1: oklch(0.72 0.14 60);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.09 0.008 250);
-  --sidebar-foreground: oklch(0.93 0.012 70);
-  --sidebar-primary: oklch(0.76 0.145 65);
-  --sidebar-primary-foreground: oklch(0.08 0.008 250);
-  --sidebar-accent: oklch(0.15 0.010 250);
-  --sidebar-accent-foreground: oklch(0.90 0.010 70);
-  --sidebar-border: oklch(0.18 0.008 250);
-  --sidebar-ring: oklch(0.76 0.145 65);
+  --sidebar: oklch(0.07 0.006 260);
+  --sidebar-foreground: oklch(0.91 0.015 65);
+  --sidebar-primary: oklch(0.72 0.14 60);
+  --sidebar-primary-foreground: oklch(0.06 0.006 260);
+  --sidebar-accent: oklch(0.13 0.008 260);
+  --sidebar-accent-foreground: oklch(0.88 0.012 65);
+  --sidebar-border: oklch(0.15 0.006 260);
+  --sidebar-ring: oklch(0.72 0.14 60);
 }
 
 @layer base {
@@ -110,23 +114,42 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
-  /* Premium typography scale */
   h1, h2, h3 {
     text-wrap: balance;
   }
 
-  /* Scrollbar refinement */
+  /* Scrollbar — quase invisível */
   ::-webkit-scrollbar {
-    width: 6px;
+    width: 4px;
   }
   ::-webkit-scrollbar-track {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: oklch(0.25 0.01 265);
-    border-radius: 3px;
+    background: oklch(0.20 0.008 260);
+    border-radius: 2px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: oklch(0.30 0.01 265);
+    background: oklch(0.26 0.008 260);
+  }
+}
+
+/* Animação de respiração — pulsação suave como luz de vela */
+@keyframes breathe {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.05); }
+}
+
+@keyframes float-slow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@layer utilities {
+  .animate-breathe {
+    animation: breathe 6s ease-in-out infinite;
+  }
+  .animate-float-slow {
+    animation: float-slow 8s ease-in-out infinite;
   }
 }
