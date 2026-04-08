@@ -276,16 +276,16 @@ function LoginPage() {
       <div className="flex flex-1 relative z-10">
         {leftPanel}
 
-        <div className="flex flex-1 items-center justify-center px-6 py-12">
+        <div className="flex flex-1 items-center justify-center px-6 py-6 sm:py-12">
           <div className="w-full max-w-[360px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
             {/* Mobile header */}
-            <div className="lg:hidden mb-12 text-center">
-              <div className="mx-auto mb-10 w-px h-14 bg-gradient-to-b from-transparent via-gold/15 to-transparent" />
-              <h1 className="font-display text-3xl font-bold text-foreground tracking-tight">
+            <div className="lg:hidden mb-6 sm:mb-10 text-center">
+              <div className="mx-auto mb-5 w-px h-8 bg-gradient-to-b from-transparent via-gold/15 to-transparent" />
+              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
                 Paz em Canção
               </h1>
-              <div className="mx-auto mt-5 h-px w-10 bg-gradient-to-r from-transparent via-gold/12 to-transparent" />
-              <p className="mt-5 text-[11px] text-muted-foreground/60 tracking-[0.3em] uppercase">
+              <div className="mx-auto mt-3 h-px w-10 bg-gradient-to-r from-transparent via-gold/12 to-transparent" />
+              <p className="mt-3 text-[10px] text-muted-foreground/60 tracking-[0.3em] uppercase">
                 Sua biblioteca espiritual
               </p>
             </div>
