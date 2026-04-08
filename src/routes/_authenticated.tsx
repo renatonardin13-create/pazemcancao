@@ -11,10 +11,13 @@ function AuthenticatedLayout() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-gold border-t-transparent" />
-          <p className="text-sm text-muted-foreground">Carregando...</p>
+      <div className="flex min-h-screen items-center justify-center bg-background relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_40%,var(--color-gold)/0.025,transparent_70%)]" />
+        <div className="relative flex flex-col items-center gap-6 animate-in fade-in duration-1000">
+          <div className="w-px h-12 bg-gradient-to-b from-transparent via-gold/15 to-transparent animate-breathe" />
+          <p className="text-[11px] font-medium uppercase tracking-[0.4em] text-gold/25">
+            Preparando seu espaço
+          </p>
         </div>
       </div>
     );
