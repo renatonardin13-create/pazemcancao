@@ -1,4 +1,4 @@
-import { Lock, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 export function RestrictedAccessCard() {
@@ -12,11 +12,11 @@ export function RestrictedAccessCard() {
         <Heart className="h-5 w-5 text-gold/35 mx-auto mb-6" />
 
         <h1 className="font-display text-2xl font-bold text-foreground/85">
-          Este espaço é seu refúgio
+          Área exclusiva
         </h1>
         <p className="mt-4 text-sm text-muted-foreground/50 leading-[1.9]">
-          Área reservada para quem carrega<br />
-          essas canções no coração.
+          Espaço reservado para quem possui<br />
+          acesso à coleção Paz em Canção.
         </p>
 
         <div className="mt-10">
