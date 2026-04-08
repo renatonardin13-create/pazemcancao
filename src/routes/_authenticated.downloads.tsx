@@ -24,17 +24,6 @@ const categories = [
   "Refúgio",
 ];
 
-const categoryEmojis: Record<string, string> = {
-  Todos: "🎵",
-  Paz: "🕊️",
-  Cura: "💚",
-  Força: "🔥",
-  Oração: "🙏",
-  Madrugada: "🌅",
-  Presença: "✨",
-  Refúgio: "🏔️",
-};
-
 function DownloadsPage() {
   const [filter, setFilter] = useState("Todos");
 
@@ -45,108 +34,104 @@ function DownloadsPage() {
 
   return (
     <div className="min-h-screen bg-background pb-28 relative">
-      {/* Deep atmospheric layers — night silence */}
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_50%_35%_at_50%_10%,var(--color-gold)/0.035,transparent_70%)]" />
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_40%_50%_at_85%_80%,var(--color-gold)/0.018,transparent_55%)]" />
-
-      {/* Breathing orb — alive, gentle */}
-      <div className="pointer-events-none fixed top-[8%] left-1/2 -translate-x-1/2 h-[500px] w-[500px] rounded-full bg-gold/[0.015] blur-[150px] animate-breathe" />
+      {/* Deep night atmosphere */}
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_50%_35%_at_50%_8%,var(--color-gold)/0.04,transparent_70%)]" />
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_35%_45%_at_85%_85%,var(--color-gold)/0.015,transparent_55%)]" />
+      <div className="pointer-events-none fixed top-[5%] left-1/2 -translate-x-1/2 h-[600px] w-[600px] rounded-full bg-gold/[0.012] blur-[180px] animate-breathe" />
 
       <AppHeader />
 
-      {/* Entrance — contemplative, not loud */}
+      {/* Entrance — like opening a sacred collection */}
       <section className="relative overflow-hidden">
-        <PageContainer className="py-16 sm:py-24 text-center relative z-10">
-          <div className="animate-in fade-in slide-in-from-bottom-6 duration-1000">
-            {/* Spiritual mark */}
-            <div className="mx-auto mb-8 w-px h-12 bg-gradient-to-b from-transparent via-gold/20 to-transparent" />
+        <PageContainer className="py-20 sm:py-28 text-center relative z-10">
+          <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000">
+            {/* Spiritual vertical mark */}
+            <div className="mx-auto mb-10 w-px h-16 bg-gradient-to-b from-transparent via-gold/18 to-transparent" />
 
-            <p className="mb-4 text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.35em] text-gold/40">
+            <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.4em] text-gold/35">
               Sua Biblioteca Espiritual
             </p>
 
-            <h1 className="font-display text-4xl sm:text-5xl font-bold text-foreground leading-[1.08] tracking-tight">
+            <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-foreground/95 leading-[1.06] tracking-tight">
               Seus Louvores
             </h1>
 
-            <div className="mx-auto mt-5 h-px w-14 bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
+            <div className="mx-auto mt-6 h-px w-20 bg-gradient-to-r from-transparent via-gold/15 to-transparent" />
 
-            <p className="mx-auto mt-6 max-w-sm text-sm leading-[1.9] text-muted-foreground/55">
-              Cada canção foi preparada com oração.
+            <p className="mx-auto mt-7 max-w-sm text-[15px] leading-[2] text-muted-foreground/50 font-light">
+              30 canções criadas com oração.<br />
               Ouça com o coração aberto.
             </p>
 
-            <div className="mt-8 flex items-center justify-center gap-8 text-[11px] text-muted-foreground/40">
+            {/* Subtle stats — whispered, not shouted */}
+            <div className="mt-10 flex items-center justify-center gap-10 text-[10px] text-muted-foreground/30 tracking-wider uppercase">
               <span>30 faixas</span>
-              <span className="text-border/40">·</span>
+              <span className="w-px h-3 bg-gold/10" />
               <span>Download ilimitado</span>
+              <span className="w-px h-3 bg-gold/10" />
+              <span>Acesso exclusivo</span>
             </div>
           </div>
         </PageContainer>
 
-        <div className="h-px bg-gradient-to-r from-transparent via-gold/8 to-transparent" />
+        <div className="h-px bg-gradient-to-r from-transparent via-gold/6 to-transparent" />
       </section>
 
-      {/* Value message — intimate */}
-      <PageContainer className="pt-8 sm:pt-10 animate-in fade-in duration-700 delay-300">
+      {/* Devotional message */}
+      <PageContainer className="pt-6 sm:pt-8 animate-in fade-in duration-1000 delay-300">
         <ValueMessageCard />
       </PageContainer>
 
-      {/* Tracks */}
-      <PageContainer className="py-8 sm:py-10">
-        {/* Section header — quiet */}
-        <div className="flex items-center gap-2.5 mb-6 animate-in fade-in duration-500 delay-400">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-gold/8">
-            <ListMusic className="h-3.5 w-3.5 text-gold/60" />
-          </div>
-          <h2 className="font-display text-base sm:text-lg font-bold text-foreground/90">
-            Todas as Faixas
+      {/* Collection */}
+      <PageContainer className="py-10 sm:py-12">
+        {/* Section — quiet, confident */}
+        <div className="flex items-center gap-3 mb-8 animate-in fade-in duration-700 delay-400">
+          <div className="w-px h-6 bg-gradient-to-b from-gold/15 to-transparent" />
+          <h2 className="font-display text-lg font-semibold text-foreground/80 tracking-tight">
+            Coleção Completa
           </h2>
-          <span className="ml-auto text-[10px] text-muted-foreground/35 font-medium">
-            {filtered.length} {filtered.length === 1 ? "faixa" : "faixas"}
+          <span className="ml-auto text-[10px] text-muted-foreground/25">
+            {filtered.length} {filtered.length === 1 ? "louvor" : "louvores"}
           </span>
         </div>
 
-        {/* Category filter — subtle pills */}
-        <div className="mb-7 -mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-none">
-          <div className="flex gap-2 pb-1 min-w-max sm:min-w-0 sm:flex-wrap">
+        {/* Category filter — delicate, contemplative */}
+        <div className="mb-8 -mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-none">
+          <div className="flex gap-1.5 pb-1 min-w-max sm:min-w-0 sm:flex-wrap">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setFilter(cat)}
-                className={`flex items-center gap-1.5 rounded-full px-4 sm:px-5 py-2.5 text-xs sm:text-sm font-medium transition-all duration-500 whitespace-nowrap active:scale-95 ${
+                className={`rounded-full px-4 py-2 text-xs font-medium transition-all duration-500 whitespace-nowrap active:scale-95 ${
                   filter === cat
-                    ? "bg-gold/90 text-gold-foreground shadow-lg shadow-gold/15"
-                    : "bg-card/30 border border-border/30 text-muted-foreground/60 hover:border-gold/15 hover:text-foreground/80 hover:bg-card/50"
+                    ? "bg-gold/85 text-gold-foreground shadow-lg shadow-gold/10"
+                    : "text-muted-foreground/40 hover:text-muted-foreground/60 hover:bg-card/40"
                 }`}
               >
-                <span className="text-[10px]">{categoryEmojis[cat]}</span>
                 {cat}
               </button>
             ))}
           </div>
         </div>
 
-        {/* Track list */}
-        <div className="space-y-2">
+        {/* Track list — each track is a doorway, not just a row */}
+        <div className="space-y-1.5">
           {filtered.map((track, i) => (
             <TrackCard key={track.id} track={track} index={i} />
           ))}
         </div>
 
-        {/* Download all — quiet, elegant */}
-        <div className="mt-20 text-center animate-in fade-in duration-700 delay-500">
-          <div className="inline-flex flex-col items-center gap-5 rounded-3xl border border-border/25 bg-card/20 backdrop-blur-sm px-12 sm:px-16 py-10">
-            <div className="w-px h-8 bg-gradient-to-b from-transparent via-gold/15 to-transparent" />
-            <div>
-              <h3 className="font-display text-lg font-bold text-foreground/90">
-                Baixe Toda a Coleção
-              </h3>
-              <p className="mt-2 text-xs text-muted-foreground/40">
-                Todos os 30 louvores em alta qualidade
-              </p>
-            </div>
-            <Button className="gap-2.5 rounded-full bg-gold/90 text-gold-foreground px-10 py-3.5 h-auto text-sm font-bold hover:bg-gold shadow-xl shadow-gold/10 transition-all duration-500 active:scale-95">
+        {/* Download all — sacred, final */}
+        <div className="mt-24 text-center animate-in fade-in duration-1000 delay-500">
+          <div className="mx-auto max-w-xs">
+            <div className="mx-auto w-px h-10 bg-gradient-to-b from-transparent via-gold/12 to-transparent mb-8" />
+            <h3 className="font-display text-lg font-semibold text-foreground/85">
+              Baixe Toda a Coleção
+            </h3>
+            <p className="mt-2 text-xs text-muted-foreground/35 leading-relaxed">
+              Todos os 30 louvores em alta qualidade
+            </p>
+            <Button className="mt-6 gap-2.5 rounded-full bg-gold/85 text-gold-foreground px-10 py-3.5 h-auto text-sm font-bold hover:bg-gold shadow-xl shadow-gold/8 transition-all duration-500 active:scale-95">
               <Download className="h-4 w-4" />
               Baixar Todos
             </Button>
