@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      active_sessions: {
+        Row: {
+          created_at: string
+          device_fingerprint: string | null
+          email: string
+          id: string
+          ip_address: string | null
+          is_valid: boolean
+          last_active_at: string
+          session_token: string
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string
+          device_fingerprint?: string | null
+          email: string
+          id?: string
+          ip_address?: string | null
+          is_valid?: boolean
+          last_active_at?: string
+          session_token: string
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string
+          device_fingerprint?: string | null
+          email?: string
+          id?: string
+          ip_address?: string | null
+          is_valid?: boolean
+          last_active_at?: string
+          session_token?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       approved_buyers: {
         Row: {
           access_enabled: boolean
