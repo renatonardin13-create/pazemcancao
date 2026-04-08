@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Play, Pause, Download } from "lucide-react";
+import { Play, Pause, Download, Music } from "lucide-react";
 import { motion } from "framer-motion";
 import type { Track } from "@/lib/sample-tracks";
 import { Button } from "@/components/ui/button";
@@ -8,6 +8,16 @@ interface TrackCardProps {
   track: Track;
   index: number;
 }
+
+const categoryColors: Record<string, string> = {
+  Paz: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+  Cura: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  Força: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  Oração: "bg-violet-500/10 text-violet-600 dark:text-violet-400",
+  Madrugada: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400",
+  Presença: "bg-rose-500/10 text-rose-600 dark:text-rose-400",
+  Refúgio: "bg-teal-500/10 text-teal-600 dark:text-teal-400",
+};
 
 export function TrackCard({ track, index }: TrackCardProps) {
   const [playing, setPlaying] = useState(false);
@@ -34,23 +44,39 @@ export function TrackCard({ track, index }: TrackCardProps) {
 
       {/* Info */}
       <div className="flex-1 min-w-0">
-        <h3 className="text-sm font-semibold text-foreground truncate">
-          {track.title}
-        </h3>
-        <p className="text-xs text-muted-foreground">
-          {track.category} · {track.duration}
-        </p>
+        <div className="flex items-center gap-2">
+          <Music className="h-3.5 w-3.5 text-gold shrink-0" />
+          <h3 className="text-sm font-semibold text-foreground truncate">
+            {track.title}
+          </h3>
+        </div>
+        <div className="mt-1 flex items-center gap-2">
+          <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium ${categoryColors[track.category] || "bg-muted text-muted-foreground"}`}>
+            {track.category}
+          </span>
+          <span className="text-xs text-muted-foreground">{track.duration}</span>
+        </div>
       </div>
 
-      {/* Download */}
-      <Button
-        variant="ghost"
-        size="sm"
-        className="shrink-0 gap-1.5 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity hover:text-gold"
-      >
-        <Download className="h-4 w-4" />
-        <span className="hidden sm:inline text-xs">Baixar</span>
-      </Button>
+      {/* Actions */}
+      <div className="flex items-center gap-2 shrink-0">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-1.5 text-muted-foreground hover:text-gold"
+        >
+          <Play className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline text-xs">Ouvir</span>
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="gap-1.5 text-muted-foreground hover:text-gold"
+        >
+          <Download className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline text-xs">Baixar</span>
+        </Button>
+      </div>
     </motion.div>
   );
 }

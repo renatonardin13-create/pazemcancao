@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
-import { Music, Mail, ArrowRight } from "lucide-react";
+import { Music, Mail, Lock, ArrowRight, ShieldCheck } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,12 +15,20 @@ function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
     setLoading(true);
     // TODO: integrate with Lovable Cloud auth
     setTimeout(() => {
+      // Simulated error for now — replace with real auth
+      if (!email || !password) {
+        setError("Não foi possível acessar. Verifique seu e-mail e senha e tente novamente.");
+        setLoading(false);
+        return;
+      }
       navigate({ to: "/downloads" });
     }, 800);
   };
@@ -42,9 +50,12 @@ function LoginPage() {
           <h2 className="font-display text-3xl font-bold text-primary-foreground">
             Paz em Canção
           </h2>
-          <p className="mt-4 text-sm leading-relaxed text-primary-foreground/70">
-            Sua biblioteca espiritual privada com 30 louvores inéditos que
-            tocam a alma.
+          <p className="mt-3 text-sm font-medium text-primary-foreground/80">
+            30 Louvores Inéditos que Tocam a Alma
+          </p>
+          <p className="mt-4 text-sm leading-relaxed text-primary-foreground/60">
+            Sua biblioteca espiritual privada com louvores preparados para
+            trazer paz, cura e presença de Deus.
           </p>
         </motion.div>
       </div>
@@ -76,6 +87,17 @@ function LoginPage() {
             </p>
           </div>
 
+          {/* Error message */}
+          {error && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive"
+            >
+              {error}
+            </motion.div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-medium text-foreground">
@@ -99,27 +121,37 @@ function LoginPage() {
               <Label htmlFor="password" className="text-sm font-medium text-foreground">
                 Senha
               </Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="pl-10"
+                  required
+                />
+              </div>
             </div>
 
             <Button
               type="submit"
               disabled={loading}
-              className="w-full gap-2 rounded-full bg-primary text-primary-foreground py-3 font-semibold"
+              className="w-full gap-2 rounded-full bg-primary text-primary-foreground py-3 font-semibold text-base"
             >
-              {loading ? "Entrando..." : "Entrar"}
+              {loading ? "Entrando..." : "ENTRAR"}
               {!loading && <ArrowRight className="h-4 w-4" />}
             </Button>
           </form>
 
-          <p className="mt-8 text-center text-xs text-muted-foreground">
+          {/* Security note */}
+          <div className="mt-6 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+            <ShieldCheck className="h-3.5 w-3.5 text-gold" />
+            Seu acesso é individual, seguro e protegido.
+          </div>
+
+          <p className="mt-6 text-center text-xs text-muted-foreground">
             Problemas com o acesso?{" "}
             <a href="mailto:suporte@pazemcancao.com" className="text-gold underline">
               Fale conosco
