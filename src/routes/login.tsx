@@ -290,7 +290,7 @@ function LoginPage() {
               </p>
             </div>
 
-            <div className="rounded-3xl border border-gold/15 bg-card/60 backdrop-blur-xl p-8 sm:p-10 relative overflow-hidden shadow-[0_8px_60px_-12px_rgba(0,0,0,0.6)]">
+            <div className="rounded-3xl border border-gold/20 bg-[oklch(0.14_0.01_260)] p-8 sm:p-10 relative overflow-hidden shadow-[0_8px_60px_-12px_rgba(0,0,0,0.6)]">
               <div className="pointer-events-none absolute -top-28 -right-28 h-56 w-56 rounded-full bg-gold/[0.04] blur-[80px]" />
 
               <div className="relative z-10">
