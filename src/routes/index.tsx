@@ -18,17 +18,17 @@ function LandingPage() {
         <div className="relative z-10 max-w-md text-center animate-in fade-in slide-in-from-bottom-8 duration-[1200ms]">
           <div className="mx-auto mb-14 w-px h-20 bg-gradient-to-b from-transparent via-gold/15 to-transparent" />
 
-          <p className="mb-5 text-[10px] font-medium uppercase tracking-[0.5em] text-gold/30">
+          <p className="mb-5 text-[10px] font-medium uppercase tracking-[0.5em] text-gold/50">
             Uma experiência íntima de adoração
           </p>
 
-          <h1 className="font-display text-5xl font-bold leading-[1.06] tracking-tight text-foreground/90 sm:text-6xl lg:text-7xl">
+          <h1 className="font-display text-5xl font-bold leading-[1.06] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
             Paz em Canção
           </h1>
 
           <div className="mx-auto mt-8 h-px w-20 bg-gradient-to-r from-transparent via-gold/12 to-transparent" />
 
-          <p className="mx-auto mt-8 max-w-xs text-[15px] leading-[2.2] text-muted-foreground/40 font-light">
+          <p className="mx-auto mt-8 max-w-xs text-[15px] leading-[2.2] text-muted-foreground/65 font-light">
             30 louvores inéditos, criados para os momentos em que
             a alma precisa de silêncio, cura e presença.
           </p>
@@ -36,14 +36,14 @@ function LandingPage() {
           <div className="mt-16 animate-in fade-in duration-1000 delay-700">
             <Link
               to="/login"
-              className="group inline-flex items-center gap-3 rounded-full bg-gold/12 text-gold/55 border border-gold/10 px-10 py-4 text-[12px] font-semibold tracking-wider uppercase transition-all duration-500 hover:bg-gold/20 hover:text-gold/75"
+              className="group inline-flex items-center gap-3 rounded-full bg-gold/18 text-gold/75 border border-gold/15 px-10 py-4 text-[12px] font-semibold tracking-wider uppercase transition-all duration-500 hover:bg-gold/28 hover:text-gold/90"
             >
               Acessar Minha Área
               <ArrowRight className="h-3.5 w-3.5 transition-transform duration-500 group-hover:translate-x-1" />
             </Link>
           </div>
 
-          <p className="mt-10 text-[10px] text-muted-foreground/20 tracking-wider">
+          <p className="mt-10 text-[10px] text-muted-foreground/35 tracking-wider">
             Acesso exclusivo para compradores
           </p>
         </div>
