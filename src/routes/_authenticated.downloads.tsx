@@ -38,7 +38,7 @@ function DownloadsPage() {
       : sampleTracks.filter((t) => t.category === filter);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background pb-20">
       <AppHeader />
 
       {/* Hero section */}
