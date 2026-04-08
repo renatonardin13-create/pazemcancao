@@ -1,19 +1,23 @@
 import { createServerFn } from "@tanstack/react-start";
-import { getSupabaseServerClient } from "@/integrations/supabase/client.server";
+import { supabaseAdmin } from "@/integrations/supabase/client.server";
 
-export const checkIsAdmin = createServerFn({ method: "GET" })
+export const assignAdminRole = createServerFn({ method: "POST" })
   .handler(async () => {
-    const supabase = getSupabaseServerClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    
-    if (!user) return { isAdmin: false };
+    // This is a utility — assign admin to a specific email
+    const adminEmail = "renatonardin13@gmail.com";
 
-    const { data } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.id)
-      .eq("role", "admin")
-      .maybeSingle();
+    const { data: users } = await supabaseAdmin.auth.admin.listUsers();
+    const adminUser = users?.users?.find((u) => u.email === adminEmail);
 
-    return { isAdmin: !!data };
+    if (!adminUser) {
+      return { success: false, message: "Usuário admin não encontrado. Faça login primeiro." };
+    }
+
+    const { error } = await supabaseAdmin.from("user_roles").upsert(
+      { user_id: adminUser.id, role: "admin" },
+      { onConflict: "user_id,role" }
+    );
+
+    if (error) return { success: false, message: error.message };
+    return { success: true };
   });
