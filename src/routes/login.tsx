@@ -85,10 +85,10 @@ function LoginPage() {
 
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-foreground font-display">
-              Bem-vindo de volta
+              Acesse sua plataforma exclusiva
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Entre com o e-mail da sua compra para acessar seus louvores.
+              Entre com o mesmo e-mail usado na sua compra para acessar seus louvores.
             </p>
           </div>
 
