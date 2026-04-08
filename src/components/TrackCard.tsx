@@ -1,4 +1,4 @@
-import { Play, Pause, Download, Volume2, Clock, Music } from "lucide-react";
+import { Play, Pause, Download, Volume2, Clock } from "lucide-react";
 import type { Track } from "@/lib/sample-tracks";
 import { usePlayer } from "@/hooks/use-player";
 
@@ -8,13 +8,13 @@ interface TrackCardProps {
 }
 
 const categoryColors: Record<string, string> = {
-  Paz: "bg-sky-500/10 text-sky-400 border-sky-500/15",
-  Cura: "bg-emerald-500/10 text-emerald-400 border-emerald-500/15",
-  Força: "bg-amber-500/10 text-amber-400 border-amber-500/15",
-  Oração: "bg-violet-500/10 text-violet-400 border-violet-500/15",
-  Madrugada: "bg-indigo-500/10 text-indigo-400 border-indigo-500/15",
-  Presença: "bg-rose-500/10 text-rose-400 border-rose-500/15",
-  Refúgio: "bg-teal-500/10 text-teal-400 border-teal-500/15",
+  Paz: "bg-sky-500/8 text-sky-400/80 border-sky-500/10",
+  Cura: "bg-emerald-500/8 text-emerald-400/80 border-emerald-500/10",
+  Força: "bg-amber-500/8 text-amber-400/80 border-amber-500/10",
+  Oração: "bg-violet-500/8 text-violet-400/80 border-violet-500/10",
+  Madrugada: "bg-indigo-500/8 text-indigo-400/80 border-indigo-500/10",
+  Presença: "bg-rose-500/8 text-rose-400/80 border-rose-500/10",
+  Refúgio: "bg-teal-500/8 text-teal-400/80 border-teal-500/10",
 };
 
 const categoryIcons: Record<string, string> = {
@@ -41,21 +41,20 @@ export function TrackCard({ track, index }: TrackCardProps) {
 
   return (
     <div
-      className={`group relative rounded-2xl border backdrop-blur-sm transition-all duration-500 ease-out overflow-hidden ${
+      className={`group relative rounded-2xl border backdrop-blur-sm transition-all duration-700 ease-out overflow-hidden ${
         isPlaying
-          ? "border-gold/25 bg-card/80 shadow-[0_0_40px_-10px_var(--color-gold)/0.12]"
-          : "border-border/30 bg-card/40 hover:border-gold/15 hover:bg-card/60 hover:shadow-[0_12px_48px_-16px_rgba(0,0,0,0.4)]"
+          ? "border-gold/15 bg-card/50 shadow-[0_0_60px_-15px_var(--color-gold)/0.08]"
+          : "border-border/20 bg-card/20 hover:border-gold/10 hover:bg-card/35"
       }`}
       style={{
-        animationDelay: `${index * 40}ms`,
+        animationDelay: `${index * 50}ms`,
         animationFillMode: "backwards",
       }}
     >
       {/* Subtle gold glow when playing */}
       {isPlaying && (
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-10 -right-10 h-24 w-24 rounded-full bg-gold/[0.06] blur-2xl" />
-          <div className="absolute -bottom-8 -left-8 h-20 w-20 rounded-full bg-gold/[0.04] blur-2xl" />
+          <div className="absolute -top-12 -right-12 h-28 w-28 rounded-full bg-gold/[0.04] blur-3xl animate-breathe" />
         </div>
       )}
 
@@ -63,7 +62,7 @@ export function TrackCard({ track, index }: TrackCardProps) {
       {isPlaying && (
         <div className="absolute inset-0 pointer-events-none">
           <div
-            className="h-full bg-gold/[0.025] transition-all duration-150 ease-linear"
+            className="h-full bg-gold/[0.015] transition-all duration-150 ease-linear"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -71,20 +70,20 @@ export function TrackCard({ track, index }: TrackCardProps) {
 
       <div className="relative p-4 sm:p-5">
         <div className="flex items-center gap-3 sm:gap-4">
-          {/* Track number + icon */}
+          {/* Track number */}
           <div className="relative">
             <div
-              className={`flex h-13 w-13 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl transition-all duration-300 ${
+              className={`flex h-12 w-12 sm:h-13 sm:w-13 shrink-0 items-center justify-center rounded-2xl transition-all duration-500 ${
                 isPlaying
-                  ? "bg-gold text-gold-foreground shadow-xl shadow-gold/30 scale-105"
-                  : "bg-muted/30 border border-border/30 text-muted-foreground group-hover:bg-gold/10 group-hover:border-gold/20 group-hover:text-gold"
+                  ? "bg-gold/90 text-gold-foreground shadow-xl shadow-gold/20"
+                  : "bg-muted/15 border border-border/20 text-muted-foreground/50 group-hover:bg-gold/8 group-hover:border-gold/15 group-hover:text-gold/70"
               }`}
             >
               {isPlaying ? (
                 <div className="flex items-center gap-[3px]">
-                  <div className="w-[3px] h-3 bg-gold-foreground rounded-full animate-pulse" />
-                  <div className="w-[3px] h-4 bg-gold-foreground rounded-full animate-pulse" style={{ animationDelay: '0.15s' }} />
-                  <div className="w-[3px] h-2.5 bg-gold-foreground rounded-full animate-pulse" style={{ animationDelay: '0.3s' }} />
+                  <div className="w-[2.5px] h-2.5 bg-gold-foreground/80 rounded-full animate-pulse" />
+                  <div className="w-[2.5px] h-3.5 bg-gold-foreground/80 rounded-full animate-pulse" style={{ animationDelay: '0.15s' }} />
+                  <div className="w-[2.5px] h-2 bg-gold-foreground/80 rounded-full animate-pulse" style={{ animationDelay: '0.3s' }} />
                 </div>
               ) : (
                 <span className="text-sm font-bold font-display">
@@ -98,17 +97,17 @@ export function TrackCard({ track, index }: TrackCardProps) {
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2">
               {isPlaying && (
-                <Volume2 className="h-3.5 w-3.5 text-gold shrink-0 animate-pulse" />
+                <Volume2 className="h-3 w-3 text-gold/60 shrink-0 animate-pulse" />
               )}
               <h3
-                className={`text-sm sm:text-[15px] font-bold truncate transition-colors duration-300 leading-tight ${
-                  isPlaying ? "text-gold" : "text-foreground"
+                className={`text-sm sm:text-[15px] font-bold truncate transition-colors duration-500 leading-tight ${
+                  isPlaying ? "text-gold/90" : "text-foreground/85"
                 }`}
               >
                 {track.title}
               </h3>
             </div>
-            <p className="mt-1.5 text-[11px] sm:text-xs leading-relaxed text-muted-foreground/60 line-clamp-1 sm:line-clamp-2">
+            <p className="mt-1.5 text-[11px] sm:text-xs leading-relaxed text-muted-foreground/40 line-clamp-1 sm:line-clamp-2">
               {track.description}
             </p>
             <div className="mt-2 flex items-center gap-2 flex-wrap">
@@ -123,7 +122,7 @@ export function TrackCard({ track, index }: TrackCardProps) {
                 </span>
                 {track.category}
               </span>
-              <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground/40 font-medium">
+              <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground/30 font-medium">
                 <Clock className="h-2.5 w-2.5" />
                 {track.duration}
               </span>
@@ -131,14 +130,13 @@ export function TrackCard({ track, index }: TrackCardProps) {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-1.5 shrink-0">
-            {/* Play/Pause button */}
+          <div className="flex items-center gap-1 shrink-0">
             <button
               onClick={() => toggle(track)}
-              className={`flex h-11 w-11 sm:h-10 sm:w-10 items-center justify-center rounded-xl transition-all duration-300 active:scale-90 ${
+              className={`flex h-10 w-10 items-center justify-center rounded-xl transition-all duration-500 active:scale-90 ${
                 isPlaying
-                  ? "bg-gold/20 text-gold hover:bg-gold/30"
-                  : "bg-transparent text-muted-foreground/60 hover:bg-gold/10 hover:text-gold"
+                  ? "bg-gold/15 text-gold/80 hover:bg-gold/20"
+                  : "bg-transparent text-muted-foreground/35 hover:bg-gold/8 hover:text-gold/60"
               }`}
             >
               {isPlaying ? (
@@ -148,10 +146,9 @@ export function TrackCard({ track, index }: TrackCardProps) {
               )}
             </button>
 
-            {/* Download button */}
             <button
               onClick={handleDownload}
-              className="flex h-11 w-11 sm:h-10 sm:w-10 items-center justify-center rounded-xl text-muted-foreground/40 hover:bg-gold/10 hover:text-gold transition-all duration-300 active:scale-95"
+              className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground/25 hover:bg-gold/8 hover:text-gold/60 transition-all duration-500 active:scale-95"
             >
               <Download className="h-4 w-4" />
             </button>
@@ -160,12 +157,12 @@ export function TrackCard({ track, index }: TrackCardProps) {
 
         {/* Progress bar when playing */}
         {isPlaying && (
-          <div className="mt-4 h-1 rounded-full bg-muted/20 overflow-hidden">
+          <div className="mt-4 h-0.5 rounded-full bg-muted/10 overflow-hidden">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-gold/60 via-gold to-gold/80 transition-all duration-150 ease-linear relative"
+              className="h-full rounded-full bg-gradient-to-r from-gold/40 via-gold/70 to-gold/50 transition-all duration-150 ease-linear relative"
               style={{ width: `${progress}%` }}
             >
-              <div className="absolute right-0 top-1/2 -translate-y-1/2 h-2.5 w-2.5 rounded-full bg-gold shadow-md shadow-gold/40" />
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 h-2 w-2 rounded-full bg-gold/80 shadow-md shadow-gold/30" />
             </div>
           </div>
         )}
