@@ -25,15 +25,15 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const play = (track: Track) => {
-    if (currentTrack?.id !== track.id) {
-      setProgress(0);
-    }
-    setCurrentTrack(track);
+  const play = useCallback((track: Track) => {
+    setCurrentTrack((prev) => {
+      if (prev?.id !== track.id) setProgress(0);
+      return track;
+    });
     setPlaying(true);
-  };
+  }, []);
 
-  const pause = () => setPlaying(false);
+  const pause = useCallback(() => setPlaying(false), []);
 
   const toggle = (track: Track) => {
     if (currentTrack?.id === track.id && playing) {
