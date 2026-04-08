@@ -134,31 +134,31 @@ function LoginPage() {
           transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
           className="w-full max-w-[400px]"
         >
-          <div className="rounded-3xl border border-border/25 bg-card/20 backdrop-blur-md p-10 text-center relative overflow-hidden">
+          <div className="rounded-3xl border border-border/40 bg-card/20 backdrop-blur-md p-10 text-center relative overflow-hidden">
             <div className="pointer-events-none absolute -top-28 -right-28 h-56 w-56 rounded-full bg-destructive/[0.03] blur-[80px]" />
             
             <div className="relative z-10">
               <div className="mx-auto mb-7 flex h-16 w-16 items-center justify-center rounded-full bg-destructive/[0.06] border border-destructive/10">
-                <ShieldAlert className="h-7 w-7 text-destructive/50" />
+                <ShieldAlert className="h-7 w-7 text-destructive/70" />
               </div>
               
-              <h2 className="text-xl font-bold text-foreground/85 font-display tracking-tight mb-4">
+              <h2 className="text-xl font-bold text-foreground font-display tracking-tight mb-4">
                 Acesso não autorizado detectado
               </h2>
               
-              <p className="text-[14px] text-muted-foreground/50 leading-[2] font-light mb-3">
+              <p className="text-[14px] text-muted-foreground/70 leading-[2] font-light mb-3">
                 {blockMessage || 'Esta conta está vinculada ao comprador original. Se você é o titular da compra, tente novamente no dispositivo autorizado.'}
               </p>
               
               <div className="mx-auto my-7 h-px w-16 bg-gradient-to-r from-transparent via-border/20 to-transparent" />
               
-              <p className="text-[12px] text-muted-foreground/35 leading-[1.8] mb-8">
+              <p className="text-[12px] text-muted-foreground/50 leading-[1.8] mb-8">
                 Se acredita que houve um engano, entre em contato com nosso suporte.
               </p>
               
               <button
                 onClick={() => window.location.reload()}
-                className="inline-flex items-center gap-2 text-[12px] text-gold/45 hover:text-gold/65 transition-colors duration-500 underline underline-offset-4 decoration-gold/15 hover:decoration-gold/30"
+                className="inline-flex items-center gap-2 text-[12px] text-gold/70 hover:text-gold/70 transition-colors duration-500 underline underline-offset-4 decoration-gold/15 hover:decoration-gold/30"
               >
                 <ArrowLeft className="h-3 w-3" />
                 Tentar novamente
@@ -166,7 +166,7 @@ function LoginPage() {
             </div>
           </div>
           
-          <p className="mt-6 text-center text-[10px] text-muted-foreground/30">
+          <p className="mt-6 text-center text-[10px] text-muted-foreground/50">
             Precisa de ajuda?{" "}
             <a href="mailto:suporte@pazemcancao.com" className="text-gold/35 hover:text-gold/55 transition-colors duration-500 underline underline-offset-2">
               Fale conosco
@@ -196,7 +196,7 @@ function LoginPage() {
             transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
             className="mx-auto mb-10 flex h-20 w-20 items-center justify-center rounded-full bg-gold/[0.08] border border-gold/15"
           >
-            <Music className="h-8 w-8 text-gold/60" />
+            <Music className="h-8 w-8 text-gold/70" />
           </motion.div>
           
           <motion.div
@@ -204,10 +204,10 @@ function LoginPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground/85 tracking-tight mb-4">
+            <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight mb-4">
               Acesso liberado
             </h2>
-            <p className="text-[15px] text-muted-foreground/50 leading-[2] font-light">
+            <p className="text-[15px] text-muted-foreground/70 leading-[2] font-light">
               Preparando seus louvores…
             </p>
           </motion.div>
@@ -242,23 +242,23 @@ function LoginPage() {
       <div className="relative z-10 max-w-xs text-center px-10 animate-in fade-in slide-in-from-left-8 duration-[1200ms]">
         <div className="mx-auto mb-12 w-px h-16 bg-gradient-to-b from-transparent via-gold/15 to-transparent" />
 
-        <h2 className="font-display text-4xl font-bold text-foreground/90 tracking-tight leading-[1.08]">
+        <h2 className="font-display text-4xl font-bold text-foreground tracking-tight leading-[1.08]">
           Seu espaço<br />de paz
         </h2>
 
         <div className="mx-auto mt-6 h-px w-12 bg-gradient-to-r from-transparent via-gold/12 to-transparent" />
 
-        <p className="mt-6 text-[11px] font-medium text-gold/40 tracking-[0.3em] uppercase">
+        <p className="mt-6 text-[11px] font-medium text-gold/55 tracking-[0.3em] uppercase">
           30 Louvores Inéditos
         </p>
 
-        <p className="mt-10 text-[14px] leading-[2.2] text-muted-foreground/50 font-light">
+        <p className="mt-10 text-[14px] leading-[2.2] text-muted-foreground/70 font-light">
           Um refúgio sonoro para momentos de oração,
           quietude e renovação espiritual.
         </p>
 
         <div className="mt-14 py-6">
-          <p className="text-[13px] italic text-muted-foreground/45 leading-[2]">
+          <p className="text-[13px] italic text-muted-foreground/65 leading-[2]">
             "Essas canções se tornaram parte
             da minha rotina de oração."
           </p>
@@ -270,31 +270,31 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_35%_at_50%_20%,var(--color-gold)/0.03,transparent_70%)]" />
-      <div className="pointer-events-none absolute top-[10%] left-1/2 -translate-x-1/2 h-[500px] w-[500px] rounded-full bg-gold/[0.015] blur-[150px] animate-breathe" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_35%_at_50%_20%,var(--color-gold)/0.06,transparent_70%)]" />
+      <div className="pointer-events-none absolute top-[10%] left-1/2 -translate-x-1/2 h-[500px] w-[500px] rounded-full bg-gold/[0.03] blur-[150px] animate-breathe" />
 
       <div className="flex flex-1 relative z-10">
         {leftPanel}
 
-        <div className="flex flex-1 items-center justify-center px-6 py-12">
+        <div className="flex flex-1 items-center justify-center px-6 py-6 sm:py-12">
           <div className="w-full max-w-[360px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
             {/* Mobile header */}
-            <div className="lg:hidden mb-16 text-center">
-              <div className="mx-auto mb-10 w-px h-14 bg-gradient-to-b from-transparent via-gold/15 to-transparent" />
-              <h1 className="font-display text-3xl font-bold text-foreground/90 tracking-tight">
+            <div className="lg:hidden mb-6 sm:mb-10 text-center">
+              <div className="mx-auto mb-5 w-px h-8 bg-gradient-to-b from-transparent via-gold/15 to-transparent" />
+              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
                 Paz em Canção
               </h1>
-              <div className="mx-auto mt-5 h-px w-10 bg-gradient-to-r from-transparent via-gold/12 to-transparent" />
-              <p className="mt-5 text-[11px] text-muted-foreground/40 tracking-[0.3em] uppercase">
+              <div className="mx-auto mt-3 h-px w-10 bg-gradient-to-r from-transparent via-gold/12 to-transparent" />
+              <p className="mt-3 text-[10px] text-muted-foreground/60 tracking-[0.3em] uppercase">
                 Sua biblioteca espiritual
               </p>
             </div>
 
-            <div className="rounded-3xl border border-border/25 bg-card/20 backdrop-blur-md p-8 sm:p-10 relative overflow-hidden">
-              <div className="pointer-events-none absolute -top-28 -right-28 h-56 w-56 rounded-full bg-gold/[0.02] blur-[80px]" />
+            <div className="rounded-3xl border border-gold/20 bg-[oklch(0.14_0.01_260)] p-8 sm:p-10 relative overflow-hidden shadow-[0_8px_60px_-12px_rgba(0,0,0,0.6)]">
+              <div className="pointer-events-none absolute -top-28 -right-28 h-56 w-56 rounded-full bg-gold/[0.04] blur-[80px]" />
 
               <div className="relative z-10">
-                <AnimatePresence mode="wait">
+                <AnimatePresence mode="wait" initial={false}>
                   {/* ═══ LOGIN VIEW ═══ */}
                   {view === "login" && (
                     <motion.div
@@ -305,10 +305,10 @@ function LoginPage() {
                       transition={{ duration: 0.3 }}
                     >
                       <div className="mb-9">
-                        <h2 className="text-xl font-bold text-foreground/85 font-display tracking-tight">
+                        <h2 className="text-xl font-bold text-foreground font-display tracking-tight">
                           Acesse seu espaço
                         </h2>
-                        <p className="mt-3 text-[13px] text-muted-foreground/50 leading-[1.8]">
+                        <p className="mt-3 text-[13px] text-muted-foreground/70 leading-[1.8]">
                           Use o e-mail da sua compra para entrar.
                         </p>
                       </div>
@@ -317,7 +317,7 @@ function LoginPage() {
                         <motion.div
                           initial={{ opacity: 0, y: -8 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="mb-7 rounded-xl border border-destructive/10 bg-destructive/5 px-4 py-3.5 text-[13px] text-destructive/70 leading-[1.7]"
+                          className="mb-7 rounded-xl border border-destructive/10 bg-destructive/5 px-4 py-3.5 text-[13px] text-destructive/80 leading-[1.7]"
                         >
                           {error}
                         </motion.div>
@@ -325,36 +325,36 @@ function LoginPage() {
 
                       <form onSubmit={handleLogin} className="space-y-6">
                         <div className="space-y-2.5">
-                          <Label htmlFor="email" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/40">
+                          <Label htmlFor="email" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
                             E-mail
                           </Label>
                           <div className="relative">
-                            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
+                            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
                             <Input
                               id="email"
                               type="email"
                               placeholder="seu@email.com"
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
-                              className="pl-11 h-12 bg-background/40 border-border/25 rounded-xl text-sm placeholder:text-muted-foreground/20 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                               required
                             />
                           </div>
                         </div>
 
                         <div className="space-y-2.5">
-                          <Label htmlFor="password" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/40">
+                          <Label htmlFor="password" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
                             Senha
                           </Label>
                           <div className="relative">
-                            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
+                            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
                             <Input
                               id="password"
                               type="password"
                               placeholder="••••••••"
                               value={password}
                               onChange={(e) => setPassword(e.target.value)}
-                              className="pl-11 h-12 bg-background/40 border-border/25 rounded-xl text-sm placeholder:text-muted-foreground/20 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                               required
                             />
                           </div>
@@ -363,7 +363,7 @@ function LoginPage() {
                         <button
                           type="submit"
                           disabled={loading}
-                          className="w-full flex items-center justify-center gap-2.5 rounded-xl h-12 text-[12px] font-semibold tracking-wider uppercase bg-gold/15 text-gold/65 border border-gold/12 hover:bg-gold/22 hover:text-gold/80 transition-all duration-500 active:scale-[0.98] disabled:opacity-40"
+                          className="w-full flex items-center justify-center gap-2.5 rounded-xl h-12 text-[12px] font-semibold tracking-wider uppercase bg-gold/15 text-gold/70 border border-gold/12 hover:bg-gold/22 hover:text-gold/80 transition-all duration-500 active:scale-[0.98] disabled:opacity-40"
                         >
                           {loading ? (
                             <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-gold/20 border-t-gold/50" />
@@ -379,13 +379,13 @@ function LoginPage() {
                       <div className="mt-7 text-center">
                         <button
                           onClick={() => { setView("reset"); setError(""); }}
-                          className="text-[12px] text-gold/40 hover:text-gold/65 transition-colors duration-500 underline underline-offset-4 decoration-gold/15 hover:decoration-gold/30"
+                          className="text-[12px] text-gold/55 hover:text-gold/70 transition-colors duration-500 underline underline-offset-4 decoration-gold/15 hover:decoration-gold/30"
                         >
                           Primeiro acesso ou esqueceu sua senha?
                         </button>
                       </div>
 
-                      <div className="mt-6 flex items-center justify-center gap-2 text-[10px] text-muted-foreground/30">
+                      <div className="mt-6 flex items-center justify-center gap-2 text-[10px] text-muted-foreground/50">
                         <ShieldCheck className="h-3 w-3 text-gold/25" />
                         Acesso seguro e exclusivo
                       </div>
@@ -403,12 +403,12 @@ function LoginPage() {
                     >
                       <div className="mb-9">
                         <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-gold/[0.06] border border-gold/10">
-                          <KeyRound className="h-5 w-5 text-gold/50" />
+                          <KeyRound className="h-5 w-5 text-gold/70" />
                         </div>
-                        <h2 className="text-xl font-bold text-foreground/85 font-display tracking-tight">
+                        <h2 className="text-xl font-bold text-foreground font-display tracking-tight">
                           Primeiro acesso
                         </h2>
-                        <p className="mt-3 text-[13px] text-muted-foreground/50 leading-[1.8]">
+                        <p className="mt-3 text-[13px] text-muted-foreground/70 leading-[1.8]">
                           Digite o e-mail da sua compra. Enviaremos um link seguro para você definir sua senha.
                         </p>
                       </div>
@@ -417,7 +417,7 @@ function LoginPage() {
                         <motion.div
                           initial={{ opacity: 0, y: -8 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="mb-7 rounded-xl border border-destructive/10 bg-destructive/5 px-4 py-3.5 text-[13px] text-destructive/70 leading-[1.7]"
+                          className="mb-7 rounded-xl border border-destructive/10 bg-destructive/5 px-4 py-3.5 text-[13px] text-destructive/80 leading-[1.7]"
                         >
                           {error}
                         </motion.div>
@@ -425,18 +425,18 @@ function LoginPage() {
 
                       <form onSubmit={handleResetRequest} className="space-y-6">
                         <div className="space-y-2.5">
-                          <Label htmlFor="reset-email" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/40">
+                          <Label htmlFor="reset-email" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
                             E-mail da compra
                           </Label>
                           <div className="relative">
-                            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
+                            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
                             <Input
                               id="reset-email"
                               type="email"
                               placeholder="seu@email.com"
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
-                              className="pl-11 h-12 bg-background/40 border-border/25 rounded-xl text-sm placeholder:text-muted-foreground/20 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                               required
                             />
                           </div>
@@ -445,7 +445,7 @@ function LoginPage() {
                         <button
                           type="submit"
                           disabled={loading}
-                          className="w-full flex items-center justify-center gap-2.5 rounded-xl h-12 text-[12px] font-semibold tracking-wider uppercase bg-gold/15 text-gold/65 border border-gold/12 hover:bg-gold/22 hover:text-gold/80 transition-all duration-500 active:scale-[0.98] disabled:opacity-40"
+                          className="w-full flex items-center justify-center gap-2.5 rounded-xl h-12 text-[12px] font-semibold tracking-wider uppercase bg-gold/15 text-gold/70 border border-gold/12 hover:bg-gold/22 hover:text-gold/80 transition-all duration-500 active:scale-[0.98] disabled:opacity-40"
                         >
                           {loading ? (
                             <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-gold/20 border-t-gold/50" />
@@ -461,7 +461,7 @@ function LoginPage() {
                       <div className="mt-7 text-center">
                         <button
                           onClick={() => { setView("login"); setError(""); }}
-                          className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground/35 hover:text-muted-foreground/55 transition-colors duration-500"
+                          className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground/50 hover:text-muted-foreground/75 transition-colors duration-500"
                         >
                           <ArrowLeft className="h-3 w-3" />
                           Voltar ao login
@@ -481,21 +481,21 @@ function LoginPage() {
                       className="text-center py-4"
                     >
                       <div className="mb-6 flex h-14 w-14 mx-auto items-center justify-center rounded-full bg-gold/[0.08] border border-gold/15">
-                        <CheckCircle className="h-6 w-6 text-gold/60" />
+                        <CheckCircle className="h-6 w-6 text-gold/70" />
                       </div>
-                      <h2 className="text-xl font-bold text-foreground/85 font-display tracking-tight mb-4">
+                      <h2 className="text-xl font-bold text-foreground font-display tracking-tight mb-4">
                         Verifique seu e-mail
                       </h2>
-                      <p className="text-[14px] text-muted-foreground/50 leading-[2] font-light mb-2">
-                        Enviamos um link seguro para redefinir sua senha no e-mail <span className="text-foreground/70 font-medium">{email}</span>.
+                      <p className="text-[14px] text-muted-foreground/70 leading-[2] font-light mb-2">
+                        Enviamos um link seguro para redefinir sua senha no e-mail <span className="text-foreground/90 font-medium">{email}</span>.
                       </p>
-                      <p className="text-[12px] text-muted-foreground/35 leading-[1.8] mb-8">
+                      <p className="text-[12px] text-muted-foreground/50 leading-[1.8] mb-8">
                         Verifique também a pasta de spam.
                       </p>
 
                       <button
                         onClick={() => { setView("login"); setError(""); }}
-                        className="inline-flex items-center gap-1.5 text-[11px] text-gold/40 hover:text-gold/60 transition-colors duration-500"
+                        className="inline-flex items-center gap-1.5 text-[11px] text-gold/55 hover:text-gold/70 transition-colors duration-500"
                       >
                         <ArrowLeft className="h-3 w-3" />
                         Voltar ao login
@@ -514,12 +514,12 @@ function LoginPage() {
                     >
                       <div className="mb-9">
                         <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-gold/[0.06] border border-gold/10">
-                          <Lock className="h-5 w-5 text-gold/50" />
+                          <Lock className="h-5 w-5 text-gold/70" />
                         </div>
-                        <h2 className="text-xl font-bold text-foreground/85 font-display tracking-tight">
+                        <h2 className="text-xl font-bold text-foreground font-display tracking-tight">
                           Defina sua senha
                         </h2>
-                        <p className="mt-3 text-[13px] text-muted-foreground/50 leading-[1.8]">
+                        <p className="mt-3 text-[13px] text-muted-foreground/70 leading-[1.8]">
                           Escolha uma senha segura para acessar seu espaço de paz.
                         </p>
                       </div>
@@ -528,7 +528,7 @@ function LoginPage() {
                         <motion.div
                           initial={{ opacity: 0, y: -8 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="mb-7 rounded-xl border border-destructive/10 bg-destructive/5 px-4 py-3.5 text-[13px] text-destructive/70 leading-[1.7]"
+                          className="mb-7 rounded-xl border border-destructive/10 bg-destructive/5 px-4 py-3.5 text-[13px] text-destructive/80 leading-[1.7]"
                         >
                           {error}
                         </motion.div>
@@ -540,25 +540,25 @@ function LoginPage() {
                           animate={{ opacity: 1, y: 0 }}
                           className="mb-7 rounded-xl border border-gold/15 bg-gold/5 px-4 py-3.5 text-[13px] text-gold/70 flex items-center gap-2"
                         >
-                          <CheckCircle className="h-4 w-4 text-gold/50 shrink-0" />
+                          <CheckCircle className="h-4 w-4 text-gold/70 shrink-0" />
                           {successMsg}
                         </motion.div>
                       )}
 
                       <form onSubmit={handleNewPassword} className="space-y-6">
                         <div className="space-y-2.5">
-                          <Label htmlFor="new-password" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/40">
+                          <Label htmlFor="new-password" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
                             Nova Senha
                           </Label>
                           <div className="relative">
-                            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
+                            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
                             <Input
                               id="new-password"
                               type="password"
                               placeholder="Mínimo 6 caracteres"
                               value={newPassword}
                               onChange={(e) => setNewPassword(e.target.value)}
-                              className="pl-11 h-12 bg-background/40 border-border/25 rounded-xl text-sm placeholder:text-muted-foreground/20 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                               required
                               minLength={6}
                             />
@@ -566,18 +566,18 @@ function LoginPage() {
                         </div>
 
                         <div className="space-y-2.5">
-                          <Label htmlFor="confirm-password" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/40">
+                          <Label htmlFor="confirm-password" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
                             Confirmar Senha
                           </Label>
                           <div className="relative">
-                            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
+                            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
                             <Input
                               id="confirm-password"
                               type="password"
                               placeholder="Repita a senha"
                               value={confirmPassword}
                               onChange={(e) => setConfirmPassword(e.target.value)}
-                              className="pl-11 h-12 bg-background/40 border-border/25 rounded-xl text-sm placeholder:text-muted-foreground/20 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                               required
                               minLength={6}
                             />
@@ -587,7 +587,7 @@ function LoginPage() {
                         <button
                           type="submit"
                           disabled={loading || !!successMsg}
-                          className="w-full flex items-center justify-center gap-2.5 rounded-xl h-12 text-[12px] font-semibold tracking-wider uppercase bg-gold/15 text-gold/65 border border-gold/12 hover:bg-gold/22 hover:text-gold/80 transition-all duration-500 active:scale-[0.98] disabled:opacity-40"
+                          className="w-full flex items-center justify-center gap-2.5 rounded-xl h-12 text-[12px] font-semibold tracking-wider uppercase bg-gold/15 text-gold/70 border border-gold/12 hover:bg-gold/22 hover:text-gold/80 transition-all duration-500 active:scale-[0.98] disabled:opacity-40"
                         >
                           {loading ? (
                             <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-gold/20 border-t-gold/50" />
@@ -605,7 +605,7 @@ function LoginPage() {
               </div>
             </div>
 
-            <p className="mt-8 text-center text-[10px] text-muted-foreground/30">
+            <p className="mt-8 text-center text-[10px] text-muted-foreground/50">
               Precisa de ajuda?{" "}
               <a href="mailto:suporte@pazemcancao.com" className="text-gold/35 hover:text-gold/55 transition-colors duration-500 underline underline-offset-2">
                 Fale conosco
@@ -616,10 +616,10 @@ function LoginPage() {
       </div>
 
       <footer className="relative z-10 py-4 text-center">
-        <div className="flex items-center justify-center gap-4 text-[10px] text-muted-foreground/30">
-          <Link to="/termos" className="hover:text-muted-foreground/50 transition-colors duration-500">Termos</Link>
+        <div className="flex items-center justify-center gap-4 text-[10px] text-muted-foreground/50">
+          <Link to="/termos" className="hover:text-muted-foreground/70 transition-colors duration-500">Termos</Link>
           <span className="text-border/30">·</span>
-          <Link to="/privacidade" className="hover:text-muted-foreground/50 transition-colors duration-500">Privacidade</Link>
+          <Link to="/privacidade" className="hover:text-muted-foreground/70 transition-colors duration-500">Privacidade</Link>
           <span className="text-border/30">·</span>
           <span>© {new Date().getFullYear()} Paz em Canção</span>
         </div>
