@@ -270,8 +270,8 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background relative overflow-hidden">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_35%_at_50%_20%,var(--color-gold)/0.03,transparent_70%)]" />
-      <div className="pointer-events-none absolute top-[10%] left-1/2 -translate-x-1/2 h-[500px] w-[500px] rounded-full bg-gold/[0.015] blur-[150px] animate-breathe" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_35%_at_50%_20%,var(--color-gold)/0.06,transparent_70%)]" />
+      <div className="pointer-events-none absolute top-[10%] left-1/2 -translate-x-1/2 h-[500px] w-[500px] rounded-full bg-gold/[0.03] blur-[150px] animate-breathe" />
 
       <div className="flex flex-1 relative z-10">
         {leftPanel}
