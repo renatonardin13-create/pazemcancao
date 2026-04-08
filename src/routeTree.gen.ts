@@ -15,6 +15,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedDownloadsRouteImport } from './routes/_authenticated.downloads'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
 import { Route as ApiWebhookKiwifyRouteImport } from './routes/api/webhook/kiwify'
 
 const TermosRoute = TermosRouteImport.update({
@@ -46,6 +47,11 @@ const AuthenticatedDownloadsRoute = AuthenticatedDownloadsRouteImport.update({
   path: '/downloads',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const ApiWebhookKiwifyRoute = ApiWebhookKiwifyRouteImport.update({
   id: '/api/webhook/kiwify',
   path: '/api/webhook/kiwify',
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/downloads': typeof AuthenticatedDownloadsRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
 }
@@ -65,6 +72,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
+  '/admin': typeof AuthenticatedAdminRoute
   '/downloads': typeof AuthenticatedDownloadsRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
 }
@@ -75,6 +83,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/downloads': typeof AuthenticatedDownloadsRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
 }
@@ -85,6 +94,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacidade'
     | '/termos'
+    | '/admin'
     | '/downloads'
     | '/api/webhook/kiwify'
   fileRoutesByTo: FileRoutesByTo
@@ -93,6 +103,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacidade'
     | '/termos'
+    | '/admin'
     | '/downloads'
     | '/api/webhook/kiwify'
   id:
@@ -102,6 +113,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacidade'
     | '/termos'
+    | '/_authenticated/admin'
     | '/_authenticated/downloads'
     | '/api/webhook/kiwify'
   fileRoutesById: FileRoutesById
@@ -159,6 +171,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDownloadsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/api/webhook/kiwify': {
       id: '/api/webhook/kiwify'
       path: '/api/webhook/kiwify'
@@ -170,10 +189,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedDownloadsRoute: typeof AuthenticatedDownloadsRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedDownloadsRoute: AuthenticatedDownloadsRoute,
 }
 
