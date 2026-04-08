@@ -85,10 +85,10 @@ function LoginPage() {
 
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-foreground font-display">
-              Bem-vindo de volta
+              Acesse sua plataforma exclusiva
             </h2>
             <p className="mt-2 text-sm text-muted-foreground">
-              Entre com o e-mail da sua compra para acessar seus louvores.
+              Entre com o mesmo e-mail usado na sua compra para acessar seus louvores.
             </p>
           </div>
 
@@ -113,7 +113,7 @@ function LoginPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="seu@email.com"
+                  placeholder="Digite seu e-mail"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="pl-10"
@@ -131,7 +131,7 @@ function LoginPage() {
                 <Input
                   id="password"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder="Digite sua senha"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="pl-10"
