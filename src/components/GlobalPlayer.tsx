@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Play, Pause, X, Download, Music, SkipBack, SkipForward } from "lucide-react";
+import { Play, Pause, X, Download, SkipBack, SkipForward } from "lucide-react";
 import { usePlayer } from "@/hooks/use-player";
 import { sampleTracks } from "@/lib/sample-tracks";
 
@@ -57,98 +57,74 @@ export function GlobalPlayer() {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl shadow-[0_-8px_40px_-10px_rgba(0,0,0,0.5)]">
-      {/* Progress bar */}
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/85 backdrop-blur-2xl">
+      {/* Progress — gentle, clickable */}
       <div
-        className="h-[2px] w-full bg-muted/10 cursor-pointer group relative"
+        className="h-[1.5px] w-full bg-muted/6 cursor-pointer group relative"
         onClick={handleProgressClick}
       >
         <div
-          className="h-full bg-gradient-to-r from-gold/50 via-gold/80 to-gold/60 transition-all duration-150 ease-linear relative"
+          className="h-full bg-gradient-to-r from-gold/35 via-gold/60 to-gold/40 transition-all duration-200 ease-linear relative"
           style={{ width: `${progress}%` }}
         >
-          <div className="absolute right-0 top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-gold/80 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg shadow-gold/30 border-2 border-background" />
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 h-2.5 w-2.5 rounded-full bg-gold/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 border border-background" />
         </div>
       </div>
 
-      {/* Whisper gold line */}
-      <div className="h-px bg-gradient-to-r from-transparent via-gold/8 to-transparent" />
-
-      <div className="flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-3 max-w-5xl mx-auto">
-        {/* Track info */}
-        <div className="flex items-center gap-3 flex-1 min-w-0">
-          <div className={`flex h-10 w-10 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-xl border transition-all duration-500 ${
-            playing
-              ? "bg-gold/10 border-gold/15"
-              : "bg-muted/10 border-border/20"
-          }`}>
-            {playing ? (
-              <div className="flex items-center gap-[2px]">
-                <div className="w-[2px] h-2 bg-gold/70 rounded-full animate-pulse" />
-                <div className="w-[2px] h-3 bg-gold/70 rounded-full animate-pulse" style={{ animationDelay: '0.15s' }} />
-                <div className="w-[2px] h-1.5 bg-gold/70 rounded-full animate-pulse" style={{ animationDelay: '0.3s' }} />
-              </div>
-            ) : (
-              <Music className="h-4 w-4 text-muted-foreground/30" />
-            )}
-          </div>
-          <div className="min-w-0">
-            <p className="text-sm font-bold text-foreground/85 truncate leading-tight">
-              {currentTrack.title}
-            </p>
-            <div className="flex items-center gap-2 mt-0.5">
-              <p className="text-[10px] text-muted-foreground/35 truncate">
-                {currentTrack.category}
-              </p>
-              <span className="text-[10px] text-muted-foreground/20">·</span>
-              <p className="text-[10px] text-muted-foreground/30 tabular-nums">
-                {formatTime(progress, currentTrack.duration)} / {currentTrack.duration}
-              </p>
-            </div>
-          </div>
+      <div className="flex items-center gap-4 px-5 sm:px-8 py-4 max-w-5xl mx-auto">
+        {/* Track info — quiet, present */}
+        <div className="flex-1 min-w-0">
+          <p className="text-[13px] font-semibold text-foreground/75 truncate leading-tight">
+            {currentTrack.title}
+          </p>
+          <p className="mt-1 text-[10px] text-muted-foreground/25 tracking-wider">
+            {currentTrack.category}
+            <span className="mx-1.5">·</span>
+            <span className="tabular-nums">{formatTime(progress, currentTrack.duration)}</span>
+            <span className="mx-1 text-border/15">/</span>
+            <span className="tabular-nums">{currentTrack.duration}</span>
+          </p>
         </div>
 
-        {/* Controls */}
-        <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
+        {/* Controls — moment of pause */}
+        <div className="flex items-center gap-1 shrink-0">
           <button
             onClick={prevTrack}
-            className="hidden sm:flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/30 hover:text-foreground/60 hover:bg-muted/10 transition-all duration-500 active:scale-90"
+            className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/20 hover:text-muted-foreground/45 transition-all duration-500"
           >
-            <SkipBack className="h-4 w-4" />
+            <SkipBack className="h-3.5 w-3.5" />
           </button>
 
           <button
             onClick={() => toggle(currentTrack)}
-            className={`flex h-11 w-11 items-center justify-center rounded-full transition-all duration-500 active:scale-90 ${
+            className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-500 ${
               playing
-                ? "bg-gold/90 text-gold-foreground shadow-lg shadow-gold/20"
-                : "bg-gold/10 text-gold/70 hover:bg-gold/20 border border-gold/15"
+                ? "bg-gold/80 text-gold-foreground"
+                : "bg-gold/10 text-gold/60 hover:bg-gold/20"
             }`}
           >
-            {playing ? <Pause className="h-4.5 w-4.5" /> : <Play className="h-4.5 w-4.5 ml-0.5" />}
+            {playing ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 ml-0.5" />}
           </button>
 
           <button
             onClick={nextTrack}
-            className="hidden sm:flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/30 hover:text-foreground/60 hover:bg-muted/10 transition-all duration-500 active:scale-90"
+            className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/20 hover:text-muted-foreground/45 transition-all duration-500"
           >
-            <SkipForward className="h-4 w-4" />
+            <SkipForward className="h-3.5 w-3.5" />
           </button>
-
-          <div className="w-px h-4 bg-border/15 mx-1 hidden sm:block" />
 
           <button
             onClick={handleDownload}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/25 hover:text-gold/60 hover:bg-gold/8 transition-all duration-500 active:scale-95"
+            className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/15 hover:text-gold/35 transition-all duration-500 ml-1"
           >
-            <Download className="h-4 w-4" />
+            <Download className="h-3.5 w-3.5" />
           </button>
 
           <button
             onClick={stop}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/20 hover:text-foreground/50 hover:bg-muted/10 transition-all duration-500 active:scale-95"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/15 hover:text-muted-foreground/35 transition-all duration-500"
           >
-            <X className="h-3.5 w-3.5" />
+            <X className="h-3 w-3" />
           </button>
         </div>
       </div>
