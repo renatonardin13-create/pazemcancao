@@ -46,8 +46,8 @@ function DownloadsPage() {
           <div className="animate-in fade-in slide-in-from-bottom-8 duration-[1200ms]">
             <div className="mx-auto mb-12 w-px h-20 bg-gradient-to-b from-transparent via-gold/12 to-transparent" />
 
-            <p className="mb-4 text-[10px] font-medium uppercase tracking-[0.5em] text-gold/25">
-              Sua Biblioteca Espiritual
+            <p className="mb-4 text-[10px] font-medium uppercase tracking-[0.5em] text-gold/35">
+              Seu Lugar de Descanso
             </p>
 
             <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-foreground/90 leading-[1.04] tracking-tight">
@@ -56,9 +56,9 @@ function DownloadsPage() {
 
             <div className="mx-auto mt-8 h-px w-24 bg-gradient-to-r from-transparent via-gold/10 to-transparent" />
 
-            <p className="mx-auto mt-8 max-w-xs text-[15px] leading-[2.2] text-muted-foreground/40 font-light">
-              30 canções criadas com oração.<br />
-              Ouça com o coração aberto.
+            <p className="mx-auto mt-8 max-w-xs text-[15px] leading-[2.2] text-muted-foreground/55 font-light">
+              30 canções para os dias em que a alma pesa.<br />
+              Ouça sem pressa. Você merece esse momento.
             </p>
           </div>
         </PageContainer>
@@ -74,11 +74,11 @@ function DownloadsPage() {
         {/* Section header */}
         <div className="flex items-center gap-3 mb-10 animate-in fade-in duration-700 delay-700">
           <div className="w-px h-5 bg-gold/10" />
-          <h2 className="text-[11px] font-medium uppercase tracking-[0.4em] text-muted-foreground/25">
+          <h2 className="text-[11px] font-medium uppercase tracking-[0.4em] text-muted-foreground/35">
             Coleção Completa
           </h2>
-          <span className="ml-auto text-[10px] text-muted-foreground/15">
-            {filtered.length} louvores
+          <span className="ml-auto text-[10px] text-muted-foreground/25">
+            {filtered.length} canções de cura
           </span>
         </div>
 
@@ -92,7 +92,7 @@ function DownloadsPage() {
                 className={`rounded-full px-4 py-2 text-[11px] font-medium transition-all duration-500 whitespace-nowrap ${
                   filter === cat
                     ? "bg-gold/80 text-gold-foreground"
-                    : "text-muted-foreground/25 hover:text-muted-foreground/45"
+                    : "text-muted-foreground/35 hover:text-muted-foreground/55"
                 }`}
               >
                 {cat}
@@ -111,14 +111,14 @@ function DownloadsPage() {
         {/* Download all — gentle, final */}
         <div className="mt-28 text-center">
           <div className="mx-auto w-px h-14 bg-gradient-to-b from-transparent via-gold/8 to-transparent mb-10" />
-          <p className="text-[10px] font-medium uppercase tracking-[0.4em] text-gold/20 mb-4">
-            Coleção Completa
+          <p className="text-[10px] font-medium uppercase tracking-[0.4em] text-gold/30 mb-4">
+            Leve todas com você
           </p>
           <h3 className="font-display text-lg font-semibold text-foreground/80">
-            Baixe Todos os Louvores
+            Baixe Toda a Coleção
           </h3>
-          <p className="mt-2 text-xs text-muted-foreground/25 leading-relaxed">
-            30 faixas em alta qualidade
+          <p className="mt-2 text-xs text-muted-foreground/40 leading-relaxed">
+            30 faixas para os momentos que só Deus vê
           </p>
           <Button className="mt-7 gap-2 rounded-full bg-gold/15 text-gold/60 border border-gold/10 px-8 py-3 h-auto text-[12px] font-semibold tracking-wider uppercase hover:bg-gold/25 hover:text-gold/80 shadow-none transition-all duration-500 active:scale-95">
             <Download className="h-3.5 w-3.5" />
