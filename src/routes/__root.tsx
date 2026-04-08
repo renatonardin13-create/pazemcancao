@@ -1,5 +1,7 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { AuthProvider } from "@/hooks/use-auth";
+import { PlayerProvider } from "@/hooks/use-player";
+import { GlobalPlayer } from "@/components/GlobalPlayer";
 
 import appCss from "../styles.css?url";
 
@@ -73,7 +75,10 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   return (
     <AuthProvider>
-      <Outlet />
+      <PlayerProvider>
+        <Outlet />
+        <GlobalPlayer />
+      </PlayerProvider>
     </AuthProvider>
   );
 }
