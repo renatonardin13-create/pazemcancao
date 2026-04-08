@@ -5,8 +5,9 @@ import { useState } from "react";
 import { sampleTracks } from "@/lib/sample-tracks";
 import { TrackCard } from "@/components/TrackCard";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
 
-export const Route = createFileRoute("/downloads")({
+export const Route = createFileRoute("/_authenticated/downloads")({
   component: DownloadsPage,
 });
 
@@ -14,6 +15,7 @@ const categories = ["Todos", "Paz", "Cura", "Força", "Oração", "Madrugada", "
 
 function DownloadsPage() {
   const [filter, setFilter] = useState("Todos");
+  const { logout } = useAuth();
 
   const filtered =
     filter === "Todos"
@@ -38,7 +40,12 @@ function DownloadsPage() {
               </p>
             </div>
           </div>
-          <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground uppercase text-xs font-semibold tracking-wide">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="gap-2 text-muted-foreground uppercase text-xs font-semibold tracking-wide"
+            onClick={() => logout()}
+          >
             <LogOut className="h-4 w-4" />
             Sair
           </Button>
