@@ -8,7 +8,7 @@ interface PlayerState {
   play: (track: Track) => void;
   pause: () => void;
   toggle: (track: Track) => void;
-  setProgress: (p: number) => void;
+  setProgress: React.Dispatch<React.SetStateAction<number>>;
   stop: () => void;
 }
 
