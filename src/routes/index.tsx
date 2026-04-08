@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Music, Lock, Download, Headphones } from "lucide-react";
+import { FooterLinks } from "@/components/FooterLinks";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
@@ -10,11 +11,9 @@ function LandingPage() {
     <div className="min-h-screen bg-background flex flex-col">
       {/* Hero */}
       <section className="relative flex-1 flex items-center justify-center px-6 py-24 overflow-hidden">
-        {/* Subtle radial glow */}
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--color-gold)/0.08,transparent_70%)]" />
 
         <div className="relative z-10 max-w-2xl text-center animate-in fade-in slide-in-from-bottom-4 duration-700">
-          {/* Cross / music icon */}
           <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-full border border-gold/30 bg-gold/10 animate-in zoom-in duration-500 delay-200">
             <Music className="h-9 w-9 text-gold" />
           </div>
@@ -32,7 +31,6 @@ function LandingPage() {
             adoração preparada com carinho para você.
           </p>
 
-          {/* Feature pills */}
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             {[
               { icon: Headphones, label: "Ouça online" },
@@ -49,7 +47,6 @@ function LandingPage() {
             ))}
           </div>
 
-          {/* CTA */}
           <div className="mt-12 animate-in fade-in slide-in-from-bottom-2 duration-500 delay-500">
             <Link
               to="/login"
@@ -61,15 +58,7 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t border-border py-6 text-center text-xs text-muted-foreground">
-        <div className="flex items-center justify-center gap-4 mb-2">
-          <Link to="/termos" className="hover:text-foreground transition-colors">Termos de Uso</Link>
-          <span>·</span>
-          <Link to="/privacidade" className="hover:text-foreground transition-colors">Privacidade</Link>
-        </div>
-        © {new Date().getFullYear()} Paz em Canção · Todos os direitos reservados
-      </footer>
+      <FooterLinks variant="minimal" />
     </div>
   );
 }
