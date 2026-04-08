@@ -11,29 +11,20 @@ export const Route = createFileRoute("/")({
 function LandingPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
-      {/* Hero with background image */}
+      {/* Hero */}
       <section className="relative min-h-screen flex flex-col items-center justify-start overflow-hidden">
-        {/* Background image — positioned lower so candle doesn't overlap text */}
         <div className="absolute inset-0">
-          <img
-            src={heroBg}
-            alt=""
-            className="h-full w-full object-cover object-[center_80%]"
-            width={1920}
-            height={1080}
-          />
+          <img src={heroBg} alt="" className="h-full w-full object-cover object-[center_80%]" width={1920} height={1080} />
           <div className="absolute inset-0 bg-gradient-to-b from-background via-background/60 to-background/90" />
         </div>
 
-        {/* Floating particles */}
         <div className="pointer-events-none absolute inset-0">
           <div className="absolute top-[20%] left-[15%] h-1 w-1 rounded-full bg-gold/20 animate-breathe" />
           <div className="absolute top-[35%] right-[20%] h-0.5 w-0.5 rounded-full bg-gold/15 animate-breathe" style={{ animationDelay: "2s" }} />
-          <div className="absolute top-[60%] left-[25%] h-0.5 w-0.5 rounded-full bg-gold/10 animate-breathe" style={{ animationDelay: "4s" }} />
           <div className="absolute top-[45%] right-[35%] h-1 w-1 rounded-full bg-gold/15 animate-float-slow" />
         </div>
 
-        {/* Logo top */}
+        {/* Logo */}
         <div className="relative z-20 pt-8 pb-4 animate-in fade-in duration-1000">
           <div className="flex items-center gap-2.5">
             <img src={logoIcon} alt="Paz em Canção" className="h-8 w-8 object-contain" width={512} height={512} />
@@ -43,12 +34,12 @@ function LandingPage() {
           </div>
         </div>
 
-        {/* Hero content — positioned in upper half */}
+        {/* Hero content */}
         <div className="relative z-10 max-w-lg text-center px-6 pt-16 sm:pt-24 animate-in fade-in slide-in-from-bottom-12 duration-[1600ms]">
           <div className="mx-auto mb-8 w-px h-20 bg-gradient-to-b from-transparent via-gold/20 to-transparent" />
 
           <p className="mb-6 text-[10px] font-semibold uppercase tracking-[0.6em] text-gold/55">
-            Um bálsamo para a alma
+            Paz em forma de canção
           </p>
 
           <h1 className="font-display text-5xl sm:text-6xl lg:text-7xl font-bold leading-[1.04] tracking-tight text-foreground">
@@ -58,21 +49,19 @@ function LandingPage() {
           <div className="mx-auto mt-7 h-px w-28 bg-gradient-to-r from-transparent via-gold/20 to-transparent" />
 
           <p className="mx-auto mt-7 max-w-sm text-[15px] leading-[2.4] text-muted-foreground/70 font-light">
-            30 louvores criados para quem precisa{" "}
-            <em className="text-foreground/85 not-italic font-medium">respirar Deus</em> outra vez.
-            Para as madrugadas em que só Deus entende,
-            para o choro silencioso, para a alma que precisa de{" "}
-            <em className="text-foreground/85 not-italic font-medium">colo</em> e{" "}
+            30 louvores inéditos para momentos de{" "}
+            <em className="text-foreground/85 not-italic font-medium">quietude</em>,{" "}
+            <em className="text-foreground/85 not-italic font-medium">oração</em> e{" "}
             <em className="text-foreground/85 not-italic font-medium">presença</em>.
+            Um refúgio sonoro para a sua caminhada de fé.
           </p>
 
-          {/* CTA */}
           <div className="mt-12">
             <Link
               to="/login"
               className="group relative inline-flex items-center gap-3 rounded-full bg-gold/20 text-gold border border-gold/20 px-12 py-5 text-[12px] font-bold tracking-[0.2em] uppercase transition-all duration-500 hover:bg-gold/30 hover:border-gold/35 hover:shadow-[0_0_40px_-8px] hover:shadow-gold/20"
             >
-              Entrar no Meu Refúgio
+              Acessar Meu Espaço
               <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1.5" />
             </Link>
           </div>
@@ -82,25 +71,24 @@ function LandingPage() {
           </p>
         </div>
 
-        {/* Scroll indicator */}
         <div className="relative z-10 mt-auto pb-10 flex flex-col items-center gap-3 animate-in fade-in duration-1000 delay-1000">
           <span className="text-[9px] uppercase tracking-[0.4em] text-muted-foreground/25">Conheça</span>
           <div className="w-px h-8 bg-gradient-to-b from-gold/15 to-transparent animate-float-slow" />
         </div>
       </section>
 
-      {/* Emotional pillars — "Para quem" */}
+      {/* Pillars */}
       <section className="relative py-24 sm:py-32">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_40%_at_50%_50%,var(--color-gold)/0.02,transparent_70%)]" />
 
         <div className="mx-auto max-w-4xl px-6 relative z-10">
-          <div className="text-center mb-20 animate-in fade-in duration-1000">
+          <div className="text-center mb-20">
             <Heart className="h-4 w-4 text-gold/40 mx-auto mb-5" />
             <p className="text-[10px] font-semibold uppercase tracking-[0.5em] text-gold/35 mb-5">
-              Para Quem Está Ferido, Mas Não Desistiu
+              Sua Biblioteca Espiritual
             </p>
             <h2 className="font-display text-3xl sm:text-4xl font-bold text-foreground/85 tracking-tight leading-tight">
-              Canções que tocam onde<br />ninguém mais alcança
+              Canções criadas para<br />nutrir a sua fé
             </h2>
           </div>
 
@@ -109,17 +97,17 @@ function LandingPage() {
               {
                 icon: Music,
                 title: "30 Louvores Inéditos",
-                description: "Canções para dias em que só Deus entende. Cada faixa é um encontro entre a sua dor e a paz que vem do alto.",
+                description: "Cada canção foi composta para ser um momento de encontro, oração e renovação espiritual.",
               },
               {
                 icon: ShieldCheck,
                 title: "Acesso Vitalício",
-                description: "Ouça e baixe sempre que precisar. Seu refúgio sonoro está sempre disponível — nas madrugadas em que a mente não para.",
+                description: "Ouça e baixe sempre que precisar. Seu espaço de adoração está sempre disponível, a qualquer hora.",
               },
               {
                 icon: Star,
                 title: "Qualidade Premium",
-                description: "Áudio em alta qualidade para uma experiência imersiva. Paz em forma de canção, com a profundidade que a sua alma merece.",
+                description: "Áudio em alta qualidade para uma experiência imersiva. Feito com cuidado e respeito por cada nota.",
               },
             ].map((item) => (
               <div
@@ -141,40 +129,39 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* Emotional testimonial — "Soldado ferido" */}
+      {/* Testimonial */}
       <section className="relative py-20 sm:py-28">
         <div className="mx-auto max-w-2xl px-6 text-center">
           <div className="mx-auto mb-12 w-px h-16 bg-gradient-to-b from-transparent via-gold/12 to-transparent" />
 
           <blockquote className="font-display text-xl sm:text-2xl font-semibold text-foreground/70 leading-[1.8] tracking-tight italic">
-            "Eu estava no meu pior momento. Essas canções me lembraram
-            que eu não estava sozinha. Chorei ouvindo cada uma —
-            mas foi um choro que curou."
+            "Essas canções se tornaram parte da minha rotina de oração.
+            Sinto paz toda vez que ouço."
           </blockquote>
 
           <div className="mx-auto mt-8 h-px w-10 bg-gradient-to-r from-transparent via-gold/15 to-transparent" />
 
           <p className="mt-6 text-[11px] uppercase tracking-[0.4em] text-gold/30 font-medium">
-            Uma ouvinte real
+            Uma ouvinte
           </p>
         </div>
       </section>
 
-      {/* Community — "Somos uma rede de fé" */}
+      {/* Community */}
       <section className="relative py-16 sm:py-24">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_50%,var(--color-gold)/0.015,transparent_70%)]" />
 
         <div className="mx-auto max-w-xl px-6 text-center relative z-10">
           <p className="text-[10px] font-semibold uppercase tracking-[0.5em] text-gold/35 mb-5">
-            Somos Uma Rede de Fé
+            Uma Rede de Fé
           </p>
           <h2 className="font-display text-2xl sm:text-3xl font-bold text-foreground/80 tracking-tight leading-tight mb-6">
             Você não está sozinho
           </h2>
           <p className="text-[14px] leading-[2.4] text-muted-foreground/50 font-light">
-            Milhares de pessoas como você — feridas, cansadas, mas que ainda acreditam —
-            encontraram nessas canções um lugar seguro para chorar, orar e respirar.
-            Este é o seu lugar. Bem-vindo ao refúgio.
+            Pessoas de todo o Brasil encontraram nessas canções
+            um espaço de paz, presença e renovação.
+            Este também é o seu lugar.
           </p>
         </div>
       </section>
@@ -185,14 +172,14 @@ function LandingPage() {
 
         <div className="mx-auto max-w-md px-6 text-center relative z-10">
           <p className="text-[10px] font-semibold uppercase tracking-[0.5em] text-gold/40 mb-5">
-            Seu Refúgio Espera
+            Seu Espaço de Paz
           </p>
           <h2 className="font-display text-3xl sm:text-4xl font-bold text-foreground/85 tracking-tight leading-tight mb-6">
             Comece a ouvir agora
           </h2>
           <p className="text-[14px] leading-[2.2] text-muted-foreground/50 font-light mb-10">
-            Acesse seus 30 louvores e deixe a paz restaurar
-            o que o mundo tentou destruir.
+            Acesse seus 30 louvores e permita-se
+            viver momentos de paz e presença.
           </p>
 
           <Link
@@ -202,10 +189,6 @@ function LandingPage() {
             Acessar Meus Louvores
             <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-1.5" />
           </Link>
-
-          <p className="mt-8 text-[10px] text-muted-foreground/25 tracking-[0.15em] leading-[2]">
-            Para quem está ferido, mas ainda não desistiu
-          </p>
         </div>
       </section>
 

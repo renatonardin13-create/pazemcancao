@@ -37,12 +37,11 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background relative overflow-hidden">
-      {/* Atmosphere */}
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_35%_at_50%_20%,var(--color-gold)/0.03,transparent_70%)]" />
       <div className="pointer-events-none absolute top-[10%] left-1/2 -translate-x-1/2 h-[500px] w-[500px] rounded-full bg-gold/[0.015] blur-[150px] animate-breathe" />
 
       <div className="flex flex-1 relative z-10">
-        {/* Left — contemplative message */}
+        {/* Left panel */}
         <div className="hidden lg:flex lg:w-[45%] relative items-center justify-center overflow-hidden">
           <div className="absolute inset-0 bg-card/20" />
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--color-gold)/0.04,transparent_70%)]" />
@@ -53,36 +52,33 @@ function LoginPage() {
             <div className="mx-auto mb-12 w-px h-16 bg-gradient-to-b from-transparent via-gold/15 to-transparent" />
 
             <h2 className="font-display text-4xl font-bold text-foreground/90 tracking-tight leading-[1.08]">
-              Seu refúgio<br />está aqui
+              Seu espaço<br />de paz
             </h2>
 
             <div className="mx-auto mt-6 h-px w-12 bg-gradient-to-r from-transparent via-gold/12 to-transparent" />
 
             <p className="mt-6 text-[11px] font-medium text-gold/40 tracking-[0.3em] uppercase">
-              30 Louvores Para a Alma
+              30 Louvores Inéditos
             </p>
 
             <p className="mt-10 text-[14px] leading-[2.2] text-muted-foreground/50 font-light">
-              Para as madrugadas em que o sono não vem.
-              Para o choro silencioso que ninguém escuta.
-              Para o coração ferido que ainda acredita.
+              Um refúgio sonoro para momentos de oração,
+              quietude e renovação espiritual.
             </p>
 
-            {/* Testimonial — soldado ferido */}
             <div className="mt-14 py-6">
               <p className="text-[13px] italic text-muted-foreground/45 leading-[2]">
-                "Eu estava no meu pior momento. Essas canções
-                me lembraram que eu não estava sozinha."
+                "Essas canções se tornaram parte
+                da minha rotina de oração."
               </p>
               <div className="mt-5 h-px w-6 mx-auto bg-gold/10" />
             </div>
           </div>
         </div>
 
-        {/* Right — login form */}
+        {/* Login form */}
         <div className="flex flex-1 items-center justify-center px-6 py-12">
           <div className="w-full max-w-[360px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            {/* Mobile header */}
             <div className="lg:hidden mb-16 text-center">
               <div className="mx-auto mb-10 w-px h-14 bg-gradient-to-b from-transparent via-gold/15 to-transparent" />
               <h1 className="font-display text-3xl font-bold text-foreground/90 tracking-tight">
@@ -90,22 +86,20 @@ function LoginPage() {
               </h1>
               <div className="mx-auto mt-5 h-px w-10 bg-gradient-to-r from-transparent via-gold/12 to-transparent" />
               <p className="mt-5 text-[11px] text-muted-foreground/40 tracking-[0.3em] uppercase">
-                Seu lugar de descanso
+                Sua biblioteca espiritual
               </p>
             </div>
 
-            {/* Login card */}
             <div className="rounded-3xl border border-border/25 bg-card/20 backdrop-blur-md p-8 sm:p-10 relative overflow-hidden">
               <div className="pointer-events-none absolute -top-28 -right-28 h-56 w-56 rounded-full bg-gold/[0.02] blur-[80px]" />
 
               <div className="relative z-10">
                 <div className="mb-9">
                   <h2 className="text-xl font-bold text-foreground/85 font-display tracking-tight">
-                    Entre no seu espaço
+                    Acesse seu espaço
                   </h2>
                   <p className="mt-3 text-[13px] text-muted-foreground/50 leading-[1.8]">
-                    Use o e-mail da sua compra para acessar
-                    seus louvores.
+                    Use o e-mail da sua compra para entrar.
                   </p>
                 </div>
 
@@ -170,7 +164,7 @@ function LoginPage() {
 
                 <div className="mt-8 flex items-center justify-center gap-2 text-[10px] text-muted-foreground/30">
                   <ShieldCheck className="h-3 w-3 text-gold/25" />
-                  Seu espaço seguro de adoração
+                  Acesso seguro e exclusivo
                 </div>
               </div>
             </div>
@@ -178,14 +172,13 @@ function LoginPage() {
             <p className="mt-8 text-center text-[10px] text-muted-foreground/30">
               Precisa de ajuda?{" "}
               <a href="mailto:suporte@pazemcancao.com" className="text-gold/35 hover:text-gold/55 transition-colors duration-500 underline underline-offset-2">
-                Estamos aqui por você
+                Fale conosco
               </a>
             </p>
           </div>
         </div>
       </div>
 
-      {/* Footer */}
       <footer className="relative z-10 py-4 text-center">
         <div className="flex items-center justify-center gap-4 text-[10px] text-muted-foreground/30">
           <Link to="/termos" className="hover:text-muted-foreground/50 transition-colors duration-500">Termos</Link>
