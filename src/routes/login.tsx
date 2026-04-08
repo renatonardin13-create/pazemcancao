@@ -294,7 +294,7 @@ function LoginPage() {
               <div className="pointer-events-none absolute -top-28 -right-28 h-56 w-56 rounded-full bg-gold/[0.04] blur-[80px]" />
 
               <div className="relative z-10">
-                <AnimatePresence mode="wait">
+                <AnimatePresence mode="wait" initial={false}>
                   {/* ═══ LOGIN VIEW ═══ */}
                   {view === "login" && (
                     <motion.div
