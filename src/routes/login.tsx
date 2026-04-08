@@ -42,7 +42,7 @@ function LoginPage() {
       <div className="pointer-events-none absolute top-[10%] left-1/2 -translate-x-1/2 h-[500px] w-[500px] rounded-full bg-gold/[0.015] blur-[150px] animate-breathe" />
 
       <div className="flex flex-1 relative z-10">
-        {/* Left — contemplative */}
+        {/* Left — contemplative message */}
         <div className="hidden lg:flex lg:w-[45%] relative items-center justify-center overflow-hidden">
           <div className="absolute inset-0 bg-card/20" />
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--color-gold)/0.04,transparent_70%)]" />
@@ -53,25 +53,26 @@ function LoginPage() {
             <div className="mx-auto mb-12 w-px h-16 bg-gradient-to-b from-transparent via-gold/15 to-transparent" />
 
             <h2 className="font-display text-4xl font-bold text-foreground/90 tracking-tight leading-[1.08]">
-              Paz em<br />Canção
+              Seu refúgio<br />está aqui
             </h2>
 
             <div className="mx-auto mt-6 h-px w-12 bg-gradient-to-r from-transparent via-gold/12 to-transparent" />
 
-            <p className="mt-6 text-[11px] font-medium text-gold/30 tracking-[0.3em] uppercase">
-              30 Louvores Inéditos
+            <p className="mt-6 text-[11px] font-medium text-gold/40 tracking-[0.3em] uppercase">
+              30 Louvores Para a Alma
             </p>
 
-            <p className="mt-10 text-[14px] leading-[2.2] text-muted-foreground/35 font-light">
-              Canções criadas para os momentos em que a alma
-              precisa de silêncio, refúgio e presença.
+            <p className="mt-10 text-[14px] leading-[2.2] text-muted-foreground/50 font-light">
+              Para as madrugadas em que o sono não vem.
+              Para o choro silencioso que ninguém escuta.
+              Para o coração ferido que ainda acredita.
             </p>
 
-            {/* Testimonial */}
+            {/* Testimonial — soldado ferido */}
             <div className="mt-14 py-6">
-              <p className="text-[13px] italic text-muted-foreground/30 leading-[2]">
-                "Essas canções se tornaram meu refúgio nos dias
-                mais difíceis."
+              <p className="text-[13px] italic text-muted-foreground/45 leading-[2]">
+                "Eu estava no meu pior momento. Essas canções
+                me lembraram que eu não estava sozinha."
               </p>
               <div className="mt-5 h-px w-6 mx-auto bg-gold/10" />
             </div>
@@ -88,8 +89,8 @@ function LoginPage() {
                 Paz em Canção
               </h1>
               <div className="mx-auto mt-5 h-px w-10 bg-gradient-to-r from-transparent via-gold/12 to-transparent" />
-              <p className="mt-5 text-[10px] text-muted-foreground/25 tracking-[0.4em] uppercase">
-                Sua biblioteca espiritual
+              <p className="mt-5 text-[11px] text-muted-foreground/40 tracking-[0.3em] uppercase">
+                Seu lugar de descanso
               </p>
             </div>
 
@@ -100,10 +101,11 @@ function LoginPage() {
               <div className="relative z-10">
                 <div className="mb-9">
                   <h2 className="text-xl font-bold text-foreground/85 font-display tracking-tight">
-                    Acesse sua área
+                    Entre no seu espaço
                   </h2>
-                  <p className="mt-3 text-[13px] text-muted-foreground/35 leading-[1.8]">
-                    Entre com o e-mail da sua compra.
+                  <p className="mt-3 text-[13px] text-muted-foreground/50 leading-[1.8]">
+                    Use o e-mail da sua compra para acessar
+                    seus louvores.
                   </p>
                 </div>
 
@@ -115,36 +117,36 @@ function LoginPage() {
 
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="space-y-2.5">
-                    <Label htmlFor="email" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/30">
+                    <Label htmlFor="email" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/40">
                       E-mail
                     </Label>
                     <div className="relative">
-                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/20" />
+                      <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
                       <Input
                         id="email"
                         type="email"
                         placeholder="seu@email.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="pl-11 h-12 bg-background/40 border-border/25 rounded-xl text-sm placeholder:text-muted-foreground/15 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                        className="pl-11 h-12 bg-background/40 border-border/25 rounded-xl text-sm placeholder:text-muted-foreground/20 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                         required
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2.5">
-                    <Label htmlFor="password" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/30">
+                    <Label htmlFor="password" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/40">
                       Senha
                     </Label>
                     <div className="relative">
-                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/20" />
+                      <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
                       <Input
                         id="password"
                         type="password"
                         placeholder="••••••••"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="pl-11 h-12 bg-background/40 border-border/25 rounded-xl text-sm placeholder:text-muted-foreground/15 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                        className="pl-11 h-12 bg-background/40 border-border/25 rounded-xl text-sm placeholder:text-muted-foreground/20 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                         required
                       />
                     </div>
@@ -153,7 +155,7 @@ function LoginPage() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full flex items-center justify-center gap-2.5 rounded-xl h-12 text-[12px] font-semibold tracking-wider uppercase bg-gold/12 text-gold/55 border border-gold/10 hover:bg-gold/20 hover:text-gold/75 transition-all duration-500 active:scale-[0.98] disabled:opacity-40"
+                    className="w-full flex items-center justify-center gap-2.5 rounded-xl h-12 text-[12px] font-semibold tracking-wider uppercase bg-gold/15 text-gold/65 border border-gold/12 hover:bg-gold/22 hover:text-gold/80 transition-all duration-500 active:scale-[0.98] disabled:opacity-40"
                   >
                     {loading ? (
                       <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-gold/20 border-t-gold/50" />
@@ -166,17 +168,17 @@ function LoginPage() {
                   </button>
                 </form>
 
-                <div className="mt-8 flex items-center justify-center gap-2 text-[10px] text-muted-foreground/20">
-                  <ShieldCheck className="h-3 w-3 text-gold/20" />
-                  Acesso seguro e protegido
+                <div className="mt-8 flex items-center justify-center gap-2 text-[10px] text-muted-foreground/30">
+                  <ShieldCheck className="h-3 w-3 text-gold/25" />
+                  Seu espaço seguro de adoração
                 </div>
               </div>
             </div>
 
-            <p className="mt-8 text-center text-[10px] text-muted-foreground/18">
-              Problemas com o acesso?{" "}
-              <a href="mailto:suporte@pazemcancao.com" className="text-gold/25 hover:text-gold/40 transition-colors duration-500 underline underline-offset-2">
-                Fale conosco
+            <p className="mt-8 text-center text-[10px] text-muted-foreground/30">
+              Precisa de ajuda?{" "}
+              <a href="mailto:suporte@pazemcancao.com" className="text-gold/35 hover:text-gold/55 transition-colors duration-500 underline underline-offset-2">
+                Estamos aqui por você
               </a>
             </p>
           </div>
@@ -185,11 +187,11 @@ function LoginPage() {
 
       {/* Footer */}
       <footer className="relative z-10 py-4 text-center">
-        <div className="flex items-center justify-center gap-4 text-[10px] text-muted-foreground/18">
-          <Link to="/termos" className="hover:text-muted-foreground/35 transition-colors duration-500">Termos</Link>
-          <span className="text-border/20">·</span>
-          <Link to="/privacidade" className="hover:text-muted-foreground/35 transition-colors duration-500">Privacidade</Link>
-          <span className="text-border/20">·</span>
+        <div className="flex items-center justify-center gap-4 text-[10px] text-muted-foreground/30">
+          <Link to="/termos" className="hover:text-muted-foreground/50 transition-colors duration-500">Termos</Link>
+          <span className="text-border/30">·</span>
+          <Link to="/privacidade" className="hover:text-muted-foreground/50 transition-colors duration-500">Privacidade</Link>
+          <span className="text-border/30">·</span>
           <span>© {new Date().getFullYear()} Paz em Canção</span>
         </div>
       </footer>
