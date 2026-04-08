@@ -290,8 +290,8 @@ function LoginPage() {
               </p>
             </div>
 
-            <div className="rounded-3xl border border-border/40 bg-card/40 backdrop-blur-xl p-8 sm:p-10 relative overflow-hidden shadow-[0_8px_40px_-12px_rgba(0,0,0,0.5)]">
-              <div className="pointer-events-none absolute -top-28 -right-28 h-56 w-56 rounded-full bg-gold/[0.02] blur-[80px]" />
+            <div className="rounded-3xl border border-gold/15 bg-card/60 backdrop-blur-xl p-8 sm:p-10 relative overflow-hidden shadow-[0_8px_60px_-12px_rgba(0,0,0,0.6)]">
+              <div className="pointer-events-none absolute -top-28 -right-28 h-56 w-56 rounded-full bg-gold/[0.04] blur-[80px]" />
 
               <div className="relative z-10">
                 <AnimatePresence mode="wait">
