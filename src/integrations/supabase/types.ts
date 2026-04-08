@@ -14,7 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      approved_buyers: {
+        Row: {
+          access_enabled: boolean
+          created_at: string
+          email: string
+          first_login_at: string | null
+          id: string
+          last_login_at: string | null
+          nome: string
+          order_id: string | null
+          product_name: string | null
+          status: string
+        }
+        Insert: {
+          access_enabled?: boolean
+          created_at?: string
+          email: string
+          first_login_at?: string | null
+          id?: string
+          last_login_at?: string | null
+          nome: string
+          order_id?: string | null
+          product_name?: string | null
+          status?: string
+        }
+        Update: {
+          access_enabled?: boolean
+          created_at?: string
+          email?: string
+          first_login_at?: string | null
+          id?: string
+          last_login_at?: string | null
+          nome?: string
+          order_id?: string | null
+          product_name?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      user_access_logs: {
+        Row: {
+          block_reason: string | null
+          device_fingerprint: string | null
+          email: string
+          id: string
+          ip_address: string | null
+          is_blocked: boolean
+          login_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          block_reason?: string | null
+          device_fingerprint?: string | null
+          email: string
+          id?: string
+          ip_address?: string | null
+          is_blocked?: boolean
+          login_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          block_reason?: string | null
+          device_fingerprint?: string | null
+          email?: string
+          id?: string
+          ip_address?: string | null
+          is_blocked?: boolean
+          login_at?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
