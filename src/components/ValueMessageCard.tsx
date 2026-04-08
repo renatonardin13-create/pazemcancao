@@ -6,32 +6,33 @@ interface ValueMessageCardProps {
 
 export function ValueMessageCard({ message }: ValueMessageCardProps) {
   return (
-    <div className="relative rounded-2xl border border-gold/8 overflow-hidden">
-      {/* Barely-there gold atmosphere */}
-      <div className="absolute inset-0 bg-gradient-to-br from-gold/[0.02] via-transparent to-gold/[0.01]" />
-      <div className="absolute -top-16 -right-16 h-32 w-32 rounded-full bg-gold/[0.025] blur-3xl animate-breathe" />
+    <div className="relative overflow-hidden">
+      {/* Barely-there gold warmth */}
+      <div className="absolute -top-20 -right-20 h-40 w-40 rounded-full bg-gold/[0.015] blur-[60px] animate-breathe" />
 
-      <div className="relative backdrop-blur-sm px-6 sm:px-8 py-6 sm:py-7 flex items-start gap-4">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gold/6 border border-gold/10 mt-0.5">
-          <Heart className="h-4 w-4 text-gold/60" />
+      <div className="relative px-6 sm:px-0 py-6 flex items-start gap-4">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gold/5 mt-0.5">
+          <Heart className="h-3.5 w-3.5 text-gold/40" />
         </div>
         <div className="flex-1">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-gold/35 mb-2.5">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-gold/25 mb-3">
             Uma Palavra Para Você
           </p>
-          <p className="text-sm leading-[1.9] text-foreground/60">
+          <p className="text-[14px] leading-[2] text-foreground/50 font-light">
             {message || (
               <>
                 Que essas canções sejam{" "}
-                <span className="text-foreground/80">paz</span> para sua alma,{" "}
-                <span className="text-foreground/80">força</span> para sua caminhada e{" "}
-                <span className="text-foreground/80">presença de Deus</span> nos seus
+                <span className="text-foreground/70">paz</span> para sua alma,{" "}
+                <span className="text-foreground/70">força</span> para sua caminhada e{" "}
+                <span className="text-foreground/70">presença de Deus</span> nos seus
                 momentos mais silenciosos.
               </>
             )}
           </p>
         </div>
       </div>
+
+      <div className="h-px bg-gradient-to-r from-transparent via-border/10 to-transparent" />
     </div>
   );
 }
