@@ -1,10 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { Music, Mail, Lock, ArrowRight, ShieldCheck } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -12,25 +13,29 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { login, isAuthenticated, loading: authLoading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      navigate({ to: "/downloads" });
+    }
+  }, [isAuthenticated, authLoading, navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-    // TODO: integrate with Lovable Cloud auth
-    setTimeout(() => {
-      // Simulated error for now — replace with real auth
-      if (!email || !password) {
-        setError("Não foi possível acessar. Verifique seu e-mail e senha e tente novamente.");
-        setLoading(false);
-        return;
-      }
-      navigate({ to: "/downloads" });
-    }, 800);
+
+    const result = await login(email, password);
+    if (result.error) {
+      setError(result.error);
+      setLoading(false);
+    }
+    // On success, the auth state change will trigger the redirect via useEffect
   };
 
   return (
