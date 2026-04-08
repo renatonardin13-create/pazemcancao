@@ -26,11 +26,11 @@ export function LogoBrand({ size = "md", linkTo, showSubtitle = false }: LogoBra
         height={512}
       />
       <div className="flex flex-col">
-        <span className={`font-display ${s.text} font-bold text-foreground/90 tracking-tight leading-tight`}>
+        <span className={`font-display ${s.text} font-bold text-foreground tracking-tight leading-tight`}>
           Paz em Canção
         </span>
         {showSubtitle && (
-          <p className="text-[9px] text-gold/35 font-medium tracking-[0.25em] uppercase hidden sm:block">
+          <p className="text-[9px] text-gold/60 font-medium tracking-[0.25em] uppercase hidden sm:block">
             Biblioteca Espiritual
           </p>
         )}
