@@ -1,4 +1,4 @@
-import { Play, Pause, Download, Volume2, Clock } from "lucide-react";
+import { Play, Pause, Download, Volume2, Clock, Music } from "lucide-react";
 import type { Track } from "@/lib/sample-tracks";
 import { usePlayer } from "@/hooks/use-player";
 
@@ -8,13 +8,13 @@ interface TrackCardProps {
 }
 
 const categoryColors: Record<string, string> = {
-  Paz: "bg-blue-500/15 text-blue-400 border-blue-500/20",
-  Cura: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20",
-  Força: "bg-amber-500/15 text-amber-400 border-amber-500/20",
-  Oração: "bg-violet-500/15 text-violet-400 border-violet-500/20",
-  Madrugada: "bg-indigo-500/15 text-indigo-400 border-indigo-500/20",
-  Presença: "bg-rose-500/15 text-rose-400 border-rose-500/20",
-  Refúgio: "bg-teal-500/15 text-teal-400 border-teal-500/20",
+  Paz: "bg-sky-500/10 text-sky-400 border-sky-500/15",
+  Cura: "bg-emerald-500/10 text-emerald-400 border-emerald-500/15",
+  Força: "bg-amber-500/10 text-amber-400 border-amber-500/15",
+  Oração: "bg-violet-500/10 text-violet-400 border-violet-500/15",
+  Madrugada: "bg-indigo-500/10 text-indigo-400 border-indigo-500/15",
+  Presença: "bg-rose-500/10 text-rose-400 border-rose-500/15",
+  Refúgio: "bg-teal-500/10 text-teal-400 border-teal-500/15",
 };
 
 const categoryIcons: Record<string, string> = {
@@ -41,118 +41,135 @@ export function TrackCard({ track, index }: TrackCardProps) {
 
   return (
     <div
-      className={`group relative rounded-2xl border bg-card/60 backdrop-blur-sm p-4 sm:p-5 transition-all duration-500 ease-out ${
+      className={`group relative rounded-2xl border backdrop-blur-sm transition-all duration-500 ease-out overflow-hidden ${
         isPlaying
-          ? "border-gold/30 shadow-[0_0_30px_-8px_var(--color-gold)/0.15]"
-          : "border-border/40 hover:border-gold/20 hover:shadow-[0_8px_40px_-12px_rgba(0,0,0,0.3)] hover:bg-card/80"
+          ? "border-gold/25 bg-card/80 shadow-[0_0_40px_-10px_var(--color-gold)/0.12]"
+          : "border-border/30 bg-card/40 hover:border-gold/15 hover:bg-card/60 hover:shadow-[0_12px_48px_-16px_rgba(0,0,0,0.4)]"
       }`}
       style={{
-        animationDelay: `${index * 30}ms`,
+        animationDelay: `${index * 40}ms`,
         animationFillMode: "backwards",
       }}
     >
-      {/* Progress bar background */}
+      {/* Subtle gold glow when playing */}
       {isPlaying && (
-        <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-10 -right-10 h-24 w-24 rounded-full bg-gold/[0.06] blur-2xl" />
+          <div className="absolute -bottom-8 -left-8 h-20 w-20 rounded-full bg-gold/[0.04] blur-2xl" />
+        </div>
+      )}
+
+      {/* Playing progress overlay */}
+      {isPlaying && (
+        <div className="absolute inset-0 pointer-events-none">
           <div
-            className="h-full bg-gold/[0.03] transition-all duration-150 ease-linear"
+            className="h-full bg-gold/[0.025] transition-all duration-150 ease-linear"
             style={{ width: `${progress}%` }}
           />
         </div>
       )}
 
-      <div className="relative flex items-center gap-3 sm:gap-4">
-        {/* Track number — desktop */}
-        <span className="hidden sm:flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-muted/40 text-sm font-bold text-muted-foreground/60 font-display transition-colors group-hover:text-muted-foreground">
-          {String(track.id).padStart(2, "0")}
-        </span>
-
-        {/* Play button */}
-        <button
-          onClick={() => toggle(track)}
-          className={`flex h-12 w-12 sm:h-11 sm:w-11 shrink-0 items-center justify-center rounded-xl transition-all duration-300 active:scale-90 ${
-            isPlaying
-              ? "bg-gold text-gold-foreground shadow-lg shadow-gold/25 scale-105"
-              : "bg-gold/10 text-gold hover:bg-gold/20 hover:scale-105 hover:shadow-md hover:shadow-gold/10"
-          }`}
-        >
-          {isPlaying ? (
-            <Pause className="h-5 w-5" />
-          ) : (
-            <Play className="h-5 w-5 ml-0.5" />
-          )}
-        </button>
-
-        {/* Info */}
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2">
-            {isPlaying && (
-              <Volume2 className="h-3.5 w-3.5 text-gold animate-pulse shrink-0" />
-            )}
-            <h3
-              className={`text-sm sm:text-base font-semibold truncate transition-colors duration-300 ${
-                isPlaying ? "text-gold" : "text-foreground group-hover:text-foreground"
+      <div className="relative p-4 sm:p-5">
+        <div className="flex items-center gap-3 sm:gap-4">
+          {/* Track number + icon */}
+          <div className="relative">
+            <div
+              className={`flex h-13 w-13 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl transition-all duration-300 ${
+                isPlaying
+                  ? "bg-gold text-gold-foreground shadow-xl shadow-gold/30 scale-105"
+                  : "bg-muted/30 border border-border/30 text-muted-foreground group-hover:bg-gold/10 group-hover:border-gold/20 group-hover:text-gold"
               }`}
             >
-              {track.title}
-            </h3>
+              {isPlaying ? (
+                <div className="flex items-center gap-[3px]">
+                  <div className="w-[3px] h-3 bg-gold-foreground rounded-full animate-pulse" />
+                  <div className="w-[3px] h-4 bg-gold-foreground rounded-full animate-pulse" style={{ animationDelay: '0.15s' }} />
+                  <div className="w-[3px] h-2.5 bg-gold-foreground rounded-full animate-pulse" style={{ animationDelay: '0.3s' }} />
+                </div>
+              ) : (
+                <span className="text-sm font-bold font-display">
+                  {String(track.id).padStart(2, "0")}
+                </span>
+              )}
+            </div>
           </div>
-          <p className="mt-1 text-[11px] sm:text-xs leading-relaxed text-muted-foreground/70 line-clamp-2 italic">
-            {track.description}
-          </p>
-          <div className="mt-1.5 flex items-center gap-2 flex-wrap">
-            <span
-              className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-[10px] sm:text-[11px] font-medium ${
-                categoryColors[track.category] ||
-                "bg-muted text-muted-foreground border-border"
-              }`}
-            >
-              <span className="text-[10px]">
-                {categoryIcons[track.category]}
+
+          {/* Info */}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2">
+              {isPlaying && (
+                <Volume2 className="h-3.5 w-3.5 text-gold shrink-0 animate-pulse" />
+              )}
+              <h3
+                className={`text-sm sm:text-[15px] font-bold truncate transition-colors duration-300 leading-tight ${
+                  isPlaying ? "text-gold" : "text-foreground"
+                }`}
+              >
+                {track.title}
+              </h3>
+            </div>
+            <p className="mt-1.5 text-[11px] sm:text-xs leading-relaxed text-muted-foreground/60 line-clamp-1 sm:line-clamp-2">
+              {track.description}
+            </p>
+            <div className="mt-2 flex items-center gap-2 flex-wrap">
+              <span
+                className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-semibold tracking-wide ${
+                  categoryColors[track.category] ||
+                  "bg-muted text-muted-foreground border-border"
+                }`}
+              >
+                <span className="text-[10px] leading-none">
+                  {categoryIcons[track.category]}
+                </span>
+                {track.category}
               </span>
-              {track.category}
-            </span>
-            <span className="inline-flex items-center gap-1 text-[11px] text-muted-foreground/50">
-              <Clock className="h-3 w-3" />
-              {track.duration}
-            </span>
+              <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground/40 font-medium">
+                <Clock className="h-2.5 w-2.5" />
+                {track.duration}
+              </span>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-1.5 shrink-0">
+            {/* Play/Pause button */}
+            <button
+              onClick={() => toggle(track)}
+              className={`flex h-11 w-11 sm:h-10 sm:w-10 items-center justify-center rounded-xl transition-all duration-300 active:scale-90 ${
+                isPlaying
+                  ? "bg-gold/20 text-gold hover:bg-gold/30"
+                  : "bg-transparent text-muted-foreground/60 hover:bg-gold/10 hover:text-gold"
+              }`}
+            >
+              {isPlaying ? (
+                <Pause className="h-4 w-4" />
+              ) : (
+                <Play className="h-4 w-4 ml-0.5" />
+              )}
+            </button>
+
+            {/* Download button */}
+            <button
+              onClick={handleDownload}
+              className="flex h-11 w-11 sm:h-10 sm:w-10 items-center justify-center rounded-xl text-muted-foreground/40 hover:bg-gold/10 hover:text-gold transition-all duration-300 active:scale-95"
+            >
+              <Download className="h-4 w-4" />
+            </button>
           </div>
         </div>
 
-        {/* Actions */}
-        <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-          <button
-            onClick={() => toggle(track)}
-            className="flex h-10 sm:h-9 items-center gap-1.5 rounded-xl px-3 sm:px-4 text-xs font-medium text-muted-foreground transition-all duration-200 hover:bg-gold/10 hover:text-gold active:scale-95"
-          >
-            {isPlaying ? (
-              <Pause className="h-3.5 w-3.5" />
-            ) : (
-              <Play className="h-3.5 w-3.5" />
-            )}
-            <span className="hidden sm:inline">
-              {isPlaying ? "Pausar" : "Ouvir"}
-            </span>
-          </button>
-          <button
-            onClick={handleDownload}
-            className="flex h-10 sm:h-9 items-center gap-1.5 rounded-xl px-3 sm:px-4 text-xs font-medium text-muted-foreground transition-all duration-200 hover:bg-gold/10 hover:text-gold active:scale-95"
-          >
-            <Download className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Baixar</span>
-          </button>
-        </div>
+        {/* Progress bar when playing */}
+        {isPlaying && (
+          <div className="mt-4 h-1 rounded-full bg-muted/20 overflow-hidden">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-gold/60 via-gold to-gold/80 transition-all duration-150 ease-linear relative"
+              style={{ width: `${progress}%` }}
+            >
+              <div className="absolute right-0 top-1/2 -translate-y-1/2 h-2.5 w-2.5 rounded-full bg-gold shadow-md shadow-gold/40" />
+            </div>
+          </div>
+        )}
       </div>
-
-      {/* Mini progress bar */}
-      {isPlaying && (
-        <div className="mt-3 h-1 rounded-full bg-muted/30 overflow-hidden">
-          <div
-            className="h-full rounded-full bg-gradient-to-r from-gold/80 to-gold transition-all duration-150 ease-linear"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      )}
     </div>
   );
 }
