@@ -77,7 +77,7 @@ function LandingPage() {
         >
           <Link
             to="/login"
-            className="inline-block px-12 py-5 rounded-full bg-[#FFA500] text-background font-bold text-base sm:text-lg tracking-wide uppercase shadow-[0_0_30px_rgba(255,165,0,0.3)] hover:shadow-[0_0_50px_rgba(255,165,0,0.5)] hover:scale-105 transition-all duration-500"
+            className="inline-block px-12 py-5 rounded-full bg-[hsl(32_82%_58%)] text-background font-bold text-base sm:text-lg tracking-wide uppercase shadow-[0_0_30px_rgba(234,153,61,0.28)] hover:shadow-[0_0_50px_rgba(234,153,61,0.42)] hover:scale-105 transition-all duration-500"
           >
             QUERO ACESSAR MEUS 30 LOUVORES AGORA
           </Link>
