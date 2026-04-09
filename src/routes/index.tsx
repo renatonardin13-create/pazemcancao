@@ -50,8 +50,8 @@ function LandingPage() {
             {/* Hero Image with glow effect */}
             <motion.div variants={fadeUp} custom={0.7} className="mt-8 relative">
               {/* Glow layers */}
-              <div className="absolute -inset-8 rounded-3xl bg-gradient-to-r from-gold/10 via-gold/20 to-gold/10 blur-[40px] opacity-60" />
-              <div className="absolute -inset-4 rounded-2xl bg-gradient-to-b from-gold/5 via-transparent to-gold/5 blur-[20px]" />
+              <div className="absolute -inset-8 rounded-3xl bg-gradient-to-r from-gold/5 via-gold/8 to-gold/5 blur-[40px] opacity-40" />
+              <div className="absolute -inset-4 rounded-2xl bg-gradient-to-b from-gold/3 via-transparent to-gold/3 blur-[20px]" />
               
               <img
                 src={heroImg}
