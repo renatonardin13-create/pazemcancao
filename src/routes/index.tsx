@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { FooterLinks } from "@/components/FooterLinks";
 import logo from "@/assets/logo-paz-em-cancao.png";
+import heroImg from "@/assets/hero-bg.png";
 import { motion } from "framer-motion";
 import { MusicNoteParticles } from "@/components/MusicNoteParticles";
 
