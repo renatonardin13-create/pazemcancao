@@ -14,6 +14,7 @@ import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated.perfil'
 import { Route as AuthenticatedDownloadsRouteImport } from './routes/_authenticated.downloads'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated.admin.index'
@@ -47,6 +48,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedDownloadsRoute = AuthenticatedDownloadsRouteImport.update({
   id: '/downloads',
@@ -106,6 +112,7 @@ export interface FileRoutesByFullPath {
   '/termos': typeof TermosRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/downloads': typeof AuthenticatedDownloadsRoute
+  '/perfil': typeof AuthenticatedPerfilRoute
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByTo {
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
   '/downloads': typeof AuthenticatedDownloadsRoute
+  '/perfil': typeof AuthenticatedPerfilRoute
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
@@ -137,6 +145,7 @@ export interface FileRoutesById {
   '/termos': typeof TermosRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/downloads': typeof AuthenticatedDownloadsRoute
+  '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/_authenticated/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/_authenticated/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
@@ -154,6 +163,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/admin'
     | '/downloads'
+    | '/perfil'
     | '/admin/courses'
     | '/conteudo/$trackId'
     | '/louvor/$trackId'
@@ -168,6 +178,7 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/termos'
     | '/downloads'
+    | '/perfil'
     | '/admin/courses'
     | '/conteudo/$trackId'
     | '/louvor/$trackId'
@@ -184,6 +195,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/_authenticated/admin'
     | '/_authenticated/downloads'
+    | '/_authenticated/perfil'
     | '/_authenticated/admin/courses'
     | '/_authenticated/conteudo/$trackId'
     | '/_authenticated/louvor/$trackId'
@@ -238,6 +250,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/perfil': {
+      id: '/_authenticated/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof AuthenticatedPerfilRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/downloads': {
       id: '/_authenticated/downloads'
@@ -338,6 +357,7 @@ const AuthenticatedAdminRouteWithChildren =
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedDownloadsRoute: typeof AuthenticatedDownloadsRoute
+  AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedConteudoTrackIdRoute: typeof AuthenticatedConteudoTrackIdRoute
   AuthenticatedLouvorTrackIdRoute: typeof AuthenticatedLouvorTrackIdRoute
 }
@@ -345,6 +365,7 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedDownloadsRoute: AuthenticatedDownloadsRoute,
+  AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedConteudoTrackIdRoute: AuthenticatedConteudoTrackIdRoute,
   AuthenticatedLouvorTrackIdRoute: AuthenticatedLouvorTrackIdRoute,
 }
