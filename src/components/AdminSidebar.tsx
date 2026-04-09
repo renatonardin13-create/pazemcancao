@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { LayoutDashboard, Users, BookOpen, FolderOpen, Settings, Shield } from "lucide-react";
+import { LayoutDashboard, Users, BookOpen, FolderOpen, Settings, Shield, Music } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
