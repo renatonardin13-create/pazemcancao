@@ -38,31 +38,6 @@ const categoryGroups = [
   tracks: sampleTracks.filter((t) => t.category === cat.key),
 })).filter((cat) => cat.tracks.length > 0);
 
-function SectionHeader({ icon: Icon, tag, title, count }: { icon: React.ElementType; tag: string; title: string; count?: number }) {
-  return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-40px" }}
-      className="flex items-center gap-3 mb-10"
-    >
-      <motion.div variants={fadeUp} custom={0} className="flex items-center gap-3 flex-1">
-        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/10">
-          <Icon className="h-3.5 w-3.5 text-gold/45" />
-        </div>
-        <div>
-          <p className="text-[9px] font-semibold uppercase tracking-[0.4em] text-gold/35">{tag}</p>
-          <h2 className="text-[13px] font-bold text-foreground/80 tracking-tight mt-0.5">{title}</h2>
-        </div>
-        {count !== undefined && (
-          <span className="ml-auto text-[10px] text-muted-foreground/25 font-medium">
-            {count} {count === 1 ? "item" : "itens"}
-          </span>
-        )}
-      </motion.div>
-    </motion.div>
-  );
-}
 
 function HorizontalRow({ title, tag, icon: Icon, tracks, emoji }: { title: string; tag: string; icon: React.ElementType; tracks: typeof sampleTracks; emoji?: string }) {
   return (
