@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { createTrack } from "@/lib/admin-tracks.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -47,24 +48,22 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
         .from("tracks")
         .getPublicUrl(fileName);
 
-      // 2. Insert track record
-      const { data: track, error: insertError } = await supabase
-        .from("tracks")
-        .insert({
+      setUploading(false);
+
+      // 2. Insert track via server function (bypasses RLS)
+      const result = await createTrack({
+        data: {
           title: title.trim(),
           category,
           duration: duration || "0:00",
-          description: description || null,
           storage_path: fileName,
           download_url: urlData.publicUrl,
-          is_active: true,
-        })
-        .select()
-        .single();
+          description: description || undefined,
+        },
+      });
 
-      if (insertError) throw new Error("Erro ao salvar: " + insertError.message);
+      const track = result.track;
 
-      setUploading(false);
       setGeneratingCover(true);
 
       // 3. Generate cover with AI (async, non-blocking)
@@ -96,8 +95,6 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
             toast.info("Capa não gerada. Será usada capa padrão.");
           }
         } else {
-          const errData = await coverRes.json().catch(() => ({}));
-          console.error("Cover generation failed:", errData);
           toast.info("Capa não gerada. Será usada capa padrão.");
         }
       } catch (coverErr) {
@@ -132,10 +129,10 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && file.type === "audio/mpeg") {
+    if (file && (file.type === "audio/mpeg" || file.name.endsWith(".mp3"))) {
       setMp3File(file);
 
-      // Try to extract duration
+      // Extract duration
       const audio = new Audio();
       audio.src = URL.createObjectURL(file);
       audio.onloadedmetadata = () => {
@@ -152,7 +149,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
   const isSubmitting = uploading || generatingCover || addTrackMutation.isPending;
 
   return (
-    <div className="rounded-2xl border border-border/15 bg-card/10 p-6 space-y-5">
+    <div className="space-y-5">
       <div className="flex items-center gap-3 mb-2">
         <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold/10">
           <Music className="h-4 w-4 text-gold/60" />
