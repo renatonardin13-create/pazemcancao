@@ -120,7 +120,7 @@ export function TrackCard({ track, index }: TrackCardProps) {
               ) : (
                 <>
                   <Play className="h-3 w-3 ml-0.5" />
-                  Ouvir
+                  Ouvir Agora
                 </>
               )}
             </span>
@@ -132,7 +132,7 @@ export function TrackCard({ track, index }: TrackCardProps) {
               className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase text-muted-foreground/20 hover:text-gold/45 transition-colors duration-500"
             >
               <Download className="h-3 w-3" />
-              Baixar
+              Baixar Louvor
             </button>
           </div>
         </div>
