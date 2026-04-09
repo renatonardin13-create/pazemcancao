@@ -100,6 +100,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
+import { AddTrackForm } from "@/components/AddTrackForm";
 
 function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -291,7 +292,8 @@ function AdminDashboard() {
 
       {/* Tracks Tab */}
       {activeTab === "tracks" && (
-        <div className="space-y-3">
+        <div className="space-y-6">
+          <AddTrackForm />
           {tracksLoading ? (
             <p className="text-center text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 py-12 animate-pulse">
               Carregando...
