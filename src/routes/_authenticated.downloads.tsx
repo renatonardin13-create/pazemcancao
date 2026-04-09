@@ -132,13 +132,13 @@ function DownloadsPage() {
           </div>
         </motion.div>
 
-        <div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
           {filtered.map((track, i) => (
             <motion.div
               key={track.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.7 + i * 0.03, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0, y: 16, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.6, delay: 0.7 + i * 0.04, ease: [0.22, 1, 0.36, 1] }}
             >
               <TrackCard track={track} index={i} />
             </motion.div>
