@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { RestrictedAccessCard } from "@/components/RestrictedAccessCard";
 import { checkBuyerAccess } from "@/lib/access.functions";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import { LogOut, ShieldAlert } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -13,12 +13,25 @@ function AuthenticatedLayout() {
   const { isAuthenticated, loading, logout, user, blocked, blockMessage } = useAuth();
   const navigate = useNavigate();
 
-  const { data: accessData, isLoading: accessLoading } = useQuery({
-    queryKey: ["buyer-access", user?.email],
-    queryFn: () => checkBuyerAccess(),
-    enabled: isAuthenticated,
-    staleTime: 1000 * 60 * 5,
-  });
+  const [accessData, setAccessData] = useState<{ hasAccess: boolean; buyer: any } | null>(null);
+  const [accessLoading, setAccessLoading] = useState(true);
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setAccessLoading(false);
+      return;
+    }
+    let cancelled = false;
+    checkBuyerAccess().then((result) => {
+      if (!cancelled) {
+        setAccessData(result);
+        setAccessLoading(false);
+      }
+    }).catch(() => {
+      if (!cancelled) setAccessLoading(false);
+    });
+    return () => { cancelled = true; };
+  }, [isAuthenticated, user?.email]);
 
   if (loading || (isAuthenticated && accessLoading)) {
     return (
