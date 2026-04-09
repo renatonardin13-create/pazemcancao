@@ -9,6 +9,7 @@ interface AuthState {
   user: User | null;
   session: Session | null;
   loading: boolean;
+  adminLoading: boolean;
   blocked: boolean;
   blockMessage: string | null;
   isAdmin: boolean;
@@ -38,6 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [adminLoading, setAdminLoading] = useState(false);
   const [blocked, setBlocked] = useState(false);
   const [blockMessage, setBlockMessage] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -47,10 +49,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!user?.id) {
       setIsAdmin(false);
+      setAdminLoading(false);
       return;
     }
 
     const checkAdmin = async () => {
+      setAdminLoading(true);
       const { data } = await supabase
         .from("user_roles")
         .select("role")
@@ -58,6 +62,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .eq("role", "admin")
         .maybeSingle();
       setIsAdmin(!!data);
+      setAdminLoading(false);
     };
 
     checkAdmin();
@@ -173,6 +178,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         session,
         loading,
+        adminLoading,
         blocked,
         blockMessage,
         isAdmin,

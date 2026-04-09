@@ -19,23 +19,8 @@ export const Route = createFileRoute("/_authenticated/admin")({
 const categories = ["Paz", "Cura", "Força", "Oração", "Madrugada", "Presença", "Refúgio"];
 
 function AdminPage() {
-  const { user } = useAuth();
+  const { user, isAdmin, adminLoading } = useAuth();
   const queryClient = useQueryClient();
-
-  // Check admin role
-  const { data: roleData, isLoading: roleLoading } = useQuery({
-    queryKey: ["user-role", user?.id],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user!.id)
-        .eq("role", "admin")
-        .maybeSingle();
-      return { isAdmin: !!data };
-    },
-    enabled: !!user,
-  });
 
   // Fetch tracks
   const { data: tracks, isLoading: tracksLoading } = useQuery({
@@ -48,7 +33,7 @@ function AdminPage() {
       if (error) throw error;
       return data;
     },
-    enabled: roleData?.isAdmin,
+    enabled: !adminLoading && isAdmin,
   });
 
   const [showForm, setShowForm] = useState(false);
@@ -124,7 +109,7 @@ function AdminPage() {
     },
   });
 
-  if (roleLoading) {
+  if (adminLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <p className="text-[11px] uppercase tracking-[0.4em] text-gold/25">Verificando acesso...</p>
@@ -132,7 +117,7 @@ function AdminPage() {
     );
   }
 
-  if (!roleData?.isAdmin) {
+  if (!isAdmin) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
