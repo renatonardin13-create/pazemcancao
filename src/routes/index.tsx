@@ -50,19 +50,31 @@ function LandingPage() {
             </motion.div>
           </motion.div>
 
-          {/* Hero Image */}
+          {/* Hero Image with neon border */}
           <motion.div
             initial="hidden"
             animate="visible"
             variants={fadeUp}
             custom={0.9}
-            className="mt-8 relative"
+            className="mt-8 relative group"
           >
             <div className="absolute -inset-8 rounded-3xl bg-gradient-to-r from-gold/5 via-gold/8 to-gold/5 blur-[40px] opacity-40" />
+            
+            {/* Neon animated border */}
+            <div className="absolute -inset-[2px] rounded-xl z-10 overflow-hidden">
+              <div
+                className="absolute inset-0 rounded-xl"
+                style={{
+                  background: 'conic-gradient(from var(--neon-angle, 0deg), transparent 0%, rgba(212,175,55,0.8) 10%, transparent 20%, transparent 80%, rgba(212,175,55,0.8) 90%, transparent 100%)',
+                  animation: 'neonSpin 3s linear infinite',
+                }}
+              />
+            </div>
+            
             <img
               src={heroImg}
               alt="Paz em Canção — Plataforma completa com 30 louvores inéditos"
-              className="relative z-10 w-full max-w-[700px] sm:max-w-[800px] rounded-xl border border-gold/10 shadow-[0_0_60px_-20px_rgba(212,175,55,0.15)]"
+              className="relative z-20 w-full max-w-[700px] sm:max-w-[800px] rounded-xl border border-gold/10 shadow-[0_0_60px_-20px_rgba(212,175,55,0.15)]"
             />
           </motion.div>
         </div>
@@ -73,7 +85,7 @@ function LandingPage() {
           animate="visible"
           variants={fadeUp}
           custom={1.0}
-          className="relative z-10 mb-8 mt-12"
+          className="relative z-10 mb-8 mt-16"
         >
           <Link
             to="/login"

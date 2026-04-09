@@ -160,6 +160,17 @@
   50% { transform: translateY(-8px) translateX(-8px); }
   75% { transform: translateY(-25px) translateX(5px); }
 }
+
+@property --neon-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes neonSpin {
+  0% { --neon-angle: 0deg; }
+  100% { --neon-angle: 360deg; }
+}
 #lovable-badge,
 a[href*="lovable"],
 div:has(a[href*="lovable"]) {
