@@ -22,6 +22,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as ApiWebhookKiwifyRouteImport } from './routes/api/webhook/kiwify'
 import { Route as AuthenticatedMusicasTrackIdRouteImport } from './routes/_authenticated.musicas.$trackId'
 import { Route as AuthenticatedLouvorTrackIdRouteImport } from './routes/_authenticated.louvor.$trackId'
+import { Route as AuthenticatedCursosCourseIdRouteImport } from './routes/_authenticated.cursos.$courseId'
 import { Route as AuthenticatedConteudoTrackIdRouteImport } from './routes/_authenticated.conteudo.$trackId'
 import { Route as AuthenticatedAdminTracksRouteImport } from './routes/_authenticated.admin.tracks'
 import { Route as AuthenticatedAdminCoursesRouteImport } from './routes/_authenticated.admin.courses'
@@ -95,6 +96,12 @@ const AuthenticatedLouvorTrackIdRoute =
     path: '/louvor/$trackId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedCursosCourseIdRoute =
+  AuthenticatedCursosCourseIdRouteImport.update({
+    id: '/cursos/$courseId',
+    path: '/cursos/$courseId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedConteudoTrackIdRoute =
   AuthenticatedConteudoTrackIdRouteImport.update({
     id: '/conteudo/$trackId',
@@ -145,6 +152,7 @@ export interface FileRoutesByFullPath {
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/admin/tracks': typeof AuthenticatedAdminTracksRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
+  '/cursos/$courseId': typeof AuthenticatedCursosCourseIdRoute
   '/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
   '/musicas/$trackId': typeof AuthenticatedMusicasTrackIdRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
@@ -164,6 +172,7 @@ export interface FileRoutesByTo {
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/admin/tracks': typeof AuthenticatedAdminTracksRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
+  '/cursos/$courseId': typeof AuthenticatedCursosCourseIdRoute
   '/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
   '/musicas/$trackId': typeof AuthenticatedMusicasTrackIdRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
@@ -186,6 +195,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/_authenticated/admin/tracks': typeof AuthenticatedAdminTracksRoute
   '/_authenticated/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
+  '/_authenticated/cursos/$courseId': typeof AuthenticatedCursosCourseIdRoute
   '/_authenticated/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
   '/_authenticated/musicas/$trackId': typeof AuthenticatedMusicasTrackIdRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
@@ -208,6 +218,7 @@ export interface FileRouteTypes {
     | '/admin/courses'
     | '/admin/tracks'
     | '/conteudo/$trackId'
+    | '/cursos/$courseId'
     | '/louvor/$trackId'
     | '/musicas/$trackId'
     | '/api/webhook/kiwify'
@@ -227,6 +238,7 @@ export interface FileRouteTypes {
     | '/admin/courses'
     | '/admin/tracks'
     | '/conteudo/$trackId'
+    | '/cursos/$courseId'
     | '/louvor/$trackId'
     | '/musicas/$trackId'
     | '/api/webhook/kiwify'
@@ -248,6 +260,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/courses'
     | '/_authenticated/admin/tracks'
     | '/_authenticated/conteudo/$trackId'
+    | '/_authenticated/cursos/$courseId'
     | '/_authenticated/louvor/$trackId'
     | '/_authenticated/musicas/$trackId'
     | '/api/webhook/kiwify'
@@ -358,6 +371,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLouvorTrackIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/cursos/$courseId': {
+      id: '/_authenticated/cursos/$courseId'
+      path: '/cursos/$courseId'
+      fullPath: '/cursos/$courseId'
+      preLoaderRoute: typeof AuthenticatedCursosCourseIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/conteudo/$trackId': {
       id: '/_authenticated/conteudo/$trackId'
       path: '/conteudo/$trackId'
@@ -454,6 +474,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedMusicasRoute: typeof AuthenticatedMusicasRouteWithChildren
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedConteudoTrackIdRoute: typeof AuthenticatedConteudoTrackIdRoute
+  AuthenticatedCursosCourseIdRoute: typeof AuthenticatedCursosCourseIdRoute
   AuthenticatedLouvorTrackIdRoute: typeof AuthenticatedLouvorTrackIdRoute
 }
 
@@ -463,6 +484,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedMusicasRoute: AuthenticatedMusicasRouteWithChildren,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedConteudoTrackIdRoute: AuthenticatedConteudoTrackIdRoute,
+  AuthenticatedCursosCourseIdRoute: AuthenticatedCursosCourseIdRoute,
   AuthenticatedLouvorTrackIdRoute: AuthenticatedLouvorTrackIdRoute,
 }
 
