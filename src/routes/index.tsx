@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Heart, Music, ShieldCheck, Star, Cross, Headphones } from "lucide-react";
+import { ArrowRight, Heart, Music, ShieldCheck, Star, Headphones } from "lucide-react";
 import { FooterLinks } from "@/components/FooterLinks";
-import logoIcon from "@/assets/logo-icon.png";
+import logo from "@/assets/logo-paz-em-cancao.png";
 import heroBg from "@/assets/hero-bg.jpg";
 import { motion } from "framer-motion";
+import { MusicNoteParticles } from "@/components/MusicNoteParticles";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
@@ -31,7 +32,7 @@ function LandingPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
       {/* ═══════════════════ HERO ═══════════════════ */}
-      <section className="relative min-h-[105vh] flex flex-col items-center justify-center overflow-hidden">
+      <section className="relative min-h-[85vh] flex flex-col items-center justify-center overflow-hidden">
         {/* Background layers */}
         <div className="absolute inset-0">
           <img
@@ -45,14 +46,8 @@ function LandingPage() {
           <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40" />
         </div>
 
-        {/* Ambient particles */}
-        <div className="pointer-events-none absolute inset-0">
-          <div className="absolute top-[18%] left-[12%] h-1.5 w-1.5 rounded-full bg-gold/25 animate-breathe" />
-          <div className="absolute top-[28%] right-[18%] h-1 w-1 rounded-full bg-gold/15 animate-breathe" style={{ animationDelay: "2s" }} />
-          <div className="absolute top-[55%] left-[25%] h-0.5 w-0.5 rounded-full bg-gold/20 animate-float-slow" style={{ animationDelay: "4s" }} />
-          <div className="absolute top-[42%] right-[30%] h-1 w-1 rounded-full bg-gold/10 animate-breathe" style={{ animationDelay: "3s" }} />
-          <div className="absolute bottom-[30%] left-[40%] h-0.5 w-0.5 rounded-full bg-gold/15 animate-float-slow" style={{ animationDelay: "1s" }} />
-        </div>
+        {/* Musical note particles */}
+        <MusicNoteParticles />
 
         {/* Top nav */}
         <motion.div
@@ -61,12 +56,7 @@ function LandingPage() {
           transition={{ duration: 1, delay: 0.3 }}
           className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-6 sm:px-10 py-6"
         >
-          <div className="flex items-center gap-2.5">
-            <img src={logoIcon} alt="Paz em Canção" className="h-7 w-7 object-contain" width={512} height={512} />
-            <span className="font-display text-sm font-bold text-foreground/80 tracking-tight">
-              Paz em Canção
-            </span>
-          </div>
+          <img src={logo} alt="Paz em Canção" className="h-10 sm:h-12 object-contain" />
           <Link
             to="/login"
             className="text-[10px] font-semibold uppercase tracking-[0.25em] text-gold/50 hover:text-gold/80 transition-colors duration-500"
@@ -84,9 +74,7 @@ function LandingPage() {
           >
             {/* Cross icon */}
             <motion.div variants={fadeUp} custom={0.4} className="mb-8">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-gold/10 bg-gold/[0.04]">
-                <Cross className="h-5 w-5 text-gold/50" />
-              </div>
+              <img src={logo} alt="Paz em Canção" className="h-20 sm:h-28 object-contain mx-auto" />
             </motion.div>
 
             {/* Tag */}
@@ -150,17 +138,6 @@ function LandingPage() {
             </motion.p>
           </motion.div>
         </div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2.5, duration: 1 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-10"
-        >
-          <span className="text-[8px] uppercase tracking-[0.5em] text-muted-foreground/20">Descubra</span>
-          <div className="w-px h-10 bg-gradient-to-b from-gold/20 to-transparent animate-float-slow" />
-        </motion.div>
       </section>
 
       {/* ═══════════════════ EMOTIONAL BRIDGE ═══════════════════ */}
