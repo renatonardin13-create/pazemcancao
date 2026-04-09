@@ -131,6 +131,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     if (authData.user?.id) {
+      // Email-based fallback for admin
+      if (email.toLowerCase() === ADMIN_EMAIL) {
+        setIsAdmin(true);
+        loginRegistered.current = true;
+        return { error: null };
+      }
+
       const { data: adminRole } = await supabase
         .from("user_roles")
         .select("role")
