@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Heart, Music, ShieldCheck, Star, Headphones } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { FooterLinks } from "@/components/FooterLinks";
 import logo from "@/assets/logo-paz-em-cancao.png";
-import heroBg from "@/assets/hero-bg.jpg";
+import heroImg from "@/assets/hero-bg.png";
 import { motion } from "framer-motion";
 import { MusicNoteParticles } from "@/components/MusicNoteParticles";
 
@@ -19,72 +19,49 @@ const fadeUp = {
   }),
 };
 
-const scaleIn = {
-  hidden: { opacity: 0, scale: 0.92 },
-  visible: (delay: number) => ({
-    opacity: 1,
-    scale: 1,
-    transition: { duration: 1, ease: [0.22, 1, 0.36, 1], delay },
-  }),
-};
-
 function LandingPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
       {/* ═══════════════════ HERO ═══════════════════ */}
-      <section className="relative min-h-[85vh] flex flex-col items-center justify-center overflow-hidden">
-        {/* Background layers */}
-        <div className="absolute inset-0">
-          <img
-            src={heroBg}
-            alt=""
-            className="h-full w-full object-cover object-[center_75%] scale-105"
-            width={1920}
-            height={1080}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-background/95 via-background/50 to-background" />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/40 via-transparent to-background/40" />
-        </div>
+      <section className="relative min-h-[100vh] flex flex-col items-center justify-center overflow-hidden">
+        {/* Dark background */}
+        <div className="absolute inset-0 bg-background" />
 
         {/* Musical note particles */}
         <MusicNoteParticles />
 
-        {/* Top nav removed per PRD — no header elements above hero */}
-
         {/* Hero content */}
-        <div className="relative z-10 max-w-xl text-center px-6">
+        <div className="relative z-10 max-w-4xl text-center px-6">
           <motion.div
             initial="hidden"
             animate="visible"
             className="flex flex-col items-center"
           >
             {/* Logo */}
-            <motion.div variants={fadeUp} custom={0.4} className="mb-8">
-              <img src={logo} alt="Paz em Canção" className="h-[150px] sm:h-[200px] object-contain mx-auto drop-shadow-[0_0_30px_rgba(212,175,55,0.15)]" />
+            <motion.div variants={fadeUp} custom={0.2} className="mb-6">
+              <img src={logo} alt="Paz em Canção" className="h-[100px] sm:h-[130px] object-contain mx-auto drop-shadow-[0_0_30px_rgba(212,175,55,0.15)]" />
             </motion.div>
 
-
             {/* Divider */}
-
-            {/* Divider */}
-            <motion.div variants={fadeUp} custom={1}>
-              <div className="mx-auto mt-8 h-px w-36 bg-gradient-to-r from-transparent via-gold/25 to-transparent" />
+            <motion.div variants={fadeUp} custom={0.5}>
+              <div className="mx-auto h-px w-36 bg-gradient-to-r from-transparent via-gold/25 to-transparent" />
             </motion.div>
 
-            {/* Subtitle */}
-            <motion.p
-              variants={fadeUp}
-              custom={1.1}
-              className="mx-auto mt-8 max-w-md text-base sm:text-[17px] leading-[2.2] text-muted-foreground/70 font-light"
-            >
-              30 louvores inéditos criados para quem precisa
-              <em className="text-foreground/90 not-italic font-medium"> respirar Deus</em> outra vez.
-              <br />
-              <span className="text-muted-foreground/50">Para dias em que só Ele entende.</span>
-            </motion.p>
+            {/* Hero Image with glow effect */}
+            <motion.div variants={fadeUp} custom={0.7} className="mt-8 relative">
+              {/* Glow layers */}
+              <div className="absolute -inset-8 rounded-3xl bg-gradient-to-r from-gold/10 via-gold/20 to-gold/10 blur-[40px] opacity-60" />
+              <div className="absolute -inset-4 rounded-2xl bg-gradient-to-b from-gold/5 via-transparent to-gold/5 blur-[20px]" />
+              
+              <img
+                src={heroImg}
+                alt="Paz em Canção — Plataforma completa com 30 louvores inéditos"
+                className="relative z-10 w-full max-w-[700px] sm:max-w-[800px] rounded-xl border border-gold/10 shadow-[0_0_80px_-20px_rgba(212,175,55,0.25)]"
+              />
+            </motion.div>
 
             {/* CTA */}
-            <motion.div variants={fadeUp} custom={1.4} className="mt-14">
+            <motion.div variants={fadeUp} custom={1.0} className="mt-10">
               <Link
                 to="/login"
                 className="group relative inline-flex items-center gap-3 rounded-full bg-gold/20 text-gold border border-gold/25 px-14 py-5 text-[12px] font-bold tracking-[0.25em] uppercase transition-all duration-700 hover:bg-gold/30 hover:border-gold/40 hover:shadow-[0_0_60px_-12px] hover:shadow-gold/25 active:scale-[0.97]"
@@ -98,7 +75,7 @@ function LandingPage() {
             {/* Sub-CTA */}
             <motion.p
               variants={fadeUp}
-              custom={1.7}
+              custom={1.3}
               className="mt-7 text-[10px] text-muted-foreground/35 tracking-[0.25em] font-light"
             >
               Você não está sozinho nessa caminhada
@@ -106,7 +83,6 @@ function LandingPage() {
           </motion.div>
         </div>
       </section>
-
 
       <FooterLinks variant="full" />
     </div>
