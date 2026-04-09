@@ -476,26 +476,13 @@ function LoginPage() {
                         </button>
                       </form>
 
-                      <div className="mt-6 text-center space-y-3">
+                      <div className="mt-6 text-center">
                         <button
                           onClick={() => { setView("reset"); setError(""); }}
                           className="text-[12px] text-gold/55 hover:text-gold/70 transition-colors duration-500 underline underline-offset-4 decoration-gold/15 hover:decoration-gold/30"
                         >
                           Esqueceu sua senha?
                         </button>
-                        <div>
-                          <button
-                            onClick={() => { setView("signup"); setError(""); setSuccessMsg(""); }}
-                            className="text-[12px] text-muted-foreground/60 hover:text-muted-foreground/80 transition-colors duration-500"
-                          >
-                            Não tem conta? <span className="text-gold/55 underline underline-offset-4 decoration-gold/15">Cadastre-se</span>
-                          </button>
-                        </div>
-                      </div>
-
-                      <div className="mt-5 flex items-center justify-center gap-2 text-[10px] text-muted-foreground/50">
-                        <ShieldCheck className="h-3 w-3 text-gold/25" />
-                        Acesso seguro e exclusivo
                       </div>
                     </motion.div>
                   )}
