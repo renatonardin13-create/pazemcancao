@@ -48,17 +48,6 @@ function LandingPage() {
             <motion.div variants={fadeUp} custom={0.5}>
               <div className="mx-auto h-px w-36 bg-gradient-to-r from-transparent via-gold/25 to-transparent" />
             </motion.div>
-
-            {/* Description text */}
-            <motion.p
-              variants={fadeUp}
-              custom={0.7}
-              className="mt-6 text-lg sm:text-xl text-muted-foreground/70 font-light tracking-wide max-w-md leading-relaxed"
-            >
-              Plataforma Completa com Música
-              <br />
-              & Conteúdos Espirituais
-            </motion.p>
           </motion.div>
 
           {/* Hero Image */}
