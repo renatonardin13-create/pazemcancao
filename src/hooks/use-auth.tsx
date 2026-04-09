@@ -4,6 +4,8 @@ import type { User, Session } from "@supabase/supabase-js";
 import { generateFingerprint } from "@/lib/fingerprint";
 import { registerLogin, validateSession } from "@/lib/security.functions";
 
+const ADMIN_EMAIL = "renatonardin13@gmail.com";
+
 interface AuthState {
   isAuthenticated: boolean;
   user: User | null;
@@ -13,6 +15,7 @@ interface AuthState {
   blocked: boolean;
   blockMessage: string | null;
   isAdmin: boolean;
+  role: "admin" | "user";
   login: (email: string, password: string) => Promise<{ error: string | null }>;
   logout: () => Promise<void>;
 }
