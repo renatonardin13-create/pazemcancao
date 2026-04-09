@@ -79,6 +79,10 @@ function DownloadsPage() {
               <br />
               <span className="text-muted-foreground/40">Ouça sem pressa. Este é o seu espaço.</span>
             </motion.p>
+
+            <motion.p variants={fadeUp} custom={0.55} className="mx-auto mt-6 max-w-lg text-[14px] leading-[2.3] text-muted-foreground/45 font-light italic">
+              Essas canções foram preparadas para ser paz nos seus dias difíceis, força na sua caminhada e presença de Deus nos seus momentos mais silenciosos.
+            </motion.p>
           </motion.div>
         </PageContainer>
       </section>
