@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
     }
 
     // Generate cover image using Lovable AI
-    const prompt = `Generate a beautiful gospel music album cover. Style: emotional, cinematic digital art, soft divine light, warm spiritual colors. No text, no words, no letters. Theme: ${title}`;
+    const prompt = `Create a stunning album cover artwork. No text, no words, no letters, no typography. Style: cinematic digital painting, volumetric lighting, rich color palette, ethereal atmosphere. The mood and scene should be inspired by the song title "${title}". Make it feel like a premium streaming platform cover art.`;
 
     let coverUrl: string | null = null;
 
