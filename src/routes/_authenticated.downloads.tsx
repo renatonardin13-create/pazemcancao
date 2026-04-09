@@ -170,6 +170,20 @@ function DownloadsPage() {
             </Button>
           </motion.div>
         </motion.div>
+
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-40px" }}
+          className="mt-20 text-center"
+        >
+          <motion.div variants={fadeUp} custom={0}>
+            <div className="mx-auto h-px w-32 bg-gradient-to-r from-transparent via-gold/10 to-transparent mb-8" />
+          </motion.div>
+          <motion.p variants={fadeUp} custom={0.15} className="text-[11px] leading-[2.2] text-muted-foreground/30 font-light italic max-w-sm mx-auto">
+            Esta coleção é exclusiva e disponível apenas para membros. Não está disponível em plataformas públicas.
+          </motion.p>
+        </motion.div>
       </PageContainer>
 
       <FooterLinks variant="full" />
