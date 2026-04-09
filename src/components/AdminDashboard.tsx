@@ -9,6 +9,7 @@ import {
   Video,
   BookText,
   BarChart3,
+  Music,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -31,7 +32,7 @@ export function AdminDashboard() {
       </div>
 
       {/* Stats grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {[
           {
             label: "Cursos Ativos",
@@ -58,6 +59,13 @@ export function AdminDashboard() {
             value: data?.activeSessions ?? "—",
             icon: Activity,
             color: "text-amber-400/60",
+          },
+          {
+            label: "Músicas",
+            value: data?.activeTracks ?? "—",
+            total: data?.totalTracks,
+            icon: Music,
+            color: "text-purple-400/60",
           },
         ].map((stat) => (
           <div

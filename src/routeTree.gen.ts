@@ -21,6 +21,7 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as ApiWebhookKiwifyRouteImport } from './routes/api/webhook/kiwify'
 import { Route as AuthenticatedLouvorTrackIdRouteImport } from './routes/_authenticated.louvor.$trackId'
 import { Route as AuthenticatedConteudoTrackIdRouteImport } from './routes/_authenticated.conteudo.$trackId'
+import { Route as AuthenticatedAdminTracksRouteImport } from './routes/_authenticated.admin.tracks'
 import { Route as AuthenticatedAdminCoursesRouteImport } from './routes/_authenticated.admin.courses'
 import { Route as AuthenticatedAdminCoursesNewRouteImport } from './routes/_authenticated.admin.courses.new'
 import { Route as AuthenticatedAdminCoursesCourseIdRouteImport } from './routes/_authenticated.admin.courses.$courseId'
@@ -86,6 +87,12 @@ const AuthenticatedConteudoTrackIdRoute =
     path: '/conteudo/$trackId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAdminTracksRoute =
+  AuthenticatedAdminTracksRouteImport.update({
+    id: '/tracks',
+    path: '/tracks',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminCoursesRoute =
   AuthenticatedAdminCoursesRouteImport.update({
     id: '/courses',
@@ -114,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/downloads': typeof AuthenticatedDownloadsRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
+  '/admin/tracks': typeof AuthenticatedAdminTracksRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
@@ -129,6 +137,7 @@ export interface FileRoutesByTo {
   '/downloads': typeof AuthenticatedDownloadsRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
+  '/admin/tracks': typeof AuthenticatedAdminTracksRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
@@ -147,6 +156,7 @@ export interface FileRoutesById {
   '/_authenticated/downloads': typeof AuthenticatedDownloadsRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
+  '/_authenticated/admin/tracks': typeof AuthenticatedAdminTracksRoute
   '/_authenticated/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/_authenticated/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
@@ -165,6 +175,7 @@ export interface FileRouteTypes {
     | '/downloads'
     | '/perfil'
     | '/admin/courses'
+    | '/admin/tracks'
     | '/conteudo/$trackId'
     | '/louvor/$trackId'
     | '/api/webhook/kiwify'
@@ -180,6 +191,7 @@ export interface FileRouteTypes {
     | '/downloads'
     | '/perfil'
     | '/admin/courses'
+    | '/admin/tracks'
     | '/conteudo/$trackId'
     | '/louvor/$trackId'
     | '/api/webhook/kiwify'
@@ -197,6 +209,7 @@ export interface FileRouteTypes {
     | '/_authenticated/downloads'
     | '/_authenticated/perfil'
     | '/_authenticated/admin/courses'
+    | '/_authenticated/admin/tracks'
     | '/_authenticated/conteudo/$trackId'
     | '/_authenticated/louvor/$trackId'
     | '/api/webhook/kiwify'
@@ -300,6 +313,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConteudoTrackIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/admin/tracks': {
+      id: '/_authenticated/admin/tracks'
+      path: '/tracks'
+      fullPath: '/admin/tracks'
+      preLoaderRoute: typeof AuthenticatedAdminTracksRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/courses': {
       id: '/_authenticated/admin/courses'
       path: '/courses'
@@ -343,11 +363,13 @@ const AuthenticatedAdminCoursesRouteWithChildren =
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCoursesRoute: typeof AuthenticatedAdminCoursesRouteWithChildren
+  AuthenticatedAdminTracksRoute: typeof AuthenticatedAdminTracksRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCoursesRoute: AuthenticatedAdminCoursesRouteWithChildren,
+  AuthenticatedAdminTracksRoute: AuthenticatedAdminTracksRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
