@@ -61,7 +61,7 @@ function LandingPage() {
             </motion.div>
 
             {/* CTA Button */}
-            <motion.div variants={fadeUp} custom={1.0} className="mt-10">
+            <motion.div variants={fadeUp} custom={1.0} className="mt-16">
               <Link
                 to="/login"
                 className="inline-block px-10 py-4 rounded-full bg-gold text-background font-bold text-base sm:text-lg tracking-wide uppercase shadow-[0_0_30px_rgba(212,175,55,0.3)] hover:shadow-[0_0_50px_rgba(212,175,55,0.5)] hover:scale-105 transition-all duration-500"
