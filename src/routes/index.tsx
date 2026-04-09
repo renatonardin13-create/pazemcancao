@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { FooterLinks } from "@/components/FooterLinks";
 import logo from "@/assets/logo-paz-em-cancao.png";
+import heroImg from "@/assets/hero-bg.png";
 import { motion } from "framer-motion";
 import { MusicNoteParticles } from "@/components/MusicNoteParticles";
 
@@ -58,6 +59,22 @@ function LandingPage() {
               <br />
               & Conteúdos Espirituais
             </motion.p>
+          </motion.div>
+
+          {/* Hero Image */}
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            custom={0.9}
+            className="mt-8 relative"
+          >
+            <div className="absolute -inset-8 rounded-3xl bg-gradient-to-r from-gold/5 via-gold/8 to-gold/5 blur-[40px] opacity-40" />
+            <img
+              src={heroImg}
+              alt="Paz em Canção — Plataforma completa com 30 louvores inéditos"
+              className="relative z-10 w-full max-w-[700px] sm:max-w-[800px] rounded-xl border border-gold/10 shadow-[0_0_60px_-20px_rgba(212,175,55,0.15)]"
+            />
           </motion.div>
         </div>
 
