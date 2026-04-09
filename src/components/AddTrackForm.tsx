@@ -64,7 +64,6 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
 
       const track = result.track;
 
-      setUploading(false);
       setGeneratingCover(true);
 
       // 3. Generate cover with AI (async, non-blocking)
