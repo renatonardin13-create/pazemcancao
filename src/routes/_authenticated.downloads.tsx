@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Download, Music, Flame, Star, BookOpen, ShoppingBag, Lock } from "lucide-react";
-import { useState } from "react";
 import { sampleTracks } from "@/lib/sample-tracks";
 import { TrackCard } from "@/components/TrackCard";
 import { Button } from "@/components/ui/button";
@@ -14,17 +13,6 @@ export const Route = createFileRoute("/_authenticated/downloads")({
   component: DownloadsPage,
 });
 
-const categories = [
-  "Todos",
-  "Paz",
-  "Cura",
-  "Força",
-  "Oração",
-  "Madrugada",
-  "Presença",
-  "Refúgio",
-];
-
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
   visible: (delay: number) => ({
@@ -37,40 +25,73 @@ const fadeUp = {
 const featuredIds = [1, 3, 6, 15, 29, 30];
 const featuredTracks = sampleTracks.filter((t) => featuredIds.includes(t.id));
 
-function SectionHeader({ icon: Icon, tag, title, count }: { icon: React.ElementType; tag: string; title: string; count?: number }) {
+const categoryGroups = [
+  { key: "Paz", icon: "🕊️" },
+  { key: "Cura", icon: "💛" },
+  { key: "Força", icon: "🔥" },
+  { key: "Oração", icon: "🙏" },
+  { key: "Madrugada", icon: "🌙" },
+  { key: "Presença", icon: "✨" },
+  { key: "Refúgio", icon: "🏔️" },
+].map((cat) => ({
+  ...cat,
+  tracks: sampleTracks.filter((t) => t.category === cat.key),
+})).filter((cat) => cat.tracks.length > 0);
+
+
+function HorizontalRow({ title, tag, icon: Icon, tracks, emoji }: { title: string; tag: string; icon: React.ElementType; tracks: typeof sampleTracks; emoji?: string }) {
   return (
-    <motion.div
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: "-40px" }}
-      className="flex items-center gap-3 mb-10"
-    >
-      <motion.div variants={fadeUp} custom={0} className="flex items-center gap-3 flex-1">
-        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/10">
-          <Icon className="h-3.5 w-3.5 text-gold/45" />
+    <section className="pt-14 sm:pt-18">
+      {/* Divider line */}
+      <PageContainer>
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-border/10 to-transparent mb-10" />
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-40px" }}
+          className="flex items-center gap-3 mb-8"
+        >
+          <motion.div variants={fadeUp} custom={0} className="flex items-center gap-3 flex-1">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/10">
+              {emoji ? (
+                <span className="text-sm">{emoji}</span>
+              ) : (
+                <Icon className="h-3.5 w-3.5 text-gold/45" />
+              )}
+            </div>
+            <div>
+              <p className="text-[9px] font-semibold uppercase tracking-[0.4em] text-gold/35">{tag}</p>
+              <h2 className="text-[14px] font-bold text-foreground/80 tracking-tight mt-0.5">{title}</h2>
+            </div>
+            <span className="ml-auto text-[10px] text-muted-foreground/25 font-medium">
+              {tracks.length} {tracks.length === 1 ? "louvor" : "louvores"}
+            </span>
+          </motion.div>
+        </motion.div>
+      </PageContainer>
+
+      {/* Horizontal scroll */}
+      <div className="overflow-x-auto scrollbar-none -mx-0 px-6 sm:px-10 lg:px-16">
+        <div className="flex gap-5 pb-4" style={{ minWidth: "max-content" }}>
+          {tracks.map((track, i) => (
+            <motion.div
+              key={track.id}
+              initial={{ opacity: 0, x: 20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true, margin: "-20px" }}
+              transition={{ duration: 0.5, delay: i * 0.05, ease: [0.22, 1, 0.36, 1] }}
+              className="w-[280px] sm:w-[320px] flex-shrink-0"
+            >
+              <TrackCard track={track} index={i} />
+            </motion.div>
+          ))}
         </div>
-        <div>
-          <p className="text-[9px] font-semibold uppercase tracking-[0.4em] text-gold/35">{tag}</p>
-          <h2 className="text-[13px] font-bold text-foreground/80 tracking-tight mt-0.5">{title}</h2>
-        </div>
-        {count !== undefined && (
-          <span className="ml-auto text-[10px] text-muted-foreground/25 font-medium">
-            {count} {count === 1 ? "item" : "itens"}
-          </span>
-        )}
-      </motion.div>
-    </motion.div>
+      </div>
+    </section>
   );
 }
 
 function DownloadsPage() {
-  const [filter, setFilter] = useState("Todos");
-
-  const filtered =
-    filter === "Todos"
-      ? sampleTracks
-      : sampleTracks.filter((t) => t.category === filter);
-
   return (
     <div className="min-h-screen bg-background pb-32 relative">
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_50%_30%_at_50%_5%,var(--color-gold)/0.03,transparent_70%)]" />
@@ -127,73 +148,33 @@ function DownloadsPage() {
         </motion.div>
       </PageContainer>
 
-      {/* ═══════════ SEÇÃO 1: MAIS ACESSADOS ═══════════ */}
-      <PageContainer className="pt-16 sm:pt-20 pb-8">
-        <SectionHeader icon={Flame} tag="Destaques" title="Mais Acessados" count={featuredTracks.length} />
+      {/* ═══════════ MAIS ACESSADOS ═══════════ */}
+      <HorizontalRow
+        icon={Flame}
+        tag="Destaques"
+        title="Mais Acessados"
+        tracks={featuredTracks}
+      />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-          {featuredTracks.map((track, i) => (
-            <motion.div
-              key={track.id}
-              initial={{ opacity: 0, y: 16, scale: 0.97 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true, margin: "-30px" }}
-              transition={{ duration: 0.6, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <TrackCard track={track} index={i} />
-            </motion.div>
-          ))}
-        </div>
-      </PageContainer>
+      {/* ═══════════ CATEGORIAS ═══════════ */}
+      {categoryGroups.map((cat) => (
+        <HorizontalRow
+          key={cat.key}
+          icon={Star}
+          emoji={cat.icon}
+          tag={cat.key}
+          title={`Louvores de ${cat.key}`}
+          tracks={cat.tracks}
+        />
+      ))}
 
-      {/* ═══════════ SEÇÃO 2: LOUVORES EXCLUSIVOS ═══════════ */}
-      <PageContainer className="pt-16 sm:pt-20 pb-8">
-        <SectionHeader icon={Star} tag="Coleção Completa" title="Louvores Exclusivos" count={filtered.length} />
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
-        >
-          <div className="mb-10 -mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-none">
-            <div className="flex gap-1 pb-1 min-w-max sm:min-w-0 sm:flex-wrap">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setFilter(cat)}
-                  className={`rounded-full px-4 py-2 text-[11px] font-medium transition-all duration-500 whitespace-nowrap ${
-                    filter === cat
-                      ? "bg-gold/80 text-gold-foreground shadow-[0_0_20px_-4px] shadow-gold/15"
-                      : "text-muted-foreground/35 hover:text-muted-foreground/55 hover:bg-muted/10"
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-          </div>
-        </motion.div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-          {filtered.map((track, i) => (
-            <motion.div
-              key={track.id}
-              initial={{ opacity: 0, y: 16, scale: 0.97 }}
-              whileInView={{ opacity: 1, y: 0, scale: 1 }}
-              viewport={{ once: true, margin: "-20px" }}
-              transition={{ duration: 0.6, delay: i * 0.03, ease: [0.22, 1, 0.36, 1] }}
-            >
-              <TrackCard track={track} index={i} />
-            </motion.div>
-          ))}
-        </div>
-
+      {/* ═══════════ BAIXAR TODOS ═══════════ */}
+      <PageContainer className="pt-20">
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-40px" }}
-          className="mt-28 text-center"
+          className="text-center"
         >
           <motion.div variants={fadeUp} custom={0}>
             <div className="mx-auto w-px h-14 bg-gradient-to-b from-transparent via-gold/10 to-transparent mb-10" />
@@ -218,7 +199,16 @@ function DownloadsPage() {
 
       {/* ═══════════ SEÇÃO 3: CONTEÚDOS ═══════════ */}
       <PageContainer className="pt-16 sm:pt-20 pb-8">
-        <SectionHeader icon={BookOpen} tag="Recursos" title="Conteúdos" />
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-border/10 to-transparent mb-10" />
+        <div className="flex items-center gap-3 mb-10">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/10">
+            <BookOpen className="h-3.5 w-3.5 text-gold/45" />
+          </div>
+          <div>
+            <p className="text-[9px] font-semibold uppercase tracking-[0.4em] text-gold/35">Recursos</p>
+            <h2 className="text-[14px] font-bold text-foreground/80 tracking-tight mt-0.5">Conteúdos</h2>
+          </div>
+        </div>
 
         <motion.div
           initial="hidden"
@@ -252,7 +242,16 @@ function DownloadsPage() {
 
       {/* ═══════════ SEÇÃO 4: PRODUTOS ═══════════ */}
       <PageContainer className="pt-16 sm:pt-20 pb-8">
-        <SectionHeader icon={ShoppingBag} tag="Loja" title="Produtos" />
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-border/10 to-transparent mb-10" />
+        <div className="flex items-center gap-3 mb-10">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/10">
+            <ShoppingBag className="h-3.5 w-3.5 text-gold/45" />
+          </div>
+          <div>
+            <p className="text-[9px] font-semibold uppercase tracking-[0.4em] text-gold/35">Loja</p>
+            <h2 className="text-[14px] font-bold text-foreground/80 tracking-tight mt-0.5">Produtos</h2>
+          </div>
+        </div>
 
         <motion.div
           initial="hidden"
