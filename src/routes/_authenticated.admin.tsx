@@ -3,7 +3,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/AdminSidebar";
 import { LogOut, ShieldAlert, ArrowLeft } from "lucide-react";
-import { AdminDashboard } from "@/components/AdminDashboard";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
@@ -84,7 +83,7 @@ function AdminLayout() {
 
           {/* Content */}
           <main className="flex-1 p-6 sm:p-8">
-            <AdminDashboard />
+            <Outlet />
           </main>
         </div>
       </div>
