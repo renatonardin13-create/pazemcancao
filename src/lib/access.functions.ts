@@ -14,6 +14,18 @@ export const checkBuyerAccess = createServerFn({ method: 'POST' })
       return { hasAccess: false, buyer: null };
     }
 
+    // Check if user is admin — admins bypass buyer check
+    const { data: adminRole } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    if (adminRole) {
+      return { hasAccess: true, buyer: { nome: 'Administrador', product_name: null } };
+    }
+
     const { data: buyer } = await supabase
       .from('approved_buyers')
       .select('*')
