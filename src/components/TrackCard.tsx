@@ -71,23 +71,34 @@ export function TrackCard({ track, index }: TrackCardProps) {
       >
         {/* Cover image area */}
         <div className={`relative h-40 sm:h-44 w-full bg-gradient-to-br ${gradient} overflow-hidden`}>
+          {/* Cover image if available */}
+          {track.coverUrl && (
+            <img
+              src={track.coverUrl}
+              alt={track.title}
+              className="absolute inset-0 w-full h-full object-cover"
+              loading="lazy"
+            />
+          )}
           {/* Texture overlay */}
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,transparent_30%,rgba(0,0,0,0.4))]" />
           {/* Soft glow on hover */}
           <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/[0.03] to-white/[0.06] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
-          {/* Floating icon */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className={`flex h-16 w-16 items-center justify-center rounded-2xl backdrop-blur-sm transition-all duration-700 ${
-              isPlaying
-                ? "bg-gold/15 border border-gold/25 scale-110"
-                : "bg-white/[0.04] border border-white/[0.06] group-hover:scale-105 group-hover:bg-white/[0.07]"
-            }`}>
-              <Music className={`h-7 w-7 transition-colors duration-500 ${
-                isPlaying ? "text-gold/70" : "text-white/25 group-hover:text-white/40"
-              }`} />
+          {/* Floating icon (only show if no cover) */}
+          {!track.coverUrl && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className={`flex h-16 w-16 items-center justify-center rounded-2xl backdrop-blur-sm transition-all duration-700 ${
+                isPlaying
+                  ? "bg-gold/15 border border-gold/25 scale-110"
+                  : "bg-white/[0.04] border border-white/[0.06] group-hover:scale-105 group-hover:bg-white/[0.07]"
+              }`}>
+                <Music className={`h-7 w-7 transition-colors duration-500 ${
+                  isPlaying ? "text-gold/70" : "text-white/25 group-hover:text-white/40"
+                }`} />
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Track number */}
           <span className="absolute top-4 left-5 text-[10px] font-bold tracking-[0.3em] text-white/15">
