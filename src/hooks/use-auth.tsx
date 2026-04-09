@@ -83,7 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Session validation interval
   useEffect(() => {
-    if (!session || typeof window === 'undefined') return;
+    if (!session || isAdmin || typeof window === 'undefined') return;
 
     const checkSession = async () => {
       try {
@@ -103,16 +103,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const interval = setInterval(checkSession, 2 * 60 * 1000);
     return () => clearInterval(interval);
-  }, [session]);
+  }, [session, isAdmin]);
 
   const login = useCallback(async (email: string, password: string) => {
     setBlocked(false);
     setBlockMessage(null);
     loginRegistered.current = false;
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       return { error: "Não foi possível acessar. Verifique seu e-mail e senha e tente novamente." };
+    }
+
+    if (authData.user?.id) {
+      const { data: adminRole } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", authData.user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      if (adminRole) {
+        setIsAdmin(true);
+        loginRegistered.current = true;
+        return { error: null };
+      }
     }
 
     // Register login with security checks
