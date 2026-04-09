@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Download, Music } from "lucide-react";
+import { Download, Music, Flame, Star, BookOpen, ShoppingBag, Lock } from "lucide-react";
 import { useState } from "react";
 import { sampleTracks } from "@/lib/sample-tracks";
 import { TrackCard } from "@/components/TrackCard";
@@ -34,6 +34,35 @@ const fadeUp = {
   }),
 };
 
+const featuredIds = [1, 3, 6, 15, 29, 30];
+const featuredTracks = sampleTracks.filter((t) => featuredIds.includes(t.id));
+
+function SectionHeader({ icon: Icon, tag, title, count }: { icon: React.ElementType; tag: string; title: string; count?: number }) {
+  return (
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-40px" }}
+      className="flex items-center gap-3 mb-10"
+    >
+      <motion.div variants={fadeUp} custom={0} className="flex items-center gap-3 flex-1">
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/10">
+          <Icon className="h-3.5 w-3.5 text-gold/45" />
+        </div>
+        <div>
+          <p className="text-[9px] font-semibold uppercase tracking-[0.4em] text-gold/35">{tag}</p>
+          <h2 className="text-[13px] font-bold text-foreground/80 tracking-tight mt-0.5">{title}</h2>
+        </div>
+        {count !== undefined && (
+          <span className="ml-auto text-[10px] text-muted-foreground/25 font-medium">
+            {count} {count === 1 ? "item" : "itens"}
+          </span>
+        )}
+      </motion.div>
+    </motion.div>
+  );
+}
+
 function DownloadsPage() {
   const [filter, setFilter] = useState("Todos");
 
@@ -49,6 +78,7 @@ function DownloadsPage() {
 
       <AppHeader />
 
+      {/* ═══════════ HERO ═══════════ */}
       <section className="relative">
         <PageContainer className="pt-24 pb-16 sm:pt-32 sm:pb-20 text-center relative z-10">
           <motion.div
@@ -97,22 +127,35 @@ function DownloadsPage() {
         </motion.div>
       </PageContainer>
 
-      <PageContainer className="pt-12 sm:pt-16 pb-8">
+      {/* ═══════════ SEÇÃO 1: MAIS ACESSADOS ═══════════ */}
+      <PageContainer className="pt-16 sm:pt-20 pb-8">
+        <SectionHeader icon={Flame} tag="Destaques" title="Mais Acessados" count={featuredTracks.length} />
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+          {featuredTracks.map((track, i) => (
+            <motion.div
+              key={track.id}
+              initial={{ opacity: 0, y: 16, scale: 0.97 }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-30px" }}
+              transition={{ duration: 0.6, delay: i * 0.06, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <TrackCard track={track} index={i} />
+            </motion.div>
+          ))}
+        </div>
+      </PageContainer>
+
+      {/* ═══════════ SEÇÃO 2: LOUVORES EXCLUSIVOS ═══════════ */}
+      <PageContainer className="pt-16 sm:pt-20 pb-8">
+        <SectionHeader icon={Star} tag="Coleção Completa" title="Louvores Exclusivos" count={filtered.length} />
+
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 0.6 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
         >
-          <div className="flex items-center gap-3 mb-10">
-            <div className="w-px h-5 bg-gold/15" />
-            <h2 className="text-[11px] font-semibold uppercase tracking-[0.4em] text-muted-foreground/40">
-              Coleção Completa
-            </h2>
-            <span className="ml-auto text-[10px] text-muted-foreground/30 font-medium">
-              {filtered.length} canções
-            </span>
-          </div>
-
           <div className="mb-10 -mx-4 sm:mx-0 px-4 sm:px-0 overflow-x-auto scrollbar-none">
             <div className="flex gap-1 pb-1 min-w-max sm:min-w-0 sm:flex-wrap">
               {categories.map((cat) => (
@@ -137,8 +180,9 @@ function DownloadsPage() {
             <motion.div
               key={track.id}
               initial={{ opacity: 0, y: 16, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.6, delay: 0.7 + i * 0.04, ease: [0.22, 1, 0.36, 1] }}
+              whileInView={{ opacity: 1, y: 0, scale: 1 }}
+              viewport={{ once: true, margin: "-20px" }}
+              transition={{ duration: 0.6, delay: i * 0.03, ease: [0.22, 1, 0.36, 1] }}
             >
               <TrackCard track={track} index={i} />
             </motion.div>
@@ -170,15 +214,89 @@ function DownloadsPage() {
             </Button>
           </motion.div>
         </motion.div>
+      </PageContainer>
+
+      {/* ═══════════ SEÇÃO 3: CONTEÚDOS ═══════════ */}
+      <PageContainer className="pt-16 sm:pt-20 pb-8">
+        <SectionHeader icon={BookOpen} tag="Recursos" title="Conteúdos" />
 
         <motion.div
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-40px" }}
-          className="mt-20 text-center"
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5"
+        >
+          {[
+            { title: "Devocional Diário", desc: "Reflexões breves para iniciar o dia com propósito e presença." },
+            { title: "Guia de Oração", desc: "Um roteiro para seus momentos de intimidade com Deus." },
+            { title: "Letras dos Louvores", desc: "Todas as letras para acompanhar e meditar enquanto ouve." },
+          ].map((item, i) => (
+            <motion.div
+              key={item.title}
+              variants={fadeUp}
+              custom={i * 0.1}
+              className="group relative rounded-2xl border border-border/10 bg-card/10 p-7 transition-all duration-500 hover:border-gold/10 hover:bg-card/15"
+            >
+              <div className="flex items-center gap-2 mb-4">
+                <BookOpen className="h-4 w-4 text-gold/30" />
+                <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-gold/30 bg-gold/[0.06] rounded-full px-2.5 py-0.5">
+                  Em breve
+                </span>
+              </div>
+              <h3 className="font-display text-[15px] font-bold text-foreground/75 tracking-tight mb-2">{item.title}</h3>
+              <p className="text-[12px] leading-[2] text-muted-foreground/35 font-light">{item.desc}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </PageContainer>
+
+      {/* ═══════════ SEÇÃO 4: PRODUTOS ═══════════ */}
+      <PageContainer className="pt-16 sm:pt-20 pb-8">
+        <SectionHeader icon={ShoppingBag} tag="Loja" title="Produtos" />
+
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-40px" }}
+          className="grid sm:grid-cols-2 gap-5"
+        >
+          {[
+            { title: "Paz em Canção — Vol. 2", desc: "Uma nova coleção de louvores inéditos está sendo preparada com o mesmo cuidado e propósito." },
+            { title: "Kit Adoração em Família", desc: "Materiais especiais para viver momentos de adoração com quem você ama." },
+          ].map((item, i) => (
+            <motion.div
+              key={item.title}
+              variants={fadeUp}
+              custom={i * 0.1}
+              className="group relative rounded-2xl border border-border/10 bg-card/10 p-7 transition-all duration-500 hover:border-gold/10 hover:bg-card/15"
+            >
+              <div className="flex items-center gap-2 mb-4">
+                <ShoppingBag className="h-4 w-4 text-gold/30" />
+                <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-gold/30 bg-gold/[0.06] rounded-full px-2.5 py-0.5">
+                  Em breve
+                </span>
+              </div>
+              <h3 className="font-display text-[15px] font-bold text-foreground/75 tracking-tight mb-2">{item.title}</h3>
+              <p className="text-[12px] leading-[2] text-muted-foreground/35 font-light">{item.desc}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+      </PageContainer>
+
+      {/* ═══════════ EXCLUSIVIDADE ═══════════ */}
+      <PageContainer className="pt-12 pb-8">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-40px" }}
+          className="text-center"
         >
           <motion.div variants={fadeUp} custom={0}>
             <div className="mx-auto h-px w-32 bg-gradient-to-r from-transparent via-gold/10 to-transparent mb-8" />
+          </motion.div>
+          <motion.div variants={fadeUp} custom={0.1} className="flex items-center justify-center gap-2 mb-3">
+            <Lock className="h-3 w-3 text-gold/25" />
+            <span className="text-[9px] font-semibold uppercase tracking-[0.4em] text-gold/30">Acesso Exclusivo</span>
           </motion.div>
           <motion.p variants={fadeUp} custom={0.15} className="text-[11px] leading-[2.2] text-muted-foreground/30 font-light italic max-w-sm mx-auto">
             Esta coleção é exclusiva e disponível apenas para membros. Não está disponível em plataformas públicas.
