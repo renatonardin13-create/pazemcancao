@@ -467,14 +467,13 @@ function LoginPage() {
                         <button
                           type="submit"
                           disabled={loading}
-                          className="w-full flex items-center justify-center gap-2.5 rounded-xl h-12 text-[12px] font-semibold tracking-wider uppercase bg-gold/15 text-gold/70 border border-gold/12 hover:bg-gold/22 hover:text-gold/80 transition-all duration-500 active:scale-[0.98] disabled:opacity-40"
+                          className="w-full flex items-center justify-center gap-2.5 rounded-xl h-12 text-[13px] font-bold tracking-wider bg-gold text-background border border-gold/80 hover:bg-gold/90 transition-all duration-500 active:scale-[0.98] disabled:opacity-40"
                         >
                           {loading ? (
-                            <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-gold/20 border-t-gold/50" />
+                            <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-background/20 border-t-background/50" />
                           ) : (
                             <>
                               Entrar
-                              <ArrowRight className="h-3.5 w-3.5" />
                             </>
                           )}
                         </button>
