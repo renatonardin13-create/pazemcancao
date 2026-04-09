@@ -9,6 +9,7 @@ import {
   Video,
   BookText,
   BarChart3,
+  Music,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
