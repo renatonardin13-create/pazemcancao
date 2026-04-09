@@ -199,7 +199,16 @@ function DownloadsPage() {
 
       {/* ═══════════ SEÇÃO 3: CONTEÚDOS ═══════════ */}
       <PageContainer className="pt-16 sm:pt-20 pb-8">
-        <SectionHeader icon={BookOpen} tag="Recursos" title="Conteúdos" />
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-border/10 to-transparent mb-10" />
+        <div className="flex items-center gap-3 mb-10">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/10">
+            <BookOpen className="h-3.5 w-3.5 text-gold/45" />
+          </div>
+          <div>
+            <p className="text-[9px] font-semibold uppercase tracking-[0.4em] text-gold/35">Recursos</p>
+            <h2 className="text-[14px] font-bold text-foreground/80 tracking-tight mt-0.5">Conteúdos</h2>
+          </div>
+        </div>
 
         <motion.div
           initial="hidden"
@@ -233,7 +242,16 @@ function DownloadsPage() {
 
       {/* ═══════════ SEÇÃO 4: PRODUTOS ═══════════ */}
       <PageContainer className="pt-16 sm:pt-20 pb-8">
-        <SectionHeader icon={ShoppingBag} tag="Loja" title="Produtos" />
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-border/10 to-transparent mb-10" />
+        <div className="flex items-center gap-3 mb-10">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/10">
+            <ShoppingBag className="h-3.5 w-3.5 text-gold/45" />
+          </div>
+          <div>
+            <p className="text-[9px] font-semibold uppercase tracking-[0.4em] text-gold/35">Loja</p>
+            <h2 className="text-[14px] font-bold text-foreground/80 tracking-tight mt-0.5">Produtos</h2>
+          </div>
+        </div>
 
         <motion.div
           initial="hidden"
