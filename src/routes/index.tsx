@@ -85,7 +85,7 @@ function LandingPage() {
           animate="visible"
           variants={fadeUp}
           custom={1.0}
-          className="relative z-10 mb-8 mt-12"
+          className="relative z-10 mb-8 mt-16"
         >
           <Link
             to="/login"
