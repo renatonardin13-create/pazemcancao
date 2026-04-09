@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import productBox from "@/assets/product-box.png";
 import { Mail, Lock, ArrowRight, ShieldCheck, KeyRound, ArrowLeft, CheckCircle, ShieldAlert, Music, User, FileText } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
