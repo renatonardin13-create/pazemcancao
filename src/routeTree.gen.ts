@@ -15,10 +15,12 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated.perfil'
+import { Route as AuthenticatedMusicasRouteImport } from './routes/_authenticated.musicas'
 import { Route as AuthenticatedDownloadsRouteImport } from './routes/_authenticated.downloads'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated.admin.index'
 import { Route as ApiWebhookKiwifyRouteImport } from './routes/api/webhook/kiwify'
+import { Route as AuthenticatedMusicasTrackIdRouteImport } from './routes/_authenticated.musicas.$trackId'
 import { Route as AuthenticatedLouvorTrackIdRouteImport } from './routes/_authenticated.louvor.$trackId'
 import { Route as AuthenticatedConteudoTrackIdRouteImport } from './routes/_authenticated.conteudo.$trackId'
 import { Route as AuthenticatedAdminTracksRouteImport } from './routes/_authenticated.admin.tracks'
@@ -55,6 +57,11 @@ const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
   path: '/perfil',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedMusicasRoute = AuthenticatedMusicasRouteImport.update({
+  id: '/musicas',
+  path: '/musicas',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedDownloadsRoute = AuthenticatedDownloadsRouteImport.update({
   id: '/downloads',
   path: '/downloads',
@@ -75,6 +82,12 @@ const ApiWebhookKiwifyRoute = ApiWebhookKiwifyRouteImport.update({
   path: '/api/webhook/kiwify',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedMusicasTrackIdRoute =
+  AuthenticatedMusicasTrackIdRouteImport.update({
+    id: '/$trackId',
+    path: '/$trackId',
+    getParentRoute: () => AuthenticatedMusicasRoute,
+  } as any)
 const AuthenticatedLouvorTrackIdRoute =
   AuthenticatedLouvorTrackIdRouteImport.update({
     id: '/louvor/$trackId',
@@ -119,11 +132,13 @@ export interface FileRoutesByFullPath {
   '/termos': typeof TermosRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/downloads': typeof AuthenticatedDownloadsRoute
+  '/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/perfil': typeof AuthenticatedPerfilRoute
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/admin/tracks': typeof AuthenticatedAdminTracksRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
+  '/musicas/$trackId': typeof AuthenticatedMusicasTrackIdRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
@@ -135,11 +150,13 @@ export interface FileRoutesByTo {
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
   '/downloads': typeof AuthenticatedDownloadsRoute
+  '/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/perfil': typeof AuthenticatedPerfilRoute
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/admin/tracks': typeof AuthenticatedAdminTracksRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
+  '/musicas/$trackId': typeof AuthenticatedMusicasTrackIdRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
@@ -154,11 +171,13 @@ export interface FileRoutesById {
   '/termos': typeof TermosRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/downloads': typeof AuthenticatedDownloadsRoute
+  '/_authenticated/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/_authenticated/admin/tracks': typeof AuthenticatedAdminTracksRoute
   '/_authenticated/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/_authenticated/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
+  '/_authenticated/musicas/$trackId': typeof AuthenticatedMusicasTrackIdRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
@@ -173,11 +192,13 @@ export interface FileRouteTypes {
     | '/termos'
     | '/admin'
     | '/downloads'
+    | '/musicas'
     | '/perfil'
     | '/admin/courses'
     | '/admin/tracks'
     | '/conteudo/$trackId'
     | '/louvor/$trackId'
+    | '/musicas/$trackId'
     | '/api/webhook/kiwify'
     | '/admin/'
     | '/admin/courses/$courseId'
@@ -189,11 +210,13 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/termos'
     | '/downloads'
+    | '/musicas'
     | '/perfil'
     | '/admin/courses'
     | '/admin/tracks'
     | '/conteudo/$trackId'
     | '/louvor/$trackId'
+    | '/musicas/$trackId'
     | '/api/webhook/kiwify'
     | '/admin'
     | '/admin/courses/$courseId'
@@ -207,11 +230,13 @@ export interface FileRouteTypes {
     | '/termos'
     | '/_authenticated/admin'
     | '/_authenticated/downloads'
+    | '/_authenticated/musicas'
     | '/_authenticated/perfil'
     | '/_authenticated/admin/courses'
     | '/_authenticated/admin/tracks'
     | '/_authenticated/conteudo/$trackId'
     | '/_authenticated/louvor/$trackId'
+    | '/_authenticated/musicas/$trackId'
     | '/api/webhook/kiwify'
     | '/_authenticated/admin/'
     | '/_authenticated/admin/courses/$courseId'
@@ -271,6 +296,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPerfilRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/musicas': {
+      id: '/_authenticated/musicas'
+      path: '/musicas'
+      fullPath: '/musicas'
+      preLoaderRoute: typeof AuthenticatedMusicasRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/downloads': {
       id: '/_authenticated/downloads'
       path: '/downloads'
@@ -298,6 +330,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/api/webhook/kiwify'
       preLoaderRoute: typeof ApiWebhookKiwifyRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/musicas/$trackId': {
+      id: '/_authenticated/musicas/$trackId'
+      path: '/$trackId'
+      fullPath: '/musicas/$trackId'
+      preLoaderRoute: typeof AuthenticatedMusicasTrackIdRouteImport
+      parentRoute: typeof AuthenticatedMusicasRoute
     }
     '/_authenticated/louvor/$trackId': {
       id: '/_authenticated/louvor/$trackId'
@@ -376,9 +415,21 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
 const AuthenticatedAdminRouteWithChildren =
   AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
 
+interface AuthenticatedMusicasRouteChildren {
+  AuthenticatedMusicasTrackIdRoute: typeof AuthenticatedMusicasTrackIdRoute
+}
+
+const AuthenticatedMusicasRouteChildren: AuthenticatedMusicasRouteChildren = {
+  AuthenticatedMusicasTrackIdRoute: AuthenticatedMusicasTrackIdRoute,
+}
+
+const AuthenticatedMusicasRouteWithChildren =
+  AuthenticatedMusicasRoute._addFileChildren(AuthenticatedMusicasRouteChildren)
+
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedDownloadsRoute: typeof AuthenticatedDownloadsRoute
+  AuthenticatedMusicasRoute: typeof AuthenticatedMusicasRouteWithChildren
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedConteudoTrackIdRoute: typeof AuthenticatedConteudoTrackIdRoute
   AuthenticatedLouvorTrackIdRoute: typeof AuthenticatedLouvorTrackIdRoute
@@ -387,6 +438,7 @@ interface AuthenticatedRouteChildren {
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedDownloadsRoute: AuthenticatedDownloadsRoute,
+  AuthenticatedMusicasRoute: AuthenticatedMusicasRouteWithChildren,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedConteudoTrackIdRoute: AuthenticatedConteudoTrackIdRoute,
   AuthenticatedLouvorTrackIdRoute: AuthenticatedLouvorTrackIdRoute,
