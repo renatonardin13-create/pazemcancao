@@ -53,7 +53,7 @@ export function TrackCard({ track, index }: TrackCardProps) {
 
   return (
     <Link
-      to="/louvor/$trackId"
+      to="/conteudo/$trackId"
       params={{ trackId: String(track.id) }}
       className="group relative cursor-pointer h-full block"
     >
