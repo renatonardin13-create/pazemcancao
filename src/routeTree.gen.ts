@@ -18,6 +18,7 @@ import { Route as AuthenticatedDownloadsRouteImport } from './routes/_authentica
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
 import { Route as ApiWebhookKiwifyRouteImport } from './routes/api/webhook/kiwify'
 import { Route as AuthenticatedLouvorTrackIdRouteImport } from './routes/_authenticated.louvor.$trackId'
+import { Route as AuthenticatedConteudoTrackIdRouteImport } from './routes/_authenticated.conteudo.$trackId'
 
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
@@ -64,6 +65,12 @@ const AuthenticatedLouvorTrackIdRoute =
     path: '/louvor/$trackId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedConteudoTrackIdRoute =
+  AuthenticatedConteudoTrackIdRouteImport.update({
+    id: '/conteudo/$trackId',
+    path: '/conteudo/$trackId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -72,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/termos': typeof TermosRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/downloads': typeof AuthenticatedDownloadsRoute
+  '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
 }
@@ -82,6 +90,7 @@ export interface FileRoutesByTo {
   '/termos': typeof TermosRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/downloads': typeof AuthenticatedDownloadsRoute
+  '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
 }
@@ -94,6 +103,7 @@ export interface FileRoutesById {
   '/termos': typeof TermosRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/downloads': typeof AuthenticatedDownloadsRoute
+  '/_authenticated/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/_authenticated/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
 }
@@ -106,6 +116,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/admin'
     | '/downloads'
+    | '/conteudo/$trackId'
     | '/louvor/$trackId'
     | '/api/webhook/kiwify'
   fileRoutesByTo: FileRoutesByTo
@@ -116,6 +127,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/admin'
     | '/downloads'
+    | '/conteudo/$trackId'
     | '/louvor/$trackId'
     | '/api/webhook/kiwify'
   id:
@@ -127,6 +139,7 @@ export interface FileRouteTypes {
     | '/termos'
     | '/_authenticated/admin'
     | '/_authenticated/downloads'
+    | '/_authenticated/conteudo/$trackId'
     | '/_authenticated/louvor/$trackId'
     | '/api/webhook/kiwify'
   fileRoutesById: FileRoutesById
@@ -205,18 +218,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedLouvorTrackIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/conteudo/$trackId': {
+      id: '/_authenticated/conteudo/$trackId'
+      path: '/conteudo/$trackId'
+      fullPath: '/conteudo/$trackId'
+      preLoaderRoute: typeof AuthenticatedConteudoTrackIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRoute
   AuthenticatedDownloadsRoute: typeof AuthenticatedDownloadsRoute
+  AuthenticatedConteudoTrackIdRoute: typeof AuthenticatedConteudoTrackIdRoute
   AuthenticatedLouvorTrackIdRoute: typeof AuthenticatedLouvorTrackIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRoute,
   AuthenticatedDownloadsRoute: AuthenticatedDownloadsRoute,
+  AuthenticatedConteudoTrackIdRoute: AuthenticatedConteudoTrackIdRoute,
   AuthenticatedLouvorTrackIdRoute: AuthenticatedLouvorTrackIdRoute,
 }
 
