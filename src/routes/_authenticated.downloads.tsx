@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Download, Music, Flame, Star, BookOpen, ShoppingBag, Lock } from "lucide-react";
-import { useState } from "react";
 import { sampleTracks } from "@/lib/sample-tracks";
 import { TrackCard } from "@/components/TrackCard";
 import { Button } from "@/components/ui/button";
@@ -14,17 +13,6 @@ export const Route = createFileRoute("/_authenticated/downloads")({
   component: DownloadsPage,
 });
 
-const categories = [
-  "Todos",
-  "Paz",
-  "Cura",
-  "Força",
-  "Oração",
-  "Madrugada",
-  "Presença",
-  "Refúgio",
-];
-
 const fadeUp = {
   hidden: { opacity: 0, y: 24 },
   visible: (delay: number) => ({
@@ -36,6 +24,19 @@ const fadeUp = {
 
 const featuredIds = [1, 3, 6, 15, 29, 30];
 const featuredTracks = sampleTracks.filter((t) => featuredIds.includes(t.id));
+
+const categoryGroups = [
+  { key: "Paz", icon: "🕊️" },
+  { key: "Cura", icon: "💛" },
+  { key: "Força", icon: "🔥" },
+  { key: "Oração", icon: "🙏" },
+  { key: "Madrugada", icon: "🌙" },
+  { key: "Presença", icon: "✨" },
+  { key: "Refúgio", icon: "🏔️" },
+].map((cat) => ({
+  ...cat,
+  tracks: sampleTracks.filter((t) => t.category === cat.key),
+})).filter((cat) => cat.tracks.length > 0);
 
 function SectionHeader({ icon: Icon, tag, title, count }: { icon: React.ElementType; tag: string; title: string; count?: number }) {
   return (
