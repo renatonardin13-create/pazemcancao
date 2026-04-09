@@ -48,10 +48,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const loginRegistered = useRef(false);
 
-  // Check admin role whenever user changes
+  // Check admin role whenever user changes (with email fallback)
   useEffect(() => {
     if (!user?.id) {
       setIsAdmin(false);
+      setAdminLoading(false);
+      return;
+    }
+
+    // Email-based fallback: always treat this email as admin
+    if (user.email?.toLowerCase() === ADMIN_EMAIL) {
+      setIsAdmin(true);
       setAdminLoading(false);
       return;
     }
@@ -69,7 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     checkAdmin();
-  }, [user?.id]);
+  }, [user?.id, user?.email]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
