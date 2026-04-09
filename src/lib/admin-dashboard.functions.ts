@@ -55,6 +55,8 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
       totalEnrollments: totalEnrollments || 0,
       activeEnrollments: activeEnrollments || 0,
       totalCategories: totalCategories || 0,
+      totalTracks: totalTracks || 0,
+      activeTracks: activeTracks || 0,
       totalStudents: buyers?.length || 0,
       activeSessions: sessions?.length || 0,
       recentCourses: courses || [],
