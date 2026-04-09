@@ -138,17 +138,6 @@ function LandingPage() {
             </motion.p>
           </motion.div>
         </div>
-
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 2.5, duration: 1 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-10"
-        >
-          <span className="text-[8px] uppercase tracking-[0.5em] text-muted-foreground/20">Descubra</span>
-          <div className="w-px h-10 bg-gradient-to-b from-gold/20 to-transparent animate-float-slow" />
-        </motion.div>
       </section>
 
       {/* ═══════════════════ EMOTIONAL BRIDGE ═══════════════════ */}
