@@ -63,27 +63,8 @@ function LandingPage() {
               <img src={logo} alt="Paz em Canção" className="h-20 sm:h-28 object-contain mx-auto" />
             </motion.div>
 
-            {/* Tag */}
-            <motion.p
-              variants={fadeUp}
-              custom={0.6}
-              className="mb-7 text-[10px] font-semibold uppercase tracking-[0.7em] text-gold/60"
-            >
-              Refúgio Sonoro
-            </motion.p>
 
-            {/* Title */}
-            <motion.h1
-              variants={fadeUp}
-              custom={0.8}
-              className="font-display text-[3.2rem] sm:text-[4rem] lg:text-[5rem] font-bold leading-[1] tracking-[-0.02em] text-foreground"
-            >
-              Paz em{" "}
-              <span className="relative">
-                <span className="text-gold">Canção</span>
-                <span className="absolute -bottom-2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-gold/30 to-transparent" />
-              </span>
-            </motion.h1>
+            {/* Divider */}
 
             {/* Divider */}
             <motion.div variants={fadeUp} custom={1}>
