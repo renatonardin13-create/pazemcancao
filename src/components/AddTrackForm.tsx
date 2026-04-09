@@ -48,22 +48,21 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
         .from("tracks")
         .getPublicUrl(fileName);
 
-      // 2. Insert track record
-      const { data: track, error: insertError } = await supabase
-        .from("tracks")
-        .insert({
+      setUploading(false);
+
+      // 2. Insert track via server function (bypasses RLS)
+      const result = await createTrack({
+        data: {
           title: title.trim(),
           category,
           duration: duration || "0:00",
-          description: description || null,
           storage_path: fileName,
           download_url: urlData.publicUrl,
-          is_active: true,
-        })
-        .select()
-        .single();
+          description: description || undefined,
+        },
+      });
 
-      if (insertError) throw new Error("Erro ao salvar: " + insertError.message);
+      const track = result.track;
 
       setUploading(false);
       setGeneratingCover(true);
