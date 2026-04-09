@@ -2,30 +2,13 @@ import { LogoBrand } from "./LogoBrand";
 import { LogOut, Settings } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 
 interface AppHeaderProps {
   showLogout?: boolean;
 }
 
 export function AppHeader({ showLogout = true }: AppHeaderProps) {
-  const { logout, user } = useAuth();
-
-  const { data: roleData } = useQuery({
-    queryKey: ["user-role", user?.id],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user!.id)
-        .eq("role", "admin")
-        .maybeSingle();
-      return { isAdmin: !!data };
-    },
-    enabled: !!user,
-    staleTime: 1000 * 60 * 10,
-  });
+  const { logout, isAdmin, adminLoading } = useAuth();
 
   return (
     <header className="sticky top-0 z-40 bg-background/60 backdrop-blur-2xl">
@@ -35,7 +18,7 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
         <LogoBrand size="md" showSubtitle />
 
         <div className="flex items-center gap-1">
-          {roleData?.isAdmin && (
+          {!adminLoading && isAdmin && (
             <Link
               to="/admin"
               className="group flex items-center gap-2 rounded-xl px-3 py-2 text-muted-foreground/35 hover:text-gold/60 hover:bg-muted/15 transition-all duration-500"

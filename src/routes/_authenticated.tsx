@@ -10,7 +10,7 @@ export const Route = createFileRoute("/_authenticated")({
 });
 
 function AuthenticatedLayout() {
-  const { isAuthenticated, loading, logout, user, blocked, blockMessage } = useAuth();
+  const { isAuthenticated, loading, adminLoading, isAdmin, logout, user, blocked, blockMessage } = useAuth();
   const navigate = useNavigate();
 
   const [accessData, setAccessData] = useState<{ hasAccess: boolean; buyer: any } | null>(null);
@@ -18,9 +18,22 @@ function AuthenticatedLayout() {
 
   useEffect(() => {
     if (!isAuthenticated) {
+      setAccessData(null);
       setAccessLoading(false);
       return;
     }
+
+    if (adminLoading) {
+      setAccessLoading(true);
+      return;
+    }
+
+    if (isAdmin) {
+      setAccessData({ hasAccess: true, buyer: { nome: "Administrador", product_name: null } });
+      setAccessLoading(false);
+      return;
+    }
+
     let cancelled = false;
     checkBuyerAccess().then((result) => {
       if (!cancelled) {
@@ -31,9 +44,9 @@ function AuthenticatedLayout() {
       if (!cancelled) setAccessLoading(false);
     });
     return () => { cancelled = true; };
-  }, [isAuthenticated, user?.email]);
+  }, [isAuthenticated, adminLoading, isAdmin, user?.email]);
 
-  if (loading || (isAuthenticated && accessLoading)) {
+  if (loading || adminLoading || (isAuthenticated && !isAdmin && accessLoading)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_40%,var(--color-gold)/0.025,transparent_70%)]" />
@@ -90,7 +103,7 @@ function AuthenticatedLayout() {
     return <RestrictedAccessCard />;
   }
 
-  if (!accessData?.hasAccess) {
+  if (!isAdmin && !accessData?.hasAccess) {
     const handleLogout = async () => {
       await logout();
       navigate({ to: "/login" });
