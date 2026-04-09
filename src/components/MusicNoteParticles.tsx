@@ -12,14 +12,14 @@ interface Particle {
   opacity: number;
 }
 
-const particles: Particle[] = Array.from({ length: 18 }, (_, i) => ({
+const particles: Particle[] = Array.from({ length: 22 }, (_, i) => ({
   id: i,
   note: NOTES[i % NOTES.length],
   x: `${5 + Math.random() * 90}%`,
-  delay: Math.random() * 8,
-  duration: 6 + Math.random() * 8,
-  size: 10 + Math.random() * 14,
-  opacity: 0.06 + Math.random() * 0.12,
+  delay: Math.random() * 6,
+  duration: 8 + Math.random() * 10,
+  size: 14 + Math.random() * 18,
+  opacity: 0.12 + Math.random() * 0.18,
 }));
 
 export function MusicNoteParticles() {

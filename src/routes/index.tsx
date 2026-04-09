@@ -58,9 +58,9 @@ function LandingPage() {
             animate="visible"
             className="flex flex-col items-center"
           >
-            {/* Cross icon */}
+            {/* Logo */}
             <motion.div variants={fadeUp} custom={0.4} className="mb-8">
-              <img src={logo} alt="Paz em Canção" className="h-20 sm:h-28 object-contain mx-auto" />
+              <img src={logo} alt="Paz em Canção" className="h-[150px] sm:h-[200px] object-contain mx-auto drop-shadow-[0_0_30px_rgba(212,175,55,0.15)]" />
             </motion.div>
 
 
