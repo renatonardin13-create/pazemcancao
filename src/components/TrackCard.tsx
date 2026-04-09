@@ -57,7 +57,12 @@ export function TrackCard({ track, index }: TrackCardProps) {
       params={{ trackId: String(track.id) }}
       className="group relative cursor-pointer h-full block"
     >
-      <div
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: index * 0.08, ease: "easeOut" }}
+        whileHover={{ scale: 1.03, y: -4 }}
+        whileTap={{ scale: 0.98 }}
         className={`relative rounded-3xl border transition-all duration-700 overflow-hidden h-full flex flex-col ${
           isPlaying
             ? "border-gold/25 shadow-[0_8px_50px_-12px] shadow-gold/15"
