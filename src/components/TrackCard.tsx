@@ -1,5 +1,6 @@
 import { Play, Pause, Download, Music } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { motion } from "framer-motion";
 import type { Track } from "@/lib/sample-tracks";
 import { usePlayer } from "@/hooks/use-player";
 
@@ -56,7 +57,12 @@ export function TrackCard({ track, index }: TrackCardProps) {
       params={{ trackId: String(track.id) }}
       className="group relative cursor-pointer h-full block"
     >
-      <div
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: index * 0.08, ease: "easeOut" }}
+        whileHover={{ scale: 1.03, y: -4 }}
+        whileTap={{ scale: 0.98 }}
         className={`relative rounded-3xl border transition-all duration-700 overflow-hidden h-full flex flex-col ${
           isPlaying
             ? "border-gold/25 shadow-[0_8px_50px_-12px] shadow-gold/15"
@@ -67,6 +73,8 @@ export function TrackCard({ track, index }: TrackCardProps) {
         <div className={`relative h-40 sm:h-44 w-full bg-gradient-to-br ${gradient} overflow-hidden`}>
           {/* Texture overlay */}
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,transparent_30%,rgba(0,0,0,0.4))]" />
+          {/* Soft glow on hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/[0.03] to-white/[0.06] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
           {/* Floating icon */}
           <div className="absolute inset-0 flex items-center justify-center">
@@ -176,7 +184,7 @@ export function TrackCard({ track, index }: TrackCardProps) {
             </button>
           </div>
         </div>
-      </div>
+      </motion.div>
     </Link>
   );
 }
