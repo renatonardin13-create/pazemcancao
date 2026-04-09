@@ -3,7 +3,7 @@ import { AuthProvider } from "@/hooks/use-auth";
 import { PlayerProvider } from "@/hooks/use-player";
 import { GlobalPlayer } from "@/components/GlobalPlayer";
 
-import appCss from "../styles.css?url";
+import "../styles.css";
 
 function NotFoundComponent() {
   return (
@@ -47,7 +47,6 @@ export const Route = createRootRoute({
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/1d01eb3f-19ed-4f5f-9851-be389438ba4b/id-preview-dc89306e--7c271dbb-a0a4-4e86-a882-a3d0882beb59.lovable.app-1775650031233.png" },
     ],
     links: [
-      { rel: "stylesheet", href: appCss },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
