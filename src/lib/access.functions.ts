@@ -6,15 +6,7 @@ export const checkBuyerAccess = createServerFn({ method: 'POST' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
 
-    // Get user email from auth
-    const { data: userData } = await supabase.auth.getUser();
-    const email = userData?.user?.email;
-
-    if (!email) {
-      return { hasAccess: false, buyer: null };
-    }
-
-    // Check if user is admin — admins bypass buyer check
+    // Check if user is admin first — admins bypass buyer check entirely
     const { data: adminRole } = await supabase
       .from('user_roles')
       .select('role')
@@ -24,6 +16,14 @@ export const checkBuyerAccess = createServerFn({ method: 'POST' })
 
     if (adminRole) {
       return { hasAccess: true, buyer: { nome: 'Administrador', product_name: null } };
+    }
+
+    // Get user email from auth
+    const { data: userData } = await supabase.auth.getUser();
+    const email = userData?.user?.email;
+
+    if (!email) {
+      return { hasAccess: false, buyer: null };
     }
 
     const { data: buyer } = await supabase
