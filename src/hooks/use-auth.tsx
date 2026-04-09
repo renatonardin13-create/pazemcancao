@@ -4,6 +4,8 @@ import type { User, Session } from "@supabase/supabase-js";
 import { generateFingerprint } from "@/lib/fingerprint";
 import { registerLogin, validateSession } from "@/lib/security.functions";
 
+const ADMIN_EMAIL = "renatonardin13@gmail.com";
+
 interface AuthState {
   isAuthenticated: boolean;
   user: User | null;
@@ -13,6 +15,7 @@ interface AuthState {
   blocked: boolean;
   blockMessage: string | null;
   isAdmin: boolean;
+  role: "admin" | "user";
   login: (email: string, password: string) => Promise<{ error: string | null }>;
   logout: () => Promise<void>;
 }
@@ -45,10 +48,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const loginRegistered = useRef(false);
 
-  // Check admin role whenever user changes
+  // Check admin role whenever user changes (with email fallback)
   useEffect(() => {
     if (!user?.id) {
       setIsAdmin(false);
+      setAdminLoading(false);
+      return;
+    }
+
+    // Email-based fallback: always treat this email as admin
+    if (user.email?.toLowerCase() === ADMIN_EMAIL) {
+      setIsAdmin(true);
       setAdminLoading(false);
       return;
     }
@@ -66,7 +76,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     checkAdmin();
-  }, [user?.id]);
+  }, [user?.id, user?.email]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -121,6 +131,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     if (authData.user?.id) {
+      // Email-based fallback for admin
+      if (email.toLowerCase() === ADMIN_EMAIL) {
+        setIsAdmin(true);
+        loginRegistered.current = true;
+        return { error: null };
+      }
+
       const { data: adminRole } = await supabase
         .from("user_roles")
         .select("role")
@@ -182,6 +199,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         blocked,
         blockMessage,
         isAdmin,
+        role: isAdmin ? "admin" as const : "user" as const,
         login,
         logout,
       }}
