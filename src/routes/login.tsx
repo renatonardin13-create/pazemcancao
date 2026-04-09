@@ -341,31 +341,12 @@ function LoginPage() {
       <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-background to-transparent" />
       <div className="absolute right-0 top-1/4 bottom-1/4 w-px bg-gradient-to-b from-transparent via-gold/10 to-transparent" />
 
-      <div className="relative z-10 max-w-xs text-center px-10 animate-in fade-in slide-in-from-left-8 duration-[1200ms]">
-        <div className="mx-auto mb-12 w-px h-16 bg-gradient-to-b from-transparent via-gold/15 to-transparent" />
-
-        <h2 className="font-display text-4xl font-bold text-foreground tracking-tight leading-[1.08]">
-          Seu espaço<br />de paz
-        </h2>
-
-        <div className="mx-auto mt-6 h-px w-12 bg-gradient-to-r from-transparent via-gold/12 to-transparent" />
-
-        <p className="mt-6 text-[11px] font-medium text-gold/55 tracking-[0.3em] uppercase">
-          30 Louvores Inéditos
-        </p>
-
-        <p className="mt-10 text-[14px] leading-[2.2] text-muted-foreground/70 font-light">
-          Um refúgio sonoro para momentos de oração,
-          quietude e renovação espiritual.
-        </p>
-
-        <div className="mt-14 py-6">
-          <p className="text-[13px] italic text-muted-foreground/65 leading-[2]">
-            "Essas canções se tornaram parte
-            da minha rotina de oração."
-          </p>
-          <div className="mt-5 h-px w-6 mx-auto bg-gold/10" />
-        </div>
+      <div className="relative z-10 flex items-center justify-center px-10 animate-in fade-in slide-in-from-left-8 duration-[1200ms]">
+        <img
+          src={productBox}
+          alt="Paz em Canção — Coleção Exclusiva com 30 Louvores Inéditos"
+          className="max-h-[70vh] w-auto object-contain drop-shadow-[0_0_40px_rgba(212,175,55,0.15)]"
+        />
       </div>
     </div>
   );
