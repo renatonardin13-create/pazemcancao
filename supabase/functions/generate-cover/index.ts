@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
     }
 
     // Generate cover image using Lovable AI
-    const prompt = `capa de música gospel, estilo emocional, fundo bonito, luz suave, cores quentes e espirituais, arte digital cinematográfica, sem texto, sem palavras, tema: ${title}`;
+    const prompt = `Generate a beautiful gospel music album cover. Style: emotional, cinematic digital art, soft divine light, warm spiritual colors. No text, no words, no letters. Theme: ${title}`;
 
     let coverUrl: string | null = null;
 
@@ -80,7 +80,7 @@ Deno.serve(async (req) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            model: "google/gemini-2.5-flash-image",
+            model: "google/gemini-3.1-flash-image-preview",
             messages: [{ role: "user", content: prompt }],
             modalities: ["image", "text"],
           }),
