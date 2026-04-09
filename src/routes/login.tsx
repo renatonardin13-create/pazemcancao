@@ -424,9 +424,6 @@ function LoginPage() {
                         </motion.div>
                       )}
 
-                      {googleButton}
-                      {divider}
-
                       <form onSubmit={handleLogin} className="space-y-5">
                         <div className="space-y-2.5">
                           <Label htmlFor="email" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
