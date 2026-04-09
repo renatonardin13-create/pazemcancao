@@ -15,6 +15,7 @@ import {
 const adminItems = [
   { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
   { title: "Cursos", url: "/admin/courses", icon: BookOpen },
+  { title: "Músicas", url: "/admin/tracks", icon: Music },
   { title: "Categorias", url: "/admin/categories", icon: FolderOpen },
   { title: "Usuários", url: "/admin/users", icon: Users },
 ];
