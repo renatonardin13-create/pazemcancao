@@ -1,10 +1,12 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { Mail, Lock, ArrowRight, ShieldCheck, KeyRound, ArrowLeft, CheckCircle, ShieldAlert, Music } from "lucide-react";
+import { Mail, Lock, ArrowRight, ShieldCheck, KeyRound, ArrowLeft, CheckCircle, ShieldAlert, Music, User, FileText } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
+import { lovable } from "@/integrations/lovable/index";
 import { requestFirstAccess } from "@/lib/first-access.functions";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -12,7 +14,7 @@ export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
 
-type View = "login" | "reset" | "reset-sent" | "new-password" | "success";
+type View = "login" | "signup" | "reset" | "reset-sent" | "new-password" | "success";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -25,6 +27,13 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+
+  // Signup fields
+  const [signupName, setSignupName] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+  const [signupConfirm, setSignupConfirm] = useState("");
+  const [acceptTerms, setAcceptTerms] = useState(false);
 
   useEffect(() => {
     if (!authLoading && isAuthenticated && view !== "success") {
@@ -50,6 +59,35 @@ function LoginPage() {
     return () => subscription.unsubscribe();
   }, []);
 
+  const handleGoogleLogin = async () => {
+    setError("");
+    setLoading(true);
+    try {
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
+      });
+
+      if (result.error) {
+        setError("Não foi possível entrar com Google. Tente novamente.");
+        setLoading(false);
+        return;
+      }
+
+      if (result.redirected) {
+        return;
+      }
+
+      setView("success");
+      setLoading(false);
+      setTimeout(() => {
+        navigate({ to: "/downloads" });
+      }, 2000);
+    } catch {
+      setError("Erro ao conectar com Google. Tente novamente.");
+      setLoading(false);
+    }
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -60,13 +98,51 @@ function LoginPage() {
       setError(result.error);
       setLoading(false);
     } else {
-      // Show success transition
       setView("success");
       setLoading(false);
       setTimeout(() => {
         navigate({ to: "/downloads" });
       }, 2000);
     }
+  };
+
+  const handleSignup = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    if (signupPassword.length < 6) {
+      setError("A senha deve ter pelo menos 6 caracteres.");
+      return;
+    }
+    if (signupPassword !== signupConfirm) {
+      setError("As senhas não coincidem.");
+      return;
+    }
+    if (!acceptTerms) {
+      setError("Você precisa aceitar os termos de uso para continuar.");
+      return;
+    }
+
+    setLoading(true);
+
+    const { error: signupError } = await supabase.auth.signUp({
+      email: signupEmail,
+      password: signupPassword,
+      options: {
+        data: { full_name: signupName },
+      },
+    });
+
+    if (signupError) {
+      setError(signupError.message === "User already registered"
+        ? "Este e-mail já está cadastrado. Tente fazer login."
+        : "Não foi possível criar sua conta. Tente novamente.");
+      setLoading(false);
+      return;
+    }
+
+    setSuccessMsg("Conta criada! Verifique seu e-mail para confirmar o cadastro.");
+    setLoading(false);
   };
 
   const handleResetRequest = async (e: React.FormEvent) => {
@@ -122,7 +198,32 @@ function LoginPage() {
     }, 1500);
   };
 
-  // ═══ BLOCKED STATE (humanized) ═══
+  const googleButton = (
+    <button
+      type="button"
+      onClick={handleGoogleLogin}
+      disabled={loading}
+      className="w-full flex items-center justify-center gap-3 rounded-xl h-12 text-[12px] font-semibold tracking-wider bg-background/60 border border-border/40 text-foreground/80 hover:bg-background/80 hover:border-border/60 transition-all duration-500 active:scale-[0.98] disabled:opacity-40"
+    >
+      <svg className="h-4 w-4" viewBox="0 0 24 24">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      Continuar com Google
+    </button>
+  );
+
+  const divider = (
+    <div className="flex items-center gap-3 my-6">
+      <div className="flex-1 h-px bg-border/20" />
+      <span className="text-[10px] text-muted-foreground/40 uppercase tracking-widest">ou</span>
+      <div className="flex-1 h-px bg-border/20" />
+    </div>
+  );
+
+  // ═══ BLOCKED STATE ═══
   if (blocked) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background relative overflow-hidden px-6">
@@ -304,7 +405,7 @@ function LoginPage() {
                       exit={{ opacity: 0, x: 10 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <div className="mb-9">
+                      <div className="mb-7">
                         <h2 className="text-xl font-bold text-foreground font-display tracking-tight">
                           Acesse seu espaço
                         </h2>
@@ -317,13 +418,16 @@ function LoginPage() {
                         <motion.div
                           initial={{ opacity: 0, y: -8 }}
                           animate={{ opacity: 1, y: 0 }}
-                          className="mb-7 rounded-xl border border-destructive/10 bg-destructive/5 px-4 py-3.5 text-[13px] text-destructive/80 leading-[1.7]"
+                          className="mb-6 rounded-xl border border-destructive/10 bg-destructive/5 px-4 py-3.5 text-[13px] text-destructive/80 leading-[1.7]"
                         >
                           {error}
                         </motion.div>
                       )}
 
-                      <form onSubmit={handleLogin} className="space-y-6">
+                      {googleButton}
+                      {divider}
+
+                      <form onSubmit={handleLogin} className="space-y-5">
                         <div className="space-y-2.5">
                           <Label htmlFor="email" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
                             E-mail
@@ -376,18 +480,194 @@ function LoginPage() {
                         </button>
                       </form>
 
-                      <div className="mt-7 text-center">
+                      <div className="mt-6 text-center space-y-3">
                         <button
                           onClick={() => { setView("reset"); setError(""); }}
                           className="text-[12px] text-gold/55 hover:text-gold/70 transition-colors duration-500 underline underline-offset-4 decoration-gold/15 hover:decoration-gold/30"
                         >
-                          Primeiro acesso ou esqueceu sua senha?
+                          Esqueceu sua senha?
                         </button>
+                        <div>
+                          <button
+                            onClick={() => { setView("signup"); setError(""); setSuccessMsg(""); }}
+                            className="text-[12px] text-muted-foreground/60 hover:text-muted-foreground/80 transition-colors duration-500"
+                          >
+                            Não tem conta? <span className="text-gold/55 underline underline-offset-4 decoration-gold/15">Cadastre-se</span>
+                          </button>
+                        </div>
                       </div>
 
-                      <div className="mt-6 flex items-center justify-center gap-2 text-[10px] text-muted-foreground/50">
+                      <div className="mt-5 flex items-center justify-center gap-2 text-[10px] text-muted-foreground/50">
                         <ShieldCheck className="h-3 w-3 text-gold/25" />
                         Acesso seguro e exclusivo
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* ═══ SIGNUP VIEW ═══ */}
+                  {view === "signup" && (
+                    <motion.div
+                      key="signup"
+                      initial={{ opacity: 0, x: 10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <div className="mb-7">
+                        <h2 className="text-xl font-bold text-foreground font-display tracking-tight">
+                          Criar conta
+                        </h2>
+                        <p className="mt-3 text-[13px] text-muted-foreground/70 leading-[1.8]">
+                          Preencha os dados abaixo para se cadastrar.
+                        </p>
+                      </div>
+
+                      {error && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="mb-6 rounded-xl border border-destructive/10 bg-destructive/5 px-4 py-3.5 text-[13px] text-destructive/80 leading-[1.7]"
+                        >
+                          {error}
+                        </motion.div>
+                      )}
+
+                      {successMsg && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="mb-6 rounded-xl border border-gold/15 bg-gold/5 px-4 py-3.5 text-[13px] text-gold/70 flex items-center gap-2"
+                        >
+                          <CheckCircle className="h-4 w-4 text-gold/70 shrink-0" />
+                          {successMsg}
+                        </motion.div>
+                      )}
+
+                      {!successMsg && (
+                        <>
+                          {googleButton}
+                          {divider}
+
+                          <form onSubmit={handleSignup} className="space-y-4">
+                            <div className="space-y-2">
+                              <Label htmlFor="signup-name" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                                Nome completo
+                              </Label>
+                              <div className="relative">
+                                <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+                                <Input
+                                  id="signup-name"
+                                  type="text"
+                                  placeholder="Seu nome"
+                                  value={signupName}
+                                  onChange={(e) => setSignupName(e.target.value)}
+                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                                  required
+                                />
+                              </div>
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label htmlFor="signup-email" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                                E-mail
+                              </Label>
+                              <div className="relative">
+                                <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+                                <Input
+                                  id="signup-email"
+                                  type="email"
+                                  placeholder="seu@email.com"
+                                  value={signupEmail}
+                                  onChange={(e) => setSignupEmail(e.target.value)}
+                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                                  required
+                                />
+                              </div>
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label htmlFor="signup-password" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                                Senha
+                              </Label>
+                              <div className="relative">
+                                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+                                <Input
+                                  id="signup-password"
+                                  type="password"
+                                  placeholder="Mínimo 6 caracteres"
+                                  value={signupPassword}
+                                  onChange={(e) => setSignupPassword(e.target.value)}
+                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                                  required
+                                  minLength={6}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label htmlFor="signup-confirm" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                                Confirmar senha
+                              </Label>
+                              <div className="relative">
+                                <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+                                <Input
+                                  id="signup-confirm"
+                                  type="password"
+                                  placeholder="Repita a senha"
+                                  value={signupConfirm}
+                                  onChange={(e) => setSignupConfirm(e.target.value)}
+                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                                  required
+                                  minLength={6}
+                                />
+                              </div>
+                            </div>
+
+                            <div className="flex items-start gap-3 pt-1">
+                              <Checkbox
+                                id="terms"
+                                checked={acceptTerms}
+                                onCheckedChange={(checked) => setAcceptTerms(checked === true)}
+                                className="mt-0.5 border-border/40 data-[state=checked]:bg-gold/20 data-[state=checked]:border-gold/30"
+                              />
+                              <label htmlFor="terms" className="text-[11px] text-muted-foreground/60 leading-[1.6] cursor-pointer">
+                                Li e aceito os{" "}
+                                <Link to="/termos" className="text-gold/55 underline underline-offset-2 hover:text-gold/70" target="_blank">
+                                  Termos de Uso
+                                </Link>{" "}
+                                e a{" "}
+                                <Link to="/privacidade" className="text-gold/55 underline underline-offset-2 hover:text-gold/70" target="_blank">
+                                  Política de Privacidade
+                                </Link>
+                              </label>
+                            </div>
+
+                            <button
+                              type="submit"
+                              disabled={loading}
+                              className="w-full flex items-center justify-center gap-2.5 rounded-xl h-12 text-[12px] font-semibold tracking-wider uppercase bg-gold/15 text-gold/70 border border-gold/12 hover:bg-gold/22 hover:text-gold/80 transition-all duration-500 active:scale-[0.98] disabled:opacity-40"
+                            >
+                              {loading ? (
+                                <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-gold/20 border-t-gold/50" />
+                              ) : (
+                                <>
+                                  Criar conta
+                                  <ArrowRight className="h-3.5 w-3.5" />
+                                </>
+                              )}
+                            </button>
+                          </form>
+                        </>
+                      )}
+
+                      <div className="mt-6 text-center">
+                        <button
+                          onClick={() => { setView("login"); setError(""); setSuccessMsg(""); }}
+                          className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground/50 hover:text-muted-foreground/75 transition-colors duration-500"
+                        >
+                          <ArrowLeft className="h-3 w-3" />
+                          Voltar ao login
+                        </button>
                       </div>
                     </motion.div>
                   )}
@@ -406,10 +686,10 @@ function LoginPage() {
                           <KeyRound className="h-5 w-5 text-gold/70" />
                         </div>
                         <h2 className="text-xl font-bold text-foreground font-display tracking-tight">
-                          Primeiro acesso
+                          Recuperar senha
                         </h2>
                         <p className="mt-3 text-[13px] text-muted-foreground/70 leading-[1.8]">
-                          Digite o e-mail da sua compra. Enviaremos um link seguro para você definir sua senha.
+                          Digite seu e-mail. Enviaremos um link seguro para redefinir sua senha.
                         </p>
                       </div>
 
@@ -426,7 +706,7 @@ function LoginPage() {
                       <form onSubmit={handleResetRequest} className="space-y-6">
                         <div className="space-y-2.5">
                           <Label htmlFor="reset-email" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
-                            E-mail da compra
+                            E-mail
                           </Label>
                           <div className="relative">
                             <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
@@ -451,7 +731,7 @@ function LoginPage() {
                             <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-gold/20 border-t-gold/50" />
                           ) : (
                             <>
-                              Enviar link de acesso
+                              Enviar link de recuperação
                               <ArrowRight className="h-3.5 w-3.5" />
                             </>
                           )}
