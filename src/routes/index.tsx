@@ -49,21 +49,7 @@ function LandingPage() {
         {/* Musical note particles */}
         <MusicNoteParticles />
 
-        {/* Top nav */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.3 }}
-          className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-6 sm:px-10 py-6"
-        >
-          <img src={logo} alt="Paz em Canção" className="h-10 sm:h-12 object-contain" />
-          <Link
-            to="/login"
-            className="text-[10px] font-semibold uppercase tracking-[0.25em] text-gold/50 hover:text-gold/80 transition-colors duration-500"
-          >
-            Entrar
-          </Link>
-        </motion.div>
+        {/* Top nav removed per PRD — no header elements above hero */}
 
         {/* Hero content */}
         <div className="relative z-10 max-w-xl text-center px-6">
