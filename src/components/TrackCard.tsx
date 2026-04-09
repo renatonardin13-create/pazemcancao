@@ -1,4 +1,4 @@
-import { Play, Pause, Download } from "lucide-react";
+import { Play, Pause, Download, Music } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import type { Track } from "@/lib/sample-tracks";
 import { usePlayer } from "@/hooks/use-player";
@@ -8,10 +8,32 @@ interface TrackCardProps {
   index: number;
 }
 
+const categoryGradients: Record<string, string> = {
+  Paz: "from-sky-900/40 via-blue-950/30 to-slate-950/50",
+  Cura: "from-amber-900/35 via-yellow-950/25 to-stone-950/50",
+  Força: "from-orange-900/35 via-red-950/25 to-stone-950/50",
+  Oração: "from-violet-900/35 via-purple-950/25 to-slate-950/50",
+  Madrugada: "from-indigo-900/40 via-slate-950/30 to-zinc-950/50",
+  Presença: "from-emerald-900/35 via-teal-950/25 to-slate-950/50",
+  Refúgio: "from-stone-800/35 via-zinc-900/30 to-neutral-950/50",
+};
+
+const categoryEmojis: Record<string, string> = {
+  Paz: "🕊️",
+  Cura: "💛",
+  Força: "🔥",
+  Oração: "🙏",
+  Madrugada: "🌙",
+  Presença: "✨",
+  Refúgio: "🏔️",
+};
+
 export function TrackCard({ track, index }: TrackCardProps) {
   const { currentTrack, playing, progress, toggle } = usePlayer();
   const isThis = currentTrack?.id === track.id;
   const isPlaying = isThis && playing;
+
+  const gradient = categoryGradients[track.category] || categoryGradients["Paz"];
 
   const handlePlay = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -35,46 +57,54 @@ export function TrackCard({ track, index }: TrackCardProps) {
       className="group relative cursor-pointer h-full block"
     >
       <div
-        className={`relative rounded-2xl border transition-all duration-700 overflow-hidden h-full flex flex-col ${
+        className={`relative rounded-3xl border transition-all duration-700 overflow-hidden h-full flex flex-col ${
           isPlaying
-            ? "bg-card/50 border-gold/20 shadow-[0_0_40px_-12px] shadow-gold/10"
-            : "bg-card/10 border-border/10 hover:border-gold/12 hover:bg-card/20"
-        }`}
+            ? "border-gold/25 shadow-[0_8px_50px_-12px] shadow-gold/15"
+            : "border-border/8 shadow-[0_4px_30px_-10px] shadow-black/20 hover:border-gold/15 hover:shadow-[0_8px_40px_-10px] hover:shadow-gold/8"
+        } bg-card/10`}
       >
-        {/* Ambient glow */}
-        {isPlaying && (
-          <div className="pointer-events-none absolute inset-0">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 h-20 w-32 rounded-full bg-gold/[0.04] blur-[50px] animate-breathe" />
-          </div>
-        )}
+        {/* Cover image area */}
+        <div className={`relative h-40 sm:h-44 w-full bg-gradient-to-br ${gradient} overflow-hidden`}>
+          {/* Texture overlay */}
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,transparent_30%,rgba(0,0,0,0.4))]" />
 
-        <div className="relative p-6 sm:p-7 flex flex-col flex-1">
-          {/* Top row: number + category */}
-          <div className="flex items-center justify-between mb-5">
-            <span
-              className={`text-[10px] font-semibold tracking-[0.3em] uppercase transition-colors duration-500 ${
-                isPlaying ? "text-gold/50" : "text-muted-foreground/25"
-              }`}
-            >
-              {String(track.id).padStart(2, "0")}
-            </span>
-            <span
-              className={`text-[9px] font-medium tracking-[0.2em] uppercase rounded-full px-3 py-1 transition-all duration-500 ${
-                isPlaying
-                  ? "bg-gold/10 text-gold/50"
-                  : "bg-muted/5 text-muted-foreground/20"
-              }`}
-            >
-              {track.category}
-            </span>
+          {/* Floating icon */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className={`flex h-16 w-16 items-center justify-center rounded-2xl backdrop-blur-sm transition-all duration-700 ${
+              isPlaying
+                ? "bg-gold/15 border border-gold/25 scale-110"
+                : "bg-white/[0.04] border border-white/[0.06] group-hover:scale-105 group-hover:bg-white/[0.07]"
+            }`}>
+              <Music className={`h-7 w-7 transition-colors duration-500 ${
+                isPlaying ? "text-gold/70" : "text-white/25 group-hover:text-white/40"
+              }`} />
+            </div>
           </div>
 
+          {/* Track number */}
+          <span className="absolute top-4 left-5 text-[10px] font-bold tracking-[0.3em] text-white/15">
+            {String(track.id).padStart(2, "0")}
+          </span>
+
+          {/* Category badge */}
+          <span className="absolute top-4 right-4 text-[9px] font-medium tracking-[0.2em] uppercase rounded-full bg-black/20 backdrop-blur-sm border border-white/[0.06] px-3 py-1 text-white/30">
+            {categoryEmojis[track.category] || ""} {track.category}
+          </span>
+
+          {/* Playing indicator */}
+          {isPlaying && (
+            <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-gold/10 to-transparent" />
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="relative p-5 sm:p-6 flex flex-col flex-1">
           {/* Title */}
           <h3
-            className={`font-display text-[17px] sm:text-lg font-bold tracking-tight leading-snug transition-colors duration-500 ${
+            className={`font-display text-[16px] sm:text-[17px] font-bold tracking-tight leading-snug transition-colors duration-500 ${
               isPlaying
                 ? "text-gold/85"
-                : "text-foreground/80 group-hover:text-foreground/95"
+                : "text-foreground/85 group-hover:text-foreground"
             }`}
           >
             {track.title}
@@ -82,10 +112,10 @@ export function TrackCard({ track, index }: TrackCardProps) {
 
           {/* Description */}
           <p
-            className={`mt-3 text-[12.5px] leading-[2] line-clamp-2 transition-colors duration-500 flex-1 ${
+            className={`mt-2.5 text-[12px] leading-[1.9] line-clamp-2 transition-colors duration-500 flex-1 ${
               isPlaying
                 ? "text-muted-foreground/50"
-                : "text-muted-foreground/30 group-hover:text-muted-foreground/40"
+                : "text-muted-foreground/35 group-hover:text-muted-foreground/45"
             }`}
           >
             {track.description}
@@ -93,8 +123,8 @@ export function TrackCard({ track, index }: TrackCardProps) {
 
           {/* Duration */}
           <p
-            className={`mt-4 text-[10px] tracking-[0.15em] font-medium transition-colors duration-500 ${
-              isPlaying ? "text-gold/35" : "text-muted-foreground/18"
+            className={`mt-3 text-[10px] tracking-[0.15em] font-medium transition-colors duration-500 ${
+              isPlaying ? "text-gold/40" : "text-muted-foreground/20"
             }`}
           >
             {track.duration}
@@ -102,7 +132,7 @@ export function TrackCard({ track, index }: TrackCardProps) {
 
           {/* Progress bar */}
           {isPlaying && (
-            <div className="mt-4 h-[1.5px] rounded-full bg-muted/8 overflow-hidden">
+            <div className="mt-3 h-[2px] rounded-full bg-muted/8 overflow-hidden">
               <div
                 className="h-full rounded-full bg-gradient-to-r from-gold/30 via-gold/55 to-gold/35 transition-all duration-200 ease-linear"
                 style={{ width: `${progress}%` }}
@@ -112,7 +142,7 @@ export function TrackCard({ track, index }: TrackCardProps) {
 
           {/* Actions */}
           <div
-            className={`mt-5 pt-4 border-t border-border/6 flex items-center gap-3 transition-all duration-500 ${
+            className={`mt-4 pt-3.5 border-t border-border/6 flex items-center gap-3 transition-all duration-500 ${
               isPlaying ? "opacity-100" : "opacity-0 group-hover:opacity-100"
             }`}
           >
