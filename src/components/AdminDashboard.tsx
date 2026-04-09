@@ -60,6 +60,13 @@ export function AdminDashboard() {
             icon: Activity,
             color: "text-amber-400/60",
           },
+          {
+            label: "Músicas",
+            value: data?.activeTracks ?? "—",
+            total: data?.totalTracks,
+            icon: Music,
+            color: "text-purple-400/60",
+          },
         ].map((stat) => (
           <div
             key={stat.label}
