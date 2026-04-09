@@ -192,6 +192,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         blocked,
         blockMessage,
         isAdmin,
+        role: isAdmin ? "admin" as const : "user" as const,
         login,
         logout,
       }}
