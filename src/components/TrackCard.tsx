@@ -182,7 +182,7 @@ export function TrackCard({ track, index }: TrackCardProps) {
             </button>
           </div>
         </div>
-      </div>
+      </motion.div>
     </Link>
   );
 }
