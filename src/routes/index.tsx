@@ -60,26 +60,6 @@ function LandingPage() {
               />
             </motion.div>
 
-            {/* CTA */}
-            <motion.div variants={fadeUp} custom={1.0} className="mt-10">
-              <Link
-                to="/login"
-                className="group relative inline-flex items-center gap-3 rounded-full bg-gold/20 text-gold border border-gold/25 px-14 py-5 text-[12px] font-bold tracking-[0.25em] uppercase transition-all duration-700 hover:bg-gold/30 hover:border-gold/40 hover:shadow-[0_0_60px_-12px] hover:shadow-gold/25 active:scale-[0.97]"
-              >
-                <span>Acessar Meu Espaço</span>
-                <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-2" />
-                <span className="absolute inset-0 rounded-full bg-gradient-to-r from-gold/0 via-gold/5 to-gold/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-              </Link>
-            </motion.div>
-
-            {/* Sub-CTA */}
-            <motion.p
-              variants={fadeUp}
-              custom={1.3}
-              className="mt-7 text-[10px] text-muted-foreground/35 tracking-[0.25em] font-light"
-            >
-              Você não está sozinho nessa caminhada
-            </motion.p>
           </motion.div>
         </div>
       </section>
