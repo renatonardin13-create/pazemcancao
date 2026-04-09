@@ -107,49 +107,6 @@ function LandingPage() {
         </div>
       </section>
 
-      {/* ═══════════════════ FINAL CTA ═══════════════════ */}
-      <section className="relative py-28 sm:py-36">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_50%_at_50%_50%,var(--color-gold)/0.03,transparent_70%)]" />
-
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-60px" }}
-          className="mx-auto max-w-md px-6 text-center relative z-10"
-        >
-          <motion.div variants={fadeUp} custom={0}>
-            <div className="mx-auto mb-8 w-px h-16 bg-gradient-to-b from-transparent via-gold/20 to-transparent" />
-          </motion.div>
-
-          <motion.p variants={fadeUp} custom={0.1} className="text-[10px] font-semibold uppercase tracking-[0.5em] text-gold/45 mb-5">
-            Seu Espaço de Paz
-          </motion.p>
-
-          <motion.h2 variants={fadeUp} custom={0.2} className="font-display text-3xl sm:text-4xl font-bold text-foreground/90 tracking-tight leading-tight mb-6">
-            Comece a ouvir<br />agora mesmo
-          </motion.h2>
-
-          <motion.p variants={fadeUp} custom={0.35} className="text-[15px] leading-[2.2] text-muted-foreground/50 font-light mb-12">
-            Acesse seus 30 louvores e permita-se
-            viver momentos de paz e presença divina.
-          </motion.p>
-
-          <motion.div variants={fadeUp} custom={0.5}>
-            <Link
-              to="/login"
-              className="group relative inline-flex items-center gap-3 rounded-full bg-gold/20 text-gold border border-gold/25 px-12 py-5 text-[12px] font-bold tracking-[0.25em] uppercase transition-all duration-700 hover:bg-gold/30 hover:border-gold/40 hover:shadow-[0_0_60px_-12px] hover:shadow-gold/25 active:scale-[0.97]"
-            >
-              Acessar Meus Louvores
-              <ArrowRight className="h-4 w-4 transition-transform duration-500 group-hover:translate-x-2" />
-              <span className="absolute inset-0 rounded-full bg-gradient-to-r from-gold/0 via-gold/5 to-gold/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-            </Link>
-          </motion.div>
-
-          <motion.p variants={fadeUp} custom={0.65} className="mt-8 text-[10px] text-muted-foreground/25 tracking-wider">
-            Acesso imediato após a compra · Suporte dedicado
-          </motion.p>
-        </motion.div>
-      </section>
 
       <FooterLinks variant="full" />
     </div>
