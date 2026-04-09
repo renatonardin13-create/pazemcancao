@@ -12,6 +12,34 @@ function getAdminClient() {
   });
 }
 
+async function getAuthenticatedEmail(
+  admin: ReturnType<typeof getAdminClient>,
+  userId: string,
+  claims?: { email?: unknown }
+) {
+  const claimEmail = typeof claims?.email === 'string' ? claims.email.toLowerCase() : null;
+  if (claimEmail) return claimEmail;
+
+  const { data, error } = await admin.auth.admin.getUserById(userId);
+  if (error) return null;
+
+  return data.user?.email?.toLowerCase() ?? null;
+}
+
+async function isAdminUser(
+  admin: ReturnType<typeof getAdminClient>,
+  userId: string
+) {
+  const { data } = await admin
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', userId)
+    .eq('role', 'admin')
+    .maybeSingle();
+
+  return !!data;
+}
+
 /**
  * Register a login: log access, enforce single session, detect suspicious activity.
  */
@@ -19,17 +47,25 @@ export const registerLogin = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { deviceFingerprint: string; sessionToken: string }) => input)
   .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
+    const { userId, claims } = context;
     const admin = getAdminClient();
 
-    const { data: userData } = await supabase.auth.getUser();
-    const email = userData?.user?.email?.toLowerCase();
-    if (!email) return { allowed: false, reason: 'no-email' };
+    const email = await getAuthenticatedEmail(admin, userId, claims);
+    if (!email) {
+      return {
+        allowed: false,
+        reason: 'no-email',
+        message: 'Não foi possível validar seu e-mail de acesso. Faça login novamente e tente de novo.',
+      };
+    }
+
+    const isAdmin = await isAdminUser(admin, userId);
 
     const userAgent = getRequestHeader('user-agent') || 'unknown';
     const ipAddress = getRequestIP({ xForwardedFor: true }) || 'unknown';
     const { deviceFingerprint, sessionToken } = data;
 
+    if (!isAdmin) {
     // 1. Check if user is blocked
     const { data: recentBlocks } = await admin
       .from('user_access_logs')
@@ -57,7 +93,6 @@ export const registerLogin = createServerFn({ method: 'POST' })
 
     const recentCount = recentLogins?.length || 0;
     const uniqueDevices = new Set(recentLogins?.map(l => l.device_fingerprint).filter(Boolean));
-    const uniqueIPs = new Set(recentLogins?.map(l => l.ip_address).filter(Boolean));
 
     // Flag suspicious: 5+ logins in 5 min OR 3+ different devices in 5 min
     const isSuspicious = recentCount >= 5 || uniqueDevices.size >= 3;
@@ -80,6 +115,7 @@ export const registerLogin = createServerFn({ method: 'POST' })
         reason: 'suspicious',
         message: 'Acesso não autorizado detectado. Esta conta está vinculada ao comprador original. Se você é o titular da compra, tente novamente no dispositivo autorizado.',
       };
+    }
     }
 
     // 3. Invalidate previous sessions for this email
@@ -131,11 +167,10 @@ export const validateSession = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { sessionToken: string }) => input)
   .handler(async ({ data, context }) => {
-    const { supabase } = context;
+    const { userId, claims } = context;
     const admin = getAdminClient();
 
-    const { data: userData } = await supabase.auth.getUser();
-    const email = userData?.user?.email?.toLowerCase();
+    const email = await getAuthenticatedEmail(admin, userId, claims);
     if (!email) return { valid: false };
 
     const { data: session } = await admin
