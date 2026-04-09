@@ -406,11 +406,11 @@ function LoginPage() {
                       transition={{ duration: 0.3 }}
                     >
                       <div className="mb-7">
-                        <h2 className="text-xl font-bold text-foreground font-display tracking-tight">
-                          Acesse seu espaço
+                        <h2 className="text-2xl font-bold text-foreground font-display tracking-tight">
+                          Bem-vindo de volta
                         </h2>
                         <p className="mt-3 text-[13px] text-muted-foreground/70 leading-[1.8]">
-                          Use o e-mail da sua compra para entrar.
+                          Entre com suas credenciais para continuar
                         </p>
                       </div>
 
