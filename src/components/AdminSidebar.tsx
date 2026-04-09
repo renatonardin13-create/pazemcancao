@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { LayoutDashboard, Users, Music, Settings, Shield } from "lucide-react";
+import { LayoutDashboard, Users, BookOpen, FolderOpen, Settings, Shield } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -14,8 +14,9 @@ import {
 
 const adminItems = [
   { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
+  { title: "Cursos", url: "/admin/courses", icon: BookOpen },
+  { title: "Categorias", url: "/admin/categories", icon: FolderOpen },
   { title: "Usuários", url: "/admin/users", icon: Users },
-  { title: "Louvores", url: "/admin/tracks", icon: Music },
 ];
 
 export function AdminSidebar() {
@@ -38,7 +39,7 @@ export function AdminSidebar() {
               </div>
               <div>
                 <p className="text-[11px] font-bold text-sidebar-foreground/80 tracking-tight">Admin</p>
-                <p className="text-[9px] text-sidebar-foreground/30">Paz em Canção</p>
+                <p className="text-[9px] text-sidebar-foreground/30">Plataforma de Cursos</p>
               </div>
             </div>
           )}
