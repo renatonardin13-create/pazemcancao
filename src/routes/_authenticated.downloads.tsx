@@ -67,15 +67,15 @@ function DownloadsPage() {
             </motion.p>
 
             <motion.h1 variants={fadeUp} custom={0.2} className="font-display text-4xl sm:text-5xl md:text-6xl font-bold text-foreground leading-[1.04] tracking-tight">
-              Seus <span className="text-gold">Louvores</span>
+              Seus Louvores <span className="text-gold">Exclusivos</span>
             </motion.h1>
 
             <motion.div variants={fadeUp} custom={0.3}>
               <div className="mx-auto mt-8 h-px w-28 bg-gradient-to-r from-transparent via-gold/15 to-transparent" />
             </motion.div>
 
-            <motion.p variants={fadeUp} custom={0.4} className="mx-auto mt-8 max-w-sm text-[15px] leading-[2.2] text-muted-foreground/55 font-light">
-              30 canções para momentos de paz, oração e presença.
+            <motion.p variants={fadeUp} custom={0.4} className="mx-auto mt-8 max-w-md text-[15px] leading-[2.2] text-muted-foreground/55 font-light">
+              Acesse, ouça e baixe sua coleção privada de 30 louvores inéditos.
               <br />
               <span className="text-muted-foreground/40">Ouça sem pressa. Este é o seu espaço.</span>
             </motion.p>
