@@ -153,3 +153,8 @@
     animation: float-slow 8s ease-in-out infinite;
   }
 }
+#lovable-badge,
+a[href*="lovable"],
+div:has(a[href*="lovable"]) {
+  display: none !important;
+}
