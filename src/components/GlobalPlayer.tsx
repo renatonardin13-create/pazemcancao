@@ -1,24 +1,9 @@
-import { useEffect } from "react";
 import { Play, Pause, X, Download, SkipBack, SkipForward } from "lucide-react";
 import { usePlayer } from "@/hooks/use-player";
 import { sampleTracks } from "@/lib/sample-tracks";
 
 export function GlobalPlayer() {
-  const { currentTrack, playing, progress, pause, play, toggle, setProgress, stop } = usePlayer();
-
-  useEffect(() => {
-    if (!playing) return;
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          pause();
-          return 0;
-        }
-        return prev + 0.5;
-      });
-    }, 100);
-    return () => clearInterval(interval);
-  }, [playing, setProgress, pause]);
+  const { currentTrack, playing, progress, currentTime, duration, pause, play, toggle, seek, stop } = usePlayer();
 
   if (!currentTrack) return null;
 
@@ -44,21 +29,19 @@ export function GlobalPlayer() {
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const pct = ((e.clientX - rect.left) / rect.width) * 100;
-    setProgress(Math.max(0, Math.min(100, pct)));
+    seek(Math.max(0, Math.min(100, pct)));
   };
 
-  const formatTime = (pct: number, duration: string) => {
-    const parts = duration.split(":").map(Number);
-    const totalSecs = (parts[0] || 0) * 60 + (parts[1] || 0);
-    const currentSecs = Math.floor((pct / 100) * totalSecs);
-    const m = Math.floor(currentSecs / 60);
-    const s = currentSecs % 60;
+  const formatSecs = (secs: number) => {
+    if (!secs || !isFinite(secs)) return "0:00";
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
     return `${m}:${String(s).padStart(2, "0")}`;
   };
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/85 backdrop-blur-2xl">
-      {/* Progress — gentle, clickable */}
+      {/* Progress — clickable */}
       <div
         className="h-[1.5px] w-full bg-muted/6 cursor-pointer group relative"
         onClick={handleProgressClick}
@@ -72,7 +55,7 @@ export function GlobalPlayer() {
       </div>
 
       <div className="flex items-center gap-4 px-5 sm:px-8 py-4 max-w-5xl mx-auto">
-        {/* Track info — quiet, present */}
+        {/* Track info */}
         <div className="flex-1 min-w-0">
           <p className="text-[13px] font-semibold text-foreground/75 truncate leading-tight">
             {currentTrack.title}
@@ -80,13 +63,13 @@ export function GlobalPlayer() {
           <p className="mt-1 text-[10px] text-muted-foreground/25 tracking-wider">
             {currentTrack.category}
             <span className="mx-1.5">·</span>
-            <span className="tabular-nums">{formatTime(progress, currentTrack.duration)}</span>
+            <span className="tabular-nums">{formatSecs(currentTime)}</span>
             <span className="mx-1 text-border/15">/</span>
-            <span className="tabular-nums">{currentTrack.duration}</span>
+            <span className="tabular-nums">{duration > 0 ? formatSecs(duration) : currentTrack.duration}</span>
           </p>
         </div>
 
-        {/* Controls — moment of pause */}
+        {/* Controls */}
         <div className="flex items-center gap-1 shrink-0">
           <button
             onClick={prevTrack}
