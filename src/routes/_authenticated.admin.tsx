@@ -1,28 +1,115 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { AppHeader } from "@/components/AppHeader";
-import { PageContainer } from "@/components/PageContainer";
-import { FooterLinks } from "@/components/FooterLinks";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { useState } from "react";
-import { Upload, Music, Trash2, ArrowLeft, Plus } from "lucide-react";
-import { toast } from "sonner";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AdminSidebar } from "@/components/AdminSidebar";
+import { LogOut, ShieldAlert, ArrowLeft } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
-  component: AdminPage,
+  component: AdminLayout,
 });
 
-const categories = ["Paz", "Cura", "Força", "Oração", "Madrugada", "Presença", "Refúgio"];
+function AdminLayout() {
+  const { isAdmin, adminLoading, logout, user } = useAuth();
 
-function AdminPage() {
-  const { user, isAdmin, adminLoading } = useAuth();
-  const queryClient = useQueryClient();
+  if (adminLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <p className="text-[11px] uppercase tracking-[0.4em] text-gold/25 animate-pulse">
+          Verificando acesso...
+        </p>
+      </div>
+    );
+  }
 
-  // Fetch tracks
+  if (!isAdmin) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background relative overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_40%,var(--color-gold)/0.02,transparent_70%)]" />
+        <div className="relative text-center max-w-sm px-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+          <ShieldAlert className="h-8 w-8 text-destructive/50 mx-auto mb-6" />
+          <h1 className="font-display text-2xl font-bold text-foreground/85 tracking-tight">
+            Acesso restrito
+          </h1>
+          <div className="mx-auto mt-4 h-px w-10 bg-gradient-to-r from-transparent via-destructive/20 to-transparent" />
+          <p className="mt-5 text-[14px] leading-[2] text-muted-foreground/50 font-light">
+            Você não tem permissão de administrador para acessar esta área.
+          </p>
+          <div className="mt-8 flex flex-col items-center gap-3">
+            <Link
+              to="/downloads"
+              className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.3em] text-gold/45 hover:text-gold/65 transition-colors duration-500"
+            >
+              <ArrowLeft className="h-3 w-3" />
+              Voltar à biblioteca
+            </Link>
+            <button
+              onClick={() => logout()}
+              className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.3em] text-muted-foreground/30 hover:text-muted-foreground/50 transition-colors duration-500"
+            >
+              <LogOut className="h-3 w-3" />
+              Sair
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <SidebarProvider>
+      <div className="min-h-screen flex w-full bg-background">
+        <AdminSidebar />
+
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Top bar */}
+          <header className="sticky top-0 z-40 h-14 flex items-center gap-3 border-b border-border/15 bg-background/80 backdrop-blur-xl px-4">
+            <SidebarTrigger className="text-muted-foreground/40 hover:text-muted-foreground/70" />
+            <div className="h-4 w-px bg-border/20" />
+            <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground/30">
+              Painel Administrativo
+            </span>
+            <div className="ml-auto flex items-center gap-3">
+              <span className="text-[10px] text-muted-foreground/25 hidden sm:inline">
+                {user?.email}
+              </span>
+              <button
+                onClick={() => logout()}
+                className="flex items-center gap-1.5 text-[10px] text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors"
+              >
+                <LogOut className="h-3 w-3" />
+              </button>
+            </div>
+          </header>
+
+          {/* Content */}
+          <main className="flex-1 p-6 sm:p-8">
+            <AdminDashboard />
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
+  );
+}
+
+// Inline dashboard since this is the main /admin route
+import { useQuery } from "@tanstack/react-query";
+import { listApprovedBuyers } from "@/lib/admin-users.functions";
+import { supabase } from "@/integrations/supabase/client";
+import { Users, Music, Shield, Activity, Search, MoreHorizontal, CheckCircle, XCircle, Clock } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+
+function AdminDashboard() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState<"users" | "tracks">("users");
+
+  const { data: usersData, isLoading: usersLoading } = useQuery({
+    queryKey: ["admin-users"],
+    queryFn: () => listApprovedBuyers(),
+  });
+
   const { data: tracks, isLoading: tracksLoading } = useQuery({
     queryKey: ["admin-tracks"],
     queryFn: async () => {
@@ -33,184 +120,186 @@ function AdminPage() {
       if (error) throw error;
       return data;
     },
-    enabled: !adminLoading && isAdmin,
   });
 
-  const [showForm, setShowForm] = useState(false);
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("Paz");
-  const [duration, setDuration] = useState("");
-  const [audioFile, setAudioFile] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
+  const buyers = usersData?.buyers || [];
+  const activeSessions = usersData?.activeSessions || [];
 
-  const uploadMutation = useMutation({
-    mutationFn: async () => {
-      if (!audioFile || !title || !duration) throw new Error("Preencha todos os campos");
+  const filteredBuyers = buyers.filter(
+    (b) =>
+      b.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      b.nome.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-      setUploading(true);
-      const ext = audioFile.name.split(".").pop();
-      const path = `${Date.now()}-${crypto.randomUUID()}.${ext}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from("tracks")
-        .upload(path, audioFile);
-
-      if (uploadError) throw uploadError;
-
-      const { data: urlData } = supabase.storage.from("tracks").getPublicUrl(path);
-
-      const sortOrder = (tracks?.length || 0) + 1;
-
-      const { error: insertError } = await supabase.from("tracks").insert({
-        title,
-        description,
-        category,
-        duration,
-        storage_path: path,
-        download_url: urlData.publicUrl,
-        sort_order: sortOrder,
-      });
-
-      if (insertError) throw insertError;
-    },
-    onSuccess: () => {
-      toast.success("Louvor adicionado com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["admin-tracks"] });
-      setShowForm(false);
-      setTitle("");
-      setDescription("");
-      setCategory("Paz");
-      setDuration("");
-      setAudioFile(null);
-      setUploading(false);
-    },
-    onError: (err) => {
-      toast.error(`Erro: ${err.message}`);
-      setUploading(false);
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: async (trackId: string) => {
-      const track = tracks?.find((t) => t.id === trackId);
-      if (track?.storage_path) {
-        await supabase.storage.from("tracks").remove([track.storage_path]);
-      }
-      const { error } = await supabase.from("tracks").delete().eq("id", trackId);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast.success("Louvor removido.");
-      queryClient.invalidateQueries({ queryKey: ["admin-tracks"] });
-    },
-    onError: (err) => {
-      toast.error(`Erro: ${err.message}`);
-    },
-  });
-
-  if (adminLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <p className="text-[11px] uppercase tracking-[0.4em] text-gold/25">Verificando acesso...</p>
-      </div>
-    );
-  }
-
-  if (!isAdmin) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="text-center">
-          <h1 className="font-display text-2xl font-bold text-foreground/85">Acesso restrito</h1>
-          <p className="mt-3 text-sm text-muted-foreground/50">Você não tem permissão de administrador.</p>
-          <Link to="/downloads" className="mt-6 inline-flex items-center gap-2 text-[11px] text-gold/50 hover:text-gold/70 uppercase tracking-wider transition-colors">
-            <ArrowLeft className="h-3 w-3" /> Voltar
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  const activeCount = buyers.filter((b) => b.access_enabled).length;
+  const sessionCount = activeSessions.length;
 
   return (
-    <div className="min-h-screen bg-background pb-16">
-      <AppHeader />
-
-      <PageContainer className="pt-10 sm:pt-14">
-        <div className="flex items-center justify-between mb-10">
-          <div>
-            <h1 className="font-display text-2xl font-bold text-foreground/85">Painel Admin</h1>
-            <p className="mt-1 text-xs text-muted-foreground/40">Gerencie os louvores da coleção</p>
-          </div>
-          <Button
-            onClick={() => setShowForm(!showForm)}
-            className="gap-2 rounded-full"
-            variant={showForm ? "outline" : "default"}
+    <div className="max-w-6xl mx-auto space-y-8">
+      {/* Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { label: "Usuários", value: buyers.length, icon: Users, color: "text-gold/60" },
+          { label: "Ativos", value: activeCount, icon: CheckCircle, color: "text-emerald-500/60" },
+          { label: "Sessões", value: sessionCount, icon: Activity, color: "text-blue-400/60" },
+          { label: "Louvores", value: tracks?.length || 0, icon: Music, color: "text-gold/60" },
+        ].map((stat) => (
+          <div
+            key={stat.label}
+            className="rounded-2xl border border-border/15 bg-card/10 p-5 transition-colors hover:bg-card/15"
           >
-            <Plus className="h-4 w-4" />
-            {showForm ? "Cancelar" : "Novo Louvor"}
-          </Button>
-        </div>
-
-        {/* Upload form */}
-        {showForm && (
-          <div className="mb-10 rounded-2xl border border-border/25 bg-card/20 p-6 sm:p-8 animate-in fade-in slide-in-from-top-4 duration-500">
-            <h2 className="font-display text-lg font-bold text-foreground/80 mb-6">Adicionar Louvor</h2>
-            <div className="grid sm:grid-cols-2 gap-5">
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/40">Título</Label>
-                <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Nome do louvor" className="bg-background/40 border-border/25" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/40">Duração</Label>
-                <Input value={duration} onChange={(e) => setDuration(e.target.value)} placeholder="4:32" className="bg-background/40 border-border/25" />
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/40">Categoria</Label>
-                <select
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full h-10 px-3 rounded-xl bg-background/40 border border-border/25 text-sm text-foreground"
-                >
-                  {categories.map((c) => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/40">Arquivo de Áudio</Label>
-                <Input
-                  type="file"
-                  accept="audio/mpeg,audio/mp3,audio/wav,audio/ogg"
-                  onChange={(e) => setAudioFile(e.target.files?.[0] || null)}
-                  className="bg-background/40 border-border/25"
-                />
-              </div>
-              <div className="sm:col-span-2 space-y-2">
-                <Label className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/40">Descrição</Label>
-                <Input value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Uma breve descrição emocional do louvor" className="bg-background/40 border-border/25" />
+            <div className="flex items-center gap-3 mb-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-muted/20">
+                <stat.icon className={`h-4 w-4 ${stat.color}`} />
               </div>
             </div>
-            <div className="mt-6 flex justify-end">
-              <Button
-                onClick={() => uploadMutation.mutate()}
-                disabled={uploading || !title || !audioFile || !duration}
-                className="gap-2 rounded-full"
-              >
-                <Upload className="h-4 w-4" />
-                {uploading ? "Enviando..." : "Enviar Louvor"}
-              </Button>
-            </div>
+            <p className="font-display text-2xl font-bold text-foreground/80">
+              {usersLoading || tracksLoading ? "—" : stat.value}
+            </p>
+            <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/30 mt-1">
+              {stat.label}
+            </p>
           </div>
-        )}
+        ))}
+      </div>
 
-        {/* Track list */}
-        <div className="space-y-2">
+      {/* Tabs */}
+      <div className="flex items-center gap-1 border-b border-border/15 pb-0">
+        {(["users", "tracks"] as const).map((tab) => (
+          <button
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={`px-5 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] transition-all duration-300 border-b-2 -mb-px ${
+              activeTab === tab
+                ? "border-gold/50 text-gold/70"
+                : "border-transparent text-muted-foreground/30 hover:text-muted-foreground/50"
+            }`}
+          >
+            {tab === "users" ? "Usuários" : "Louvores"}
+          </button>
+        ))}
+      </div>
+
+      {/* Users Tab */}
+      {activeTab === "users" && (
+        <div className="space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="relative flex-1 max-w-sm">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/25" />
+              <Input
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Buscar por nome ou email..."
+                className="pl-9 bg-card/10 border-border/15 text-sm h-10"
+              />
+            </div>
+            <span className="text-[10px] text-muted-foreground/25">
+              {filteredBuyers.length} resultado{filteredBuyers.length !== 1 ? "s" : ""}
+            </span>
+          </div>
+
+          {usersLoading ? (
+            <div className="text-center py-16">
+              <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+                Carregando usuários...
+              </p>
+            </div>
+          ) : filteredBuyers.length === 0 ? (
+            <div className="text-center py-16">
+              <Users className="h-8 w-8 text-muted-foreground/15 mx-auto mb-4" />
+              <p className="text-sm text-muted-foreground/35">Nenhum usuário encontrado.</p>
+            </div>
+          ) : (
+            <div className="rounded-2xl border border-border/15 overflow-hidden">
+              {/* Header */}
+              <div className="hidden sm:grid grid-cols-[1fr_1fr_120px_120px_60px] gap-4 px-5 py-3 bg-muted/5 border-b border-border/10">
+                <span className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground/30 font-semibold">Nome</span>
+                <span className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground/30 font-semibold">Email</span>
+                <span className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground/30 font-semibold">Status</span>
+                <span className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground/30 font-semibold">Último acesso</span>
+                <span />
+              </div>
+
+              {/* Rows */}
+              {filteredBuyers.map((buyer) => {
+                const hasActiveSession = activeSessions.some((s) => s.email === buyer.email);
+                const statusColor = !buyer.access_enabled
+                  ? "text-destructive/60 bg-destructive/10 border-destructive/15"
+                  : hasActiveSession
+                    ? "text-emerald-400/70 bg-emerald-500/10 border-emerald-500/15"
+                    : "text-gold/50 bg-gold/8 border-gold/12";
+                const statusLabel = !buyer.access_enabled
+                  ? "Bloqueado"
+                  : hasActiveSession
+                    ? "Online"
+                    : "Ativo";
+
+                return (
+                  <div
+                    key={buyer.id}
+                    className="grid sm:grid-cols-[1fr_1fr_120px_120px_60px] gap-2 sm:gap-4 px-5 py-4 border-b border-border/8 last:border-0 hover:bg-card/10 transition-colors items-center"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted/15 text-[11px] font-bold text-foreground/50">
+                        {buyer.nome.charAt(0).toUpperCase()}
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-foreground/75 truncate">
+                          {buyer.nome}
+                        </p>
+                        <p className="sm:hidden text-[11px] text-muted-foreground/30 truncate">
+                          {buyer.email}
+                        </p>
+                      </div>
+                    </div>
+
+                    <p className="hidden sm:block text-[12px] text-muted-foreground/45 truncate">
+                      {buyer.email}
+                    </p>
+
+                    <div>
+                      <Badge
+                        variant="outline"
+                        className={`text-[9px] font-semibold uppercase tracking-[0.15em] rounded-full px-2.5 py-0.5 border ${statusColor}`}
+                      >
+                        {statusLabel}
+                      </Badge>
+                    </div>
+
+                    <p className="hidden sm:block text-[11px] text-muted-foreground/30">
+                      {buyer.last_login_at
+                        ? new Date(buyer.last_login_at).toLocaleDateString("pt-BR")
+                        : "Nunca"}
+                    </p>
+
+                    <div className="flex justify-end">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-7 w-7 text-muted-foreground/25 hover:text-muted-foreground/50"
+                      >
+                        <MoreHorizontal className="h-3.5 w-3.5" />
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Tracks Tab */}
+      {activeTab === "tracks" && (
+        <div className="space-y-3">
           {tracksLoading ? (
-            <p className="text-center text-xs text-muted-foreground/30 py-12">Carregando...</p>
+            <p className="text-center text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 py-12 animate-pulse">
+              Carregando...
+            </p>
           ) : !tracks?.length ? (
             <div className="text-center py-16">
               <Music className="h-8 w-8 text-muted-foreground/15 mx-auto mb-4" />
-              <p className="text-sm text-muted-foreground/35">Nenhum louvor adicionado ainda.</p>
+              <p className="text-sm text-muted-foreground/35">Nenhum louvor adicionado.</p>
             </div>
           ) : (
             tracks.map((track, i) => (
@@ -227,25 +316,14 @@ function AdminPage() {
                     {track.category} · {track.duration}
                   </p>
                 </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => {
-                    if (confirm("Deseja remover este louvor?")) {
-                      deleteMutation.mutate(track.id);
-                    }
-                  }}
-                  className="text-destructive/40 hover:text-destructive/70 h-8 w-8"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                <Badge variant="outline" className="text-[9px] rounded-full px-2 border-border/20 text-muted-foreground/30">
+                  {track.is_active ? "Ativo" : "Inativo"}
+                </Badge>
               </div>
             ))
           )}
         </div>
-      </PageContainer>
-
-      <FooterLinks variant="minimal" />
+      )}
     </div>
   );
 }
