@@ -73,6 +73,8 @@ export function TrackCard({ track, index }: TrackCardProps) {
         <div className={`relative h-40 sm:h-44 w-full bg-gradient-to-br ${gradient} overflow-hidden`}>
           {/* Texture overlay */}
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,transparent_30%,rgba(0,0,0,0.4))]" />
+          {/* Soft glow on hover */}
+          <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/[0.03] to-white/[0.06] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
           {/* Floating icon */}
           <div className="absolute inset-0 flex items-center justify-center">
