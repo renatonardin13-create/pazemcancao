@@ -6,6 +6,7 @@ export interface Track {
   audioUrl: string;
   downloadUrl: string;
   description: string;
+  coverUrl?: string;
 }
 
 export const sampleTracks: Track[] = [

@@ -100,6 +100,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
+import { AddTrackForm } from "@/components/AddTrackForm";
 
 function AdminDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -291,7 +292,8 @@ function AdminDashboard() {
 
       {/* Tracks Tab */}
       {activeTab === "tracks" && (
-        <div className="space-y-3">
+        <div className="space-y-6">
+          <AddTrackForm />
           {tracksLoading ? (
             <p className="text-center text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 py-12 animate-pulse">
               Carregando...
@@ -307,9 +309,13 @@ function AdminDashboard() {
                 key={track.id}
                 className="flex items-center gap-4 rounded-xl border border-border/15 bg-card/10 px-5 py-4 transition-colors hover:bg-card/20"
               >
-                <span className="text-[11px] font-mono text-muted-foreground/25 w-6">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
+                {track.cover_url ? (
+                  <img src={track.cover_url} alt={track.title} className="h-10 w-10 rounded-lg object-cover shrink-0" />
+                ) : (
+                  <span className="text-[11px] font-mono text-muted-foreground/25 w-10 text-center">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                )}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-foreground/75 truncate">{track.title}</p>
                   <p className="text-[11px] text-muted-foreground/30">
