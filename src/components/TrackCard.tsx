@@ -1,4 +1,5 @@
 import { Play, Pause, Download } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import type { Track } from "@/lib/sample-tracks";
 import { usePlayer } from "@/hooks/use-player";
 
@@ -12,7 +13,14 @@ export function TrackCard({ track, index }: TrackCardProps) {
   const isThis = currentTrack?.id === track.id;
   const isPlaying = isThis && playing;
 
+  const handlePlay = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggle(track);
+  };
+
   const handleDownload = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     const link = document.createElement("a");
     link.href = track.downloadUrl;
@@ -21,9 +29,10 @@ export function TrackCard({ track, index }: TrackCardProps) {
   };
 
   return (
-    <div
-      className="group relative cursor-pointer h-full"
-      onClick={() => toggle(track)}
+    <Link
+      to="/louvor/$trackId"
+      params={{ trackId: String(track.id) }}
+      className="group relative cursor-pointer h-full block"
     >
       <div
         className={`relative rounded-2xl border transition-all duration-700 overflow-hidden h-full flex flex-col ${
@@ -107,7 +116,8 @@ export function TrackCard({ track, index }: TrackCardProps) {
               isPlaying ? "opacity-100" : "opacity-0 group-hover:opacity-100"
             }`}
           >
-            <span
+            <button
+              onClick={handlePlay}
               className={`inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase transition-colors duration-500 ${
                 isPlaying ? "text-gold/55" : "text-muted-foreground/30"
               }`}
@@ -123,7 +133,7 @@ export function TrackCard({ track, index }: TrackCardProps) {
                   Ouvir Agora
                 </>
               )}
-            </span>
+            </button>
 
             <span className="w-px h-3 bg-border/8" />
 
@@ -137,6 +147,6 @@ export function TrackCard({ track, index }: TrackCardProps) {
           </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
