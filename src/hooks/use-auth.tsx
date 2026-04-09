@@ -11,6 +11,7 @@ interface AuthState {
   loading: boolean;
   blocked: boolean;
   blockMessage: string | null;
+  isAdmin: boolean;
   login: (email: string, password: string) => Promise<{ error: string | null }>;
   logout: () => Promise<void>;
 }
@@ -39,17 +40,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [blocked, setBlocked] = useState(false);
   const [blockMessage, setBlockMessage] = useState<string | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const loginRegistered = useRef(false);
 
+  // Check admin role whenever user changes
   useEffect(() => {
-    // Restore session from storage first to avoid race conditions
+    if (!user?.id) {
+      setIsAdmin(false);
+      return;
+    }
+
+    const checkAdmin = async () => {
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      setIsAdmin(!!data);
+    };
+
+    checkAdmin();
+  }, [user?.id]);
+
+  useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    // Then listen for subsequent auth changes (fire-and-forget, no await inside)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
         setSession(session);
@@ -61,7 +81,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Session validation interval — check every 2 minutes
+  // Session validation interval
   useEffect(() => {
     if (!session || typeof window === 'undefined') return;
 
@@ -70,7 +90,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const sessionToken = getSessionToken();
         const result = await validateSession({ data: { sessionToken } });
         if (!result.valid) {
-          // Session invalidated — another device logged in
           setBlocked(true);
           setBlockMessage(
             'Sua sessão foi encerrada porque um novo login foi detectado em outro dispositivo.'
@@ -78,7 +97,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           await supabase.auth.signOut();
         }
       } catch {
-        // Silently fail — don't block if validation check fails
+        // Silently fail
       }
     };
 
@@ -117,7 +136,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       loginRegistered.current = true;
     } catch (err) {
-      // Don't block login if security check fails — log and continue
       console.error('Security check failed:', err);
     }
 
@@ -127,6 +145,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(async () => {
     setBlocked(false);
     setBlockMessage(null);
+    setIsAdmin(false);
     loginRegistered.current = false;
     sessionStorage.removeItem('paz-session-token');
     await supabase.auth.signOut();
@@ -141,6 +160,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading,
         blocked,
         blockMessage,
+        isAdmin,
         login,
         logout,
       }}
