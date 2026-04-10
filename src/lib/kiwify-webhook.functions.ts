@@ -53,7 +53,12 @@ async function provisionUserAccess(email: string) {
 export async function handleKiwifyWebhook(request: Request): Promise<Response> {
   try {
     // 1. Read token from header
-    const headerToken = request.headers.get('x-kiwify-token') || '';
+    const reqUrl = new URL(request.url);
+    const headerToken =
+      request.headers.get('x-kiwify-token') ||
+      request.headers.get('authorization')?.replace('Bearer ', '') ||
+      reqUrl.searchParams.get('token') ||
+      '';
 
     // 2. Fetch saved token from webhook_settings
     const { data: config } = await supabaseAdmin
