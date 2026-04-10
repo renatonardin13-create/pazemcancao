@@ -45,7 +45,7 @@ async function provisionUserAccess(email: string) {
       auth: { persistSession: false, autoRefreshToken: false },
     });
     await publicClient.auth.resetPasswordForEmail(email, {
-      redirectTo: `${url.replace('.supabase.co', '')}/login`,
+      redirectTo: 'https://pazemcancao.lovable.app/login',
     });
   }
 }
