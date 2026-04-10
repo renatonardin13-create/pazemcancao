@@ -394,6 +394,18 @@ function LoginPage() {
                         <p className="mt-3 text-[13px] text-muted-foreground/70 leading-[1.8]">
                           Entre com suas credenciais para continuar
                         </p>
+                        <p className="mt-2 text-[11px] text-muted-foreground/50 leading-[1.7] text-center">
+                          Use o e-mail da sua compra na Kiwify. Se é o seu primeiro acesso,
+                          clique em{' '}
+                          <button
+                            type="button"
+                            onClick={() => { setView("reset"); setError(""); }}
+                            className="text-gold/60 hover:text-gold/80 underline underline-offset-2 decoration-gold/20 hover:decoration-gold/40 transition-colors duration-300"
+                          >
+                            Esqueceu sua senha?
+                          </button>{' '}
+                          para criar sua senha de acesso.
+                        </p>
                       </div>
 
                       {error && (
