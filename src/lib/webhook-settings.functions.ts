@@ -1,0 +1,43 @@
+import { createServerFn } from '@tanstack/react-start';
+import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+
+export const getWebhookSettings = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase } = context;
+    const { data, error } = await supabase
+      .from('webhook_settings')
+      .select('*')
+      .eq('provider', 'kiwify')
+      .maybeSingle();
+
+    if (error) throw new Error(error.message);
+    return { settings: data };
+  });
+
+export const updateWebhookSettings = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: {
+    is_active: boolean;
+    monitored_events: string[];
+    auth_token?: string;
+  }) => input)
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+
+    const { error } = await supabase
+      .from('webhook_settings')
+      .upsert(
+        {
+          provider: 'kiwify',
+          webhook_url: 'https://pazemcancao.lovable.app/webhook',
+          is_active: data.is_active,
+          monitored_events: data.monitored_events,
+          auth_token: data.auth_token || null,
+        },
+        { onConflict: 'provider' }
+      );
+
+    if (error) throw new Error(error.message);
+    return { success: true };
+  });
