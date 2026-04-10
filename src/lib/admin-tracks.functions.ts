@@ -111,3 +111,71 @@ export const deleteTrack = createServerFn({ method: 'POST' })
     if (error) throw new Error(error.message);
     return { success: true };
   });
+
+export const regenerateCover = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { trackId: string; title: string }) => input)
+  .handler(async ({ data, context }) => {
+    await verifyAdmin(context.supabase, context.userId);
+
+    const LOVABLE_API_KEY = process.env.LOVABLE_API_KEY;
+    if (!LOVABLE_API_KEY) throw new Error('LOVABLE_API_KEY not configured');
+
+    const prompt = `Create a stunning album cover artwork. No text, no words, no letters, no typography. Style: cinematic digital painting, volumetric lighting, rich color palette, ethereal atmosphere. The mood and scene should be inspired by the song title "${data.title}". Make it feel like a premium streaming platform cover art.`;
+
+    const aiResponse = await fetch(
+      'https://ai.gateway.lovable.dev/v1/chat/completions',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-3.1-flash-image-preview',
+          messages: [{ role: 'user', content: prompt }],
+          modalities: ['image', 'text'],
+        }),
+      }
+    );
+
+    if (!aiResponse.ok) {
+      const errText = await aiResponse.text();
+      console.error('AI gateway error:', aiResponse.status, errText);
+      throw new Error(`AI error: ${aiResponse.status}`);
+    }
+
+    const aiData = await aiResponse.json();
+    const imageData = aiData.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+
+    if (!imageData || !imageData.startsWith('data:image')) {
+      throw new Error('No image returned from AI');
+    }
+
+    const base64Data = imageData.split(',')[1];
+    const binaryStr = atob(base64Data);
+    const bytes = new Uint8Array(binaryStr.length);
+    for (let i = 0; i < binaryStr.length; i++) {
+      bytes[i] = binaryStr.charCodeAt(i);
+    }
+
+    const fileName = `covers/${data.trackId}.png`;
+    const { error: uploadError } = await supabaseAdmin.storage
+      .from('tracks')
+      .upload(fileName, bytes, { contentType: 'image/png', upsert: true });
+
+    if (uploadError) throw new Error('Upload failed: ' + uploadError.message);
+
+    const { data: urlData } = supabaseAdmin.storage
+      .from('tracks')
+      .getPublicUrl(fileName);
+
+    const coverUrl = urlData.publicUrl;
+
+    await supabaseAdmin
+      .from('tracks')
+      .update({ cover_url: coverUrl })
+      .eq('id', data.trackId);
+
+    return { coverUrl };
+  });
