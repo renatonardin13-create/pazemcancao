@@ -116,7 +116,22 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
     if (file && (file.type === "audio/mpeg" || file.name.endsWith(".mp3"))) {
       setMp3File(file);
 
-      // Extract duration only
+      // Auto-fill title from filename (remove extension, replace separators)
+      const nameWithoutExt = file.name.replace(/\.mp3$/i, '');
+      const cleanTitle = nameWithoutExt
+        .replace(/[-_]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+      if (!title.trim()) {
+        setTitle(cleanTitle);
+      }
+
+      // Auto-fill description if empty
+      if (!description.trim()) {
+        setDescription(`Louvor: ${cleanTitle}`);
+      }
+
+      // Extract duration
       const audio = new Audio();
       audio.src = URL.createObjectURL(file);
       audio.onloadedmetadata = () => {
