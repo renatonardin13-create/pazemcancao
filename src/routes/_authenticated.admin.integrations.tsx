@@ -39,6 +39,7 @@ function IntegrationsPage() {
   const [monitoredEvents, setMonitoredEvents] = useState<string[]>([]);
   const [authToken, setAuthToken] = useState("");
   const [allowedIps, setAllowedIps] = useState("");
+  const [webhookUrl, setWebhookUrl] = useState("https://pazemcancao.lovable.app/api/webhook/kiwify");
 
   useEffect(() => {
     if (settings) {
@@ -46,6 +47,7 @@ function IntegrationsPage() {
       setMonitoredEvents(settings.monitored_events || []);
       setAuthToken(settings.auth_token || "");
       setAllowedIps((settings.allowed_ips || []).join(", "));
+      setWebhookUrl(settings.webhook_url || "https://pazemcancao.lovable.app/api/webhook/kiwify");
     }
   }, [settings]);
 
@@ -56,6 +58,7 @@ function IntegrationsPage() {
           is_active: isActive,
           monitored_events: monitoredEvents,
           auth_token: authToken || undefined,
+          webhook_url: webhookUrl,
           allowed_ips: allowedIps
             ? allowedIps.split(",").map((ip: string) => ip.trim()).filter(Boolean)
             : [],
@@ -70,7 +73,7 @@ function IntegrationsPage() {
     },
   });
 
-  const webhookUrl = settings?.webhook_url || "https://pazemcancao.lovable.app/api/webhook/kiwify";
+  const defaultUrl = "https://pazemcancao.lovable.app/api/webhook/kiwify";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(webhookUrl);
@@ -127,13 +130,13 @@ function IntegrationsPage() {
               URL do Webhook
             </Label>
             <p className="text-[11px] text-muted-foreground/40">
-              Copie esta URL e cole no painel da Kiwify em Configurações → Webhooks
+              Cole esta URL no painel da Kiwify em Configurações → Webhooks. Você pode editar se necessário.
             </p>
             <div className="flex gap-2 min-w-0">
               <Input
                 value={webhookUrl}
-                readOnly
-                className="font-mono text-xs bg-muted/30 min-w-0 truncate"
+                onChange={(e) => setWebhookUrl(e.target.value)}
+                className="font-mono text-xs min-w-0 truncate"
               />
               <Button
                 variant="outline"
