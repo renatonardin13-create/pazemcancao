@@ -55,6 +55,7 @@ function dbTrackToPlayerTrack(track: any): Track {
 function MusicLibraryPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [initialized, setInitialized] = useState(false);
 
   const { data: catData } = useQuery({
@@ -212,11 +213,19 @@ function MusicLibraryPage() {
                     <span className="text-[10px] text-muted-foreground/25">
                       {catTracks.length} música{catTracks.length !== 1 ? "s" : ""}
                     </span>
+                    {catTracks.length > 4 && (
+                      <button
+                        onClick={() => setExpandedCategory(expandedCategory === category ? null : category)}
+                        className="text-[11px] font-medium text-gold/50 hover:text-gold/80 transition-colors duration-300 whitespace-nowrap"
+                      >
+                        {expandedCategory === category ? "← Voltar" : "Ver todas →"}
+                      </button>
+                    )}
                   </div>
 
-                  {/* Netflix-style horizontal carousel */}
-                  <div className="relative -mx-4 sm:-mx-6 px-4 sm:px-6">
-                    <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+                  {expandedCategory === category ? (
+                    /* Grid view - all tracks */
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                       {catTracks.map((track: any, idx: number) => {
                         const playerTrack = dbTrackToPlayerTrack(track);
                         const isThis = currentTrack?.id === track.id;
@@ -228,119 +237,153 @@ function MusicLibraryPage() {
                             key={track.id}
                             to="/musicas/$trackId"
                             params={{ trackId: track.id }}
-                            className="group relative cursor-pointer snap-start shrink-0 w-[260px] sm:w-[280px] block"
+                            className="group relative cursor-pointer block"
                           >
                             <motion.div
-                              initial={{ opacity: 0, x: 30 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              transition={{ duration: 0.5, delay: idx * 0.06, ease: "easeOut" }}
-                              whileHover={{ scale: 1.05, y: -6 }}
-                              whileTap={{ scale: 0.97 }}
-                              className={`relative rounded-2xl border transition-all duration-700 overflow-hidden h-full flex flex-col ${
+                              initial={{ opacity: 0, scale: 0.95 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ duration: 0.4, delay: idx * 0.03 }}
+                              whileHover={{ scale: 1.05, y: -4 }}
+                              className={`relative rounded-2xl border transition-all duration-700 overflow-hidden ${
                                 isPlaying
                                   ? "border-gold/25 shadow-[0_8px_50px_-12px] shadow-gold/15"
-                                  : "border-border/8 shadow-[0_4px_30px_-10px] shadow-black/20 hover:border-gold/15 hover:shadow-[0_8px_40px_-10px] hover:shadow-gold/8"
+                                  : "border-border/8 shadow-[0_4px_30px_-10px] shadow-black/20 hover:border-gold/15"
                               } bg-card/10`}
                             >
-                              {/* Cover */}
                               <div className={`relative aspect-square w-full bg-gradient-to-br ${gradient} overflow-hidden`}>
                                 {track.cover_url && (
-                                  <img
-                                    src={track.cover_url}
-                                    alt={track.title}
-                                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                    loading="lazy"
-                                  />
+                                  <img src={track.cover_url} alt={track.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
                                 )}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
                                 {!track.cover_url && (
                                   <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className={`flex h-16 w-16 items-center justify-center rounded-2xl backdrop-blur-sm transition-all duration-700 ${
-                                      isPlaying
-                                        ? "bg-gold/15 border border-gold/25 scale-110"
-                                        : "bg-white/[0.04] border border-white/[0.06] group-hover:scale-105"
-                                    }`}>
-                                      <Music className={`h-7 w-7 transition-colors duration-500 ${
-                                        isPlaying ? "text-gold/70" : "text-white/25 group-hover:text-white/40"
-                                      }`} />
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white/[0.04] border border-white/[0.06]">
+                                      <Music className="h-5 w-5 text-white/25" />
                                     </div>
                                   </div>
                                 )}
-
-                                {/* Play overlay on hover */}
                                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                   <button
-                                    onClick={(e) => {
-                                      e.preventDefault();
-                                      e.stopPropagation();
-                                      toggle(playerTrack);
-                                    }}
-                                    className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/80 text-background shadow-xl shadow-gold/20 hover:bg-gold transition-all duration-300 hover:scale-110"
+                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggle(playerTrack); }}
+                                    className="flex h-12 w-12 items-center justify-center rounded-full bg-gold/80 text-background shadow-xl shadow-gold/20 hover:bg-gold transition-all duration-300"
                                   >
-                                    {isPlaying ? (
-                                      <Pause className="h-6 w-6" />
-                                    ) : (
-                                      <Play className="h-6 w-6 ml-0.5" />
-                                    )}
+                                    {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
                                   </button>
                                 </div>
-
-                                {/* Category badge */}
-                                <span className="absolute top-3 right-3 text-[9px] font-medium tracking-[0.15em] uppercase rounded-full bg-black/30 backdrop-blur-sm border border-white/[0.08] px-2.5 py-0.5 text-white/40">
-                                  {icon} {track.category.replace(/^[^\w\s]+\s*/, '')}
-                                </span>
-
-                                {/* Playing indicator bar */}
                                 {isPlaying && (
                                   <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/30">
-                                    <div
-                                      className="h-full bg-gradient-to-r from-gold/60 to-gold/90 transition-all duration-200 ease-linear"
-                                      style={{ width: `${progress}%` }}
-                                    />
+                                    <div className="h-full bg-gradient-to-r from-gold/60 to-gold/90 transition-all duration-200" style={{ width: `${progress}%` }} />
                                   </div>
                                 )}
                               </div>
-
-                              {/* Content */}
-                              <div className="p-4">
-                                <h3 className={`font-display text-[14px] font-bold tracking-tight leading-snug truncate transition-colors duration-500 ${
-                                  isPlaying ? "text-gold/85" : "text-foreground/85 group-hover:text-foreground"
-                                }`}>
+                              <div className="p-3">
+                                <h3 className={`font-display text-[13px] font-bold tracking-tight leading-snug truncate ${isPlaying ? "text-gold/85" : "text-foreground/85"}`}>
                                   {track.title}
                                 </h3>
-
-                                <div className="flex items-center justify-between mt-2">
-                                  <p className={`text-[10px] tracking-[0.1em] font-medium transition-colors duration-500 ${
-                                    isPlaying ? "text-gold/40" : "text-muted-foreground/25"
-                                  }`}>
-                                    {track.duration}
-                                  </p>
-
-                                  {(track.download_url || track.storage_path) && (
-                                    <button
-                                      onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        const link = document.createElement("a");
-                                        link.href = track.download_url || getStoragePublicUrl(track.storage_path);
-                                        link.download = `${track.title}.mp3`;
-                                        link.click();
-                                      }}
-                                      className="text-muted-foreground/20 hover:text-gold/50 transition-colors duration-300"
-                                      title="Baixar"
-                                    >
-                                      <Download className="h-3.5 w-3.5" />
-                                    </button>
-                                  )}
-                                </div>
+                                <p className="text-[10px] text-muted-foreground/25 mt-1">{track.duration}</p>
                               </div>
                             </motion.div>
                           </Link>
                         );
                       })}
                     </div>
-                  </div>
+                  ) : (
+                    /* Horizontal carousel */
+                    <div className="relative -mx-4 sm:-mx-6 px-4 sm:px-6">
+                      <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+                        {catTracks.map((track: any, idx: number) => {
+                          const playerTrack = dbTrackToPlayerTrack(track);
+                          const isThis = currentTrack?.id === track.id;
+                          const isPlaying = isThis && playing;
+                          const gradient = categoryGradients[track.category] || "from-sky-900/40 via-blue-950/30 to-slate-950/50";
+
+                          return (
+                            <Link
+                              key={track.id}
+                              to="/musicas/$trackId"
+                              params={{ trackId: track.id }}
+                              className="group relative cursor-pointer snap-start shrink-0 w-[260px] sm:w-[280px] block"
+                            >
+                              <motion.div
+                                initial={{ opacity: 0, x: 30 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.5, delay: idx * 0.06, ease: "easeOut" }}
+                                whileHover={{ scale: 1.05, y: -6 }}
+                                whileTap={{ scale: 0.97 }}
+                                className={`relative rounded-2xl border transition-all duration-700 overflow-hidden h-full flex flex-col ${
+                                  isPlaying
+                                    ? "border-gold/25 shadow-[0_8px_50px_-12px] shadow-gold/15"
+                                    : "border-border/8 shadow-[0_4px_30px_-10px] shadow-black/20 hover:border-gold/15 hover:shadow-[0_8px_40px_-10px] hover:shadow-gold/8"
+                                } bg-card/10`}
+                              >
+                                <div className={`relative aspect-square w-full bg-gradient-to-br ${gradient} overflow-hidden`}>
+                                  {track.cover_url && (
+                                    <img src={track.cover_url} alt={track.title} className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+                                  )}
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                                  {!track.cover_url && (
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                      <div className={`flex h-16 w-16 items-center justify-center rounded-2xl backdrop-blur-sm transition-all duration-700 ${
+                                        isPlaying ? "bg-gold/15 border border-gold/25 scale-110" : "bg-white/[0.04] border border-white/[0.06] group-hover:scale-105"
+                                      }`}>
+                                        <Music className={`h-7 w-7 transition-colors duration-500 ${isPlaying ? "text-gold/70" : "text-white/25 group-hover:text-white/40"}`} />
+                                      </div>
+                                    </div>
+                                  )}
+                                  <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                    <button
+                                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggle(playerTrack); }}
+                                      className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/80 text-background shadow-xl shadow-gold/20 hover:bg-gold transition-all duration-300 hover:scale-110"
+                                    >
+                                      {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-0.5" />}
+                                    </button>
+                                  </div>
+                                  <span className="absolute top-3 right-3 text-[9px] font-medium tracking-[0.15em] uppercase rounded-full bg-black/30 backdrop-blur-sm border border-white/[0.08] px-2.5 py-0.5 text-white/40">
+                                    {icon} {track.category.replace(/^[^\w\s]+\s*/, '')}
+                                  </span>
+                                  {isPlaying && (
+                                    <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/30">
+                                      <div className="h-full bg-gradient-to-r from-gold/60 to-gold/90 transition-all duration-200 ease-linear" style={{ width: `${progress}%` }} />
+                                    </div>
+                                  )}
+                                </div>
+                                <div className="p-4">
+                                  <h3 className={`font-display text-[14px] font-bold tracking-tight leading-snug truncate transition-colors duration-500 ${
+                                    isPlaying ? "text-gold/85" : "text-foreground/85 group-hover:text-foreground"
+                                  }`}>
+                                    {track.title}
+                                  </h3>
+                                  <div className="flex items-center justify-between mt-2">
+                                    <p className={`text-[10px] tracking-[0.1em] font-medium transition-colors duration-500 ${
+                                      isPlaying ? "text-gold/40" : "text-muted-foreground/25"
+                                    }`}>
+                                      {track.duration}
+                                    </p>
+                                    {(track.download_url || track.storage_path) && (
+                                      <button
+                                        onClick={(e) => {
+                                          e.preventDefault();
+                                          e.stopPropagation();
+                                          const link = document.createElement("a");
+                                          link.href = track.download_url || getStoragePublicUrl(track.storage_path);
+                                          link.download = `${track.title}.mp3`;
+                                          link.click();
+                                        }}
+                                        className="text-muted-foreground/20 hover:text-gold/50 transition-colors duration-300"
+                                        title="Baixar"
+                                      >
+                                        <Download className="h-3.5 w-3.5" />
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+                              </motion.div>
+                            </Link>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </motion.section>
               );
             })}
