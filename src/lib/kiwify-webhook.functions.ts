@@ -14,10 +14,28 @@ function jsonResponse(data: unknown, status = 200) {
 async function getWebhookConfig() {
   const { data } = await supabaseAdmin
     .from('webhook_settings')
-    .select('is_active, monitored_events, auth_token')
+    .select('is_active, monitored_events, auth_token, allowed_ips')
     .eq('provider', 'kiwify')
     .maybeSingle();
   return data;
+}
+
+function getClientIp(request: Request): string {
+  return (
+    request.headers.get('cf-connecting-ip') ||
+    request.headers.get('x-real-ip') ||
+    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+    ''
+  );
+}
+
+function isIpAllowed(clientIp: string, allowedIps: string[]): boolean {
+  if (!allowedIps || allowedIps.length === 0) return true;
+  if (!clientIp) {
+    console.warn('⚠️ Could not determine client IP – allowing request');
+    return true;
+  }
+  return allowedIps.includes(clientIp);
 }
 
 async function verifySignature(request: Request, body: string, dbToken?: string | null): Promise<boolean> {
@@ -87,6 +105,14 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
     const config = await getWebhookConfig();
     if (config && !config.is_active) {
       return jsonResponse({ status: 'success', message: 'Webhook is disabled' });
+    }
+
+    // IP whitelist check
+    const clientIp = getClientIp(request);
+    if (config?.allowed_ips && !isIpAllowed(clientIp, config.allowed_ips)) {
+      console.error(`❌ IP blocked: ${clientIp}`);
+      await logWebhook('ip_blocked', '', '', null, 403, `Blocked IP: ${clientIp}`);
+      return jsonResponse({ status: 'error', message: 'IP not allowed' }, 403);
     }
 
     const rawBody = await request.text();

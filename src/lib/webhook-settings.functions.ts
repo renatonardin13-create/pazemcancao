@@ -21,6 +21,7 @@ export const updateWebhookSettings = createServerFn({ method: 'POST' })
     is_active: boolean;
     monitored_events: string[];
     auth_token?: string;
+    allowed_ips?: string[];
   }) => input)
   .handler(async ({ data, context }) => {
     const { supabase } = context;
@@ -34,6 +35,7 @@ export const updateWebhookSettings = createServerFn({ method: 'POST' })
           is_active: data.is_active,
           monitored_events: data.monitored_events,
           auth_token: data.auth_token || null,
+          allowed_ips: data.allowed_ips || [],
         },
         { onConflict: 'provider' }
       );
