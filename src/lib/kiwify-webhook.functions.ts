@@ -38,9 +38,25 @@ function isIpAllowed(clientIp: string, allowedIps: string[]): boolean {
   return allowedIps.includes(clientIp);
 }
 
-async function verifySignature(request: Request, body: string, dbToken?: string | null): Promise<boolean> {
-  const signature = request.headers.get('x-kiwify-signature')
+function getRequestSignature(request: Request): string | null {
+  const headerSignature = request.headers.get('x-kiwify-signature')
     || request.headers.get('x-webhook-signature');
+
+  if (headerSignature?.trim()) {
+    return headerSignature.trim();
+  }
+
+  try {
+    const url = new URL(request.url);
+    const querySignature = url.searchParams.get('signature');
+    return querySignature?.trim() || null;
+  } catch {
+    return null;
+  }
+}
+
+async function verifySignature(request: Request, body: string, dbToken?: string | null): Promise<boolean> {
+  const signature = getRequestSignature(request);
 
   // Use DB token first, fallback to env var
   const secret = dbToken || process.env.KIWIFY_WEBHOOK_SECRET;
@@ -51,7 +67,7 @@ async function verifySignature(request: Request, body: string, dbToken?: string 
   }
 
   if (!signature) {
-    console.error('❌ Missing webhook signature header');
+    console.error('❌ Missing webhook signature header or query param');
     return false;
   }
 
