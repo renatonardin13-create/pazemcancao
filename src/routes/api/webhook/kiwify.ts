@@ -42,7 +42,7 @@ async function verifySignature(request: Request, body: string): Promise<boolean>
       .map(b => b.toString(16).padStart(2, '0'))
       .join('');
 
-    // Timing-safe comparison to prevent timing attacks
+    // Timing-safe comparison
     if (signature.length !== expectedSignature.length) return false;
     const a = new TextEncoder().encode(signature);
     const b2 = new TextEncoder().encode(expectedSignature);
@@ -57,123 +57,121 @@ async function verifySignature(request: Request, body: string): Promise<boolean>
   }
 }
 
+export async function handleKiwifyWebhook(request: Request): Promise<Response> {
+  try {
+    const rawBody = await request.text();
+
+    const isValid = await verifySignature(request, rawBody);
+    if (!isValid) {
+      return jsonResponse({ status: 'error', message: 'Invalid signature' }, 401);
+    }
+
+    const body = JSON.parse(rawBody);
+
+    const event = body.event || '';
+    const orderStatus = (
+      body.status ||
+      body.order_status ||
+      body.payment_status ||
+      body.subscription_status ||
+      ''
+    ).toLowerCase();
+
+    const buyerName =
+      body.user_data?.name ||
+      body.Customer?.full_name ||
+      body.customer?.name ||
+      body.buyer_name ||
+      'Comprador';
+
+    const buyerEmail = (
+      body.user_data?.email ||
+      body.Customer?.email ||
+      body.customer?.email ||
+      body.buyer_email ||
+      ''
+    ).toLowerCase().trim();
+
+    const orderId =
+      body.order_id ||
+      body.Transaction?.order_id ||
+      body.transaction_id ||
+      '';
+
+    const productName =
+      body.user_data?.plan ||
+      body.Product?.name ||
+      body.product?.name ||
+      body.product_name ||
+      'Paz em Canção';
+
+    if (!buyerEmail) {
+      return jsonResponse({ status: 'error', message: 'Missing buyer email' }, 400);
+    }
+
+    console.log(`📩 Kiwify webhook: event=${event} status=${orderStatus} email=${buyerEmail} order=${orderId}`);
+
+    // Handle approved/paid/completed purchases & subscriptions
+    if (
+      APPROVED_STATUSES.includes(orderStatus) ||
+      event === 'purchase_completed' ||
+      event === 'subscription_started'
+    ) {
+      const { error: dbError } = await supabaseAdmin
+        .from('approved_buyers')
+        .upsert(
+          {
+            nome: buyerName,
+            email: buyerEmail,
+            order_id: orderId,
+            product_name: productName,
+            status: 'approved',
+            access_enabled: true,
+          },
+          { onConflict: 'email' }
+        );
+
+      if (dbError) {
+        console.error('❌ DB upsert error:', dbError);
+        return jsonResponse({ status: 'error', message: 'Failed to register buyer' }, 500);
+      }
+
+      console.log(`✅ Buyer approved: ${buyerEmail}`);
+      return jsonResponse({ status: 'success', message: 'Webhook processed successfully.' });
+    }
+
+    // Handle cancellations / refunds / chargebacks
+    if (CANCELLED_STATUSES.includes(orderStatus)) {
+      const { error: dbError } = await supabaseAdmin
+        .from('approved_buyers')
+        .update({ access_enabled: false, status: orderStatus })
+        .eq('email', buyerEmail);
+
+      if (dbError) {
+        console.error('❌ DB update error:', dbError);
+        return jsonResponse({ status: 'error', message: 'Failed to update buyer status' }, 500);
+      }
+
+      console.log(`🚫 Buyer access revoked: ${buyerEmail} (${orderStatus})`);
+      return jsonResponse({ status: 'success', message: 'Webhook processed successfully.' });
+    }
+
+    console.log(`ℹ️ Unhandled: event=${event} status=${orderStatus} email=${buyerEmail}`);
+    return jsonResponse({ status: 'success', message: 'Event received but no action required.' });
+
+  } catch (err: any) {
+    console.error('❌ Webhook error:', err);
+    return jsonResponse({ status: 'error', message: err.message || 'Webhook processing failed' }, 400);
+  }
+}
+
 export const Route = createFileRoute('/api/webhook/kiwify')({
   server: {
     handlers: {
       OPTIONS: async () => {
         return new Response(null, { status: 204, headers: CORS_HEADERS });
       },
-
-      POST: async ({ request }) => {
-        try {
-          const rawBody = await request.text();
-
-          const isValid = await verifySignature(request, rawBody);
-          if (!isValid) {
-            return jsonResponse({ status: 'error', message: 'Invalid signature' }, 401);
-          }
-
-          const body = JSON.parse(rawBody);
-
-          // Support both PRD format (body.event + body.status) and Kiwify native format
-          const event = body.event || '';
-          const orderStatus = (
-            body.status ||
-            body.order_status ||
-            body.payment_status ||
-            body.subscription_status ||
-            ''
-          ).toLowerCase();
-
-          // Extract buyer info – supports PRD format (user_data) and Kiwify native formats
-          const buyerName =
-            body.user_data?.name ||
-            body.Customer?.full_name ||
-            body.customer?.name ||
-            body.buyer_name ||
-            'Comprador';
-
-          const buyerEmail = (
-            body.user_data?.email ||
-            body.Customer?.email ||
-            body.customer?.email ||
-            body.buyer_email ||
-            ''
-          ).toLowerCase().trim();
-
-          const orderId =
-            body.order_id ||
-            body.Transaction?.order_id ||
-            body.transaction_id ||
-            '';
-
-          const productName =
-            body.user_data?.plan ||
-            body.Product?.name ||
-            body.product?.name ||
-            body.product_name ||
-            'Paz em Canção';
-
-          if (!buyerEmail) {
-            return jsonResponse({ status: 'error', message: 'Missing buyer email' }, 400);
-          }
-
-          console.log(`📩 Kiwify webhook: event=${event} status=${orderStatus} email=${buyerEmail} order=${orderId}`);
-
-          // Handle approved/paid/completed purchases & subscriptions
-          if (
-            APPROVED_STATUSES.includes(orderStatus) ||
-            event === 'purchase_completed' ||
-            event === 'subscription_started'
-          ) {
-            const { error: dbError } = await supabaseAdmin
-              .from('approved_buyers')
-              .upsert(
-                {
-                  nome: buyerName,
-                  email: buyerEmail,
-                  order_id: orderId,
-                  product_name: productName,
-                  status: 'approved',
-                  access_enabled: true,
-                },
-                { onConflict: 'email' }
-              );
-
-            if (dbError) {
-              console.error('❌ DB upsert error:', dbError);
-              return jsonResponse({ status: 'error', message: 'Failed to register buyer' }, 500);
-            }
-
-            console.log(`✅ Buyer approved: ${buyerEmail}`);
-            return jsonResponse({ status: 'success', message: 'Webhook processed successfully.' });
-          }
-
-          // Handle cancellations / refunds / chargebacks
-          if (CANCELLED_STATUSES.includes(orderStatus)) {
-            const { error: dbError } = await supabaseAdmin
-              .from('approved_buyers')
-              .update({ access_enabled: false, status: orderStatus })
-              .eq('email', buyerEmail);
-
-            if (dbError) {
-              console.error('❌ DB update error:', dbError);
-              return jsonResponse({ status: 'error', message: 'Failed to update buyer status' }, 500);
-            }
-
-            console.log(`🚫 Buyer access revoked: ${buyerEmail} (${orderStatus})`);
-            return jsonResponse({ status: 'success', message: 'Webhook processed successfully.' });
-          }
-
-          // Unhandled event/status – acknowledge receipt
-          console.log(`ℹ️ Unhandled: event=${event} status=${orderStatus} email=${buyerEmail}`);
-          return jsonResponse({ status: 'success', message: 'Event received but no action required.' });
-
-        } catch (err: any) {
-          console.error('❌ Webhook error:', err);
-          return jsonResponse({ status: 'error', message: err.message || 'Webhook processing failed' }, 400);
-        }
-      },
+      POST: async ({ request }) => handleKiwifyWebhook(request),
     },
   },
 });
