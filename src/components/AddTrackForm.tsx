@@ -37,11 +37,18 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
 
       // 1. Upload MP3 to storage
       const fileName = `audio/${crypto.randomUUID()}.mp3`;
+      console.log("[AddTrack] Uploading MP3:", fileName, "size:", mp3File.size);
+      
       const { error: uploadError } = await supabase.storage
         .from("tracks")
         .upload(fileName, mp3File, { contentType: "audio/mpeg" });
 
-      if (uploadError) throw new Error("Erro ao enviar MP3: " + uploadError.message);
+      if (uploadError) {
+        console.error("[AddTrack] Upload error:", uploadError);
+        throw new Error("Erro ao enviar MP3: " + uploadError.message);
+      }
+
+      console.log("[AddTrack] Upload OK, getting public URL");
 
       // Get public URL for download
       const { data: urlData } = supabase.storage
@@ -51,6 +58,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
       setUploading(false);
 
       // 2. Insert track via server function (bypasses RLS)
+      console.log("[AddTrack] Creating track record...");
       const result = await createTrack({
         data: {
           title: title.trim(),
@@ -63,10 +71,10 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
       });
 
       const track = result.track;
-
-      setGeneratingCover(true);
+      console.log("[AddTrack] Track created:", track.id);
 
       // 3. Generate cover with AI (async, non-blocking)
+      setGeneratingCover(true);
       try {
         const session = await supabase.auth.getSession();
         const token = session.data.session?.access_token;
@@ -95,10 +103,11 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
             toast.info("Capa não gerada. Será usada capa padrão.");
           }
         } else {
+          console.warn("[AddTrack] Cover generation failed:", coverRes.status);
           toast.info("Capa não gerada. Será usada capa padrão.");
         }
       } catch (coverErr) {
-        console.error("Cover error:", coverErr);
+        console.error("[AddTrack] Cover error:", coverErr);
         toast.info("Capa não gerada. Será usada capa padrão.");
       }
 
@@ -112,6 +121,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
       onSuccess?.();
     },
     onError: (err: Error) => {
+      console.error("[AddTrack] Mutation error:", err);
       setUploading(false);
       setGeneratingCover(false);
       toast.error(err.message);
