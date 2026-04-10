@@ -14,6 +14,7 @@ export const Route = createFileRoute("/_authenticated/admin/tracks")({
 
 function AdminTracksPage() {
   const [showForm, setShowForm] = useState(false);
+  const [editingTrack, setEditingTrack] = useState<any>(null);
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -134,6 +135,13 @@ function AdminTracksPage() {
               </Badge>
 
               <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setEditingTrack(track)}
+                  className="p-2 text-muted-foreground/30 hover:text-gold/60 transition-colors"
+                  title="Editar"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </button>
                 {!track.cover_url && (
                   <button
                     onClick={() =>
