@@ -258,21 +258,29 @@ function LoginPage() {
                 Se acredita que houve um engano, entre em contato com nosso suporte.
               </p>
               
-              <button
-                onClick={() => window.location.reload()}
-                className="inline-flex items-center gap-2 text-[12px] text-gold/70 hover:text-gold/70 transition-colors duration-500 underline underline-offset-4 decoration-gold/15 hover:decoration-gold/30"
-              >
-                <ArrowLeft className="h-3 w-3" />
-                Tentar novamente
-              </button>
+              <div className="flex flex-col items-center gap-3">
+                <button
+                  onClick={() => window.location.reload()}
+                  className="inline-flex items-center gap-2 text-[12px] text-gold/70 hover:text-gold/70 transition-colors duration-500 underline underline-offset-4 decoration-gold/15 hover:decoration-gold/30"
+                >
+                  <ArrowLeft className="h-3 w-3" />
+                  Tentar novamente
+                </button>
+
+                <a
+                  href={`https://wa.me/5517988308037?text=${encodeURIComponent('Olá, preciso de ajuda para acessar o Paz em Canção')}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 text-emerald-400/70 border border-emerald-500/15 px-5 py-2.5 text-[11px] font-semibold tracking-wider uppercase hover:bg-emerald-500/20 hover:text-emerald-400/90 transition-all duration-500"
+                >
+                  Falar com Suporte
+                </a>
+              </div>
             </div>
           </div>
           
           <p className="mt-6 text-center text-[10px] text-muted-foreground/50">
-            Precisa de ajuda?{" "}
-            <a href="mailto:suporte@pazemcancao.com" className="text-gold/35 hover:text-gold/55 transition-colors duration-500 underline underline-offset-2">
-              Fale conosco
-            </a>
+            Suporte: (17) 98830-8037
           </p>
         </motion.div>
       </div>
