@@ -74,7 +74,7 @@ function LandingPage() {
             <img
               src={heroImg}
               alt="Paz em Canção — Plataforma completa com 30 louvores inéditos"
-              className="relative z-20 w-full max-w-[700px] sm:max-w-[800px] rounded-xl border border-gold/10 shadow-[0_0_60px_-20px_rgba(212,175,55,0.15)]"
+              className="relative z-20 w-full max-w-[320px] sm:max-w-[600px] md:max-w-[800px] rounded-xl border border-gold/10 shadow-[0_0_60px_-20px_rgba(212,175,55,0.15)]"
             />
           </motion.div>
         </div>
@@ -85,11 +85,11 @@ function LandingPage() {
           animate="visible"
           variants={fadeUp}
           custom={1.0}
-          className="relative z-10 mb-8 mt-16"
+          className="relative z-10 mb-8 mt-10 sm:mt-16 px-6"
         >
           <Link
             to="/login"
-            className="inline-block px-12 py-5 rounded-full bg-[hsl(32_82%_58%)] text-background font-bold text-base sm:text-lg tracking-wide uppercase shadow-[0_0_30px_rgba(234,153,61,0.28)] hover:shadow-[0_0_50px_rgba(234,153,61,0.42)] hover:scale-105 transition-all duration-500"
+            className="inline-block w-full sm:w-auto text-center px-8 sm:px-12 py-4 sm:py-5 rounded-full bg-[hsl(32_82%_58%)] text-background font-bold text-sm sm:text-lg tracking-wide uppercase shadow-[0_0_30px_rgba(234,153,61,0.28)] hover:shadow-[0_0_50px_rgba(234,153,61,0.42)] hover:scale-105 transition-all duration-500"
           >
             QUERO ACESSAR MEUS 30 LOUVORES AGORA
           </Link>
