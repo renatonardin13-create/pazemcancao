@@ -258,6 +258,7 @@ function TestWebhookSection() {
   const queryClient = useQueryClient();
   const [testEmail, setTestEmail] = useState("teste@exemplo.com");
   const [testName, setTestName] = useState("Comprador Teste");
+  const [testToken, setTestToken] = useState("");
 
   type TestWebhookResponse = {
     status: number;
@@ -275,7 +276,7 @@ function TestWebhookSection() {
   };
 
   const testMutation = useMutation({
-    mutationFn: () => sendTestWebhook({ data: { email: testEmail, name: testName } }) as Promise<TestWebhookResponse>,
+    mutationFn: () => sendTestWebhook({ data: { email: testEmail, name: testName, token: testToken } }) as Promise<TestWebhookResponse>,
     onSuccess: (res: TestWebhookResponse) => {
       if (res.status === 200) {
         toast.success("Teste enviado com sucesso! Verifique os logs abaixo.");
@@ -319,6 +320,12 @@ function TestWebhookSection() {
           className="text-xs"
         />
       </div>
+      <Input
+        value={testToken}
+        onChange={(e) => setTestToken(e.target.value)}
+        placeholder="Token (deixe vazio para ignorar validação)"
+        className="font-mono text-xs"
+      />
       <Button
         variant="outline"
         onClick={() => testMutation.mutate()}
