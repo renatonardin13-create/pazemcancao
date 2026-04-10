@@ -265,7 +265,12 @@ function TestWebhookSection() {
       if (res.status === 200) {
         toast.success("Teste enviado com sucesso! Verifique os logs abaixo.");
       } else {
-        toast.error(`Teste falhou com status ${res.status}: ${JSON.stringify(res.result)}`);
+        const message =
+          typeof res.result === "object" && res.result !== null && "error" in res.result
+            ? String((res.result as { error?: unknown }).error)
+            : JSON.stringify(res.result);
+
+        toast.error(`Teste falhou com status ${res.status}: ${message}`);
       }
       queryClient.invalidateQueries({ queryKey: ["webhook-logs"] });
     },

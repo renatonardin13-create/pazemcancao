@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+import { handleKiwifyWebhook } from '@/lib/kiwify-webhook.functions';
 
 export const getWebhookSettings = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
@@ -86,15 +87,24 @@ export const sendTestWebhook = createServerFn({ method: 'POST' })
       _test: true,
     };
 
-    const res = await fetch('https://pazemcancao.lovable.app/api/webhook/kiwify', {
+    const request = new Request('https://pazemcancao.lovable.app/api/webhook/kiwify', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-kiwify-token': token,
+        ...(token ? { 'x-kiwify-token': token } : {}),
       },
       body: JSON.stringify(testPayload),
     });
 
-    const result = await res.json();
+    const res = await handleKiwifyWebhook(request);
+    const rawResult = await res.text();
+
+    let result: unknown = null;
+    try {
+      result = rawResult ? JSON.parse(rawResult) : null;
+    } catch {
+      result = { raw: rawResult };
+    }
+
     return { status: res.status, result };
   });
