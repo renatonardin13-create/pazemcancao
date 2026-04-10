@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { createTrack } from "@/lib/admin-tracks.functions";
+import { createTrack, regenerateCover } from "@/lib/admin-tracks.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -73,37 +73,16 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
       const track = result.track;
       console.log("[AddTrack] Track created:", track.id);
 
-      // 3. Generate cover with AI (async, non-blocking)
+      // 3. Generate cover with AI via server function
       setGeneratingCover(true);
       try {
-        const session = await supabase.auth.getSession();
-        const token = session.data.session?.access_token;
-
-        const coverRes = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/generate-cover`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({
-              title: title.trim(),
-              trackId: track.id,
-            }),
-          }
-        );
-
-        if (coverRes.ok) {
-          const coverData = await coverRes.json();
-          if (coverData.coverUrl) {
-            setCoverPreview(coverData.coverUrl);
-            toast.success("Capa gerada com sucesso!");
-          } else {
-            toast.info("Capa não gerada. Será usada capa padrão.");
-          }
+        const coverResult = await regenerateCover({
+          data: { trackId: track.id, title: title.trim() },
+        });
+        if (coverResult.coverUrl) {
+          setCoverPreview(coverResult.coverUrl);
+          toast.success("Capa gerada com sucesso!");
         } else {
-          console.warn("[AddTrack] Cover generation failed:", coverRes.status);
           toast.info("Capa não gerada. Será usada capa padrão.");
         }
       } catch (coverErr) {
