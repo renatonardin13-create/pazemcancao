@@ -49,3 +49,31 @@ export const upsertCourseIntegration = createServerFn({ method: 'POST' })
     if (error) throw new Error(error.message);
     return { success: true };
   });
+
+export const testCourseWebhook = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { courseId: string }) => input)
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+
+    // Verify admin role
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not authenticated');
+
+    const { data: role } = await supabase.rpc('has_role', { _user_id: user.id, _role: 'admin' });
+    if (!role) throw new Error('Admin access required');
+
+    // Insert test log entry
+    const { error } = await supabase.from('webhook_logs').insert({
+      provider: 'test',
+      event_type: 'test_webhook',
+      order_id: `TEST-${Date.now()}`,
+      email: 'teste@exemplo.com',
+      payload: { _test: true, course_id: data.courseId, timestamp: new Date().toISOString() },
+      response_status: 200,
+      response_message: 'Teste de webhook realizado com sucesso',
+    });
+
+    if (error) throw new Error(error.message);
+    return { success: true };
+  });
