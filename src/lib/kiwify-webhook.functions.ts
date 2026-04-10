@@ -70,41 +70,21 @@ async function provisionUserAccess(email: string) {
   }
 }
 
-function verifyToken(request: Request, body: any, savedToken: string): boolean {
-  // If no token is configured, skip verification (allow all requests)
-  if (!savedToken) return true;
-
-  // 1. Check headers (x-kiwify-token, Authorization Bearer)
-  const headerToken =
-    request.headers.get('x-kiwify-token') ||
-    request.headers.get('authorization')?.replace('Bearer ', '') ||
-    '';
-
-  if (headerToken && headerToken === savedToken) return true;
-
-  // 2. Check query param
-  const url = new URL(request.url);
-  const queryToken = url.searchParams.get('token') || '';
-  if (queryToken && queryToken === savedToken) return true;
-
-  // 3. Check signature field in body (Kiwify sends signature in the payload)
-  const bodySignature = body?.signature || '';
-  if (bodySignature && bodySignature === savedToken) return true;
-
-  // 4. Check the raw body token field
-  const bodyToken = body?.token || '';
-  if (bodyToken && bodyToken === savedToken) return true;
-
-  return false;
-}
-
 export async function handleKiwifyWebhook(request: Request): Promise<Response> {
   let rawBody: any = null;
 
   try {
     rawBody = await request.json();
 
-    // 1. Fetch saved config
+    const requestUrl = new URL(request.url);
+    const headerToken =
+      request.headers.get('x-kiwify-token') ||
+      request.headers.get('x-webhook-token') ||
+      request.headers.get('authorization')?.replace('Bearer ', '') ||
+      requestUrl.searchParams.get('token') ||
+      requestUrl.searchParams.get('kiwify_token') ||
+      '';
+
     const { data: config } = await supabaseAdmin
       .from('webhook_settings')
       .select('auth_token, is_active')
@@ -121,13 +101,11 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       return jsonResponse({ status: 'success', message: 'Webhook is disabled' });
     }
 
-    const savedToken = config?.auth_token || '';
+    const savedToken = (config?.auth_token || '').trim();
+    const receivedToken = headerToken.trim();
 
-    // 2. Verify token
-    const isValid = verifyToken(request, rawBody, savedToken);
-
-    if (!isValid) {
-      console.error('❌ Token mismatch or missing');
+    if (savedToken && receivedToken !== savedToken) {
+      console.error('Token recebido:', receivedToken, 'Token esperado:', savedToken);
       await logWebhookEvent({
         eventType: 'auth_failed',
         payload: rawBody,
