@@ -458,6 +458,39 @@ export type Database = {
         }
         Relationships: []
       }
+      webhook_settings: {
+        Row: {
+          auth_token: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          monitored_events: string[]
+          provider: string
+          updated_at: string
+          webhook_url: string
+        }
+        Insert: {
+          auth_token?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          monitored_events?: string[]
+          provider?: string
+          updated_at?: string
+          webhook_url?: string
+        }
+        Update: {
+          auth_token?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          monitored_events?: string[]
+          provider?: string
+          updated_at?: string
+          webhook_url?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
