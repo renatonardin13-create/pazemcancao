@@ -84,6 +84,22 @@ async function verifySignature(request: Request, body: string, dbToken?: string 
   }
 }
 
+async function logWebhook(eventType: string, orderId: string, email: string, payload: any, responseStatus: number, responseMessage: string) {
+  try {
+    await supabaseAdmin.from('webhook_logs').insert({
+      provider: 'kiwify',
+      event_type: eventType,
+      order_id: orderId || null,
+      email: email || null,
+      payload,
+      response_status: responseStatus,
+      response_message: responseMessage,
+    });
+  } catch (e) {
+    console.error('Failed to log webhook:', e);
+  }
+}
+
 export async function handleKiwifyWebhook(request: Request): Promise<Response> {
   try {
     // Check if webhook is active in DB settings
