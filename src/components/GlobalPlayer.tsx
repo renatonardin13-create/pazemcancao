@@ -2,7 +2,7 @@ import { Play, Pause, X, Download, SkipBack, SkipForward, Music } from "lucide-r
 import { usePlayer } from "@/hooks/use-player";
 
 export function GlobalPlayer() {
-  const { currentTrack, playing, progress, currentTime, duration, pause, play, toggle, seek, stop } = usePlayer();
+  const { currentTrack, playing, progress, currentTime, duration, queue, queueIndex, toggle, seek, stop, next, previous } = usePlayer();
 
   if (!currentTrack) return null;
 
@@ -36,6 +36,8 @@ export function GlobalPlayer() {
     return `${m}:${String(s).padStart(2, "0")}`;
   };
 
+  const hasQueue = queue.length > 1;
+
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/85 backdrop-blur-2xl">
       {/* Progress — clickable */}
@@ -54,7 +56,6 @@ export function GlobalPlayer() {
       <div className="flex items-center gap-4 px-5 sm:px-8 py-4 max-w-5xl mx-auto">
         {/* Cover + Track info */}
         <div className="flex items-center gap-3 flex-1 min-w-0">
-          {/* Cover image */}
           <div className="shrink-0 h-10 w-10 rounded-lg overflow-hidden bg-card/20 border border-border/10">
             {currentTrack.coverUrl ? (
               <img
@@ -79,12 +80,27 @@ export function GlobalPlayer() {
               <span className="tabular-nums">{formatSecs(currentTime)}</span>
               <span className="mx-1 text-border/15">/</span>
               <span className="tabular-nums">{duration > 0 ? formatSecs(duration) : currentTrack.duration}</span>
+              {hasQueue && (
+                <>
+                  <span className="mx-1.5">·</span>
+                  <span className="tabular-nums">{queueIndex + 1}/{queue.length}</span>
+                </>
+              )}
             </p>
           </div>
         </div>
 
         {/* Controls */}
         <div className="flex items-center gap-1 shrink-0">
+          {hasQueue && (
+            <button
+              onClick={previous}
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/25 hover:text-gold/50 transition-all duration-500"
+            >
+              <SkipBack className="h-3.5 w-3.5" />
+            </button>
+          )}
+
           <button
             onClick={() => toggle(currentTrack)}
             className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-500 ${
@@ -95,6 +111,15 @@ export function GlobalPlayer() {
           >
             {playing ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 ml-0.5" />}
           </button>
+
+          {hasQueue && (
+            <button
+              onClick={next}
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/25 hover:text-gold/50 transition-all duration-500"
+            >
+              <SkipForward className="h-3.5 w-3.5" />
+            </button>
+          )}
 
           <button
             onClick={handleDownload}

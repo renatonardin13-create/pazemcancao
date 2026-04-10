@@ -4,7 +4,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { FooterLinks } from "@/components/FooterLinks";
 import { useQuery } from "@tanstack/react-query";
 import { listActiveTracks, listCategories } from "@/lib/tracks.functions";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { usePlayer } from "@/hooks/use-player";
 import { motion } from "framer-motion";
@@ -68,7 +68,7 @@ function MusicLibraryPage() {
     queryFn: () => listActiveTracks(),
   });
 
-  const { currentTrack, playing, progress, toggle } = usePlayer();
+  const { currentTrack, playing, progress, toggle, setQueue, queue } = usePlayer();
 
   const dbCategories = catData?.categories || [];
   const tracks = data?.tracks || [];
@@ -96,6 +96,20 @@ function MusicLibraryPage() {
       return matchesSearch && matchesCategory;
     });
   }, [tracks, searchTerm, activeCategory]);
+
+  // Build player tracks queue from filtered results
+  const allPlayerTracks = useMemo(() => {
+    return filteredTracks.map((t: any) => dbTrackToPlayerTrack(t));
+  }, [filteredTracks]);
+
+  const handleToggleWithQueue = useCallback((playerTrack: Track) => {
+    const idx = allPlayerTracks.findIndex(t => t.id === playerTrack.id);
+    if (idx >= 0 && (queue.length === 0 || !queue.some(q => q.id === playerTrack.id))) {
+      setQueue(allPlayerTracks, idx);
+    } else {
+      handleToggleWithQueue(playerTrack);
+    }
+  }, [allPlayerTracks, queue, setQueue, toggle]);
 
   // Group by category
   const tracksByCategory = useMemo(() => {
@@ -264,7 +278,7 @@ function MusicLibraryPage() {
                                 )}
                                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                   <button
-                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggle(playerTrack); }}
+                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleToggleWithQueue(playerTrack); }}
                                     className="flex h-12 w-12 items-center justify-center rounded-full bg-gold/80 text-background shadow-xl shadow-gold/20 hover:bg-gold transition-all duration-300"
                                   >
                                     {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
@@ -332,7 +346,7 @@ function MusicLibraryPage() {
                                   )}
                                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                     <button
-                                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggle(playerTrack); }}
+                                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); handleToggleWithQueue(playerTrack); }}
                                       className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/80 text-background shadow-xl shadow-gold/20 hover:bg-gold transition-all duration-300 hover:scale-110"
                                     >
                                       {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-0.5" />}
