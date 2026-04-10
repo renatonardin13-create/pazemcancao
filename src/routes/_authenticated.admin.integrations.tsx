@@ -259,13 +259,33 @@ function TestWebhookSection() {
   const [testEmail, setTestEmail] = useState("teste@exemplo.com");
   const [testName, setTestName] = useState("Comprador Teste");
 
+  type TestWebhookResponse = {
+    status: number;
+    resultText: string;
+  };
+
+  const parseTestResponse = (resultText: string) => {
+    if (!resultText) return null;
+
+    try {
+      return JSON.parse(resultText) as Record<string, unknown>;
+    } catch {
+      return { raw: resultText };
+    }
+  };
+
   const testMutation = useMutation({
-    mutationFn: () => sendTestWebhook({ data: { email: testEmail, name: testName } }),
-    onSuccess: (res) => {
+    mutationFn: () => sendTestWebhook({ data: { email: testEmail, name: testName } }) as Promise<TestWebhookResponse>,
+    onSuccess: (res: TestWebhookResponse) => {
       if (res.status === 200) {
         toast.success("Teste enviado com sucesso! Verifique os logs abaixo.");
       } else {
-        toast.error(`Teste falhou com status ${res.status}: ${JSON.stringify(res.result)}`);
+        const parsed = parseTestResponse(res.resultText);
+        const message = typeof parsed?.error === "string"
+          ? parsed.error
+          : JSON.stringify(parsed);
+
+        toast.error(`Teste falhou com status ${res.status}: ${message}`);
       }
       queryClient.invalidateQueries({ queryKey: ["webhook-logs"] });
     },
@@ -367,7 +387,7 @@ function WebhookLogsSection() {
                       {log.event_type || '—'}
                     </Badge>
                     {log.payload?._test && (
-                      <Badge variant="outline" className="text-[10px] font-mono border-amber-500/30 text-amber-400 gap-1">
+                      <Badge variant="outline" className="text-[10px] font-mono border-primary/30 text-primary gap-1">
                         <FlaskConical className="h-3 w-3" />
                         Teste
                       </Badge>
