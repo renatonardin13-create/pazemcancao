@@ -275,7 +275,7 @@ function MusicLibraryPage() {
                                 )}
                                 <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                   <button
-                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggle(playerTrack); }}
+                                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); handlePlayWithQueue(track, catTracks); }}
                                     className="flex h-12 w-12 items-center justify-center rounded-full bg-gold/80 text-background shadow-xl shadow-gold/20 hover:bg-gold transition-all duration-300"
                                   >
                                     {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
@@ -343,7 +343,7 @@ function MusicLibraryPage() {
                                   )}
                                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                     <button
-                                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggle(playerTrack); }}
+                                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); handlePlayWithQueue(track, catTracks); }}
                                       className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/80 text-background shadow-xl shadow-gold/20 hover:bg-gold transition-all duration-300 hover:scale-110"
                                     >
                                       {isPlaying ? <Pause className="h-6 w-6" /> : <Play className="h-6 w-6 ml-0.5" />}
