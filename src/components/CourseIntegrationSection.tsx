@@ -287,18 +287,24 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
         </Card>
       )}
 
-      {/* Save button */}
-      <Button
-        type="button"
-        onClick={() => mutation.mutate()}
-        disabled={mutation.isPending}
-        className="w-full"
-      >
-        {mutation.isPending ? (
-          <Loader2 className="h-4 w-4 animate-spin mr-2" />
-        ) : null}
-        {isEnabled ? "Atualizar Integração" : "Salvar Configurações"}
-      </Button>
+      {/* Action buttons */}
+      <div className="flex gap-3">
+        <Button
+          type="button"
+          onClick={() => mutation.mutate()}
+          disabled={mutation.isPending}
+          className="flex-1"
+        >
+          {mutation.isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin mr-2" />
+          ) : null}
+          {isEnabled ? "Atualizar Integração" : "Salvar Configurações"}
+        </Button>
+
+        {isEnabled && webhookActive && (
+          <TestWebhookButton webhookUrl={webhookUrl} platform={platform} />
+        )}
+      </div>
     </div>
   );
 }
