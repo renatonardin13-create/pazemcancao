@@ -2,7 +2,8 @@ import { createFileRoute } from '@tanstack/react-router';
 import { CORS_HEADERS } from '@/lib/cors';
 import { handleKiwifyWebhook } from '@/lib/kiwify-webhook.functions';
 
-export const Route = createFileRoute('/api/webhook/kiwify')({
+// PRD URL: https://pazemcancao.lovable.app/webhook
+export const Route = createFileRoute('/webhook')({
   server: {
     handlers: {
       OPTIONS: async () => {

@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WebhookRouteImport } from './routes/webhook'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as LoginRouteImport } from './routes/login'
@@ -31,6 +32,11 @@ import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminCoursesNewRouteImport } from './routes/_authenticated.admin.courses.new'
 import { Route as AuthenticatedAdminCoursesCourseIdRouteImport } from './routes/_authenticated.admin.courses.$courseId'
 
+const WebhookRoute = WebhookRouteImport.update({
+  id: '/webhook',
+  path: '/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
   path: '/termos',
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
+  '/webhook': typeof WebhookRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/downloads': typeof AuthenticatedDownloadsRoute
   '/musicas': typeof AuthenticatedMusicasRouteWithChildren
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
+  '/webhook': typeof WebhookRoute
   '/downloads': typeof AuthenticatedDownloadsRoute
   '/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/perfil': typeof AuthenticatedPerfilRoute
@@ -195,6 +203,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
+  '/webhook': typeof WebhookRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/downloads': typeof AuthenticatedDownloadsRoute
   '/_authenticated/musicas': typeof AuthenticatedMusicasRouteWithChildren
@@ -219,6 +228,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacidade'
     | '/termos'
+    | '/webhook'
     | '/admin'
     | '/downloads'
     | '/musicas'
@@ -241,6 +251,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacidade'
     | '/termos'
+    | '/webhook'
     | '/downloads'
     | '/musicas'
     | '/perfil'
@@ -263,6 +274,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacidade'
     | '/termos'
+    | '/webhook'
     | '/_authenticated/admin'
     | '/_authenticated/downloads'
     | '/_authenticated/musicas'
@@ -287,11 +299,19 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   TermosRoute: typeof TermosRoute
+  WebhookRoute: typeof WebhookRoute
   ApiWebhookKiwifyRoute: typeof ApiWebhookKiwifyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/webhook': {
+      id: '/webhook'
+      path: '/webhook'
+      fullPath: '/webhook'
+      preLoaderRoute: typeof WebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/termos': {
       id: '/termos'
       path: '/termos'
@@ -519,6 +539,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   TermosRoute: TermosRoute,
+  WebhookRoute: WebhookRoute,
   ApiWebhookKiwifyRoute: ApiWebhookKiwifyRoute,
 }
 export const routeTree = rootRouteImport
