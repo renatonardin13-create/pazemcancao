@@ -496,6 +496,7 @@ export type Database = {
       }
       webhook_settings: {
         Row: {
+          allowed_ips: string[]
           auth_token: string | null
           created_at: string
           id: string
@@ -506,6 +507,7 @@ export type Database = {
           webhook_url: string
         }
         Insert: {
+          allowed_ips?: string[]
           auth_token?: string | null
           created_at?: string
           id?: string
@@ -516,6 +518,7 @@ export type Database = {
           webhook_url?: string
         }
         Update: {
+          allowed_ips?: string[]
           auth_token?: string | null
           created_at?: string
           id?: string

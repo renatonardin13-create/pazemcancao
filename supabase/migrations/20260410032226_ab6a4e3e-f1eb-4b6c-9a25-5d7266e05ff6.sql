@@ -1,0 +1,1 @@
+ALTER TABLE public.webhook_settings ADD COLUMN allowed_ips text[] NOT NULL DEFAULT '{}';
