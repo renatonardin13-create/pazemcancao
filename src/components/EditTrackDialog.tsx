@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { updateTrack } from "@/lib/admin-tracks.functions";
+import { listAdminCategories } from "@/lib/admin-categories.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,8 +18,6 @@ import { Loader2, Upload, X, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-const CATEGORIES = ["Paz", "Cura", "Força", "Oração", "Madrugada", "Presença", "Refúgio"];
-
 interface EditTrackDialogProps {
   track: {
     id: string;
@@ -33,6 +32,11 @@ interface EditTrackDialogProps {
 
 export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogProps) {
   const queryClient = useQueryClient();
+  const { data: catData } = useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: () => listAdminCategories(),
+  });
+  const categories = (catData?.categories || []).map((c: any) => c.name);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState(track.title);
@@ -242,7 +246,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {CATEGORIES.map((c) => (
+                {categories.map((c: string) => (
                   <SelectItem key={c} value={c}>{c}</SelectItem>
                 ))}
               </SelectContent>

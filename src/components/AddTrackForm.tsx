@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { createTrack, regenerateCover } from "@/lib/admin-tracks.functions";
+import { listAdminCategories } from "@/lib/admin-categories.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,16 +11,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Upload, Loader2, ImageIcon, Music, X, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
-const CATEGORIES = ["Paz", "Cura", "Força", "Oração", "Madrugada", "Presença", "Refúgio"];
-
 interface AddTrackFormProps {
   onSuccess?: () => void;
 }
 
 export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
   const queryClient = useQueryClient();
+  const { data: catData } = useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: () => listAdminCategories(),
+  });
+  const categories = (catData?.categories || []).map((c: any) => c.name);
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("Paz");
+  const [category, setCategory] = useState("");
   const [duration, setDuration] = useState("");
   const [description, setDescription] = useState("");
   const [mp3File, setMp3File] = useState<File | null>(null);
@@ -172,7 +176,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {CATEGORIES.map((c) => (
+              {categories.map((c: string) => (
                 <SelectItem key={c} value={c}>{c}</SelectItem>
               ))}
             </SelectContent>
