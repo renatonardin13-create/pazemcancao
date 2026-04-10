@@ -107,7 +107,7 @@ function MusicDetailPage() {
   const nextTrack = currentIndex < allTracks.length - 1 ? allTracks[currentIndex + 1] : null;
 
   const handleDownload = () => {
-    const url = track.download_url || track.storage_path;
+    const url = track.download_url || getStoragePublicUrl(track.storage_path);
     const link = document.createElement("a");
     link.href = url;
     link.download = `${track.title}.mp3`;
