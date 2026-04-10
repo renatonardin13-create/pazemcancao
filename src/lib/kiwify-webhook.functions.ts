@@ -104,7 +104,9 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
     const savedToken = (config?.auth_token || '').trim();
     const receivedToken = headerToken.trim();
 
-    if (savedToken && receivedToken !== savedToken) {
+    // Only validate token if BOTH a token is configured AND one was received
+    // If no token is received, skip validation (Kiwify may not send tokens)
+    if (savedToken && receivedToken && receivedToken !== savedToken) {
       console.error('Token recebido:', receivedToken, 'Token esperado:', savedToken);
       await logWebhookEvent({
         eventType: 'auth_failed',
