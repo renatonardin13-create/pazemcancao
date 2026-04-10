@@ -68,7 +68,22 @@ function MusicLibraryPage() {
     queryFn: () => listActiveTracks(),
   });
 
-  const { currentTrack, playing, progress, toggle } = usePlayer();
+  const { currentTrack, playing, progress, toggle, setQueue, queue } = usePlayer();
+
+  // Build all player tracks from filtered results for queue
+  const allPlayerTracks = useMemo(() => {
+    return filteredTracks.map((t: any) => dbTrackToPlayerTrack(t));
+  }, [filteredTracks]);
+
+  const handleToggleWithQueue = useCallback((playerTrack: Track) => {
+    // If this track isn't in the current queue, set the queue
+    const idx = allPlayerTracks.findIndex(t => t.id === playerTrack.id);
+    if (idx >= 0 && (queue.length === 0 || !queue.some(q => q.id === playerTrack.id))) {
+      setQueue(allPlayerTracks, idx);
+    } else {
+      toggle(playerTrack);
+    }
+  }, [allPlayerTracks, queue, setQueue, toggle]);
 
   const dbCategories = catData?.categories || [];
   const tracks = data?.tracks || [];
