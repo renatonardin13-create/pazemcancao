@@ -50,7 +50,7 @@ function getRequestSignature(request: Request): string | null {
     const url = new URL(request.url);
     const querySignature = url.searchParams.get('signature');
     return querySignature?.trim() || null;
-  } catch {
+  } catch (_e) {
     return null;
   }
 }
