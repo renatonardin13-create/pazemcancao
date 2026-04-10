@@ -96,7 +96,7 @@ function IntegrationsPage() {
   }
 
   return (
-    <div className="max-w-2xl space-y-6">
+    <div className="w-full max-w-2xl space-y-6 overflow-hidden">
       <div>
         <h1 className="font-display text-2xl font-bold tracking-tight text-foreground/90">
           Integrações
@@ -129,11 +129,11 @@ function IntegrationsPage() {
             <p className="text-[11px] text-muted-foreground/40">
               Copie esta URL e cole no painel da Kiwify em Configurações → Webhooks
             </p>
-            <div className="flex gap-2">
+            <div className="flex gap-2 min-w-0">
               <Input
                 value={webhookUrl}
                 readOnly
-                className="font-mono text-xs bg-muted/30"
+                className="font-mono text-xs bg-muted/30 min-w-0 truncate"
               />
               <Button
                 variant="outline"
