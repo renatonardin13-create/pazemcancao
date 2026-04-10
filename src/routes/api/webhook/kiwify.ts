@@ -1,6 +1,55 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { createClient } from '@supabase/supabase-js';
+import { supabaseAdmin } from '@/integrations/supabase/client.server';
 import { CORS_HEADERS } from '@/lib/cors';
+
+// Kiwify event types we handle
+const APPROVED_STATUSES = ['paid', 'approved', 'completed'];
+const CANCELLED_STATUSES = ['refunded', 'chargedback', 'chargeback', 'cancelled'];
+
+function jsonResponse(data: unknown, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
+    headers: { 'Content-Type': 'application/json', ...CORS_HEADERS },
+  });
+}
+
+async function verifySignature(request: Request, body: string): Promise<boolean> {
+  const signature = request.headers.get('x-kiwify-signature') 
+    || request.headers.get('x-webhook-signature');
+  
+  const secret = process.env.KIWIFY_WEBHOOK_SECRET;
+  
+  // If no secret configured, skip verification (log warning)
+  if (!secret) {
+    console.warn('⚠️ KIWIFY_WEBHOOK_SECRET not configured – skipping signature verification');
+    return true;
+  }
+  
+  if (!signature) {
+    console.error('❌ Missing webhook signature header');
+    return false;
+  }
+
+  try {
+    const encoder = new TextEncoder();
+    const key = await crypto.subtle.importKey(
+      'raw',
+      encoder.encode(secret),
+      { name: 'HMAC', hash: 'SHA-256' },
+      false,
+      ['sign']
+    );
+    const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(body));
+    const expectedSignature = Array.from(new Uint8Array(sig))
+      .map(b => b.toString(16).padStart(2, '0'))
+      .join('');
+    
+    return signature === expectedSignature;
+  } catch (err) {
+    console.error('Signature verification error:', err);
+    return false;
+  }
+}
 
 export const Route = createFileRoute('/api/webhook/kiwify')({
   server: {
@@ -11,33 +60,25 @@ export const Route = createFileRoute('/api/webhook/kiwify')({
 
       POST: async ({ request }) => {
         try {
-          const body = await request.json();
-
-          // Kiwify sends order_status for approved purchases
-          const status = body.order_status || body.payment_status;
-          if (status !== 'paid' && status !== 'approved') {
-            return new Response(
-              JSON.stringify({ received: true, action: 'ignored', reason: 'not approved' }),
-              { status: 200, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } }
-            );
+          const rawBody = await request.text();
+          
+          // Verify signature if secret is configured
+          const isValid = await verifySignature(request, rawBody);
+          if (!isValid) {
+            return jsonResponse({ error: 'Invalid signature' }, 401);
           }
 
-          const supabaseUrl = process.env.SUPABASE_URL;
-          const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+          const body = JSON.parse(rawBody);
 
-          if (!supabaseUrl || !serviceRoleKey) {
-            console.error('Missing Supabase server env vars');
-            return new Response(
-              JSON.stringify({ error: 'Server configuration error' }),
-              { status: 500, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } }
-            );
-          }
+          // Extract status from various Kiwify payload formats
+          const orderStatus = (
+            body.order_status || 
+            body.payment_status || 
+            body.subscription_status ||
+            ''
+          ).toLowerCase();
 
-          const adminClient = createClient(supabaseUrl, serviceRoleKey, {
-            auth: { persistSession: false, autoRefreshToken: false },
-          });
-
-          // Extract buyer info from Kiwify payload
+          // Extract buyer info from Kiwify payload (multiple format support)
           const buyerName =
             body.Customer?.full_name ||
             body.customer?.name ||
@@ -64,47 +105,59 @@ export const Route = createFileRoute('/api/webhook/kiwify')({
             'Paz em Canção';
 
           if (!buyerEmail) {
-            return new Response(
-              JSON.stringify({ error: 'Missing buyer email' }),
-              { status: 400, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } }
-            );
+            return jsonResponse({ error: 'Missing buyer email' }, 400);
           }
 
-          // Upsert into approved_buyers
-          const { error: dbError } = await adminClient
-            .from('approved_buyers')
-            .upsert(
-              {
-                nome: buyerName,
-                email: buyerEmail,
-                order_id: orderId,
-                product_name: productName,
-                status: 'approved',
-                access_enabled: true,
-              },
-              { onConflict: 'email' }
-            );
+          console.log(`📩 Kiwify webhook: status=${orderStatus}, email=${buyerEmail}, order=${orderId}`);
 
-          if (dbError) {
-            console.error('DB upsert error:', dbError);
-            return new Response(
-              JSON.stringify({ error: 'Failed to register buyer' }),
-              { status: 500, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } }
-            );
+          // Handle approved/paid purchases
+          if (APPROVED_STATUSES.includes(orderStatus)) {
+            const { error: dbError } = await supabaseAdmin
+              .from('approved_buyers')
+              .upsert(
+                {
+                  nome: buyerName,
+                  email: buyerEmail,
+                  order_id: orderId,
+                  product_name: productName,
+                  status: 'approved',
+                  access_enabled: true,
+                },
+                { onConflict: 'email' }
+              );
+
+            if (dbError) {
+              console.error('❌ DB upsert error:', dbError);
+              return jsonResponse({ error: 'Failed to register buyer' }, 500);
+            }
+
+            console.log(`✅ Buyer approved: ${buyerEmail}`);
+            return jsonResponse({ received: true, action: 'buyer_approved', email: buyerEmail });
           }
 
-          console.log(`✅ Buyer approved: ${buyerEmail}`);
+          // Handle cancellations/refunds/chargebacks
+          if (CANCELLED_STATUSES.includes(orderStatus)) {
+            const { error: dbError } = await supabaseAdmin
+              .from('approved_buyers')
+              .update({ access_enabled: false, status: orderStatus })
+              .eq('email', buyerEmail);
 
-          return new Response(
-            JSON.stringify({ received: true, action: 'buyer_approved', email: buyerEmail }),
-            { status: 200, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } }
-          );
+            if (dbError) {
+              console.error('❌ DB update error:', dbError);
+              return jsonResponse({ error: 'Failed to update buyer status' }, 500);
+            }
+
+            console.log(`🚫 Buyer access revoked: ${buyerEmail} (${orderStatus})`);
+            return jsonResponse({ received: true, action: 'access_revoked', email: buyerEmail });
+          }
+
+          // Unknown or unhandled status – acknowledge receipt
+          console.log(`ℹ️ Unhandled status: ${orderStatus} for ${buyerEmail}`);
+          return jsonResponse({ received: true, action: 'ignored', reason: `unhandled status: ${orderStatus}` });
+
         } catch (err: any) {
-          console.error('Webhook error:', err);
-          return new Response(
-            JSON.stringify({ error: err.message || 'Webhook processing failed' }),
-            { status: 400, headers: { 'Content-Type': 'application/json', ...CORS_HEADERS } }
-          );
+          console.error('❌ Webhook error:', err);
+          return jsonResponse({ error: err.message || 'Webhook processing failed' }, 400);
         }
       },
     },
