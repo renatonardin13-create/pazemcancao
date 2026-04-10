@@ -13,6 +13,18 @@ export const listActiveTracks = createServerFn({ method: 'POST' })
 
     if (error) throw new Error(error.message);
     return { tracks: tracks || [] };
+});
+
+export const listCategories = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .handler(async () => {
+    const { data: categories, error } = await supabaseAdmin
+      .from('categories')
+      .select('id, name, slug, icon, sort_order')
+      .order('sort_order', { ascending: true });
+
+    if (error) throw new Error(error.message);
+    return { categories: categories || [] };
   });
 
 export const getTrackById = createServerFn({ method: 'POST' })
