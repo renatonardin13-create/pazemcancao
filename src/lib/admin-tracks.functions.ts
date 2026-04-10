@@ -61,6 +61,7 @@ export const createTrack = createServerFn({ method: 'POST' })
         cover_url: data.cover_url || null,
         download_url: data.download_url || null,
         description: data.description || null,
+        is_active: true,
         sort_order: (maxOrder?.sort_order ?? 0) + 1,
       })
       .select()
