@@ -21,6 +21,7 @@ export const updateWebhookSettings = createServerFn({ method: 'POST' })
     is_active: boolean;
     monitored_events: string[];
     auth_token?: string;
+    webhook_url?: string;
     allowed_ips?: string[];
   }) => input)
   .handler(async ({ data, context }) => {
