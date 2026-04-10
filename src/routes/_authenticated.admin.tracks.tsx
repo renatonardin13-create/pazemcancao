@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listAdminTracks, deleteTrack, updateTrack, regenerateCover } from "@/lib/admin-tracks.functions";
-import { Music, Plus, Trash2, ToggleLeft, ToggleRight, ExternalLink, ImageIcon, Loader2 } from "lucide-react";
+import { Music, Plus, Trash2, ToggleLeft, ToggleRight, ExternalLink, ImageIcon, Loader2, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { AddTrackForm } from "@/components/AddTrackForm";
+import { EditTrackDialog } from "@/components/EditTrackDialog";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/tracks")({
@@ -13,6 +14,7 @@ export const Route = createFileRoute("/_authenticated/admin/tracks")({
 
 function AdminTracksPage() {
   const [showForm, setShowForm] = useState(false);
+  const [editingTrack, setEditingTrack] = useState<any>(null);
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -133,6 +135,13 @@ function AdminTracksPage() {
               </Badge>
 
               <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setEditingTrack(track)}
+                  className="p-2 text-muted-foreground/30 hover:text-gold/60 transition-colors"
+                  title="Editar"
+                >
+                  <Pencil className="h-3.5 w-3.5" />
+                </button>
                 {!track.cover_url && (
                   <button
                     onClick={() =>
@@ -191,6 +200,14 @@ function AdminTracksPage() {
             </div>
           ))}
         </div>
+      )}
+
+      {editingTrack && (
+        <EditTrackDialog
+          track={editingTrack}
+          open={!!editingTrack}
+          onOpenChange={(open) => { if (!open) setEditingTrack(null); }}
+        />
       )}
     </div>
   );
