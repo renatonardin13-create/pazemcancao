@@ -58,6 +58,7 @@ function IntegrationsPage() {
           is_active: isActive,
           monitored_events: monitoredEvents,
           auth_token: authToken || undefined,
+          webhook_url: webhookUrl,
           allowed_ips: allowedIps
             ? allowedIps.split(",").map((ip: string) => ip.trim()).filter(Boolean)
             : [],
