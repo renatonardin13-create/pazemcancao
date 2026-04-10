@@ -70,7 +70,7 @@ function IntegrationsPage() {
     },
   });
 
-  const webhookUrl = settings?.webhook_url || "https://pazemcancao.lovable.app/api/webhook/kiwify";
+  const [webhookUrl, setWebhookUrl] = useState(settings?.webhook_url || "https://pazemcancao.lovable.app/api/webhook/kiwify");
 
   const handleCopy = () => {
     navigator.clipboard.writeText(webhookUrl);
