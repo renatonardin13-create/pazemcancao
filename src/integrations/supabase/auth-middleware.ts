@@ -4,11 +4,29 @@ import { getRequest } from '@tanstack/react-start/server'
 import { createClient } from '@supabase/supabase-js'
 import type { Database } from './types'
 
+export const requireSupabaseAuth = createMiddleware({ type: 'function' })
+  .client(async ({ next }) => {
+    // During SSR, skip client-side token attachment
+    if (typeof window === 'undefined') {
+      return next();
+    }
 
+    // Dynamic import to avoid SSR issues with localStorage
+    const { supabase } = await import('@/integrations/supabase/client');
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
 
-export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server(
-  async ({ next }) => {
-    
+    if (!token) {
+      throw new Error('Não autenticado. Faça login novamente.');
+    }
+
+    return next({
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  })
+  .server(async ({ next }) => {
     const SUPABASE_URL = process.env.SUPABASE_URL;
     const SUPABASE_PUBLISHABLE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
 
@@ -18,7 +36,7 @@ export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server
         { status: 500 }
       );
     }
-    
+
     const request = getRequest();
 
     if (!request?.headers) {
@@ -73,5 +91,4 @@ export const requireSupabaseAuth = createMiddleware({ type: 'function' }).server
         claims: data.claims,
       },
     })
-  }
-)
+  })
