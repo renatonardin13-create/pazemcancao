@@ -39,6 +39,7 @@ function IntegrationsPage() {
   const [monitoredEvents, setMonitoredEvents] = useState<string[]>([]);
   const [authToken, setAuthToken] = useState("");
   const [allowedIps, setAllowedIps] = useState("");
+  const [webhookUrl, setWebhookUrl] = useState("https://pazemcancao.lovable.app/api/webhook/kiwify");
 
   useEffect(() => {
     if (settings) {
@@ -46,6 +47,7 @@ function IntegrationsPage() {
       setMonitoredEvents(settings.monitored_events || []);
       setAuthToken(settings.auth_token || "");
       setAllowedIps((settings.allowed_ips || []).join(", "));
+      setWebhookUrl(settings.webhook_url || "https://pazemcancao.lovable.app/api/webhook/kiwify");
     }
   }, [settings]);
 
@@ -70,7 +72,7 @@ function IntegrationsPage() {
     },
   });
 
-  const [webhookUrl, setWebhookUrl] = useState(settings?.webhook_url || "https://pazemcancao.lovable.app/api/webhook/kiwify");
+  const defaultUrl = "https://pazemcancao.lovable.app/api/webhook/kiwify";
 
   const handleCopy = () => {
     navigator.clipboard.writeText(webhookUrl);
