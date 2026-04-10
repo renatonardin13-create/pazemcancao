@@ -92,6 +92,14 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       return jsonResponse({ status: 'success', message: 'Webhook is disabled' });
     }
 
+    // IP whitelist check
+    const clientIp = getClientIp(request);
+    if (config?.allowed_ips && !isIpAllowed(clientIp, config.allowed_ips)) {
+      console.error(`❌ IP blocked: ${clientIp}`);
+      await logWebhook('ip_blocked', '', '', null, 403, `Blocked IP: ${clientIp}`);
+      return jsonResponse({ status: 'error', message: 'IP not allowed' }, 403);
+    }
+
     const rawBody = await request.text();
 
     const isValid = await verifySignature(request, rawBody, config?.auth_token);
