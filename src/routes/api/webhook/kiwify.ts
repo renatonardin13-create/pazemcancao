@@ -42,7 +42,15 @@ async function verifySignature(request: Request, body: string): Promise<boolean>
       .map(b => b.toString(16).padStart(2, '0'))
       .join('');
 
-    return signature === expectedSignature;
+    // Timing-safe comparison to prevent timing attacks
+    if (signature.length !== expectedSignature.length) return false;
+    const a = new TextEncoder().encode(signature);
+    const b2 = new TextEncoder().encode(expectedSignature);
+    let diff = 0;
+    for (let i = 0; i < a.length; i++) {
+      diff |= a[i] ^ b2[i];
+    }
+    return diff === 0;
   } catch (err) {
     console.error('Signature verification error:', err);
     return false;
