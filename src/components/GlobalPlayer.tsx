@@ -6,11 +6,21 @@ export function GlobalPlayer() {
 
   if (!currentTrack) return null;
 
-  const handleDownload = () => {
-    const link = document.createElement("a");
-    link.href = currentTrack.downloadUrl;
-    link.download = `${currentTrack.title}.mp3`;
-    link.click();
+  const handleDownload = async () => {
+    try {
+      const response = await fetch(currentTrack.downloadUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = currentTrack.title.replace(/[\/\\:*?"<>|]/g, "-") + ".mp3";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch {
+      window.open(currentTrack.downloadUrl, "_blank");
+    }
   };
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
