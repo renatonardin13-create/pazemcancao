@@ -4,7 +4,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { FooterLinks } from "@/components/FooterLinks";
 import { useQuery } from "@tanstack/react-query";
 import { listActiveTracks, listCategories } from "@/lib/tracks.functions";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { usePlayer } from "@/hooks/use-player";
 import { motion } from "framer-motion";
