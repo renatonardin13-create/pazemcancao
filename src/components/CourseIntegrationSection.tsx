@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Zap, Link as LinkIcon, Copy, Check, Loader2 } from "lucide-react";
+import { Zap, Link as LinkIcon, Copy, Check, Loader2, FlaskConical } from "lucide-react";
 
 const PLATFORMS = [
   { value: "hotmart", label: "Hotmart", color: "text-orange-400" },
