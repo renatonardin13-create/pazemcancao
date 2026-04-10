@@ -120,7 +120,7 @@ Deno.serve(async (req) => {
         // Upload to storage
         const fileName = `covers/${trackId}.png`;
         const { error: uploadError } = await supabase.storage
-          .from("tracks")
+          .from("covers")
           .upload(fileName, binaryData, {
             contentType: "image/png",
             upsert: true,
@@ -133,7 +133,7 @@ Deno.serve(async (req) => {
 
         // Get public URL
         const { data: urlData } = supabase.storage
-          .from("tracks")
+          .from("covers")
           .getPublicUrl(fileName);
 
         coverUrl = urlData.publicUrl;
