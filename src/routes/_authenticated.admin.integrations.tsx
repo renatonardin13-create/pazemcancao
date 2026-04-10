@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Webhook, Copy, Check, Shield, Loader2, ScrollText, CheckCircle2, XCircle, Clock, FlaskConical } from "lucide-react";
+import { Webhook, Copy, Check, Shield, Loader2, ScrollText, CheckCircle2, XCircle, Clock, FlaskConical, Eye, EyeOff } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/_authenticated/admin/integrations")({
@@ -17,11 +17,7 @@ export const Route = createFileRoute("/_authenticated/admin/integrations")({
 });
 
 const AVAILABLE_EVENTS = [
-  { id: "purchase_completed", label: "Compra realizada" },
-  { id: "subscription_started", label: "Assinatura iniciada" },
-  { id: "status_changed", label: "Alteração no status da transação" },
-  { id: "refund", label: "Reembolso" },
-  { id: "chargeback", label: "Chargeback" },
+  { id: "purchase_completed", label: "Compra aprovada" },
 ];
 
 function IntegrationsPage() {
@@ -39,7 +35,7 @@ function IntegrationsPage() {
   const [monitoredEvents, setMonitoredEvents] = useState<string[]>([]);
   const [authToken, setAuthToken] = useState("");
   const [allowedIps, setAllowedIps] = useState("");
-  const [webhookUrl, setWebhookUrl] = useState("https://pazemcancao.lovable.app/api/webhook/kiwify");
+  const webhookUrl = "https://pazemcancao.lovable.app/api/webhook/kiwify";
 
   useEffect(() => {
     if (settings) {
@@ -47,7 +43,6 @@ function IntegrationsPage() {
       setMonitoredEvents(settings.monitored_events || []);
       setAuthToken(settings.auth_token || "");
       setAllowedIps((settings.allowed_ips || []).join(", "));
-      setWebhookUrl(settings.webhook_url || "https://pazemcancao.lovable.app/api/webhook/kiwify");
     }
   }, [settings]);
 
@@ -130,13 +125,13 @@ function IntegrationsPage() {
               URL do Webhook
             </Label>
             <p className="text-[11px] text-muted-foreground/40">
-              Cole esta URL no painel da Kiwify em Configurações → Webhooks. Você pode editar se necessário.
+              Cole esta URL no painel da Kiwify em Configurações → Webhooks.
             </p>
             <div className="flex gap-2 min-w-0">
               <Input
                 value={webhookUrl}
-                onChange={(e) => setWebhookUrl(e.target.value)}
-                className="font-mono text-xs min-w-0 truncate"
+                readOnly
+                className="font-mono text-xs min-w-0 truncate bg-muted/30"
               />
               <Button
                 variant="outline"
@@ -190,19 +185,30 @@ function IntegrationsPage() {
             <div className="flex items-center gap-2">
               <Shield className="h-3.5 w-3.5 text-muted-foreground/40" />
               <Label className="text-xs font-medium text-muted-foreground/70">
-                Token de Autenticação (opcional)
+                Token de Autenticação
               </Label>
             </div>
             <p className="text-[11px] text-muted-foreground/40">
-              Se configurado, o webhook verificará a assinatura HMAC-SHA256 das requisições
+              O webhook verificará este token em cada requisição recebida
             </p>
-            <Input
-              type="password"
-              value={authToken}
-              onChange={(e) => setAuthToken(e.target.value)}
-              placeholder="Cole aqui o token secret da Kiwify"
-              className="font-mono text-xs"
-            />
+            <div className="flex gap-2">
+              <Input
+                type={showToken ? "text" : "password"}
+                value={authToken}
+                onChange={(e) => setAuthToken(e.target.value)}
+                placeholder="Cole aqui o token secret da Kiwify"
+                className="font-mono text-xs"
+              />
+              <Button
+                variant="outline"
+                size="icon"
+                type="button"
+                onClick={() => setShowToken((v) => !v)}
+                className="shrink-0"
+              >
+                {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </Button>
+            </div>
           </div>
 
           {/* IP Whitelist */}
