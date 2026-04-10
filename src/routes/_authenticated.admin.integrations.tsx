@@ -66,6 +66,11 @@ function IntegrationsPage() {
     }
   }, [settings]);
 
+  const successCount = logs.filter((l: any) => l.response_status === 200).length;
+  const successRate = logs.length > 0 ? Math.round((successCount / logs.length) * 100) : -1;
+  const webhookActiveNoEvents = isActive && logs.length === 0;
+  const zeroSuccessRate = logs.length > 0 && successRate === 0;
+
   const mutation = useMutation({
     mutationFn: () =>
       updateWebhookSettings({
