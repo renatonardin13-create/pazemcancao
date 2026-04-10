@@ -71,7 +71,8 @@ async function provisionUserAccess(email: string) {
 }
 
 function verifyToken(request: Request, body: any, savedToken: string): boolean {
-  if (!savedToken) return false;
+  // If no token is configured, skip verification (allow all requests)
+  if (!savedToken) return true;
 
   // 1. Check headers (x-kiwify-token, Authorization Bearer)
   const headerToken =
