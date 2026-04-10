@@ -17,6 +17,7 @@ const adminItems = [
   { title: "Músicas", url: "/admin/tracks", icon: Music },
   { title: "Categorias", url: "/admin/categories", icon: FolderOpen },
   { title: "Usuários", url: "/admin/users", icon: Users },
+  { title: "Integrações", url: "/admin/integrations", icon: Webhook },
 ];
 
 export function AdminSidebar() {
