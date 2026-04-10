@@ -129,7 +129,7 @@ function IntegrationsPage() {
             <p className="text-[11px] text-muted-foreground/40">
               Copie esta URL e cole no painel da Kiwify em Configurações → Webhooks
             </p>
-            <div className="flex gap-2">
+            <div className="flex gap-2 min-w-0">
               <Input
                 value={webhookUrl}
                 readOnly
