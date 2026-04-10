@@ -50,6 +50,10 @@ function IntegrationsPage() {
   const lastLog = logs[0] || null;
   const hasRecentSuccess = lastLog?.response_status === 200;
   const lastEventTime = lastLog ? new Date(lastLog.created_at) : null;
+  const successCount = logs.filter((l: any) => l.response_status === 200).length;
+  const successRate = logs.length > 0 ? Math.round((successCount / logs.length) * 100) : -1;
+  const webhookActiveNoEvents = isActive && logs.length === 0;
+  const zeroSuccessRate = logs.length > 0 && successRate === 0;
 
   const [isActive, setIsActive] = useState(false);
   const [monitoredEvents, setMonitoredEvents] = useState<string[]>([]);
