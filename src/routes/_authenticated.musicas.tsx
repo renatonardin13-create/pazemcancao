@@ -55,6 +55,7 @@ function dbTrackToPlayerTrack(track: any): Track {
 function MusicLibraryPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [initialized, setInitialized] = useState(false);
 
   const { data: catData } = useQuery({
