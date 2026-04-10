@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { createTrack, regenerateCover } from "@/lib/admin-tracks.functions";
+import { createTrack } from "@/lib/admin-tracks.functions";
 import { listAdminCategories } from "@/lib/admin-categories.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, Loader2, ImageIcon, Music, X, Sparkles } from "lucide-react";
+import { Upload, Loader2, ImageIcon, Music, X } from "lucide-react";
 import { toast } from "sonner";
 
 interface AddTrackFormProps {
@@ -27,9 +27,9 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
   const [duration, setDuration] = useState("");
   const [description, setDescription] = useState("");
   const [mp3File, setMp3File] = useState<File | null>(null);
-  const [uploading, setUploading] = useState(false);
-  const [generatingCover, setGeneratingCover] = useState(false);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
 
   const addTrackMutation = useMutation({
     mutationFn: async () => {
@@ -39,30 +39,42 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
 
       setUploading(true);
 
-      // 1. Upload MP3 to storage
+      // 1. Upload MP3
       const fileName = `audio/${crypto.randomUUID()}.mp3`;
-      console.log("[AddTrack] Uploading MP3:", fileName, "size:", mp3File.size);
-      
       const { error: uploadError } = await supabase.storage
         .from("tracks")
         .upload(fileName, mp3File, { contentType: "audio/mpeg" });
 
       if (uploadError) {
-        console.error("[AddTrack] Upload error:", uploadError);
         throw new Error("Erro ao enviar MP3: " + uploadError.message);
       }
 
-      console.log("[AddTrack] Upload OK, getting public URL");
-
-      // Get public URL for download
       const { data: urlData } = supabase.storage
         .from("tracks")
         .getPublicUrl(fileName);
 
+      // 2. Upload cover if provided
+      let coverUrl: string | undefined;
+      if (coverFile) {
+        const coverName = `${crypto.randomUUID()}.${coverFile.name.split('.').pop()}`;
+        const { error: coverError } = await supabase.storage
+          .from("covers")
+          .upload(coverName, coverFile, { contentType: coverFile.type, upsert: true });
+
+        if (coverError) {
+          console.error("Cover upload error:", coverError);
+          toast.error("Erro ao enviar capa, mas a música será salva sem capa.");
+        } else {
+          const { data: coverUrlData } = supabase.storage
+            .from("covers")
+            .getPublicUrl(coverName);
+          coverUrl = coverUrlData.publicUrl;
+        }
+      }
+
       setUploading(false);
 
-      // 2. Insert track via server function (bypasses RLS)
-      console.log("[AddTrack] Creating track record...");
+      // 3. Insert track
       const result = await createTrack({
         data: {
           title: title.trim(),
@@ -71,31 +83,11 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
           storage_path: fileName,
           download_url: urlData.publicUrl,
           description: description || undefined,
+          cover_url: coverUrl,
         },
       });
 
-      const track = result.track;
-      console.log("[AddTrack] Track created:", track.id);
-
-      // 3. Generate cover with AI via server function
-      setGeneratingCover(true);
-      try {
-        const coverResult = await regenerateCover({
-          data: { trackId: track.id, title: title.trim() },
-        });
-        if (coverResult.coverUrl) {
-          setCoverPreview(coverResult.coverUrl);
-          toast.success("Capa gerada com sucesso!");
-        } else {
-          toast.info("Capa não gerada. Será usada capa padrão.");
-        }
-      } catch (coverErr) {
-        console.error("[AddTrack] Cover error:", coverErr);
-        toast.info("Capa não gerada. Será usada capa padrão.");
-      }
-
-      setGeneratingCover(false);
-      return track;
+      return result.track;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-tracks"] });
@@ -104,19 +96,18 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
       onSuccess?.();
     },
     onError: (err: Error) => {
-      console.error("[AddTrack] Mutation error:", err);
       setUploading(false);
-      setGeneratingCover(false);
       toast.error(err.message);
     },
   });
 
   const resetForm = () => {
     setTitle("");
-    setCategory("Paz");
+    setCategory("");
     setDuration("");
     setDescription("");
     setMp3File(null);
+    setCoverFile(null);
     setCoverPreview(null);
   };
 
@@ -125,7 +116,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
     if (file && (file.type === "audio/mpeg" || file.name.endsWith(".mp3"))) {
       setMp3File(file);
 
-      // Extract duration
+      // Extract duration only
       const audio = new Audio();
       audio.src = URL.createObjectURL(file);
       audio.onloadedmetadata = () => {
@@ -139,7 +130,17 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
     }
   };
 
-  const isSubmitting = uploading || generatingCover || addTrackMutation.isPending;
+  const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && (file.type === "image/png" || file.type === "image/jpeg")) {
+      setCoverFile(file);
+      setCoverPreview(URL.createObjectURL(file));
+    } else if (file) {
+      toast.error("Selecione uma imagem PNG ou JPG.");
+    }
+  };
+
+  const isSubmitting = uploading || addTrackMutation.isPending;
 
   return (
     <div className="space-y-5">
@@ -149,7 +150,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
         </div>
         <div>
           <h3 className="text-sm font-bold text-foreground/80">Adicionar Louvor</h3>
-          <p className="text-[10px] text-muted-foreground/35">A capa será gerada automaticamente por IA</p>
+          <p className="text-[10px] text-muted-foreground/35">Preencha os campos e envie o arquivo MP3</p>
         </div>
       </div>
 
@@ -236,36 +237,49 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
         )}
       </div>
 
-      {/* Cover preview */}
-      {coverPreview && (
-        <div className="space-y-2">
-          <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
-            Capa Gerada
-          </Label>
+      {/* Cover Upload */}
+      <div className="space-y-2">
+        <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+          Capa da música (opcional) — PNG ou JPG, 500×500px
+        </Label>
+        {coverPreview ? (
           <div className="flex items-center gap-4">
             <img
               src={coverPreview}
-              alt="Capa gerada"
+              alt="Capa selecionada"
               className="h-20 w-20 rounded-xl object-cover border border-border/15"
             />
-            <div className="flex items-center gap-1.5 text-[10px] text-emerald-400/60">
-              <Sparkles className="h-3 w-3" />
-              Gerada por IA
-            </div>
+            <button
+              onClick={() => { setCoverFile(null); setCoverPreview(null); }}
+              className="text-muted-foreground/30 hover:text-muted-foreground/60"
+              disabled={isSubmitting}
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
-        </div>
-      )}
+        ) : (
+          <label className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border/20 bg-card/10 p-4 cursor-pointer hover:border-gold/20 hover:bg-card/15 transition-all duration-300">
+            <ImageIcon className="h-5 w-5 text-muted-foreground/25" />
+            <span className="text-[11px] text-muted-foreground/35">
+              Clique para selecionar uma imagem
+            </span>
+            <input
+              type="file"
+              accept="image/png,image/jpeg"
+              className="hidden"
+              onChange={handleCoverChange}
+              disabled={isSubmitting}
+            />
+          </label>
+        )}
+      </div>
 
       {/* Status */}
       {isSubmitting && (
         <div className="flex items-center gap-3 rounded-xl border border-gold/10 bg-gold/[0.04] p-3">
           <Loader2 className="h-4 w-4 text-gold/50 animate-spin" />
           <span className="text-[11px] text-gold/50">
-            {uploading
-              ? "Enviando arquivo MP3..."
-              : generatingCover
-                ? "Gerando capa com IA..."
-                : "Salvando..."}
+            {uploading ? "Enviando arquivos..." : "Salvando..."}
           </span>
         </div>
       )}
