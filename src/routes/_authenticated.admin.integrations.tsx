@@ -23,6 +23,7 @@ const AVAILABLE_EVENTS = [
 function IntegrationsPage() {
   const queryClient = useQueryClient();
   const [copied, setCopied] = useState(false);
+  const [showToken, setShowToken] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["webhook-settings"],
