@@ -2,8 +2,6 @@ import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { handleKiwifyWebhook } from '@/lib/kiwify-webhook.functions';
 
-type TestWebhookResult = Record<string, unknown> | null;
-
 export const getWebhookSettings = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -99,14 +97,7 @@ export const sendTestWebhook = createServerFn({ method: 'POST' })
     });
 
     const res = await handleKiwifyWebhook(request);
-    const rawResult = await res.text();
+    const resultText = await res.text();
 
-    let result: TestWebhookResult = null;
-    try {
-      result = rawResult ? (JSON.parse(rawResult) as Record<string, unknown>) : null;
-    } catch {
-      result = { raw: rawResult };
-    }
-
-    return { status: res.status, result };
+    return { status: res.status, resultText };
   });

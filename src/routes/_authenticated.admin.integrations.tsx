@@ -261,18 +261,29 @@ function TestWebhookSection() {
 
   type TestWebhookResponse = {
     status: number;
-    result: Record<string, unknown> | null;
+    resultText: string;
+  };
+
+  const parseTestResponse = (resultText: string) => {
+    if (!resultText) return null;
+
+    try {
+      return JSON.parse(resultText) as Record<string, unknown>;
+    } catch {
+      return { raw: resultText };
+    }
   };
 
   const testMutation = useMutation({
-    mutationFn: () => sendTestWebhook({ data: { email: testEmail, name: testName } }),
+    mutationFn: () => sendTestWebhook({ data: { email: testEmail, name: testName } }) as Promise<TestWebhookResponse>,
     onSuccess: (res: TestWebhookResponse) => {
       if (res.status === 200) {
         toast.success("Teste enviado com sucesso! Verifique os logs abaixo.");
       } else {
-        const message = typeof res.result?.error === "string"
-          ? res.result.error
-          : JSON.stringify(res.result);
+        const parsed = parseTestResponse(res.resultText);
+        const message = typeof parsed?.error === "string"
+          ? parsed.error
+          : JSON.stringify(parsed);
 
         toast.error(`Teste falhou com status ${res.status}: ${message}`);
       }
