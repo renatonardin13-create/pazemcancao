@@ -39,14 +39,20 @@ const emotionalMessages: Record<string, string> = {
   Refúgio: "Este é o seu lugar seguro. Aqui, debaixo das asas do Altíssimo, nada pode alcançá-lo.",
 };
 
+function getStoragePublicUrl(storagePath: string): string {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  return `${supabaseUrl}/storage/v1/object/public/tracks/${storagePath}`;
+}
+
 function dbTrackToPlayerTrack(track: any): Track {
+  const audioUrl = getStoragePublicUrl(track.storage_path);
   return {
     id: track.id,
     title: track.title,
     duration: track.duration,
     category: track.category,
-    audioUrl: track.storage_path,
-    downloadUrl: track.download_url || track.storage_path,
+    audioUrl,
+    downloadUrl: track.download_url || audioUrl,
     description: track.description || "",
     coverUrl: track.cover_url || undefined,
   };
@@ -101,7 +107,7 @@ function MusicDetailPage() {
   const nextTrack = currentIndex < allTracks.length - 1 ? allTracks[currentIndex + 1] : null;
 
   const handleDownload = () => {
-    const url = track.download_url || track.storage_path;
+    const url = track.download_url || getStoragePublicUrl(track.storage_path);
     const link = document.createElement("a");
     link.href = url;
     link.download = `${track.title}.mp3`;

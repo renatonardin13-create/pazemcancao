@@ -43,14 +43,20 @@ const categoryGradients: Record<string, string> = {
   Refúgio: "from-stone-800/35 via-zinc-900/30 to-neutral-950/50",
 };
 
+function getStoragePublicUrl(storagePath: string): string {
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  return `${supabaseUrl}/storage/v1/object/public/tracks/${storagePath}`;
+}
+
 function dbTrackToPlayerTrack(track: any): Track {
+  const audioUrl = getStoragePublicUrl(track.storage_path);
   return {
     id: track.id,
     title: track.title,
     duration: track.duration,
     category: track.category,
-    audioUrl: track.storage_path,
-    downloadUrl: track.download_url || track.storage_path,
+    audioUrl,
+    downloadUrl: track.download_url || audioUrl,
     description: track.description || "",
     coverUrl: track.cover_url || undefined,
   };
@@ -319,7 +325,7 @@ function MusicLibraryPage() {
                                       e.preventDefault();
                                       e.stopPropagation();
                                       const link = document.createElement("a");
-                                      link.href = track.download_url || track.storage_path;
+                                      link.href = track.download_url || getStoragePublicUrl(track.storage_path);
                                       link.download = `${track.title}.mp3`;
                                       link.click();
                                     }}
