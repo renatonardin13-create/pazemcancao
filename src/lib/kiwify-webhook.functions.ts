@@ -11,14 +11,24 @@ function jsonResponse(data: unknown, status = 200) {
   });
 }
 
-async function verifySignature(request: Request, body: string): Promise<boolean> {
+async function getWebhookConfig() {
+  const { data } = await supabaseAdmin
+    .from('webhook_settings')
+    .select('is_active, monitored_events, auth_token')
+    .eq('provider', 'kiwify')
+    .maybeSingle();
+  return data;
+}
+
+async function verifySignature(request: Request, body: string, dbToken?: string | null): Promise<boolean> {
   const signature = request.headers.get('x-kiwify-signature')
     || request.headers.get('x-webhook-signature');
 
-  const secret = process.env.KIWIFY_WEBHOOK_SECRET;
+  // Use DB token first, fallback to env var
+  const secret = dbToken || process.env.KIWIFY_WEBHOOK_SECRET;
 
   if (!secret) {
-    console.warn('⚠️ KIWIFY_WEBHOOK_SECRET not configured – skipping signature verification');
+    console.warn('⚠️ No webhook secret configured – skipping signature verification');
     return true;
   }
 
