@@ -1,0 +1,1 @@
+UPDATE webhook_settings SET webhook_url = 'https://pazemcancao.lovable.app/api/webhook/kiwify' WHERE provider = 'kiwify';
