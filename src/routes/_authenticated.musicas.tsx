@@ -97,6 +97,20 @@ function MusicLibraryPage() {
     });
   }, [tracks, searchTerm, activeCategory]);
 
+  // Build player tracks queue from filtered results
+  const allPlayerTracks = useMemo(() => {
+    return filteredTracks.map((t: any) => dbTrackToPlayerTrack(t));
+  }, [filteredTracks]);
+
+  const handleToggleWithQueue = useCallback((playerTrack: Track) => {
+    const idx = allPlayerTracks.findIndex(t => t.id === playerTrack.id);
+    if (idx >= 0 && (queue.length === 0 || !queue.some(q => q.id === playerTrack.id))) {
+      setQueue(allPlayerTracks, idx);
+    } else {
+      toggle(playerTrack);
+    }
+  }, [allPlayerTracks, queue, setQueue, toggle]);
+
   // Group by category
   const tracksByCategory = useMemo(() => {
     const grouped: Record<string, any[]> = {};
