@@ -1,5 +1,8 @@
-import { Heart } from "lucide-react";
+import { Heart, ExternalLink, MessageCircle } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+
+const WHATSAPP_NUMBER = "5517988308037";
+const SUPPORT_MESSAGE = encodeURIComponent("Olá, preciso de ajuda para acessar o Paz em Canção");
 
 export function RestrictedAccessCard() {
   return (
@@ -15,20 +18,44 @@ export function RestrictedAccessCard() {
           Área exclusiva
         </h1>
         <p className="mt-4 text-sm text-muted-foreground/50 leading-[1.9]">
-          Espaço reservado para quem possui<br />
-          acesso à coleção Paz em Canção.
+          Este e-mail não possui compra registrada.<br />
+          Se você já comprou, use o e-mail da compra.
         </p>
 
-        <div className="mt-10">
-          <Link
-            to="/login"
+        <div className="mt-6 space-y-3">
+          <a
+            href="https://pazemcancao-oficial.lovable.app"
+            target="_blank"
+            rel="noopener noreferrer"
             className="inline-flex items-center gap-2 rounded-full bg-gold/15 text-gold/65 border border-gold/12 px-8 py-3 text-[12px] font-semibold tracking-wider uppercase hover:bg-gold/22 hover:text-gold/80 transition-all duration-500"
           >
-            Acessar Meu Espaço
+            <ExternalLink className="h-3.5 w-3.5" />
+            Adquira aqui
+          </a>
+        </div>
+
+        <div className="mt-4">
+          <Link
+            to="/login"
+            className="inline-flex items-center gap-2 text-[12px] text-gold/45 hover:text-gold/70 transition-colors duration-500 underline underline-offset-4 decoration-gold/15 hover:decoration-gold/30"
+          >
+            Tentar com outro e-mail
           </Link>
         </div>
 
-        <div className="mx-auto mt-10 w-px h-8 bg-gradient-to-b from-gold/8 to-transparent" />
+        <div className="mt-6">
+          <a
+            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${SUPPORT_MESSAGE}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-[11px] text-muted-foreground/40 hover:text-muted-foreground/60 transition-colors duration-300"
+          >
+            <MessageCircle className="h-3.5 w-3.5" />
+            Suporte: (17) 98830-8037
+          </a>
+        </div>
+
+        <div className="mx-auto mt-8 w-px h-8 bg-gradient-to-b from-gold/8 to-transparent" />
       </div>
     </div>
   );
