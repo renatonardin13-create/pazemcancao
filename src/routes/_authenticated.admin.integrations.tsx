@@ -210,6 +210,87 @@ function IntegrationsPage() {
           </Button>
         </CardContent>
       </Card>
+
+      {/* Webhook Logs */}
+      <WebhookLogsSection />
     </div>
+  );
+}
+
+function WebhookLogsSection() {
+  const { data, isLoading } = useQuery({
+    queryKey: ["webhook-logs"],
+    queryFn: () => getWebhookLogs(),
+    refetchInterval: 30000,
+  });
+
+  const logs = data?.logs || [];
+
+  return (
+    <Card className="border-border/20">
+      <CardHeader className="pb-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted/30 border border-border/15">
+            <ScrollText className="h-5 w-5 text-muted-foreground/50" />
+          </div>
+          <div>
+            <CardTitle className="text-base">Relatório de Transações</CardTitle>
+            <CardDescription className="text-xs">
+              Últimos 50 eventos recebidos do webhook
+            </CardDescription>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        {isLoading ? (
+          <div className="flex justify-center py-8">
+            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground/40" />
+          </div>
+        ) : logs.length === 0 ? (
+          <p className="text-sm text-muted-foreground/40 text-center py-8">
+            Nenhum evento registrado ainda.
+          </p>
+        ) : (
+          <div className="space-y-2 max-h-96 overflow-y-auto">
+            {logs.map((log: any) => (
+              <div
+                key={log.id}
+                className="flex items-center gap-3 rounded-lg border border-border/10 p-3 text-sm"
+              >
+                {log.response_status === 200 ? (
+                  <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                ) : (
+                  <XCircle className="h-4 w-4 text-destructive shrink-0" />
+                )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <Badge variant="outline" className="text-[10px] font-mono">
+                      {log.event_type || '—'}
+                    </Badge>
+                    {log.email && (
+                      <span className="text-xs text-muted-foreground/60 truncate">
+                        {log.email}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[11px] text-muted-foreground/40 mt-1">
+                    {log.response_message}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1 text-[10px] text-muted-foreground/30 shrink-0">
+                  <Clock className="h-3 w-3" />
+                  {new Date(log.created_at).toLocaleString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
   );
 }
