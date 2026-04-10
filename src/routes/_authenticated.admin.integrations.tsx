@@ -291,6 +291,12 @@ function WebhookLogsSection() {
                     <Badge variant="outline" className="text-[10px] font-mono">
                       {log.event_type || '—'}
                     </Badge>
+                    {log.payload?._test && (
+                      <Badge variant="outline" className="text-[10px] font-mono border-amber-500/30 text-amber-400 gap-1">
+                        <FlaskConical className="h-3 w-3" />
+                        Teste
+                      </Badge>
+                    )}
                     {log.email && (
                       <span className="text-xs text-muted-foreground/60 truncate">
                         {log.email}
