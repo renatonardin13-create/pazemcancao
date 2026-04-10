@@ -1,8 +1,6 @@
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
 import { CORS_HEADERS } from '@/lib/cors';
-
-const APPROVED_STATUSES = ['paid', 'approved', 'completed'];
-const CANCELLED_STATUSES = ['refunded', 'chargedback', 'chargeback', 'cancelled'];
+import { createClient } from '@supabase/supabase-js';
 
 function jsonResponse(data: unknown, status = 200) {
   return new Response(JSON.stringify(data), {
@@ -11,195 +9,98 @@ function jsonResponse(data: unknown, status = 200) {
   });
 }
 
-async function getWebhookConfig() {
-  const { data } = await supabaseAdmin
-    .from('webhook_settings')
-    .select('is_active, monitored_events, auth_token, allowed_ips')
-    .eq('provider', 'kiwify')
-    .maybeSingle();
-  return data;
-}
+async function provisionUserAccess(email: string) {
+  const url = process.env.SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const publicKey = process.env.SUPABASE_PUBLISHABLE_KEY;
+  if (!url || !serviceKey) return;
 
-function getClientIp(request: Request): string {
-  return (
-    request.headers.get('cf-connecting-ip') ||
-    request.headers.get('x-real-ip') ||
-    request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
-    ''
+  const admin = createClient(url, serviceKey, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+
+  // Check if user already exists
+  const { data: userList } = await admin.auth.admin.listUsers();
+  const existingUser = userList?.users?.find(
+    (u) => u.email?.toLowerCase() === email
   );
-}
 
-function isIpAllowed(clientIp: string, allowedIps: string[]): boolean {
-  if (!allowedIps || allowedIps.length === 0) return true;
-  if (!clientIp) {
-    console.warn('⚠️ Could not determine client IP – allowing request');
-    return true;
-  }
-  return allowedIps.includes(clientIp);
-}
-
-function getRequestSignature(request: Request): string | null {
-  const headerSignature = request.headers.get('x-kiwify-signature')
-    || request.headers.get('x-webhook-signature');
-
-  if (headerSignature?.trim()) {
-    return headerSignature.trim();
-  }
-
-  try {
-    const url = new URL(request.url);
-    const querySignature = url.searchParams.get('signature');
-    return querySignature?.trim() || null;
-  } catch (_e) {
-    return null;
-  }
-}
-
-async function verifySignature(request: Request, body: string, dbToken?: string | null): Promise<boolean> {
-  const signature = getRequestSignature(request);
-
-  // Use DB token first, fallback to env var
-  const secret = dbToken || process.env.KIWIFY_WEBHOOK_SECRET;
-
-  if (!secret) {
-    console.warn('⚠️ No webhook secret configured – skipping signature verification');
-    return true;
-  }
-
-  if (!signature) {
-    console.error('❌ Missing webhook signature header or query param');
-    return false;
-  }
-
-  try {
-    const encoder = new TextEncoder();
-    const key = await crypto.subtle.importKey(
-      'raw',
-      encoder.encode(secret),
-      { name: 'HMAC', hash: 'SHA-256' },
-      false,
-      ['sign']
-    );
-    const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(body));
-    const expectedSignature = Array.from(new Uint8Array(sig))
-      .map(b => b.toString(16).padStart(2, '0'))
-      .join('');
-
-    // Timing-safe comparison
-    if (signature.length !== expectedSignature.length) return false;
-    const a = new TextEncoder().encode(signature);
-    const b2 = new TextEncoder().encode(expectedSignature);
-    let diff = 0;
-    for (let i = 0; i < a.length; i++) {
-      diff |= a[i] ^ b2[i];
-    }
-    return diff === 0;
-  } catch (err) {
-    console.error('Signature verification error:', err);
-    return false;
-  }
-}
-
-async function logWebhook(eventType: string, orderId: string, email: string, payload: any, responseStatus: number, responseMessage: string) {
-  try {
-    await supabaseAdmin.from('webhook_logs').insert({
-      provider: 'kiwify',
-      event_type: eventType,
-      order_id: orderId || null,
-      email: email || null,
-      payload,
-      response_status: responseStatus,
-      response_message: responseMessage,
+  if (!existingUser) {
+    // Create user with random password — they'll set it via reset link
+    const tempPassword = crypto.randomUUID() + crypto.randomUUID();
+    const { error: createError } = await admin.auth.admin.createUser({
+      email,
+      password: tempPassword,
+      email_confirm: true,
     });
-  } catch (e) {
-    console.error('Failed to log webhook:', e);
+    if (createError) {
+      console.error('Error creating user:', createError);
+      return;
+    }
+  }
+
+  // Send password reset email via public client
+  if (publicKey) {
+    const publicClient = createClient(url, publicKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    });
+    await publicClient.auth.resetPasswordForEmail(email, {
+      redirectTo: `${url.replace('.supabase.co', '')}/login`,
+    });
   }
 }
 
 export async function handleKiwifyWebhook(request: Request): Promise<Response> {
   try {
-    const config = await getWebhookConfig();
+    // 1. Read token from header
+    const headerToken = request.headers.get('x-kiwify-token') || '';
+
+    // 2. Fetch saved token from webhook_settings
+    const { data: config } = await supabaseAdmin
+      .from('webhook_settings')
+      .select('auth_token, is_active')
+      .eq('provider', 'kiwify')
+      .maybeSingle();
+
     if (config && !config.is_active) {
       return jsonResponse({ status: 'success', message: 'Webhook is disabled' });
     }
 
-    // IP whitelist check
-    const clientIp = getClientIp(request);
-    if (config?.allowed_ips && !isIpAllowed(clientIp, config.allowed_ips)) {
-      console.error(`❌ IP blocked: ${clientIp}`);
-      await logWebhook('ip_blocked', '', '', null, 403, `Blocked IP: ${clientIp}`);
-      return jsonResponse({ status: 'error', message: 'IP not allowed' }, 403);
+    const savedToken = config?.auth_token || '';
+
+    // 3. Compare tokens — reject if mismatch
+    if (!savedToken || headerToken !== savedToken) {
+      console.error('❌ Token mismatch or missing');
+      return jsonResponse({ error: 'Invalid signature' }, 401);
     }
 
-    const rawBody = await request.text();
-
-    const isValid = await verifySignature(request, rawBody, config?.auth_token);
-    if (!isValid) {
-      await logWebhook('auth_failed', '', '', null, 401, 'Invalid signature');
-      return jsonResponse({ status: 'error', message: 'Invalid signature' }, 401);
-    }
-
-    const body = JSON.parse(rawBody);
-
-    const event = body.event || '';
-    const orderStatus = (
-      body.status ||
-      body.order_status ||
-      body.payment_status ||
-      body.subscription_status ||
-      ''
-    ).toLowerCase();
-
-    const buyerName =
-      body.user_data?.name ||
-      body.Customer?.full_name ||
-      body.customer?.name ||
-      body.buyer_name ||
-      'Comprador';
-
-    const buyerEmail = (
-      body.user_data?.email ||
-      body.Customer?.email ||
-      body.customer?.email ||
-      body.buyer_email ||
-      ''
+    // 4. Parse payload (Kiwify format: { data: { customer, status } })
+    const body = await request.json();
+    const payload = body.data || body;
+    const status = (payload.status || '').toLowerCase();
+    const customerEmail = (
+      payload.customer?.email || payload.Customer?.email || ''
     ).toLowerCase().trim();
+    const customerName =
+      payload.customer?.name || payload.Customer?.full_name || 'Comprador';
+    const orderId = payload.order_id || body.order_id || '';
 
-    const orderId =
-      body.order_id ||
-      body.Transaction?.order_id ||
-      body.transaction_id ||
-      '';
-
-    const productName =
-      body.user_data?.plan ||
-      body.Product?.name ||
-      body.product?.name ||
-      body.product_name ||
-      'Paz em Canção';
-
-    if (!buyerEmail) {
-      await logWebhook(event || orderStatus, orderId, '', body, 400, 'Missing buyer email');
-      return jsonResponse({ status: 'error', message: 'Missing buyer email' }, 400);
+    if (!customerEmail) {
+      return jsonResponse({ error: 'Missing customer email' }, 400);
     }
 
-    const eventLabel = event || orderStatus;
-    console.log(`📩 Kiwify webhook: event=${eventLabel} email=${buyerEmail} order=${orderId}`);
+    console.log(`📩 Kiwify webhook: status=${status} email=${customerEmail}`);
 
-    // Handle approved/paid/completed purchases & subscriptions
-    if (
-      APPROVED_STATUSES.includes(orderStatus) ||
-      event === 'purchase_completed' ||
-      event === 'subscription_started'
-    ) {
+    if (status === 'paid' || status === 'approved') {
+      // 4. Save to approved_buyers
       const { error: dbError } = await supabaseAdmin
         .from('approved_buyers')
         .upsert(
           {
-            nome: buyerName,
-            email: buyerEmail,
+            nome: customerName,
+            email: customerEmail,
             order_id: orderId,
-            product_name: productName,
+            product_name: 'Paz em Canção',
             status: 'approved',
             access_enabled: true,
           },
@@ -208,40 +109,31 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
 
       if (dbError) {
         console.error('❌ DB upsert error:', dbError);
-        await logWebhook(eventLabel, orderId, buyerEmail, body, 500, 'DB upsert failed');
-        return jsonResponse({ status: 'error', message: 'Failed to register buyer' }, 500);
+        return jsonResponse({ error: 'Failed to register buyer' }, 500);
       }
 
-      console.log(`✅ Buyer approved: ${buyerEmail}`);
-      await logWebhook(eventLabel, orderId, buyerEmail, body, 200, 'Buyer approved');
-      return jsonResponse({ status: 'success', message: 'Webhook processed successfully.' });
+      // 5. Create user in auth and send password reset email
+      await provisionUserAccess(customerEmail);
+
+      console.log(`✅ Buyer approved and provisioned: ${customerEmail}`);
+      // 6. Return success
+      return jsonResponse({ success: true });
     }
 
-    // Handle cancellations / refunds / chargebacks
-    if (CANCELLED_STATUSES.includes(orderStatus)) {
-      const { error: dbError } = await supabaseAdmin
+    // Handle cancellations
+    const cancelledStatuses = ['refunded', 'chargedback', 'chargeback', 'cancelled'];
+    if (cancelledStatuses.includes(status)) {
+      await supabaseAdmin
         .from('approved_buyers')
-        .update({ access_enabled: false, status: orderStatus })
-        .eq('email', buyerEmail);
+        .update({ access_enabled: false, status })
+        .eq('email', customerEmail);
 
-      if (dbError) {
-        console.error('❌ DB update error:', dbError);
-        await logWebhook(eventLabel, orderId, buyerEmail, body, 500, 'DB update failed');
-        return jsonResponse({ status: 'error', message: 'Failed to update buyer status' }, 500);
-      }
-
-      console.log(`🚫 Buyer access revoked: ${buyerEmail} (${orderStatus})`);
-      await logWebhook(eventLabel, orderId, buyerEmail, body, 200, 'Access revoked');
-      return jsonResponse({ status: 'success', message: 'Webhook processed successfully.' });
+      return jsonResponse({ success: true });
     }
 
-    console.log(`ℹ️ Unhandled: event=${eventLabel} email=${buyerEmail}`);
-    await logWebhook(eventLabel, orderId, buyerEmail, body, 200, 'No action required');
-    return jsonResponse({ status: 'success', message: 'Event received but no action required.' });
-
+    return jsonResponse({ success: true, message: 'No action required' });
   } catch (err: any) {
     console.error('❌ Webhook error:', err);
-    await logWebhook('error', '', '', null, 400, err.message || 'Processing failed');
-    return jsonResponse({ status: 'error', message: err.message || 'Webhook processing failed' }, 400);
+    return jsonResponse({ error: err.message || 'Webhook processing failed' }, 400);
   }
 }
