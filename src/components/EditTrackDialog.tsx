@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Loader2, Upload, X, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 const CATEGORIES = ["Paz", "Cura", "Força", "Oração", "Madrugada", "Presença", "Refúgio"];
 
@@ -40,16 +41,28 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(track.cover_url);
   const [uploading, setUploading] = useState(false);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [statusType, setStatusType] = useState<"success" | "error" | null>(null);
 
   const saveMutation = useMutation({
     mutationFn: async () => {
+      setStatusMessage(null);
+      setStatusType(null);
+
       let cover_url = track.cover_url;
 
       // Upload new cover if selected
       if (coverFile) {
         setUploading(true);
         const fileName = `covers/${track.id}.png`;
-        const { error: uploadError } = await supabase.storage
+        console.log("[EditTrackDialog] Iniciando upload da capa", {
+          trackId: track.id,
+          fileName,
+          fileType: coverFile.type,
+          fileSize: coverFile.size,
+        });
+
+        const { data: uploadData, error: uploadError } = await supabase.storage
           .from("tracks")
           .upload(fileName, coverFile, {
             contentType: coverFile.type,
@@ -57,16 +70,27 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
           });
 
         if (uploadError) {
+          console.error("[EditTrackDialog] Erro no upload da capa:", uploadError);
           throw new Error("Erro ao enviar capa: " + uploadError.message);
         }
+
+        console.log("[EditTrackDialog] Upload concluído", uploadData);
 
         const { data: urlData } = supabase.storage
           .from("tracks")
           .getPublicUrl(fileName);
 
+        console.log("[EditTrackDialog] URL pública gerada", urlData.publicUrl);
         cover_url = urlData.publicUrl + "?t=" + Date.now();
         setUploading(false);
       }
+
+      console.log("[EditTrackDialog] Atualizando track", {
+        id: track.id,
+        title: title.trim(),
+        category,
+        hasCover: !!cover_url,
+      });
 
       await updateTrack({
         data: {
@@ -80,11 +104,16 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-tracks"] });
+      setStatusType("success");
+      setStatusMessage("Música atualizada com sucesso.");
       toast.success("Música atualizada!");
       onOpenChange(false);
     },
     onError: (err: Error) => {
       setUploading(false);
+      console.error("[EditTrackDialog] Falha ao salvar:", err);
+      setStatusType("error");
+      setStatusMessage(err.message || "Falha ao salvar a capa.");
       toast.error(err.message);
     },
   });
@@ -94,9 +123,14 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
     if (!file) return;
 
     if (!file.type.startsWith("image/")) {
+      setStatusType("error");
+      setStatusMessage("Selecione uma imagem válida.");
       toast.error("Selecione uma imagem válida.");
       return;
     }
+
+    setStatusMessage(null);
+    setStatusType(null);
 
     setCoverFile(file);
     const url = URL.createObjectURL(file);
@@ -119,6 +153,15 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
         </DialogHeader>
 
         <div className="space-y-4 pt-2">
+          {statusMessage ? (
+            <Alert variant={statusType === "error" ? "destructive" : "default"}>
+              <AlertTitle>
+                {statusType === "error" ? "Erro no upload" : "Sucesso"}
+              </AlertTitle>
+              <AlertDescription>{statusMessage}</AlertDescription>
+            </Alert>
+          ) : null}
+
           {/* Cover */}
           <div className="space-y-2">
             <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
