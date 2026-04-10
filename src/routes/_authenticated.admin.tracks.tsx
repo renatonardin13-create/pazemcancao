@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { listAdminTracks, deleteTrack, updateTrack } from "@/lib/admin-tracks.functions";
-import { Music, Plus, Trash2, ToggleLeft, ToggleRight, ExternalLink } from "lucide-react";
+import { listAdminTracks, deleteTrack, updateTrack, regenerateCover } from "@/lib/admin-tracks.functions";
+import { Music, Plus, Trash2, ToggleLeft, ToggleRight, ExternalLink, ImageIcon, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { AddTrackForm } from "@/components/AddTrackForm";
@@ -34,6 +34,18 @@ function AdminTracksPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-tracks"] });
       toast.success("Status atualizado");
+    },
+  });
+
+  const coverMutation = useMutation({
+    mutationFn: ({ trackId, title }: { trackId: string; title: string }) =>
+      regenerateCover({ data: { trackId, title } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-tracks"] });
+      toast.success("Capa gerada com sucesso!");
+    },
+    onError: (err: Error) => {
+      toast.error("Erro ao gerar capa: " + err.message);
     },
   });
 
