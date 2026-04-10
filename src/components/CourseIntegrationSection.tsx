@@ -308,3 +308,54 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
     </div>
   );
 }
+
+function TestWebhookButton({ webhookUrl, platform }: { webhookUrl: string; platform: string }) {
+  const [testing, setTesting] = useState(false);
+
+  const handleTest = async () => {
+    setTesting(true);
+    try {
+      const mockPayload = {
+        order_id: `TEST-${Date.now()}`,
+        order_status: "approved",
+        product: { id: "test-product", name: "Produto de Teste" },
+        customer: { name: "Usuário Teste", email: "teste@exemplo.com" },
+        subscription: { id: null, status: null },
+        _test: true,
+      };
+
+      const res = await fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(mockPayload),
+      });
+
+      if (res.ok) {
+        toast.success("Webhook de teste enviado com sucesso!");
+      } else {
+        const text = await res.text();
+        toast.error(`Erro no webhook (${res.status}): ${text}`);
+      }
+    } catch (err: any) {
+      toast.error("Falha ao enviar teste: " + err.message);
+    } finally {
+      setTesting(false);
+    }
+  };
+
+  return (
+    <Button
+      type="button"
+      variant="outline"
+      onClick={handleTest}
+      disabled={testing}
+    >
+      {testing ? (
+        <Loader2 className="h-4 w-4 animate-spin mr-2" />
+      ) : (
+        <FlaskConical className="h-4 w-4 mr-2" />
+      )}
+      Testar
+    </Button>
+  );
+}
