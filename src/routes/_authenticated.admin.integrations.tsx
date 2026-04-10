@@ -468,6 +468,8 @@ function WebhookLogsSection() {
   });
 
   const logs = data?.logs || [];
+  const recentFailures = logs.slice(0, 5).filter((l: any) => l.response_status !== 200).length;
+  const hasConsecutiveFailures = recentFailures >= 3;
 
   return (
     <Card className="border-border/20">
@@ -476,95 +478,221 @@ function WebhookLogsSection() {
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted/30 border border-border/15">
             <ScrollText className="h-5 w-5 text-muted-foreground/50" />
           </div>
-          <div>
+          <div className="flex-1">
             <CardTitle className="text-base">Relatório de Transações</CardTitle>
             <CardDescription className="text-xs">
               Últimos 50 eventos recebidos do webhook
             </CardDescription>
           </div>
+          {logs.length > 0 && (
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-[10px] font-mono border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
+                ✓ {logs.filter((l: any) => l.response_status === 200).length}
+              </Badge>
+              <Badge variant="outline" className="text-[10px] font-mono border-red-500/20 text-red-600 dark:text-red-400">
+                ✗ {logs.filter((l: any) => l.response_status !== 200).length}
+              </Badge>
+            </div>
+          )}
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
+        {/* Alert: never called */}
+        {!isLoading && logs.length === 0 && (
+          <div className="flex items-start gap-3 rounded-xl border border-amber-500/20 bg-amber-500/[0.04] p-4">
+            <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
+                Webhook nunca foi chamado
+              </p>
+              <p className="text-[11px] text-muted-foreground/50 mt-1">
+                Nenhum evento foi recebido ainda. Verifique se a URL do webhook foi configurada corretamente na sua plataforma de pagamento, ou envie um teste acima.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Alert: consecutive failures */}
+        {hasConsecutiveFailures && (
+          <div className="flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/[0.04] p-4">
+            <XCircle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-medium text-red-600 dark:text-red-400">
+                Múltiplas falhas detectadas
+              </p>
+              <p className="text-[11px] text-muted-foreground/50 mt-1">
+                {recentFailures} dos últimos 5 eventos falharam. Verifique o token de autenticação, o formato do payload, e os logs abaixo para mais detalhes.
+              </p>
+            </div>
+          </div>
+        )}
+
         {isLoading ? (
           <div className="flex justify-center py-8">
             <Loader2 className="h-5 w-5 animate-spin text-muted-foreground/40" />
           </div>
         ) : logs.length === 0 ? (
-          <div className="text-center py-10">
+          <div className="text-center py-6">
             <CircleDot className="h-8 w-8 text-muted-foreground/15 mx-auto mb-3" />
             <p className="text-sm text-muted-foreground/40">
-              Nenhum evento registrado ainda.
-            </p>
-            <p className="text-[11px] text-muted-foreground/25 mt-1">
               Envie um webhook de teste para verificar a configuração
             </p>
           </div>
         ) : (
-          <div className="space-y-2 max-h-96 overflow-y-auto">
+          <div className="space-y-2 max-h-[520px] overflow-y-auto">
             {logs.map((log: any, i: number) => (
-              <motion.div
-                key={log.id}
-                initial={{ opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: i * 0.02 }}
-                className={`flex items-center gap-3 rounded-lg border p-3 text-sm transition-colors ${
-                  i === 0
-                    ? log.response_status === 200
-                      ? "border-emerald-500/15 bg-emerald-500/[0.02]"
-                      : "border-red-500/15 bg-red-500/[0.02]"
-                    : "border-border/10"
-                }`}
-              >
-                {log.response_status === 200 ? (
-                  <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-                ) : (
-                  <XCircle className="h-4 w-4 text-red-500 shrink-0" />
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <Badge
-                      variant="outline"
-                      className={`text-[10px] font-mono ${
-                        log.response_status === 200
-                          ? 'border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
-                          : 'border-red-500/30 text-red-600 dark:text-red-400'
-                      }`}
-                    >
-                      HTTP {log.response_status}
-                    </Badge>
-                    <Badge variant="outline" className="text-[10px] font-mono">
-                      {log.event_type || '—'}
-                    </Badge>
-                    {log.payload?._test && (
-                      <Badge variant="outline" className="text-[10px] font-mono border-primary/30 text-primary gap-1">
-                        <FlaskConical className="h-3 w-3" />
-                        Teste
-                      </Badge>
-                    )}
-                    {log.email && (
-                      <span className="text-xs text-muted-foreground/60 truncate">
-                        {log.email}
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[11px] text-muted-foreground/40 mt-1">
-                    {log.response_message}
-                  </p>
-                </div>
-                <div className="flex items-center gap-1 text-[10px] text-muted-foreground/30 shrink-0">
-                  <Clock className="h-3 w-3" />
-                  {new Date(log.created_at).toLocaleString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </div>
-              </motion.div>
+              <LogEntry key={log.id} log={log} index={i} />
             ))}
           </div>
         )}
       </CardContent>
     </Card>
+  );
+}
+
+function LogEntry({ log, index }: { log: any; index: number }) {
+  const [expanded, setExpanded] = useState(false);
+  const isSuccess = log.response_status === 200;
+
+  const formattedDate = new Date(log.created_at).toLocaleString('pt-BR', {
+    day: '2-digit', month: '2-digit', year: 'numeric',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+  });
+
+  const payloadStr = log.payload ? JSON.stringify(log.payload, null, 2) : null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, delay: index * 0.02 }}
+    >
+      <div
+        className={`rounded-lg border transition-all duration-200 ${
+          index === 0
+            ? isSuccess
+              ? "border-emerald-500/15 bg-emerald-500/[0.02]"
+              : "border-red-500/15 bg-red-500/[0.02]"
+            : "border-border/10 hover:border-border/20"
+        }`}
+      >
+        {/* Main row */}
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="w-full flex items-center gap-3 p-3 text-left text-sm"
+        >
+          {isSuccess ? (
+            <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
+          ) : (
+            <XCircle className="h-4 w-4 text-red-500 shrink-0" />
+          )}
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Badge
+                variant="outline"
+                className={`text-[10px] font-mono ${
+                  isSuccess
+                    ? 'border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
+                    : 'border-red-500/30 text-red-600 dark:text-red-400'
+                }`}
+              >
+                HTTP {log.response_status}
+              </Badge>
+              <Badge variant="outline" className="text-[10px] font-mono">
+                {log.event_type || '—'}
+              </Badge>
+              {log.payload?._test && (
+                <Badge variant="outline" className="text-[10px] font-mono border-primary/30 text-primary gap-1">
+                  <FlaskConical className="h-3 w-3" />
+                  Teste
+                </Badge>
+              )}
+              {log.email && (
+                <span className="text-xs text-muted-foreground/60 truncate">
+                  {log.email}
+                </span>
+              )}
+            </div>
+            <p className="text-[11px] text-muted-foreground/40 mt-1 truncate">
+              {log.response_message || "Sem mensagem"}
+            </p>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <div className="text-right hidden sm:block">
+              <p className="text-[10px] text-muted-foreground/30 tabular-nums">{formattedDate}</p>
+            </div>
+            {expanded ? (
+              <ChevronUp className="h-3.5 w-3.5 text-muted-foreground/30" />
+            ) : (
+              <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/30" />
+            )}
+          </div>
+        </button>
+
+        {/* Expanded details */}
+        <AnimatePresence>
+          {expanded && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="overflow-hidden"
+            >
+              <div className="px-3 pb-3 space-y-3 border-t border-border/10 pt-3">
+                {/* Details grid */}
+                <div className="grid grid-cols-2 gap-3 text-[11px]">
+                  <div>
+                    <p className="text-muted-foreground/40 mb-0.5">Data/Hora</p>
+                    <p className="text-foreground/70 font-medium tabular-nums">{formattedDate}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground/40 mb-0.5">Status</p>
+                    <p className={`font-medium ${isSuccess ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
+                      {isSuccess ? "Sucesso" : "Erro"} · HTTP {log.response_status}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground/40 mb-0.5">Email</p>
+                    <p className="text-foreground/70 font-medium truncate">{log.email || "—"}</p>
+                  </div>
+                  <div>
+                    <p className="text-muted-foreground/40 mb-0.5">Evento</p>
+                    <p className="text-foreground/70 font-medium">{log.event_type || "—"}</p>
+                  </div>
+                </div>
+
+                {/* Response message */}
+                {log.response_message && (
+                  <div>
+                    <p className="text-[11px] text-muted-foreground/40 mb-1">Resposta</p>
+                    <div className={`rounded-lg border p-2.5 text-[11px] font-mono ${
+                      isSuccess
+                        ? "border-emerald-500/15 bg-emerald-500/[0.03] text-emerald-700 dark:text-emerald-300"
+                        : "border-red-500/15 bg-red-500/[0.03] text-red-700 dark:text-red-300"
+                    }`}>
+                      {log.response_message}
+                    </div>
+                  </div>
+                )}
+
+                {/* Payload */}
+                {payloadStr && (
+                  <div>
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <Code className="h-3 w-3 text-muted-foreground/30" />
+                      <p className="text-[11px] text-muted-foreground/40">Payload recebido</p>
+                    </div>
+                    <pre className="rounded-lg border border-border/10 bg-muted/5 p-3 text-[10px] font-mono text-foreground/60 overflow-x-auto max-h-48 whitespace-pre-wrap break-all">
+                      {payloadStr}
+                    </pre>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+    </motion.div>
   );
 }
