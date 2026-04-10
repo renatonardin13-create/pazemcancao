@@ -83,10 +83,12 @@ function AuthenticatedLayout() {
             </p>
             <div className="mt-10 flex flex-col items-center gap-4">
               <a
-                href="mailto:suporte@pazemcancao.com"
-                className="text-[11px] font-medium uppercase tracking-[0.3em] text-gold/45 hover:text-gold/65 transition-colors duration-500"
+                href={`https://wa.me/5517988308037?text=${encodeURIComponent('Olá, preciso de ajuda para acessar o Paz em Canção')}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 text-emerald-400/70 border border-emerald-500/15 px-5 py-2.5 text-[11px] font-semibold tracking-wider uppercase hover:bg-emerald-500/20 hover:text-emerald-400/90 transition-all duration-500"
               >
-                Falar com suporte
+                Falar com Suporte
               </a>
               <button
                 onClick={handleLogout}
@@ -119,21 +121,29 @@ function AuthenticatedLayout() {
           </h2>
           <div className="mx-auto mt-5 h-px w-10 bg-gradient-to-r from-transparent via-gold/12 to-transparent" />
           <p className="mt-6 text-[14px] leading-[2] text-muted-foreground/40 font-light">
-            Não encontramos uma compra válida vinculada a este e-mail.
+            Este e-mail não possui compra registrada.<br />
+            Se você já comprou, use o e-mail da compra.
           </p>
-          <p className="mt-3 text-[13px] leading-[1.8] text-muted-foreground/30 font-light">
-            Se você já realizou a compra, aguarde alguns minutos ou entre em contato com o suporte.
-          </p>
-          <div className="mt-10 flex flex-col items-center gap-4">
+          <div className="mt-6 flex flex-col items-center gap-3">
             <a
-              href="mailto:suporte@pazemcancao.com"
-              className="text-[11px] font-medium uppercase tracking-[0.3em] text-gold/35 hover:text-gold/55 transition-colors duration-500"
+              href="https://pazemcancao-oficial.lovable.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-gold/15 text-gold/65 border border-gold/12 px-6 py-2.5 text-[11px] font-semibold tracking-wider uppercase hover:bg-gold/22 hover:text-gold/80 transition-all duration-500"
             >
-              Falar com suporte
+              Adquira aqui
+            </a>
+            <a
+              href={`https://wa.me/5517988308037?text=${encodeURIComponent('Olá, preciso de ajuda para acessar o Paz em Canção')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 text-emerald-400/70 border border-emerald-500/15 px-5 py-2.5 text-[11px] font-semibold tracking-wider uppercase hover:bg-emerald-500/20 hover:text-emerald-400/90 transition-all duration-500"
+            >
+              Suporte: (17) 98830-8037
             </a>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.3em] text-muted-foreground/25 hover:text-muted-foreground/45 transition-colors duration-500"
+              className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.3em] text-muted-foreground/25 hover:text-muted-foreground/45 transition-colors duration-500 mt-2"
             >
               <LogOut className="h-3 w-3" />
               Sair
