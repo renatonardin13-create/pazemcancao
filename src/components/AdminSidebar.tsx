@@ -1,5 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { LayoutDashboard, Users, FolderOpen, Settings, Shield, Music, Webhook } from "lucide-react";
+import { cn } from "@/lib/utils";
 import {
   Sidebar,
   SidebarContent,
@@ -32,29 +33,30 @@ export function AdminSidebar() {
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       <SidebarContent className="pt-4">
         {/* Brand */}
-        <div className="px-4 pb-4 mb-2">
-          {!collapsed && (
+        <div className={cn("pb-4 mb-2", collapsed ? "px-0 flex justify-center" : "px-4")}>
+          {!collapsed ? (
             <div className="flex items-center gap-2.5">
-              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.08] border border-gold/15">
+              <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gold/[0.08] border border-gold/15">
                 <Shield className="h-3.5 w-3.5 text-gold/60" />
               </div>
-              <div>
-                <p className="text-[11px] font-bold text-sidebar-foreground/80 tracking-tight">Admin</p>
-                <p className="text-[9px] text-sidebar-foreground/30">Plataforma de Louvores</p>
+              <div className="overflow-hidden">
+                <p className="text-[11px] font-bold text-sidebar-foreground/80 tracking-tight truncate">Admin</p>
+                <p className="text-[9px] text-sidebar-foreground/30 truncate">Plataforma de Louvores</p>
               </div>
             </div>
-          )}
-          {collapsed && (
-            <div className="flex justify-center">
-              <Shield className="h-4 w-4 text-gold/50" />
+          ) : (
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-gold/[0.08] border border-gold/15">
+              <Shield className="h-3.5 w-3.5 text-gold/60" />
             </div>
           )}
         </div>
 
         <SidebarGroup>
-          <SidebarGroupLabel className="text-[9px] uppercase tracking-[0.3em] text-sidebar-foreground/25 px-4">
-            Menu
-          </SidebarGroupLabel>
+          {!collapsed && (
+            <SidebarGroupLabel className="text-[9px] uppercase tracking-[0.3em] text-sidebar-foreground/25 px-4">
+              Menu
+            </SidebarGroupLabel>
+          )}
           <SidebarGroupContent>
             <SidebarMenu>
               {adminItems.map((item) => (
@@ -62,11 +64,12 @@ export function AdminSidebar() {
                   <SidebarMenuButton
                     asChild
                     isActive={isActive(item.url)}
+                    tooltip={item.title}
                     className="transition-all duration-300"
                   >
                     <Link to={item.url}>
-                      <item.icon className="h-4 w-4" />
-                      {!collapsed && <span>{item.title}</span>}
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      <span>{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -80,10 +83,10 @@ export function AdminSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild tooltip="Voltar ao app">
                   <Link to="/downloads" className="text-sidebar-foreground/35 hover:text-sidebar-foreground/60">
-                    <Settings className="h-4 w-4" />
-                    {!collapsed && <span>Voltar ao app</span>}
+                    <Settings className="h-4 w-4 shrink-0" />
+                    <span>Voltar ao app</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
