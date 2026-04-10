@@ -66,9 +66,24 @@ async function verifySignature(request: Request, body: string, dbToken?: string 
   }
 }
 
+async function logWebhook(eventType: string, orderId: string, email: string, payload: any, responseStatus: number, responseMessage: string) {
+  try {
+    await supabaseAdmin.from('webhook_logs').insert({
+      provider: 'kiwify',
+      event_type: eventType,
+      order_id: orderId || null,
+      email: email || null,
+      payload,
+      response_status: responseStatus,
+      response_message: responseMessage,
+    });
+  } catch (e) {
+    console.error('Failed to log webhook:', e);
+  }
+}
+
 export async function handleKiwifyWebhook(request: Request): Promise<Response> {
   try {
-    // Check if webhook is active in DB settings
     const config = await getWebhookConfig();
     if (config && !config.is_active) {
       return jsonResponse({ status: 'success', message: 'Webhook is disabled' });
@@ -78,6 +93,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
 
     const isValid = await verifySignature(request, rawBody, config?.auth_token);
     if (!isValid) {
+      await logWebhook('auth_failed', '', '', null, 401, 'Invalid signature');
       return jsonResponse({ status: 'error', message: 'Invalid signature' }, 401);
     }
 
@@ -121,11 +137,14 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       'Paz em Canção';
 
     if (!buyerEmail) {
+      await logWebhook(event || orderStatus, orderId, '', body, 400, 'Missing buyer email');
       return jsonResponse({ status: 'error', message: 'Missing buyer email' }, 400);
     }
 
-    console.log(`📩 Kiwify webhook: event=${event} status=${orderStatus} email=${buyerEmail} order=${orderId}`);
+    const eventLabel = event || orderStatus;
+    console.log(`📩 Kiwify webhook: event=${eventLabel} email=${buyerEmail} order=${orderId}`);
 
+    // Handle approved/paid/completed purchases & subscriptions
     if (
       APPROVED_STATUSES.includes(orderStatus) ||
       event === 'purchase_completed' ||
@@ -147,13 +166,16 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
 
       if (dbError) {
         console.error('❌ DB upsert error:', dbError);
+        await logWebhook(eventLabel, orderId, buyerEmail, body, 500, 'DB upsert failed');
         return jsonResponse({ status: 'error', message: 'Failed to register buyer' }, 500);
       }
 
       console.log(`✅ Buyer approved: ${buyerEmail}`);
+      await logWebhook(eventLabel, orderId, buyerEmail, body, 200, 'Buyer approved');
       return jsonResponse({ status: 'success', message: 'Webhook processed successfully.' });
     }
 
+    // Handle cancellations / refunds / chargebacks
     if (CANCELLED_STATUSES.includes(orderStatus)) {
       const { error: dbError } = await supabaseAdmin
         .from('approved_buyers')
@@ -162,18 +184,22 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
 
       if (dbError) {
         console.error('❌ DB update error:', dbError);
+        await logWebhook(eventLabel, orderId, buyerEmail, body, 500, 'DB update failed');
         return jsonResponse({ status: 'error', message: 'Failed to update buyer status' }, 500);
       }
 
       console.log(`🚫 Buyer access revoked: ${buyerEmail} (${orderStatus})`);
+      await logWebhook(eventLabel, orderId, buyerEmail, body, 200, 'Access revoked');
       return jsonResponse({ status: 'success', message: 'Webhook processed successfully.' });
     }
 
-    console.log(`ℹ️ Unhandled: event=${event} status=${orderStatus} email=${buyerEmail}`);
+    console.log(`ℹ️ Unhandled: event=${eventLabel} email=${buyerEmail}`);
+    await logWebhook(eventLabel, orderId, buyerEmail, body, 200, 'No action required');
     return jsonResponse({ status: 'success', message: 'Event received but no action required.' });
 
   } catch (err: any) {
     console.error('❌ Webhook error:', err);
+    await logWebhook('error', '', '', null, 400, err.message || 'Processing failed');
     return jsonResponse({ status: 'error', message: err.message || 'Webhook processing failed' }, 400);
   }
 }

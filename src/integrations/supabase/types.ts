@@ -458,6 +458,42 @@ export type Database = {
         }
         Relationships: []
       }
+      webhook_logs: {
+        Row: {
+          created_at: string
+          email: string | null
+          event_type: string
+          id: string
+          order_id: string | null
+          payload: Json | null
+          provider: string
+          response_message: string | null
+          response_status: number
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          event_type?: string
+          id?: string
+          order_id?: string | null
+          payload?: Json | null
+          provider?: string
+          response_message?: string | null
+          response_status?: number
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          event_type?: string
+          id?: string
+          order_id?: string | null
+          payload?: Json | null
+          provider?: string
+          response_message?: string | null
+          response_status?: number
+        }
+        Relationships: []
+      }
       webhook_settings: {
         Row: {
           auth_token: string | null

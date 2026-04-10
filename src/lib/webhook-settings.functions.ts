@@ -41,3 +41,18 @@ export const updateWebhookSettings = createServerFn({ method: 'POST' })
     if (error) throw new Error(error.message);
     return { success: true };
   });
+
+export const getWebhookLogs = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase } = context;
+    const { data, error } = await supabase
+      .from('webhook_logs')
+      .select('*')
+      .eq('provider', 'kiwify')
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (error) throw new Error(error.message);
+    return { logs: data || [] };
+  });
