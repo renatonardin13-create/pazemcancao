@@ -32,6 +32,11 @@ interface EditTrackDialogProps {
 
 export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogProps) {
   const queryClient = useQueryClient();
+  const { data: catData } = useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: () => listAdminCategories(),
+  });
+  const categories = (catData?.categories || []).map((c: any) => c.name);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState(track.title);
@@ -241,7 +246,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {CATEGORIES.map((c) => (
+                {categories.map((c: string) => (
                   <SelectItem key={c} value={c}>{c}</SelectItem>
                 ))}
               </SelectContent>

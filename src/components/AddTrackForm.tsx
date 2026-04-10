@@ -17,8 +17,13 @@ interface AddTrackFormProps {
 
 export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
   const queryClient = useQueryClient();
+  const { data: catData } = useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: () => listAdminCategories(),
+  });
+  const categories = (catData?.categories || []).map((c: any) => c.name);
   const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("Paz");
+  const [category, setCategory] = useState("");
   const [duration, setDuration] = useState("");
   const [description, setDescription] = useState("");
   const [mp3File, setMp3File] = useState<File | null>(null);
@@ -171,7 +176,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {CATEGORIES.map((c) => (
+              {categories.map((c: string) => (
                 <SelectItem key={c} value={c}>{c}</SelectItem>
               ))}
             </SelectContent>
