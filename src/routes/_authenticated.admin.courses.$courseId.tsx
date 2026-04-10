@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { CourseForm } from "@/components/CourseForm";
+import { CourseIntegrationSection } from "@/components/CourseIntegrationSection";
 import { getAdminCourse, updateCourse } from "@/lib/admin-courses.functions";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -63,6 +64,8 @@ function EditCoursePage() {
         onSubmit={(values) => mutation.mutate(values)}
         isSubmitting={mutation.isPending}
       />
+
+      <CourseIntegrationSection courseId={courseId} />
     </div>
   );
 }
