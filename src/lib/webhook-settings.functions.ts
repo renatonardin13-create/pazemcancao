@@ -32,7 +32,7 @@ export const updateWebhookSettings = createServerFn({ method: 'POST' })
       .upsert(
         {
           provider: 'kiwify',
-          webhook_url: 'https://pazemcancao.lovable.app/api/webhook/kiwify',
+          webhook_url: data.webhook_url || 'https://pazemcancao.lovable.app/api/webhook/kiwify',
           is_active: data.is_active,
           monitored_events: data.monitored_events,
           auth_token: data.auth_token || null,
