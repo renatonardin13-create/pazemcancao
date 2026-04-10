@@ -66,6 +66,11 @@ function IntegrationsPage() {
     }
   }, [settings]);
 
+  const successCount = logs.filter((l: any) => l.response_status === 200).length;
+  const successRate = logs.length > 0 ? Math.round((successCount / logs.length) * 100) : -1;
+  const webhookActiveNoEvents = isActive && logs.length === 0;
+  const zeroSuccessRate = logs.length > 0 && successRate === 0;
+
   const mutation = useMutation({
     mutationFn: () =>
       updateWebhookSettings({
@@ -184,6 +189,82 @@ function IntegrationsPage() {
           )}
         </div>
       </motion.div>
+
+      {/* ── Automatic Alerts ── */}
+      {webhookActiveNoEvents && (
+        <motion.div variants={fadeUp} custom={0.07}>
+          <div className="flex items-start gap-3 rounded-xl border border-amber-500/25 bg-amber-500/[0.05] p-4">
+            <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-amber-600 dark:text-amber-400">
+                Webhook ativo, mas sem eventos
+              </p>
+              <p className="text-[12px] text-muted-foreground/60 mt-1 leading-relaxed">
+                Seu webhook está ativo mas ainda não recebeu nenhum evento. Verifique se a URL foi configurada corretamente na plataforma de pagamento e se os eventos de compra estão habilitados.
+              </p>
+              <div className="flex flex-wrap gap-2 mt-3">
+                <Badge variant="outline" className="text-[10px] border-amber-500/20 text-amber-600 dark:text-amber-400">
+                  ⚠ Nenhuma venda processada
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {zeroSuccessRate && (
+        <motion.div variants={fadeUp} custom={0.07}>
+          <div className="flex items-start gap-3 rounded-xl border border-red-500/25 bg-red-500/[0.05] p-4">
+            <XCircle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-red-600 dark:text-red-400">
+                Taxa de sucesso: 0%
+              </p>
+              <p className="text-[12px] text-muted-foreground/60 mt-1 leading-relaxed">
+                Todos os {logs.length} evento{logs.length !== 1 ? "s" : ""} recebido{logs.length !== 1 ? "s" : ""} falharam. Suas vendas <strong className="text-red-500">não estão sendo processadas</strong>. Verifique imediatamente:
+              </p>
+              <ul className="mt-2 space-y-1 text-[11px] text-muted-foreground/50">
+                <li className="flex items-center gap-1.5">
+                  <span className="h-1 w-1 rounded-full bg-red-500/50 shrink-0" />
+                  Token de autenticação está correto?
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <span className="h-1 w-1 rounded-full bg-red-500/50 shrink-0" />
+                  Formato do payload da plataforma é compatível?
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <span className="h-1 w-1 rounded-full bg-red-500/50 shrink-0" />
+                  Expanda os logs abaixo para ver as mensagens de erro
+                </li>
+              </ul>
+              <div className="flex flex-wrap gap-2 mt-3">
+                <Badge variant="outline" className="text-[10px] border-red-500/25 text-red-600 dark:text-red-400 font-mono">
+                  {logs.length} falha{logs.length !== 1 ? "s" : ""} · 0% sucesso
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {successRate > 0 && successRate < 100 && (
+        <motion.div variants={fadeUp} custom={0.07}>
+          <div className="flex items-center gap-3 rounded-xl border border-border/15 bg-muted/5 p-3">
+            <div className="flex items-center gap-2 flex-1">
+              <span className="text-[11px] text-muted-foreground/50">Taxa de sucesso:</span>
+              <div className="flex-1 max-w-32 h-1.5 rounded-full bg-muted/15 overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all ${successRate >= 80 ? "bg-emerald-500/60" : successRate >= 50 ? "bg-amber-500/60" : "bg-red-500/60"}`}
+                  style={{ width: `${successRate}%` }}
+                />
+              </div>
+              <span className={`text-[11px] font-mono font-medium ${successRate >= 80 ? "text-emerald-500" : successRate >= 50 ? "text-amber-500" : "text-red-500"}`}>
+                {successRate}%
+              </span>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
       {/* ── Setup Steps ── */}
       <motion.div variants={fadeUp} custom={0.1}>
