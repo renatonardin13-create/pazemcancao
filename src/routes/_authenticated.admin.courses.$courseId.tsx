@@ -64,6 +64,10 @@ function EditCoursePage() {
         onSubmit={(values) => mutation.mutate(values)}
         isSubmitting={mutation.isPending}
       />
+
+      <CourseIntegrationSection courseId={courseId} />
     </div>
+  );
+}
   );
 }
