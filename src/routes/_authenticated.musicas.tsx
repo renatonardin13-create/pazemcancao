@@ -68,7 +68,18 @@ function MusicLibraryPage() {
     queryFn: () => listActiveTracks(),
   });
 
-  const { currentTrack, playing, progress, toggle } = usePlayer();
+  const { currentTrack, playing, progress, toggle, setQueue } = usePlayer();
+
+  const handlePlayWithQueue = useCallback((track: any, trackList: any[]) => {
+    const playerTracks = trackList.map(dbTrackToPlayerTrack);
+    const playerTrack = dbTrackToPlayerTrack(track);
+    const idx = playerTracks.findIndex(t => t.id === playerTrack.id);
+    if (currentTrack?.id === track.id) {
+      toggle(playerTrack);
+    } else {
+      setQueue(playerTracks, idx >= 0 ? idx : 0);
+    }
+  }, [currentTrack?.id, toggle, setQueue]);
 
   const dbCategories = catData?.categories || [];
   const tracks = data?.tracks || [];
