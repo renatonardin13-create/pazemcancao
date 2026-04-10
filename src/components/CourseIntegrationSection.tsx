@@ -311,31 +311,18 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
 
 function TestWebhookButton({ webhookUrl, platform }: { webhookUrl: string; platform: string }) {
   const [testing, setTesting] = useState(false);
+  const queryClient = useQueryClient();
 
   const handleTest = async () => {
     setTesting(true);
     try {
-      const mockPayload = {
-        order_id: `TEST-${Date.now()}`,
-        order_status: "approved",
-        product: { id: "test-product", name: "Produto de Teste" },
-        customer: { name: "Usuário Teste", email: "teste@exemplo.com" },
-        subscription: { id: null, status: null },
-        _test: true,
-      };
+      // Extract courseId from webhook URL
+      const url = new URL(webhookUrl);
+      const courseId = url.searchParams.get("course") || "";
 
-      const res = await fetch(webhookUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(mockPayload),
-      });
-
-      if (res.ok) {
-        toast.success("Webhook de teste enviado com sucesso!");
-      } else {
-        const text = await res.text();
-        toast.error(`Erro no webhook (${res.status}): ${text}`);
-      }
+      await testCourseWebhook({ data: { courseId } });
+      toast.success("Webhook de teste enviado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["webhook-logs"] });
     } catch (err: any) {
       toast.error("Falha ao enviar teste: " + err.message);
     } finally {
