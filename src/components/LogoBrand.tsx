@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import logoIcon from "@/assets/logo-icon.png";
+import logo from "@/assets/logo-paz-em-cancao.png";
 
 interface LogoBrandProps {
   size?: "sm" | "md" | "lg";
@@ -7,35 +7,19 @@ interface LogoBrandProps {
   showSubtitle?: boolean;
 }
 
-export function LogoBrand({ size = "md", linkTo, showSubtitle = false }: LogoBrandProps) {
-  const sizes = {
-    sm: { img: "h-7 w-7", text: "text-base" },
-    md: { img: "h-8 w-8 sm:h-9 sm:w-9", text: "text-base sm:text-lg" },
-    lg: { img: "h-12 w-12", text: "text-2xl" },
+export function LogoBrand({ size = "md", linkTo }: LogoBrandProps) {
+  const heights = {
+    sm: "h-8",
+    md: "h-10 sm:h-12",
+    lg: "h-16",
   };
 
-  const s = sizes[size];
-
   const content = (
-    <div className="flex items-center gap-2.5">
-      <img
-        src={logoIcon}
-        alt="Paz em Canção"
-        className={`${s.img} object-contain`}
-        width={512}
-        height={512}
-      />
-      <div className="flex flex-col">
-        <span className={`font-display ${s.text} font-bold text-foreground tracking-tight leading-tight`}>
-          Paz em Canção
-        </span>
-        {showSubtitle && (
-          <p className="text-[9px] text-gold/60 font-medium tracking-[0.25em] uppercase hidden sm:block">
-            Biblioteca Espiritual
-          </p>
-        )}
-      </div>
-    </div>
+    <img
+      src={logo}
+      alt="Paz em Canção"
+      className={`${heights[size]} object-contain`}
+    />
   );
 
   if (linkTo) {
