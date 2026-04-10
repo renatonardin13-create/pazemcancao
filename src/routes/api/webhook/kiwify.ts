@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { CORS_HEADERS } from '@/lib/cors';
-import { handleKiwifyWebhook } from '@/lib/kiwify-webhook.server';
+import { handleKiwifyWebhook } from '@/lib/kiwify-webhook.functions';
 
 export const Route = createFileRoute('/api/webhook/kiwify')({
   server: {
