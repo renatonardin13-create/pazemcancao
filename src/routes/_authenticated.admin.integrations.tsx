@@ -37,12 +37,14 @@ function IntegrationsPage() {
   const [isActive, setIsActive] = useState(false);
   const [monitoredEvents, setMonitoredEvents] = useState<string[]>([]);
   const [authToken, setAuthToken] = useState("");
+  const [allowedIps, setAllowedIps] = useState("");
 
   useEffect(() => {
     if (settings) {
       setIsActive(settings.is_active);
       setMonitoredEvents(settings.monitored_events || []);
       setAuthToken(settings.auth_token || "");
+      setAllowedIps((settings.allowed_ips || []).join(", "));
     }
   }, [settings]);
 
@@ -53,6 +55,9 @@ function IntegrationsPage() {
           is_active: isActive,
           monitored_events: monitoredEvents,
           auth_token: authToken || undefined,
+          allowed_ips: allowedIps
+            ? allowedIps.split(",").map((ip: string) => ip.trim()).filter(Boolean)
+            : [],
         },
       }),
     onSuccess: () => {
@@ -192,6 +197,25 @@ function IntegrationsPage() {
               value={authToken}
               onChange={(e) => setAuthToken(e.target.value)}
               placeholder="Cole aqui o token secret da Kiwify"
+              className="font-mono text-xs"
+            />
+          </div>
+
+          {/* IP Whitelist */}
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Shield className="h-3.5 w-3.5 text-muted-foreground/40" />
+              <Label className="text-xs font-medium text-muted-foreground/70">
+                Whitelist de IPs (opcional)
+              </Label>
+            </div>
+            <p className="text-[11px] text-muted-foreground/40">
+              IPs permitidos separados por vírgula. Deixe vazio para aceitar de qualquer IP.
+            </p>
+            <Input
+              value={allowedIps}
+              onChange={(e) => setAllowedIps(e.target.value)}
+              placeholder="Ex: 104.18.0.0, 172.67.0.0"
               className="font-mono text-xs"
             />
           </div>
