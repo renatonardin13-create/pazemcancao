@@ -133,7 +133,7 @@ function IntegrationsPage() {
               <Input
                 value={webhookUrl}
                 readOnly
-                className="font-mono text-xs bg-muted/30"
+                className="font-mono text-xs bg-muted/30 min-w-0 truncate"
               />
               <Button
                 variant="outline"
