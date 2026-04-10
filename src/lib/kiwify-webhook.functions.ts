@@ -68,9 +68,15 @@ async function verifySignature(request: Request, body: string, dbToken?: string 
 
 export async function handleKiwifyWebhook(request: Request): Promise<Response> {
   try {
+    // Check if webhook is active in DB settings
+    const config = await getWebhookConfig();
+    if (config && !config.is_active) {
+      return jsonResponse({ status: 'success', message: 'Webhook is disabled' });
+    }
+
     const rawBody = await request.text();
 
-    const isValid = await verifySignature(request, rawBody);
+    const isValid = await verifySignature(request, rawBody, config?.auth_token);
     if (!isValid) {
       return jsonResponse({ status: 'error', message: 'Invalid signature' }, 401);
     }
