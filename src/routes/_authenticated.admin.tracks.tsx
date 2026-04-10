@@ -201,6 +201,14 @@ function AdminTracksPage() {
           ))}
         </div>
       )}
+
+      {editingTrack && (
+        <EditTrackDialog
+          track={editingTrack}
+          open={!!editingTrack}
+          onOpenChange={(open) => { if (!open) setEditingTrack(null); }}
+        />
+      )}
     </div>
   );
 }
