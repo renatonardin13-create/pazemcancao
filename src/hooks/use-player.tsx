@@ -7,11 +7,16 @@ interface PlayerState {
   progress: number;
   duration: number;
   currentTime: number;
+  queue: Track[];
+  queueIndex: number;
   play: (track: Track) => void;
   pause: () => void;
   toggle: (track: Track) => void;
   seek: (percent: number) => void;
   stop: () => void;
+  next: () => void;
+  previous: () => void;
+  setQueue: (tracks: Track[], startIndex?: number) => void;
 }
 
 const PlayerContext = createContext<PlayerState | null>(null);
@@ -28,9 +33,16 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+  const [queue, setQueueState] = useState<Track[]>([]);
+  const [queueIndex, setQueueIndex] = useState(-1);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const queueRef = useRef<Track[]>([]);
+  const queueIndexRef = useRef(-1);
 
-  // Cleanup on unmount
+  // Keep refs in sync
+  useEffect(() => { queueRef.current = queue; }, [queue]);
+  useEffect(() => { queueIndexRef.current = queueIndex; }, [queueIndex]);
+
   useEffect(() => {
     return () => {
       if (audioRef.current) {
@@ -40,22 +52,12 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const playAudio = useCallback((track: Track) => {
-    const isSame = audioRef.current && currentTrack?.id === track.id;
-
-    if (isSame && audioRef.current) {
-      audioRef.current.play().catch(() => {});
-      setPlaying(true);
-      return;
-    }
-
-    // Stop current
+  const startAudio = useCallback((track: Track, autoNext = true) => {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current = null;
     }
 
-    // Create new Audio synchronously (browser gesture chain)
     const audio = new Audio(track.audioUrl);
     audioRef.current = audio;
     setCurrentTrack(track);
@@ -63,9 +65,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     setCurrentTime(0);
     setDuration(0);
 
-    audio.addEventListener("loadedmetadata", () => {
-      setDuration(audio.duration);
-    });
+    audio.addEventListener("loadedmetadata", () => setDuration(audio.duration));
 
     audio.addEventListener("timeupdate", () => {
       if (audio.duration > 0) {
@@ -75,6 +75,16 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     });
 
     audio.addEventListener("ended", () => {
+      if (autoNext) {
+        const q = queueRef.current;
+        const idx = queueIndexRef.current;
+        if (q.length > 0 && idx < q.length - 1) {
+          const nextIdx = idx + 1;
+          setQueueIndex(nextIdx);
+          startAudio(q[nextIdx], true);
+          return;
+        }
+      }
       setPlaying(false);
       setProgress(100);
     });
@@ -84,13 +94,21 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       console.error("Audio playback error for:", track.title);
     });
 
-    audio.play().then(() => {
-      setPlaying(true);
-    }).catch((err) => {
+    audio.play().then(() => setPlaying(true)).catch((err) => {
       console.error("Play failed:", err);
       setPlaying(false);
     });
-  }, [currentTrack?.id]);
+  }, []);
+
+  const playAudio = useCallback((track: Track) => {
+    const isSame = audioRef.current && currentTrack?.id === track.id;
+    if (isSame && audioRef.current) {
+      audioRef.current.play().catch(() => {});
+      setPlaying(true);
+      return;
+    }
+    startAudio(track);
+  }, [currentTrack?.id, startAudio]);
 
   const pause = useCallback(() => {
     audioRef.current?.pause();
@@ -101,10 +119,16 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     const isSame = currentTrack?.id === track.id;
     if (isSame && playing) {
       pause();
+    } else if (isSame && audioRef.current) {
+      audioRef.current.play().catch(() => {});
+      setPlaying(true);
     } else {
-      playAudio(track);
+      // Find in queue
+      const idx = queueRef.current.findIndex(t => t.id === track.id);
+      if (idx >= 0) setQueueIndex(idx);
+      startAudio(track);
     }
-  }, [currentTrack?.id, playing, pause, playAudio]);
+  }, [currentTrack?.id, playing, pause, startAudio]);
 
   const seek = useCallback((percent: number) => {
     if (audioRef.current && audioRef.current.duration) {
@@ -125,11 +149,50 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     setProgress(0);
     setCurrentTime(0);
     setDuration(0);
+    setQueueState([]);
+    setQueueIndex(-1);
   }, []);
+
+  const next = useCallback(() => {
+    const q = queueRef.current;
+    const idx = queueIndexRef.current;
+    if (q.length === 0) return;
+    const nextIdx = idx < q.length - 1 ? idx + 1 : 0;
+    setQueueIndex(nextIdx);
+    startAudio(q[nextIdx]);
+  }, [startAudio]);
+
+  const previous = useCallback(() => {
+    const q = queueRef.current;
+    const idx = queueIndexRef.current;
+    if (q.length === 0) return;
+    // If >3s into track, restart; otherwise go previous
+    if (audioRef.current && audioRef.current.currentTime > 3) {
+      audioRef.current.currentTime = 0;
+      setCurrentTime(0);
+      setProgress(0);
+      return;
+    }
+    const prevIdx = idx > 0 ? idx - 1 : q.length - 1;
+    setQueueIndex(prevIdx);
+    startAudio(q[prevIdx]);
+  }, [startAudio]);
+
+  const setQueue = useCallback((tracks: Track[], startIndex = 0) => {
+    setQueueState(tracks);
+    setQueueIndex(startIndex);
+    if (tracks.length > 0 && startIndex < tracks.length) {
+      startAudio(tracks[startIndex]);
+    }
+  }, [startAudio]);
 
   return (
     <PlayerContext.Provider
-      value={{ currentTrack, playing, progress, duration, currentTime, play: playAudio, pause, toggle, seek, stop }}
+      value={{
+        currentTrack, playing, progress, duration, currentTime,
+        queue, queueIndex,
+        play: playAudio, pause, toggle, seek, stop, next, previous, setQueue,
+      }}
     >
       {children}
     </PlayerContext.Provider>
