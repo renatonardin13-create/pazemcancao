@@ -39,7 +39,6 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const queueRef = useRef<Track[]>([]);
   const queueIndexRef = useRef(-1);
 
-  // Keep refs in sync
   useEffect(() => { queueRef.current = queue; }, [queue]);
   useEffect(() => { queueIndexRef.current = queueIndex; }, [queueIndex]);
 
@@ -52,15 +51,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const playTrackInternal = useCallback((track: Track) => {
-    const isSame = audioRef.current && currentTrack?.id === track.id;
-
-    if (isSame && audioRef.current) {
-      audioRef.current.play().catch(() => {});
-      setPlaying(true);
-      return;
-    }
-
+  // Core function to start playing a track with auto-advance on ended
+  const startPlayback = useCallback((track: Track) => {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current = null;
@@ -73,9 +65,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     setCurrentTime(0);
     setDuration(0);
 
-    audio.addEventListener("loadedmetadata", () => {
-      setDuration(audio.duration);
-    });
+    audio.addEventListener("loadedmetadata", () => setDuration(audio.duration));
 
     audio.addEventListener("timeupdate", () => {
       if (audio.duration > 0) {
@@ -85,49 +75,19 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     });
 
     audio.addEventListener("ended", () => {
-      // Auto-advance to next track
       const q = queueRef.current;
       const idx = queueIndexRef.current;
       if (q.length > 0 && idx < q.length - 1) {
         const nextIdx = idx + 1;
         setQueueIndex(nextIdx);
         queueIndexRef.current = nextIdx;
-        // Play next track - we need to do it inline to keep browser gesture chain
         const nextTrack = q[nextIdx];
         if (nextTrack) {
-          const nextAudio = new Audio(nextTrack.audioUrl);
-          if (audioRef.current) {
-            audioRef.current.pause();
-          }
-          audioRef.current = nextAudio;
-          setCurrentTrack(nextTrack);
-          setProgress(0);
-          setCurrentTime(0);
-          setDuration(0);
-
-          nextAudio.addEventListener("loadedmetadata", () => setDuration(nextAudio.duration));
-          nextAudio.addEventListener("timeupdate", () => {
-            if (nextAudio.duration > 0) {
-              setCurrentTime(nextAudio.currentTime);
-              setProgress((nextAudio.currentTime / nextAudio.duration) * 100);
-            }
-          });
-          nextAudio.addEventListener("ended", () => {
-            // Recursive auto-advance via the same ended handler pattern
-            nextAudio.dispatchEvent(new Event("_queue_ended"));
-          });
-          nextAudio.addEventListener("error", () => {
-            setPlaying(false);
-          });
-
-          nextAudio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
-          // Re-attach the ended listener properly for chaining
-          nextAudio.removeEventListener("ended", () => {});
-          nextAudio.addEventListener("ended", handleEnded);
+          // Recursive: create new audio for next track
+          startPlayback(nextTrack);
           return;
         }
       }
-      // No more tracks
       setPlaying(false);
       setProgress(100);
     });
@@ -141,79 +101,18 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       console.error("Play failed:", err);
       setPlaying(false);
     });
-  }, [currentTrack?.id]);
-
-  // Centralized ended handler for auto-advance
-  const handleEnded = useCallback(() => {
-    const q = queueRef.current;
-    const idx = queueIndexRef.current;
-    if (q.length > 0 && idx < q.length - 1) {
-      const nextIdx = idx + 1;
-      setQueueIndex(nextIdx);
-      queueIndexRef.current = nextIdx;
-      const nextTrack = q[nextIdx];
-      if (nextTrack) {
-        if (audioRef.current) {
-          audioRef.current.pause();
-          audioRef.current = null;
-        }
-        const audio = new Audio(nextTrack.audioUrl);
-        audioRef.current = audio;
-        setCurrentTrack(nextTrack);
-        setProgress(0);
-        setCurrentTime(0);
-        setDuration(0);
-        audio.addEventListener("loadedmetadata", () => setDuration(audio.duration));
-        audio.addEventListener("timeupdate", () => {
-          if (audio.duration > 0) {
-            setCurrentTime(audio.currentTime);
-            setProgress((audio.currentTime / audio.duration) * 100);
-          }
-        });
-        audio.addEventListener("ended", handleEnded);
-        audio.addEventListener("error", () => setPlaying(false));
-        audio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
-        return;
-      }
-    }
-    setPlaying(false);
-    setProgress(100);
   }, []);
 
-  // Override playTrackInternal to use handleEnded
   const playAudio = useCallback((track: Track) => {
+    // Resume same track
     const isSame = audioRef.current && currentTrack?.id === track.id;
     if (isSame && audioRef.current) {
       audioRef.current.play().catch(() => {});
       setPlaying(true);
       return;
     }
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
-    }
-    const audio = new Audio(track.audioUrl);
-    audioRef.current = audio;
-    setCurrentTrack(track);
-    setProgress(0);
-    setCurrentTime(0);
-    setDuration(0);
-    audio.addEventListener("loadedmetadata", () => setDuration(audio.duration));
-    audio.addEventListener("timeupdate", () => {
-      if (audio.duration > 0) {
-        setCurrentTime(audio.currentTime);
-        setProgress((audio.currentTime / audio.duration) * 100);
-      }
-    });
-    audio.addEventListener("ended", handleEnded);
-    audio.addEventListener("error", () => {
-      setPlaying(false);
-      console.error("Audio playback error for:", track.title);
-    });
-    audio.play().then(() => setPlaying(true)).catch((err) => {
-      console.error("Play failed:", err);
-      setPlaying(false);
-    });
+
+    startPlayback(track);
 
     // Update queue index if track is in queue
     const idx = queueRef.current.findIndex(t => t.id === track.id);
@@ -221,7 +120,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       setQueueIndex(idx);
       queueIndexRef.current = idx;
     }
-  }, [currentTrack?.id, handleEnded]);
+  }, [currentTrack?.id, startPlayback]);
 
   const pause = useCallback(() => {
     audioRef.current?.pause();
@@ -264,36 +163,36 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     setQueueIndex(startIndex);
     queueIndexRef.current = startIndex;
     if (tracks[startIndex]) {
-      playAudio(tracks[startIndex]);
+      startPlayback(tracks[startIndex]);
     }
-  }, [playAudio]);
+  }, [startPlayback]);
 
   const next = useCallback(() => {
     const q = queueRef.current;
     const idx = queueIndexRef.current;
     if (q.length === 0) return;
-    const nextIdx = idx < q.length - 1 ? idx + 1 : 0; // loop
+    const nextIdx = idx < q.length - 1 ? idx + 1 : 0;
     setQueueIndex(nextIdx);
     queueIndexRef.current = nextIdx;
-    if (q[nextIdx]) playAudio(q[nextIdx]);
-  }, [playAudio]);
+    if (q[nextIdx]) startPlayback(q[nextIdx]);
+  }, [startPlayback]);
 
   const previous = useCallback(() => {
     const q = queueRef.current;
     const idx = queueIndexRef.current;
     if (q.length === 0) return;
-    // If more than 3s into the song, restart it; otherwise go previous
+    // If more than 3s in, restart current track
     if (audioRef.current && audioRef.current.currentTime > 3) {
       audioRef.current.currentTime = 0;
       setCurrentTime(0);
       setProgress(0);
       return;
     }
-    const prevIdx = idx > 0 ? idx - 1 : q.length - 1; // loop
+    const prevIdx = idx > 0 ? idx - 1 : q.length - 1;
     setQueueIndex(prevIdx);
     queueIndexRef.current = prevIdx;
-    if (q[prevIdx]) playAudio(q[prevIdx]);
-  }, [playAudio]);
+    if (q[prevIdx]) startPlayback(q[prevIdx]);
+  }, [startPlayback]);
 
   return (
     <PlayerContext.Provider
