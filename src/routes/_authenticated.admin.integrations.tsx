@@ -96,7 +96,7 @@ function IntegrationsPage() {
   }
 
   return (
-    <div className="max-w-2xl space-y-6">
+    <div className="w-full max-w-2xl space-y-6 overflow-hidden">
       <div>
         <h1 className="font-display text-2xl font-bold tracking-tight text-foreground/90">
           Integrações
