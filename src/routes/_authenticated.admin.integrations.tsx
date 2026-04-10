@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getWebhookSettings, updateWebhookSettings, getWebhookLogs } from "@/lib/webhook-settings.functions";
+import { getWebhookSettings, updateWebhookSettings, getWebhookLogs, sendTestWebhook } from "@/lib/webhook-settings.functions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
