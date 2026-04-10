@@ -21,7 +21,7 @@ const fadeUp = {
 function LandingPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col relative overflow-hidden">
-      <section className="relative flex-1 flex flex-col items-center justify-between overflow-hidden py-16">
+      <section className="relative flex-1 flex flex-col items-center justify-between overflow-hidden py-8 sm:py-16">
         {/* Dark background */}
         <div className="absolute inset-0 bg-background" />
 
@@ -29,18 +29,18 @@ function LandingPage() {
         <MusicNoteParticles />
 
         {/* Top content: Logo + Text */}
-        <div className="relative z-10 flex flex-col items-center text-center px-6 mt-8">
+        <div className="relative z-10 flex flex-col items-center text-center px-4 sm:px-6 mt-4 sm:mt-8">
           <motion.div
             initial="hidden"
             animate="visible"
             className="flex flex-col items-center"
           >
             {/* Logo */}
-            <motion.div variants={fadeUp} custom={0.2} className="mb-8">
+            <motion.div variants={fadeUp} custom={0.2} className="mb-4 sm:mb-8">
               <img
                 src={logo}
                 alt="Paz em Canção"
-                className="h-[100px] sm:h-[130px] object-contain mx-auto drop-shadow-[0_0_30px_rgba(212,175,55,0.15)]"
+                className="h-[70px] sm:h-[130px] object-contain mx-auto drop-shadow-[0_0_30px_rgba(212,175,55,0.15)]"
               />
             </motion.div>
 
@@ -56,7 +56,7 @@ function LandingPage() {
             animate="visible"
             variants={fadeUp}
             custom={0.9}
-            className="mt-8 relative group"
+            className="mt-4 sm:mt-8 relative group"
           >
             <div className="absolute -inset-8 rounded-3xl bg-gradient-to-r from-gold/5 via-gold/8 to-gold/5 blur-[40px] opacity-40" />
             
@@ -74,7 +74,7 @@ function LandingPage() {
             <img
               src={heroImg}
               alt="Paz em Canção — Plataforma completa com 30 louvores inéditos"
-              className="relative z-20 w-full max-w-[320px] sm:max-w-[600px] md:max-w-[800px] rounded-xl border border-gold/10 shadow-[0_0_60px_-20px_rgba(212,175,55,0.15)]"
+              className="relative z-20 w-full max-w-[280px] sm:max-w-[600px] md:max-w-[800px] rounded-xl border border-gold/10 shadow-[0_0_60px_-20px_rgba(212,175,55,0.15)]"
             />
           </motion.div>
         </div>
@@ -85,11 +85,11 @@ function LandingPage() {
           animate="visible"
           variants={fadeUp}
           custom={1.0}
-          className="relative z-10 mb-8 mt-10 sm:mt-16 px-6"
+          className="relative z-10 mb-6 sm:mb-8 mt-6 sm:mt-16 px-6"
         >
           <Link
             to="/login"
-            className="inline-block w-full sm:w-auto text-center px-8 sm:px-12 py-4 sm:py-5 rounded-full bg-[hsl(32_82%_58%)] text-background font-bold text-sm sm:text-lg tracking-wide uppercase shadow-[0_0_30px_rgba(234,153,61,0.28)] hover:shadow-[0_0_50px_rgba(234,153,61,0.42)] hover:scale-105 transition-all duration-500"
+            className="inline-block w-full sm:w-auto text-center px-6 sm:px-12 py-3.5 sm:py-5 rounded-full bg-[hsl(32_82%_58%)] text-background font-bold text-xs sm:text-lg tracking-wide uppercase shadow-[0_0_30px_rgba(234,153,61,0.28)] hover:shadow-[0_0_50px_rgba(234,153,61,0.42)] hover:scale-105 transition-all duration-500"
           >
             QUERO ACESSAR MEUS 30 LOUVORES AGORA
           </Link>
