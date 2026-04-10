@@ -63,18 +63,11 @@ export const getWebhookLogs = createServerFn({ method: 'POST' })
 
 export const sendTestWebhook = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { email: string; name: string }) => input)
+  .inputValidator((input: { email: string; name: string; token?: string }) => input)
   .handler(async ({ data, context }) => {
     const { supabase } = context;
 
-    // Get the auth token
-    const { data: config } = await supabase
-      .from('webhook_settings')
-      .select('auth_token')
-      .eq('provider', 'kiwify')
-      .maybeSingle();
-
-    const token = config?.auth_token || '';
+    const token = data.token || '';
 
     const testPayload = {
       order_status: 'paid',
