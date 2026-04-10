@@ -112,7 +112,7 @@ function AdminCategoriesPage() {
             Categorias
           </h1>
           <p className="mt-1 text-[13px] text-muted-foreground/40">
-            Gerencie as categorias dos cursos
+            Gerencie as categorias dos louvores
           </p>
         </div>
         <button
