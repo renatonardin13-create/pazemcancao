@@ -259,16 +259,20 @@ function TestWebhookSection() {
   const [testEmail, setTestEmail] = useState("teste@exemplo.com");
   const [testName, setTestName] = useState("Comprador Teste");
 
+  type TestWebhookResponse = {
+    status: number;
+    result: Record<string, unknown> | null;
+  };
+
   const testMutation = useMutation({
     mutationFn: () => sendTestWebhook({ data: { email: testEmail, name: testName } }),
-    onSuccess: (res) => {
+    onSuccess: (res: TestWebhookResponse) => {
       if (res.status === 200) {
         toast.success("Teste enviado com sucesso! Verifique os logs abaixo.");
       } else {
-        const message =
-          typeof res.result === "object" && res.result !== null && "error" in res.result
-            ? String((res.result as { error?: unknown }).error)
-            : JSON.stringify(res.result);
+        const message = typeof res.result?.error === "string"
+          ? res.result.error
+          : JSON.stringify(res.result);
 
         toast.error(`Teste falhou com status ${res.status}: ${message}`);
       }
@@ -372,7 +376,7 @@ function WebhookLogsSection() {
                       {log.event_type || '—'}
                     </Badge>
                     {log.payload?._test && (
-                      <Badge variant="outline" className="text-[10px] font-mono border-amber-500/30 text-amber-400 gap-1">
+                      <Badge variant="outline" className="text-[10px] font-mono border-primary/30 text-primary gap-1">
                         <FlaskConical className="h-3 w-3" />
                         Teste
                       </Badge>
