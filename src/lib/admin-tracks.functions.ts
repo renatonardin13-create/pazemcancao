@@ -161,13 +161,13 @@ export const regenerateCover = createServerFn({ method: 'POST' })
 
     const fileName = `covers/${data.trackId}.png`;
     const { error: uploadError } = await supabaseAdmin.storage
-      .from('tracks')
+      .from('covers')
       .upload(fileName, bytes, { contentType: 'image/png', upsert: true });
 
     if (uploadError) throw new Error('Upload failed: ' + uploadError.message);
 
     const { data: urlData } = supabaseAdmin.storage
-      .from('tracks')
+      .from('covers')
       .getPublicUrl(fileName);
 
     const coverUrl = urlData.publicUrl;

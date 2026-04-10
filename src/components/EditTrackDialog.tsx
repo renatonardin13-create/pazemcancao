@@ -63,7 +63,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
         });
 
         const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("tracks")
+          .from("covers")
           .upload(fileName, coverFile, {
             contentType: coverFile.type,
             upsert: true,
@@ -77,7 +77,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
         console.log("[EditTrackDialog] Upload concluído", uploadData);
 
         const { data: urlData } = supabase.storage
-          .from("tracks")
+          .from("covers")
           .getPublicUrl(fileName);
 
         console.log("[EditTrackDialog] URL pública gerada", urlData.publicUrl);
