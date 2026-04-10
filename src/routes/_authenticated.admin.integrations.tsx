@@ -127,13 +127,13 @@ function IntegrationsPage() {
               URL do Webhook
             </Label>
             <p className="text-[11px] text-muted-foreground/40">
-              Copie esta URL e cole no painel da Kiwify em Configurações → Webhooks
+              Cole esta URL no painel da Kiwify em Configurações → Webhooks. Você pode editar se necessário.
             </p>
             <div className="flex gap-2 min-w-0">
               <Input
                 value={webhookUrl}
-                readOnly
-                className="font-mono text-xs bg-muted/30 min-w-0 truncate"
+                onChange={(e) => setWebhookUrl(e.target.value)}
+                className="font-mono text-xs min-w-0 truncate"
               />
               <Button
                 variant="outline"
