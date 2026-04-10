@@ -39,7 +39,7 @@ export function AdminSidebar() {
               </div>
               <div>
                 <p className="text-[11px] font-bold text-sidebar-foreground/80 tracking-tight">Admin</p>
-                <p className="text-[9px] text-sidebar-foreground/30">Plataforma de Cursos</p>
+                <p className="text-[9px] text-sidebar-foreground/30">Plataforma de Louvores</p>
               </div>
             </div>
           )}

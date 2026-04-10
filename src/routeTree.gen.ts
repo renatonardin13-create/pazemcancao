@@ -24,6 +24,7 @@ import { Route as AuthenticatedMusicasTrackIdRouteImport } from './routes/_authe
 import { Route as AuthenticatedLouvorTrackIdRouteImport } from './routes/_authenticated.louvor.$trackId'
 import { Route as AuthenticatedCursosCourseIdRouteImport } from './routes/_authenticated.cursos.$courseId'
 import { Route as AuthenticatedConteudoTrackIdRouteImport } from './routes/_authenticated.conteudo.$trackId'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated.admin.users'
 import { Route as AuthenticatedAdminTracksRouteImport } from './routes/_authenticated.admin.tracks'
 import { Route as AuthenticatedAdminCoursesRouteImport } from './routes/_authenticated.admin.courses'
 import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated.admin.categories'
@@ -108,6 +109,11 @@ const AuthenticatedConteudoTrackIdRoute =
     path: '/conteudo/$trackId',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
 const AuthenticatedAdminTracksRoute =
   AuthenticatedAdminTracksRouteImport.update({
     id: '/tracks',
@@ -151,6 +157,7 @@ export interface FileRoutesByFullPath {
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/admin/tracks': typeof AuthenticatedAdminTracksRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/cursos/$courseId': typeof AuthenticatedCursosCourseIdRoute
   '/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
@@ -171,6 +178,7 @@ export interface FileRoutesByTo {
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/admin/tracks': typeof AuthenticatedAdminTracksRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/cursos/$courseId': typeof AuthenticatedCursosCourseIdRoute
   '/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
@@ -194,6 +202,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/_authenticated/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/_authenticated/admin/tracks': typeof AuthenticatedAdminTracksRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/_authenticated/cursos/$courseId': typeof AuthenticatedCursosCourseIdRoute
   '/_authenticated/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
@@ -217,6 +226,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/courses'
     | '/admin/tracks'
+    | '/admin/users'
     | '/conteudo/$trackId'
     | '/cursos/$courseId'
     | '/louvor/$trackId'
@@ -237,6 +247,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/courses'
     | '/admin/tracks'
+    | '/admin/users'
     | '/conteudo/$trackId'
     | '/cursos/$courseId'
     | '/louvor/$trackId'
@@ -259,6 +270,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/categories'
     | '/_authenticated/admin/courses'
     | '/_authenticated/admin/tracks'
+    | '/_authenticated/admin/users'
     | '/_authenticated/conteudo/$trackId'
     | '/_authenticated/cursos/$courseId'
     | '/_authenticated/louvor/$trackId'
@@ -385,6 +397,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConteudoTrackIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/tracks': {
       id: '/_authenticated/admin/tracks'
       path: '/tracks'
@@ -444,6 +463,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCategoriesRoute: typeof AuthenticatedAdminCategoriesRoute
   AuthenticatedAdminCoursesRoute: typeof AuthenticatedAdminCoursesRouteWithChildren
   AuthenticatedAdminTracksRoute: typeof AuthenticatedAdminTracksRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
@@ -451,6 +471,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCategoriesRoute: AuthenticatedAdminCategoriesRoute,
   AuthenticatedAdminCoursesRoute: AuthenticatedAdminCoursesRouteWithChildren,
   AuthenticatedAdminTracksRoute: AuthenticatedAdminTracksRoute,
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
