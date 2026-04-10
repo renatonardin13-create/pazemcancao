@@ -42,13 +42,23 @@ export function TrackCard({ track, index }: TrackCardProps) {
     toggle(track);
   };
 
-  const handleDownload = (e: React.MouseEvent) => {
+  const handleDownload = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    const link = document.createElement("a");
-    link.href = track.downloadUrl;
-    link.download = `${String(track.id).padStart(2, "0")} - ${track.title}.mp3`;
-    link.click();
+    try {
+      const response = await fetch(track.downloadUrl);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = track.title.replace(/[\/\\:*?"<>|]/g, "-") + ".mp3";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch {
+      window.open(track.downloadUrl, "_blank");
+    }
   };
 
   return (
