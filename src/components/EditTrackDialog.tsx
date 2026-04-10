@@ -49,10 +49,20 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
       setStatusMessage(null);
       setStatusType(null);
 
-      let cover_url = track.cover_url;
+      let cover_url: string | null = track.cover_url;
 
-      // Upload new cover if selected
-      if (coverFile) {
+      // Cover was removed
+      if (!coverPreview && !coverFile) {
+        if (track.cover_url) {
+          const parts = track.cover_url.split("/covers/");
+          const oldPath = parts.length > 1 ? parts.pop()?.split("?")[0] : null;
+          if (oldPath) {
+            await supabase.storage.from("covers").remove([`covers/${oldPath}`]);
+          }
+        }
+        cover_url = null;
+      } else if (coverFile) {
+        // Upload new cover
         setUploading(true);
         const fileName = `covers/${track.id}.png`;
         console.log("[EditTrackDialog] Iniciando upload da capa", {
@@ -63,7 +73,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
         });
 
         const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("tracks")
+          .from("covers")
           .upload(fileName, coverFile, {
             contentType: coverFile.type,
             upsert: true,
@@ -77,7 +87,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
         console.log("[EditTrackDialog] Upload concluído", uploadData);
 
         const { data: urlData } = supabase.storage
-          .from("tracks")
+          .from("covers")
           .getPublicUrl(fileName);
 
         console.log("[EditTrackDialog] URL pública gerada", urlData.publicUrl);
@@ -98,7 +108,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
           title: title.trim(),
           category,
           description: description.trim() || undefined,
-          cover_url: cover_url || undefined,
+          cover_url: cover_url === null ? "" : (cover_url || undefined),
         },
       });
     },
@@ -139,7 +149,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
   const removeCover = () => {
     setCoverFile(null);
-    setCoverPreview(track.cover_url);
+    setCoverPreview(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
@@ -175,14 +185,14 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
                     alt="Capa"
                     className="h-20 w-20 rounded-xl object-cover border border-border/15"
                   />
-                  {coverFile && (
-                    <button
-                      onClick={removeCover}
-                      className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-destructive/80 text-white flex items-center justify-center"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  )}
+                  <button
+                    onClick={removeCover}
+                    disabled={isSubmitting}
+                    className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-destructive/80 text-white flex items-center justify-center hover:bg-destructive transition-colors"
+                    title="Remover capa"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
                 </div>
               ) : (
                 <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-muted/15 border border-dashed border-border/20">
