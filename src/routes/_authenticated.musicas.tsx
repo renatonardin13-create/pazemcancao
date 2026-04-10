@@ -325,7 +325,7 @@ function MusicLibraryPage() {
                                       e.preventDefault();
                                       e.stopPropagation();
                                       const link = document.createElement("a");
-                                      link.href = track.download_url || track.storage_path;
+                                      link.href = track.download_url || getStoragePublicUrl(track.storage_path);
                                       link.download = `${track.title}.mp3`;
                                       link.click();
                                     }}
