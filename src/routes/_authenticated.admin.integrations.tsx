@@ -247,8 +247,39 @@ function IntegrationsPage() {
         </motion.div>
       )}
 
-      {successRate > 0 && successRate < 100 && (
+      {successRate > 0 && successRate < 50 && (
         <motion.div variants={fadeUp} custom={0.07}>
+          <div className="flex items-start gap-3 rounded-xl border border-red-500/25 bg-red-500/[0.05] p-4">
+            <AlertTriangle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold text-red-600 dark:text-red-400">
+                Taxa de sucesso crítica: {successRate}%
+              </p>
+              <p className="text-[12px] text-muted-foreground/60 mt-1 leading-relaxed">
+                Mais da metade dos webhooks recebidos estão falhando. Suas vendas podem <strong className="text-red-500">não estar sendo processadas corretamente</strong>. Verifique os logs abaixo e corrija a configuração.
+              </p>
+              <ul className="mt-2 space-y-1 text-[11px] text-muted-foreground/50">
+                <li className="flex items-center gap-1.5">
+                  <span className="h-1 w-1 rounded-full bg-red-500/50 shrink-0" />
+                  Verifique se o token de autenticação está correto
+                </li>
+                <li className="flex items-center gap-1.5">
+                  <span className="h-1 w-1 rounded-full bg-red-500/50 shrink-0" />
+                  Confira o formato do payload enviado pela plataforma
+                </li>
+              </ul>
+              <div className="flex flex-wrap gap-2 mt-3">
+                <Badge variant="outline" className="text-[10px] border-red-500/25 text-red-600 dark:text-red-400 font-mono">
+                  {successCount}/{logs.length} sucesso · {successRate}%
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+      )}
+
+      {successRate > 0 && successRate < 100 && (
+        <motion.div variants={fadeUp} custom={0.08}>
           <div className="flex items-center gap-3 rounded-xl border border-border/15 bg-muted/5 p-3">
             <div className="flex items-center gap-2 flex-1">
               <span className="text-[11px] text-muted-foreground/50">Taxa de sucesso:</span>
