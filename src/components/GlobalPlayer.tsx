@@ -1,28 +1,15 @@
-import { Play, Pause, X, Download, SkipBack, SkipForward } from "lucide-react";
+import { Play, Pause, X, Download, SkipBack, SkipForward, Music } from "lucide-react";
 import { usePlayer } from "@/hooks/use-player";
-import { sampleTracks } from "@/lib/sample-tracks";
 
 export function GlobalPlayer() {
   const { currentTrack, playing, progress, currentTime, duration, pause, play, toggle, seek, stop } = usePlayer();
 
   if (!currentTrack) return null;
 
-  const currentIndex = sampleTracks.findIndex((t) => t.id === currentTrack.id);
-
-  const prevTrack = () => {
-    const idx = currentIndex > 0 ? currentIndex - 1 : sampleTracks.length - 1;
-    play(sampleTracks[idx]);
-  };
-
-  const nextTrack = () => {
-    const idx = currentIndex < sampleTracks.length - 1 ? currentIndex + 1 : 0;
-    play(sampleTracks[idx]);
-  };
-
   const handleDownload = () => {
     const link = document.createElement("a");
     link.href = currentTrack.downloadUrl;
-    link.download = `${String(currentTrack.id).padStart(2, "0")} - ${currentTrack.title}.mp3`;
+    link.download = `${currentTrack.title}.mp3`;
     link.click();
   };
 
@@ -55,29 +42,39 @@ export function GlobalPlayer() {
       </div>
 
       <div className="flex items-center gap-4 px-5 sm:px-8 py-4 max-w-5xl mx-auto">
-        {/* Track info */}
-        <div className="flex-1 min-w-0">
-          <p className="text-[13px] font-semibold text-foreground/75 truncate leading-tight">
-            {currentTrack.title}
-          </p>
-          <p className="mt-1 text-[10px] text-muted-foreground/25 tracking-wider">
-            {currentTrack.category}
-            <span className="mx-1.5">·</span>
-            <span className="tabular-nums">{formatSecs(currentTime)}</span>
-            <span className="mx-1 text-border/15">/</span>
-            <span className="tabular-nums">{duration > 0 ? formatSecs(duration) : currentTrack.duration}</span>
-          </p>
+        {/* Cover + Track info */}
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          {/* Cover image */}
+          <div className="shrink-0 h-10 w-10 rounded-lg overflow-hidden bg-card/20 border border-border/10">
+            {currentTrack.coverUrl ? (
+              <img
+                src={currentTrack.coverUrl}
+                alt={currentTrack.title}
+                className="h-full w-full object-cover"
+              />
+            ) : (
+              <div className="h-full w-full flex items-center justify-center">
+                <Music className="h-4 w-4 text-muted-foreground/20" />
+              </div>
+            )}
+          </div>
+
+          <div className="min-w-0">
+            <p className="text-[13px] font-semibold text-foreground/75 truncate leading-tight">
+              {currentTrack.title}
+            </p>
+            <p className="mt-1 text-[10px] text-muted-foreground/25 tracking-wider">
+              {currentTrack.category}
+              <span className="mx-1.5">·</span>
+              <span className="tabular-nums">{formatSecs(currentTime)}</span>
+              <span className="mx-1 text-border/15">/</span>
+              <span className="tabular-nums">{duration > 0 ? formatSecs(duration) : currentTrack.duration}</span>
+            </p>
+          </div>
         </div>
 
         {/* Controls */}
         <div className="flex items-center gap-1 shrink-0">
-          <button
-            onClick={prevTrack}
-            className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/20 hover:text-muted-foreground/45 transition-all duration-500"
-          >
-            <SkipBack className="h-3.5 w-3.5" />
-          </button>
-
           <button
             onClick={() => toggle(currentTrack)}
             className={`flex h-10 w-10 items-center justify-center rounded-full transition-all duration-500 ${
@@ -87,13 +84,6 @@ export function GlobalPlayer() {
             }`}
           >
             {playing ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 ml-0.5" />}
-          </button>
-
-          <button
-            onClick={nextTrack}
-            className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/20 hover:text-muted-foreground/45 transition-all duration-500"
-          >
-            <SkipForward className="h-3.5 w-3.5" />
           </button>
 
           <button
