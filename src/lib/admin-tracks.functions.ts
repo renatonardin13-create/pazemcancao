@@ -88,6 +88,10 @@ export const updateTrack = createServerFn({ method: 'POST' })
     await verifyAdmin(context.supabase, context.userId);
 
     const { id, ...updates } = data;
+    // Empty string means "remove cover"
+    if ('cover_url' in updates && updates.cover_url === '') {
+      (updates as any).cover_url = null;
+    }
     const { error } = await supabaseAdmin
       .from('tracks')
       .update(updates)
