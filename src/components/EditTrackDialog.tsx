@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { updateTrack } from "@/lib/admin-tracks.functions";
+import { listAdminCategories } from "@/lib/admin-categories.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,8 +17,6 @@ import {
 import { Loader2, Upload, X, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-
-const CATEGORIES = ["Paz", "Cura", "Força", "Oração", "Madrugada", "Presença", "Refúgio"];
 
 interface EditTrackDialogProps {
   track: {
