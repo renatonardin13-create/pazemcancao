@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useState, useEffect } from "react";
 
 const NOTES = ["♪", "♫", "♩", "♬"];
 
@@ -13,25 +13,38 @@ interface Particle {
   opacity: number;
 }
 
+function seededRandom(seed: number): number {
+  const x = Math.sin(seed * 9301 + 49297) * 233280;
+  return x - Math.floor(x);
+}
+
 function generateParticles(count: number): Particle[] {
   return Array.from({ length: count }, (_, i) => ({
     id: i,
     note: NOTES[i % NOTES.length],
-    left: `${Math.random() * 100}%`,
-    top: `${Math.random() * 100}%`,
-    delay: `${Math.random() * 8}s`,
-    duration: `${12 + Math.random() * 10}s`,
-    size: 14 + Math.random() * 12,
-    opacity: 0.06 + Math.random() * 0.12,
+    left: `${seededRandom(i * 7 + 1) * 100}%`,
+    top: `${seededRandom(i * 7 + 2) * 100}%`,
+    delay: `${seededRandom(i * 7 + 3) * 8}s`,
+    duration: `${12 + seededRandom(i * 7 + 4) * 10}s`,
+    size: 14 + seededRandom(i * 7 + 5) * 12,
+    opacity: 0.06 + seededRandom(i * 7 + 6) * 0.12,
   }));
 }
 
+const PARTICLES = generateParticles(12);
+
 export function MusicNoteParticles() {
-  const particles = useMemo(() => generateParticles(12), []);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
-      {particles.map((p) => (
+      {PARTICLES.map((p) => (
         <span
           key={p.id}
           className="absolute text-gold select-none animate-[float_var(--dur)_ease-in-out_var(--delay)_infinite]"
