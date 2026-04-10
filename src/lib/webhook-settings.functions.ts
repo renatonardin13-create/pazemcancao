@@ -59,3 +59,42 @@ export const getWebhookLogs = createServerFn({ method: 'POST' })
     if (error) throw new Error(error.message);
     return { logs: data || [] };
   });
+
+export const sendTestWebhook = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { email: string; name: string }) => input)
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+
+    // Get the auth token
+    const { data: config } = await supabase
+      .from('webhook_settings')
+      .select('auth_token')
+      .eq('provider', 'kiwify')
+      .maybeSingle();
+
+    const token = config?.auth_token || '';
+
+    const testPayload = {
+      order_status: 'paid',
+      order_id: `TEST-${Date.now()}`,
+      customer: {
+        email: data.email.toLowerCase().trim(),
+        name: data.name || 'Teste Manual',
+      },
+      product: { name: 'Paz em Canção' },
+      _test: true,
+    };
+
+    const res = await fetch('https://pazemcancao.lovable.app/api/webhook/kiwify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-kiwify-token': token,
+      },
+      body: JSON.stringify(testPayload),
+    });
+
+    const result = await res.json();
+    return { status: res.status, result };
+  });

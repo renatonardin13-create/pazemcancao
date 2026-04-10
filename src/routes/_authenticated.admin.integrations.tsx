@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getWebhookSettings, updateWebhookSettings, getWebhookLogs } from "@/lib/webhook-settings.functions";
+import { getWebhookSettings, updateWebhookSettings, getWebhookLogs, sendTestWebhook } from "@/lib/webhook-settings.functions";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Webhook, Copy, Check, Shield, Loader2, ScrollText, CheckCircle2, XCircle, Clock, FlaskConical, Eye, EyeOff } from "lucide-react";
+import { Webhook, Copy, Check, Shield, Loader2, ScrollText, CheckCircle2, XCircle, Clock, FlaskConical, Eye, EyeOff, Send } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/_authenticated/admin/integrations")({
@@ -231,6 +231,9 @@ function IntegrationsPage() {
             />
           </div>
 
+          {/* Test Webhook */}
+          <TestWebhookSection />
+
           {/* Save */}
           <Button
             onClick={() => mutation.mutate()}
@@ -247,6 +250,68 @@ function IntegrationsPage() {
 
       {/* Webhook Logs */}
       <WebhookLogsSection />
+    </div>
+  );
+}
+
+function TestWebhookSection() {
+  const queryClient = useQueryClient();
+  const [testEmail, setTestEmail] = useState("teste@exemplo.com");
+  const [testName, setTestName] = useState("Comprador Teste");
+
+  const testMutation = useMutation({
+    mutationFn: () => sendTestWebhook({ data: { email: testEmail, name: testName } }),
+    onSuccess: (res) => {
+      if (res.status === 200) {
+        toast.success("Teste enviado com sucesso! Verifique os logs abaixo.");
+      } else {
+        toast.error(`Teste falhou com status ${res.status}: ${JSON.stringify(res.result)}`);
+      }
+      queryClient.invalidateQueries({ queryKey: ["webhook-logs"] });
+    },
+    onError: (err: any) => {
+      toast.error("Erro ao enviar teste: " + err.message);
+    },
+  });
+
+  return (
+    <div className="space-y-3 rounded-lg border border-dashed border-border/20 p-4">
+      <div className="flex items-center gap-2">
+        <FlaskConical className="h-3.5 w-3.5 text-muted-foreground/40" />
+        <Label className="text-xs font-medium text-muted-foreground/70">
+          Enviar Webhook de Teste
+        </Label>
+      </div>
+      <p className="text-[11px] text-muted-foreground/40">
+        Simula uma compra aprovada para verificar se o webhook está funcionando.
+      </p>
+      <div className="grid grid-cols-2 gap-2">
+        <Input
+          value={testName}
+          onChange={(e) => setTestName(e.target.value)}
+          placeholder="Nome"
+          className="text-xs"
+        />
+        <Input
+          value={testEmail}
+          onChange={(e) => setTestEmail(e.target.value)}
+          placeholder="Email"
+          className="text-xs"
+        />
+      </div>
+      <Button
+        variant="outline"
+        onClick={() => testMutation.mutate()}
+        disabled={testMutation.isPending || !testEmail}
+        className="w-full gap-2"
+      >
+        {testMutation.isPending ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : (
+          <Send className="h-4 w-4" />
+        )}
+        Enviar Teste
+      </Button>
     </div>
   );
 }
