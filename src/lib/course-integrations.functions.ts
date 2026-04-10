@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 export const getCourseIntegration = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
@@ -63,8 +64,8 @@ export const testCourseWebhook = createServerFn({ method: 'POST' })
     const { data: role } = await supabase.rpc('has_role', { _user_id: user.id, _role: 'admin' });
     if (!role) throw new Error('Admin access required');
 
-    // Insert test log entry
-    const { error } = await supabase.from('webhook_logs').insert({
+    // Use admin client since webhook_logs RLS only allows service_role inserts
+    const { error } = await supabaseAdmin.from('webhook_logs').insert({
       provider: 'test',
       event_type: 'test_webhook',
       order_id: `TEST-${Date.now()}`,
