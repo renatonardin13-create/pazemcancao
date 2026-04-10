@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/hooks/use-auth";
 import { PlayerProvider } from "@/hooks/use-player";
 import { GlobalPlayer } from "@/components/GlobalPlayer";
+import { Toaster } from "@/components/ui/sonner";
 
 import "../styles.css";
 
@@ -82,6 +83,7 @@ function RootComponent() {
         <PlayerProvider>
           <Outlet />
           <GlobalPlayer />
+          <Toaster richColors position="top-right" />
         </PlayerProvider>
       </AuthProvider>
     </QueryClientProvider>
