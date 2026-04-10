@@ -77,13 +77,17 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
     rawBody = await request.json();
 
     const requestUrl = new URL(request.url);
-    const headerToken =
+    const explicitToken = (
       request.headers.get('x-kiwify-token') ||
       request.headers.get('x-webhook-token') ||
-      request.headers.get('authorization')?.replace('Bearer ', '') ||
       requestUrl.searchParams.get('token') ||
       requestUrl.searchParams.get('kiwify_token') ||
-      '';
+      ''
+    ).trim();
+    const authorizationHeader = request.headers.get('authorization') || '';
+    const bearerToken = authorizationHeader.startsWith('Bearer ')
+      ? authorizationHeader.replace(/^Bearer\s+/i, '').trim()
+      : '';
 
     const { data: config } = await supabaseAdmin
       .from('webhook_settings')
@@ -102,12 +106,12 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
     }
 
     const savedToken = (config?.auth_token || '').trim();
-    const receivedToken = headerToken.trim();
+    const hasExplicitToken = explicitToken.length > 0;
+    const hasMatchingBearerToken = !!savedToken && bearerToken === savedToken;
 
-    // Only validate token if BOTH a token is configured AND one was received
-    // If no token is received, skip validation (Kiwify may not send tokens)
-    if (savedToken && receivedToken && receivedToken !== savedToken) {
-      console.error('Token recebido:', receivedToken, 'Token esperado:', savedToken);
+    // Validate explicit webhook tokens first. Ignore unrelated Authorization bearer tokens,
+    // because platforms, proxies, or internal tools may attach JWTs that are not the webhook secret.
+    if (savedToken && hasExplicitToken && explicitToken !== savedToken) {
       await logWebhookEvent({
         eventType: 'auth_failed',
         payload: rawBody,
@@ -115,6 +119,10 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
         responseMessage: 'Invalid signature',
       });
       return jsonResponse({ error: 'Invalid signature' }, 401);
+    }
+
+    if (savedToken && !hasExplicitToken && bearerToken && !hasMatchingBearerToken) {
+      console.warn('Ignoring non-matching Authorization bearer token for webhook validation');
     }
 
     // 3. Parse payload (Kiwify sends nested or flat)
