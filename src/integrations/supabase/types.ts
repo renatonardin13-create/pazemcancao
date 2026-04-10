@@ -122,6 +122,56 @@ export type Database = {
         }
         Relationships: []
       }
+      course_integrations: {
+        Row: {
+          checkout_url: string | null
+          course_id: string
+          created_at: string
+          external_product_id: string | null
+          external_product_name: string | null
+          id: string
+          is_enabled: boolean
+          notes: string | null
+          platform: string
+          updated_at: string
+          webhook_active: boolean
+        }
+        Insert: {
+          checkout_url?: string | null
+          course_id: string
+          created_at?: string
+          external_product_id?: string | null
+          external_product_name?: string | null
+          id?: string
+          is_enabled?: boolean
+          notes?: string | null
+          platform?: string
+          updated_at?: string
+          webhook_active?: boolean
+        }
+        Update: {
+          checkout_url?: string | null
+          course_id?: string
+          created_at?: string
+          external_product_id?: string | null
+          external_product_name?: string | null
+          id?: string
+          is_enabled?: boolean
+          notes?: string | null
+          platform?: string
+          updated_at?: string
+          webhook_active?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_integrations_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: true
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       courses: {
         Row: {
           banner_image_url: string | null
