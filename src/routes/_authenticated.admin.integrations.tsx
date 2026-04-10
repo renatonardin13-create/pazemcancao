@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { Webhook, Copy, Check, Shield, Loader2, ScrollText, CheckCircle2, XCircle, Clock, FlaskConical, Eye, EyeOff } from "lucide-react";
+import { Webhook, Copy, Check, Shield, Loader2, ScrollText, CheckCircle2, XCircle, Clock, FlaskConical, Eye, EyeOff, Send } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 export const Route = createFileRoute("/_authenticated/admin/integrations")({
@@ -230,6 +230,9 @@ function IntegrationsPage() {
               className="font-mono text-xs"
             />
           </div>
+
+          {/* Test Webhook */}
+          <TestWebhookSection />
 
           {/* Save */}
           <Button
