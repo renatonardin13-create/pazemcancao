@@ -390,6 +390,16 @@ function WebhookLogsSection() {
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
+                    <Badge
+                      variant="outline"
+                      className={`text-[10px] font-mono ${
+                        log.response_status === 200
+                          ? 'border-primary/30 text-primary'
+                          : 'border-destructive/30 text-destructive'
+                      }`}
+                    >
+                      HTTP {log.response_status}
+                    </Badge>
                     <Badge variant="outline" className="text-[10px] font-mono">
                       {log.event_type || '—'}
                     </Badge>
