@@ -141,6 +141,7 @@ export type Database = {
           id: string
           is_active: boolean
           is_free: boolean
+          release_days: number | null
           sales_page_url: string | null
           sort_order: number
           title: string
@@ -156,6 +157,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_free?: boolean
+          release_days?: number | null
           sales_page_url?: string | null
           sort_order?: number
           title: string
@@ -171,6 +173,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_free?: boolean
+          release_days?: number | null
           sales_page_url?: string | null
           sort_order?: number
           title?: string
