@@ -49,14 +49,7 @@ const accessModeOptions = [
   { value: "liberar_em_dias", label: "Liberar em X dias após compra" },
 ];
 
-const journeyOptions = [
-  { value: "", label: "Nenhuma trilha" },
-  { value: "comece_por_aqui", label: "🌱 Comece por aqui" },
-  { value: "dias_dificeis", label: "🌧️ Para dias difíceis" },
-  { value: "ansiedade", label: "🕊️ Quando a ansiedade apertar" },
-  { value: "restauracao", label: "💛 Para restaurar a alma" },
-  { value: "perseveranca", label: "💪 Para continuar mesmo cansado" },
-];
+// Journey options are now loaded dynamically from DB
 
 function AdminContentPage() {
   const queryClient = useQueryClient();
