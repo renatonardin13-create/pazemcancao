@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { Lock, Download, Play, ShoppingCart, Clock } from "lucide-react";
+import { Lock, Download, Play, ShoppingCart, Clock, ArrowRight } from "lucide-react";
+import { Link } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 
 interface ContentCardProps {
