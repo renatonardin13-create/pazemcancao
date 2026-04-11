@@ -178,32 +178,64 @@ function AdminUsersPage() {
             <DialogHeader>
               <DialogTitle className="font-display">Cadastrar Cliente de Teste</DialogTitle>
             </DialogHeader>
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                createTrial.mutate({ email: trialEmail, nome: trialName, trialDays });
-              }}
-              className="space-y-4 mt-4"
-            >
-              <div className="space-y-2">
-                <Label htmlFor="trial-name">Nome</Label>
-                <Input id="trial-name" value={trialName} onChange={(e) => setTrialName(e.target.value)} placeholder="Nome do cliente" required />
+
+            {generatedPassword ? (
+              <div className="space-y-4 mt-4">
+                <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-center">
+                  <KeyRound className="h-8 w-8 text-emerald-400/60 mx-auto mb-3" />
+                  <p className="text-sm font-semibold text-foreground/80 mb-1">Cliente cadastrado!</p>
+                  <p className="text-[12px] text-muted-foreground/50 mb-4">Envie a senha abaixo para o cliente acessar:</p>
+                  <div className="flex items-center gap-2 justify-center">
+                    <code className="rounded-lg bg-card/20 border border-border/20 px-4 py-2 text-lg font-mono font-bold text-gold tracking-wider">
+                      {generatedPassword}
+                    </code>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(generatedPassword);
+                        toast.success("Senha copiada!");
+                      }}
+                      className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/40 hover:text-gold/70 hover:bg-gold/10 transition-all"
+                      title="Copiar senha"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+                <Button
+                  className="w-full"
+                  onClick={() => { setGeneratedPassword(null); setOpen(false); }}
+                >
+                  Fechar
+                </Button>
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="trial-email">E-mail</Label>
-                <Input id="trial-email" type="email" value={trialEmail} onChange={(e) => setTrialEmail(e.target.value)} placeholder="email@exemplo.com" required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="trial-days">Dias de teste</Label>
-                <Input id="trial-days" type="number" min={1} max={90} value={trialDays} onChange={(e) => setTrialDays(Number(e.target.value))} required />
-                <p className="text-[11px] text-muted-foreground/40">
-                  O cliente poderá apenas ouvir (sem download). Após o prazo, o acesso será bloqueado.
-                </p>
-              </div>
-              <Button type="submit" className="w-full" disabled={createTrial.isPending}>
-                {createTrial.isPending ? "Cadastrando..." : "Cadastrar Cliente de Teste"}
-              </Button>
-            </form>
+            ) : (
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  createTrial.mutate({ email: trialEmail, nome: trialName, trialDays });
+                }}
+                className="space-y-4 mt-4"
+              >
+                <div className="space-y-2">
+                  <Label htmlFor="trial-name">Nome</Label>
+                  <Input id="trial-name" value={trialName} onChange={(e) => setTrialName(e.target.value)} placeholder="Nome do cliente" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="trial-email">E-mail</Label>
+                  <Input id="trial-email" type="email" value={trialEmail} onChange={(e) => setTrialEmail(e.target.value)} placeholder="email@exemplo.com" required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="trial-days">Dias de teste</Label>
+                  <Input id="trial-days" type="number" min={1} max={90} value={trialDays} onChange={(e) => setTrialDays(Number(e.target.value))} required />
+                  <p className="text-[11px] text-muted-foreground/40">
+                    O cliente poderá apenas ouvir (sem download). Após o prazo, o acesso será bloqueado.
+                  </p>
+                </div>
+                <Button type="submit" className="w-full" disabled={createTrial.isPending}>
+                  {createTrial.isPending ? "Cadastrando..." : "Cadastrar Cliente de Teste"}
+                </Button>
+              </form>
+            )}
           </DialogContent>
         </Dialog>
       </div>
