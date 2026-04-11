@@ -296,6 +296,40 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
         )}
       </div>
 
+      {/* Bonus */}
+      <div className="space-y-3 rounded-xl border border-amber-500/10 bg-amber-500/[0.03] p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Gift className="h-4 w-4 text-amber-400/60" />
+            <Label className="text-[12px] font-semibold text-foreground/70">
+              Música Bônus
+            </Label>
+          </div>
+          <Switch
+            checked={isBonus}
+            onCheckedChange={setIsBonus}
+            disabled={isSubmitting}
+          />
+        </div>
+        {isBonus && (
+          <div className="space-y-2">
+            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+              Data de Liberação
+            </Label>
+            <Input
+              type="date"
+              value={bonusReleaseDate}
+              onChange={(e) => setBonusReleaseDate(e.target.value)}
+              className="bg-card/15 border-border/15 text-sm"
+              disabled={isSubmitting}
+            />
+            <p className="text-[9px] text-muted-foreground/30">
+              A música ficará bloqueada até esta data.
+            </p>
+          </div>
+        )}
+      </div>
+
       {/* Status */}
       {isSubmitting && (
         <div className="flex items-center gap-3 rounded-xl border border-gold/10 bg-gold/[0.04] p-3">
