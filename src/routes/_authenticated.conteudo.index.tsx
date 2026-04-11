@@ -38,6 +38,16 @@ function ContentPage() {
   const hasAccess = data?.hasFullAccess ?? false;
   const items = data?.items || [];
   const progressMap = data?.progressMap || {};
+  const dbCategories = data?.categories || [];
+
+  // Build category lookup from DB
+  const categoryLookup = useMemo(() => {
+    const map: Record<string, { name: string; icon: string; sortOrder: number; isFeatured: boolean }> = {};
+    for (const c of dbCategories) {
+      map[c.slug] = { name: c.icon ? `${c.icon} ${c.name.replace(/^[\p{Emoji}\s]+/u, '')}` : c.name, icon: c.icon || '', sortOrder: c.sortOrder, isFeatured: c.isFeatured };
+    }
+    return map;
+  }, [dbCategories]);
 
   // Group items
   const categoryGroups: Record<string, any[]> = {};
@@ -76,7 +86,7 @@ function ContentPage() {
     arr.sort(sortJourneyItems);
   }
 
-  // "Continue sua caminhada" — items started but not completed
+  // "Continue sua caminhada"
   const continueItems = useMemo(() => {
     return items.filter((item: any) => {
       const p = progressMap[item.id];
@@ -84,19 +94,19 @@ function ContentPage() {
     }).slice(0, 4);
   }, [items, progressMap]);
 
-  // Sorted category entries — bonus first, then others in defined order
+  // Sort categories by DB sort_order
   const sortedCategories = useMemo(() => {
     const entries = Object.entries(categoryGroups);
     return entries.sort(([a], [b]) => {
-      const ai = categoryOrder.indexOf(a);
-      const bi = categoryOrder.indexOf(b);
-      return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+      const ao = categoryLookup[a]?.sortOrder ?? 999;
+      const bo = categoryLookup[b]?.sortOrder ?? 999;
+      return ao - bo;
     });
-  }, [categoryGroups]);
+  }, [categoryGroups, categoryLookup]);
 
-  // Separate bonus from other categories
-  const bonusCategories = sortedCategories.filter(([cat]) => cat === "bonus_exclusivos");
-  const otherCategories = sortedCategories.filter(([cat]) => cat !== "bonus_exclusivos");
+  // Featured categories first, then others
+  const featuredCategories = sortedCategories.filter(([cat]) => categoryLookup[cat]?.isFeatured);
+  const otherCategories = sortedCategories.filter(([cat]) => !categoryLookup[cat]?.isFeatured);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
