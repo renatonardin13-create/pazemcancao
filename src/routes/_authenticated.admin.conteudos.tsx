@@ -6,6 +6,7 @@ import {
   updateContentItem,
   deleteContentItem,
 } from "@/lib/admin-content.functions";
+import { listAdminCategories } from "@/lib/admin-categories.functions";
 import {
   BookOpen, Video, GraduationCap, FileText, Plus, Trash2,
   ToggleLeft, ToggleRight, Pencil, Loader2, ExternalLink,
@@ -39,14 +40,7 @@ const contentTypeLabels: Record<string, { label: string; icon: any; color: strin
   material: { label: "Material", icon: FileText, color: "text-amber-400/60 border-amber-500/15 bg-amber-500/8" },
 };
 
-const categoryOptions = [
-  { value: "", label: "Nenhuma (padrão por tipo)" },
-  { value: "bonus_exclusivos", label: "🎁 Bônus Exclusivos" },
-  { value: "soldado_ferido", label: "⚔️ Soldado Ferido" },
-  { value: "ansiedade", label: "🕊️ Ansiedade" },
-  { value: "cura_da_alma", label: "💛 Cura da Alma" },
-  { value: "refugio", label: "🏠 Refúgio" },
-];
+// Category options are now loaded dynamically from DB
 
 const accessModeOptions = [
   { value: "gratuito", label: "Gratuito" },
