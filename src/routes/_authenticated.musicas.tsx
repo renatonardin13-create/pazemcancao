@@ -471,8 +471,8 @@ function TrackCard({
       <Wrapper
         {...(wrapperProps as any)}
         onClick={isBonusLocked ? () => {
-          toast.info(bonusReleaseFormatted
-            ? `🎁 Este bônus será liberado em ${bonusReleaseFormatted}`
+          toast.info(bonusCountdown
+            ? `🎁 ${bonusCountdown}`
             : "🎁 Este bônus ainda não tem data de liberação definida"
           );
         } : undefined}
@@ -529,10 +529,10 @@ function TrackCard({
                     <Lock className={`${isCarousel ? "h-7 w-7" : "h-5 w-5"} text-white/50`} />
                   )}
                 </div>
-                {isBonusLocked && bonusReleaseFormatted && (
+                {isBonusLocked && bonusCountdown && (
                   <div className="rounded-full bg-black/50 backdrop-blur-sm border border-amber-400/20 px-3 py-1">
                     <p className="text-[9px] font-semibold text-amber-300/80 tracking-wider uppercase text-center">
-                      Liberação: {bonusReleaseFormatted}
+                      ⏳ {bonusCountdown}
                     </p>
                   </div>
                 )}
