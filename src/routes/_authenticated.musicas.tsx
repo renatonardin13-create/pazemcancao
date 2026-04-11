@@ -316,6 +316,7 @@ function MusicLibraryPage() {
                           progress={progress}
                           handlePlayWithQueue={handlePlayWithQueue}
                           canDownload={canDownload}
+                          isLocked={isLocked}
                         />
                       ))}
                     </div>
@@ -336,6 +337,7 @@ function MusicLibraryPage() {
                             progress={progress}
                             handlePlayWithQueue={handlePlayWithQueue}
                             canDownload={canDownload}
+                            isLocked={isLocked}
                           />
                         ))}
                       </div>
