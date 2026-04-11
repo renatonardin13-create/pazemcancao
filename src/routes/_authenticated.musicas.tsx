@@ -448,10 +448,21 @@ function TrackCard({
 
             {/* Locked padlock overlay */}
             {effectiveLocked && (
-              <div className="absolute inset-0 flex items-center justify-center z-10">
+              <div className="absolute inset-0 flex flex-col items-center justify-center z-10 gap-2">
                 <div className={`flex ${isCarousel ? "h-16 w-16 rounded-2xl" : "h-12 w-12 rounded-xl"} items-center justify-center backdrop-blur-sm bg-black/30 border border-white/10`}>
-                  <Lock className={`${isCarousel ? "h-7 w-7" : "h-5 w-5"} text-white/50`} />
+                  {isBonusLocked ? (
+                    <Gift className={`${isCarousel ? "h-7 w-7" : "h-5 w-5"} text-amber-400/70`} />
+                  ) : (
+                    <Lock className={`${isCarousel ? "h-7 w-7" : "h-5 w-5"} text-white/50`} />
+                  )}
                 </div>
+                {isBonusLocked && bonusReleaseFormatted && (
+                  <div className="rounded-full bg-black/50 backdrop-blur-sm border border-amber-400/20 px-3 py-1">
+                    <p className="text-[9px] font-semibold text-amber-300/80 tracking-wider uppercase text-center">
+                      Liberação: {bonusReleaseFormatted}
+                    </p>
+                  </div>
+                )}
               </div>
             )}
 
