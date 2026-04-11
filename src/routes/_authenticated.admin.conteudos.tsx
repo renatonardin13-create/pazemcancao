@@ -400,6 +400,7 @@ function AdminContentPage() {
               </div>
             </div>
 
+            <div className="flex justify-end gap-2 pt-2">
               <Button variant="ghost" onClick={() => { setFormOpen(false); resetForm(); }} disabled={isSubmitting} className="text-[11px] text-muted-foreground/40">
                 Cancelar
               </Button>
