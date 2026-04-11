@@ -8,7 +8,7 @@ import {
 } from "@/lib/admin-content.functions";
 import {
   BookOpen, Video, GraduationCap, FileText, Plus, Trash2,
-  ToggleLeft, ToggleRight, Pencil, Loader2, ExternalLink,
+  ToggleLeft, ToggleRight, Pencil, Loader2, ExternalLink, Eye, EyeOff,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -39,44 +39,25 @@ const contentTypeLabels: Record<string, { label: string; icon: any; color: strin
   material: { label: "Material", icon: FileText, color: "text-amber-400/60 border-amber-500/15 bg-amber-500/8" },
 };
 
-const displayCategoryOptions = [
-  { value: "bonus_exclusivos", label: "🎁 Bônus Exclusivos" },
-  { value: "soldado_ferido", label: "⚔️ Soldado Ferido" },
-  { value: "ansiedade", label: "🧘 Ansiedade" },
-  { value: "cura_da_alma", label: "💚 Cura da Alma" },
-  { value: "refugio", label: "🏠 Refúgio" },
-  { value: "nao_desista", label: "💪 Não Desista" },
-  { value: "destaques", label: "⭐ Destaques" },
-  { value: "geral", label: "📂 Geral" },
-];
-
 function AdminContentPage() {
   const queryClient = useQueryClient();
   const [formOpen, setFormOpen] = useState(false);
   const [editItem, setEditItem] = useState<any>(null);
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
 
-  // Form state — existing fields
+  // Form state
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [contentType, setContentType] = useState("ebook");
   const [videoUrl, setVideoUrl] = useState("");
   const [salesPageUrl, setSalesPageUrl] = useState("");
+  const [isFree, setIsFree] = useState(false);
+  const [releaseDays, setReleaseDays] = useState<string>("");
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [contentFile, setContentFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const coverInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Form state — new fields
-  const [accessMode, setAccessMode] = useState("pago");
-  const [releaseDays, setReleaseDays] = useState("");
-  const [displayCategory, setDisplayCategory] = useState("");
-  const [showAsCard, setShowAsCard] = useState(true);
-  const [displayOrder, setDisplayOrder] = useState("");
-  const [badgeText, setBadgeText] = useState("");
-  const [cardCoverFile, setCardCoverFile] = useState<File | null>(null);
-  const cardCoverInputRef = useRef<HTMLInputElement>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-content"],
@@ -90,16 +71,11 @@ function AdminContentPage() {
     setContentType("ebook");
     setVideoUrl("");
     setSalesPageUrl("");
+    setIsFree(false);
+    setReleaseDays("");
     setCoverFile(null);
     setContentFile(null);
     setEditItem(null);
-    setAccessMode("pago");
-    setReleaseDays("");
-    setDisplayCategory("");
-    setShowAsCard(true);
-    setDisplayOrder("");
-    setBadgeText("");
-    setCardCoverFile(null);
   };
 
   const openEdit = (item: any) => {
@@ -109,16 +85,10 @@ function AdminContentPage() {
     setContentType(item.content_type);
     setVideoUrl(item.video_url || "");
     setSalesPageUrl(item.sales_page_url || "");
+    setIsFree(item.is_free);
+    setReleaseDays(item.release_days != null ? String(item.release_days) : "");
     setCoverFile(null);
     setContentFile(null);
-    // New fields with fallback for old records
-    setAccessMode(item.access_mode || (item.is_free ? "gratuito" : item.release_days ? "liberar_em_dias" : "pago"));
-    setReleaseDays(item.release_days != null ? String(item.release_days) : "");
-    setDisplayCategory(item.display_category || "");
-    setShowAsCard(item.show_as_card !== false);
-    setDisplayOrder(item.sort_order != null ? String(item.sort_order) : "");
-    setBadgeText(item.badge_text || "");
-    setCardCoverFile(null);
     setFormOpen(true);
   };
 
@@ -132,7 +102,6 @@ function AdminContentPage() {
       setUploading(true);
       let cover_url = editItem?.cover_url || undefined;
       let file_url = editItem?.file_url || undefined;
-      let card_cover_url = editItem?.card_cover_url || undefined;
 
       const itemId = editItem?.id || crypto.randomUUID();
 
@@ -152,16 +121,7 @@ function AdminContentPage() {
         file_url = urlData.publicUrl + "?t=" + Date.now();
       }
 
-      if (cardCoverFile) {
-        const path = `card-covers/${itemId}.${cardCoverFile.name.split('.').pop()}`;
-        const { error } = await supabase.storage.from("content-files").upload(path, cardCoverFile, { upsert: true });
-        if (error) throw new Error("Erro no upload da capa do card: " + error.message);
-        const { data: urlData } = supabase.storage.from("content-files").getPublicUrl(path);
-        card_cover_url = urlData.publicUrl + "?t=" + Date.now();
-      }
-
       const parsedDays = releaseDays.trim() !== "" ? parseInt(releaseDays, 10) : null;
-      const parsedOrder = displayOrder.trim() !== "" ? parseInt(displayOrder, 10) : undefined;
 
       const payload = {
         title: title.trim(),
@@ -171,14 +131,8 @@ function AdminContentPage() {
         file_url,
         video_url: videoUrl.trim() || undefined,
         sales_page_url: salesPageUrl.trim() || undefined,
-        access_mode: accessMode,
-        is_free: accessMode === "gratuito",
-        release_days: accessMode === "liberar_em_dias" && parsedDays && parsedDays > 0 ? parsedDays : null,
-        display_category: displayCategory || null,
-        show_as_card: showAsCard,
-        badge_text: badgeText.trim() || null,
-        card_cover_url,
-        sort_order: parsedOrder,
+        is_free: isFree,
+        release_days: isFree ? null : (parsedDays && parsedDays > 0 ? parsedDays : null),
       };
 
       if (editItem) {
@@ -249,7 +203,6 @@ function AdminContentPage() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-2">
-            {/* Tipo de conteúdo */}
             <div className="space-y-2">
               <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Tipo</Label>
               <Select value={contentType} onValueChange={setContentType} disabled={isSubmitting}>
@@ -265,13 +218,11 @@ function AdminContentPage() {
               </Select>
             </div>
 
-            {/* Título */}
             <div className="space-y-2">
               <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Título</Label>
               <Input value={title} onChange={(e) => setTitle(e.target.value)} className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
             </div>
 
-            {/* Descrição */}
             <div className="space-y-2">
               <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Descrição</Label>
               <Textarea value={description} onChange={(e) => setDescription(e.target.value)} className="bg-card/15 border-border/15 text-sm min-h-[60px]" disabled={isSubmitting} />
@@ -326,133 +277,36 @@ function AdminContentPage() {
               <p className="text-[9px] text-muted-foreground/25">Se preenchido, aparecerá um botão de compra para não-compradores</p>
             </div>
 
-            {/* ═══════ NOVOS CAMPOS ═══════ */}
-
-            <div className="border-t border-border/10 pt-4 mt-2">
-              <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/30 mb-4 font-semibold">
-                Configurações de exibição
-              </p>
-
-              {/* 1. Categoria de exibição */}
-              <div className="space-y-2 mb-4">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
-                  Categoria de Exibição
-                </Label>
-                <Select value={displayCategory} onValueChange={setDisplayCategory} disabled={isSubmitting}>
-                  <SelectTrigger className="bg-card/15 border-border/15 text-sm">
-                    <SelectValue placeholder="Selecione a categoria..." />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">📂 Sem categoria</SelectItem>
-                    {displayCategoryOptions.map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-[9px] text-muted-foreground/25">Em qual seção/trilho do app o card aparecerá</p>
+            {/* Is Free */}
+            <div className="flex items-center justify-between rounded-xl border border-emerald-500/10 bg-emerald-500/[0.03] p-4">
+              <div>
+                <p className="text-[12px] font-semibold text-foreground/70">Conteúdo Gratuito</p>
+                <p className="text-[10px] text-muted-foreground/40">Visível para todos, sem precisar comprar</p>
               </div>
+              <Switch checked={isFree} onCheckedChange={setIsFree} disabled={isSubmitting} />
+            </div>
 
-              {/* 2. Modo de acesso */}
-              <div className="space-y-2 mb-4">
+            {/* Release Days - only for paid content */}
+            {!isFree && (
+              <div className="space-y-2">
                 <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
-                  Modo de Acesso
-                </Label>
-                <Select value={accessMode} onValueChange={setAccessMode} disabled={isSubmitting}>
-                  <SelectTrigger className="bg-card/15 border-border/15 text-sm">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="gratuito">🟢 Gratuito</SelectItem>
-                    <SelectItem value="pago">🔒 Pago</SelectItem>
-                    <SelectItem value="liberar_em_dias">📅 Liberar em dias</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {/* 3. Dias para liberar — só se access_mode = liberar_em_dias */}
-              {accessMode === "liberar_em_dias" && (
-                <div className="space-y-2 mb-4">
-                  <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
-                    Dias para liberar
-                  </Label>
-                  <Input
-                    type="number"
-                    min="1"
-                    max="365"
-                    value={releaseDays}
-                    onChange={(e) => setReleaseDays(e.target.value)}
-                    placeholder="Ex: 7"
-                    className="bg-card/15 border-border/15 text-sm"
-                    disabled={isSubmitting}
-                  />
-                  <p className="text-[9px] text-muted-foreground/25">
-                    O conteúdo será liberado X dias após a data de compra do cliente
-                  </p>
-                </div>
-              )}
-
-              {/* 4. Exibir como card */}
-              <div className="flex items-center justify-between rounded-xl border border-border/10 bg-card/5 p-4 mb-4">
-                <div>
-                  <p className="text-[12px] font-semibold text-foreground/70">Exibir como Card</p>
-                  <p className="text-[10px] text-muted-foreground/40">Mostrar este conteúdo no app como card visual</p>
-                </div>
-                <Switch checked={showAsCard} onCheckedChange={setShowAsCard} disabled={isSubmitting} />
-              </div>
-
-              {/* 5. Ordem de exibição */}
-              <div className="space-y-2 mb-4">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
-                  Ordem de Exibição
+                  Liberação por dias (opcional)
                 </Label>
                 <Input
                   type="number"
-                  min="0"
-                  value={displayOrder}
-                  onChange={(e) => setDisplayOrder(e.target.value)}
-                  placeholder="0 (menor = primeiro)"
+                  min="1"
+                  max="365"
+                  value={releaseDays}
+                  onChange={(e) => setReleaseDays(e.target.value)}
+                  placeholder="Ex: 7 (libera 7 dias após a compra)"
                   className="bg-card/15 border-border/15 text-sm"
                   disabled={isSubmitting}
                 />
+                <p className="text-[9px] text-muted-foreground/25">
+                  Se preenchido, o conteúdo será liberado X dias após a data de compra do cliente. Deixe vazio para acesso imediato.
+                </p>
               </div>
-
-              {/* 6. Badge texto */}
-              <div className="space-y-2 mb-4">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
-                  Badge (opcional)
-                </Label>
-                <Input
-                  value={badgeText}
-                  onChange={(e) => setBadgeText(e.target.value)}
-                  placeholder="Ex: BÔNUS, NOVO, VIP, GRÁTIS"
-                  className="bg-card/15 border-border/15 text-sm"
-                  maxLength={30}
-                  disabled={isSubmitting}
-                />
-                <p className="text-[9px] text-muted-foreground/25">Texto exibido como badge no card do app</p>
-              </div>
-
-              {/* 7. Capa do card */}
-              <div className="space-y-2">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
-                  Capa do Card (opcional)
-                </Label>
-                <div className="flex items-center gap-3">
-                  {(editItem?.card_cover_url || cardCoverFile) && (
-                    <img
-                      src={cardCoverFile ? URL.createObjectURL(cardCoverFile) : editItem?.card_cover_url}
-                      alt="Capa do card"
-                      className="h-16 w-16 rounded-lg object-cover border border-border/15"
-                    />
-                  )}
-                  <label className="flex items-center gap-2 cursor-pointer rounded-lg border border-border/15 bg-card/15 px-3 py-2 text-[11px] text-muted-foreground/50 hover:border-gold/20 hover:text-gold/60 transition-all">
-                    🖼️ {cardCoverFile ? cardCoverFile.name : "Enviar capa do card"}
-                    <input ref={cardCoverInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => setCardCoverFile(e.target.files?.[0] || null)} disabled={isSubmitting} />
-                  </label>
-                </div>
-                <p className="text-[9px] text-muted-foreground/25">Se vazio, será usada a capa principal</p>
-              </div>
-            </div>
+            )}
 
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="ghost" onClick={() => { setFormOpen(false); resetForm(); }} disabled={isSubmitting} className="text-[11px] text-muted-foreground/40">
@@ -509,7 +363,6 @@ function AdminContentPage() {
           {items.map((item: any) => {
             const typeInfo = contentTypeLabels[item.content_type] || contentTypeLabels.material;
             const TypeIcon = typeInfo.icon;
-            const itemAccessMode = item.access_mode || (item.is_free ? "gratuito" : item.release_days ? "liberar_em_dias" : "pago");
             return (
               <div key={item.id} className="flex items-center gap-4 px-5 py-4 border-b border-border/8 last:border-0 hover:bg-card/10 transition-colors">
                 {item.cover_url ? (
@@ -532,38 +385,14 @@ function AdminContentPage() {
                     <TypeIcon className="h-2.5 w-2.5 mr-1" />
                     {typeInfo.label}
                   </Badge>
-                  {/* Access mode badge */}
-                  {itemAccessMode === "gratuito" && (
+                  {item.is_free && (
                     <Badge variant="outline" className="text-[9px] rounded-full px-2 border text-emerald-400/60 border-emerald-500/15 bg-emerald-500/8">
-                      🟢 Gratuito
+                      Gratuito
                     </Badge>
                   )}
-                  {itemAccessMode === "liberar_em_dias" && (
+                  {!item.is_free && item.release_days && (
                     <Badge variant="outline" className="text-[9px] rounded-full px-2 border text-blue-400/60 border-blue-500/15 bg-blue-500/8">
-                      📅 {item.release_days || "?"}d
-                    </Badge>
-                  )}
-                  {itemAccessMode === "pago" && (
-                    <Badge variant="outline" className="text-[9px] rounded-full px-2 border text-amber-400/60 border-amber-500/15 bg-amber-500/8">
-                      🔒 Pago
-                    </Badge>
-                  )}
-                  {/* Display category badge */}
-                  {item.display_category && item.display_category !== "none" && (
-                    <Badge variant="outline" className="text-[9px] rounded-full px-2 border text-muted-foreground/40 border-border/20">
-                      {displayCategoryOptions.find(c => c.value === item.display_category)?.label || item.display_category}
-                    </Badge>
-                  )}
-                  {/* Badge text */}
-                  {item.badge_text && (
-                    <Badge variant="outline" className="text-[9px] rounded-full px-2 border text-gold/60 border-gold/15 bg-gold/8">
-                      {item.badge_text}
-                    </Badge>
-                  )}
-                  {/* Show as card indicator */}
-                  {item.show_as_card === false && (
-                    <Badge variant="outline" className="text-[9px] rounded-full px-2 border text-muted-foreground/30 border-border/15">
-                      Oculto no app
+                      📅 {item.release_days}d
                     </Badge>
                   )}
                   <Badge variant="outline" className={`text-[9px] rounded-full px-2 border ${item.is_active ? "text-emerald-400/60 border-emerald-500/15 bg-emerald-500/8" : "text-muted-foreground/30 border-border/20"}`}>
