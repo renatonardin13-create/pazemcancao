@@ -47,6 +47,8 @@ export const createContentItem = createServerFn({ method: 'POST' })
     show_as_card?: boolean;
     card_cover_url?: string;
     sort_order?: number;
+    journey_group?: string;
+    journey_order?: number;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
@@ -79,6 +81,8 @@ export const createContentItem = createServerFn({ method: 'POST' })
         card_cover_url: data.card_cover_url || null,
         is_active: true,
         sort_order: data.sort_order ?? ((maxOrder?.sort_order ?? 0) + 1),
+        journey_group: data.journey_group || null,
+        journey_order: data.journey_order ?? 0,
       } as any)
       .select()
       .single();
@@ -107,6 +111,8 @@ export const updateContentItem = createServerFn({ method: 'POST' })
     show_as_card?: boolean;
     card_cover_url?: string;
     sort_order?: number;
+    journey_group?: string;
+    journey_order?: number;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
