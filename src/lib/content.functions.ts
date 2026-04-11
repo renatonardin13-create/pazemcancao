@@ -77,6 +77,12 @@ export const listContentItems = createServerFn({ method: 'POST' })
 
     const now = new Date();
 
+    // Build a title lookup for prerequisite content references
+    const titleMap = new Map<string, string>();
+    for (const item of (data || [])) {
+      titleMap.set(item.id, item.title);
+    }
+
     const items = (data || []).map((item: any) => {
       if (isAdmin) return { ...item, unlocked: true };
 
