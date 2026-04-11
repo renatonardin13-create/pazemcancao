@@ -25,10 +25,14 @@ function getYouTubeEmbedUrl(url: string): string | null {
 export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: ContentCardProps) {
   const embedUrl = item.video_url ? getYouTubeEmbedUrl(item.video_url) : null;
   
+  // Use card_cover_url with fallback to cover_url
+  const cardCover = item.card_cover_url || item.cover_url;
+
   // unlocked field comes from server: true if free, admin, or release_days passed
   const isUnlocked = item.unlocked !== undefined ? item.unlocked : (item.is_free || hasAccess);
   const isLocked = !isUnlocked;
-  const isPendingRelease = hasAccess && !item.is_free && item.release_days && !isUnlocked;
+  const accessMode = item.access_mode || (item.is_free ? 'gratuito' : item.release_days ? 'liberar_em_dias' : 'pago');
+  const isPendingRelease = hasAccess && accessMode === 'liberar_em_dias' && !isUnlocked;
 
   const handleLockedClick = () => {
     if (isLocked && item.sales_page_url) {
