@@ -74,9 +74,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         setCurrentTime(audio.currentTime);
         setProgress((audio.currentTime / audio.duration) * 100);
         // Log play after 30 seconds
-        if (audio.currentTime >= 30 && playLoggedRef.current !== track.id) {
-          playLoggedRef.current = track.id;
-          logPlay({ data: { trackId: track.id, durationSeconds: Math.round(audio.currentTime) } }).catch(() => {});
+        if (audio.currentTime >= 30 && playLoggedRef.current !== String(track.id)) {
+          playLoggedRef.current = String(track.id);
+          logPlay({ data: { trackId: String(track.id), durationSeconds: Math.round(audio.currentTime) } }).catch(() => {});
         }
       }
     });
