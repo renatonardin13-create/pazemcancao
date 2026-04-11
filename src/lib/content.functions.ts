@@ -142,10 +142,10 @@ export const listContentItems = createServerFn({ method: 'POST' })
 
       if (ruleType !== 'none' && ruleContentId && baseUnlocked) {
         if (ruleType === 'after_watch') {
-          ruleMet = playedContentIds.has(ruleContentId);
+          ruleMet = playedContentIds.has(ruleContentId) || viewedContentIds.has(ruleContentId);
           if (!ruleMet) unlockRuleMessage = 'Disponível após assistir o conteúdo anterior';
         } else if (ruleType === 'after_complete') {
-          ruleMet = playedContentIds.has(ruleContentId);
+          ruleMet = completedContentIds.has(ruleContentId);
           if (!ruleMet) unlockRuleMessage = 'Disponível após concluir o conteúdo anterior';
         } else if (ruleType === 'after_download') {
           ruleMet = downloadedContentIds.has(ruleContentId);
