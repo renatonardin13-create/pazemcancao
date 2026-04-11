@@ -7,6 +7,7 @@ import {
   deleteContentItem,
 } from "@/lib/admin-content.functions";
 import { listAdminCategories } from "@/lib/admin-categories.functions";
+import { listAdminJourneys } from "@/lib/admin-journeys.functions";
 import {
   BookOpen, Video, GraduationCap, FileText, Plus, Trash2,
   ToggleLeft, ToggleRight, Pencil, Loader2, ExternalLink,
@@ -48,14 +49,7 @@ const accessModeOptions = [
   { value: "liberar_em_dias", label: "Liberar em X dias após compra" },
 ];
 
-const journeyOptions = [
-  { value: "", label: "Nenhuma trilha" },
-  { value: "comece_por_aqui", label: "🌱 Comece por aqui" },
-  { value: "dias_dificeis", label: "🌧️ Para dias difíceis" },
-  { value: "ansiedade", label: "🕊️ Quando a ansiedade apertar" },
-  { value: "restauracao", label: "💛 Para restaurar a alma" },
-  { value: "perseveranca", label: "💪 Para continuar mesmo cansado" },
-];
+// Journey options are now loaded dynamically from DB
 
 function AdminContentPage() {
   const queryClient = useQueryClient();
@@ -99,6 +93,12 @@ function AdminContentPage() {
     staleTime: 60_000,
   });
 
+  const { data: journeyData } = useQuery({
+    queryKey: ["admin-journeys"],
+    queryFn: () => listAdminJourneys(),
+    staleTime: 60_000,
+  });
+
   const categoryOptions = useMemo(() => {
     const base = [{ value: "__none__", label: "Nenhuma (padrão por tipo)" }];
     if (catData?.categories) {
@@ -108,6 +108,16 @@ function AdminContentPage() {
     }
     return base;
   }, [catData]);
+
+  const journeyOptions = useMemo(() => {
+    const base = [{ value: "__none__", label: "Nenhuma trilha" }];
+    if (journeyData?.journeys) {
+      for (const j of journeyData.journeys as any[]) {
+        base.push({ value: j.slug, label: `${j.icon || ''} ${j.name}`.trim() });
+      }
+    }
+    return base;
+  }, [journeyData]);
 
   const resetForm = () => {
     setTitle("");
@@ -437,13 +447,13 @@ function AdminContentPage() {
             {/* Journey Group */}
             <div className="space-y-2">
               <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Trilha Emocional</Label>
-              <Select value={journeyGroup} onValueChange={setJourneyGroup} disabled={isSubmitting}>
+              <Select value={journeyGroup || "__none__"} onValueChange={(v) => setJourneyGroup(v === "__none__" ? "" : v)} disabled={isSubmitting}>
                 <SelectTrigger className="bg-card/15 border-border/15 text-sm">
                   <SelectValue placeholder="Selecione..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {journeyOptions.map((opt) => (
-                    <SelectItem key={opt.value || "none"} value={opt.value || "none"}>{opt.label}</SelectItem>
+                  {journeyOptions.map((opt: any) => (
+                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>

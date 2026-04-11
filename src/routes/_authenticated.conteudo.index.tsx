@@ -19,13 +19,7 @@ const typeConfig: Record<string, { label: string; icon: any; gradient: string }>
   material: { label: "Materiais", icon: FileText, gradient: "from-amber-900/40 via-amber-950/30 to-slate-950/50" },
 };
 
-const journeyLabels: Record<string, string> = {
-  comece_por_aqui: "🌱 Comece por aqui",
-  dias_dificeis: "🌧️ Para dias difíceis",
-  ansiedade: "🕊️ Quando a ansiedade apertar",
-  restauracao: "💛 Para restaurar a alma",
-  perseveranca: "💪 Para continuar mesmo cansado",
-};
+// Journey labels now come from DB
 
 // Category order comes from DB now
 
@@ -39,6 +33,7 @@ function ContentPage() {
   const items = data?.items || [];
   const progressMap = data?.progressMap || {};
   const dbCategories = data?.categories || [];
+  const dbJourneys = data?.journeys || [];
 
   // Build category lookup from DB
   const categoryLookup = useMemo(() => {
@@ -48,6 +43,15 @@ function ContentPage() {
     }
     return map;
   }, [dbCategories]);
+
+  // Build journey labels from DB
+  const journeyLabels = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const j of dbJourneys) {
+      map[j.slug] = j.icon ? `${j.icon} ${j.name}` : j.name;
+    }
+    return map;
+  }, [dbJourneys]);
 
   // Group items
   const categoryGroups: Record<string, any[]> = {};
