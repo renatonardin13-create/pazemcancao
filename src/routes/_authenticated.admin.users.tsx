@@ -357,6 +357,18 @@ function AdminUsersPage() {
                   </Badge>
 
                   <button
+                    onClick={() => toggleAccess.mutate({ buyerId: buyer.id, access_enabled: !isEnabled })}
+                    className={`flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-300 ${
+                      isEnabled
+                        ? "text-emerald-400/50 hover:text-destructive/70 hover:bg-destructive/10"
+                        : "text-destructive/50 hover:text-emerald-400/70 hover:bg-emerald-500/10"
+                    }`}
+                    title={isEnabled ? "Bloquear acesso" : "Liberar acesso"}
+                  >
+                    {isEnabled ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
+                  </button>
+
+                  <button
                     onClick={() => openEditDialog(buyer)}
                     className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/30 hover:text-foreground/60 hover:bg-muted/20 transition-all duration-300"
                     title="Editar"
