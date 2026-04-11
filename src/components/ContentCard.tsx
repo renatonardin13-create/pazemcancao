@@ -117,28 +117,22 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
         )}
 
         {/* Pending release overlay */}
-        {isPendingRelease && (() => {
-          const daysLeft = item.unlockDate
-            ? Math.max(0, Math.ceil((new Date(item.unlockDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
-            : item.release_days || null;
-          return (
-            <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex flex-col items-center justify-center gap-3 transition-all duration-500">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/15 border border-blue-500/25">
-                <Clock className="h-6 w-6 text-blue-400/70" />
-              </div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-blue-300/50 bg-black/30 rounded-full px-4 py-1.5 border border-blue-500/15">
-                {daysLeft !== null && daysLeft > 0
-                  ? `⏳ Libera em ${daysLeft} dia${daysLeft > 1 ? 's' : ''}`
-                  : '⏳ Liberação em breve'}
-              </span>
-              {item.unlockDate && (
-                <span className="text-[9px] text-blue-300/40">
-                  Disponível em {new Date(item.unlockDate).toLocaleDateString('pt-BR')}
-                </span>
-              )}
+        {isPendingRelease && (
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex flex-col items-center justify-center gap-3 transition-all duration-500">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/15 border border-blue-500/25">
+              <Clock className="h-6 w-6 text-blue-400/70" />
             </div>
-          );
-        })()}
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-blue-300/50 bg-black/30 rounded-full px-4 py-1.5 border border-blue-500/15">
+              {daysLeft !== null && daysLeft > 0
+                ? `⏳ Libera em ${daysLeft} dia${daysLeft > 1 ? 's' : ''}`
+                : '⏳ Liberação em breve'}
+            </span>
+            {item.unlockDate && (
+              <span className="text-[9px] text-blue-300/40">
+                Disponível em {new Date(item.unlockDate).toLocaleDateString('pt-BR')}
+              </span>
+            )}
+          </div>
         )}
       </div>
 
