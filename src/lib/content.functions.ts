@@ -184,6 +184,20 @@ export const listContentItems = createServerFn({ method: 'POST' })
       isFeatured: c.is_featured,
     }));
 
+    // Fetch journeys for dynamic rendering
+    const { data: journeysData } = await supabaseAdmin
+      .from('journeys')
+      .select('id, name, slug, icon, sort_order')
+      .order('sort_order', { ascending: true });
+
+    const journeys = (journeysData || []).map((j: any) => ({
+      id: j.id,
+      name: j.name,
+      slug: j.slug,
+      icon: j.icon,
+      sortOrder: j.sort_order,
+    }));
+
     return {
       items,
       hasFullAccess,
@@ -191,5 +205,6 @@ export const listContentItems = createServerFn({ method: 'POST' })
       downloadedIds: Array.from(downloadedContentIds),
       progressMap,
       categories,
+      journeys,
     };
   });
