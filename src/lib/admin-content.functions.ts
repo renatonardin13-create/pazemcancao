@@ -66,8 +66,7 @@ export const createContentItem = createServerFn({ method: 'POST' })
         release_days: data.release_days ?? null,
         is_active: true,
         sort_order: (maxOrder?.sort_order ?? 0) + 1,
-      } as any)
-      })
+      )
       .select()
       .single();
 
