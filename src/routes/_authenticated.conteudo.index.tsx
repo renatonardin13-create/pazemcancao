@@ -19,13 +19,7 @@ const typeConfig: Record<string, { label: string; icon: any; gradient: string }>
   material: { label: "Materiais", icon: FileText, gradient: "from-amber-900/40 via-amber-950/30 to-slate-950/50" },
 };
 
-const journeyLabels: Record<string, string> = {
-  comece_por_aqui: "🌱 Comece por aqui",
-  dias_dificeis: "🌧️ Para dias difíceis",
-  ansiedade: "🕊️ Quando a ansiedade apertar",
-  restauracao: "💛 Para restaurar a alma",
-  perseveranca: "💪 Para continuar mesmo cansado",
-};
+// Journey labels now come from DB
 
 // Category order comes from DB now
 
