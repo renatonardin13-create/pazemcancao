@@ -148,7 +148,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
 
         {/* Actions */}
         <div className="mt-4 pt-3.5 border-t border-border/6 flex items-center gap-3">
-          {hasAccess ? (
+          {isUnlocked ? (
             <>
               {item.file_url && (
                 <a
@@ -180,6 +180,11 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
                 </span>
               )}
             </>
+          ) : isPendingRelease ? (
+            <span className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase text-blue-400/45">
+              <Clock className="h-3 w-3" />
+              Em breve
+            </span>
           ) : (
             <span className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/45">
               <ShoppingCart className="h-3 w-3" />
