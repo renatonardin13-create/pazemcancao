@@ -9,6 +9,7 @@ function jsonResponse(data: unknown, status = 200) {
   });
 }
 
+// ─── Legacy log (kept for backward compat with admin dashboard) ───
 async function logWebhookEvent(params: {
   eventType: string;
   email?: string;
@@ -32,11 +33,62 @@ async function logWebhookEvent(params: {
   }
 }
 
-async function provisionUserAccess(email: string) {
+// ─── Idempotency: atomic insert into processed_webhooks ───
+
+/**
+ * Try to claim this event for processing. Returns the record id if claimed,
+ * or null if the event was already processed (unique constraint violation).
+ */
+async function claimEvent(uniqueEventId: string, payload: any, email: string, eventType: string): Promise<string | null> {
+  if (!uniqueEventId) return crypto.randomUUID(); // no id = can't dedup, always process
+
+  const { data, error } = await (supabaseAdmin as any)
+    .from('processed_webhooks')
+    .insert({
+      unique_event_id: uniqueEventId,
+      provider: 'kiwify',
+      email: email || null,
+      event_type: eventType,
+      status: 'processing',
+      payload,
+    })
+    .select('id')
+    .single();
+
+  if (error) {
+    if (error.code === '23505') return null;
+    console.error('Error claiming webhook event:', error);
+    return crypto.randomUUID();
+  }
+
+  return data.id;
+}
+
+async function markEventCompleted(uniqueEventId: string, details: any = {}) {
+  if (!uniqueEventId) return;
+  await (supabaseAdmin as any)
+    .from('processed_webhooks')
+    .update({ status: 'completed', processed_at: new Date().toISOString(), details })
+    .eq('unique_event_id', uniqueEventId)
+    .eq('provider', 'kiwify');
+}
+
+async function markEventFailed(uniqueEventId: string, errorMessage: string) {
+  if (!uniqueEventId) return;
+  await (supabaseAdmin as any)
+    .from('processed_webhooks')
+    .update({ status: 'failed', error_message: errorMessage, processed_at: new Date().toISOString() })
+    .eq('unique_event_id', uniqueEventId)
+    .eq('provider', 'kiwify');
+}
+
+// ─── User provisioning ───
+
+async function provisionUserAccess(email: string): Promise<{ userCreated: boolean; userFound: boolean }> {
   const url = process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const publicKey = process.env.SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !serviceKey) return;
+  if (!url || !serviceKey) return { userCreated: false, userFound: false };
 
   const admin = createClient(url, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
@@ -47,6 +99,8 @@ async function provisionUserAccess(email: string) {
     (u) => u.email?.toLowerCase() === email
   );
 
+  let userCreated = false;
+
   if (!existingUser) {
     const tempPassword = crypto.randomUUID() + crypto.randomUUID();
     const { error: createError } = await admin.auth.admin.createUser({
@@ -56,8 +110,9 @@ async function provisionUserAccess(email: string) {
     });
     if (createError) {
       console.error('Error creating user:', createError);
-      return;
+      return { userCreated: false, userFound: false };
     }
+    userCreated = true;
   }
 
   if (publicKey) {
@@ -68,15 +123,14 @@ async function provisionUserAccess(email: string) {
       redirectTo: 'https://pazemcancao.lovable.app/login',
     });
   }
+
+  return { userCreated, userFound: !!existingUser };
 }
 
-/**
- * Calculate and store unlock dates for content items with access_mode = 'liberar_em_dias'.
- * Uses the purchase approval date as the base for calculating unlock_at.
- */
-async function calculateContentUnlocks(email: string, orderId: string) {
+// ─── Content unlock calculation ───
+
+async function calculateContentUnlocks(email: string, orderId: string): Promise<number> {
   try {
-    // Fetch all active content items that have timed release
     const { data: timedContent, error } = await supabaseAdmin
       .from('content_items')
       .select('id, release_days')
@@ -84,15 +138,7 @@ async function calculateContentUnlocks(email: string, orderId: string) {
       .eq('access_mode', 'liberar_em_dias')
       .not('release_days', 'is', null);
 
-    if (error) {
-      console.error('Error fetching timed content:', error);
-      return;
-    }
-
-    if (!timedContent || timedContent.length === 0) {
-      console.log('No timed-release content to process');
-      return;
-    }
+    if (error || !timedContent?.length) return 0;
 
     const now = new Date();
 
@@ -100,8 +146,7 @@ async function calculateContentUnlocks(email: string, orderId: string) {
       const unlockAt = new Date(now);
       unlockAt.setDate(unlockAt.getDate() + (item.release_days || 0));
 
-      // Upsert - if already exists for this email+content, skip (idempotent)
-      const { error: upsertError } = await supabaseAdmin
+      await supabaseAdmin
         .from('user_content_unlocks')
         .upsert(
           {
@@ -113,42 +158,99 @@ async function calculateContentUnlocks(email: string, orderId: string) {
           },
           { onConflict: 'email,content_id', ignoreDuplicates: true }
         );
-
-      if (upsertError) {
-        console.error(`Error upserting unlock for content ${item.id}:`, upsertError);
-      }
     }
 
-    console.log(`📅 Calculated ${timedContent.length} content unlock dates for ${email}`);
+    return timedContent.length;
   } catch (e) {
     console.error('Error calculating content unlocks:', e);
+    return 0;
   }
 }
 
-/**
- * Check if this order_id has already been processed successfully to avoid duplicates.
- */
-async function isOrderAlreadyProcessed(orderId: string): Promise<boolean> {
-  if (!orderId) return false;
+// ─── Parse helpers ───
 
-  const { data } = await supabaseAdmin
-    .from('webhook_logs')
-    .select('id')
-    .eq('order_id', orderId)
-    .eq('provider', 'kiwify')
-    .in('event_type', ['paid', 'approved', 'completed'])
-    .eq('response_status', 200)
-    .limit(1);
-
-  return !!(data && data.length > 0);
+function extractEventId(payload: any, rawBody: any): string {
+  return (
+    payload.transaction_id ||
+    rawBody.transaction_id ||
+    payload.order_id ||
+    rawBody.order_id ||
+    ''
+  );
 }
+
+function extractFields(rawBody: any) {
+  const payload = rawBody.data || rawBody;
+  const status = (
+    payload.order_status || payload.status || rawBody.order_status || ''
+  ).toLowerCase();
+  const customerEmail = (
+    payload.customer?.email ||
+    payload.Customer?.email ||
+    rawBody.Customer?.email ||
+    rawBody.customer?.email ||
+    ''
+  ).toLowerCase().trim();
+  const customerName =
+    payload.customer?.name ||
+    payload.Customer?.full_name ||
+    rawBody.Customer?.full_name ||
+    rawBody.customer?.name ||
+    'Comprador';
+  const orderId = payload.order_id || rawBody.order_id || '';
+  const uniqueEventId = extractEventId(payload, rawBody);
+
+  return { payload, status, customerEmail, customerName, orderId, uniqueEventId };
+}
+
+// ─── Main handler ───
 
 export async function handleKiwifyWebhook(request: Request): Promise<Response> {
   let rawBody: any = null;
 
   try {
     rawBody = await request.json();
+  } catch {
+    await logWebhookEvent({
+      eventType: 'error',
+      responseStatus: 400,
+      responseMessage: 'Invalid JSON body',
+    });
+    return jsonResponse({ error: 'Invalid JSON body' }, 400);
+  }
 
+  const { status, customerEmail, customerName, orderId, uniqueEventId } = extractFields(rawBody);
+
+  // ── 1. Validate: email required ──
+  if (!customerEmail) {
+    await logWebhookEvent({
+      eventType: status || 'unknown',
+      payload: rawBody,
+      responseStatus: 400,
+      responseMessage: 'Missing customer email',
+    });
+    return jsonResponse({ error: 'Missing customer email' }, 400);
+  }
+
+  // ── 2. Validate: must have a recognized status ──
+  const approvedStatuses = ['paid', 'approved', 'completed'];
+  const cancelledStatuses = ['refunded', 'chargedback', 'chargeback', 'cancelled'];
+  const allKnownStatuses = [...approvedStatuses, ...cancelledStatuses, 'waiting_payment', 'pending'];
+
+  if (!status) {
+    await logWebhookEvent({
+      eventType: 'unknown',
+      email: customerEmail,
+      orderId,
+      payload: rawBody,
+      responseStatus: 400,
+      responseMessage: 'Missing order status',
+    });
+    return jsonResponse({ error: 'Missing order status' }, 400);
+  }
+
+  // ── 3. Auth token validation ──
+  try {
     const requestUrl = new URL(request.url);
     const explicitToken = (
       request.headers.get('x-kiwify-token') ||
@@ -169,81 +271,45 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       .maybeSingle();
 
     if (config && !config.is_active) {
-      await logWebhookEvent({
-        eventType: 'disabled',
-        payload: rawBody,
-        responseStatus: 200,
-        responseMessage: 'Webhook is disabled',
-      });
+      await logWebhookEvent({ eventType: 'disabled', payload: rawBody, responseStatus: 200, responseMessage: 'Webhook is disabled' });
       return jsonResponse({ status: 'success', message: 'Webhook is disabled' });
     }
 
     const savedToken = (config?.auth_token || '').trim();
-    const hasExplicitToken = explicitToken.length > 0;
-    const hasMatchingBearerToken = !!savedToken && bearerToken === savedToken;
-
-    if (savedToken && hasExplicitToken && explicitToken !== savedToken) {
-      await logWebhookEvent({
-        eventType: 'auth_failed',
-        payload: rawBody,
-        responseStatus: 401,
-        responseMessage: 'Invalid signature',
-      });
+    if (savedToken && explicitToken && explicitToken !== savedToken) {
+      await logWebhookEvent({ eventType: 'auth_failed', payload: rawBody, responseStatus: 401, responseMessage: 'Invalid signature' });
       return jsonResponse({ error: 'Invalid signature' }, 401);
     }
-
-    if (savedToken && !hasExplicitToken && bearerToken && !hasMatchingBearerToken) {
+    if (savedToken && !explicitToken && bearerToken && bearerToken !== savedToken) {
       console.warn('Ignoring non-matching Authorization bearer token for webhook validation');
     }
+  } catch (authErr: any) {
+    console.error('Auth validation error:', authErr);
+  }
 
-    // Parse payload (Kiwify sends nested or flat)
-    const payload = rawBody.data || rawBody;
-    const status = (
-      payload.order_status || payload.status || rawBody.order_status || ''
-    ).toLowerCase();
-    const customerEmail = (
-      payload.customer?.email ||
-      payload.Customer?.email ||
-      rawBody.Customer?.email ||
-      rawBody.customer?.email ||
-      ''
-    ).toLowerCase().trim();
-    const customerName =
-      payload.customer?.name ||
-      payload.Customer?.full_name ||
-      rawBody.Customer?.full_name ||
-      rawBody.customer?.name ||
-      'Comprador';
-    const orderId =
-      payload.order_id || rawBody.order_id || '';
+  console.log(`📩 Kiwify webhook: status=${status} email=${customerEmail} event=${uniqueEventId || orderId}`);
 
-    if (!customerEmail) {
+  // ── 4. Handle approved purchase ──
+  if (approvedStatuses.includes(status)) {
+    // Atomic idempotency: try to claim this event
+    const claimedId = await claimEvent(uniqueEventId || orderId, rawBody, customerEmail, status);
+    if (claimedId === null) {
+      console.log(`⚠️ Event ${uniqueEventId || orderId} already processed, skipping`);
       await logWebhookEvent({
-        eventType: status || 'unknown',
+        eventType: status,
+        email: customerEmail,
+        orderId,
         payload: rawBody,
-        responseStatus: 400,
-        responseMessage: 'Missing customer email',
+        responseStatus: 200,
+        responseMessage: 'Already processed (idempotent)',
       });
-      return jsonResponse({ error: 'Missing customer email' }, 400);
+      return jsonResponse({ success: true, message: 'Already processed' });
     }
 
-    console.log(`📩 Kiwify webhook: status=${status} email=${customerEmail} order=${orderId}`);
+    const eventKey = uniqueEventId || orderId;
 
-    if (status === 'paid' || status === 'approved' || status === 'completed') {
-      // Idempotency check: skip if this order was already processed
-      if (orderId && await isOrderAlreadyProcessed(orderId)) {
-        console.log(`⚠️ Order ${orderId} already processed, skipping`);
-        await logWebhookEvent({
-          eventType: status,
-          email: customerEmail,
-          orderId,
-          payload: rawBody,
-          responseStatus: 200,
-          responseMessage: 'Already processed (idempotent)',
-        });
-        return jsonResponse({ success: true, message: 'Already processed' });
-      }
-
+    try {
+      // Step 1: Register buyer
       const { error: dbError } = await supabaseAdmin
         .from('approved_buyers')
         .upsert(
@@ -260,70 +326,49 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
 
       if (dbError) {
         console.error('❌ DB upsert error:', dbError);
-        await logWebhookEvent({
-          eventType: status,
-          email: customerEmail,
-          orderId,
-          payload: rawBody,
-          responseStatus: 500,
-          responseMessage: 'Failed to register buyer',
-        });
+        await markEventFailed(eventKey, `DB upsert error: ${dbError.message}`);
+        await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 500, responseMessage: 'Failed to register buyer' });
         return jsonResponse({ error: 'Failed to register buyer' }, 500);
       }
 
-      // Provision user account (create or send reset email)
-      await provisionUserAccess(customerEmail);
+      // Step 2: Provision user account
+      const userResult = await provisionUserAccess(customerEmail);
 
-      // Calculate unlock dates for timed-release content
-      await calculateContentUnlocks(customerEmail, orderId);
+      // Step 3: Calculate unlock dates for timed content
+      const unlocksCreated = await calculateContentUnlocks(customerEmail, orderId);
 
-      console.log(`✅ Buyer approved and provisioned: ${customerEmail}`);
-      await logWebhookEvent({
-        eventType: status,
-        email: customerEmail,
-        orderId,
-        payload: rawBody,
-        responseStatus: 200,
-        responseMessage: 'Buyer approved',
+      // Step 4: Mark as completed with details
+      await markEventCompleted(eventKey, {
+        user_created: userResult.userCreated,
+        user_found: userResult.userFound,
+        purchase_linked: orderId,
+        content_unlocks_created: unlocksCreated,
       });
+
+      console.log(`✅ Buyer approved and provisioned: ${customerEmail} (user_created=${userResult.userCreated}, unlocks=${unlocksCreated})`);
+      await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: 'Buyer approved' });
       return jsonResponse({ success: true });
+
+    } catch (processErr: any) {
+      console.error('❌ Processing error:', processErr);
+      await markEventFailed(eventKey, processErr.message || 'Unknown processing error');
+      await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 500, responseMessage: processErr.message || 'Processing failed' });
+      return jsonResponse({ error: 'Processing failed' }, 500);
     }
-
-    const cancelledStatuses = ['refunded', 'chargedback', 'chargeback', 'cancelled'];
-    if (cancelledStatuses.includes(status)) {
-      await supabaseAdmin
-        .from('approved_buyers')
-        .update({ access_enabled: false, status })
-        .eq('email', customerEmail);
-
-      await logWebhookEvent({
-        eventType: status,
-        email: customerEmail,
-        orderId,
-        payload: rawBody,
-        responseStatus: 200,
-        responseMessage: `Access revoked: ${status}`,
-      });
-      return jsonResponse({ success: true });
-    }
-
-    await logWebhookEvent({
-      eventType: status || 'unknown',
-      email: customerEmail,
-      orderId,
-      payload: rawBody,
-      responseStatus: 200,
-      responseMessage: 'No action required',
-    });
-    return jsonResponse({ success: true, message: 'No action required' });
-  } catch (err: any) {
-    console.error('❌ Webhook error:', err);
-    await logWebhookEvent({
-      eventType: 'error',
-      payload: rawBody,
-      responseStatus: 400,
-      responseMessage: err.message || 'Webhook processing failed',
-    });
-    return jsonResponse({ error: err.message || 'Webhook processing failed' }, 400);
   }
+
+  // ── 5. Handle cancellation/refund ──
+  if (cancelledStatuses.includes(status)) {
+    await supabaseAdmin
+      .from('approved_buyers')
+      .update({ access_enabled: false, status })
+      .eq('email', customerEmail);
+
+    await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Access revoked: ${status}` });
+    return jsonResponse({ success: true });
+  }
+
+  // ── 6. Unrecognized or no-action status ──
+  await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: 'No action required' });
+  return jsonResponse({ success: true, message: 'No action required' });
 }
