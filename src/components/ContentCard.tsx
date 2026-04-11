@@ -140,16 +140,26 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, badgeO
            "📄 Material"}
         </span>
 
-        {/* Badge text (custom or free) */}
-        {item.badge_text ? (
-          <span className="absolute top-4 left-4 text-[9px] font-bold uppercase tracking-widest text-gold/80 bg-gold/15 backdrop-blur-sm border border-gold/20 rounded-full px-3 py-1">
-            {item.badge_text}
-          </span>
-        ) : item.is_free ? (
-          <span className="absolute top-4 left-4 text-[9px] font-bold uppercase tracking-widest text-emerald-300/80 bg-emerald-500/15 backdrop-blur-sm border border-emerald-500/20 rounded-full px-3 py-1">
-            Gratuito
-          </span>
-        ) : null}
+        {/* Badge text — manual or auto-generated */}
+        {(() => {
+          if (item.badge_text || badgeOverride) {
+            const text = badgeOverride || item.badge_text;
+            return (
+              <span className="absolute top-4 left-4 text-[9px] font-bold uppercase tracking-widest text-gold/80 bg-gold/15 backdrop-blur-sm border border-gold/20 rounded-full px-3 py-1">
+                {text}
+              </span>
+            );
+          }
+          const auto = computeAutoBadge(item, hasAccess);
+          if (auto) {
+            return (
+              <span className={`absolute top-4 left-4 text-[9px] font-bold uppercase tracking-widest ${auto.textClass} ${auto.bgClass} backdrop-blur-sm border ${auto.borderClass} rounded-full px-3 py-1`}>
+                {auto.text}
+              </span>
+            );
+          }
+          return null;
+        })()}
 
         {/* Lock overlay for paid content */}
         {isLocked && !isPendingRelease && (
