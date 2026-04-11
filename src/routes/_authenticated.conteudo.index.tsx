@@ -45,8 +45,18 @@ function ContentPage() {
   });
 
   const hasAccess = data?.hasFullAccess ?? false;
-  const items = data?.items || [];
+  const rawItems = data?.items || [];
   const progressMap = data?.progressMap || {};
+
+  // Enrich items with progress flags for auto-badges
+  const items = useMemo(() => rawItems.map((item: any) => {
+    const p = progressMap[item.id];
+    return {
+      ...item,
+      _progressViewed: !!p?.viewed_at,
+      _progressCompleted: !!p?.completed_at,
+    };
+  }), [rawItems, progressMap]);
 
   // Group items
   const categoryGroups: Record<string, any[]> = {};
