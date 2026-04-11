@@ -137,3 +137,58 @@ export const removeTrialUser = createServerFn({ method: 'POST' })
     if (error) throw new Error(error.message);
     return { success: true };
   });
+
+const updateBuyerSchema = z.object({
+  buyerId: z.string().uuid(),
+  nome: z.string().min(1).max(255).trim().optional(),
+  access_enabled: z.boolean().optional(),
+  is_trial: z.boolean().optional(),
+  trialDays: z.number().min(1).max(90).optional(),
+  can_download: z.boolean().optional(),
+});
+
+export const updateBuyer = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { buyerId: string; nome?: string; access_enabled?: boolean; is_trial?: boolean; trialDays?: number; can_download?: boolean }) =>
+    updateBuyerSchema.parse(input)
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+
+    const { data: adminRole } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    const { data: userData } = await supabase.auth.getUser();
+    const isAdminEmail = userData?.user?.email?.toLowerCase() === 'renatonardin13@gmail.com';
+
+    if (!adminRole && !isAdminEmail) {
+      throw new Error('Acesso não autorizado');
+    }
+
+    const updates: Record<string, any> = {};
+    if (data.nome !== undefined) updates.nome = data.nome;
+    if (data.access_enabled !== undefined) updates.access_enabled = data.access_enabled;
+    if (data.is_trial !== undefined) updates.is_trial = data.is_trial;
+    if (data.can_download !== undefined) updates.can_download = data.can_download;
+
+    if (data.trialDays !== undefined) {
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + data.trialDays);
+      updates.trial_expires_at = expiresAt.toISOString();
+      updates.is_trial = true;
+      updates.can_download = false;
+      updates.access_enabled = true;
+    }
+
+    const { error } = await supabaseAdmin
+      .from('approved_buyers')
+      .update(updates)
+      .eq('id', data.buyerId);
+
+    if (error) throw new Error(error.message);
+    return { success: true };
+  });
