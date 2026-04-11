@@ -53,39 +53,48 @@ export type Database = {
       approved_buyers: {
         Row: {
           access_enabled: boolean
+          can_download: boolean
           created_at: string
           email: string
           first_login_at: string | null
           id: string
+          is_trial: boolean
           last_login_at: string | null
           nome: string
           order_id: string | null
           product_name: string | null
           status: string
+          trial_expires_at: string | null
         }
         Insert: {
           access_enabled?: boolean
+          can_download?: boolean
           created_at?: string
           email: string
           first_login_at?: string | null
           id?: string
+          is_trial?: boolean
           last_login_at?: string | null
           nome: string
           order_id?: string | null
           product_name?: string | null
           status?: string
+          trial_expires_at?: string | null
         }
         Update: {
           access_enabled?: boolean
+          can_download?: boolean
           created_at?: string
           email?: string
           first_login_at?: string | null
           id?: string
+          is_trial?: boolean
           last_login_at?: string | null
           nome?: string
           order_id?: string | null
           product_name?: string | null
           status?: string
+          trial_expires_at?: string | null
         }
         Relationships: []
       }

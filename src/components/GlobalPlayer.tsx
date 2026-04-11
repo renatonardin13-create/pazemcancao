@@ -1,5 +1,7 @@
 import { Play, Pause, X, Download, SkipBack, SkipForward, Music } from "lucide-react";
 import { usePlayer } from "@/hooks/use-player";
+import { useQuery } from "@tanstack/react-query";
+import { checkBuyerAccess } from "@/lib/access.functions";
 
 export function GlobalPlayer() {
   const {
@@ -7,6 +9,14 @@ export function GlobalPlayer() {
     queue, queueIndex,
     pause, play, toggle, seek, stop, next, previous,
   } = usePlayer();
+
+  const { data: accessData } = useQuery({
+    queryKey: ["buyer-access"],
+    queryFn: () => checkBuyerAccess(),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const canDownload = accessData?.canDownload !== false;
 
   if (!currentTrack) return null;
 
@@ -114,12 +124,14 @@ export function GlobalPlayer() {
             </button>
           )}
 
-          <button
-            onClick={handleDownload}
-            className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/20 hover:text-gold/40 transition-colors duration-300 ml-1"
-          >
-            <Download className="h-3.5 w-3.5" />
-          </button>
+          {canDownload && (
+            <button
+              onClick={handleDownload}
+              className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/20 hover:text-gold/40 transition-colors duration-300 ml-1"
+            >
+              <Download className="h-3.5 w-3.5" />
+            </button>
+          )}
 
           <button
             onClick={stop}

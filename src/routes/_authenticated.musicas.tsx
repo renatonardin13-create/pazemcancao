@@ -4,6 +4,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { FooterLinks } from "@/components/FooterLinks";
 import { useQuery } from "@tanstack/react-query";
 import { listActiveTracks, listCategories } from "@/lib/tracks.functions";
+import { checkBuyerAccess } from "@/lib/access.functions";
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { usePlayer } from "@/hooks/use-player";
@@ -75,6 +76,14 @@ function MusicLibraryPage() {
   const [initialized, setInitialized] = useState(false);
   const activeTrackRef = useRef<HTMLDivElement>(null);
   const prevTrackId = useRef<string | number | null>(null);
+
+  const { data: accessData } = useQuery({
+    queryKey: ["buyer-access"],
+    queryFn: () => checkBuyerAccess(),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const canDownload = accessData?.canDownload !== false;
 
   const { data: catData } = useQuery({
     queryKey: ["categories"],
@@ -281,6 +290,7 @@ function MusicLibraryPage() {
                           playing={playing}
                           progress={progress}
                           handlePlayWithQueue={handlePlayWithQueue}
+                          canDownload={canDownload}
                         />
                       ))}
                     </div>
@@ -300,6 +310,7 @@ function MusicLibraryPage() {
                             playing={playing}
                             progress={progress}
                             handlePlayWithQueue={handlePlayWithQueue}
+                            canDownload={canDownload}
                           />
                         ))}
                       </div>
@@ -329,11 +340,12 @@ interface TrackCardProps {
   playing: boolean;
   progress: number;
   handlePlayWithQueue: (track: any, trackList: any[]) => void;
+  canDownload: boolean;
 }
 
 function TrackCard({
   track, idx, icon, catTracks, isCarousel,
-  activeTrackRef, currentTrack, playing, progress, handlePlayWithQueue,
+  activeTrackRef, currentTrack, playing, progress, handlePlayWithQueue, canDownload,
 }: TrackCardProps) {
   const isThis = currentTrack?.id === track.id;
   const isPlaying = isThis && playing;
@@ -478,7 +490,7 @@ function TrackCard({
                   </motion.span>
                 )}
               </div>
-              {(track.download_url || track.storage_path) && (
+              {canDownload && (track.download_url || track.storage_path) && (
                 <button
                   onClick={(e) => {
                     e.preventDefault();
