@@ -137,6 +137,12 @@ function AdminContentPage() {
       }
 
       const parsedDays = releaseDays.trim() !== "" ? parseInt(releaseDays, 10) : null;
+      const parsedSort = sortOrder.trim() !== "" ? parseInt(sortOrder, 10) : undefined;
+
+      // Derive access_mode from controls
+      let effectiveAccessMode = accessMode;
+      if (isFree) effectiveAccessMode = 'gratuito';
+      else if (parsedDays && parsedDays > 0) effectiveAccessMode = 'liberar_em_dias';
 
       const payload = {
         title: title.trim(),
@@ -148,6 +154,11 @@ function AdminContentPage() {
         sales_page_url: salesPageUrl.trim() || undefined,
         is_free: isFree,
         release_days: isFree ? null : (parsedDays && parsedDays > 0 ? parsedDays : null),
+        display_category: displayCategory.trim() || null,
+        access_mode: effectiveAccessMode,
+        show_as_card: showAsCard,
+        badge_text: badgeText.trim() || null,
+        sort_order: parsedSort,
       };
 
       if (editItem) {
