@@ -64,6 +64,8 @@ export const createTrack = createServerFn({ method: 'POST' })
         download_url: data.download_url || null,
         description: data.description || null,
         is_active: true,
+        is_bonus: data.is_bonus || false,
+        bonus_release_date: data.bonus_release_date || null,
         sort_order: (maxOrder?.sort_order ?? 0) + 1,
       })
       .select()
@@ -85,6 +87,8 @@ export const updateTrack = createServerFn({ method: 'POST' })
     download_url?: string;
     description?: string;
     is_active?: boolean;
+    is_bonus?: boolean;
+    bonus_release_date?: string | null;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
