@@ -563,8 +563,7 @@ function TrackCard({
                   }`}>
                     {isBonusLocked ? "🎁 Bônus" : "Bloqueado"}
                   </span>
-                )}
-                )}
+                )
                 {!effectiveLocked && isPlaying && (
                   <motion.span
                     initial={{ opacity: 0, scale: 0.8 }}
