@@ -41,11 +41,11 @@ export const createContentItem = createServerFn({ method: 'POST' })
     sales_page_url?: string;
     is_free?: boolean;
     release_days?: number | null;
-    display_category?: string | null;
-    access_mode?: string | null;
+    access_mode?: string;
+    display_category?: string;
+    badge_text?: string;
     show_as_card?: boolean;
-    badge_text?: string | null;
-    card_cover_url?: string | null;
+    card_cover_url?: string;
     sort_order?: number;
   }) => input)
   .handler(async ({ data, context }) => {
@@ -57,6 +57,8 @@ export const createContentItem = createServerFn({ method: 'POST' })
       .order('sort_order', { ascending: false })
       .limit(1)
       .single();
+
+    const accessMode = data.access_mode || (data.is_free ? 'gratuito' : (data.release_days && data.release_days > 0 ? 'liberar_em_dias' : 'pago'));
 
     const { data: item, error } = await supabaseAdmin
       .from('content_items')
@@ -70,10 +72,10 @@ export const createContentItem = createServerFn({ method: 'POST' })
         sales_page_url: data.sales_page_url || null,
         is_free: data.is_free || false,
         release_days: data.release_days ?? null,
+        access_mode: accessMode,
         display_category: data.display_category || null,
-        access_mode: data.access_mode || (data.is_free ? 'gratuito' : 'pago'),
-        show_as_card: data.show_as_card !== undefined ? data.show_as_card : true,
         badge_text: data.badge_text || null,
+        show_as_card: data.show_as_card ?? true,
         card_cover_url: data.card_cover_url || null,
         is_active: true,
         sort_order: data.sort_order ?? ((maxOrder?.sort_order ?? 0) + 1),
@@ -99,11 +101,11 @@ export const updateContentItem = createServerFn({ method: 'POST' })
     is_free?: boolean;
     is_active?: boolean;
     release_days?: number | null;
-    display_category?: string | null;
-    access_mode?: string | null;
+    access_mode?: string;
+    display_category?: string;
+    badge_text?: string;
     show_as_card?: boolean;
-    badge_text?: string | null;
-    card_cover_url?: string | null;
+    card_cover_url?: string;
     sort_order?: number;
   }) => input)
   .handler(async ({ data, context }) => {
