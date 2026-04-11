@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { usePlayer } from "@/hooks/use-player";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Track } from "@/lib/sample-tracks";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/musicas")({
   component: MusicLibraryPage,
