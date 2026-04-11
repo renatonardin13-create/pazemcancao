@@ -132,8 +132,17 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     } else {
       // Find in queue
       const idx = queueRef.current.findIndex(t => t.id === track.id);
-      if (idx >= 0) setQueueIndex(idx);
-      startAudio(track);
+      if (idx >= 0) {
+        setQueueIndex(idx);
+        startAudio(track);
+      } else {
+        // Track not in current queue — play solo without auto-next
+        setQueueState([track]);
+        setQueueIndex(0);
+        queueRef.current = [track];
+        queueIndexRef.current = 0;
+        startAudio(track, true);
+      }
     }
   }, [currentTrack?.id, playing, pause, startAudio]);
 
