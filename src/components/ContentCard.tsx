@@ -67,9 +67,9 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
           />
         ) : (
           <>
-            {item.cover_url && (
+            {cardCover && (
               <img
-                src={item.cover_url}
+                src={cardCover}
                 alt={item.title}
                 className="absolute inset-0 w-full h-full object-cover"
                 loading="lazy"
@@ -79,7 +79,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
             <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/[0.03] to-white/[0.06] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
             {/* Floating icon when no cover */}
-            {!item.cover_url && (
+            {!cardCover && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl backdrop-blur-sm bg-white/[0.04] border border-white/[0.06] group-hover:scale-105 group-hover:bg-white/[0.07] transition-all duration-700">
                   <TypeIcon className="h-7 w-7 text-white/25 group-hover:text-white/40 transition-colors duration-500" />
@@ -97,10 +97,10 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
            "📄 Material"}
         </span>
 
-        {/* Free badge */}
-        {item.is_free && (
+        {/* Free / custom badge */}
+        {(item.badge_text || item.is_free || accessMode === 'gratuito') && (
           <span className="absolute top-4 left-4 text-[9px] font-bold uppercase tracking-widest text-emerald-300/80 bg-emerald-500/15 backdrop-blur-sm border border-emerald-500/20 rounded-full px-3 py-1">
-            Gratuito
+            {item.badge_text || "Gratuito"}
           </span>
         )}
 
