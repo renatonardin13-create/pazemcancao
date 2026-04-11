@@ -8,7 +8,7 @@ import {
 } from "@/lib/admin-content.functions";
 import {
   BookOpen, Video, GraduationCap, FileText, Plus, Trash2,
-  ToggleLeft, ToggleRight, Pencil, Loader2, ExternalLink, Eye, EyeOff,
+  ToggleLeft, ToggleRight, Pencil, Loader2, ExternalLink,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -39,6 +39,21 @@ const contentTypeLabels: Record<string, { label: string; icon: any; color: strin
   material: { label: "Material", icon: FileText, color: "text-amber-400/60 border-amber-500/15 bg-amber-500/8" },
 };
 
+const categoryOptions = [
+  { value: "", label: "Nenhuma (padrão por tipo)" },
+  { value: "bonus_exclusivos", label: "🎁 Bônus Exclusivos" },
+  { value: "soldado_ferido", label: "⚔️ Soldado Ferido" },
+  { value: "ansiedade", label: "🕊️ Ansiedade" },
+  { value: "cura_da_alma", label: "💛 Cura da Alma" },
+  { value: "refugio", label: "🏠 Refúgio" },
+];
+
+const accessModeOptions = [
+  { value: "gratuito", label: "Gratuito" },
+  { value: "pago", label: "Pago (acesso imediato)" },
+  { value: "liberar_em_dias", label: "Liberar em X dias após compra" },
+];
+
 function AdminContentPage() {
   const queryClient = useQueryClient();
   const [formOpen, setFormOpen] = useState(false);
@@ -51,8 +66,12 @@ function AdminContentPage() {
   const [contentType, setContentType] = useState("ebook");
   const [videoUrl, setVideoUrl] = useState("");
   const [salesPageUrl, setSalesPageUrl] = useState("");
-  const [isFree, setIsFree] = useState(false);
+  const [accessMode, setAccessMode] = useState("pago");
   const [releaseDays, setReleaseDays] = useState<string>("");
+  const [displayCategory, setDisplayCategory] = useState("");
+  const [badgeText, setBadgeText] = useState("");
+  const [showAsCard, setShowAsCard] = useState(true);
+  const [sortOrder, setSortOrder] = useState<string>("");
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [contentFile, setContentFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -71,8 +90,12 @@ function AdminContentPage() {
     setContentType("ebook");
     setVideoUrl("");
     setSalesPageUrl("");
-    setIsFree(false);
+    setAccessMode("pago");
     setReleaseDays("");
+    setDisplayCategory("");
+    setBadgeText("");
+    setShowAsCard(true);
+    setSortOrder("");
     setCoverFile(null);
     setContentFile(null);
     setEditItem(null);
@@ -85,8 +108,12 @@ function AdminContentPage() {
     setContentType(item.content_type);
     setVideoUrl(item.video_url || "");
     setSalesPageUrl(item.sales_page_url || "");
-    setIsFree(item.is_free);
+    setAccessMode(item.access_mode || (item.is_free ? "gratuito" : "pago"));
     setReleaseDays(item.release_days != null ? String(item.release_days) : "");
+    setDisplayCategory(item.display_category || "");
+    setBadgeText(item.badge_text || "");
+    setShowAsCard(item.show_as_card !== false);
+    setSortOrder(item.sort_order != null ? String(item.sort_order) : "");
     setCoverFile(null);
     setContentFile(null);
     setFormOpen(true);
@@ -122,8 +149,10 @@ function AdminContentPage() {
       }
 
       const parsedDays = releaseDays.trim() !== "" ? parseInt(releaseDays, 10) : null;
+      const parsedSortOrder = sortOrder.trim() !== "" ? parseInt(sortOrder, 10) : undefined;
+      const isFree = accessMode === "gratuito";
 
-      const payload = {
+      const payload: any = {
         title: title.trim(),
         description: description.trim() || undefined,
         content_type: contentType,
@@ -132,7 +161,12 @@ function AdminContentPage() {
         video_url: videoUrl.trim() || undefined,
         sales_page_url: salesPageUrl.trim() || undefined,
         is_free: isFree,
-        release_days: isFree ? null : (parsedDays && parsedDays > 0 ? parsedDays : null),
+        access_mode: accessMode,
+        release_days: accessMode === "liberar_em_dias" && parsedDays && parsedDays > 0 ? parsedDays : null,
+        display_category: displayCategory || undefined,
+        badge_text: badgeText.trim() || undefined,
+        show_as_card: showAsCard,
+        sort_order: parsedSortOrder,
       };
 
       if (editItem) {
@@ -277,20 +311,26 @@ function AdminContentPage() {
               <p className="text-[9px] text-muted-foreground/25">Se preenchido, aparecerá um botão de compra para não-compradores</p>
             </div>
 
-            {/* Is Free */}
-            <div className="flex items-center justify-between rounded-xl border border-emerald-500/10 bg-emerald-500/[0.03] p-4">
-              <div>
-                <p className="text-[12px] font-semibold text-foreground/70">Conteúdo Gratuito</p>
-                <p className="text-[10px] text-muted-foreground/40">Visível para todos, sem precisar comprar</p>
-              </div>
-              <Switch checked={isFree} onCheckedChange={setIsFree} disabled={isSubmitting} />
+            {/* Access Mode */}
+            <div className="space-y-2">
+              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Modo de Acesso</Label>
+              <Select value={accessMode} onValueChange={setAccessMode} disabled={isSubmitting}>
+                <SelectTrigger className="bg-card/15 border-border/15 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {accessModeOptions.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
-            {/* Release Days - only for paid content */}
-            {!isFree && (
+            {/* Release Days - only for liberar_em_dias */}
+            {accessMode === "liberar_em_dias" && (
               <div className="space-y-2">
                 <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
-                  Liberação por dias (opcional)
+                  Dias para liberar após compra
                 </Label>
                 <Input
                   type="number"
@@ -298,15 +338,51 @@ function AdminContentPage() {
                   max="365"
                   value={releaseDays}
                   onChange={(e) => setReleaseDays(e.target.value)}
-                  placeholder="Ex: 7 (libera 7 dias após a compra)"
+                  placeholder="Ex: 7"
                   className="bg-card/15 border-border/15 text-sm"
                   disabled={isSubmitting}
                 />
                 <p className="text-[9px] text-muted-foreground/25">
-                  Se preenchido, o conteúdo será liberado X dias após a data de compra do cliente. Deixe vazio para acesso imediato.
+                  O conteúdo será liberado X dias após a data de compra aprovada do cliente.
                 </p>
               </div>
             )}
+
+            {/* Display Category */}
+            <div className="space-y-2">
+              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Categoria de Exibição</Label>
+              <Select value={displayCategory} onValueChange={setDisplayCategory} disabled={isSubmitting}>
+                <SelectTrigger className="bg-card/15 border-border/15 text-sm">
+                  <SelectValue placeholder="Selecione..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {categoryOptions.map((opt) => (
+                    <SelectItem key={opt.value || "none"} value={opt.value || "none"}>{opt.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Badge Text */}
+            <div className="space-y-2">
+              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Texto do Badge (opcional)</Label>
+              <Input value={badgeText} onChange={(e) => setBadgeText(e.target.value)} placeholder="Ex: NOVO, BÔNUS, EM BREVE" className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
+            </div>
+
+            {/* Sort Order */}
+            <div className="space-y-2">
+              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Ordem de Exibição</Label>
+              <Input type="number" min="0" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} placeholder="Automático" className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
+            </div>
+
+            {/* Show as Card */}
+            <div className="flex items-center justify-between rounded-xl border border-border/10 bg-card/5 p-4">
+              <div>
+                <p className="text-[12px] font-semibold text-foreground/70">Exibir como Card</p>
+                <p className="text-[10px] text-muted-foreground/40">Se desativado, o conteúdo não aparece na grade</p>
+              </div>
+              <Switch checked={showAsCard} onCheckedChange={setShowAsCard} disabled={isSubmitting} />
+            </div>
 
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="ghost" onClick={() => { setFormOpen(false); resetForm(); }} disabled={isSubmitting} className="text-[11px] text-muted-foreground/40">
@@ -359,45 +435,57 @@ function AdminContentPage() {
           <p className="text-[11px] text-muted-foreground/25 mt-1">Clique em "Novo Conteúdo" para adicionar.</p>
         </div>
       ) : (
-        <div className="rounded-2xl border border-border/15 overflow-hidden">
+        <div className="space-y-2">
           {items.map((item: any) => {
             const typeInfo = contentTypeLabels[item.content_type] || contentTypeLabels.material;
             const TypeIcon = typeInfo.icon;
+            const effectiveAccess = item.access_mode || (item.is_free ? "gratuito" : "pago");
+
             return (
-              <div key={item.id} className="flex items-center gap-4 px-5 py-4 border-b border-border/8 last:border-0 hover:bg-card/10 transition-colors">
-                {item.cover_url ? (
-                  <img src={item.cover_url} alt={item.title} className="h-12 w-12 rounded-lg object-cover shrink-0" />
-                ) : (
-                  <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-muted/15 shrink-0">
-                    <TypeIcon className="h-5 w-5 text-muted-foreground/25" />
+              <div
+                key={item.id}
+                className={`flex items-center justify-between gap-4 rounded-xl border p-4 transition-all duration-500 ${
+                  item.is_active
+                    ? "border-border/15 bg-card/5 hover:bg-card/10"
+                    : "border-border/8 bg-card/[0.02] opacity-50"
+                }`}
+              >
+                <div className="flex items-center gap-4 min-w-0 flex-1">
+                  {item.cover_url ? (
+                    <img src={item.cover_url} alt="" className="h-12 w-12 rounded-lg object-cover border border-border/10 flex-shrink-0" />
+                  ) : (
+                    <div className="h-12 w-12 rounded-lg bg-muted/10 flex items-center justify-center flex-shrink-0">
+                      <TypeIcon className="h-5 w-5 text-muted-foreground/20" />
+                    </div>
+                  )}
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-foreground/75 truncate">{item.title}</p>
+                    <div className="flex items-center gap-2 mt-1 flex-wrap">
+                      <Badge variant="outline" className={`text-[9px] px-1.5 py-0 ${typeInfo.color}`}>
+                        {typeInfo.label}
+                      </Badge>
+                      <Badge variant="outline" className={`text-[9px] px-1.5 py-0 ${
+                        effectiveAccess === "gratuito"
+                          ? "text-emerald-400/60 border-emerald-500/15 bg-emerald-500/8"
+                          : effectiveAccess === "liberar_em_dias"
+                          ? "text-amber-400/60 border-amber-500/15 bg-amber-500/8"
+                          : "text-rose-400/60 border-rose-500/15 bg-rose-500/8"
+                      }`}>
+                        {effectiveAccess === "gratuito" ? "Gratuito" : effectiveAccess === "liberar_em_dias" ? `Libera em ${item.release_days || "?"}d` : "Pago"}
+                      </Badge>
+                      {item.display_category && (
+                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 text-muted-foreground/40 border-border/15">
+                          {item.display_category.replace(/_/g, " ")}
+                        </Badge>
+                      )}
+                      {item.badge_text && (
+                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 text-gold/50 border-gold/15 bg-gold/5">
+                          {item.badge_text}
+                        </Badge>
+                      )}
+                      <span className="text-[9px] text-muted-foreground/20">#{item.sort_order}</span>
+                    </div>
                   </div>
-                )}
-
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-foreground/75 truncate">{item.title}</p>
-                  <p className="text-[11px] text-muted-foreground/30 truncate">
-                    {item.description || "Sem descrição"}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1.5 flex-wrap justify-end">
-                  <Badge variant="outline" className={`text-[9px] rounded-full px-2 border ${typeInfo.color}`}>
-                    <TypeIcon className="h-2.5 w-2.5 mr-1" />
-                    {typeInfo.label}
-                  </Badge>
-                  {item.is_free && (
-                    <Badge variant="outline" className="text-[9px] rounded-full px-2 border text-emerald-400/60 border-emerald-500/15 bg-emerald-500/8">
-                      Gratuito
-                    </Badge>
-                  )}
-                  {!item.is_free && item.release_days && (
-                    <Badge variant="outline" className="text-[9px] rounded-full px-2 border text-blue-400/60 border-blue-500/15 bg-blue-500/8">
-                      📅 {item.release_days}d
-                    </Badge>
-                  )}
-                  <Badge variant="outline" className={`text-[9px] rounded-full px-2 border ${item.is_active ? "text-emerald-400/60 border-emerald-500/15 bg-emerald-500/8" : "text-muted-foreground/30 border-border/20"}`}>
-                    {item.is_active ? "Ativo" : "Inativo"}
-                  </Badge>
                 </div>
 
                 <div className="flex items-center gap-1">
