@@ -42,7 +42,7 @@ async function logWebhookEvent(params: {
 async function claimEvent(uniqueEventId: string, payload: any, email: string, eventType: string): Promise<string | null> {
   if (!uniqueEventId) return crypto.randomUUID(); // no id = can't dedup, always process
 
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await (supabaseAdmin as any)
     .from('processed_webhooks')
     .insert({
       unique_event_id: uniqueEventId,
@@ -56,10 +56,8 @@ async function claimEvent(uniqueEventId: string, payload: any, email: string, ev
     .single();
 
   if (error) {
-    // 23505 = unique constraint violation → already processed
     if (error.code === '23505') return null;
     console.error('Error claiming webhook event:', error);
-    // Non-duplicate DB error: still try to process (best-effort)
     return crypto.randomUUID();
   }
 
