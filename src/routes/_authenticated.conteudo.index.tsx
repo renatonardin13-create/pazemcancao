@@ -46,8 +46,16 @@ function ContentPage() {
   // others go into type-based sections (legacy grouping)
   const categoryGroups: Record<string, any[]> = {};
   const typeGroups: Record<string, any[]> = {};
+  const journeyGroups: Record<string, any[]> = {};
 
   for (const item of items) {
+    // Journey grouping (complementary, item can be in both)
+    if (item.journey_group && item.show_as_card !== false) {
+      const jg = item.journey_group;
+      if (!journeyGroups[jg]) journeyGroups[jg] = [];
+      journeyGroups[jg].push(item);
+    }
+
     if (item.display_category && item.show_as_card !== false) {
       const cat = item.display_category;
       if (!categoryGroups[cat]) categoryGroups[cat] = [];
@@ -64,8 +72,15 @@ function ContentPage() {
     if (a.sort_order !== b.sort_order) return a.sort_order - b.sort_order;
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   };
+  const sortJourneyItems = (a: any, b: any) => {
+    if ((a.journey_order || 0) !== (b.journey_order || 0)) return (a.journey_order || 0) - (b.journey_order || 0);
+    return a.sort_order - b.sort_order;
+  };
   for (const arr of [...Object.values(categoryGroups), ...Object.values(typeGroups)]) {
     arr.sort(sortItems);
+  }
+  for (const arr of Object.values(journeyGroups)) {
+    arr.sort(sortJourneyItems);
   }
 
   return (
