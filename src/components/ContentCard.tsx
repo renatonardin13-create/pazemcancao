@@ -8,6 +8,48 @@ interface ContentCardProps {
   hasAccess: boolean;
   gradient: string;
   TypeIcon: LucideIcon;
+  badgeOverride?: string;
+}
+
+type BadgeStyle = { text: string; textClass: string; bgClass: string; borderClass: string };
+
+function computeAutoBadge(item: any, hasAccess: boolean): BadgeStyle | null {
+  // Manual badge takes priority — handled separately in JSX
+  if (item.badge_text) return null;
+
+  const accessMode = item.effectiveAccessMode || (item.is_free ? 'gratuito' : 'pago');
+  const isUnlocked = item.unlocked !== undefined ? item.unlocked : (item.is_free || hasAccess);
+  const daysLeft = item.unlockDate
+    ? Math.max(0, Math.ceil((new Date(item.unlockDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    : null;
+
+  // "LIBERA EM X DIAS"
+  if (accessMode === 'liberar_em_dias' && !isUnlocked && hasAccess && daysLeft !== null && daysLeft > 0) {
+    return { text: `⏳ ${daysLeft}d`, textClass: "text-blue-300/80", bgClass: "bg-blue-500/15", borderClass: "border-blue-500/20" };
+  }
+
+  // "CONTINUE" — started but not completed
+  if (item._progressViewed && !item._progressCompleted && isUnlocked) {
+    return { text: "▶ Continue", textClass: "text-amber-300/80", bgClass: "bg-amber-500/15", borderClass: "border-amber-500/20" };
+  }
+
+  // "GRÁTIS"
+  if (item.is_free) {
+    return { text: "Gratuito", textClass: "text-emerald-300/80", bgClass: "bg-emerald-500/15", borderClass: "border-emerald-500/20" };
+  }
+
+  // "NOVO" — created in last 7 days
+  const createdAt = item.created_at ? new Date(item.created_at) : null;
+  if (createdAt && (Date.now() - createdAt.getTime()) < 7 * 24 * 60 * 60 * 1000) {
+    return { text: "✨ Novo", textClass: "text-purple-300/80", bgClass: "bg-purple-500/15", borderClass: "border-purple-500/20" };
+  }
+
+  // "VIP" — paid content
+  if (accessMode === 'pago' && !item.is_free) {
+    return { text: "VIP", textClass: "text-gold/80", bgClass: "bg-gold/15", borderClass: "border-gold/20" };
+  }
+
+  return null;
 }
 
 function getYouTubeEmbedUrl(url: string): string | null {
