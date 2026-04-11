@@ -30,6 +30,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
   const isUnlocked = item.unlocked !== undefined ? item.unlocked : (item.is_free || hasAccess);
   const isLocked = !isUnlocked;
   const isPendingRelease = accessMode === 'liberar_em_dias' && !isUnlocked && hasAccess;
+  const isRuleLocked = !!item.unlockRuleMessage && !isUnlocked;
   const daysLeft = item.unlockDate
     ? Math.max(0, Math.ceil((new Date(item.unlockDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : item.release_days || null;
