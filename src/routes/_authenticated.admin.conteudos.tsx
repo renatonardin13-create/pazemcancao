@@ -54,6 +54,15 @@ const accessModeOptions = [
   { value: "liberar_em_dias", label: "Liberar em X dias após compra" },
 ];
 
+const journeyOptions = [
+  { value: "", label: "Nenhuma trilha" },
+  { value: "comece_por_aqui", label: "🌱 Comece por aqui" },
+  { value: "dias_dificeis", label: "🌧️ Para dias difíceis" },
+  { value: "ansiedade", label: "🕊️ Quando a ansiedade apertar" },
+  { value: "restauracao", label: "💛 Para restaurar a alma" },
+  { value: "perseveranca", label: "💪 Para continuar mesmo cansado" },
+];
+
 function AdminContentPage() {
   const queryClient = useQueryClient();
   const [formOpen, setFormOpen] = useState(false);
@@ -72,6 +81,8 @@ function AdminContentPage() {
   const [badgeText, setBadgeText] = useState("");
   const [showAsCard, setShowAsCard] = useState(true);
   const [sortOrder, setSortOrder] = useState<string>("");
+  const [journeyGroup, setJourneyGroup] = useState("");
+  const [journeyOrder, setJourneyOrder] = useState<string>("");
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [contentFile, setContentFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -96,6 +107,8 @@ function AdminContentPage() {
     setBadgeText("");
     setShowAsCard(true);
     setSortOrder("");
+    setJourneyGroup("");
+    setJourneyOrder("");
     setCoverFile(null);
     setContentFile(null);
     setEditItem(null);
@@ -114,6 +127,8 @@ function AdminContentPage() {
     setBadgeText(item.badge_text || "");
     setShowAsCard(item.show_as_card !== false);
     setSortOrder(item.sort_order != null ? String(item.sort_order) : "");
+    setJourneyGroup(item.journey_group || "");
+    setJourneyOrder(item.journey_order != null ? String(item.journey_order) : "");
     setCoverFile(null);
     setContentFile(null);
     setFormOpen(true);
@@ -167,6 +182,8 @@ function AdminContentPage() {
         badge_text: badgeText.trim() || undefined,
         show_as_card: showAsCard,
         sort_order: parsedSortOrder,
+        journey_group: journeyGroup || undefined,
+        journey_order: journeyOrder.trim() !== "" ? parseInt(journeyOrder, 10) : undefined,
       };
 
       if (editItem) {
@@ -375,6 +392,29 @@ function AdminContentPage() {
               <Input type="number" min="0" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} placeholder="Automático" className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
             </div>
 
+            {/* Journey Group */}
+            <div className="space-y-2">
+              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Trilha Emocional</Label>
+              <Select value={journeyGroup} onValueChange={setJourneyGroup} disabled={isSubmitting}>
+                <SelectTrigger className="bg-card/15 border-border/15 text-sm">
+                  <SelectValue placeholder="Selecione..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {journeyOptions.map((opt) => (
+                    <SelectItem key={opt.value || "none"} value={opt.value || "none"}>{opt.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Journey Order */}
+            {journeyGroup && journeyGroup !== "none" && (
+              <div className="space-y-2">
+                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Posição na Trilha</Label>
+                <Input type="number" min="1" value={journeyOrder} onChange={(e) => setJourneyOrder(e.target.value)} placeholder="Ex: 1, 2, 3..." className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
+              </div>
+            )}
+
             {/* Show as Card */}
             <div className="flex items-center justify-between rounded-xl border border-border/10 bg-card/5 p-4">
               <div>
@@ -481,6 +521,11 @@ function AdminContentPage() {
                       {item.badge_text && (
                         <Badge variant="outline" className="text-[9px] px-1.5 py-0 text-gold/50 border-gold/15 bg-gold/5">
                           {item.badge_text}
+                        </Badge>
+                      )}
+                      {item.journey_group && (
+                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 text-purple-400/50 border-purple-500/15 bg-purple-500/5">
+                          trilha: {item.journey_group.replace(/_/g, " ")}
                         </Badge>
                       )}
                       <span className="text-[9px] text-muted-foreground/20">#{item.sort_order}</span>
