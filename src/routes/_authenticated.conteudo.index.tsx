@@ -110,6 +110,48 @@ function ContentPage() {
           </div>
         ) : (
           <>
+            {/* Journey sections (emotional trails) */}
+            {Object.keys(journeyGroups).length > 0 && (
+              <section className="space-y-6">
+                <div className="text-center">
+                  <h2 className="font-display text-xl font-bold text-foreground/80 tracking-tight">
+                    ✨ Sua Jornada
+                  </h2>
+                  <p className="mt-1 text-[11px] text-muted-foreground/35">
+                    Trilhas guiadas para acompanhar seu momento
+                  </p>
+                </div>
+                {Object.entries(journeyGroups).map(([jg, jgItems]) => {
+                  const label = journeyLabels[jg] || jg.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+                  const config = typeConfig[jgItems[0]?.content_type] || typeConfig.material;
+                  return (
+                    <div key={`journey-${jg}`} className="space-y-4">
+                      <div className="flex items-center gap-3">
+                        <h3 className="font-display text-[15px] font-bold text-foreground/70 tracking-tight">
+                          {label}
+                        </h3>
+                        <span className="text-[10px] text-muted-foreground/25">{jgItems.length} item(ns)</span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                        {jgItems.map((item: any, idx: number) => {
+                          const itemConfig = typeConfig[item.content_type] || typeConfig.material;
+                          return (
+                            <ContentCard
+                              key={`j-${item.id}`}
+                              item={item}
+                              index={idx}
+                              hasAccess={item.is_free || hasAccess}
+                              gradient={itemConfig.gradient}
+                              TypeIcon={itemConfig.icon}
+                            />
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </section>
+            )}
             {/* Category-based sections (new display_category grouping) */}
             {Object.entries(categoryGroups).map(([cat, catItems]) => {
               const label = categoryLabels[cat] || cat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
