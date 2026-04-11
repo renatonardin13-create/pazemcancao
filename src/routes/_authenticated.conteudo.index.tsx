@@ -98,10 +98,9 @@ function ContentPage() {
   // "Continue sua caminhada" — items started but not completed
   const continueItems = useMemo(() => {
     return items.filter((item: any) => {
-      const p = progressMap[item.id];
-      return p?.viewed_at && !p?.completed_at && item.unlocked;
+      return item._progressViewed && !item._progressCompleted && item.unlocked;
     }).slice(0, 4);
-  }, [items, progressMap]);
+  }, [items]);
 
   // Sorted category entries — bonus first, then others in defined order
   const sortedCategories = useMemo(() => {
