@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Music, Play, Pause, Download, Search, Headphones } from "lucide-react";
+import { Music, Play, Pause, Download, Search, Headphones, Lock } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { FooterLinks } from "@/components/FooterLinks";
 import { useQuery } from "@tanstack/react-query";
@@ -84,6 +84,7 @@ function MusicLibraryPage() {
   });
 
   const canDownload = accessData?.canDownload !== false;
+  const isLocked = accessData?.trialExpired === true;
 
   const { data: catData } = useQuery({
     queryKey: ["categories"],
@@ -181,7 +182,31 @@ function MusicLibraryPage() {
           </motion.p>
         </motion.div>
 
-        {/* Search & filters */}
+        {/* Trial expired banner */}
+        {isLocked && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8 rounded-2xl border border-gold/20 bg-gold/5 p-5 text-center"
+          >
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Lock className="h-5 w-5 text-gold/60" />
+              <h3 className="font-display text-lg font-bold text-foreground/80">Período de teste encerrado</h3>
+            </div>
+            <p className="text-[13px] text-muted-foreground/50 mb-4">
+              Seu acesso de teste expirou. Adquira o acesso completo para continuar ouvindo os louvores.
+            </p>
+            <a
+              href="https://pazemcancao-oficial.lovable.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-gold/15 text-gold/70 border border-gold/20 px-6 py-2.5 text-[12px] font-semibold tracking-wider uppercase hover:bg-gold/25 hover:text-gold/90 transition-all duration-500"
+            >
+              Adquira aqui
+            </a>
+          </motion.div>
+        )}
+
         <motion.div
           initial="hidden"
           animate="visible"
@@ -291,6 +316,7 @@ function MusicLibraryPage() {
                           progress={progress}
                           handlePlayWithQueue={handlePlayWithQueue}
                           canDownload={canDownload}
+                          isLocked={isLocked}
                         />
                       ))}
                     </div>
@@ -311,6 +337,7 @@ function MusicLibraryPage() {
                             progress={progress}
                             handlePlayWithQueue={handlePlayWithQueue}
                             canDownload={canDownload}
+                            isLocked={isLocked}
                           />
                         ))}
                       </div>
@@ -341,21 +368,26 @@ interface TrackCardProps {
   progress: number;
   handlePlayWithQueue: (track: any, trackList: any[]) => void;
   canDownload: boolean;
+  isLocked: boolean;
 }
 
 function TrackCard({
   track, idx, icon, catTracks, isCarousel,
-  activeTrackRef, currentTrack, playing, progress, handlePlayWithQueue, canDownload,
+  activeTrackRef, currentTrack, playing, progress, handlePlayWithQueue, canDownload, isLocked,
 }: TrackCardProps) {
   const isThis = currentTrack?.id === track.id;
   const isPlaying = isThis && playing;
   const gradient = categoryGradients[track.category] || "from-sky-900/40 via-blue-950/30 to-slate-950/50";
 
+  const Wrapper = isLocked ? 'a' : Link;
+  const wrapperProps = isLocked
+    ? { href: "https://pazemcancao-oficial.lovable.app", target: "_blank", rel: "noopener noreferrer" }
+    : { to: "/musicas/$trackId" as const, params: { trackId: track.id } };
+
   return (
     <div ref={isThis ? activeTrackRef : undefined}>
-      <Link
-        to="/musicas/$trackId"
-        params={{ trackId: track.id }}
+      <Wrapper
+        {...(wrapperProps as any)}
         className={`group relative cursor-pointer block ${
           isCarousel ? "snap-start shrink-0 w-[260px] sm:w-[280px]" : ""
         }`}
@@ -370,11 +402,13 @@ function TrackCard({
           className={`relative rounded-2xl border transition-all duration-500 overflow-hidden ${
             isCarousel ? "h-full flex flex-col" : ""
           } ${
-            isPlaying
-              ? "border-gold/30 shadow-[0_8px_50px_-12px] shadow-gold/20 ring-1 ring-gold/10"
-              : isThis
-                ? "border-gold/15 shadow-[0_4px_30px_-10px] shadow-gold/10"
-                : "border-border/8 shadow-[0_4px_30px_-10px] shadow-black/20 hover:border-gold/15"
+            isLocked
+              ? "border-border/10 shadow-[0_4px_30px_-10px] shadow-black/20 opacity-70 grayscale-[30%]"
+              : isPlaying
+                ? "border-gold/30 shadow-[0_8px_50px_-12px] shadow-gold/20 ring-1 ring-gold/10"
+                : isThis
+                  ? "border-gold/15 shadow-[0_4px_30px_-10px] shadow-gold/10"
+                  : "border-border/8 shadow-[0_4px_30px_-10px] shadow-black/20 hover:border-gold/15"
           } bg-card/10`}
         >
           {/* Cover area */}
@@ -384,18 +418,29 @@ function TrackCard({
                 src={track.cover_url}
                 alt={track.title}
                 className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${
-                  isPlaying ? "scale-105 brightness-90" : "group-hover:scale-110"
+                  isLocked ? "brightness-50" : isPlaying ? "scale-105 brightness-90" : "group-hover:scale-110"
                 }`}
                 loading="lazy"
               />
             )}
             <div className={`absolute inset-0 transition-all duration-500 ${
-              isPlaying
-                ? "bg-gradient-to-t from-black/70 via-black/20 to-black/10"
-                : "bg-gradient-to-t from-black/60 via-transparent to-transparent"
+              isLocked
+                ? "bg-gradient-to-t from-black/80 via-black/40 to-black/20"
+                : isPlaying
+                  ? "bg-gradient-to-t from-black/70 via-black/20 to-black/10"
+                  : "bg-gradient-to-t from-black/60 via-transparent to-transparent"
             }`} />
 
-            {!track.cover_url && (
+            {/* Locked padlock overlay */}
+            {isLocked && (
+              <div className="absolute inset-0 flex items-center justify-center z-10">
+                <div className={`flex ${isCarousel ? "h-16 w-16 rounded-2xl" : "h-12 w-12 rounded-xl"} items-center justify-center backdrop-blur-sm bg-black/30 border border-white/10`}>
+                  <Lock className={`${isCarousel ? "h-7 w-7" : "h-5 w-5"} text-white/50`} />
+                </div>
+              </div>
+            )}
+
+            {!isLocked && !track.cover_url && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className={`flex ${isCarousel ? "h-16 w-16 rounded-2xl" : "h-12 w-12 rounded-xl"} items-center justify-center backdrop-blur-sm transition-all duration-700 ${
                   isPlaying ? "bg-gold/15 border border-gold/25 scale-110" : "bg-white/[0.04] border border-white/[0.06] group-hover:scale-105"
@@ -410,35 +455,39 @@ function TrackCard({
             )}
 
             {/* Now Playing overlay for covers */}
-            <AnimatePresence>
-              {isPlaying && track.cover_url && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute bottom-3 left-3"
-                >
-                  <NowPlayingBars />
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {!isLocked && (
+              <AnimatePresence>
+                {isPlaying && track.cover_url && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute bottom-3 left-3"
+                  >
+                    <NowPlayingBars />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
 
-            {/* Play button overlay */}
-            <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${
-              isPlaying ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-            }`}>
-              <motion.button
-                whileTap={{ scale: 0.9 }}
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); handlePlayWithQueue(track, catTracks); }}
-                className={`flex ${isCarousel ? "h-14 w-14" : "h-12 w-12"} items-center justify-center rounded-full transition-all duration-300 ${
-                  isPlaying
-                    ? "bg-gold/90 text-background shadow-xl shadow-gold/30"
-                    : "bg-gold/80 text-background shadow-xl shadow-gold/20 hover:bg-gold hover:scale-110"
-                }`}
-              >
-                {isPlaying ? <Pause className={`${isCarousel ? "h-6 w-6" : "h-5 w-5"}`} /> : <Play className={`${isCarousel ? "h-6 w-6" : "h-5 w-5"} ml-0.5`} />}
-              </motion.button>
-            </div>
+            {/* Play button overlay — hidden when locked */}
+            {!isLocked && (
+              <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${
+                isPlaying ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+              }`}>
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); handlePlayWithQueue(track, catTracks); }}
+                  className={`flex ${isCarousel ? "h-14 w-14" : "h-12 w-12"} items-center justify-center rounded-full transition-all duration-300 ${
+                    isPlaying
+                      ? "bg-gold/90 text-background shadow-xl shadow-gold/30"
+                      : "bg-gold/80 text-background shadow-xl shadow-gold/20 hover:bg-gold hover:scale-110"
+                  }`}
+                >
+                  {isPlaying ? <Pause className={`${isCarousel ? "h-6 w-6" : "h-5 w-5"}`} /> : <Play className={`${isCarousel ? "h-6 w-6" : "h-5 w-5"} ml-0.5`} />}
+                </motion.button>
+              </div>
+            )}
 
             {/* Category badge */}
             {isCarousel && (
@@ -448,28 +497,30 @@ function TrackCard({
             )}
 
             {/* Progress bar on card */}
-            <AnimatePresence>
-              {isThis && (
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-black/40"
-                >
+            {!isLocked && (
+              <AnimatePresence>
+                {isThis && (
                   <motion.div
-                    className="h-full bg-gradient-to-r from-gold/60 to-gold/90"
-                    style={{ width: `${progress}%` }}
-                    transition={{ duration: 0.15, ease: "linear" }}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    className="absolute bottom-0 left-0 right-0 h-1 bg-black/40"
+                  >
+                    <motion.div
+                      className="h-full bg-gradient-to-r from-gold/60 to-gold/90"
+                      style={{ width: `${progress}%` }}
+                      transition={{ duration: 0.15, ease: "linear" }}
+                    />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
           </div>
 
           {/* Info section */}
           <div className={`${isCarousel ? "p-4" : "p-3"}`}>
             <h3 className={`font-display ${isCarousel ? "text-[14px]" : "text-[13px]"} font-bold tracking-tight leading-snug truncate transition-colors duration-500 ${
-              isPlaying ? "text-gold" : isThis ? "text-gold/70" : "text-foreground/85 group-hover:text-foreground"
+              isLocked ? "text-muted-foreground/40" : isPlaying ? "text-gold" : isThis ? "text-gold/70" : "text-foreground/85 group-hover:text-foreground"
             }`}>
               {track.title}
             </h3>
@@ -480,7 +531,12 @@ function TrackCard({
                 }`}>
                   {track.duration}
                 </p>
-                {isPlaying && (
+                {isLocked && (
+                  <span className="text-[9px] font-semibold tracking-wider uppercase text-destructive/40 bg-destructive/8 px-1.5 py-0.5 rounded-full">
+                    Bloqueado
+                  </span>
+                )}
+                {!isLocked && isPlaying && (
                   <motion.span
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -490,7 +546,7 @@ function TrackCard({
                   </motion.span>
                 )}
               </div>
-              {canDownload && (track.download_url || track.storage_path) && (
+              {!isLocked && canDownload && (track.download_url || track.storage_path) && (
                 <button
                   onClick={(e) => {
                     e.preventDefault();
@@ -509,7 +565,7 @@ function TrackCard({
             </div>
           </div>
         </motion.div>
-      </Link>
+      </Wrapper>
     </div>
   );
 }

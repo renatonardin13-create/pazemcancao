@@ -26,7 +26,8 @@ export const checkBuyerAccess = createServerFn({ method: 'POST' })
       return { hasAccess: false, buyer: null };
     }
 
-    const { data: buyer } = await supabase
+    // First check with access_enabled
+    let { data: buyer } = await supabase
       .from('approved_buyers')
       .select('*')
       .eq('email', email.toLowerCase())
@@ -34,6 +35,21 @@ export const checkBuyerAccess = createServerFn({ method: 'POST' })
       .maybeSingle();
 
     if (!buyer) {
+      // Check if there's an expired trial (access_enabled may still be true but expired)
+      const { data: trialBuyer } = await supabase
+        .from('approved_buyers')
+        .select('*')
+        .eq('email', email.toLowerCase())
+        .maybeSingle();
+
+      if (trialBuyer?.is_trial && trialBuyer?.trial_expires_at) {
+        const expired = new Date(trialBuyer.trial_expires_at) < new Date();
+        if (expired) {
+          // Let them through but locked
+          return { hasAccess: true, buyer: { nome: trialBuyer.nome, product_name: trialBuyer.product_name }, isTrial: true, trialExpired: true, canDownload: false, trialExpiresAt: trialBuyer.trial_expires_at };
+        }
+      }
+
       return { hasAccess: false, buyer: null, isTrial: false, trialExpired: false, canDownload: true };
     }
 
@@ -42,15 +58,7 @@ export const checkBuyerAccess = createServerFn({ method: 'POST' })
     const trialExpired = isTrial && buyer.trial_expires_at && new Date(buyer.trial_expires_at) < new Date();
 
     if (trialExpired) {
-      // Auto-block expired trial
-      const { createClient } = await import('@supabase/supabase-js');
-      const adminUrl = process.env.SUPABASE_URL;
-      const adminKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-      if (adminUrl && adminKey) {
-        const adminClient = createClient(adminUrl, adminKey, { auth: { persistSession: false, autoRefreshToken: false } });
-        await adminClient.from('approved_buyers').update({ access_enabled: false }).eq('id', buyer.id);
-      }
-      return { hasAccess: false, buyer: null, isTrial: true, trialExpired: true, canDownload: false };
+      return { hasAccess: true, buyer: { nome: buyer.nome, product_name: buyer.product_name }, isTrial: true, trialExpired: true, canDownload: false, trialExpiresAt: buyer.trial_expires_at };
     }
 
     return {
