@@ -43,19 +43,29 @@ export const listContentItems = createServerFn({ method: 'POST' })
 
     // For each item, compute whether it's unlocked based on release_days
     const items = (data || []).map((item: any) => {
-      if (item.is_free) return { ...item, unlocked: true };
       if (isAdmin) return { ...item, unlocked: true };
-      if (!isBuyer) return { ...item, unlocked: false };
 
-      // Buyer has access — check release_days
-      if (item.release_days && buyerCreatedAt) {
-        const unlockDate = new Date(buyerCreatedAt);
-        unlockDate.setDate(unlockDate.getDate() + item.release_days);
-        const unlocked = new Date() >= unlockDate;
-        return { ...item, unlocked, unlockDate: unlockDate.toISOString() };
+      // Determine access mode: use access_mode field, fallback to is_free
+      const accessMode = item.access_mode || (item.is_free ? 'gratuito' : 'pago');
+
+      if (accessMode === 'gratuito') {
+        return { ...item, unlocked: true, effectiveAccessMode: 'gratuito' };
       }
 
-      return { ...item, unlocked: true };
+      if (accessMode === 'liberar_em_dias') {
+        if (!isBuyer) return { ...item, unlocked: false, effectiveAccessMode: 'liberar_em_dias' };
+        if (item.release_days && buyerCreatedAt) {
+          const unlockDate = new Date(buyerCreatedAt);
+          unlockDate.setDate(unlockDate.getDate() + item.release_days);
+          const unlocked = new Date() >= unlockDate;
+          return { ...item, unlocked, unlockDate: unlockDate.toISOString(), effectiveAccessMode: 'liberar_em_dias' };
+        }
+        return { ...item, unlocked: true, effectiveAccessMode: 'liberar_em_dias' };
+      }
+
+      // accessMode === 'pago' (default)
+      if (!isBuyer) return { ...item, unlocked: false, effectiveAccessMode: 'pago' };
+      return { ...item, unlocked: true, effectiveAccessMode: 'pago' };
     });
 
     return { items, hasFullAccess };
