@@ -17,6 +17,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
   component: AdminUsersPage,
@@ -26,6 +36,7 @@ function AdminUsersPage() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [editBuyer, setEditBuyer] = useState<any>(null);
   const [trialEmail, setTrialEmail] = useState("");
   const [trialName, setTrialName] = useState("");
@@ -421,11 +432,7 @@ function AdminUsersPage() {
                   </button>
 
                   <button
-                    onClick={() => {
-                      if (confirm(`Excluir ${buyer.nome || buyer.email}?`)) {
-                        removeBuyer.mutate(buyer.id);
-                      }
-                    }}
+                    onClick={() => setDeleteTarget(buyer)}
                     className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/30 hover:text-destructive/70 hover:bg-destructive/10 transition-all duration-300"
                     title="Excluir"
                   >
