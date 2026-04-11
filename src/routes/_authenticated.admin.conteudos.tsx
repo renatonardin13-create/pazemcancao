@@ -447,13 +447,13 @@ function AdminContentPage() {
             {/* Journey Group */}
             <div className="space-y-2">
               <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Trilha Emocional</Label>
-              <Select value={journeyGroup} onValueChange={setJourneyGroup} disabled={isSubmitting}>
+              <Select value={journeyGroup || "__none__"} onValueChange={(v) => setJourneyGroup(v === "__none__" ? "" : v)} disabled={isSubmitting}>
                 <SelectTrigger className="bg-card/15 border-border/15 text-sm">
                   <SelectValue placeholder="Selecione..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {journeyOptions.map((opt) => (
-                    <SelectItem key={opt.value || "none"} value={opt.value || "none"}>{opt.label}</SelectItem>
+                  {journeyOptions.map((opt: any) => (
+                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
