@@ -117,6 +117,8 @@ export const updateContentItem = createServerFn({ method: 'POST' })
     sort_order?: number;
     journey_group?: string;
     journey_order?: number;
+    unlock_rule_type?: string;
+    unlock_rule_content_id?: string | null;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);

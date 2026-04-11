@@ -55,6 +55,26 @@ export const listContentItems = createServerFn({ method: 'POST' })
       }
     }
 
+    // Fetch user behavior logs for unlock rules
+    let playedContentIds = new Set<string>();
+    let downloadedContentIds = new Set<string>();
+    if (email) {
+      const { data: plays } = await supabaseAdmin
+        .from('play_logs')
+        .select('track_id')
+        .eq('email', email);
+      if (plays) {
+        for (const p of plays) playedContentIds.add(p.track_id);
+      }
+      const { data: downloads } = await supabaseAdmin
+        .from('download_logs')
+        .select('track_id')
+        .eq('email', email);
+      if (downloads) {
+        for (const d of downloads) downloadedContentIds.add(d.track_id);
+      }
+    }
+
     const now = new Date();
 
     const items = (data || []).map((item: any) => {
