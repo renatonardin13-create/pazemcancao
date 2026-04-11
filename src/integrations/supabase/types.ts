@@ -152,6 +152,8 @@ export type Database = {
           show_as_card: boolean | null
           sort_order: number
           title: string
+          unlock_rule_content_id: string | null
+          unlock_rule_type: string | null
           updated_at: string
           video_url: string | null
         }
@@ -175,6 +177,8 @@ export type Database = {
           show_as_card?: boolean | null
           sort_order?: number
           title: string
+          unlock_rule_content_id?: string | null
+          unlock_rule_type?: string | null
           updated_at?: string
           video_url?: string | null
         }
@@ -198,10 +202,20 @@ export type Database = {
           show_as_card?: boolean | null
           sort_order?: number
           title?: string
+          unlock_rule_content_id?: string | null
+          unlock_rule_type?: string | null
           updated_at?: string
           video_url?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "content_items_unlock_rule_content_id_fkey"
+            columns: ["unlock_rule_content_id"]
+            isOneToOne: false
+            referencedRelation: "content_items"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       course_integrations: {
         Row: {
