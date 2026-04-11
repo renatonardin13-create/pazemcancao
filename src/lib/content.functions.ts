@@ -145,10 +145,25 @@ export const listContentItems = createServerFn({ method: 'POST' })
       };
     });
 
+    // Fetch user_content_progress for richer recommendations
+    let progressMap: Record<string, any> = {};
+    if (email) {
+      const { data: progressRows } = await supabaseAdmin
+        .from('user_content_progress' as any)
+        .select('content_id, viewed_at, completed_at, downloaded_at, last_position_seconds')
+        .eq('user_email', email);
+      if (progressRows) {
+        for (const p of progressRows as any[]) {
+          progressMap[p.content_id] = p;
+        }
+      }
+    }
+
     return {
       items,
       hasFullAccess,
       viewedIds: Array.from(playedContentIds),
       downloadedIds: Array.from(downloadedContentIds),
+      progressMap,
     };
   });
