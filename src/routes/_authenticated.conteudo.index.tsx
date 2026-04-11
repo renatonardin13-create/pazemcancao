@@ -4,6 +4,7 @@ import { listContentItems } from "@/lib/content.functions";
 import { AppHeader } from "@/components/AppHeader";
 import { FooterLinks } from "@/components/FooterLinks";
 import { ContentCard } from "@/components/ContentCard";
+import { RecommendedSection } from "@/components/RecommendedSection";
 import { BookOpen, Video, GraduationCap, FileText } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/conteudo/")({
@@ -110,6 +111,14 @@ function ContentPage() {
           </div>
         ) : (
           <>
+            {/* Personalized recommendations */}
+            <RecommendedSection
+              items={items}
+              hasAccess={hasAccess}
+              viewedIds={data?.viewedIds || []}
+              downloadedIds={data?.downloadedIds || []}
+            />
+
             {/* Journey sections (emotional trails) */}
             {Object.keys(journeyGroups).length > 0 && (
               <section className="space-y-6">
