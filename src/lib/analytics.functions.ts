@@ -47,18 +47,26 @@ export const logDownload = createServerFn({ method: 'POST' })
 
 export const getDashboardAnalytics = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { days?: number }) => input)
+  .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
-    // Most played tracks (top 10)
+    const days = data?.days || 30;
+    const sinceDate = new Date();
+    sinceDate.setDate(sinceDate.getDate() - days);
+    const sinceISO = sinceDate.toISOString();
+
+    // Most played tracks (within period)
     const { data: playLogs } = await supabaseAdmin
       .from('play_logs')
-      .select('track_id')
+      .select('track_id, email, played_at')
+      .gte('played_at', sinceISO)
       .limit(5000);
 
     const { data: downloadLogs } = await supabaseAdmin
       .from('download_logs')
       .select('track_id, email, downloaded_at')
+      .gte('downloaded_at', sinceISO)
       .order('downloaded_at', { ascending: false })
       .limit(5000);
 
@@ -108,13 +116,9 @@ export const getDashboardAnalytics = createServerFn({ method: 'POST' })
       downloadedAt: l.downloaded_at,
     }));
 
-    // User activity: plays per user
+    // User activity
     const userPlays = new Map<string, number>();
-    const { data: allPlays } = await supabaseAdmin
-      .from('play_logs')
-      .select('email')
-      .limit(5000);
-    (allPlays || []).forEach((l: any) => {
+    (playLogs || []).forEach((l: any) => {
       userPlays.set(l.email, (userPlays.get(l.email) || 0) + 1);
     });
 
@@ -123,7 +127,6 @@ export const getDashboardAnalytics = createServerFn({ method: 'POST' })
       userDownloads.set(l.email, (userDownloads.get(l.email) || 0) + 1);
     });
 
-    // Merge into user activity list
     const allEmails = new Set([...userPlays.keys(), ...userDownloads.keys()]);
     const userActivity = Array.from(allEmails)
       .map(email => ({
@@ -134,17 +137,9 @@ export const getDashboardAnalytics = createServerFn({ method: 'POST' })
       .sort((a, b) => (b.plays + b.downloads) - (a.plays + a.downloads))
       .slice(0, 20);
 
-    // Daily play counts (last 30 days)
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-    const { data: recentPlays } = await supabaseAdmin
-      .from('play_logs')
-      .select('played_at')
-      .gte('played_at', thirtyDaysAgo.toISOString())
-      .limit(5000);
-
+    // Daily play counts (within period)
     const dailyPlays = new Map<string, number>();
-    (recentPlays || []).forEach((l: any) => {
+    (playLogs || []).forEach((l: any) => {
       const day = l.played_at.split('T')[0];
       dailyPlays.set(day, (dailyPlays.get(day) || 0) + 1);
     });
