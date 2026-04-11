@@ -117,6 +117,10 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
         hasCover: !!cover_url,
       });
 
+      const computedReleaseDate = isBonus && bonusDays && parseInt(bonusDays) > 0
+        ? new Date(Date.now() + parseInt(bonusDays) * 86400000).toISOString().split("T")[0]
+        : null;
+
       await updateTrack({
         data: {
           id: track.id,
@@ -125,7 +129,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
           description: description.trim() || undefined,
           cover_url: cover_url === null ? "" : (cover_url || undefined),
           is_bonus: isBonus,
-          bonus_release_date: isBonus && bonusReleaseDate ? bonusReleaseDate : null,
+          bonus_release_date: computedReleaseDate,
         },
       });
     },
@@ -297,17 +301,28 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
             {isBonus && (
               <div className="space-y-2">
                 <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
-                  Data de Liberação
+                  Liberar em quantos dias?
                 </Label>
-                <Input
-                  type="date"
-                  value={bonusReleaseDate}
-                  onChange={(e) => setBonusReleaseDate(e.target.value)}
-                  className="bg-card/15 border-border/15 text-sm"
-                  disabled={isSubmitting}
-                />
+                <div className="flex items-center gap-2">
+                  <Input
+                    type="number"
+                    min="1"
+                    max="365"
+                    placeholder="Ex: 7"
+                    value={bonusDays}
+                    onChange={(e) => setBonusDays(e.target.value)}
+                    className="bg-card/15 border-border/15 text-sm w-24"
+                    disabled={isSubmitting}
+                  />
+                  <span className="text-xs text-muted-foreground/40">dias</span>
+                </div>
+                {bonusDays && parseInt(bonusDays) > 0 && (
+                  <p className="text-[10px] text-amber-400/50">
+                    📅 Será liberada em {new Date(Date.now() + parseInt(bonusDays) * 86400000).toLocaleDateString("pt-BR")}
+                  </p>
+                )}
                 <p className="text-[9px] text-muted-foreground/30">
-                  A música ficará bloqueada até esta data. Se não definir, ficará bloqueada indefinidamente.
+                  A música ficará bloqueada por esse período. Se não definir, ficará bloqueada indefinidamente.
                 </p>
               </div>
             )}
