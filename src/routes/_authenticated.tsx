@@ -13,7 +13,7 @@ function AuthenticatedLayout() {
   const { isAuthenticated, loading, adminLoading, isAdmin, logout, user, blocked, blockMessage } = useAuth();
   const navigate = useNavigate();
 
-  const [accessData, setAccessData] = useState<{ hasAccess: boolean; buyer: any; isTrial?: boolean; trialExpired?: boolean; canDownload?: boolean; trialExpiresAt?: string } | null>(null);
+  const [accessData, setAccessData] = useState<{ hasAccess: boolean; buyer: any; isTrial?: boolean; trialExpired?: boolean; canDownload?: boolean; trialExpiresAt?: string | null } | null>(null);
   const [accessLoading, setAccessLoading] = useState(true);
 
   useEffect(() => {
