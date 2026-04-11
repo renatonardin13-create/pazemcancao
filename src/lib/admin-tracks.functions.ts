@@ -18,16 +18,57 @@ async function verifyAdmin(supabase: any, userId: string) {
 
 export const listAdminTracks = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
+  .inputValidator((input: {
+    page?: number;
+    pageSize?: number;
+    search?: string;
+    category?: string;
+    status?: string;
+  }) => input)
+  .handler(async ({ data, context }) => {
+    await verifyAdmin(context.supabase, context.userId);
+
+    const page = data.page || 1;
+    const pageSize = data.pageSize || 20;
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize - 1;
+
+    let query = supabaseAdmin
+      .from('tracks')
+      .select('*', { count: 'exact' });
+
+    if (data.search) {
+      query = query.ilike('title', `%${data.search}%`);
+    }
+    if (data.category && data.category !== 'all') {
+      query = query.eq('category', data.category);
+    }
+    if (data.status === 'active') {
+      query = query.eq('is_active', true);
+    } else if (data.status === 'inactive') {
+      query = query.eq('is_active', false);
+    }
+
+    const { data: tracks, error, count } = await query
+      .order('sort_order', { ascending: true })
+      .range(from, to);
+
+    if (error) throw new Error(error.message);
+    return { tracks: tracks || [], total: count || 0, page, pageSize };
+  });
+
+export const listAdminTrackCategories = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
-    const { data: tracks, error } = await supabaseAdmin
+    const { data, error } = await supabaseAdmin
       .from('tracks')
-      .select('*')
-      .order('sort_order', { ascending: true });
+      .select('category');
 
     if (error) throw new Error(error.message);
-    return { tracks: tracks || [] };
+    const categories = Array.from(new Set((data || []).map((t: any) => t.category))).sort();
+    return { categories };
   });
 
 export const createTrack = createServerFn({ method: 'POST' })
