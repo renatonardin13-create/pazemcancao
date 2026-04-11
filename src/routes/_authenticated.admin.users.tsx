@@ -1,17 +1,52 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { Users, ShieldCheck, Ban, Activity } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Users, ShieldCheck, Ban, Activity, UserPlus, Clock, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { listApprovedBuyers } from "@/lib/admin-users.functions";
+import { createTrialUser } from "@/lib/admin-trial.functions";
+import { useState } from "react";
+import { toast } from "sonner";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
   component: AdminUsersPage,
 });
 
 function AdminUsersPage() {
+  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
+  const [trialEmail, setTrialEmail] = useState("");
+  const [trialName, setTrialName] = useState("");
+  const [trialDays, setTrialDays] = useState(7);
+
   const { data, isLoading } = useQuery({
     queryKey: ["admin-users"],
     queryFn: () => listApprovedBuyers(),
+  });
+
+  const createTrial = useMutation({
+    mutationFn: (input: { email: string; nome: string; trialDays: number }) =>
+      createTrialUser({ data: input }),
+    onSuccess: () => {
+      toast.success("Cliente de teste cadastrado com sucesso! Um e-mail foi enviado para definir a senha.");
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      setOpen(false);
+      setTrialEmail("");
+      setTrialName("");
+      setTrialDays(7);
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Erro ao cadastrar cliente de teste");
+    },
   });
 
   const buyers = data?.buyers ?? [];
@@ -21,47 +56,112 @@ function AdminUsersPage() {
   );
 
   const totalUsers = buyers.length;
-  const enabledUsers = buyers.filter((buyer: { access_enabled: boolean }) => buyer.access_enabled).length;
-  const blockedUsers = buyers.filter((buyer: { access_enabled: boolean }) => !buyer.access_enabled).length;
-  const onlineUsers = buyers.filter((buyer: { email: string }) => activeSessionEmails.has(buyer.email.toLowerCase())).length;
+  const enabledUsers = buyers.filter((buyer: any) => buyer.access_enabled).length;
+  const blockedUsers = buyers.filter((buyer: any) => !buyer.access_enabled).length;
+  const onlineUsers = buyers.filter((buyer: any) => activeSessionEmails.has(buyer.email.toLowerCase())).length;
+  const trialUsers = buyers.filter((buyer: any) => buyer.is_trial).length;
+
+  const formatDate = (dateStr: string | null) => {
+    if (!dateStr) return "—";
+    return new Date(dateStr).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+  };
+
+  const isTrialExpired = (buyer: any) => {
+    if (!buyer.is_trial || !buyer.trial_expires_at) return false;
+    return new Date(buyer.trial_expires_at) < new Date();
+  };
+
+  const daysLeft = (buyer: any) => {
+    if (!buyer.is_trial || !buyer.trial_expires_at) return null;
+    const diff = new Date(buyer.trial_expires_at).getTime() - Date.now();
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+  };
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
-      <div>
-        <h1 className="font-display text-2xl font-bold text-foreground/85 tracking-tight">
-          Usuários
-        </h1>
-        <p className="mt-1 text-[13px] text-muted-foreground/40">
-          Gerencie os compradores com acesso ao pack de músicas
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="font-display text-2xl font-bold text-foreground/85 tracking-tight">
+            Usuários
+          </h1>
+          <p className="mt-1 text-[13px] text-muted-foreground/40">
+            Gerencie os compradores e clientes de teste
+          </p>
+        </div>
+
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="gap-2">
+              <UserPlus className="h-4 w-4" />
+              Cadastrar Teste
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="font-display">Cadastrar Cliente de Teste</DialogTitle>
+            </DialogHeader>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                createTrial.mutate({ email: trialEmail, nome: trialName, trialDays });
+              }}
+              className="space-y-4 mt-4"
+            >
+              <div className="space-y-2">
+                <Label htmlFor="trial-name">Nome</Label>
+                <Input
+                  id="trial-name"
+                  value={trialName}
+                  onChange={(e) => setTrialName(e.target.value)}
+                  placeholder="Nome do cliente"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="trial-email">E-mail</Label>
+                <Input
+                  id="trial-email"
+                  type="email"
+                  value={trialEmail}
+                  onChange={(e) => setTrialEmail(e.target.value)}
+                  placeholder="email@exemplo.com"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="trial-days">Dias de teste</Label>
+                <Input
+                  id="trial-days"
+                  type="number"
+                  min={1}
+                  max={90}
+                  value={trialDays}
+                  onChange={(e) => setTrialDays(Number(e.target.value))}
+                  required
+                />
+                <p className="text-[11px] text-muted-foreground/40">
+                  O cliente poderá apenas ouvir os louvores (sem download). Após o prazo, o acesso será bloqueado automaticamente.
+                </p>
+              </div>
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={createTrial.isPending}
+              >
+                {createTrial.isPending ? "Cadastrando..." : "Cadastrar Cliente de Teste"}
+              </Button>
+            </form>
+          </DialogContent>
+        </Dialog>
       </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {[
-          {
-            label: "Usuários",
-            value: totalUsers,
-            icon: Users,
-            color: "text-foreground/70",
-          },
-          {
-            label: "Com acesso",
-            value: enabledUsers,
-            icon: ShieldCheck,
-            color: "text-emerald-400/60",
-          },
-          {
-            label: "Bloqueados",
-            value: blockedUsers,
-            icon: Ban,
-            color: "text-destructive/60",
-          },
-          {
-            label: "Online",
-            value: onlineUsers,
-            icon: Activity,
-            color: "text-gold/60",
-          },
+          { label: "Usuários", value: totalUsers, icon: Users, color: "text-foreground/70" },
+          { label: "Com acesso", value: enabledUsers, icon: ShieldCheck, color: "text-emerald-400/60" },
+          { label: "Bloqueados", value: blockedUsers, icon: Ban, color: "text-destructive/60" },
+          { label: "Online", value: onlineUsers, icon: Activity, color: "text-gold/60" },
+          { label: "Em teste", value: trialUsers, icon: Clock, color: "text-amber-400/60" },
         ].map((stat) => (
           <div
             key={stat.label}
@@ -96,6 +196,9 @@ function AdminUsersPage() {
           {buyers.map((buyer: any) => {
             const isOnline = activeSessionEmails.has(buyer.email.toLowerCase());
             const isEnabled = buyer.access_enabled;
+            const isTrial = buyer.is_trial;
+            const expired = isTrialExpired(buyer);
+            const remaining = daysLeft(buyer);
 
             return (
               <div
@@ -113,7 +216,18 @@ function AdminUsersPage() {
                   <p className="truncate text-[11px] text-muted-foreground/30">{buyer.email}</p>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap justify-end">
+                  {isTrial && (
+                    <Badge
+                      variant="outline"
+                      className={expired
+                        ? "border-destructive/20 bg-destructive/8 text-destructive/60"
+                        : "border-amber-500/20 bg-amber-500/8 text-amber-400/70"}
+                    >
+                      <Clock className="h-3 w-3 mr-1" />
+                      {expired ? "Expirado" : `${remaining}d restantes`}
+                    </Badge>
+                  )}
                   <Badge
                     variant="outline"
                     className={isOnline
@@ -128,7 +242,7 @@ function AdminUsersPage() {
                       ? "border-emerald-500/15 bg-emerald-500/8 text-emerald-400/60"
                       : "border-destructive/15 bg-destructive/8 text-destructive/60"}
                   >
-                    {isEnabled ? "Ativo" : "Bloqueado"}
+                    {isEnabled ? (isTrial ? "Teste" : "Ativo") : "Bloqueado"}
                   </Badge>
                 </div>
               </div>
