@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getDashboardStats } from "@/lib/admin-dashboard.functions";
 import { getDashboardAnalytics } from "@/lib/analytics.functions";
@@ -11,15 +12,23 @@ import {
   AreaChart, Area,
 } from "recharts";
 
+const PERIOD_OPTIONS = [
+  { label: "7 dias", value: 7 },
+  { label: "30 dias", value: 30 },
+  { label: "90 dias", value: 90 },
+] as const;
+
 export function AdminDashboard() {
+  const [days, setDays] = useState(30);
+
   const { data, isLoading } = useQuery({
     queryKey: ["admin-dashboard"],
     queryFn: () => getDashboardStats(),
   });
 
   const { data: analytics, isLoading: analyticsLoading } = useQuery({
-    queryKey: ["admin-analytics"],
-    queryFn: () => getDashboardAnalytics(),
+    queryKey: ["admin-analytics", days],
+    queryFn: () => getDashboardAnalytics({ data: { days } }),
   });
 
   return (
@@ -64,7 +73,27 @@ export function AdminDashboard() {
         ))}
       </div>
 
-      {/* Analytics Tabs */}
+      {/* Period filter + Analytics Tabs */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-foreground/60">Análise de Engajamento</h2>
+          <div className="flex gap-1 rounded-xl bg-muted/10 border border-border/10 p-0.5">
+            {PERIOD_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setDays(opt.value)}
+                className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
+                  days === opt.value
+                    ? "bg-primary/20 text-primary shadow-sm"
+                    : "text-muted-foreground/40 hover:text-muted-foreground/60"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList className="bg-muted/10 border border-border/10">
           <TabsTrigger value="overview" className="text-[11px] data-[state=active]:bg-card/20">
@@ -84,7 +113,7 @@ export function AdminDashboard() {
         {/* Daily plays chart */}
         <TabsContent value="overview">
           <div className="rounded-2xl border border-border/15 bg-card/5 p-6">
-            <h3 className="text-sm font-semibold text-foreground/70 mb-4">Plays nos últimos 30 dias</h3>
+            <h3 className="text-sm font-semibold text-foreground/70 mb-4">Plays nos últimos {days} dias</h3>
             {analyticsLoading ? (
               <p className="text-[11px] text-muted-foreground/25 animate-pulse py-12 text-center">Carregando...</p>
             ) : !analytics?.dailyPlayData?.length ? (
@@ -228,6 +257,7 @@ export function AdminDashboard() {
           </div>
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 }
