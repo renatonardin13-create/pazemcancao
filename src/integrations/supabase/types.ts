@@ -294,6 +294,27 @@ export type Database = {
           },
         ]
       }
+      download_logs: {
+        Row: {
+          downloaded_at: string
+          email: string
+          id: string
+          track_id: string
+        }
+        Insert: {
+          downloaded_at?: string
+          email: string
+          id?: string
+          track_id: string
+        }
+        Update: {
+          downloaded_at?: string
+          email?: string
+          id?: string
+          track_id?: string
+        }
+        Relationships: []
+      }
       enrollments: {
         Row: {
           completed_at: string | null
@@ -466,6 +487,30 @@ export type Database = {
           message?: string
           title?: string
           type?: string
+        }
+        Relationships: []
+      }
+      play_logs: {
+        Row: {
+          duration_seconds: number
+          email: string
+          id: string
+          played_at: string
+          track_id: string
+        }
+        Insert: {
+          duration_seconds?: number
+          email: string
+          id?: string
+          played_at?: string
+          track_id: string
+        }
+        Update: {
+          duration_seconds?: number
+          email?: string
+          id?: string
+          played_at?: string
+          track_id?: string
         }
         Relationships: []
       }
