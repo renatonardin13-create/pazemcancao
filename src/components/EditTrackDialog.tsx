@@ -46,7 +46,13 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
   const [category, setCategory] = useState(track.category);
   const [description, setDescription] = useState(track.description || "");
   const [isBonus, setIsBonus] = useState(track.is_bonus || false);
-  const [bonusReleaseDate, setBonusReleaseDate] = useState(track.bonus_release_date || "");
+  const [bonusDays, setBonusDays] = useState<string>(() => {
+    if (!track.bonus_release_date) return "";
+    const release = new Date(track.bonus_release_date + "T00:00:00");
+    const now = new Date();
+    const diffDays = Math.max(0, Math.ceil((release.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)));
+    return diffDays > 0 ? String(diffDays) : "";
+  });
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(track.cover_url);
   const [uploading, setUploading] = useState(false);
