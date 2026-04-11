@@ -523,6 +523,11 @@ function AdminContentPage() {
                           {item.badge_text}
                         </Badge>
                       )}
+                      {item.journey_group && (
+                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 text-purple-400/50 border-purple-500/15 bg-purple-500/5">
+                          trilha: {item.journey_group.replace(/_/g, " ")}
+                        </Badge>
+                      )}
                       <span className="text-[9px] text-muted-foreground/20">#{item.sort_order}</span>
                     </div>
                   </div>
