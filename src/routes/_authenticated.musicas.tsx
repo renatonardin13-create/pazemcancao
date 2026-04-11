@@ -403,6 +403,12 @@ function TrackCard({
     <div ref={isThis ? activeTrackRef : undefined}>
       <Wrapper
         {...(wrapperProps as any)}
+        onClick={isBonusLocked ? () => {
+          toast.info(bonusReleaseFormatted
+            ? `🎁 Este bônus será liberado em ${bonusReleaseFormatted}`
+            : "🎁 Este bônus ainda não tem data de liberação definida"
+          );
+        } : undefined}
         className={`group relative cursor-pointer block ${
           isCarousel ? "snap-start shrink-0 w-[260px] sm:w-[280px]" : ""
         }`}
