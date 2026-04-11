@@ -33,6 +33,7 @@ function ContentPage() {
   const items = data?.items || [];
   const progressMap = data?.progressMap || {};
   const dbCategories = data?.categories || [];
+  const dbJourneys = data?.journeys || [];
 
   // Build category lookup from DB
   const categoryLookup = useMemo(() => {
@@ -42,6 +43,15 @@ function ContentPage() {
     }
     return map;
   }, [dbCategories]);
+
+  // Build journey labels from DB
+  const journeyLabels = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const j of dbJourneys) {
+      map[j.slug] = j.icon ? `${j.icon} ${j.name}` : j.name;
+    }
+    return map;
+  }, [dbJourneys]);
 
   // Group items
   const categoryGroups: Record<string, any[]> = {};
