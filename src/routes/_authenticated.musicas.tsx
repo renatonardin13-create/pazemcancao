@@ -4,6 +4,7 @@ import { AppHeader } from "@/components/AppHeader";
 import { FooterLinks } from "@/components/FooterLinks";
 import { useQuery } from "@tanstack/react-query";
 import { listActiveTracks, listCategories } from "@/lib/tracks.functions";
+import { checkBuyerAccess } from "@/lib/access.functions";
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { usePlayer } from "@/hooks/use-player";
@@ -75,6 +76,14 @@ function MusicLibraryPage() {
   const [initialized, setInitialized] = useState(false);
   const activeTrackRef = useRef<HTMLDivElement>(null);
   const prevTrackId = useRef<string | number | null>(null);
+
+  const { data: accessData } = useQuery({
+    queryKey: ["buyer-access"],
+    queryFn: () => checkBuyerAccess(),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const canDownload = accessData?.canDownload !== false;
 
   const { data: catData } = useQuery({
     queryKey: ["categories"],
