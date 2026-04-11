@@ -423,7 +423,41 @@ function AdminContentPage() {
               </div>
             )}
 
-            {/* Show as Card */}
+            {/* Unlock Rule */}
+            <div className="space-y-2">
+              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Regra de Desbloqueio</Label>
+              <Select value={unlockRuleType} onValueChange={setUnlockRuleType} disabled={isSubmitting}>
+                <SelectTrigger className="bg-card/15 border-border/15 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Sem regra (padrão)</SelectItem>
+                  <SelectItem value="after_watch">Após assistir outro conteúdo</SelectItem>
+                  <SelectItem value="after_complete">Após concluir outro conteúdo</SelectItem>
+                  <SelectItem value="after_download">Após baixar outro conteúdo</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {unlockRuleType !== "none" && (
+              <div className="space-y-2">
+                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Conteúdo Pré-requisito</Label>
+                <Select value={unlockRuleContentId} onValueChange={setUnlockRuleContentId} disabled={isSubmitting}>
+                  <SelectTrigger className="bg-card/15 border-border/15 text-sm">
+                    <SelectValue placeholder="Selecione o conteúdo..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {items.filter((i: any) => i.id !== editItem?.id).map((i: any) => (
+                      <SelectItem key={i.id} value={i.id}>{i.title}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-[9px] text-muted-foreground/25">
+                  O usuário precisará consumir este conteúdo antes de desbloquear o atual.
+                </p>
+              </div>
+            )}
+
             <div className="flex items-center justify-between rounded-xl border border-border/10 bg-card/5 p-4">
               <div>
                 <p className="text-[12px] font-semibold text-foreground/70">Exibir como Card</p>
