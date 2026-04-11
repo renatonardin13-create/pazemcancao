@@ -14,11 +14,17 @@ interface RecommendedSectionProps {
   hasAccess: boolean;
   viewedIds: string[];
   downloadedIds: string[];
+  progressMap?: Record<string, any>;
 }
 
-export function RecommendedSection({ items, hasAccess, viewedIds, downloadedIds }: RecommendedSectionProps) {
+export function RecommendedSection({ items, hasAccess, viewedIds, downloadedIds, progressMap = {} }: RecommendedSectionProps) {
   const recommendations = useMemo(() => {
     const consumed = new Set([...viewedIds, ...downloadedIds]);
+    const completedIds = new Set(
+      Object.entries(progressMap)
+        .filter(([, p]) => p.completed_at)
+        .map(([id]) => id)
+    );
 
     // Score each item
     const scored = items
@@ -27,7 +33,13 @@ export function RecommendedSection({ items, hasAccess, viewedIds, downloadedIds 
         let score = 0;
 
         // Strongly prefer unseen content
-        if (!consumed.has(item.id)) score += 10;
+        if (!consumed.has(item.id) && !progressMap[item.id]?.viewed_at) score += 10;
+
+        // Started but not completed — "continue" boost
+        if (progressMap[item.id]?.viewed_at && !progressMap[item.id]?.completed_at) score += 8;
+
+        // Penalize already completed
+        if (completedIds.has(item.id)) score -= 5;
 
         // Prefer unlocked content
         if (item.unlocked) score += 5;
@@ -52,7 +64,7 @@ export function RecommendedSection({ items, hasAccess, viewedIds, downloadedIds 
       .map((s) => s.item);
 
     return scored;
-  }, [items, viewedIds, downloadedIds]);
+  }, [items, viewedIds, downloadedIds, progressMap]);
 
   if (recommendations.length === 0) return null;
 
