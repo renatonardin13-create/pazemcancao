@@ -558,9 +558,12 @@ function TrackCard({
                   {track.duration}
                 </p>
                 {effectiveLocked && (
-                  <span className="text-[9px] font-semibold tracking-wider uppercase text-destructive/40 bg-destructive/8 px-1.5 py-0.5 rounded-full">
-                    Bloqueado
+                  <span className={`text-[9px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded-full ${
+                    isBonusLocked ? "text-amber-400/60 bg-amber-400/10" : "text-destructive/40 bg-destructive/8"
+                  }`}>
+                    {isBonusLocked ? "🎁 Bônus" : "Bloqueado"}
                   </span>
+                )}
                 )}
                 {!effectiveLocked && isPlaying && (
                   <motion.span
