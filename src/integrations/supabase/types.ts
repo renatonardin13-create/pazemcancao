@@ -423,6 +423,7 @@ export type Database = {
       }
       tracks: {
         Row: {
+          bonus_release_date: string | null
           category: string
           cover_url: string | null
           created_at: string
@@ -431,12 +432,14 @@ export type Database = {
           duration: string
           id: string
           is_active: boolean
+          is_bonus: boolean
           sort_order: number
           storage_path: string
           title: string
           updated_at: string
         }
         Insert: {
+          bonus_release_date?: string | null
           category?: string
           cover_url?: string | null
           created_at?: string
@@ -445,12 +448,14 @@ export type Database = {
           duration?: string
           id?: string
           is_active?: boolean
+          is_bonus?: boolean
           sort_order?: number
           storage_path: string
           title: string
           updated_at?: string
         }
         Update: {
+          bonus_release_date?: string | null
           category?: string
           cover_url?: string | null
           created_at?: string
@@ -459,6 +464,7 @@ export type Database = {
           duration?: string
           id?: string
           is_active?: boolean
+          is_bonus?: boolean
           sort_order?: number
           storage_path?: string
           title?: string
