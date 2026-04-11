@@ -142,12 +142,16 @@ export const listContentItems = createServerFn({ method: 'POST' })
 
       const finalUnlocked = baseUnlocked && ruleMet;
 
+      // Resolve prerequisite content info for the card
+      const prerequisiteTitle = ruleContentId ? titleMap.get(ruleContentId) : undefined;
+
       return {
         ...item,
         unlocked: finalUnlocked,
         effectiveAccessMode,
         ...(unlockDate ? { unlockDate } : {}),
         ...(unlockRuleMessage ? { unlockRuleMessage } : {}),
+        ...(ruleContentId && prerequisiteTitle ? { unlockRuleContentId: ruleContentId, unlockRuleContentTitle: prerequisiteTitle } : {}),
       };
     });
 
