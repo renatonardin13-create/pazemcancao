@@ -100,7 +100,7 @@ function AdminContentPage() {
   });
 
   const categoryOptions = useMemo(() => {
-    const base = [{ value: "", label: "Nenhuma (padrão por tipo)" }];
+    const base = [{ value: "__none__", label: "Nenhuma (padrão por tipo)" }];
     if (catData?.categories) {
       for (const c of catData.categories) {
         base.push({ value: c.slug, label: `${c.icon || ''} ${c.name}`.trim() });
