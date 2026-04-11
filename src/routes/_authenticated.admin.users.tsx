@@ -85,6 +85,17 @@ function AdminUsersPage() {
     },
   });
 
+  const removeBuyer = useMutation({
+    mutationFn: (buyerId: string) => deleteBuyer({ data: { buyerId } }),
+    onSuccess: () => {
+      toast.success("Usuário excluído!");
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Erro ao excluir");
+    },
+  });
+
   const openEditDialog = (buyer: any) => {
     setEditBuyer(buyer);
     setEditNome(buyer.nome || "");
