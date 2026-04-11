@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listAdminTracks, deleteTrack, updateTrack, regenerateCover } from "@/lib/admin-tracks.functions";
 import { sendBonusNotification } from "@/lib/notifications.functions";
-import { Music, Plus, Trash2, ToggleLeft, ToggleRight, ExternalLink, ImageIcon, Loader2, Pencil, Gift, Bell } from "lucide-react";
+import { Music, Plus, Trash2, ToggleLeft, ToggleRight, ExternalLink, ImageIcon, Loader2, Pencil, Gift, Bell, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { AddTrackForm } from "@/components/AddTrackForm";
@@ -16,6 +16,9 @@ export const Route = createFileRoute("/_authenticated/admin/tracks")({
 function AdminTracksPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingTrack, setEditingTrack] = useState<any>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filterCategory, setFilterCategory] = useState("all");
+  const [filterStatus, setFilterStatus] = useState<"all" | "active" | "inactive">("all");
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -63,7 +66,16 @@ function AdminTracksPage() {
     },
   });
 
-  const tracks = data?.tracks || [];
+  const allTracks = data?.tracks || [];
+
+  const categories = Array.from(new Set(allTracks.map((t: any) => t.category))).sort();
+
+  const tracks = allTracks.filter((track: any) => {
+    const matchesSearch = !searchQuery || track.title.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = filterCategory === "all" || track.category === filterCategory;
+    const matchesStatus = filterStatus === "all" || (filterStatus === "active" ? track.is_active : !track.is_active);
+    return matchesSearch && matchesCategory && matchesStatus;
+  });
 
   return (
     <div className="max-w-5xl mx-auto space-y-8">
@@ -83,6 +95,44 @@ function AdminTracksPage() {
           <Plus className="h-3.5 w-3.5" />
           Nova Música
         </button>
+      </div>
+
+      {/* Filtros */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/30" />
+          <input
+            type="text"
+            placeholder="Buscar por título..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full h-9 pl-9 pr-3 rounded-xl border border-border/15 bg-card/10 text-sm text-foreground/75 placeholder:text-muted-foreground/25 focus:outline-none focus:border-gold/25 transition-colors"
+          />
+        </div>
+        <select
+          value={filterCategory}
+          onChange={(e) => setFilterCategory(e.target.value)}
+          className="h-9 px-3 rounded-xl border border-border/15 bg-card/10 text-[11px] font-semibold uppercase tracking-wider text-foreground/60 focus:outline-none focus:border-gold/25 transition-colors"
+        >
+          <option value="all">Todas categorias</option>
+          {categories.map((cat) => (
+            <option key={cat} value={cat}>{cat}</option>
+          ))}
+        </select>
+        <select
+          value={filterStatus}
+          onChange={(e) => setFilterStatus(e.target.value as any)}
+          className="h-9 px-3 rounded-xl border border-border/15 bg-card/10 text-[11px] font-semibold uppercase tracking-wider text-foreground/60 focus:outline-none focus:border-gold/25 transition-colors"
+        >
+          <option value="all">Todos status</option>
+          <option value="active">Ativos</option>
+          <option value="inactive">Inativos</option>
+        </select>
+        {(searchQuery || filterCategory !== "all" || filterStatus !== "all") && (
+          <span className="text-[10px] text-muted-foreground/30 self-center">
+            {tracks.length} de {allTracks.length}
+          </span>
+        )}
       </div>
 
       {showForm && (
