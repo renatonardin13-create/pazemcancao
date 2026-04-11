@@ -167,7 +167,7 @@ function AdminUsersPage() {
           </p>
         </div>
 
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (v) setGeneratedPassword(null); }}>
           <DialogTrigger asChild>
             <Button variant="outline" className="gap-2">
               <UserPlus className="h-4 w-4" />
