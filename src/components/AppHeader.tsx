@@ -2,6 +2,7 @@ import { LogoBrand } from "./LogoBrand";
 import { LogOut, Settings, UserCircle, Headphones } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
+import { NotificationBell } from "./NotificationBell";
 
 interface AppHeaderProps {
   showLogout?: boolean;
@@ -18,6 +19,8 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
         <LogoBrand size="md" showSubtitle />
 
         <div className="flex items-center gap-1">
+          <NotificationBell />
+
           <Link
             to="/musicas"
             className="group flex items-center gap-2 rounded-xl px-3 py-2 text-muted-foreground/35 hover:text-gold/60 hover:bg-muted/15 transition-all duration-500"
