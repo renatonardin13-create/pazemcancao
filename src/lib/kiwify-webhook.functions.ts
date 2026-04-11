@@ -70,6 +70,79 @@ async function provisionUserAccess(email: string) {
   }
 }
 
+/**
+ * Calculate and store unlock dates for content items with access_mode = 'liberar_em_dias'.
+ * Uses the purchase approval date as the base for calculating unlock_at.
+ */
+async function calculateContentUnlocks(email: string, orderId: string) {
+  try {
+    // Fetch all active content items that have timed release
+    const { data: timedContent, error } = await supabaseAdmin
+      .from('content_items')
+      .select('id, release_days')
+      .eq('is_active', true)
+      .eq('access_mode', 'liberar_em_dias')
+      .not('release_days', 'is', null);
+
+    if (error) {
+      console.error('Error fetching timed content:', error);
+      return;
+    }
+
+    if (!timedContent || timedContent.length === 0) {
+      console.log('No timed-release content to process');
+      return;
+    }
+
+    const now = new Date();
+
+    for (const item of timedContent) {
+      const unlockAt = new Date(now);
+      unlockAt.setDate(unlockAt.getDate() + (item.release_days || 0));
+
+      // Upsert - if already exists for this email+content, skip (idempotent)
+      const { error: upsertError } = await supabaseAdmin
+        .from('user_content_unlocks')
+        .upsert(
+          {
+            email,
+            content_id: item.id,
+            order_id: orderId,
+            unlock_at: unlockAt.toISOString(),
+            unlocked: item.release_days === 0,
+          },
+          { onConflict: 'email,content_id', ignoreDuplicates: true }
+        );
+
+      if (upsertError) {
+        console.error(`Error upserting unlock for content ${item.id}:`, upsertError);
+      }
+    }
+
+    console.log(`📅 Calculated ${timedContent.length} content unlock dates for ${email}`);
+  } catch (e) {
+    console.error('Error calculating content unlocks:', e);
+  }
+}
+
+/**
+ * Check if this order_id has already been processed successfully to avoid duplicates.
+ */
+async function isOrderAlreadyProcessed(orderId: string): Promise<boolean> {
+  if (!orderId) return false;
+
+  const { data } = await supabaseAdmin
+    .from('webhook_logs')
+    .select('id')
+    .eq('order_id', orderId)
+    .eq('provider', 'kiwify')
+    .in('event_type', ['paid', 'approved', 'completed'])
+    .eq('response_status', 200)
+    .limit(1);
+
+  return !!(data && data.length > 0);
+}
+
 export async function handleKiwifyWebhook(request: Request): Promise<Response> {
   let rawBody: any = null;
 
@@ -109,8 +182,6 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
     const hasExplicitToken = explicitToken.length > 0;
     const hasMatchingBearerToken = !!savedToken && bearerToken === savedToken;
 
-    // Validate explicit webhook tokens first. Ignore unrelated Authorization bearer tokens,
-    // because platforms, proxies, or internal tools may attach JWTs that are not the webhook secret.
     if (savedToken && hasExplicitToken && explicitToken !== savedToken) {
       await logWebhookEvent({
         eventType: 'auth_failed',
@@ -125,7 +196,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       console.warn('Ignoring non-matching Authorization bearer token for webhook validation');
     }
 
-    // 3. Parse payload (Kiwify sends nested or flat)
+    // Parse payload (Kiwify sends nested or flat)
     const payload = rawBody.data || rawBody;
     const status = (
       payload.order_status || payload.status || rawBody.order_status || ''
@@ -156,9 +227,23 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       return jsonResponse({ error: 'Missing customer email' }, 400);
     }
 
-    console.log(`📩 Kiwify webhook: status=${status} email=${customerEmail}`);
+    console.log(`📩 Kiwify webhook: status=${status} email=${customerEmail} order=${orderId}`);
 
     if (status === 'paid' || status === 'approved' || status === 'completed') {
+      // Idempotency check: skip if this order was already processed
+      if (orderId && await isOrderAlreadyProcessed(orderId)) {
+        console.log(`⚠️ Order ${orderId} already processed, skipping`);
+        await logWebhookEvent({
+          eventType: status,
+          email: customerEmail,
+          orderId,
+          payload: rawBody,
+          responseStatus: 200,
+          responseMessage: 'Already processed (idempotent)',
+        });
+        return jsonResponse({ success: true, message: 'Already processed' });
+      }
+
       const { error: dbError } = await supabaseAdmin
         .from('approved_buyers')
         .upsert(
@@ -186,7 +271,11 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
         return jsonResponse({ error: 'Failed to register buyer' }, 500);
       }
 
+      // Provision user account (create or send reset email)
       await provisionUserAccess(customerEmail);
+
+      // Calculate unlock dates for timed-release content
+      await calculateContentUnlocks(customerEmail, orderId);
 
       console.log(`✅ Buyer approved and provisioned: ${customerEmail}`);
       await logWebhookEvent({
