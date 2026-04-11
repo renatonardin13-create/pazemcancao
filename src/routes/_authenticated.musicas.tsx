@@ -85,7 +85,7 @@ function MusicLibraryPage() {
 
   const canDownload = accessData?.canDownload !== false;
   const isBlocked = accessData?.isBlocked === true;
-  const isLocked = accessData?.trialExpired === true || isBlocked;
+  const effectiveLocked = accessData?.trialExpired === true || isBlocked;
 
   const { data: catData } = useQuery({
     queryKey: ["categories"],
@@ -184,7 +184,7 @@ function MusicLibraryPage() {
         </motion.div>
 
         {/* Trial expired banner */}
-        {isLocked && (
+        {effectiveLocked && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -321,7 +321,7 @@ function MusicLibraryPage() {
                           progress={progress}
                           handlePlayWithQueue={handlePlayWithQueue}
                           canDownload={canDownload}
-                          isLocked={isLocked}
+                          effectiveLocked={effectiveLocked}
                         />
                       ))}
                     </div>
@@ -342,7 +342,7 @@ function MusicLibraryPage() {
                             progress={progress}
                             handlePlayWithQueue={handlePlayWithQueue}
                             canDownload={canDownload}
-                            isLocked={isLocked}
+                            effectiveLocked={effectiveLocked}
                           />
                         ))}
                       </div>
@@ -373,12 +373,12 @@ interface TrackCardProps {
   progress: number;
   handlePlayWithQueue: (track: any, trackList: any[]) => void;
   canDownload: boolean;
-  isLocked: boolean;
+  effectiveLocked: boolean;
 }
 
 function TrackCard({
   track, idx, icon, catTracks, isCarousel,
-  activeTrackRef, currentTrack, playing, progress, handlePlayWithQueue, canDownload, isLocked,
+  activeTrackRef, currentTrack, playing, progress, handlePlayWithQueue, canDownload, effectiveLocked,
 }: TrackCardProps) {
   const isThis = currentTrack?.id === track.id;
   const isPlaying = isThis && playing;
@@ -388,7 +388,7 @@ function TrackCard({
   const isBonusLocked = track.is_bonus && (
     !track.bonus_release_date || new Date(track.bonus_release_date + 'T00:00:00') > new Date()
   );
-  const effectiveLocked = isLocked || isBonusLocked;
+  const effectiveLocked = effectiveLocked || isBonusLocked;
 
   const bonusReleaseFormatted = track.bonus_release_date
     ? new Date(track.bonus_release_date + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
@@ -417,7 +417,7 @@ function TrackCard({
           className={`relative rounded-2xl border transition-all duration-500 overflow-hidden ${
             isCarousel ? "h-full flex flex-col" : ""
           } ${
-            isLocked
+            effectiveLocked
               ? "border-border/10 shadow-[0_4px_30px_-10px] shadow-black/20 opacity-70 grayscale-[30%]"
               : isPlaying
                 ? "border-gold/30 shadow-[0_8px_50px_-12px] shadow-gold/20 ring-1 ring-gold/10"
@@ -433,13 +433,13 @@ function TrackCard({
                 src={track.cover_url}
                 alt={track.title}
                 className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ${
-                  isLocked ? "brightness-50" : isPlaying ? "scale-105 brightness-90" : "group-hover:scale-110"
+                  effectiveLocked ? "brightness-50" : isPlaying ? "scale-105 brightness-90" : "group-hover:scale-110"
                 }`}
                 loading="lazy"
               />
             )}
             <div className={`absolute inset-0 transition-all duration-500 ${
-              isLocked
+              effectiveLocked
                 ? "bg-gradient-to-t from-black/80 via-black/40 to-black/20"
                 : isPlaying
                   ? "bg-gradient-to-t from-black/70 via-black/20 to-black/10"
@@ -447,7 +447,7 @@ function TrackCard({
             }`} />
 
             {/* Locked padlock overlay */}
-            {isLocked && (
+            {effectiveLocked && (
               <div className="absolute inset-0 flex items-center justify-center z-10">
                 <div className={`flex ${isCarousel ? "h-16 w-16 rounded-2xl" : "h-12 w-12 rounded-xl"} items-center justify-center backdrop-blur-sm bg-black/30 border border-white/10`}>
                   <Lock className={`${isCarousel ? "h-7 w-7" : "h-5 w-5"} text-white/50`} />
@@ -455,7 +455,7 @@ function TrackCard({
               </div>
             )}
 
-            {!isLocked && !track.cover_url && (
+            {!effectiveLocked && !track.cover_url && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className={`flex ${isCarousel ? "h-16 w-16 rounded-2xl" : "h-12 w-12 rounded-xl"} items-center justify-center backdrop-blur-sm transition-all duration-700 ${
                   isPlaying ? "bg-gold/15 border border-gold/25 scale-110" : "bg-white/[0.04] border border-white/[0.06] group-hover:scale-105"
@@ -470,7 +470,7 @@ function TrackCard({
             )}
 
             {/* Now Playing overlay for covers */}
-            {!isLocked && (
+            {!effectiveLocked && (
               <AnimatePresence>
                 {isPlaying && track.cover_url && (
                   <motion.div
@@ -486,7 +486,7 @@ function TrackCard({
             )}
 
             {/* Play button overlay — hidden when locked */}
-            {!isLocked && (
+            {!effectiveLocked && (
               <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${
                 isPlaying ? "opacity-100" : "opacity-0 group-hover:opacity-100"
               }`}>
@@ -512,7 +512,7 @@ function TrackCard({
             )}
 
             {/* Progress bar on card */}
-            {!isLocked && (
+            {!effectiveLocked && (
               <AnimatePresence>
                 {isThis && (
                   <motion.div
@@ -535,7 +535,7 @@ function TrackCard({
           {/* Info section */}
           <div className={`${isCarousel ? "p-4" : "p-3"}`}>
             <h3 className={`font-display ${isCarousel ? "text-[14px]" : "text-[13px]"} font-bold tracking-tight leading-snug truncate transition-colors duration-500 ${
-              isLocked ? "text-muted-foreground/40" : isPlaying ? "text-gold" : isThis ? "text-gold/70" : "text-foreground/85 group-hover:text-foreground"
+              effectiveLocked ? "text-muted-foreground/40" : isPlaying ? "text-gold" : isThis ? "text-gold/70" : "text-foreground/85 group-hover:text-foreground"
             }`}>
               {track.title}
             </h3>
@@ -546,12 +546,12 @@ function TrackCard({
                 }`}>
                   {track.duration}
                 </p>
-                {isLocked && (
+                {effectiveLocked && (
                   <span className="text-[9px] font-semibold tracking-wider uppercase text-destructive/40 bg-destructive/8 px-1.5 py-0.5 rounded-full">
                     Bloqueado
                   </span>
                 )}
-                {!isLocked && isPlaying && (
+                {!effectiveLocked && isPlaying && (
                   <motion.span
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -561,7 +561,7 @@ function TrackCard({
                   </motion.span>
                 )}
               </div>
-              {!isLocked && canDownload && (track.download_url || track.storage_path) && (
+              {!effectiveLocked && canDownload && (track.download_url || track.storage_path) && (
                 <button
                   onClick={(e) => {
                     e.preventDefault();
