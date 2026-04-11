@@ -44,7 +44,7 @@ export const listContentItems = createServerFn({ method: 'POST' })
     // Fetch user-specific unlock dates if buyer
     let unlockMap = new Map<string, { unlock_at: string; unlocked: boolean }>();
     if (isBuyer && email) {
-      const { data: unlocks } = await supabaseAdmin
+      const { data: unlocks } = await (supabaseAdmin as any)
         .from('user_content_unlocks')
         .select('content_id, unlock_at, unlocked')
         .eq('email', email);
