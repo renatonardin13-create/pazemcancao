@@ -165,6 +165,29 @@ function AdminTracksPage() {
                 >
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
+                {track.is_bonus && (
+                  <button
+                    onClick={() => {
+                      if (confirm(`Enviar notificação de bônus para todos os clientes sobre "${track.title}"?`)) {
+                        notifyMutation.mutate({
+                          trackTitle: track.title,
+                          releaseDate: track.bonus_release_date || undefined,
+                        });
+                      }
+                    }}
+                    disabled={notifyMutation.isPending}
+                    className="p-2 text-muted-foreground/30 hover:text-amber-400/60 transition-colors"
+                    title="Notificar clientes sobre este bônus"
+                  >
+                    {notifyMutation.isPending && notifyMutation.variables?.trackTitle === track.title ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Bell className="h-3.5 w-3.5" />
+                    )}
+                  </button>
+                )}
+                  <Pencil className="h-3.5 w-3.5" />
+                </button>
                 {!track.cover_url && (
                   <button
                     onClick={() =>
