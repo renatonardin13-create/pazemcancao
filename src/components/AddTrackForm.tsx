@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, Loader2, ImageIcon, Music, X } from "lucide-react";
+import { Upload, Loader2, ImageIcon, Music, X, Gift } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 
 interface AddTrackFormProps {
@@ -29,6 +30,8 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
   const [mp3File, setMp3File] = useState<File | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [isBonus, setIsBonus] = useState(false);
+  const [bonusReleaseDate, setBonusReleaseDate] = useState("");
   const [uploading, setUploading] = useState(false);
 
   const addTrackMutation = useMutation({
@@ -84,6 +87,8 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
           download_url: urlData.publicUrl,
           description: description || undefined,
           cover_url: coverUrl,
+          is_bonus: isBonus,
+          bonus_release_date: isBonus && bonusReleaseDate ? bonusReleaseDate : undefined,
         },
       });
 
@@ -109,6 +114,8 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
     setMp3File(null);
     setCoverFile(null);
     setCoverPreview(null);
+    setIsBonus(false);
+    setBonusReleaseDate("");
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
