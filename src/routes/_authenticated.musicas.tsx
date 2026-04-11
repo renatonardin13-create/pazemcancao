@@ -153,14 +153,22 @@ function MusicLibraryPage() {
     });
   }, [tracks, searchTerm, activeCategory]);
 
+  const bonusTracks = useMemo(() => {
+    return filteredTracks.filter((t: any) => t.is_bonus);
+  }, [filteredTracks]);
+
+  const regularTracks = useMemo(() => {
+    return filteredTracks.filter((t: any) => !t.is_bonus);
+  }, [filteredTracks]);
+
   const tracksByCategory = useMemo(() => {
     const grouped: Record<string, any[]> = {};
-    filteredTracks.forEach((track: any) => {
+    regularTracks.forEach((track: any) => {
       if (!grouped[track.category]) grouped[track.category] = [];
       grouped[track.category].push(track);
     });
     return Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b));
-  }, [filteredTracks]);
+  }, [regularTracks]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -274,6 +282,56 @@ function MusicLibraryPage() {
           </div>
         ) : (
           <div className="space-y-10">
+            {/* Bonus Section */}
+            {bonusTracks.length > 0 && (
+              <motion.section
+                initial="hidden"
+                animate="visible"
+                variants={fadeUp}
+                custom={0.3}
+              >
+                <div className="rounded-2xl border border-amber-500/15 bg-gradient-to-br from-amber-900/10 via-amber-950/5 to-transparent p-5 sm:p-6">
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/15 border border-amber-500/20">
+                      <Gift className="h-4.5 w-4.5 text-amber-400/70" />
+                    </div>
+                    <div>
+                      <h2 className="font-display text-lg font-bold text-foreground/85 tracking-tight">
+                        Bônus Exclusivos
+                      </h2>
+                      <p className="text-[11px] text-amber-400/40 mt-0.5">
+                        {bonusTracks.length} música{bonusTracks.length !== 1 ? "s" : ""} especiai{bonusTracks.length !== 1 ? "s" : "l"}
+                      </p>
+                    </div>
+                    <div className="flex-1 h-px bg-gradient-to-r from-amber-500/15 to-transparent" />
+                  </div>
+
+                  <div className="relative -mx-1">
+                    <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory px-1">
+                      {bonusTracks.map((track: any, idx: number) => (
+                        <TrackCard
+                          key={track.id}
+                          track={track}
+                          idx={idx}
+                          icon="🎁"
+                          catTracks={bonusTracks}
+                          isCarousel={true}
+                          activeTrackRef={activeTrackRef}
+                          currentTrack={currentTrack}
+                          playing={playing}
+                          progress={progress}
+                          handlePlayWithQueue={handlePlayWithQueue}
+                          canDownload={canDownload}
+                          isLocked={isLocked}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.section>
+            )}
+
+            {/* Regular categories */}
             {tracksByCategory.map(([category, catTracks], catIdx) => {
               const dbCat = dbCategories.find((c: any) => c.name === category);
               const icon = dbCat?.icon || "🎵";
