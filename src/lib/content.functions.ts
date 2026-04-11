@@ -41,21 +41,24 @@ export const listContentItems = createServerFn({ method: 'POST' })
     const hasFullAccess = isAdmin || isBuyer;
     const buyerCreatedAt = buyer?.created_at ? new Date(buyer.created_at) : null;
 
-    // For each item, compute whether it's unlocked based on release_days
+    // For each item, compute whether it's unlocked based on access_mode / release_days
     const items = (data || []).map((item: any) => {
-      if (item.is_free) return { ...item, unlocked: true };
-      if (isAdmin) return { ...item, unlocked: true };
-      if (!isBuyer) return { ...item, unlocked: false };
+      // Derive access_mode with fallback for old records
+      const accessMode = item.access_mode || (item.is_free ? 'gratuito' : item.release_days ? 'liberar_em_dias' : 'pago');
 
-      // Buyer has access — check release_days
-      if (item.release_days && buyerCreatedAt) {
+      if (accessMode === 'gratuito' || item.is_free) return { ...item, unlocked: true, access_mode: accessMode };
+      if (isAdmin) return { ...item, unlocked: true, access_mode: accessMode };
+      if (!isBuyer) return { ...item, unlocked: false, access_mode: accessMode };
+
+      // Buyer has access — check release_days for liberar_em_dias
+      if (accessMode === 'liberar_em_dias' && item.release_days && buyerCreatedAt) {
         const unlockDate = new Date(buyerCreatedAt);
         unlockDate.setDate(unlockDate.getDate() + item.release_days);
         const unlocked = new Date() >= unlockDate;
-        return { ...item, unlocked, unlockDate: unlockDate.toISOString() };
+        return { ...item, unlocked, unlockDate: unlockDate.toISOString(), access_mode: accessMode };
       }
 
-      return { ...item, unlocked: true };
+      return { ...item, unlocked: true, access_mode: accessMode };
     });
 
     return { items, hasFullAccess };
