@@ -7,7 +7,7 @@ import {
   deleteCategory,
   reorderCategories,
 } from "@/lib/admin-categories.functions";
-import { FolderOpen, Plus, Trash2, Pencil, GripVertical, Check, X } from "lucide-react";
+import { FolderOpen, Plus, Trash2, Pencil, GripVertical, Check, X, Star } from "lucide-react";
 import { useState, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
@@ -67,6 +67,15 @@ function AdminCategoriesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
       toast.success("Ordem atualizada");
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const toggleFeaturedMutation = useMutation({
+    mutationFn: (cat: any) => updateCategory({ data: { id: cat.id, is_featured: !cat.is_featured } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+      toast.success("Destaque atualizado");
     },
     onError: (err: any) => toast.error(err.message),
   });
@@ -276,6 +285,15 @@ function AdminCategoriesPage() {
               <span className="text-[9px] text-muted-foreground/20 tabular-nums shrink-0">
                 #{cat.sort_order}
               </span>
+
+              {/* Featured toggle */}
+              <button
+                onClick={() => toggleFeaturedMutation.mutate(cat)}
+                className={`p-2 transition-colors shrink-0 ${cat.is_featured ? 'text-amber-400' : 'text-muted-foreground/20 hover:text-amber-400/50'}`}
+                title={cat.is_featured ? "Remover destaque" : "Marcar como destaque"}
+              >
+                <Star className="h-3.5 w-3.5" fill={cat.is_featured ? "currentColor" : "none"} />
+              </button>
 
               {/* Actions */}
               <div className="flex items-center gap-1 shrink-0">

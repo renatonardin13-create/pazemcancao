@@ -72,6 +72,7 @@ export const updateCategory = createServerFn({ method: 'POST' })
     slug?: string;
     description?: string;
     icon?: string;
+    is_featured?: boolean;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
