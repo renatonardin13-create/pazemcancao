@@ -334,7 +334,72 @@ function AdminContentPage() {
               </div>
             )}
 
-            <div className="flex justify-end gap-2 pt-2">
+            {/* ── Novos campos opcionais ── */}
+            <div className="border-t border-border/10 pt-4 mt-2">
+              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground/30 mb-3">Exibição no App</p>
+
+              {/* Display Category */}
+              <div className="space-y-2 mb-4">
+                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Categoria de Exibição</Label>
+                <Select value={displayCategory} onValueChange={setDisplayCategory} disabled={isSubmitting}>
+                  <SelectTrigger className="bg-card/15 border-border/15 text-sm">
+                    <SelectValue placeholder="Sem categoria específica" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Sem categoria específica</SelectItem>
+                    <SelectItem value="bonus_exclusivos">🎁 Bônus Exclusivos</SelectItem>
+                    <SelectItem value="soldado_ferido">⚔️ Soldado Ferido</SelectItem>
+                    <SelectItem value="ansiedade">🕊️ Ansiedade</SelectItem>
+                    <SelectItem value="cura_da_alma">💛 Cura da Alma</SelectItem>
+                    <SelectItem value="refugio">🏠 Refúgio</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-[9px] text-muted-foreground/25">Define em qual seção do app o card aparecerá</p>
+              </div>
+
+              {/* Show as Card */}
+              <div className="flex items-center justify-between rounded-xl border border-border/10 bg-card/5 p-4 mb-4">
+                <div>
+                  <p className="text-[12px] font-semibold text-foreground/70">Exibir como Card</p>
+                  <p className="text-[10px] text-muted-foreground/40">Mostrar este conteúdo em formato de card no app</p>
+                </div>
+                <Switch checked={showAsCard} onCheckedChange={setShowAsCard} disabled={isSubmitting} />
+              </div>
+
+              {/* Badge Text */}
+              <div className="space-y-2 mb-4">
+                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Texto do Badge (opcional)</Label>
+                <Select value={badgeText} onValueChange={setBadgeText} disabled={isSubmitting}>
+                  <SelectTrigger className="bg-card/15 border-border/15 text-sm">
+                    <SelectValue placeholder="Sem badge" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Sem badge</SelectItem>
+                    <SelectItem value="BÔNUS">BÔNUS</SelectItem>
+                    <SelectItem value="NOVO">NOVO</SelectItem>
+                    <SelectItem value="GRÁTIS">GRÁTIS</SelectItem>
+                    <SelectItem value="VIP">VIP</SelectItem>
+                    <SelectItem value="LIBERA EM 7 DIAS">LIBERA EM 7 DIAS</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Sort Order */}
+              <div className="space-y-2">
+                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Ordem de Exibição</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value)}
+                  placeholder="Automático (sequencial)"
+                  className="bg-card/15 border-border/15 text-sm"
+                  disabled={isSubmitting}
+                />
+                <p className="text-[9px] text-muted-foreground/25">Menor número aparece primeiro. Deixe vazio para ordem automática.</p>
+              </div>
+            </div>
+
               <Button variant="ghost" onClick={() => { setFormOpen(false); resetForm(); }} disabled={isSubmitting} className="text-[11px] text-muted-foreground/40">
                 Cancelar
               </Button>
