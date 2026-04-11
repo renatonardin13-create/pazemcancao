@@ -6,6 +6,7 @@ import {
   updateContentItem,
   deleteContentItem,
 } from "@/lib/admin-content.functions";
+import { listAdminCategories } from "@/lib/admin-categories.functions";
 import {
   BookOpen, Video, GraduationCap, FileText, Plus, Trash2,
   ToggleLeft, ToggleRight, Pencil, Loader2, ExternalLink,
@@ -24,7 +25,7 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -39,14 +40,7 @@ const contentTypeLabels: Record<string, { label: string; icon: any; color: strin
   material: { label: "Material", icon: FileText, color: "text-amber-400/60 border-amber-500/15 bg-amber-500/8" },
 };
 
-const categoryOptions = [
-  { value: "", label: "Nenhuma (padrão por tipo)" },
-  { value: "bonus_exclusivos", label: "🎁 Bônus Exclusivos" },
-  { value: "soldado_ferido", label: "⚔️ Soldado Ferido" },
-  { value: "ansiedade", label: "🕊️ Ansiedade" },
-  { value: "cura_da_alma", label: "💛 Cura da Alma" },
-  { value: "refugio", label: "🏠 Refúgio" },
-];
+// Category options are now loaded dynamically from DB
 
 const accessModeOptions = [
   { value: "gratuito", label: "Gratuito" },
@@ -98,6 +92,22 @@ function AdminContentPage() {
     queryFn: () => listAdminContentItems(),
     staleTime: 30_000,
   });
+
+  const { data: catData } = useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: () => listAdminCategories(),
+    staleTime: 60_000,
+  });
+
+  const categoryOptions = useMemo(() => {
+    const base = [{ value: "", label: "Nenhuma (padrão por tipo)" }];
+    if (catData?.categories) {
+      for (const c of catData.categories) {
+        base.push({ value: c.slug, label: `${c.icon || ''} ${c.name}`.trim() });
+      }
+    }
+    return base;
+  }, [catData]);
 
   const resetForm = () => {
     setTitle("");

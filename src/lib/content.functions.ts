@@ -159,11 +159,27 @@ export const listContentItems = createServerFn({ method: 'POST' })
       }
     }
 
+    // Fetch active categories for dynamic rendering
+    const { data: categoriesData } = await supabaseAdmin
+      .from('categories')
+      .select('id, name, slug, icon, sort_order, is_featured')
+      .order('sort_order', { ascending: true });
+
+    const categories = (categoriesData || []).map((c: any) => ({
+      id: c.id,
+      name: c.name,
+      slug: c.slug,
+      icon: c.icon,
+      sortOrder: c.sort_order,
+      isFeatured: c.is_featured,
+    }));
+
     return {
       items,
       hasFullAccess,
       viewedIds: Array.from(playedContentIds),
       downloadedIds: Array.from(downloadedContentIds),
       progressMap,
+      categories,
     };
   });

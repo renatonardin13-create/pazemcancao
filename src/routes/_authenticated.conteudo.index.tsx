@@ -19,14 +19,6 @@ const typeConfig: Record<string, { label: string; icon: any; gradient: string }>
   material: { label: "Materiais", icon: FileText, gradient: "from-amber-900/40 via-amber-950/30 to-slate-950/50" },
 };
 
-const categoryLabels: Record<string, string> = {
-  bonus_exclusivos: "🎁 Bônus Exclusivos",
-  soldado_ferido: "⚔️ Soldado Ferido",
-  ansiedade: "🕊️ Ansiedade",
-  cura_da_alma: "💛 Cura da Alma",
-  refugio: "🏠 Refúgio",
-};
-
 const journeyLabels: Record<string, string> = {
   comece_por_aqui: "🌱 Comece por aqui",
   dias_dificeis: "🌧️ Para dias difíceis",
@@ -35,8 +27,7 @@ const journeyLabels: Record<string, string> = {
   perseveranca: "💪 Para continuar mesmo cansado",
 };
 
-// Priority order for categories — bonus_exclusivos first
-const categoryOrder = ["bonus_exclusivos", "soldado_ferido", "ansiedade", "cura_da_alma", "refugio"];
+// Category order comes from DB now
 
 function ContentPage() {
   const { data, isLoading } = useQuery({
@@ -47,6 +38,16 @@ function ContentPage() {
   const hasAccess = data?.hasFullAccess ?? false;
   const items = data?.items || [];
   const progressMap = data?.progressMap || {};
+  const dbCategories = data?.categories || [];
+
+  // Build category lookup from DB
+  const categoryLookup = useMemo(() => {
+    const map: Record<string, { name: string; icon: string; sortOrder: number; isFeatured: boolean }> = {};
+    for (const c of dbCategories) {
+      map[c.slug] = { name: c.icon ? `${c.icon} ${c.name.replace(/^[\p{Emoji}\s]+/u, '')}` : c.name, icon: c.icon || '', sortOrder: c.sortOrder, isFeatured: c.isFeatured };
+    }
+    return map;
+  }, [dbCategories]);
 
   // Group items
   const categoryGroups: Record<string, any[]> = {};
@@ -85,7 +86,7 @@ function ContentPage() {
     arr.sort(sortJourneyItems);
   }
 
-  // "Continue sua caminhada" — items started but not completed
+  // "Continue sua caminhada"
   const continueItems = useMemo(() => {
     return items.filter((item: any) => {
       const p = progressMap[item.id];
@@ -93,19 +94,19 @@ function ContentPage() {
     }).slice(0, 4);
   }, [items, progressMap]);
 
-  // Sorted category entries — bonus first, then others in defined order
+  // Sort categories by DB sort_order
   const sortedCategories = useMemo(() => {
     const entries = Object.entries(categoryGroups);
     return entries.sort(([a], [b]) => {
-      const ai = categoryOrder.indexOf(a);
-      const bi = categoryOrder.indexOf(b);
-      return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+      const ao = categoryLookup[a]?.sortOrder ?? 999;
+      const bo = categoryLookup[b]?.sortOrder ?? 999;
+      return ao - bo;
     });
-  }, [categoryGroups]);
+  }, [categoryGroups, categoryLookup]);
 
-  // Separate bonus from other categories
-  const bonusCategories = sortedCategories.filter(([cat]) => cat === "bonus_exclusivos");
-  const otherCategories = sortedCategories.filter(([cat]) => cat !== "bonus_exclusivos");
+  // Featured categories first, then others
+  const featuredCategories = sortedCategories.filter(([cat]) => categoryLookup[cat]?.isFeatured);
+  const otherCategories = sortedCategories.filter(([cat]) => !categoryLookup[cat]?.isFeatured);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -169,9 +170,9 @@ function ContentPage() {
               </section>
             )}
 
-            {/* 3. Bônus Exclusivos */}
-            {bonusCategories.map(([cat, catItems]) => {
-              const label = categoryLabels[cat] || cat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            {/* 3. Categorias em Destaque */}
+            {featuredCategories.map(([cat, catItems]: [string, any[]]) => {
+              const label = categoryLookup[cat]?.name || cat.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
               const config = typeConfig[catItems[0]?.content_type] || typeConfig.material;
               return (
                 <section key={`cat-${cat}`} className="space-y-5">
@@ -239,9 +240,9 @@ function ContentPage() {
               </section>
             )}
 
-            {/* 5. Categorias principais (exceto bônus, já exibido acima) */}
-            {otherCategories.map(([cat, catItems]) => {
-              const label = categoryLabels[cat] || cat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            {/* 5. Demais Categorias */}
+            {otherCategories.map(([cat, catItems]: [string, any[]]) => {
+              const label = categoryLookup[cat]?.name || cat.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
               const config = typeConfig[catItems[0]?.content_type] || typeConfig.material;
               return (
                 <section key={`cat-${cat}`} className="space-y-5">
