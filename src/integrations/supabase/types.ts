@@ -133,48 +133,63 @@ export type Database = {
       }
       content_items: {
         Row: {
+          access_mode: string | null
+          badge_text: string | null
+          card_cover_url: string | null
           content_type: string
           cover_url: string | null
           created_at: string
           description: string | null
+          display_category: string | null
           file_url: string | null
           id: string
           is_active: boolean
           is_free: boolean
           release_days: number | null
           sales_page_url: string | null
+          show_as_card: boolean | null
           sort_order: number
           title: string
           updated_at: string
           video_url: string | null
         }
         Insert: {
+          access_mode?: string | null
+          badge_text?: string | null
+          card_cover_url?: string | null
           content_type?: string
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          display_category?: string | null
           file_url?: string | null
           id?: string
           is_active?: boolean
           is_free?: boolean
           release_days?: number | null
           sales_page_url?: string | null
+          show_as_card?: boolean | null
           sort_order?: number
           title: string
           updated_at?: string
           video_url?: string | null
         }
         Update: {
+          access_mode?: string | null
+          badge_text?: string | null
+          card_cover_url?: string | null
           content_type?: string
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          display_category?: string | null
           file_url?: string | null
           id?: string
           is_active?: boolean
           is_free?: boolean
           release_days?: number | null
           sales_page_url?: string | null
+          show_as_card?: boolean | null
           sort_order?: number
           title?: string
           updated_at?: string
