@@ -113,7 +113,7 @@ export function AdminDashboard() {
         {/* Daily plays chart */}
         <TabsContent value="overview">
           <div className="rounded-2xl border border-border/15 bg-card/5 p-6">
-            <h3 className="text-sm font-semibold text-foreground/70 mb-4">Plays nos últimos 30 dias</h3>
+            <h3 className="text-sm font-semibold text-foreground/70 mb-4">Plays nos últimos {days} dias</h3>
             {analyticsLoading ? (
               <p className="text-[11px] text-muted-foreground/25 animate-pulse py-12 text-center">Carregando...</p>
             ) : !analytics?.dailyPlayData?.length ? (
@@ -257,6 +257,7 @@ export function AdminDashboard() {
           </div>
         </TabsContent>
       </Tabs>
+      </div>
     </div>
   );
 }
