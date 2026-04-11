@@ -332,6 +332,7 @@ function MusicLibraryPage() {
             )}
 
             {/* Regular categories */}
+            {tracksByCategory.map(([category, catTracks], catIdx) => {
               const dbCat = dbCategories.find((c: any) => c.name === category);
               const icon = dbCat?.icon || "🎵";
               const displayName = category.replace(/^[^\w\s]+\s*/, '');
