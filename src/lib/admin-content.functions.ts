@@ -63,8 +63,10 @@ export const createContentItem = createServerFn({ method: 'POST' })
         video_url: data.video_url || null,
         sales_page_url: data.sales_page_url || null,
         is_free: data.is_free || false,
+        release_days: data.release_days ?? null,
         is_active: true,
         sort_order: (maxOrder?.sort_order ?? 0) + 1,
+      } as any)
       })
       .select()
       .single();
@@ -86,6 +88,7 @@ export const updateContentItem = createServerFn({ method: 'POST' })
     sales_page_url?: string;
     is_free?: boolean;
     is_active?: boolean;
+    release_days?: number | null;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
