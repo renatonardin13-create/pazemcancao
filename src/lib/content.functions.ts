@@ -145,5 +145,10 @@ export const listContentItems = createServerFn({ method: 'POST' })
       };
     });
 
-    return { items, hasFullAccess };
+    return {
+      items,
+      hasFullAccess,
+      viewedIds: Array.from(playedContentIds),
+      downloadedIds: Array.from(downloadedContentIds),
+    };
   });
