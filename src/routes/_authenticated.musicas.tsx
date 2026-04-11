@@ -450,9 +450,16 @@ function TrackCard({
   );
   const effectiveLocked = isLocked || isBonusLocked;
 
-  const bonusReleaseFormatted = track.bonus_release_date
-    ? new Date(track.bonus_release_date + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
-    : null;
+  const bonusCountdown = (() => {
+    if (!track.bonus_release_date) return null;
+    const release = new Date(track.bonus_release_date + 'T00:00:00');
+    const now = new Date();
+    const diffMs = release.getTime() - now.getTime();
+    if (diffMs <= 0) return null;
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    if (diffDays === 1) return 'Libera amanhã';
+    return `Libera em ${diffDays} dias`;
+  })();
 
   const Wrapper = effectiveLocked ? 'div' : Link;
   const wrapperProps = effectiveLocked
