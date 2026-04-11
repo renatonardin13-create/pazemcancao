@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Users, ShieldCheck, Ban, Activity, UserPlus, Clock, Pencil, ToggleLeft, ToggleRight } from "lucide-react";
+import { Users, ShieldCheck, Ban, Activity, UserPlus, Clock, Pencil, ToggleLeft, ToggleRight, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { listApprovedBuyers } from "@/lib/admin-users.functions";
-import { createTrialUser, updateBuyer, toggleBuyerAccess } from "@/lib/admin-trial.functions";
+import { createTrialUser, updateBuyer, toggleBuyerAccess, deleteBuyer } from "@/lib/admin-trial.functions";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -82,6 +82,17 @@ function AdminUsersPage() {
     },
     onError: (err: any) => {
       toast.error(err.message || "Erro ao alterar acesso");
+    },
+  });
+
+  const removeBuyer = useMutation({
+    mutationFn: (buyerId: string) => deleteBuyer({ data: { buyerId } }),
+    onSuccess: () => {
+      toast.success("Usuário excluído!");
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Erro ao excluir");
     },
   });
 
@@ -374,6 +385,18 @@ function AdminUsersPage() {
                     title="Editar"
                   >
                     <Pencil className="h-3.5 w-3.5" />
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      if (confirm(`Excluir ${buyer.nome || buyer.email}?`)) {
+                        removeBuyer.mutate(buyer.id);
+                      }
+                    }}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/30 hover:text-destructive/70 hover:bg-destructive/10 transition-all duration-300"
+                    title="Excluir"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
                   </button>
                 </div>
               </div>

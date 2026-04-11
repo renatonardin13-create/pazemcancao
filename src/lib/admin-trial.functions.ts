@@ -106,7 +106,7 @@ export const createTrialUser = createServerFn({ method: 'POST' })
     return { success: true, expiresAt: expiresAt.toISOString() };
   });
 
-export const removeTrialUser = createServerFn({ method: 'POST' })
+export const deleteBuyer = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { buyerId: string }) => {
     z.object({ buyerId: z.string().uuid() }).parse(input);
@@ -131,7 +131,7 @@ export const removeTrialUser = createServerFn({ method: 'POST' })
 
     const { error } = await supabaseAdmin
       .from('approved_buyers')
-      .update({ access_enabled: false })
+      .delete()
       .eq('id', data.buyerId);
 
     if (error) throw new Error(error.message);
