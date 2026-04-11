@@ -19,14 +19,6 @@ const typeConfig: Record<string, { label: string; icon: any; gradient: string }>
   material: { label: "Materiais", icon: FileText, gradient: "from-amber-900/40 via-amber-950/30 to-slate-950/50" },
 };
 
-const categoryLabels: Record<string, string> = {
-  bonus_exclusivos: "🎁 Bônus Exclusivos",
-  soldado_ferido: "⚔️ Soldado Ferido",
-  ansiedade: "🕊️ Ansiedade",
-  cura_da_alma: "💛 Cura da Alma",
-  refugio: "🏠 Refúgio",
-};
-
 const journeyLabels: Record<string, string> = {
   comece_por_aqui: "🌱 Comece por aqui",
   dias_dificeis: "🌧️ Para dias difíceis",
@@ -35,8 +27,7 @@ const journeyLabels: Record<string, string> = {
   perseveranca: "💪 Para continuar mesmo cansado",
 };
 
-// Priority order for categories — bonus_exclusivos first
-const categoryOrder = ["bonus_exclusivos", "soldado_ferido", "ansiedade", "cura_da_alma", "refugio"];
+// Category order comes from DB now
 
 function ContentPage() {
   const { data, isLoading } = useQuery({
