@@ -490,7 +490,7 @@ function TrackCard({
                   </motion.span>
                 )}
               </div>
-              {(track.download_url || track.storage_path) && (
+              {canDownload && (track.download_url || track.storage_path) && (
                 <button
                   onClick={(e) => {
                     e.preventDefault();
