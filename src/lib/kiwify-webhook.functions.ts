@@ -66,7 +66,7 @@ async function claimEvent(uniqueEventId: string, payload: any, email: string, ev
   return data.id;
 }
 
-async function markEventCompleted(uniqueEventId: string, details: Record<string, unknown> = {}) {
+async function markEventCompleted(uniqueEventId: string, details: any = {}) {
   if (!uniqueEventId) return;
   await supabaseAdmin
     .from('processed_webhooks')
