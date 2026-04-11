@@ -78,6 +78,11 @@ function AdminContentPage() {
     setSalesPageUrl("");
     setIsFree(false);
     setReleaseDays("");
+    setDisplayCategory("");
+    setAccessMode("pago");
+    setShowAsCard(true);
+    setBadgeText("");
+    setSortOrder("");
     setCoverFile(null);
     setContentFile(null);
     setEditItem(null);
@@ -92,6 +97,11 @@ function AdminContentPage() {
     setSalesPageUrl(item.sales_page_url || "");
     setIsFree(item.is_free);
     setReleaseDays(item.release_days != null ? String(item.release_days) : "");
+    setDisplayCategory(item.display_category || "");
+    setAccessMode(item.access_mode || (item.is_free ? "gratuito" : "pago"));
+    setShowAsCard(item.show_as_card !== false);
+    setBadgeText(item.badge_text || "");
+    setSortOrder(item.sort_order != null ? String(item.sort_order) : "");
     setCoverFile(null);
     setContentFile(null);
     setFormOpen(true);
