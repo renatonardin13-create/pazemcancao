@@ -41,6 +41,7 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
             </span>
           </Link>
 
+          <Link
             to="/perfil"
             className="group flex items-center gap-2 rounded-xl px-3 py-2 text-muted-foreground/35 hover:text-gold/60 hover:bg-muted/15 transition-all duration-500"
           >
