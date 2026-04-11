@@ -93,6 +93,12 @@ function AdminContentPage() {
     staleTime: 60_000,
   });
 
+  const { data: journeyData } = useQuery({
+    queryKey: ["admin-journeys"],
+    queryFn: () => listAdminJourneys(),
+    staleTime: 60_000,
+  });
+
   const categoryOptions = useMemo(() => {
     const base = [{ value: "__none__", label: "Nenhuma (padrão por tipo)" }];
     if (catData?.categories) {
@@ -102,6 +108,16 @@ function AdminContentPage() {
     }
     return base;
   }, [catData]);
+
+  const journeyOptions = useMemo(() => {
+    const base = [{ value: "__none__", label: "Nenhuma trilha" }];
+    if (journeyData?.journeys) {
+      for (const j of journeyData.journeys as any[]) {
+        base.push({ value: j.slug, label: `${j.icon || ''} ${j.name}`.trim() });
+      }
+    }
+    return base;
+  }, [journeyData]);
 
   const resetForm = () => {
     setTitle("");
