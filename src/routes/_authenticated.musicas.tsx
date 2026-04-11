@@ -450,9 +450,16 @@ function TrackCard({
   );
   const effectiveLocked = isLocked || isBonusLocked;
 
-  const bonusReleaseFormatted = track.bonus_release_date
-    ? new Date(track.bonus_release_date + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
-    : null;
+  const bonusCountdown = (() => {
+    if (!track.bonus_release_date) return null;
+    const release = new Date(track.bonus_release_date + 'T00:00:00');
+    const now = new Date();
+    const diffMs = release.getTime() - now.getTime();
+    if (diffMs <= 0) return null;
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    if (diffDays === 1) return 'Libera amanhã';
+    return `Libera em ${diffDays} dias`;
+  })();
 
   const Wrapper = effectiveLocked ? 'div' : Link;
   const wrapperProps = effectiveLocked
@@ -464,8 +471,8 @@ function TrackCard({
       <Wrapper
         {...(wrapperProps as any)}
         onClick={isBonusLocked ? () => {
-          toast.info(bonusReleaseFormatted
-            ? `🎁 Este bônus será liberado em ${bonusReleaseFormatted}`
+          toast.info(bonusCountdown
+            ? `🎁 ${bonusCountdown}`
             : "🎁 Este bônus ainda não tem data de liberação definida"
           );
         } : undefined}
@@ -522,10 +529,10 @@ function TrackCard({
                     <Lock className={`${isCarousel ? "h-7 w-7" : "h-5 w-5"} text-white/50`} />
                   )}
                 </div>
-                {isBonusLocked && bonusReleaseFormatted && (
+                {isBonusLocked && bonusCountdown && (
                   <div className="rounded-full bg-black/50 backdrop-blur-sm border border-amber-400/20 px-3 py-1">
                     <p className="text-[9px] font-semibold text-amber-300/80 tracking-wider uppercase text-center">
-                      Liberação: {bonusReleaseFormatted}
+                      ⏳ {bonusCountdown}
                     </p>
                   </div>
                 )}
