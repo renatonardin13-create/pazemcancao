@@ -34,12 +34,31 @@ function ContentPage() {
   const hasAccess = data?.hasFullAccess ?? false;
   const items = data?.items || [];
 
-  const groupedItems = items.reduce((acc: Record<string, any[]>, item: any) => {
-    const type = item.content_type || "material";
-    if (!acc[type]) acc[type] = [];
-    acc[type].push(item);
-    return acc;
-  }, {} as Record<string, any[]>);
+  // Separate items: those with display_category go into category sections,
+  // others go into type-based sections (legacy grouping)
+  const categoryGroups: Record<string, any[]> = {};
+  const typeGroups: Record<string, any[]> = {};
+
+  for (const item of items) {
+    if (item.display_category && item.show_as_card !== false) {
+      const cat = item.display_category;
+      if (!categoryGroups[cat]) categoryGroups[cat] = [];
+      categoryGroups[cat].push(item);
+    } else {
+      const type = item.content_type || "material";
+      if (!typeGroups[type]) typeGroups[type] = [];
+      typeGroups[type].push(item);
+    }
+  }
+
+  // Sort items within each group by sort_order, then by created_at
+  const sortItems = (a: any, b: any) => {
+    if (a.sort_order !== b.sort_order) return a.sort_order - b.sort_order;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  };
+  for (const arr of [...Object.values(categoryGroups), ...Object.values(typeGroups)]) {
+    arr.sort(sortItems);
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
