@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Users, ShieldCheck, Ban, Activity, UserPlus, Clock, Pencil, ToggleLeft, ToggleRight, Trash2 } from "lucide-react";
+import { Users, ShieldCheck, Ban, Activity, UserPlus, Clock, Pencil, ToggleLeft, ToggleRight, Trash2, Copy, KeyRound } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,6 +30,7 @@ function AdminUsersPage() {
   const [trialEmail, setTrialEmail] = useState("");
   const [trialName, setTrialName] = useState("");
   const [trialDays, setTrialDays] = useState(7);
+  const [generatedPassword, setGeneratedPassword] = useState<string | null>(null);
 
   // Edit form state
   const [editNome, setEditNome] = useState("");
@@ -46,10 +47,10 @@ function AdminUsersPage() {
   const createTrial = useMutation({
     mutationFn: (input: { email: string; nome: string; trialDays: number }) =>
       createTrialUser({ data: input }),
-    onSuccess: () => {
+    onSuccess: (result: any) => {
       toast.success("Cliente de teste cadastrado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
-      setOpen(false);
+      setGeneratedPassword(result.generatedPassword || null);
       setTrialEmail("");
       setTrialName("");
       setTrialDays(7);
