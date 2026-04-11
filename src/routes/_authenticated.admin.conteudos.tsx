@@ -286,6 +286,28 @@ function AdminContentPage() {
               <Switch checked={isFree} onCheckedChange={setIsFree} disabled={isSubmitting} />
             </div>
 
+            {/* Release Days - only for paid content */}
+            {!isFree && (
+              <div className="space-y-2">
+                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+                  Liberação por dias (opcional)
+                </Label>
+                <Input
+                  type="number"
+                  min="1"
+                  max="365"
+                  value={releaseDays}
+                  onChange={(e) => setReleaseDays(e.target.value)}
+                  placeholder="Ex: 7 (libera 7 dias após a compra)"
+                  className="bg-card/15 border-border/15 text-sm"
+                  disabled={isSubmitting}
+                />
+                <p className="text-[9px] text-muted-foreground/25">
+                  Se preenchido, o conteúdo será liberado X dias após a data de compra do cliente. Deixe vazio para acesso imediato.
+                </p>
+              </div>
+            )}
+
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="ghost" onClick={() => { setFormOpen(false); resetForm(); }} disabled={isSubmitting} className="text-[11px] text-muted-foreground/40">
                 Cancelar
