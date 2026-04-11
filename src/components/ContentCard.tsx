@@ -139,6 +139,18 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
             )}
           </div>
         )}
+
+        {/* Unlock rule overlay */}
+        {isRuleLocked && !isPendingRelease && (
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex flex-col items-center justify-center gap-3 transition-all duration-500">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/15 border border-amber-500/25">
+              <Lock className="h-6 w-6 text-amber-400/70" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-amber-300/50 bg-black/30 rounded-full px-4 py-1.5 border border-amber-500/15 text-center max-w-[85%]">
+              🔗 {item.unlockRuleMessage}
+            </span>
+          </div>
+        )
       </div>
 
       {/* Content info */}
