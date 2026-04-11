@@ -17,6 +17,14 @@ const typeConfig: Record<string, { label: string; icon: any; gradient: string }>
   material: { label: "Materiais", icon: FileText, gradient: "from-amber-900/40 via-amber-950/30 to-slate-950/50" },
 };
 
+const categoryLabels: Record<string, string> = {
+  bonus_exclusivos: "🎁 Bônus Exclusivos",
+  soldado_ferido: "⚔️ Soldado Ferido",
+  ansiedade: "🕊️ Ansiedade",
+  cura_da_alma: "💛 Cura da Alma",
+  refugio: "🏠 Refúgio",
+};
+
 function ContentPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["content-items"],
@@ -26,12 +34,31 @@ function ContentPage() {
   const hasAccess = data?.hasFullAccess ?? false;
   const items = data?.items || [];
 
-  const groupedItems = items.reduce((acc: Record<string, any[]>, item: any) => {
-    const type = item.content_type || "material";
-    if (!acc[type]) acc[type] = [];
-    acc[type].push(item);
-    return acc;
-  }, {} as Record<string, any[]>);
+  // Separate items: those with display_category go into category sections,
+  // others go into type-based sections (legacy grouping)
+  const categoryGroups: Record<string, any[]> = {};
+  const typeGroups: Record<string, any[]> = {};
+
+  for (const item of items) {
+    if (item.display_category && item.show_as_card !== false) {
+      const cat = item.display_category;
+      if (!categoryGroups[cat]) categoryGroups[cat] = [];
+      categoryGroups[cat].push(item);
+    } else {
+      const type = item.content_type || "material";
+      if (!typeGroups[type]) typeGroups[type] = [];
+      typeGroups[type].push(item);
+    }
+  }
+
+  // Sort items within each group by sort_order, then by created_at
+  const sortItems = (a: any, b: any) => {
+    if (a.sort_order !== b.sort_order) return a.sort_order - b.sort_order;
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  };
+  for (const arr of [...Object.values(categoryGroups), ...Object.values(typeGroups)]) {
+    arr.sort(sortItems);
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -59,37 +86,68 @@ function ContentPage() {
             <p className="text-sm text-muted-foreground/35">Nenhum conteúdo disponível ainda.</p>
           </div>
         ) : (
-          Object.entries(groupedItems).map(([type, typeItems]) => {
-            const config = typeConfig[type] || typeConfig.material;
-            const TypeIcon = config.icon;
+          <>
+            {/* Category-based sections (new display_category grouping) */}
+            {Object.entries(categoryGroups).map(([cat, catItems]) => {
+              const label = categoryLabels[cat] || cat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+              const config = typeConfig[catItems[0]?.content_type] || typeConfig.material;
 
-            return (
-              <section key={type} className="space-y-5">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/15">
-                    <TypeIcon className="h-4 w-4 text-gold/50" />
+              return (
+                <section key={`cat-${cat}`} className="space-y-5">
+                  <div className="flex items-center gap-3">
+                    <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
+                      {label}
+                    </h2>
+                    <span className="text-[10px] text-muted-foreground/25">{catItems.length} item(ns)</span>
                   </div>
-                  <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
-                    {config.label}
-                  </h2>
-                  <span className="text-[10px] text-muted-foreground/25">{typeItems.length} item(ns)</span>
-                </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                    {catItems.map((item: any, idx: number) => (
+                      <ContentCard
+                        key={item.id}
+                        item={item}
+                        index={idx}
+                        hasAccess={item.is_free || hasAccess}
+                        gradient={config.gradient}
+                        TypeIcon={config.icon}
+                      />
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                  {typeItems.map((item: any, idx: number) => (
-                    <ContentCard
-                      key={item.id}
-                      item={item}
-                      index={idx}
-                      hasAccess={item.is_free || hasAccess}
-                      gradient={config.gradient}
-                      TypeIcon={config.icon}
-                    />
-                  ))}
-                </div>
-              </section>
-            );
-          })
+            {/* Type-based sections (legacy grouping for items without display_category) */}
+            {Object.entries(typeGroups).map(([type, typeItems]) => {
+              const config = typeConfig[type] || typeConfig.material;
+              const TypeIcon = config.icon;
+
+              return (
+                <section key={type} className="space-y-5">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/15">
+                      <TypeIcon className="h-4 w-4 text-gold/50" />
+                    </div>
+                    <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
+                      {config.label}
+                    </h2>
+                    <span className="text-[10px] text-muted-foreground/25">{typeItems.length} item(ns)</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                    {typeItems.map((item: any, idx: number) => (
+                      <ContentCard
+                        key={item.id}
+                        item={item}
+                        index={idx}
+                        hasAccess={item.is_free || hasAccess}
+                        gradient={config.gradient}
+                        TypeIcon={config.icon}
+                      />
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </>
         )}
       </div>
 
