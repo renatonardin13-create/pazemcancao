@@ -20,6 +20,7 @@ import { Route as AuthenticatedMusicasRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedDownloadsRouteImport } from './routes/_authenticated.downloads'
 import { Route as AuthenticatedConteudoRouteImport } from './routes/_authenticated.conteudo'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
+import { Route as AuthenticatedConteudoIndexRouteImport } from './routes/_authenticated.conteudo.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated.admin.index'
 import { Route as ApiWebhookKiwifyRouteImport } from './routes/api/webhook/kiwify'
 import { Route as AuthenticatedMusicasTrackIdRouteImport } from './routes/_authenticated.musicas.$trackId'
@@ -89,6 +90,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedConteudoIndexRoute =
+  AuthenticatedConteudoIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedConteudoRoute,
+  } as any)
 const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -194,6 +201,7 @@ export interface FileRoutesByFullPath {
   '/musicas/$trackId': typeof AuthenticatedMusicasTrackIdRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/conteudo/': typeof AuthenticatedConteudoIndexRoute
   '/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
   '/admin/courses/new': typeof AuthenticatedAdminCoursesNewRoute
 }
@@ -203,7 +211,6 @@ export interface FileRoutesByTo {
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
   '/webhook': typeof WebhookRoute
-  '/conteudo': typeof AuthenticatedConteudoRouteWithChildren
   '/downloads': typeof AuthenticatedDownloadsRoute
   '/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/perfil': typeof AuthenticatedPerfilRoute
@@ -219,6 +226,7 @@ export interface FileRoutesByTo {
   '/musicas/$trackId': typeof AuthenticatedMusicasTrackIdRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
+  '/conteudo': typeof AuthenticatedConteudoIndexRoute
   '/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
   '/admin/courses/new': typeof AuthenticatedAdminCoursesNewRoute
 }
@@ -247,6 +255,7 @@ export interface FileRoutesById {
   '/_authenticated/musicas/$trackId': typeof AuthenticatedMusicasTrackIdRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/conteudo/': typeof AuthenticatedConteudoIndexRoute
   '/_authenticated/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
   '/_authenticated/admin/courses/new': typeof AuthenticatedAdminCoursesNewRoute
 }
@@ -275,6 +284,7 @@ export interface FileRouteTypes {
     | '/musicas/$trackId'
     | '/api/webhook/kiwify'
     | '/admin/'
+    | '/conteudo/'
     | '/admin/courses/$courseId'
     | '/admin/courses/new'
   fileRoutesByTo: FileRoutesByTo
@@ -284,7 +294,6 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/termos'
     | '/webhook'
-    | '/conteudo'
     | '/downloads'
     | '/musicas'
     | '/perfil'
@@ -300,6 +309,7 @@ export interface FileRouteTypes {
     | '/musicas/$trackId'
     | '/api/webhook/kiwify'
     | '/admin'
+    | '/conteudo'
     | '/admin/courses/$courseId'
     | '/admin/courses/new'
   id:
@@ -327,6 +337,7 @@ export interface FileRouteTypes {
     | '/_authenticated/musicas/$trackId'
     | '/api/webhook/kiwify'
     | '/_authenticated/admin/'
+    | '/_authenticated/conteudo/'
     | '/_authenticated/admin/courses/$courseId'
     | '/_authenticated/admin/courses/new'
   fileRoutesById: FileRoutesById
@@ -419,6 +430,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/conteudo/': {
+      id: '/_authenticated/conteudo/'
+      path: '/'
+      fullPath: '/conteudo/'
+      preLoaderRoute: typeof AuthenticatedConteudoIndexRouteImport
+      parentRoute: typeof AuthenticatedConteudoRoute
     }
     '/_authenticated/admin/': {
       id: '/_authenticated/admin/'
@@ -563,10 +581,12 @@ const AuthenticatedAdminRouteWithChildren =
 
 interface AuthenticatedConteudoRouteChildren {
   AuthenticatedConteudoTrackIdRoute: typeof AuthenticatedConteudoTrackIdRoute
+  AuthenticatedConteudoIndexRoute: typeof AuthenticatedConteudoIndexRoute
 }
 
 const AuthenticatedConteudoRouteChildren: AuthenticatedConteudoRouteChildren = {
   AuthenticatedConteudoTrackIdRoute: AuthenticatedConteudoTrackIdRoute,
+  AuthenticatedConteudoIndexRoute: AuthenticatedConteudoIndexRoute,
 }
 
 const AuthenticatedConteudoRouteWithChildren =
