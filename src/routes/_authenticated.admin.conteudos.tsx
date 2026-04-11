@@ -487,6 +487,21 @@ function AdminContentPage() {
                       📅 {item.release_days}d
                     </Badge>
                   )}
+                  {item.display_category && (
+                    <Badge variant="outline" className="text-[9px] rounded-full px-2 border text-muted-foreground/40 border-border/15">
+                      📁 {item.display_category.replace(/_/g, ' ')}
+                    </Badge>
+                  )}
+                  {item.badge_text && (
+                    <Badge variant="outline" className="text-[9px] rounded-full px-2 border text-gold/50 border-gold/15 bg-gold/5">
+                      {item.badge_text}
+                    </Badge>
+                  )}
+                  {item.show_as_card === false && (
+                    <Badge variant="outline" className="text-[9px] rounded-full px-2 border text-muted-foreground/30 border-border/15">
+                      <EyeOff className="h-2.5 w-2.5 mr-1" /> Oculto
+                    </Badge>
+                  )}
                   <Badge variant="outline" className={`text-[9px] rounded-full px-2 border ${item.is_active ? "text-emerald-400/60 border-emerald-500/15 bg-emerald-500/8" : "text-muted-foreground/30 border-border/20"}`}>
                     {item.is_active ? "Ativo" : "Inativo"}
                   </Badge>
