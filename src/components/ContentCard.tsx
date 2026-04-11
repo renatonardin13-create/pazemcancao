@@ -97,12 +97,16 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
            "📄 Material"}
         </span>
 
-        {/* Free badge */}
-        {item.is_free && (
+        {/* Badge text (custom or free) */}
+        {item.badge_text ? (
+          <span className="absolute top-4 left-4 text-[9px] font-bold uppercase tracking-widest text-gold/80 bg-gold/15 backdrop-blur-sm border border-gold/20 rounded-full px-3 py-1">
+            {item.badge_text}
+          </span>
+        ) : item.is_free ? (
           <span className="absolute top-4 left-4 text-[9px] font-bold uppercase tracking-widest text-emerald-300/80 bg-emerald-500/15 backdrop-blur-sm border border-emerald-500/20 rounded-full px-3 py-1">
             Gratuito
           </span>
-        )}
+        ) : null}
 
         {/* Lock overlay for paid content */}
         {isLocked && !isPendingRelease && (
