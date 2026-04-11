@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listAdminTracks, deleteTrack, updateTrack, regenerateCover } from "@/lib/admin-tracks.functions";
-import { Music, Plus, Trash2, ToggleLeft, ToggleRight, ExternalLink, ImageIcon, Loader2, Pencil, Gift } from "lucide-react";
+import { sendBonusNotification } from "@/lib/notifications.functions";
+import { Music, Plus, Trash2, ToggleLeft, ToggleRight, ExternalLink, ImageIcon, Loader2, Pencil, Gift, Bell } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { AddTrackForm } from "@/components/AddTrackForm";
@@ -48,6 +49,17 @@ function AdminTracksPage() {
     },
     onError: (err: Error) => {
       toast.error("Erro ao gerar capa: " + err.message);
+    },
+  });
+
+  const notifyMutation = useMutation({
+    mutationFn: ({ trackTitle, releaseDate }: { trackTitle: string; releaseDate?: string }) =>
+      sendBonusNotification({ data: { trackTitle, releaseDate } }),
+    onSuccess: (result) => {
+      toast.success(`Notificação enviada para ${result.sent} clientes!`);
+    },
+    onError: (err: Error) => {
+      toast.error("Erro ao notificar: " + err.message);
     },
   });
 
@@ -153,6 +165,27 @@ function AdminTracksPage() {
                 >
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
+                {track.is_bonus && (
+                  <button
+                    onClick={() => {
+                      if (confirm(`Enviar notificação de bônus para todos os clientes sobre "${track.title}"?`)) {
+                        notifyMutation.mutate({
+                          trackTitle: track.title,
+                          releaseDate: track.bonus_release_date || undefined,
+                        });
+                      }
+                    }}
+                    disabled={notifyMutation.isPending}
+                    className="p-2 text-muted-foreground/30 hover:text-amber-400/60 transition-colors"
+                    title="Notificar clientes sobre este bônus"
+                  >
+                    {notifyMutation.isPending && notifyMutation.variables?.trackTitle === track.title ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <Bell className="h-3.5 w-3.5" />
+                    )}
+                  </button>
+                )}
                 {!track.cover_url && (
                   <button
                     onClick={() =>
