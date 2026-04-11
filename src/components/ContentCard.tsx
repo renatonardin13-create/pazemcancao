@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Lock, Download, Play, ShoppingCart } from "lucide-react";
+import { Lock, Download, Play, ShoppingCart, Clock } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 interface ContentCardProps {
@@ -24,7 +24,11 @@ function getYouTubeEmbedUrl(url: string): string | null {
 
 export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: ContentCardProps) {
   const embedUrl = item.video_url ? getYouTubeEmbedUrl(item.video_url) : null;
-  const isLocked = !hasAccess;
+  
+  // unlocked field comes from server: true if free, admin, or release_days passed
+  const isUnlocked = item.unlocked !== undefined ? item.unlocked : (item.is_free || hasAccess);
+  const isLocked = !isUnlocked;
+  const isPendingRelease = hasAccess && !item.is_free && item.release_days && !isUnlocked;
 
   const handleLockedClick = () => {
     if (isLocked && item.sales_page_url) {
@@ -97,7 +101,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
         )}
 
         {/* Lock overlay for paid content */}
-        {isLocked && (
+        {isLocked && !isPendingRelease && (
           <div className="absolute inset-0 bg-black/55 backdrop-blur-[2px] flex flex-col items-center justify-center gap-3 transition-all duration-500">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gold/15 border border-gold/25">
               <Lock className="h-6 w-6 text-gold/70" />
@@ -105,6 +109,23 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
             <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold/50 bg-black/30 rounded-full px-4 py-1.5 border border-gold/15">
               🔒 Conteúdo Exclusivo
             </span>
+          </div>
+        )}
+
+        {/* Pending release overlay */}
+        {isPendingRelease && (
+          <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex flex-col items-center justify-center gap-3 transition-all duration-500">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/15 border border-blue-500/25">
+              <Clock className="h-6 w-6 text-blue-400/70" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-blue-300/50 bg-black/30 rounded-full px-4 py-1.5 border border-blue-500/15">
+              ⏳ Liberação em breve
+            </span>
+            {item.unlockDate && (
+              <span className="text-[9px] text-blue-300/40">
+                Disponível em {new Date(item.unlockDate).toLocaleDateString('pt-BR')}
+              </span>
+            )}
           </div>
         )}
       </div>
@@ -127,7 +148,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
 
         {/* Actions */}
         <div className="mt-4 pt-3.5 border-t border-border/6 flex items-center gap-3">
-          {hasAccess ? (
+          {isUnlocked ? (
             <>
               {item.file_url && (
                 <a
@@ -159,6 +180,11 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
                 </span>
               )}
             </>
+          ) : isPendingRelease ? (
+            <span className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase text-blue-400/45">
+              <Clock className="h-3 w-3" />
+              Em breve
+            </span>
           ) : (
             <span className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/45">
               <ShoppingCart className="h-3 w-3" />
