@@ -107,8 +107,11 @@ function MusicLibraryPage() {
     const idx = playerTracks.findIndex(t => t.id === playerTrack.id);
     if (currentTrack?.id === track.id) {
       toggle(playerTrack);
+    } else if (idx >= 0) {
+      setQueue(playerTracks, idx);
     } else {
-      setQueue(playerTracks, idx >= 0 ? idx : 0);
+      // Track not found in list — play it individually
+      toggle(playerTrack);
     }
   }, [currentTrack?.id, toggle, setQueue]);
 
