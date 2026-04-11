@@ -50,50 +50,103 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Check admin role whenever user changes (with email fallback)
   useEffect(() => {
+    let cancelled = false;
+
     if (!user?.id) {
       setIsAdmin(false);
       setAdminLoading(false);
-      return;
+      return () => {
+        cancelled = true;
+      };
     }
 
     // Email-based fallback: always treat this email as admin
     if (user.email?.toLowerCase() === ADMIN_EMAIL) {
       setIsAdmin(true);
       setAdminLoading(false);
-      return;
+      return () => {
+        cancelled = true;
+      };
     }
 
     const checkAdmin = async () => {
       setAdminLoading(true);
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", user.id)
-        .eq("role", "admin")
-        .maybeSingle();
-      setIsAdmin(!!data);
-      setAdminLoading(false);
+
+      try {
+        const { data, error } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", user.id)
+          .eq("role", "admin")
+          .maybeSingle();
+
+        if (cancelled) return;
+
+        if (error) {
+          console.error("Admin role check failed:", error.message);
+          setIsAdmin(false);
+          return;
+        }
+
+        setIsAdmin(!!data);
+      } catch (error) {
+        if (!cancelled) {
+          console.error("Admin role check failed:", error);
+          setIsAdmin(false);
+        }
+      } finally {
+        if (!cancelled) {
+          setAdminLoading(false);
+        }
+      }
     };
 
     checkAdmin();
+
+    return () => {
+      cancelled = true;
+    };
   }, [user?.id, user?.email]);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    let cancelled = false;
+
+    const loadSession = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        if (cancelled) return;
+
+        setSession(session);
+        setUser(session?.user ?? null);
+      } catch (error) {
+        if (!cancelled) {
+          console.error("Session load failed:", error);
+          setSession(null);
+          setUser(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_event, session) => {
+        if (cancelled) return;
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
       }
     );
 
-    return () => subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
   }, []);
 
   // Session validation interval
