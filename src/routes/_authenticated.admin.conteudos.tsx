@@ -408,6 +408,22 @@ function AdminContentPage() {
               <Input type="number" min="0" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} placeholder="Automático" className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
             </div>
 
+            {/* Featured toggle */}
+            <div className="flex items-center justify-between rounded-xl border border-border/10 bg-card/5 p-4">
+              <div>
+                <p className="text-[12px] font-semibold text-foreground/70">⭐ Conteúdo em Destaque</p>
+                <p className="text-[10px] text-muted-foreground/40">Aparece na faixa principal da home</p>
+              </div>
+              <Switch checked={isFeatured} onCheckedChange={setIsFeatured} disabled={isSubmitting} />
+            </div>
+
+            {isFeatured && (
+              <div className="space-y-2">
+                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Prioridade do Destaque</Label>
+                <Input type="number" min="0" value={featuredPriority} onChange={(e) => setFeaturedPriority(e.target.value)} placeholder="0 = maior prioridade" className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
+              </div>
+            )}
+
             {/* Journey Group */}
             <div className="space-y-2">
               <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Trilha Emocional</Label>
