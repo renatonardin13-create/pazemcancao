@@ -95,7 +95,7 @@ export const updateContentItem = createServerFn({ method: 'POST' })
     const { id, ...updates } = data;
     const { error } = await supabaseAdmin
       .from('content_items')
-      .update(updates)
+      .update(updates as any)
       .eq('id', id);
 
     if (error) throw new Error(error.message);
