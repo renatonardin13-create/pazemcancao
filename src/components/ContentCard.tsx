@@ -26,9 +26,10 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
   const embedUrl = item.video_url ? getYouTubeEmbedUrl(item.video_url) : null;
   
   // unlocked field comes from server: true if free, admin, or release_days passed
+  const accessMode = item.effectiveAccessMode || (item.is_free ? 'gratuito' : 'pago');
   const isUnlocked = item.unlocked !== undefined ? item.unlocked : (item.is_free || hasAccess);
   const isLocked = !isUnlocked;
-  const isPendingRelease = hasAccess && !item.is_free && item.release_days && !isUnlocked;
+  const isPendingRelease = accessMode === 'liberar_em_dias' && !isUnlocked && hasAccess;
 
   const handleLockedClick = () => {
     if (isLocked && item.sales_page_url) {
