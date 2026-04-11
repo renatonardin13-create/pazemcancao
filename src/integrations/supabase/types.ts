@@ -711,6 +711,53 @@ export type Database = {
         }
         Relationships: []
       }
+      user_content_progress: {
+        Row: {
+          completed_at: string | null
+          content_id: string
+          created_at: string
+          downloaded_at: string | null
+          id: string
+          last_position_seconds: number
+          started_at: string | null
+          updated_at: string
+          user_email: string
+          viewed_at: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          content_id: string
+          created_at?: string
+          downloaded_at?: string | null
+          id?: string
+          last_position_seconds?: number
+          started_at?: string | null
+          updated_at?: string
+          user_email: string
+          viewed_at?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          content_id?: string
+          created_at?: string
+          downloaded_at?: string | null
+          id?: string
+          last_position_seconds?: number
+          started_at?: string | null
+          updated_at?: string
+          user_email?: string
+          viewed_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_content_progress_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "content_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_content_unlocks: {
         Row: {
           content_id: string
