@@ -17,16 +17,18 @@ export const listContentItems = createServerFn({ method: 'POST' })
 
     const isAdmin = !!adminRole || email === 'renatonardin13@gmail.com';
 
-    let isBuyer = false;
+    let buyer: any = null;
     if (!isAdmin && email) {
-      const { data: buyer } = await supabaseAdmin
+      const { data: b } = await supabaseAdmin
         .from('approved_buyers')
-        .select('id')
+        .select('id, created_at, access_enabled')
         .eq('email', email)
         .eq('access_enabled', true)
         .maybeSingle();
-      isBuyer = !!buyer;
+      buyer = b;
     }
+
+    const isBuyer = !!buyer;
 
     const { data, error } = await supabaseAdmin
       .from('content_items')
@@ -37,6 +39,24 @@ export const listContentItems = createServerFn({ method: 'POST' })
     if (error) throw new Error(error.message);
 
     const hasFullAccess = isAdmin || isBuyer;
+    const buyerCreatedAt = buyer?.created_at ? new Date(buyer.created_at) : null;
 
-    return { items: data || [], hasFullAccess };
+    // For each item, compute whether it's unlocked based on release_days
+    const items = (data || []).map((item: any) => {
+      if (item.is_free) return { ...item, unlocked: true };
+      if (isAdmin) return { ...item, unlocked: true };
+      if (!isBuyer) return { ...item, unlocked: false };
+
+      // Buyer has access — check release_days
+      if (item.release_days && buyerCreatedAt) {
+        const unlockDate = new Date(buyerCreatedAt);
+        unlockDate.setDate(unlockDate.getDate() + item.release_days);
+        const unlocked = new Date() >= unlockDate;
+        return { ...item, unlocked, unlockDate: unlockDate.toISOString() };
+      }
+
+      return { ...item, unlocked: true };
+    });
+
+    return { items, hasFullAccess };
   });
