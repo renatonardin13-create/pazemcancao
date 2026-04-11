@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { listApprovedBuyers } from "@/lib/admin-users.functions";
-import { createTrialUser, updateBuyer } from "@/lib/admin-trial.functions";
+import { createTrialUser, updateBuyer, toggleBuyerAccess } from "@/lib/admin-trial.functions";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -70,6 +70,18 @@ function AdminUsersPage() {
     },
     onError: (err: any) => {
       toast.error(err.message || "Erro ao atualizar");
+    },
+  });
+
+  const toggleAccess = useMutation({
+    mutationFn: (input: { buyerId: string; access_enabled: boolean }) =>
+      toggleBuyerAccess({ data: input }),
+    onSuccess: (_data, variables) => {
+      toast.success(variables.access_enabled ? "Acesso liberado!" : "Acesso bloqueado!");
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Erro ao alterar acesso");
     },
   });
 
@@ -343,6 +355,18 @@ function AdminUsersPage() {
                   >
                     {isEnabled ? (isTrial ? "Teste" : "Ativo") : "Bloqueado"}
                   </Badge>
+
+                  <button
+                    onClick={() => toggleAccess.mutate({ buyerId: buyer.id, access_enabled: !isEnabled })}
+                    className={`flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-300 ${
+                      isEnabled
+                        ? "text-emerald-400/50 hover:text-destructive/70 hover:bg-destructive/10"
+                        : "text-destructive/50 hover:text-emerald-400/70 hover:bg-emerald-500/10"
+                    }`}
+                    title={isEnabled ? "Bloquear acesso" : "Liberar acesso"}
+                  >
+                    {isEnabled ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
+                  </button>
 
                   <button
                     onClick={() => openEditDialog(buyer)}

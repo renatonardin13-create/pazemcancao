@@ -198,3 +198,34 @@ export const updateBuyer = createServerFn({ method: 'POST' })
     if (error) throw new Error(error.message);
     return { success: true };
   });
+
+export const toggleBuyerAccess = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { buyerId: string; access_enabled: boolean }) =>
+    z.object({ buyerId: z.string().uuid(), access_enabled: z.boolean() }).parse(input)
+  )
+  .handler(async ({ data, context }) => {
+    const { supabase, userId } = context;
+
+    const { data: adminRole } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    const { data: userData } = await supabase.auth.getUser();
+    const isAdminEmail = userData?.user?.email?.toLowerCase() === 'renatonardin13@gmail.com';
+
+    if (!adminRole && !isAdminEmail) {
+      throw new Error('Acesso não autorizado');
+    }
+
+    const { error } = await supabaseAdmin
+      .from('approved_buyers')
+      .update({ access_enabled: data.access_enabled })
+      .eq('id', data.buyerId);
+
+    if (error) throw new Error(error.message);
+    return { success: true, access_enabled: data.access_enabled };
+  });
