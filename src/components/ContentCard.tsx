@@ -67,9 +67,9 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
           />
         ) : (
           <>
-            {item.cover_url && (
+            {(item.card_cover_url || item.cover_url) && (
               <img
-                src={item.cover_url}
+                src={item.card_cover_url || item.cover_url}
                 alt={item.title}
                 className="absolute inset-0 w-full h-full object-cover"
                 loading="lazy"
