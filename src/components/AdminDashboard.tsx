@@ -73,7 +73,27 @@ export function AdminDashboard() {
         ))}
       </div>
 
-      {/* Analytics Tabs */}
+      {/* Period filter + Analytics Tabs */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-foreground/60">Análise de Engajamento</h2>
+          <div className="flex gap-1 rounded-xl bg-muted/10 border border-border/10 p-0.5">
+            {PERIOD_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setDays(opt.value)}
+                className={`px-3 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
+                  days === opt.value
+                    ? "bg-primary/20 text-primary shadow-sm"
+                    : "text-muted-foreground/40 hover:text-muted-foreground/60"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
       <Tabs defaultValue="overview" className="space-y-4">
         <TabsList className="bg-muted/10 border border-border/10">
           <TabsTrigger value="overview" className="text-[11px] data-[state=active]:bg-card/20">
