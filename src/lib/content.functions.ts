@@ -41,11 +41,25 @@ export const listContentItems = createServerFn({ method: 'POST' })
     const hasFullAccess = isAdmin || isBuyer;
     const buyerCreatedAt = buyer?.created_at ? new Date(buyer.created_at) : null;
 
-    // For each item, compute whether it's unlocked based on release_days
+    // Fetch user-specific unlock dates if buyer
+    let unlockMap = new Map<string, { unlock_at: string; unlocked: boolean }>();
+    if (isBuyer && email) {
+      const { data: unlocks } = await supabaseAdmin
+        .from('user_content_unlocks')
+        .select('content_id, unlock_at, unlocked')
+        .eq('email', email);
+      if (unlocks) {
+        for (const u of unlocks) {
+          unlockMap.set(u.content_id, { unlock_at: u.unlock_at, unlocked: u.unlocked });
+        }
+      }
+    }
+
+    const now = new Date();
+
     const items = (data || []).map((item: any) => {
       if (isAdmin) return { ...item, unlocked: true };
 
-      // Determine access mode: use access_mode field, fallback to is_free
       const accessMode = item.access_mode || (item.is_free ? 'gratuito' : 'pago');
 
       if (accessMode === 'gratuito') {
@@ -54,11 +68,21 @@ export const listContentItems = createServerFn({ method: 'POST' })
 
       if (accessMode === 'liberar_em_dias') {
         if (!isBuyer) return { ...item, unlocked: false, effectiveAccessMode: 'liberar_em_dias' };
+
+        // Use pre-calculated unlock date from user_content_unlocks table
+        const unlock = unlockMap.get(item.id);
+        if (unlock) {
+          const unlockDate = new Date(unlock.unlock_at);
+          const isUnlocked = now >= unlockDate;
+          return { ...item, unlocked: isUnlocked, unlockDate: unlock.unlock_at, effectiveAccessMode: 'liberar_em_dias' };
+        }
+
+        // Fallback: calculate from buyer created_at (legacy, before unlock table existed)
         if (item.release_days && buyerCreatedAt) {
           const unlockDate = new Date(buyerCreatedAt);
           unlockDate.setDate(unlockDate.getDate() + item.release_days);
-          const unlocked = new Date() >= unlockDate;
-          return { ...item, unlocked, unlockDate: unlockDate.toISOString(), effectiveAccessMode: 'liberar_em_dias' };
+          const isUnlocked = now >= unlockDate;
+          return { ...item, unlocked: isUnlocked, unlockDate: unlockDate.toISOString(), effectiveAccessMode: 'liberar_em_dias' };
         }
         return { ...item, unlocked: true, effectiveAccessMode: 'liberar_em_dias' };
       }

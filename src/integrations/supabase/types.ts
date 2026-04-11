@@ -646,6 +646,47 @@ export type Database = {
         }
         Relationships: []
       }
+      user_content_unlocks: {
+        Row: {
+          content_id: string
+          created_at: string
+          email: string
+          id: string
+          order_id: string | null
+          unlock_at: string
+          unlocked: boolean
+          updated_at: string
+        }
+        Insert: {
+          content_id: string
+          created_at?: string
+          email: string
+          id?: string
+          order_id?: string | null
+          unlock_at: string
+          unlocked?: boolean
+          updated_at?: string
+        }
+        Update: {
+          content_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          order_id?: string | null
+          unlock_at?: string
+          unlocked?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_content_unlocks_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "content_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
