@@ -71,6 +71,15 @@ function AdminCategoriesPage() {
     onError: (err: any) => toast.error(err.message),
   });
 
+  const toggleFeaturedMutation = useMutation({
+    mutationFn: (cat: any) => updateCategory({ data: { id: cat.id, is_featured: !cat.is_featured } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+      toast.success("Destaque atualizado");
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
   const categories = data?.categories || [];
 
   const handleNameChange = (value: string) => {
