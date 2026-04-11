@@ -58,6 +58,8 @@ export const listContentItems = createServerFn({ method: 'POST' })
     // Fetch user behavior logs for unlock rules
     let playedContentIds = new Set<string>();
     let downloadedContentIds = new Set<string>();
+    let viewedContentIds = new Set<string>();
+    let completedContentIds = new Set<string>();
     if (email) {
       const { data: plays } = await supabaseAdmin
         .from('play_logs')
@@ -72,6 +74,17 @@ export const listContentItems = createServerFn({ method: 'POST' })
         .eq('email', email);
       if (downloads) {
         for (const d of downloads) downloadedContentIds.add(d.track_id);
+      }
+      // Also check content progress for unlock rules on content_items
+      const { data: progressRows } = await supabaseAdmin
+        .from('user_content_progress')
+        .select('content_id, viewed_at, completed_at, downloaded_at')
+        .eq('user_email', email);
+      if (progressRows) {
+        for (const p of progressRows as any[]) {
+          if (p.viewed_at) viewedContentIds.add(p.content_id);
+          if (p.completed_at) completedContentIds.add(p.content_id);
+        }
       }
     }
 
@@ -129,10 +142,10 @@ export const listContentItems = createServerFn({ method: 'POST' })
 
       if (ruleType !== 'none' && ruleContentId && baseUnlocked) {
         if (ruleType === 'after_watch') {
-          ruleMet = playedContentIds.has(ruleContentId);
+          ruleMet = playedContentIds.has(ruleContentId) || viewedContentIds.has(ruleContentId);
           if (!ruleMet) unlockRuleMessage = 'Disponível após assistir o conteúdo anterior';
         } else if (ruleType === 'after_complete') {
-          ruleMet = playedContentIds.has(ruleContentId);
+          ruleMet = completedContentIds.has(ruleContentId);
           if (!ruleMet) unlockRuleMessage = 'Disponível após concluir o conteúdo anterior';
         } else if (ruleType === 'after_download') {
           ruleMet = downloadedContentIds.has(ruleContentId);
