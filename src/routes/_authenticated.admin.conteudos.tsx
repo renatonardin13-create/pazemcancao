@@ -390,6 +390,11 @@ function AdminContentPage() {
                       Gratuito
                     </Badge>
                   )}
+                  {!item.is_free && item.release_days && (
+                    <Badge variant="outline" className="text-[9px] rounded-full px-2 border text-blue-400/60 border-blue-500/15 bg-blue-500/8">
+                      📅 {item.release_days}d
+                    </Badge>
+                  )}
                   <Badge variant="outline" className={`text-[9px] rounded-full px-2 border ${item.is_active ? "text-emerald-400/60 border-emerald-500/15 bg-emerald-500/8" : "text-muted-foreground/30 border-border/20"}`}>
                     {item.is_active ? "Ativo" : "Inativo"}
                   </Badge>
