@@ -49,6 +49,8 @@ export const createContentItem = createServerFn({ method: 'POST' })
     sort_order?: number;
     journey_group?: string;
     journey_order?: number;
+    unlock_rule_type?: string;
+    unlock_rule_content_id?: string | null;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
@@ -83,6 +85,8 @@ export const createContentItem = createServerFn({ method: 'POST' })
         sort_order: data.sort_order ?? ((maxOrder?.sort_order ?? 0) + 1),
         journey_group: data.journey_group || null,
         journey_order: data.journey_order ?? 0,
+        unlock_rule_type: data.unlock_rule_type || 'none',
+        unlock_rule_content_id: data.unlock_rule_content_id || null,
       } as any)
       .select()
       .single();
@@ -113,6 +117,8 @@ export const updateContentItem = createServerFn({ method: 'POST' })
     sort_order?: number;
     journey_group?: string;
     journey_order?: number;
+    unlock_rule_type?: string;
+    unlock_rule_content_id?: string | null;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
