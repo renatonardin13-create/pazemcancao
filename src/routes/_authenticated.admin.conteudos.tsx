@@ -579,6 +579,12 @@ function AdminContentPage() {
                       }`}>
                         {effectiveAccess === "gratuito" ? "Gratuito" : effectiveAccess === "liberar_em_dias" ? `Libera em ${item.release_days || "?"}d` : "Pago"}
                       </Badge>
+                      {item.is_featured && (
+                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 text-yellow-400/70 border-yellow-500/20 bg-yellow-500/10">
+                          ⭐ Destaque
+                        </Badge>
+                      )}
+                      </Badge>
                       {item.display_category && (
                         <Badge variant="outline" className="text-[9px] px-1.5 py-0 text-muted-foreground/40 border-border/15">
                           {item.display_category.replace(/_/g, " ")}
