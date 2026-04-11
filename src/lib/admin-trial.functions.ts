@@ -75,6 +75,9 @@ export const createTrialUser = createServerFn({ method: 'POST' })
       if (error) throw new Error(error.message);
     }
 
+    // Generate a readable password for the trial user
+    const generatedPassword = 'Paz' + Math.random().toString(36).slice(2, 8) + '!';
+
     // Create auth user if doesn't exist
     const { data: userList } = await supabaseAdmin.auth.admin.listUsers();
     const existingUser = userList?.users?.find(
@@ -82,28 +85,19 @@ export const createTrialUser = createServerFn({ method: 'POST' })
     );
 
     if (!existingUser) {
-      const tempPassword = crypto.randomUUID() + crypto.randomUUID();
       await supabaseAdmin.auth.admin.createUser({
         email,
-        password: tempPassword,
+        password: generatedPassword,
         email_confirm: true,
       });
-    }
-
-    // Send password reset so user can set their password
-    const publicUrl = process.env.SUPABASE_URL;
-    const publicKey = process.env.SUPABASE_PUBLISHABLE_KEY;
-    if (publicUrl && publicKey) {
-      const { createClient } = await import('@supabase/supabase-js');
-      const publicClient = createClient(publicUrl, publicKey, {
-        auth: { persistSession: false, autoRefreshToken: false },
-      });
-      await publicClient.auth.resetPasswordForEmail(email, {
-        redirectTo: `${publicUrl.replace('.supabase.co', '')}/login`,
+    } else {
+      // Update password for existing user
+      await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
+        password: generatedPassword,
       });
     }
 
-    return { success: true, expiresAt: expiresAt.toISOString() };
+    return { success: true, expiresAt: expiresAt.toISOString(), generatedPassword };
   });
 
 export const deleteBuyer = createServerFn({ method: 'POST' })
