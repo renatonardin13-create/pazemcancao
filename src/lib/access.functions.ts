@@ -89,6 +89,7 @@ export const checkBuyerAccess = createServerFn({ method: 'POST' })
       buyer: { nome: buyer.nome, product_name: buyer.product_name },
       isTrial,
       trialExpired: false,
+      isBlocked: false,
       canDownload: buyer.can_download !== false,
       trialExpiresAt: buyer.trial_expires_at,
     };
