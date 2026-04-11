@@ -584,7 +584,6 @@ function AdminContentPage() {
                           ⭐ Destaque
                         </Badge>
                       )}
-                      </Badge>
                       {item.display_category && (
                         <Badge variant="outline" className="text-[9px] px-1.5 py-0 text-muted-foreground/40 border-border/15">
                           {item.display_category.replace(/_/g, " ")}
