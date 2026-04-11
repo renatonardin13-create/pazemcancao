@@ -5,11 +5,9 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 export const listContentItems = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    // Get user email for access check
     const { data: userData } = await context.supabase.auth.getUser();
     const email = userData?.user?.email?.toLowerCase();
 
-    // Check if user is admin
     const { data: adminRole } = await context.supabase
       .from('user_roles')
       .select('role')
@@ -19,7 +17,6 @@ export const listContentItems = createServerFn({ method: 'POST' })
 
     const isAdmin = !!adminRole || email === 'renatonardin13@gmail.com';
 
-    // Check if user is approved buyer
     let isBuyer = false;
     if (!isAdmin && email) {
       const { data: buyer } = await supabaseAdmin
@@ -31,7 +28,6 @@ export const listContentItems = createServerFn({ method: 'POST' })
       isBuyer = !!buyer;
     }
 
-    // Fetch all active content using admin client (bypasses RLS)
     const { data, error } = await supabaseAdmin
       .from('content_items')
       .select('*')
@@ -40,11 +36,7 @@ export const listContentItems = createServerFn({ method: 'POST' })
 
     if (error) throw new Error(error.message);
 
-    // Filter: admins/buyers see everything, others see only free content
     const hasFullAccess = isAdmin || isBuyer;
-    const items = (data || []).filter((item: any) =>
-      hasFullAccess || item.is_free
-    );
 
-    return { items };
+    return { items: data || [], hasFullAccess };
   });
