@@ -52,6 +52,17 @@ function AdminTracksPage() {
     },
   });
 
+  const notifyMutation = useMutation({
+    mutationFn: ({ trackTitle, releaseDate }: { trackTitle: string; releaseDate?: string }) =>
+      sendBonusNotification({ data: { trackTitle, releaseDate } }),
+    onSuccess: (result) => {
+      toast.success(`Notificação enviada para ${result.sent} clientes!`);
+    },
+    onError: (err: Error) => {
+      toast.error("Erro ao notificar: " + err.message);
+    },
+  });
+
   const tracks = data?.tracks || [];
 
   return (
