@@ -150,6 +150,16 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
             <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-amber-300/50 bg-black/30 rounded-full px-4 py-1.5 border border-amber-500/15 text-center max-w-[85%]">
               🔗 {item.unlockRuleMessage}
             </span>
+            {item.unlockRuleContentTitle && (
+              <Link
+                to="/conteudo"
+                onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                className="flex items-center gap-1.5 text-[9px] font-medium text-amber-300/60 hover:text-amber-200/80 bg-black/20 rounded-full px-3 py-1 border border-amber-500/10 hover:border-amber-500/25 transition-all duration-300"
+              >
+                <ArrowRight className="h-2.5 w-2.5" />
+                Ir para: {item.unlockRuleContentTitle}
+              </Link>
+            )}
           </div>
         )}
       </div>
