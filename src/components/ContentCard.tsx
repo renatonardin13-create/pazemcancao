@@ -219,6 +219,15 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
               <Clock className="h-3 w-3" />
               Em breve
             </span>
+          ) : isRuleLocked ? (
+            <Link
+              to="/conteudo"
+              onClick={(e: React.MouseEvent) => e.stopPropagation()}
+              className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.15em] uppercase text-amber-400/55 hover:text-amber-300/80 transition-colors duration-300"
+            >
+              <ArrowRight className="h-3 w-3" />
+              {item.unlockRuleContentTitle ? `Assistir "${item.unlockRuleContentTitle}"` : "Pré-requisito pendente"}
+            </Link>
           ) : (
             <span className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/45">
               <ShoppingCart className="h-3 w-3" />
