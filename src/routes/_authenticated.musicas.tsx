@@ -338,11 +338,12 @@ interface TrackCardProps {
   playing: boolean;
   progress: number;
   handlePlayWithQueue: (track: any, trackList: any[]) => void;
+  canDownload: boolean;
 }
 
 function TrackCard({
   track, idx, icon, catTracks, isCarousel,
-  activeTrackRef, currentTrack, playing, progress, handlePlayWithQueue,
+  activeTrackRef, currentTrack, playing, progress, handlePlayWithQueue, canDownload,
 }: TrackCardProps) {
   const isThis = currentTrack?.id === track.id;
   const isPlaying = isThis && playing;
