@@ -15,33 +15,32 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
       .eq('role', 'admin')
       .maybeSingle();
 
-    const { data: userData } = await supabase.auth.getUser();
-    const isAdminEmail = userData?.user?.email?.toLowerCase() === 'renatonardin13@gmail.com';
-
-    if (!adminRole && !isAdminEmail) {
-      throw new Error('Acesso não autorizado');
+    if (!adminRole) {
+      const { data: userData } = await supabase.auth.getUser();
+      const isAdminEmail = userData?.user?.email?.toLowerCase() === 'renatonardin13@gmail.com';
+      if (!isAdminEmail) throw new Error('Acesso não autorizado');
     }
 
-    // Fetch counts
+    // Fetch all counts in parallel using head:true (no row data transferred)
     const [
       { count: totalCategories },
       { count: totalTracks },
       { count: activeTracks },
-      { data: buyers },
-      { data: sessions },
+      { count: totalStudents },
+      { count: activeSessions },
     ] = await Promise.all([
       supabaseAdmin.from('categories').select('*', { count: 'exact', head: true }),
       supabaseAdmin.from('tracks').select('*', { count: 'exact', head: true }),
       supabaseAdmin.from('tracks').select('*', { count: 'exact', head: true }).eq('is_active', true),
-      supabaseAdmin.from('approved_buyers').select('id').limit(1000),
-      supabaseAdmin.from('active_sessions').select('email').eq('is_valid', true),
+      supabaseAdmin.from('approved_buyers').select('*', { count: 'exact', head: true }),
+      supabaseAdmin.from('active_sessions').select('*', { count: 'exact', head: true }).eq('is_valid', true),
     ]);
 
     return {
       totalCategories: totalCategories || 0,
       totalTracks: totalTracks || 0,
       activeTracks: activeTracks || 0,
-      totalStudents: buyers?.length || 0,
-      activeSessions: sessions?.length || 0,
+      totalStudents: totalStudents || 0,
+      activeSessions: activeSessions || 0,
     };
   });

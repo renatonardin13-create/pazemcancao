@@ -24,6 +24,7 @@ function AdminTracksPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["admin-tracks"],
     queryFn: () => listAdminTracks(),
+    staleTime: 30_000,
   });
 
   const deleteMutation = useMutation({

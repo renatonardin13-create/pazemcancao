@@ -61,6 +61,7 @@ function AdminContentPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["admin-content"],
     queryFn: () => listAdminContentItems(),
+    staleTime: 30_000,
   });
 
   const resetForm = () => {

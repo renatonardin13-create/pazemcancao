@@ -24,12 +24,16 @@ export function AdminDashboard() {
   const { data, isLoading } = useQuery({
     queryKey: ["admin-dashboard"],
     queryFn: () => getDashboardStats(),
+    staleTime: 60_000, // 1 min cache
   });
 
-  const { data: analytics, isLoading: analyticsLoading } = useQuery({
+  const { data: rawAnalytics, isLoading: analyticsLoading } = useQuery({
     queryKey: ["admin-analytics", days],
     queryFn: () => getDashboardAnalytics({ data: { days } }),
+    staleTime: 60_000,
   });
+
+  const analytics = rawAnalytics as any;
 
   return (
     <div className="max-w-6xl mx-auto space-y-8">
