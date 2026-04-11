@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Users, ShieldCheck, Ban, Activity, UserPlus, Clock, ExternalLink } from "lucide-react";
+import { Users, ShieldCheck, Ban, Activity, UserPlus, Clock, Pencil, ToggleLeft, ToggleRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { listApprovedBuyers } from "@/lib/admin-users.functions";
-import { createTrialUser } from "@/lib/admin-trial.functions";
+import { createTrialUser, updateBuyer } from "@/lib/admin-trial.functions";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -24,9 +25,18 @@ export const Route = createFileRoute("/_authenticated/admin/users")({
 function AdminUsersPage() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [editBuyer, setEditBuyer] = useState<any>(null);
   const [trialEmail, setTrialEmail] = useState("");
   const [trialName, setTrialName] = useState("");
   const [trialDays, setTrialDays] = useState(7);
+
+  // Edit form state
+  const [editNome, setEditNome] = useState("");
+  const [editEnabled, setEditEnabled] = useState(true);
+  const [editIsTrial, setEditIsTrial] = useState(false);
+  const [editTrialDays, setEditTrialDays] = useState(7);
+  const [editCanDownload, setEditCanDownload] = useState(true);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-users"],
@@ -37,7 +47,7 @@ function AdminUsersPage() {
     mutationFn: (input: { email: string; nome: string; trialDays: number }) =>
       createTrialUser({ data: input }),
     onSuccess: () => {
-      toast.success("Cliente de teste cadastrado com sucesso! Um e-mail foi enviado para definir a senha.");
+      toast.success("Cliente de teste cadastrado com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
       setOpen(false);
       setTrialEmail("");
@@ -48,6 +58,50 @@ function AdminUsersPage() {
       toast.error(err.message || "Erro ao cadastrar cliente de teste");
     },
   });
+
+  const update = useMutation({
+    mutationFn: (input: { buyerId: string; nome?: string; access_enabled?: boolean; is_trial?: boolean; trialDays?: number; can_download?: boolean }) =>
+      updateBuyer({ data: input }),
+    onSuccess: () => {
+      toast.success("Usuário atualizado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      setEditOpen(false);
+      setEditBuyer(null);
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Erro ao atualizar");
+    },
+  });
+
+  const openEditDialog = (buyer: any) => {
+    setEditBuyer(buyer);
+    setEditNome(buyer.nome || "");
+    setEditEnabled(buyer.access_enabled);
+    setEditIsTrial(buyer.is_trial || false);
+    setEditCanDownload(buyer.can_download !== false);
+    setEditTrialDays(7);
+    setEditOpen(true);
+  };
+
+  const handleEditSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editBuyer) return;
+
+    const payload: any = {
+      buyerId: editBuyer.id,
+      nome: editNome,
+      access_enabled: editEnabled,
+      can_download: editCanDownload,
+    };
+
+    if (editIsTrial) {
+      payload.trialDays = editTrialDays;
+    } else {
+      payload.is_trial = false;
+    }
+
+    update.mutate(payload);
+  };
 
   const buyers = data?.buyers ?? [];
   const activeSessions = data?.activeSessions ?? [];
@@ -109,51 +163,96 @@ function AdminUsersPage() {
             >
               <div className="space-y-2">
                 <Label htmlFor="trial-name">Nome</Label>
-                <Input
-                  id="trial-name"
-                  value={trialName}
-                  onChange={(e) => setTrialName(e.target.value)}
-                  placeholder="Nome do cliente"
-                  required
-                />
+                <Input id="trial-name" value={trialName} onChange={(e) => setTrialName(e.target.value)} placeholder="Nome do cliente" required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="trial-email">E-mail</Label>
-                <Input
-                  id="trial-email"
-                  type="email"
-                  value={trialEmail}
-                  onChange={(e) => setTrialEmail(e.target.value)}
-                  placeholder="email@exemplo.com"
-                  required
-                />
+                <Input id="trial-email" type="email" value={trialEmail} onChange={(e) => setTrialEmail(e.target.value)} placeholder="email@exemplo.com" required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="trial-days">Dias de teste</Label>
-                <Input
-                  id="trial-days"
-                  type="number"
-                  min={1}
-                  max={90}
-                  value={trialDays}
-                  onChange={(e) => setTrialDays(Number(e.target.value))}
-                  required
-                />
+                <Input id="trial-days" type="number" min={1} max={90} value={trialDays} onChange={(e) => setTrialDays(Number(e.target.value))} required />
                 <p className="text-[11px] text-muted-foreground/40">
-                  O cliente poderá apenas ouvir os louvores (sem download). Após o prazo, o acesso será bloqueado automaticamente.
+                  O cliente poderá apenas ouvir (sem download). Após o prazo, o acesso será bloqueado.
                 </p>
               </div>
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={createTrial.isPending}
-              >
+              <Button type="submit" className="w-full" disabled={createTrial.isPending}>
                 {createTrial.isPending ? "Cadastrando..." : "Cadastrar Cliente de Teste"}
               </Button>
             </form>
           </DialogContent>
         </Dialog>
       </div>
+
+      {/* Edit Dialog */}
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-display">Editar Usuário</DialogTitle>
+          </DialogHeader>
+          {editBuyer && (
+            <form onSubmit={handleEditSubmit} className="space-y-4 mt-4">
+              <div className="rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
+                <p className="text-[11px] text-muted-foreground/40 uppercase tracking-wider">E-mail</p>
+                <p className="text-sm font-medium text-foreground/70 mt-0.5">{editBuyer.email}</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-nome">Nome</Label>
+                <Input id="edit-nome" value={editNome} onChange={(e) => setEditNome(e.target.value)} required />
+              </div>
+
+              <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
+                <div>
+                  <p className="text-sm font-medium text-foreground/70">Acesso ativo</p>
+                  <p className="text-[11px] text-muted-foreground/40">Habilitar ou bloquear acesso</p>
+                </div>
+                <Switch checked={editEnabled} onCheckedChange={setEditEnabled} />
+              </div>
+
+              <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
+                <div>
+                  <p className="text-sm font-medium text-foreground/70">Modo teste</p>
+                  <p className="text-[11px] text-muted-foreground/40">Apenas ouvir, sem download</p>
+                </div>
+                <Switch checked={editIsTrial} onCheckedChange={setEditIsTrial} />
+              </div>
+
+              {editIsTrial && (
+                <div className="space-y-2">
+                  <Label htmlFor="edit-trial-days">Renovar dias de teste</Label>
+                  <Input
+                    id="edit-trial-days"
+                    type="number"
+                    min={1}
+                    max={90}
+                    value={editTrialDays}
+                    onChange={(e) => setEditTrialDays(Number(e.target.value))}
+                  />
+                  <p className="text-[11px] text-muted-foreground/40">
+                    {editBuyer.trial_expires_at
+                      ? `Expira em: ${formatDate(editBuyer.trial_expires_at)}`
+                      : "Sem data de expiração definida"}
+                    . Ao salvar, será renovado por {editTrialDays} dias a partir de hoje.
+                  </p>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
+                <div>
+                  <p className="text-sm font-medium text-foreground/70">Permitir download</p>
+                  <p className="text-[11px] text-muted-foreground/40">Baixar músicas em MP3</p>
+                </div>
+                <Switch checked={editCanDownload} onCheckedChange={setEditCanDownload} disabled={editIsTrial} />
+              </div>
+
+              <Button type="submit" className="w-full" disabled={update.isPending}>
+                {update.isPending ? "Salvando..." : "Salvar alterações"}
+              </Button>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {[
@@ -244,6 +343,14 @@ function AdminUsersPage() {
                   >
                     {isEnabled ? (isTrial ? "Teste" : "Ativo") : "Bloqueado"}
                   </Badge>
+
+                  <button
+                    onClick={() => openEditDialog(buyer)}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/30 hover:text-foreground/60 hover:bg-muted/20 transition-all duration-300"
+                    title="Editar"
+                  >
+                    <Pencil className="h-3.5 w-3.5" />
+                  </button>
                 </div>
               </div>
             );
