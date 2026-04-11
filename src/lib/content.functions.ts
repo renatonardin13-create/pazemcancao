@@ -82,34 +82,67 @@ export const listContentItems = createServerFn({ method: 'POST' })
 
       const accessMode = item.access_mode || (item.is_free ? 'gratuito' : 'pago');
 
+      // First, determine base unlock status from access mode
+      let baseUnlocked = false;
+      let effectiveAccessMode = accessMode;
+      let unlockDate: string | undefined;
+
       if (accessMode === 'gratuito') {
-        return { ...item, unlocked: true, effectiveAccessMode: 'gratuito' };
+        baseUnlocked = true;
+        effectiveAccessMode = 'gratuito';
+      } else if (accessMode === 'liberar_em_dias') {
+        effectiveAccessMode = 'liberar_em_dias';
+        if (!isBuyer) {
+          baseUnlocked = false;
+        } else {
+          const unlock = unlockMap.get(item.id);
+          if (unlock) {
+            const ud = new Date(unlock.unlock_at);
+            baseUnlocked = now >= ud;
+            unlockDate = unlock.unlock_at;
+          } else if (item.release_days && buyerCreatedAt) {
+            const ud = new Date(buyerCreatedAt);
+            ud.setDate(ud.getDate() + item.release_days);
+            baseUnlocked = now >= ud;
+            unlockDate = ud.toISOString();
+          } else {
+            baseUnlocked = true;
+          }
+        }
+      } else {
+        // pago
+        effectiveAccessMode = 'pago';
+        baseUnlocked = isBuyer;
       }
 
-      if (accessMode === 'liberar_em_dias') {
-        if (!isBuyer) return { ...item, unlocked: false, effectiveAccessMode: 'liberar_em_dias' };
+      // Then, apply unlock rule (complementary layer)
+      const ruleType = item.unlock_rule_type || 'none';
+      const ruleContentId = item.unlock_rule_content_id;
+      let ruleMet = true;
+      let unlockRuleMessage: string | undefined;
 
-        // Use pre-calculated unlock date from user_content_unlocks table
-        const unlock = unlockMap.get(item.id);
-        if (unlock) {
-          const unlockDate = new Date(unlock.unlock_at);
-          const isUnlocked = now >= unlockDate;
-          return { ...item, unlocked: isUnlocked, unlockDate: unlock.unlock_at, effectiveAccessMode: 'liberar_em_dias' };
+      if (ruleType !== 'none' && ruleContentId && baseUnlocked) {
+        if (ruleType === 'after_watch') {
+          ruleMet = playedContentIds.has(ruleContentId);
+          if (!ruleMet) unlockRuleMessage = 'Disponível após assistir o conteúdo anterior';
+        } else if (ruleType === 'after_complete') {
+          ruleMet = playedContentIds.has(ruleContentId);
+          if (!ruleMet) unlockRuleMessage = 'Disponível após concluir o conteúdo anterior';
+        } else if (ruleType === 'after_download') {
+          ruleMet = downloadedContentIds.has(ruleContentId);
+          if (!ruleMet) unlockRuleMessage = 'Disponível após baixar o conteúdo anterior';
         }
-
-        // Fallback: calculate from buyer created_at (legacy, before unlock table existed)
-        if (item.release_days && buyerCreatedAt) {
-          const unlockDate = new Date(buyerCreatedAt);
-          unlockDate.setDate(unlockDate.getDate() + item.release_days);
-          const isUnlocked = now >= unlockDate;
-          return { ...item, unlocked: isUnlocked, unlockDate: unlockDate.toISOString(), effectiveAccessMode: 'liberar_em_dias' };
-        }
-        return { ...item, unlocked: true, effectiveAccessMode: 'liberar_em_dias' };
       }
 
-      // accessMode === 'pago' (default)
-      if (!isBuyer) return { ...item, unlocked: false, effectiveAccessMode: 'pago' };
-      return { ...item, unlocked: true, effectiveAccessMode: 'pago' };
+      const finalUnlocked = baseUnlocked && ruleMet;
+
+      return {
+        ...item,
+        unlocked: finalUnlocked,
+        effectiveAccessMode,
+        ...(unlockDate ? { unlockDate } : {}),
+        ...(unlockRuleMessage ? { unlockRuleMessage } : {}),
+      };
     });
 
     return { items, hasFullAccess };
