@@ -52,6 +52,7 @@ function AdminContentPage() {
   const [videoUrl, setVideoUrl] = useState("");
   const [salesPageUrl, setSalesPageUrl] = useState("");
   const [isFree, setIsFree] = useState(false);
+  const [releaseDays, setReleaseDays] = useState<string>("");
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [contentFile, setContentFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -71,6 +72,7 @@ function AdminContentPage() {
     setVideoUrl("");
     setSalesPageUrl("");
     setIsFree(false);
+    setReleaseDays("");
     setCoverFile(null);
     setContentFile(null);
     setEditItem(null);
@@ -84,6 +86,7 @@ function AdminContentPage() {
     setVideoUrl(item.video_url || "");
     setSalesPageUrl(item.sales_page_url || "");
     setIsFree(item.is_free);
+    setReleaseDays(item.release_days != null ? String(item.release_days) : "");
     setCoverFile(null);
     setContentFile(null);
     setFormOpen(true);
@@ -118,6 +121,8 @@ function AdminContentPage() {
         file_url = urlData.publicUrl + "?t=" + Date.now();
       }
 
+      const parsedDays = releaseDays.trim() !== "" ? parseInt(releaseDays, 10) : null;
+
       const payload = {
         title: title.trim(),
         description: description.trim() || undefined,
@@ -127,6 +132,7 @@ function AdminContentPage() {
         video_url: videoUrl.trim() || undefined,
         sales_page_url: salesPageUrl.trim() || undefined,
         is_free: isFree,
+        release_days: isFree ? null : (parsedDays && parsedDays > 0 ? parsedDays : null),
       };
 
       if (editItem) {
