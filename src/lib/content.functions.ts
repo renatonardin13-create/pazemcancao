@@ -77,6 +77,12 @@ export const listContentItems = createServerFn({ method: 'POST' })
 
     const now = new Date();
 
+    // Build a title lookup for prerequisite content references
+    const titleMap = new Map<string, string>();
+    for (const item of (data || [])) {
+      titleMap.set(item.id, item.title);
+    }
+
     const items = (data || []).map((item: any) => {
       if (isAdmin) return { ...item, unlocked: true };
 
@@ -136,12 +142,16 @@ export const listContentItems = createServerFn({ method: 'POST' })
 
       const finalUnlocked = baseUnlocked && ruleMet;
 
+      // Resolve prerequisite content info for the card
+      const prerequisiteTitle = ruleContentId ? titleMap.get(ruleContentId) : undefined;
+
       return {
         ...item,
         unlocked: finalUnlocked,
         effectiveAccessMode,
         ...(unlockDate ? { unlockDate } : {}),
         ...(unlockRuleMessage ? { unlockRuleMessage } : {}),
+        ...(ruleContentId && prerequisiteTitle ? { unlockRuleContentId: ruleContentId, unlockRuleContentTitle: prerequisiteTitle } : {}),
       };
     });
 
