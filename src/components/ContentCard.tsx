@@ -150,7 +150,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
               🔗 {item.unlockRuleMessage}
             </span>
           </div>
-        )
+        )}
       </div>
 
       {/* Content info */}
