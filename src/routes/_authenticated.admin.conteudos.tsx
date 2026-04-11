@@ -93,6 +93,22 @@ function AdminContentPage() {
     staleTime: 30_000,
   });
 
+  const { data: catData } = useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: () => listAdminCategories(),
+    staleTime: 60_000,
+  });
+
+  const categoryOptions = useMemo(() => {
+    const base = [{ value: "", label: "Nenhuma (padrão por tipo)" }];
+    if (catData?.categories) {
+      for (const c of catData.categories) {
+        base.push({ value: c.slug, label: `${c.icon || ''} ${c.name}`.trim() });
+      }
+    }
+    return base;
+  }, [catData]);
+
   const resetForm = () => {
     setTitle("");
     setDescription("");
