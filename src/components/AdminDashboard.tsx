@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getDashboardStats } from "@/lib/admin-dashboard.functions";
 import { getDashboardAnalytics } from "@/lib/analytics.functions";
@@ -11,15 +12,23 @@ import {
   AreaChart, Area,
 } from "recharts";
 
+const PERIOD_OPTIONS = [
+  { label: "7 dias", value: 7 },
+  { label: "30 dias", value: 30 },
+  { label: "90 dias", value: 90 },
+] as const;
+
 export function AdminDashboard() {
+  const [days, setDays] = useState(30);
+
   const { data, isLoading } = useQuery({
     queryKey: ["admin-dashboard"],
     queryFn: () => getDashboardStats(),
   });
 
   const { data: analytics, isLoading: analyticsLoading } = useQuery({
-    queryKey: ["admin-analytics"],
-    queryFn: () => getDashboardAnalytics(),
+    queryKey: ["admin-analytics", days],
+    queryFn: () => getDashboardAnalytics({ data: { days } }),
   });
 
   return (
