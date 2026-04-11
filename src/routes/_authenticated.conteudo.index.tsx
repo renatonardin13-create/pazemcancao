@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
 import { listContentItems } from "@/lib/content.functions";
 import { AppHeader } from "@/components/AppHeader";
 import { FooterLinks } from "@/components/FooterLinks";
 import { ContentCard } from "@/components/ContentCard";
 import { RecommendedSection } from "@/components/RecommendedSection";
-import { BookOpen, Video, GraduationCap, FileText } from "lucide-react";
+import { BookOpen, Video, GraduationCap, FileText, PlayCircle } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/conteudo/")({
   component: ContentPage,
@@ -34,6 +35,9 @@ const journeyLabels: Record<string, string> = {
   perseveranca: "💪 Para continuar mesmo cansado",
 };
 
+// Priority order for categories — bonus_exclusivos first
+const categoryOrder = ["bonus_exclusivos", "soldado_ferido", "ansiedade", "cura_da_alma", "refugio"];
+
 function ContentPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["content-items"],
@@ -42,21 +46,19 @@ function ContentPage() {
 
   const hasAccess = data?.hasFullAccess ?? false;
   const items = data?.items || [];
+  const progressMap = data?.progressMap || {};
 
-  // Separate items: those with display_category go into category sections,
-  // others go into type-based sections (legacy grouping)
+  // Group items
   const categoryGroups: Record<string, any[]> = {};
   const typeGroups: Record<string, any[]> = {};
   const journeyGroups: Record<string, any[]> = {};
 
   for (const item of items) {
-    // Journey grouping (complementary, item can be in both)
     if (item.journey_group && item.show_as_card !== false) {
       const jg = item.journey_group;
       if (!journeyGroups[jg]) journeyGroups[jg] = [];
       journeyGroups[jg].push(item);
     }
-
     if (item.display_category && item.show_as_card !== false) {
       const cat = item.display_category;
       if (!categoryGroups[cat]) categoryGroups[cat] = [];
@@ -68,7 +70,6 @@ function ContentPage() {
     }
   }
 
-  // Sort items within each group by sort_order, then by created_at
   const sortItems = (a: any, b: any) => {
     if (a.sort_order !== b.sort_order) return a.sort_order - b.sort_order;
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
@@ -84,11 +85,34 @@ function ContentPage() {
     arr.sort(sortJourneyItems);
   }
 
+  // "Continue sua caminhada" — items started but not completed
+  const continueItems = useMemo(() => {
+    return items.filter((item: any) => {
+      const p = progressMap[item.id];
+      return p?.viewed_at && !p?.completed_at && item.unlocked;
+    }).slice(0, 4);
+  }, [items, progressMap]);
+
+  // Sorted category entries — bonus first, then others in defined order
+  const sortedCategories = useMemo(() => {
+    const entries = Object.entries(categoryGroups);
+    return entries.sort(([a], [b]) => {
+      const ai = categoryOrder.indexOf(a);
+      const bi = categoryOrder.indexOf(b);
+      return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+    });
+  }, [categoryGroups]);
+
+  // Separate bonus from other categories
+  const bonusCategories = sortedCategories.filter(([cat]) => cat === "bonus_exclusivos");
+  const otherCategories = sortedCategories.filter(([cat]) => cat !== "bonus_exclusivos");
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <AppHeader />
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8 space-y-12">
+        {/* 1. Banner / Destaque */}
         <div className="text-center">
           <h1 className="font-display text-3xl font-bold text-foreground/85 tracking-tight">
             Conteúdos Exclusivos
@@ -111,16 +135,69 @@ function ContentPage() {
           </div>
         ) : (
           <>
-            {/* Personalized recommendations */}
-            <RecommendedSection
-              items={items}
-              hasAccess={hasAccess}
-              viewedIds={data?.viewedIds || []}
-              downloadedIds={data?.downloadedIds || []}
-              progressMap={data?.progressMap || {}}
-            />
+            {/* 2. Continue sua caminhada */}
+            {continueItems.length > 0 && (
+              <section className="space-y-5">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+                    <PlayCircle className="h-4 w-4 text-primary/60" />
+                  </div>
+                  <div>
+                    <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
+                      ▶️ Continue sua caminhada
+                    </h2>
+                    <p className="text-[10px] text-muted-foreground/30">
+                      Retome de onde parou
+                    </p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                  {continueItems.map((item: any, idx: number) => {
+                    const config = typeConfig[item.content_type] || typeConfig.material;
+                    return (
+                      <ContentCard
+                        key={`cont-${item.id}`}
+                        item={item}
+                        index={idx}
+                        hasAccess={item.is_free || hasAccess}
+                        gradient={config.gradient}
+                        TypeIcon={config.icon}
+                      />
+                    );
+                  })}
+                </div>
+              </section>
+            )}
 
-            {/* Journey sections (emotional trails) */}
+            {/* 3. Bônus Exclusivos */}
+            {bonusCategories.map(([cat, catItems]) => {
+              const label = categoryLabels[cat] || cat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+              const config = typeConfig[catItems[0]?.content_type] || typeConfig.material;
+              return (
+                <section key={`cat-${cat}`} className="space-y-5">
+                  <div className="flex items-center gap-3">
+                    <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
+                      {label}
+                    </h2>
+                    <span className="text-[10px] text-muted-foreground/25">{catItems.length} item(ns)</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                    {catItems.map((item: any, idx: number) => (
+                      <ContentCard
+                        key={item.id}
+                        item={item}
+                        index={idx}
+                        hasAccess={item.is_free || hasAccess}
+                        gradient={config.gradient}
+                        TypeIcon={config.icon}
+                      />
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+
+            {/* 4. Sua Jornada */}
             {Object.keys(journeyGroups).length > 0 && (
               <section className="space-y-6">
                 <div className="text-center">
@@ -133,7 +210,6 @@ function ContentPage() {
                 </div>
                 {Object.entries(journeyGroups).map(([jg, jgItems]) => {
                   const label = journeyLabels[jg] || jg.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-                  const config = typeConfig[jgItems[0]?.content_type] || typeConfig.material;
                   return (
                     <div key={`journey-${jg}`} className="space-y-4">
                       <div className="flex items-center gap-3">
@@ -162,11 +238,11 @@ function ContentPage() {
                 })}
               </section>
             )}
-            {/* Category-based sections (new display_category grouping) */}
-            {Object.entries(categoryGroups).map(([cat, catItems]) => {
+
+            {/* 5. Categorias principais (exceto bônus, já exibido acima) */}
+            {otherCategories.map(([cat, catItems]) => {
               const label = categoryLabels[cat] || cat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
               const config = typeConfig[catItems[0]?.content_type] || typeConfig.material;
-
               return (
                 <section key={`cat-${cat}`} className="space-y-5">
                   <div className="flex items-center gap-3">
@@ -191,11 +267,10 @@ function ContentPage() {
               );
             })}
 
-            {/* Type-based sections (legacy grouping for items without display_category) */}
+            {/* Type-based sections (legacy) */}
             {Object.entries(typeGroups).map(([type, typeItems]) => {
               const config = typeConfig[type] || typeConfig.material;
               const TypeIcon = config.icon;
-
               return (
                 <section key={type} className="space-y-5">
                   <div className="flex items-center gap-3">
@@ -222,6 +297,15 @@ function ContentPage() {
                 </section>
               );
             })}
+
+            {/* 6. Recomendado para você (último) */}
+            <RecommendedSection
+              items={items}
+              hasAccess={hasAccess}
+              viewedIds={data?.viewedIds || []}
+              downloadedIds={data?.downloadedIds || []}
+              progressMap={progressMap}
+            />
           </>
         )}
       </div>
