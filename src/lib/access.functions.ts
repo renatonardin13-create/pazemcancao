@@ -35,22 +35,45 @@ export const checkBuyerAccess = createServerFn({ method: 'POST' })
       .maybeSingle();
 
     if (!buyer) {
-      // Check if there's an expired trial (access_enabled may still be true but expired)
-      const { data: trialBuyer } = await supabase
+      // Check if buyer exists but is disabled (manual block) or has expired trial
+      const { data: anyBuyer } = await supabase
         .from('approved_buyers')
         .select('*')
         .eq('email', email.toLowerCase())
         .maybeSingle();
 
-      if (trialBuyer?.is_trial && trialBuyer?.trial_expires_at) {
-        const expired = new Date(trialBuyer.trial_expires_at) < new Date();
-        if (expired) {
-          // Let them through but locked
-          return { hasAccess: true, buyer: { nome: trialBuyer.nome, product_name: trialBuyer.product_name }, isTrial: true, trialExpired: true, canDownload: false, trialExpiresAt: trialBuyer.trial_expires_at };
+      if (anyBuyer) {
+        // Manual block (access_enabled = false)
+        if (!anyBuyer.access_enabled) {
+          return {
+            hasAccess: true,
+            buyer: { nome: anyBuyer.nome, product_name: anyBuyer.product_name },
+            isTrial: anyBuyer.is_trial || false,
+            trialExpired: false,
+            isBlocked: true,
+            canDownload: false,
+            trialExpiresAt: anyBuyer.trial_expires_at,
+          };
+        }
+
+        // Expired trial
+        if (anyBuyer.is_trial && anyBuyer.trial_expires_at) {
+          const expired = new Date(anyBuyer.trial_expires_at) < new Date();
+          if (expired) {
+            return {
+              hasAccess: true,
+              buyer: { nome: anyBuyer.nome, product_name: anyBuyer.product_name },
+              isTrial: true,
+              trialExpired: true,
+              isBlocked: false,
+              canDownload: false,
+              trialExpiresAt: anyBuyer.trial_expires_at,
+            };
+          }
         }
       }
 
-      return { hasAccess: false, buyer: null, isTrial: false, trialExpired: false, canDownload: true };
+      return { hasAccess: false, buyer: null, isTrial: false, trialExpired: false, isBlocked: false, canDownload: true };
     }
 
     // Check if trial has expired
@@ -58,7 +81,7 @@ export const checkBuyerAccess = createServerFn({ method: 'POST' })
     const trialExpired = isTrial && buyer.trial_expires_at && new Date(buyer.trial_expires_at) < new Date();
 
     if (trialExpired) {
-      return { hasAccess: true, buyer: { nome: buyer.nome, product_name: buyer.product_name }, isTrial: true, trialExpired: true, canDownload: false, trialExpiresAt: buyer.trial_expires_at };
+      return { hasAccess: true, buyer: { nome: buyer.nome, product_name: buyer.product_name }, isTrial: true, trialExpired: true, isBlocked: false, canDownload: false, trialExpiresAt: buyer.trial_expires_at };
     }
 
     return {
@@ -66,6 +89,7 @@ export const checkBuyerAccess = createServerFn({ method: 'POST' })
       buyer: { nome: buyer.nome, product_name: buyer.product_name },
       isTrial,
       trialExpired: false,
+      isBlocked: false,
       canDownload: buyer.can_download !== false,
       trialExpiresAt: buyer.trial_expires_at,
     };

@@ -84,7 +84,8 @@ function MusicLibraryPage() {
   });
 
   const canDownload = accessData?.canDownload !== false;
-  const isLocked = accessData?.trialExpired === true;
+  const isBlocked = accessData?.isBlocked === true;
+  const isLocked = accessData?.trialExpired === true || isBlocked;
 
   const { data: catData } = useQuery({
     queryKey: ["categories"],
@@ -191,10 +192,14 @@ function MusicLibraryPage() {
           >
             <div className="flex items-center justify-center gap-2 mb-2">
               <Lock className="h-5 w-5 text-gold/60" />
-              <h3 className="font-display text-lg font-bold text-foreground/80">Período de teste encerrado</h3>
+              <h3 className="font-display text-lg font-bold text-foreground/80">
+                {isBlocked ? "Acesso bloqueado" : "Período de teste encerrado"}
+              </h3>
             </div>
             <p className="text-[13px] text-muted-foreground/50 mb-4">
-              Seu acesso de teste expirou. Adquira o acesso completo para continuar ouvindo os louvores.
+              {isBlocked
+                ? "Seu acesso foi desativado. Adquira o acesso completo para ouvir os louvores."
+                : "Seu acesso de teste expirou. Adquira o acesso completo para continuar ouvindo os louvores."}
             </p>
             <a
               href="https://pazemcancao-oficial.lovable.app"
