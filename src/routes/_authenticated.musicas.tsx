@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Music, Play, Pause, Download, Search, Headphones, Lock } from "lucide-react";
+import { Music, Play, Pause, Download, Search, Headphones, Lock, Gift } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { FooterLinks } from "@/components/FooterLinks";
 import { useQuery } from "@tanstack/react-query";
@@ -384,9 +384,19 @@ function TrackCard({
   const isPlaying = isThis && playing;
   const gradient = categoryGradients[track.category] || "from-sky-900/40 via-blue-950/30 to-slate-950/50";
 
-  const Wrapper = isLocked ? 'a' : Link;
-  const wrapperProps = isLocked
-    ? { href: "https://pazemcancao-oficial.lovable.app", target: "_blank", rel: "noopener noreferrer" }
+  // Check if bonus track is still locked (release date in the future or no date set)
+  const isBonusLocked = track.is_bonus && (
+    !track.bonus_release_date || new Date(track.bonus_release_date + 'T00:00:00') > new Date()
+  );
+  const effectiveLocked = isLocked || isBonusLocked;
+
+  const bonusReleaseFormatted = track.bonus_release_date
+    ? new Date(track.bonus_release_date + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
+    : null;
+
+  const Wrapper = effectiveLocked ? 'div' : Link;
+  const wrapperProps = effectiveLocked
+    ? {}
     : { to: "/musicas/$trackId" as const, params: { trackId: track.id } };
 
   return (
