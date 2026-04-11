@@ -73,6 +73,18 @@ function AdminUsersPage() {
     },
   });
 
+  const toggleAccess = useMutation({
+    mutationFn: (input: { buyerId: string; access_enabled: boolean }) =>
+      toggleBuyerAccess({ data: input }),
+    onSuccess: (_data, variables) => {
+      toast.success(variables.access_enabled ? "Acesso liberado!" : "Acesso bloqueado!");
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Erro ao alterar acesso");
+    },
+  });
+
   const openEditDialog = (buyer: any) => {
     setEditBuyer(buyer);
     setEditNome(buyer.nome || "");
