@@ -17,6 +17,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export const Route = createFileRoute("/_authenticated/admin/users")({
   component: AdminUsersPage,
@@ -26,6 +36,7 @@ function AdminUsersPage() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [editBuyer, setEditBuyer] = useState<any>(null);
   const [trialEmail, setTrialEmail] = useState("");
   const [trialName, setTrialName] = useState("");
@@ -421,11 +432,7 @@ function AdminUsersPage() {
                   </button>
 
                   <button
-                    onClick={() => {
-                      if (confirm(`Excluir ${buyer.nome || buyer.email}?`)) {
-                        removeBuyer.mutate(buyer.id);
-                      }
-                    }}
+                    onClick={() => setDeleteTarget(buyer)}
                     className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/30 hover:text-destructive/70 hover:bg-destructive/10 transition-all duration-300"
                     title="Excluir"
                   >
@@ -437,6 +444,38 @@ function AdminUsersPage() {
           })}
         </div>
       )}
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={(v) => { if (!v) setDeleteTarget(null); }}>
+        <AlertDialogContent className="bg-card border-border/20">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-foreground/85">
+              Excluir usuário
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground/50">
+              Tem certeza que deseja excluir{" "}
+              <span className="font-semibold text-foreground/70">
+                {deleteTarget?.nome || deleteTarget?.email}
+              </span>
+              ? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="text-muted-foreground/50">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (deleteTarget) removeBuyer.mutate(deleteTarget.id);
+                setDeleteTarget(null);
+              }}
+              className="bg-destructive/80 text-destructive-foreground hover:bg-destructive"
+            >
+              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
