@@ -17,6 +17,14 @@ const typeConfig: Record<string, { label: string; icon: any; gradient: string }>
   material: { label: "Materiais", icon: FileText, gradient: "from-amber-900/40 via-amber-950/30 to-slate-950/50" },
 };
 
+const categoryLabels: Record<string, string> = {
+  bonus_exclusivos: "🎁 Bônus Exclusivos",
+  soldado_ferido: "⚔️ Soldado Ferido",
+  ansiedade: "🕊️ Ansiedade",
+  cura_da_alma: "💛 Cura da Alma",
+  refugio: "🏠 Refúgio",
+};
+
 function ContentPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["content-items"],
