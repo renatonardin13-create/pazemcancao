@@ -83,6 +83,8 @@ function AdminContentPage() {
   const [sortOrder, setSortOrder] = useState<string>("");
   const [journeyGroup, setJourneyGroup] = useState("");
   const [journeyOrder, setJourneyOrder] = useState<string>("");
+  const [unlockRuleType, setUnlockRuleType] = useState("none");
+  const [unlockRuleContentId, setUnlockRuleContentId] = useState("");
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [contentFile, setContentFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -109,6 +111,8 @@ function AdminContentPage() {
     setSortOrder("");
     setJourneyGroup("");
     setJourneyOrder("");
+    setUnlockRuleType("none");
+    setUnlockRuleContentId("");
     setCoverFile(null);
     setContentFile(null);
     setEditItem(null);
@@ -129,6 +133,8 @@ function AdminContentPage() {
     setSortOrder(item.sort_order != null ? String(item.sort_order) : "");
     setJourneyGroup(item.journey_group || "");
     setJourneyOrder(item.journey_order != null ? String(item.journey_order) : "");
+    setUnlockRuleType(item.unlock_rule_type || "none");
+    setUnlockRuleContentId(item.unlock_rule_content_id || "");
     setCoverFile(null);
     setContentFile(null);
     setFormOpen(true);
@@ -184,6 +190,8 @@ function AdminContentPage() {
         sort_order: parsedSortOrder,
         journey_group: journeyGroup || undefined,
         journey_order: journeyOrder.trim() !== "" ? parseInt(journeyOrder, 10) : undefined,
+        unlock_rule_type: unlockRuleType !== "none" ? unlockRuleType : undefined,
+        unlock_rule_content_id: unlockRuleType !== "none" && unlockRuleContentId ? unlockRuleContentId : null,
       };
 
       if (editItem) {
