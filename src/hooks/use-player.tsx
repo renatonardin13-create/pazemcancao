@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback, useRef, useEffect, type ReactNode } from "react";
 import type { Track } from "@/lib/sample-tracks";
+import { logPlay } from "@/lib/analytics.functions";
 
 interface PlayerState {
   currentTrack: Track | null;
@@ -38,6 +39,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const queueRef = useRef<Track[]>([]);
   const queueIndexRef = useRef(-1);
+  const playLoggedRef = useRef<string | null>(null);
 
   // Keep refs in sync
   useEffect(() => { queueRef.current = queue; }, [queue]);
@@ -71,6 +73,11 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       if (audio.duration > 0) {
         setCurrentTime(audio.currentTime);
         setProgress((audio.currentTime / audio.duration) * 100);
+        // Log play after 30 seconds
+        if (audio.currentTime >= 30 && playLoggedRef.current !== track.id) {
+          playLoggedRef.current = track.id;
+          logPlay({ data: { trackId: track.id, durationSeconds: Math.round(audio.currentTime) } }).catch(() => {});
+        }
       }
     });
 
