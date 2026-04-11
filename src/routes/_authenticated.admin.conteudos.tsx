@@ -154,10 +154,10 @@ function AdminContentPage() {
         sales_page_url: salesPageUrl.trim() || undefined,
         is_free: isFree,
         release_days: isFree ? null : (parsedDays && parsedDays > 0 ? parsedDays : null),
-        display_category: displayCategory.trim() || null,
+        display_category: (displayCategory && displayCategory !== 'none') ? displayCategory.trim() : null,
         access_mode: effectiveAccessMode,
         show_as_card: showAsCard,
-        badge_text: badgeText.trim() || null,
+        badge_text: (badgeText && badgeText !== 'none') ? badgeText.trim() : null,
         sort_order: parsedSort,
       };
 
