@@ -286,6 +286,15 @@ function AdminCategoriesPage() {
                 #{cat.sort_order}
               </span>
 
+              {/* Featured toggle */}
+              <button
+                onClick={() => toggleFeaturedMutation.mutate(cat)}
+                className={`p-2 transition-colors shrink-0 ${cat.is_featured ? 'text-amber-400' : 'text-muted-foreground/20 hover:text-amber-400/50'}`}
+                title={cat.is_featured ? "Remover destaque" : "Marcar como destaque"}
+              >
+                <Star className="h-3.5 w-3.5" fill={cat.is_featured ? "currentColor" : "none"} />
+              </button>
+
               {/* Actions */}
               <div className="flex items-center gap-1 shrink-0">
                 {editingId === cat.id ? (
