@@ -532,6 +532,51 @@ export type Database = {
         }
         Relationships: []
       }
+      processed_webhooks: {
+        Row: {
+          created_at: string
+          details: Json | null
+          email: string | null
+          error_message: string | null
+          event_type: string
+          id: string
+          payload: Json | null
+          processed_at: string | null
+          provider: string
+          status: string
+          unique_event_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          details?: Json | null
+          email?: string | null
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json | null
+          processed_at?: string | null
+          provider?: string
+          status?: string
+          unique_event_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          details?: Json | null
+          email?: string | null
+          error_message?: string | null
+          event_type?: string
+          id?: string
+          payload?: Json | null
+          processed_at?: string | null
+          provider?: string
+          status?: string
+          unique_event_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
