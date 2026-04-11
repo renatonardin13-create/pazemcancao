@@ -64,7 +64,7 @@ function getYouTubeEmbedUrl(url: string): string | null {
   }
 }
 
-export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: ContentCardProps) {
+export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, badgeOverride }: ContentCardProps) {
   const embedUrl = item.video_url ? getYouTubeEmbedUrl(item.video_url) : null;
   
   // unlocked field comes from server: true if free, admin, or release_days passed
