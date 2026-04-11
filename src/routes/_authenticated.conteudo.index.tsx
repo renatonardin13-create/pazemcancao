@@ -86,37 +86,68 @@ function ContentPage() {
             <p className="text-sm text-muted-foreground/35">Nenhum conteúdo disponível ainda.</p>
           </div>
         ) : (
-          Object.entries(groupedItems).map(([type, typeItems]) => {
-            const config = typeConfig[type] || typeConfig.material;
-            const TypeIcon = config.icon;
+          <>
+            {/* Category-based sections (new display_category grouping) */}
+            {Object.entries(categoryGroups).map(([cat, catItems]) => {
+              const label = categoryLabels[cat] || cat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+              const config = typeConfig[catItems[0]?.content_type] || typeConfig.material;
 
-            return (
-              <section key={type} className="space-y-5">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/15">
-                    <TypeIcon className="h-4 w-4 text-gold/50" />
+              return (
+                <section key={`cat-${cat}`} className="space-y-5">
+                  <div className="flex items-center gap-3">
+                    <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
+                      {label}
+                    </h2>
+                    <span className="text-[10px] text-muted-foreground/25">{catItems.length} item(ns)</span>
                   </div>
-                  <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
-                    {config.label}
-                  </h2>
-                  <span className="text-[10px] text-muted-foreground/25">{typeItems.length} item(ns)</span>
-                </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                    {catItems.map((item: any, idx: number) => (
+                      <ContentCard
+                        key={item.id}
+                        item={item}
+                        index={idx}
+                        hasAccess={item.is_free || hasAccess}
+                        gradient={config.gradient}
+                        TypeIcon={config.icon}
+                      />
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                  {typeItems.map((item: any, idx: number) => (
-                    <ContentCard
-                      key={item.id}
-                      item={item}
-                      index={idx}
-                      hasAccess={item.is_free || hasAccess}
-                      gradient={config.gradient}
-                      TypeIcon={config.icon}
-                    />
-                  ))}
-                </div>
-              </section>
-            );
-          })
+            {/* Type-based sections (legacy grouping for items without display_category) */}
+            {Object.entries(typeGroups).map(([type, typeItems]) => {
+              const config = typeConfig[type] || typeConfig.material;
+              const TypeIcon = config.icon;
+
+              return (
+                <section key={type} className="space-y-5">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/15">
+                      <TypeIcon className="h-4 w-4 text-gold/50" />
+                    </div>
+                    <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
+                      {config.label}
+                    </h2>
+                    <span className="text-[10px] text-muted-foreground/25">{typeItems.length} item(ns)</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                    {typeItems.map((item: any, idx: number) => (
+                      <ContentCard
+                        key={item.id}
+                        item={item}
+                        index={idx}
+                        hasAccess={item.is_free || hasAccess}
+                        gradient={config.gradient}
+                        TypeIcon={config.icon}
+                      />
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
+          </>
         )}
       </div>
 
