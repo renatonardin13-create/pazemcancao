@@ -141,9 +141,11 @@ export type Database = {
           created_at: string
           description: string | null
           display_category: string | null
+          featured_priority: number
           file_url: string | null
           id: string
           is_active: boolean
+          is_featured: boolean
           is_free: boolean
           journey_group: string | null
           journey_order: number
@@ -166,9 +168,11 @@ export type Database = {
           created_at?: string
           description?: string | null
           display_category?: string | null
+          featured_priority?: number
           file_url?: string | null
           id?: string
           is_active?: boolean
+          is_featured?: boolean
           is_free?: boolean
           journey_group?: string | null
           journey_order?: number
@@ -191,9 +195,11 @@ export type Database = {
           created_at?: string
           description?: string | null
           display_category?: string | null
+          featured_priority?: number
           file_url?: string | null
           id?: string
           is_active?: boolean
+          is_featured?: boolean
           is_free?: boolean
           journey_group?: string | null
           journey_order?: number
