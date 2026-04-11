@@ -7,7 +7,7 @@ import {
   deleteCategory,
   reorderCategories,
 } from "@/lib/admin-categories.functions";
-import { FolderOpen, Plus, Trash2, Pencil, GripVertical, Check, X } from "lucide-react";
+import { FolderOpen, Plus, Trash2, Pencil, GripVertical, Check, X, Star } from "lucide-react";
 import { useState, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
