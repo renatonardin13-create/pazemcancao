@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { listApprovedBuyers } from "@/lib/admin-users.functions";
-import { createTrialUser, updateBuyer } from "@/lib/admin-trial.functions";
+import { createTrialUser, updateBuyer, toggleBuyerAccess } from "@/lib/admin-trial.functions";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
