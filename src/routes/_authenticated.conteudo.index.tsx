@@ -170,9 +170,9 @@ function ContentPage() {
               </section>
             )}
 
-            {/* 3. Bônus Exclusivos */}
-            {bonusCategories.map(([cat, catItems]) => {
-              const label = categoryLabels[cat] || cat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            {/* 3. Categorias em Destaque */}
+            {featuredCategories.map(([cat, catItems]: [string, any[]]) => {
+              const label = categoryLookup[cat]?.name || cat.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
               const config = typeConfig[catItems[0]?.content_type] || typeConfig.material;
               return (
                 <section key={`cat-${cat}`} className="space-y-5">
@@ -240,9 +240,9 @@ function ContentPage() {
               </section>
             )}
 
-            {/* 5. Categorias principais (exceto bônus, já exibido acima) */}
-            {otherCategories.map(([cat, catItems]) => {
-              const label = categoryLabels[cat] || cat.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            {/* 5. Demais Categorias */}
+            {otherCategories.map(([cat, catItems]: [string, any[]]) => {
+              const label = categoryLookup[cat]?.name || cat.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
               const config = typeConfig[catItems[0]?.content_type] || typeConfig.material;
               return (
                 <section key={`cat-${cat}`} className="space-y-5">
