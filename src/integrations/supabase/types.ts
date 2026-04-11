@@ -145,6 +145,8 @@ export type Database = {
           id: string
           is_active: boolean
           is_free: boolean
+          journey_group: string | null
+          journey_order: number
           release_days: number | null
           sales_page_url: string | null
           show_as_card: boolean | null
@@ -166,6 +168,8 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_free?: boolean
+          journey_group?: string | null
+          journey_order?: number
           release_days?: number | null
           sales_page_url?: string | null
           show_as_card?: boolean | null
@@ -187,6 +191,8 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_free?: boolean
+          journey_group?: string | null
+          journey_order?: number
           release_days?: number | null
           sales_page_url?: string | null
           show_as_card?: boolean | null
