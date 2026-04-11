@@ -146,6 +146,13 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
           {item.title}
         </h3>
 
+        {/* Duration if available */}
+        {item.duration && (
+          <span className={`mt-1 text-[10px] tracking-wider ${isLocked ? "text-muted-foreground/20" : "text-muted-foreground/30"}`}>
+            ⏱ {item.duration}
+          </span>
+        )}
+
         {item.description && (
           <p className={`mt-2.5 text-[12px] leading-[1.9] line-clamp-2 transition-colors duration-500 flex-1 ${
             isLocked ? "text-muted-foreground/25" : "text-muted-foreground/35 group-hover:text-muted-foreground/45"

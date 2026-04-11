@@ -40,6 +40,15 @@ function ContentPage() {
   // Filter only items with show_as_card !== false
   const items = allItems.filter((item: any) => item.show_as_card !== false);
 
+  // Sort helper: sort_order ascending, then created_at descending for items without order
+  const sortItems = (a: any, b: any) => {
+    const orderA = a.sort_order ?? 9999;
+    const orderB = b.sort_order ?? 9999;
+    if (orderA !== orderB) return orderA - orderB;
+    // Fallback: most recent first
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+  };
+
   // Group by display_category first, then by content_type for items without category
   const categorizedItems: Record<string, any[]> = {};
   const uncategorizedItems: Record<string, any[]> = {};
@@ -55,6 +64,10 @@ function ContentPage() {
       uncategorizedItems[type].push(item);
     }
   });
+
+  // Sort items within each group
+  Object.values(categorizedItems).forEach(arr => arr.sort(sortItems));
+  Object.values(uncategorizedItems).forEach(arr => arr.sort(sortItems));
 
   const hasCategorized = Object.keys(categorizedItems).length > 0;
   const hasUncategorized = Object.keys(uncategorizedItems).length > 0;
