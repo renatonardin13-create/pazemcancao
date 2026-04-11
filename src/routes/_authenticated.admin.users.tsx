@@ -444,6 +444,38 @@ function AdminUsersPage() {
           })}
         </div>
       )}
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={(v) => { if (!v) setDeleteTarget(null); }}>
+        <AlertDialogContent className="bg-card border-border/20">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-foreground/85">
+              Excluir usuário
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground/50">
+              Tem certeza que deseja excluir{" "}
+              <span className="font-semibold text-foreground/70">
+                {deleteTarget?.nome || deleteTarget?.email}
+              </span>
+              ? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="text-muted-foreground/50">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (deleteTarget) removeBuyer.mutate(deleteTarget.id);
+                setDeleteTarget(null);
+              }}
+              className="bg-destructive/80 text-destructive-foreground hover:bg-destructive"
+            >
+              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
