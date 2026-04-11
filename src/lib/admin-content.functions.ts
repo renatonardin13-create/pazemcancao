@@ -40,6 +40,7 @@ export const createContentItem = createServerFn({ method: 'POST' })
     video_url?: string;
     sales_page_url?: string;
     is_free?: boolean;
+    release_days?: number | null;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
