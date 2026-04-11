@@ -53,6 +53,11 @@ function AdminContentPage() {
   const [salesPageUrl, setSalesPageUrl] = useState("");
   const [isFree, setIsFree] = useState(false);
   const [releaseDays, setReleaseDays] = useState<string>("");
+  const [displayCategory, setDisplayCategory] = useState<string>("");
+  const [accessMode, setAccessMode] = useState<string>("pago");
+  const [showAsCard, setShowAsCard] = useState(true);
+  const [badgeText, setBadgeText] = useState("");
+  const [sortOrder, setSortOrder] = useState<string>("");
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [contentFile, setContentFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -73,6 +78,11 @@ function AdminContentPage() {
     setSalesPageUrl("");
     setIsFree(false);
     setReleaseDays("");
+    setDisplayCategory("");
+    setAccessMode("pago");
+    setShowAsCard(true);
+    setBadgeText("");
+    setSortOrder("");
     setCoverFile(null);
     setContentFile(null);
     setEditItem(null);
@@ -87,6 +97,11 @@ function AdminContentPage() {
     setSalesPageUrl(item.sales_page_url || "");
     setIsFree(item.is_free);
     setReleaseDays(item.release_days != null ? String(item.release_days) : "");
+    setDisplayCategory(item.display_category || "");
+    setAccessMode(item.access_mode || (item.is_free ? "gratuito" : "pago"));
+    setShowAsCard(item.show_as_card !== false);
+    setBadgeText(item.badge_text || "");
+    setSortOrder(item.sort_order != null ? String(item.sort_order) : "");
     setCoverFile(null);
     setContentFile(null);
     setFormOpen(true);
@@ -122,6 +137,12 @@ function AdminContentPage() {
       }
 
       const parsedDays = releaseDays.trim() !== "" ? parseInt(releaseDays, 10) : null;
+      const parsedSort = sortOrder.trim() !== "" ? parseInt(sortOrder, 10) : undefined;
+
+      // Derive access_mode from controls
+      let effectiveAccessMode = accessMode;
+      if (isFree) effectiveAccessMode = 'gratuito';
+      else if (parsedDays && parsedDays > 0) effectiveAccessMode = 'liberar_em_dias';
 
       const payload = {
         title: title.trim(),
@@ -133,6 +154,11 @@ function AdminContentPage() {
         sales_page_url: salesPageUrl.trim() || undefined,
         is_free: isFree,
         release_days: isFree ? null : (parsedDays && parsedDays > 0 ? parsedDays : null),
+        display_category: (displayCategory && displayCategory !== 'none') ? displayCategory.trim() : null,
+        access_mode: effectiveAccessMode,
+        show_as_card: showAsCard,
+        badge_text: (badgeText && badgeText !== 'none') ? badgeText.trim() : null,
+        sort_order: parsedSort,
       };
 
       if (editItem) {
@@ -308,6 +334,72 @@ function AdminContentPage() {
               </div>
             )}
 
+            {/* ── Novos campos opcionais ── */}
+            <div className="border-t border-border/10 pt-4 mt-2">
+              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground/30 mb-3">Exibição no App</p>
+
+              {/* Display Category */}
+              <div className="space-y-2 mb-4">
+                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Categoria de Exibição</Label>
+                <Select value={displayCategory} onValueChange={setDisplayCategory} disabled={isSubmitting}>
+                  <SelectTrigger className="bg-card/15 border-border/15 text-sm">
+                    <SelectValue placeholder="Sem categoria específica" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Sem categoria específica</SelectItem>
+                    <SelectItem value="bonus_exclusivos">🎁 Bônus Exclusivos</SelectItem>
+                    <SelectItem value="soldado_ferido">⚔️ Soldado Ferido</SelectItem>
+                    <SelectItem value="ansiedade">🕊️ Ansiedade</SelectItem>
+                    <SelectItem value="cura_da_alma">💛 Cura da Alma</SelectItem>
+                    <SelectItem value="refugio">🏠 Refúgio</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-[9px] text-muted-foreground/25">Define em qual seção do app o card aparecerá</p>
+              </div>
+
+              {/* Show as Card */}
+              <div className="flex items-center justify-between rounded-xl border border-border/10 bg-card/5 p-4 mb-4">
+                <div>
+                  <p className="text-[12px] font-semibold text-foreground/70">Exibir como Card</p>
+                  <p className="text-[10px] text-muted-foreground/40">Mostrar este conteúdo em formato de card no app</p>
+                </div>
+                <Switch checked={showAsCard} onCheckedChange={setShowAsCard} disabled={isSubmitting} />
+              </div>
+
+              {/* Badge Text */}
+              <div className="space-y-2 mb-4">
+                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Texto do Badge (opcional)</Label>
+                <Select value={badgeText} onValueChange={setBadgeText} disabled={isSubmitting}>
+                  <SelectTrigger className="bg-card/15 border-border/15 text-sm">
+                    <SelectValue placeholder="Sem badge" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Sem badge</SelectItem>
+                    <SelectItem value="BÔNUS">BÔNUS</SelectItem>
+                    <SelectItem value="NOVO">NOVO</SelectItem>
+                    <SelectItem value="GRÁTIS">GRÁTIS</SelectItem>
+                    <SelectItem value="VIP">VIP</SelectItem>
+                    <SelectItem value="LIBERA EM 7 DIAS">LIBERA EM 7 DIAS</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Sort Order */}
+              <div className="space-y-2">
+                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Ordem de Exibição</Label>
+                <Input
+                  type="number"
+                  min="0"
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value)}
+                  placeholder="Automático (sequencial)"
+                  className="bg-card/15 border-border/15 text-sm"
+                  disabled={isSubmitting}
+                />
+                <p className="text-[9px] text-muted-foreground/25">Menor número aparece primeiro. Deixe vazio para ordem automática.</p>
+              </div>
+            </div>
+
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="ghost" onClick={() => { setFormOpen(false); resetForm(); }} disabled={isSubmitting} className="text-[11px] text-muted-foreground/40">
                 Cancelar
@@ -393,6 +485,21 @@ function AdminContentPage() {
                   {!item.is_free && item.release_days && (
                     <Badge variant="outline" className="text-[9px] rounded-full px-2 border text-blue-400/60 border-blue-500/15 bg-blue-500/8">
                       📅 {item.release_days}d
+                    </Badge>
+                  )}
+                  {item.display_category && (
+                    <Badge variant="outline" className="text-[9px] rounded-full px-2 border text-muted-foreground/40 border-border/15">
+                      📁 {item.display_category.replace(/_/g, ' ')}
+                    </Badge>
+                  )}
+                  {item.badge_text && (
+                    <Badge variant="outline" className="text-[9px] rounded-full px-2 border text-gold/50 border-gold/15 bg-gold/5">
+                      {item.badge_text}
+                    </Badge>
+                  )}
+                  {item.show_as_card === false && (
+                    <Badge variant="outline" className="text-[9px] rounded-full px-2 border text-muted-foreground/30 border-border/15">
+                      <EyeOff className="h-2.5 w-2.5 mr-1" /> Oculto
                     </Badge>
                   )}
                   <Badge variant="outline" className={`text-[9px] rounded-full px-2 border ${item.is_active ? "text-emerald-400/60 border-emerald-500/15 bg-emerald-500/8" : "text-muted-foreground/30 border-border/20"}`}>
