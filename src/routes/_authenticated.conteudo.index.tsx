@@ -25,6 +25,14 @@ const categoryLabels: Record<string, string> = {
   refugio: "🏠 Refúgio",
 };
 
+const journeyLabels: Record<string, string> = {
+  comece_por_aqui: "🌱 Comece por aqui",
+  dias_dificeis: "🌧️ Para dias difíceis",
+  ansiedade: "🕊️ Quando a ansiedade apertar",
+  restauracao: "💛 Para restaurar a alma",
+  perseveranca: "💪 Para continuar mesmo cansado",
+};
+
 function ContentPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["content-items"],
