@@ -153,14 +153,22 @@ function MusicLibraryPage() {
     });
   }, [tracks, searchTerm, activeCategory]);
 
+  const bonusTracks = useMemo(() => {
+    return filteredTracks.filter((t: any) => t.is_bonus);
+  }, [filteredTracks]);
+
+  const regularTracks = useMemo(() => {
+    return filteredTracks.filter((t: any) => !t.is_bonus);
+  }, [filteredTracks]);
+
   const tracksByCategory = useMemo(() => {
     const grouped: Record<string, any[]> = {};
-    filteredTracks.forEach((track: any) => {
+    regularTracks.forEach((track: any) => {
       if (!grouped[track.category]) grouped[track.category] = [];
       grouped[track.category].push(track);
     });
     return Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b));
-  }, [filteredTracks]);
+  }, [regularTracks]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
