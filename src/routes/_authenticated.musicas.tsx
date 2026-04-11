@@ -182,7 +182,31 @@ function MusicLibraryPage() {
           </motion.p>
         </motion.div>
 
-        {/* Search & filters */}
+        {/* Trial expired banner */}
+        {isLocked && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8 rounded-2xl border border-gold/20 bg-gold/5 p-5 text-center"
+          >
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Lock className="h-5 w-5 text-gold/60" />
+              <h3 className="font-display text-lg font-bold text-foreground/80">Período de teste encerrado</h3>
+            </div>
+            <p className="text-[13px] text-muted-foreground/50 mb-4">
+              Seu acesso de teste expirou. Adquira o acesso completo para continuar ouvindo os louvores.
+            </p>
+            <a
+              href="https://pazemcancao-oficial.lovable.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-gold/15 text-gold/70 border border-gold/20 px-6 py-2.5 text-[12px] font-semibold tracking-wider uppercase hover:bg-gold/25 hover:text-gold/90 transition-all duration-500"
+            >
+              Adquira aqui
+            </a>
+          </motion.div>
+        )}
+
         <motion.div
           initial="hidden"
           animate="visible"
