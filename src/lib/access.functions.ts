@@ -81,7 +81,7 @@ export const checkBuyerAccess = createServerFn({ method: 'POST' })
     const trialExpired = isTrial && buyer.trial_expires_at && new Date(buyer.trial_expires_at) < new Date();
 
     if (trialExpired) {
-      return { hasAccess: true, buyer: { nome: buyer.nome, product_name: buyer.product_name }, isTrial: true, trialExpired: true, canDownload: false, trialExpiresAt: buyer.trial_expires_at };
+      return { hasAccess: true, buyer: { nome: buyer.nome, product_name: buyer.product_name }, isTrial: true, trialExpired: true, isBlocked: false, canDownload: false, trialExpiresAt: buyer.trial_expires_at };
     }
 
     return {
