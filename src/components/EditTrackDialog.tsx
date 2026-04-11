@@ -8,13 +8,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Loader2, Upload, X, ImageIcon } from "lucide-react";
+import { Loader2, Upload, X, ImageIcon, Gift } from "lucide-react";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -25,6 +26,8 @@ interface EditTrackDialogProps {
     category: string;
     description: string | null;
     cover_url: string | null;
+    is_bonus?: boolean;
+    bonus_release_date?: string | null;
   };
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -42,6 +45,8 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
   const [title, setTitle] = useState(track.title);
   const [category, setCategory] = useState(track.category);
   const [description, setDescription] = useState(track.description || "");
+  const [isBonus, setIsBonus] = useState(track.is_bonus || false);
+  const [bonusReleaseDate, setBonusReleaseDate] = useState(track.bonus_release_date || "");
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(track.cover_url);
   const [uploading, setUploading] = useState(false);
@@ -113,6 +118,8 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
           category,
           description: description.trim() || undefined,
           cover_url: cover_url === null ? "" : (cover_url || undefined),
+          is_bonus: isBonus,
+          bonus_release_date: isBonus && bonusReleaseDate ? bonusReleaseDate : null,
         },
       });
     },
@@ -264,6 +271,40 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
               className="bg-card/15 border-border/15 text-sm min-h-[70px]"
               disabled={isSubmitting}
             />
+          </div>
+
+          {/* Bonus */}
+          <div className="space-y-3 rounded-xl border border-amber-500/10 bg-amber-500/[0.03] p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Gift className="h-4 w-4 text-amber-400/60" />
+                <Label className="text-[12px] font-semibold text-foreground/70">
+                  Música Bônus
+                </Label>
+              </div>
+              <Switch
+                checked={isBonus}
+                onCheckedChange={setIsBonus}
+                disabled={isSubmitting}
+              />
+            </div>
+            {isBonus && (
+              <div className="space-y-2">
+                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+                  Data de Liberação
+                </Label>
+                <Input
+                  type="date"
+                  value={bonusReleaseDate}
+                  onChange={(e) => setBonusReleaseDate(e.target.value)}
+                  className="bg-card/15 border-border/15 text-sm"
+                  disabled={isSubmitting}
+                />
+                <p className="text-[9px] text-muted-foreground/30">
+                  A música ficará bloqueada até esta data. Se não definir, ficará bloqueada indefinidamente.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Actions */}

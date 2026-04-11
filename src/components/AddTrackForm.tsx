@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Upload, Loader2, ImageIcon, Music, X } from "lucide-react";
+import { Upload, Loader2, ImageIcon, Music, X, Gift } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 
 interface AddTrackFormProps {
@@ -29,6 +30,8 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
   const [mp3File, setMp3File] = useState<File | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
+  const [isBonus, setIsBonus] = useState(false);
+  const [bonusReleaseDate, setBonusReleaseDate] = useState("");
   const [uploading, setUploading] = useState(false);
 
   const addTrackMutation = useMutation({
@@ -84,6 +87,8 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
           download_url: urlData.publicUrl,
           description: description || undefined,
           cover_url: coverUrl,
+          is_bonus: isBonus,
+          bonus_release_date: isBonus && bonusReleaseDate ? bonusReleaseDate : undefined,
         },
       });
 
@@ -109,6 +114,8 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
     setMp3File(null);
     setCoverFile(null);
     setCoverPreview(null);
+    setIsBonus(false);
+    setBonusReleaseDate("");
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -286,6 +293,40 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
               disabled={isSubmitting}
             />
           </label>
+        )}
+      </div>
+
+      {/* Bonus */}
+      <div className="space-y-3 rounded-xl border border-amber-500/10 bg-amber-500/[0.03] p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Gift className="h-4 w-4 text-amber-400/60" />
+            <Label className="text-[12px] font-semibold text-foreground/70">
+              Música Bônus
+            </Label>
+          </div>
+          <Switch
+            checked={isBonus}
+            onCheckedChange={setIsBonus}
+            disabled={isSubmitting}
+          />
+        </div>
+        {isBonus && (
+          <div className="space-y-2">
+            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+              Data de Liberação
+            </Label>
+            <Input
+              type="date"
+              value={bonusReleaseDate}
+              onChange={(e) => setBonusReleaseDate(e.target.value)}
+              className="bg-card/15 border-border/15 text-sm"
+              disabled={isSubmitting}
+            />
+            <p className="text-[9px] text-muted-foreground/30">
+              A música ficará bloqueada até esta data.
+            </p>
+          </div>
         )}
       </div>
 

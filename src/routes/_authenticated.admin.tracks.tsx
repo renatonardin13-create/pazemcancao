@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listAdminTracks, deleteTrack, updateTrack, regenerateCover } from "@/lib/admin-tracks.functions";
-import { Music, Plus, Trash2, ToggleLeft, ToggleRight, ExternalLink, ImageIcon, Loader2, Pencil } from "lucide-react";
+import { Music, Plus, Trash2, ToggleLeft, ToggleRight, ExternalLink, ImageIcon, Loader2, Pencil, Gift } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { AddTrackForm } from "@/components/AddTrackForm";
@@ -123,16 +123,27 @@ function AdminTracksPage() {
                 </p>
               </div>
 
-              <Badge
-                variant="outline"
-                className={`text-[9px] rounded-full px-2 border ${
-                  track.is_active
-                    ? "text-emerald-400/60 border-emerald-500/15 bg-emerald-500/8"
-                    : "text-muted-foreground/30 border-border/20"
-                }`}
-              >
-                {track.is_active ? "Ativo" : "Inativo"}
-              </Badge>
+              <div className="flex items-center gap-1.5">
+                <Badge
+                  variant="outline"
+                  className={`text-[9px] rounded-full px-2 border ${
+                    track.is_active
+                      ? "text-emerald-400/60 border-emerald-500/15 bg-emerald-500/8"
+                      : "text-muted-foreground/30 border-border/20"
+                  }`}
+                >
+                  {track.is_active ? "Ativo" : "Inativo"}
+                </Badge>
+                {track.is_bonus && (
+                  <Badge
+                    variant="outline"
+                    className="text-[9px] rounded-full px-2 border text-amber-400/60 border-amber-500/15 bg-amber-500/8"
+                  >
+                    <Gift className="h-2.5 w-2.5 mr-1" />
+                    Bônus{track.bonus_release_date ? ` · ${new Date(track.bonus_release_date + 'T00:00:00').toLocaleDateString('pt-BR')}` : ''}
+                  </Badge>
+                )}
+              </div>
 
               <div className="flex items-center gap-1">
                 <button
