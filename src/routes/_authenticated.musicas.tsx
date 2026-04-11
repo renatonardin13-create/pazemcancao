@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Music, Play, Pause, Download, Search, Headphones } from "lucide-react";
+import { Music, Play, Pause, Download, Search, Headphones, Lock } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { FooterLinks } from "@/components/FooterLinks";
 import { useQuery } from "@tanstack/react-query";
@@ -84,6 +84,7 @@ function MusicLibraryPage() {
   });
 
   const canDownload = accessData?.canDownload !== false;
+  const isLocked = accessData?.trialExpired === true;
 
   const { data: catData } = useQuery({
     queryKey: ["categories"],
