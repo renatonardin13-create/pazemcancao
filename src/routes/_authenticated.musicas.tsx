@@ -84,7 +84,8 @@ function MusicLibraryPage() {
   });
 
   const canDownload = accessData?.canDownload !== false;
-  const isLocked = accessData?.trialExpired === true;
+  const isBlocked = accessData?.isBlocked === true;
+  const isLocked = accessData?.trialExpired === true || isBlocked;
 
   const { data: catData } = useQuery({
     queryKey: ["categories"],
