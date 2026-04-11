@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { logDownload } from "@/lib/analytics.functions";
 import { Music, Play, Pause, Download, Search, Headphones, Lock, Gift } from "lucide-react";
 import { AppHeader } from "@/components/AppHeader";
 import { FooterLinks } from "@/components/FooterLinks";
@@ -644,6 +645,7 @@ function TrackCard({
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
+                    logDownload({ data: { trackId: track.id } }).catch(() => {});
                     const link = document.createElement("a");
                     link.href = track.download_url || getStoragePublicUrl(track.storage_path);
                     link.download = `${track.title}.mp3`;

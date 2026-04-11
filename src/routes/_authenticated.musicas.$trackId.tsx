@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { logDownload } from "@/lib/analytics.functions";
 import { ArrowLeft, Download, Play, Pause, Music, Heart } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getTrackById, listActiveTracks } from "@/lib/tracks.functions";
@@ -107,6 +108,7 @@ function MusicDetailPage() {
   const nextTrack = currentIndex < allTracks.length - 1 ? allTracks[currentIndex + 1] : null;
 
   const handleDownload = () => {
+    logDownload({ data: { trackId: track.id } }).catch(() => {});
     const url = track.download_url || getStoragePublicUrl(track.storage_path);
     const link = document.createElement("a");
     link.href = url;
