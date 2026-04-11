@@ -8,13 +8,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Loader2, Upload, X, ImageIcon } from "lucide-react";
+import { Loader2, Upload, X, ImageIcon, Gift } from "lucide-react";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -25,6 +26,8 @@ interface EditTrackDialogProps {
     category: string;
     description: string | null;
     cover_url: string | null;
+    is_bonus?: boolean;
+    bonus_release_date?: string | null;
   };
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -42,6 +45,8 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
   const [title, setTitle] = useState(track.title);
   const [category, setCategory] = useState(track.category);
   const [description, setDescription] = useState(track.description || "");
+  const [isBonus, setIsBonus] = useState(track.is_bonus || false);
+  const [bonusReleaseDate, setBonusReleaseDate] = useState(track.bonus_release_date || "");
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(track.cover_url);
   const [uploading, setUploading] = useState(false);
@@ -113,6 +118,8 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
           category,
           description: description.trim() || undefined,
           cover_url: cover_url === null ? "" : (cover_url || undefined),
+          is_bonus: isBonus,
+          bonus_release_date: isBonus && bonusReleaseDate ? bonusReleaseDate : null,
         },
       });
     },
