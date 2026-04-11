@@ -66,7 +66,7 @@ async function claimEvent(uniqueEventId: string, payload: any, email: string, ev
 
 async function markEventCompleted(uniqueEventId: string, details: any = {}) {
   if (!uniqueEventId) return;
-  await supabaseAdmin
+  await (supabaseAdmin as any)
     .from('processed_webhooks')
     .update({ status: 'completed', processed_at: new Date().toISOString(), details })
     .eq('unique_event_id', uniqueEventId)
@@ -75,7 +75,7 @@ async function markEventCompleted(uniqueEventId: string, details: any = {}) {
 
 async function markEventFailed(uniqueEventId: string, errorMessage: string) {
   if (!uniqueEventId) return;
-  await supabaseAdmin
+  await (supabaseAdmin as any)
     .from('processed_webhooks')
     .update({ status: 'failed', error_message: errorMessage, processed_at: new Date().toISOString() })
     .eq('unique_event_id', uniqueEventId)
