@@ -53,6 +53,11 @@ function AdminContentPage() {
   const [salesPageUrl, setSalesPageUrl] = useState("");
   const [isFree, setIsFree] = useState(false);
   const [releaseDays, setReleaseDays] = useState<string>("");
+  const [displayCategory, setDisplayCategory] = useState<string>("");
+  const [accessMode, setAccessMode] = useState<string>("pago");
+  const [showAsCard, setShowAsCard] = useState(true);
+  const [badgeText, setBadgeText] = useState("");
+  const [sortOrder, setSortOrder] = useState<string>("");
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [contentFile, setContentFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
