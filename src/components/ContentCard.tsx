@@ -30,6 +30,9 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
   const isUnlocked = item.unlocked !== undefined ? item.unlocked : (item.is_free || hasAccess);
   const isLocked = !isUnlocked;
   const isPendingRelease = accessMode === 'liberar_em_dias' && !isUnlocked && hasAccess;
+  const daysLeft = item.unlockDate
+    ? Math.max(0, Math.ceil((new Date(item.unlockDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+    : item.release_days || null;
 
   const handleLockedClick = () => {
     if (isLocked && item.sales_page_url) {
@@ -120,7 +123,9 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
               <Clock className="h-6 w-6 text-blue-400/70" />
             </div>
             <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-blue-300/50 bg-black/30 rounded-full px-4 py-1.5 border border-blue-500/15">
-              ⏳ Liberação em breve
+              {daysLeft !== null && daysLeft > 0
+                ? `⏳ Libera em ${daysLeft} dia${daysLeft > 1 ? 's' : ''}`
+                : '⏳ Liberação em breve'}
             </span>
             {item.unlockDate && (
               <span className="text-[9px] text-blue-300/40">
