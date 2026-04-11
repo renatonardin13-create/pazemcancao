@@ -40,6 +40,8 @@ export const createTrack = createServerFn({ method: 'POST' })
     cover_url?: string;
     download_url?: string;
     description?: string;
+    is_bonus?: boolean;
+    bonus_release_date?: string | null;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
