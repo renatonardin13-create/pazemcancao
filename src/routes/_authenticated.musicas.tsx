@@ -355,7 +355,7 @@ function MusicLibraryPage() {
                     <span className="text-[10px] text-muted-foreground/25">
                       {catTracks.length} música{catTracks.length !== 1 ? "s" : ""}
                     </span>
-                    {catTracks.length > 4 && (
+                    {catTracks.length > 1 && (
                       <button
                         onClick={() => setExpandedCategory(expandedCategory === category ? null : category)}
                         className="text-[11px] font-medium text-gold/50 hover:text-gold/80 transition-colors duration-300 whitespace-nowrap"
