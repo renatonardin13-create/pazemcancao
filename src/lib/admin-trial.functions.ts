@@ -169,7 +169,13 @@ export const updateBuyer = createServerFn({ method: 'POST' })
       throw new Error('Acesso não autorizado');
     }
 
-    const updates: Record<string, any> = {};
+    const updates: {
+      nome?: string;
+      access_enabled?: boolean;
+      is_trial?: boolean;
+      can_download?: boolean;
+      trial_expires_at?: string;
+    } = {};
     if (data.nome !== undefined) updates.nome = data.nome;
     if (data.access_enabled !== undefined) updates.access_enabled = data.access_enabled;
     if (data.is_trial !== undefined) updates.is_trial = data.is_trial;
