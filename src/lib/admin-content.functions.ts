@@ -51,6 +51,8 @@ export const createContentItem = createServerFn({ method: 'POST' })
     journey_order?: number;
     unlock_rule_type?: string;
     unlock_rule_content_id?: string | null;
+    is_featured?: boolean;
+    featured_priority?: number;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
@@ -87,6 +89,8 @@ export const createContentItem = createServerFn({ method: 'POST' })
         journey_order: data.journey_order ?? 0,
         unlock_rule_type: data.unlock_rule_type || 'none',
         unlock_rule_content_id: data.unlock_rule_content_id || null,
+        is_featured: data.is_featured ?? false,
+        featured_priority: data.featured_priority ?? 0,
       } as any)
       .select()
       .single();
@@ -119,6 +123,8 @@ export const updateContentItem = createServerFn({ method: 'POST' })
     journey_order?: number;
     unlock_rule_type?: string;
     unlock_rule_content_id?: string | null;
+    is_featured?: boolean;
+    featured_priority?: number;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
