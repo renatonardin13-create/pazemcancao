@@ -100,7 +100,7 @@ function AdminContentPage() {
   });
 
   const categoryOptions = useMemo(() => {
-    const base = [{ value: "", label: "Nenhuma (padrão por tipo)" }];
+    const base = [{ value: "__none__", label: "Nenhuma (padrão por tipo)" }];
     if (catData?.categories) {
       for (const c of catData.categories) {
         base.push({ value: c.slug, label: `${c.icon || ''} ${c.name}`.trim() });
@@ -394,13 +394,13 @@ function AdminContentPage() {
             {/* Display Category */}
             <div className="space-y-2">
               <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Categoria de Exibição</Label>
-              <Select value={displayCategory} onValueChange={setDisplayCategory} disabled={isSubmitting}>
+              <Select value={displayCategory || "__none__"} onValueChange={(v) => setDisplayCategory(v === "__none__" ? "" : v)} disabled={isSubmitting}>
                 <SelectTrigger className="bg-card/15 border-border/15 text-sm">
                   <SelectValue placeholder="Selecione..." />
                 </SelectTrigger>
                 <SelectContent>
                   {categoryOptions.map((opt) => (
-                    <SelectItem key={opt.value || "none"} value={opt.value || "none"}>{opt.label}</SelectItem>
+                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
