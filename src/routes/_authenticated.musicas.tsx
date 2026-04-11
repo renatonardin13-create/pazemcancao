@@ -85,7 +85,7 @@ function MusicLibraryPage() {
 
   const canDownload = accessData?.canDownload !== false;
   const isBlocked = accessData?.isBlocked === true;
-  const effectiveLocked = accessData?.trialExpired === true || isBlocked;
+  const isLocked = accessData?.trialExpired === true || isBlocked;
 
   const { data: catData } = useQuery({
     queryKey: ["categories"],
@@ -184,7 +184,7 @@ function MusicLibraryPage() {
         </motion.div>
 
         {/* Trial expired banner */}
-        {effectiveLocked && (
+        {isLocked && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -321,7 +321,7 @@ function MusicLibraryPage() {
                           progress={progress}
                           handlePlayWithQueue={handlePlayWithQueue}
                           canDownload={canDownload}
-                          effectiveLocked={effectiveLocked}
+                          isLocked={isLocked}
                         />
                       ))}
                     </div>
@@ -342,7 +342,7 @@ function MusicLibraryPage() {
                             progress={progress}
                             handlePlayWithQueue={handlePlayWithQueue}
                             canDownload={canDownload}
-                            effectiveLocked={effectiveLocked}
+                            isLocked={isLocked}
                           />
                         ))}
                       </div>
@@ -373,12 +373,12 @@ interface TrackCardProps {
   progress: number;
   handlePlayWithQueue: (track: any, trackList: any[]) => void;
   canDownload: boolean;
-  effectiveLocked: boolean;
+  isLocked: boolean;
 }
 
 function TrackCard({
   track, idx, icon, catTracks, isCarousel,
-  activeTrackRef, currentTrack, playing, progress, handlePlayWithQueue, canDownload, effectiveLocked,
+  activeTrackRef, currentTrack, playing, progress, handlePlayWithQueue, canDownload, isLocked,
 }: TrackCardProps) {
   const isThis = currentTrack?.id === track.id;
   const isPlaying = isThis && playing;
@@ -388,7 +388,7 @@ function TrackCard({
   const isBonusLocked = track.is_bonus && (
     !track.bonus_release_date || new Date(track.bonus_release_date + 'T00:00:00') > new Date()
   );
-  const effectiveLocked = effectiveLocked || isBonusLocked;
+  const effectiveLocked = isLocked || isBonusLocked;
 
   const bonusReleaseFormatted = track.bonus_release_date
     ? new Date(track.bonus_release_date + 'T00:00:00').toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })
