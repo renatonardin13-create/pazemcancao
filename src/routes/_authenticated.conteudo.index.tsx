@@ -117,6 +117,7 @@ function ContentPage() {
               hasAccess={hasAccess}
               viewedIds={data?.viewedIds || []}
               downloadedIds={data?.downloadedIds || []}
+              progressMap={data?.progressMap || {}}
             />
 
             {/* Journey sections (emotional trails) */}
