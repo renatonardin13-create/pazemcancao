@@ -104,6 +104,7 @@ export type Database = {
           description: string | null
           icon: string | null
           id: string
+          is_featured: boolean
           name: string
           slug: string
           sort_order: number
@@ -114,6 +115,7 @@ export type Database = {
           description?: string | null
           icon?: string | null
           id?: string
+          is_featured?: boolean
           name: string
           slug: string
           sort_order?: number
@@ -124,6 +126,7 @@ export type Database = {
           description?: string | null
           icon?: string | null
           id?: string
+          is_featured?: boolean
           name?: string
           slug?: string
           sort_order?: number
