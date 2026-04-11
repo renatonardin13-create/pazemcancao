@@ -9,6 +9,7 @@ import {
 import {
   BookOpen, Video, GraduationCap, FileText, Plus, Trash2,
   ToggleLeft, ToggleRight, Pencil, Loader2, ExternalLink,
+  ChevronDown,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -261,211 +263,222 @@ function AdminContentPage() {
               {editItem ? "Editar Conteúdo" : "Novo Conteúdo"}
             </DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 pt-2">
-            <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Tipo</Label>
-              <Select value={contentType} onValueChange={setContentType} disabled={isSubmitting}>
-                <SelectTrigger className="bg-card/15 border-border/15 text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ebook">📚 E-book (PDF)</SelectItem>
-                  <SelectItem value="video">🎬 Videoaula</SelectItem>
-                  <SelectItem value="free_lesson">🎓 Aula Gratuita</SelectItem>
-                  <SelectItem value="material">📄 Material Complementar</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+          <div className="space-y-3 pt-2">
 
-            <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Título</Label>
-              <Input value={title} onChange={(e) => setTitle(e.target.value)} className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
-            </div>
+            {/* ── 1. Informações Básicas (always open) ── */}
+            <div className="space-y-4 rounded-xl border border-border/10 bg-card/5 p-4">
+              <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-muted-foreground/50">📋 Informações Básicas</p>
 
-            <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Descrição</Label>
-              <Textarea value={description} onChange={(e) => setDescription(e.target.value)} className="bg-card/15 border-border/15 text-sm min-h-[60px]" disabled={isSubmitting} />
-            </div>
-
-            {/* Cover upload */}
-            <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Capa</Label>
-              <div className="flex items-center gap-3">
-                {(editItem?.cover_url || coverFile) && (
-                  <img
-                    src={coverFile ? URL.createObjectURL(coverFile) : editItem?.cover_url}
-                    alt="Capa"
-                    className="h-16 w-16 rounded-lg object-cover border border-border/15"
-                  />
-                )}
-                <label className="flex items-center gap-2 cursor-pointer rounded-lg border border-border/15 bg-card/15 px-3 py-2 text-[11px] text-muted-foreground/50 hover:border-gold/20 hover:text-gold/60 transition-all">
-                  📷 Enviar capa
-                  <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => setCoverFile(e.target.files?.[0] || null)} disabled={isSubmitting} />
-                </label>
-              </div>
-            </div>
-
-            {/* File upload for ebook/material */}
-            {(contentType === "ebook" || contentType === "material") && (
               <div className="space-y-2">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
-                  Arquivo ({contentType === "ebook" ? "PDF" : "PDF, DOC, etc."})
-                </Label>
-                <label className="flex items-center gap-2 cursor-pointer rounded-lg border border-border/15 bg-card/15 px-3 py-2 text-[11px] text-muted-foreground/50 hover:border-gold/20 hover:text-gold/60 transition-all">
-                  📎 {contentFile ? contentFile.name : (editItem?.file_url ? "Substituir arquivo" : "Enviar arquivo")}
-                  <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx,.xlsx,.pptx,.zip" className="hidden" onChange={(e) => setContentFile(e.target.files?.[0] || null)} disabled={isSubmitting} />
-                </label>
-                {editItem?.file_url && !contentFile && (
-                  <p className="text-[9px] text-muted-foreground/30">Arquivo atual já cadastrado</p>
-                )}
-              </div>
-            )}
-
-            {/* Video URL */}
-            {(contentType === "video" || contentType === "free_lesson") && (
-              <div className="space-y-2">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">URL do Vídeo</Label>
-                <Input value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://youtube.com/watch?v=..." className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
-              </div>
-            )}
-
-            {/* Sales page URL */}
-            <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Página de Vendas (opcional)</Label>
-              <Input value={salesPageUrl} onChange={(e) => setSalesPageUrl(e.target.value)} placeholder="https://kiwify.com.br/..." className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
-              <p className="text-[9px] text-muted-foreground/25">Se preenchido, aparecerá um botão de compra para não-compradores</p>
-            </div>
-
-            {/* Access Mode */}
-            <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Modo de Acesso</Label>
-              <Select value={accessMode} onValueChange={setAccessMode} disabled={isSubmitting}>
-                <SelectTrigger className="bg-card/15 border-border/15 text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {accessModeOptions.map((opt) => (
-                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Release Days - only for liberar_em_dias */}
-            {accessMode === "liberar_em_dias" && (
-              <div className="space-y-2">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
-                  Dias para liberar após compra
-                </Label>
-                <Input
-                  type="number"
-                  min="1"
-                  max="365"
-                  value={releaseDays}
-                  onChange={(e) => setReleaseDays(e.target.value)}
-                  placeholder="Ex: 7"
-                  className="bg-card/15 border-border/15 text-sm"
-                  disabled={isSubmitting}
-                />
-                <p className="text-[9px] text-muted-foreground/25">
-                  O conteúdo será liberado X dias após a data de compra aprovada do cliente.
-                </p>
-              </div>
-            )}
-
-            {/* Display Category */}
-            <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Categoria de Exibição</Label>
-              <Select value={displayCategory} onValueChange={setDisplayCategory} disabled={isSubmitting}>
-                <SelectTrigger className="bg-card/15 border-border/15 text-sm">
-                  <SelectValue placeholder="Selecione..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {categoryOptions.map((opt) => (
-                    <SelectItem key={opt.value || "none"} value={opt.value || "none"}>{opt.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Badge Text */}
-            <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Texto do Badge (opcional)</Label>
-              <Input value={badgeText} onChange={(e) => setBadgeText(e.target.value)} placeholder="Ex: NOVO, BÔNUS, EM BREVE" className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
-            </div>
-
-            {/* Sort Order */}
-            <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Ordem de Exibição</Label>
-              <Input type="number" min="0" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} placeholder="Automático" className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
-            </div>
-
-            {/* Journey Group */}
-            <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Trilha Emocional</Label>
-              <Select value={journeyGroup} onValueChange={setJourneyGroup} disabled={isSubmitting}>
-                <SelectTrigger className="bg-card/15 border-border/15 text-sm">
-                  <SelectValue placeholder="Selecione..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {journeyOptions.map((opt) => (
-                    <SelectItem key={opt.value || "none"} value={opt.value || "none"}>{opt.label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Journey Order */}
-            {journeyGroup && journeyGroup !== "none" && (
-              <div className="space-y-2">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Posição na Trilha</Label>
-                <Input type="number" min="1" value={journeyOrder} onChange={(e) => setJourneyOrder(e.target.value)} placeholder="Ex: 1, 2, 3..." className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
-              </div>
-            )}
-
-            {/* Unlock Rule */}
-            <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Regra de Desbloqueio</Label>
-              <Select value={unlockRuleType} onValueChange={setUnlockRuleType} disabled={isSubmitting}>
-                <SelectTrigger className="bg-card/15 border-border/15 text-sm">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="none">Sem regra (padrão)</SelectItem>
-                  <SelectItem value="after_watch">Após assistir outro conteúdo</SelectItem>
-                  <SelectItem value="after_complete">Após concluir outro conteúdo</SelectItem>
-                  <SelectItem value="after_download">Após baixar outro conteúdo</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {unlockRuleType !== "none" && (
-              <div className="space-y-2">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Conteúdo Pré-requisito</Label>
-                <Select value={unlockRuleContentId} onValueChange={setUnlockRuleContentId} disabled={isSubmitting}>
-                  <SelectTrigger className="bg-card/15 border-border/15 text-sm">
-                    <SelectValue placeholder="Selecione o conteúdo..." />
-                  </SelectTrigger>
+                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Tipo</Label>
+                <Select value={contentType} onValueChange={setContentType} disabled={isSubmitting}>
+                  <SelectTrigger className="bg-card/15 border-border/15 text-sm"><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    {items.filter((i: any) => i.id !== editItem?.id).map((i: any) => (
-                      <SelectItem key={i.id} value={i.id}>{i.title}</SelectItem>
-                    ))}
+                    <SelectItem value="ebook">📚 E-book (PDF)</SelectItem>
+                    <SelectItem value="video">🎬 Videoaula</SelectItem>
+                    <SelectItem value="free_lesson">🎓 Aula Gratuita</SelectItem>
+                    <SelectItem value="material">📄 Material Complementar</SelectItem>
                   </SelectContent>
                 </Select>
-                <p className="text-[9px] text-muted-foreground/25">
-                  O usuário precisará consumir este conteúdo antes de desbloquear o atual.
-                </p>
               </div>
-            )}
 
-            <div className="flex items-center justify-between rounded-xl border border-border/10 bg-card/5 p-4">
-              <div>
-                <p className="text-[12px] font-semibold text-foreground/70">Exibir como Card</p>
-                <p className="text-[10px] text-muted-foreground/40">Se desativado, o conteúdo não aparece na grade</p>
+              <div className="space-y-2">
+                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Título</Label>
+                <Input value={title} onChange={(e) => setTitle(e.target.value)} className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
               </div>
-              <Switch checked={showAsCard} onCheckedChange={setShowAsCard} disabled={isSubmitting} />
+
+              <div className="space-y-2">
+                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Descrição</Label>
+                <Textarea value={description} onChange={(e) => setDescription(e.target.value)} className="bg-card/15 border-border/15 text-sm min-h-[60px]" disabled={isSubmitting} />
+              </div>
+
+              {/* Cover upload */}
+              <div className="space-y-2">
+                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Capa</Label>
+                <div className="flex items-center gap-3">
+                  {(editItem?.cover_url || coverFile) && (
+                    <img src={coverFile ? URL.createObjectURL(coverFile) : editItem?.cover_url} alt="Capa" className="h-16 w-16 rounded-lg object-cover border border-border/15" />
+                  )}
+                  <label className="flex items-center gap-2 cursor-pointer rounded-lg border border-border/15 bg-card/15 px-3 py-2 text-[11px] text-muted-foreground/50 hover:border-gold/20 hover:text-gold/60 transition-all">
+                    📷 Enviar capa
+                    <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={(e) => setCoverFile(e.target.files?.[0] || null)} disabled={isSubmitting} />
+                  </label>
+                </div>
+              </div>
+
+              {/* File upload */}
+              {(contentType === "ebook" || contentType === "material") && (
+                <div className="space-y-2">
+                  <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Arquivo ({contentType === "ebook" ? "PDF" : "PDF, DOC, etc."})</Label>
+                  <label className="flex items-center gap-2 cursor-pointer rounded-lg border border-border/15 bg-card/15 px-3 py-2 text-[11px] text-muted-foreground/50 hover:border-gold/20 hover:text-gold/60 transition-all">
+                    📎 {contentFile ? contentFile.name : (editItem?.file_url ? "Substituir arquivo" : "Enviar arquivo")}
+                    <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx,.xlsx,.pptx,.zip" className="hidden" onChange={(e) => setContentFile(e.target.files?.[0] || null)} disabled={isSubmitting} />
+                  </label>
+                  {editItem?.file_url && !contentFile && <p className="text-[9px] text-muted-foreground/30">Arquivo atual já cadastrado</p>}
+                </div>
+              )}
+
+              {/* Video URL */}
+              {(contentType === "video" || contentType === "free_lesson") && (
+                <div className="space-y-2">
+                  <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">URL do Vídeo</Label>
+                  <Input value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://youtube.com/watch?v=..." className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
+                </div>
+              )}
+
+              {/* Sales page */}
+              <div className="space-y-2">
+                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Página de Vendas (opcional)</Label>
+                <Input value={salesPageUrl} onChange={(e) => setSalesPageUrl(e.target.value)} placeholder="https://kiwify.com.br/..." className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
+              </div>
             </div>
 
+            {/* ── 2. Exibição no App ── */}
+            <Collapsible defaultOpen={!!editItem}>
+              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-xl border border-border/10 bg-card/5 p-4 hover:bg-card/10 transition-colors">
+                <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-muted-foreground/50">🖼️ Exibição no App</p>
+                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/30 transition-transform [[data-state=open]>&]:rotate-180" />
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-4 rounded-b-xl border border-t-0 border-border/10 bg-card/5 px-4 pb-4">
+                <div className="space-y-2 pt-3">
+                  <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Categoria de Exibição</Label>
+                  <Select value={displayCategory} onValueChange={setDisplayCategory} disabled={isSubmitting}>
+                    <SelectTrigger className="bg-card/15 border-border/15 text-sm"><SelectValue placeholder="Selecione..." /></SelectTrigger>
+                    <SelectContent>
+                      {categoryOptions.map((opt) => (
+                        <SelectItem key={opt.value || "none"} value={opt.value || "none"}>{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Texto do Badge (opcional)</Label>
+                  <Input value={badgeText} onChange={(e) => setBadgeText(e.target.value)} placeholder="Ex: NOVO, BÔNUS, EM BREVE" className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
+                  <p className="text-[9px] text-muted-foreground/25">Se vazio, o sistema gera badges automáticos (VIP, Novo, Gratuito...)</p>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Ordem de Exibição</Label>
+                  <Input type="number" min="0" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} placeholder="Automático" className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
+                </div>
+
+                <div className="flex items-center justify-between rounded-xl border border-border/10 bg-card/5 p-4">
+                  <div>
+                    <p className="text-[12px] font-semibold text-foreground/70">Exibir como Card</p>
+                    <p className="text-[10px] text-muted-foreground/40">Se desativado, o conteúdo não aparece na grade</p>
+                  </div>
+                  <Switch checked={showAsCard} onCheckedChange={setShowAsCard} disabled={isSubmitting} />
+                </div>
+
+                {/* Preview */}
+                {displayCategory && displayCategory !== "none" && (
+                  <div className="rounded-lg border border-border/8 bg-card/3 p-3">
+                    <p className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground/30 mb-1">Preview</p>
+                    <p className="text-[12px] text-foreground/60">
+                      Seção: <span className="font-semibold">{categoryOptions.find(c => c.value === displayCategory)?.label || displayCategory}</span>
+                    </p>
+                    {badgeText && <span className="inline-block mt-1 text-[9px] font-bold uppercase tracking-widest text-gold/80 bg-gold/15 border border-gold/20 rounded-full px-2 py-0.5">{badgeText}</span>}
+                  </div>
+                )}
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ── 3. Regras de Acesso ── */}
+            <Collapsible defaultOpen={accessMode !== "pago"}>
+              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-xl border border-border/10 bg-card/5 p-4 hover:bg-card/10 transition-colors">
+                <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-muted-foreground/50">🔐 Regras de Acesso</p>
+                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/30 transition-transform [[data-state=open]>&]:rotate-180" />
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-4 rounded-b-xl border border-t-0 border-border/10 bg-card/5 px-4 pb-4">
+                <div className="space-y-2 pt-3">
+                  <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Modo de Acesso</Label>
+                  <Select value={accessMode} onValueChange={setAccessMode} disabled={isSubmitting}>
+                    <SelectTrigger className="bg-card/15 border-border/15 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {accessModeOptions.map((opt) => (
+                        <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {accessMode === "liberar_em_dias" && (
+                  <div className="space-y-2">
+                    <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Dias para liberar após compra</Label>
+                    <Input type="number" min="1" max="365" value={releaseDays} onChange={(e) => setReleaseDays(e.target.value)} placeholder="Ex: 7" className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
+                    <p className="text-[9px] text-muted-foreground/25">O conteúdo será liberado X dias após a data de compra aprovada.</p>
+                  </div>
+                )}
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ── 4. Jornada / Trilha ── */}
+            <Collapsible defaultOpen={!!journeyGroup && journeyGroup !== "none"}>
+              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-xl border border-border/10 bg-card/5 p-4 hover:bg-card/10 transition-colors">
+                <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-muted-foreground/50">🧭 Jornada / Trilha</p>
+                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/30 transition-transform [[data-state=open]>&]:rotate-180" />
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-4 rounded-b-xl border border-t-0 border-border/10 bg-card/5 px-4 pb-4">
+                <div className="space-y-2 pt-3">
+                  <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Trilha Emocional</Label>
+                  <Select value={journeyGroup} onValueChange={setJourneyGroup} disabled={isSubmitting}>
+                    <SelectTrigger className="bg-card/15 border-border/15 text-sm"><SelectValue placeholder="Selecione..." /></SelectTrigger>
+                    <SelectContent>
+                      {journeyOptions.map((opt) => (
+                        <SelectItem key={opt.value || "none"} value={opt.value || "none"}>{opt.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {journeyGroup && journeyGroup !== "none" && (
+                  <div className="space-y-2">
+                    <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Posição na Trilha</Label>
+                    <Input type="number" min="1" value={journeyOrder} onChange={(e) => setJourneyOrder(e.target.value)} placeholder="Ex: 1, 2, 3..." className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
+                  </div>
+                )}
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* ── 5. Regras Avançadas ── */}
+            <Collapsible defaultOpen={unlockRuleType !== "none"}>
+              <CollapsibleTrigger className="flex w-full items-center justify-between rounded-xl border border-border/10 bg-card/5 p-4 hover:bg-card/10 transition-colors">
+                <p className="text-[11px] font-bold uppercase tracking-[0.25em] text-muted-foreground/50">⚙️ Regras Avançadas</p>
+                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/30 transition-transform [[data-state=open]>&]:rotate-180" />
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-4 rounded-b-xl border border-t-0 border-border/10 bg-card/5 px-4 pb-4">
+                <div className="space-y-2 pt-3">
+                  <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Regra de Desbloqueio</Label>
+                  <Select value={unlockRuleType} onValueChange={setUnlockRuleType} disabled={isSubmitting}>
+                    <SelectTrigger className="bg-card/15 border-border/15 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Sem regra (padrão)</SelectItem>
+                      <SelectItem value="after_watch">Após assistir outro conteúdo</SelectItem>
+                      <SelectItem value="after_complete">Após concluir outro conteúdo</SelectItem>
+                      <SelectItem value="after_download">Após baixar outro conteúdo</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {unlockRuleType !== "none" && (
+                  <div className="space-y-2">
+                    <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Conteúdo Pré-requisito</Label>
+                    <Select value={unlockRuleContentId} onValueChange={setUnlockRuleContentId} disabled={isSubmitting}>
+                      <SelectTrigger className="bg-card/15 border-border/15 text-sm"><SelectValue placeholder="Selecione o conteúdo..." /></SelectTrigger>
+                      <SelectContent>
+                        {items.filter((i: any) => i.id !== editItem?.id).map((i: any) => (
+                          <SelectItem key={i.id} value={i.id}>{i.title}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-[9px] text-muted-foreground/25">O usuário precisará consumir este conteúdo antes de desbloquear o atual.</p>
+                  </div>
+                )}
+              </CollapsibleContent>
+            </Collapsible>
+
+            {/* Actions */}
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="ghost" onClick={() => { setFormOpen(false); resetForm(); }} disabled={isSubmitting} className="text-[11px] text-muted-foreground/40">
                 Cancelar
