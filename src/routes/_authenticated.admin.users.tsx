@@ -386,6 +386,18 @@ function AdminUsersPage() {
                   >
                     <Pencil className="h-3.5 w-3.5" />
                   </button>
+
+                  <button
+                    onClick={() => {
+                      if (confirm(`Excluir ${buyer.nome || buyer.email}?`)) {
+                        removeBuyer.mutate(buyer.id);
+                      }
+                    }}
+                    className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/30 hover:text-destructive/70 hover:bg-destructive/10 transition-all duration-300"
+                    title="Excluir"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
                 </div>
               </div>
             );
