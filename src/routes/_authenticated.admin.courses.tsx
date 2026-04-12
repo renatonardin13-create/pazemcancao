@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listAdminCourses, deleteCourse } from "@/lib/admin-courses.functions";
 import { useState, useMemo } from "react";
+import { StatusBadge } from "@/components/StatusBadge";
 import {
   Plus,
   Video,
@@ -18,7 +19,7 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -87,15 +88,6 @@ function AdminCoursesPage() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  const statusLabel = (s: string) =>
-    s === "published" ? "Publicado" : s === "draft" ? "Rascunho" : "Arquivado";
-
-  const statusClasses = (s: string) =>
-    s === "published"
-      ? "text-emerald-400/80 border-emerald-500/20 bg-emerald-500/10"
-      : s === "draft"
-        ? "text-gold/60 border-gold/15 bg-gold/8"
-        : "text-muted-foreground/40 border-border/20 bg-muted/10";
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
@@ -255,12 +247,7 @@ function AdminCoursesPage() {
 
                   {/* Status */}
                   <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={`text-[9px] rounded-full px-2 border ${statusClasses(course.status)}`}
-                    >
-                      {statusLabel(course.status)}
-                    </Badge>
+                    <StatusBadge status={course.status} />
                   </TableCell>
 
                   {/* Modules */}

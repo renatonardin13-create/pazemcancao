@@ -1,4 +1,5 @@
 import { useState, useEffect, forwardRef } from "react";
+import { StatusBadge } from "@/components/StatusBadge";
 import { useQuery } from "@tanstack/react-query";
 import { listAdminCategories } from "@/lib/admin-courses.functions";
 import { Input } from "@/components/ui/input";
@@ -14,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Video, BookText, Save, Loader2, ImageIcon } from "lucide-react";
 import { ImageFieldHint } from "@/components/ImageFieldHint";
-import { Badge } from "@/components/ui/badge";
+
 
 interface CourseFormProps {
   initialValues?: any;
@@ -90,12 +91,6 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
     });
   };
 
-  const statusLabel = status === "published" ? "Publicado" : status === "draft" ? "Rascunho" : "Arquivado";
-  const statusColor = status === "published"
-    ? "text-emerald-400/80 border-emerald-500/20 bg-emerald-500/10"
-    : status === "draft"
-      ? "text-gold/60 border-gold/15 bg-gold/8"
-      : "text-muted-foreground/40 border-border/20 bg-muted/10";
 
   const selectedCategory = categories.find((c: any) => c.id === categoryId);
 
@@ -273,12 +268,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
             {/* Meta */}
             <div className="flex flex-wrap items-center gap-2">
-              <Badge
-                variant="outline"
-                className={`text-[9px] rounded-full px-2 border ${statusColor}`}
-              >
-                {statusLabel}
-              </Badge>
+              <StatusBadge status={status} />
               <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground/30">
                 {courseType === "video" ? <Video className="h-3 w-3" /> : <BookText className="h-3 w-3" />}
                 {courseType === "video" ? "Vídeo" : "eBook"}
