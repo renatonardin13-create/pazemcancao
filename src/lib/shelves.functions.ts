@@ -95,7 +95,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
         has_preview: hasPreview,
         has_checkout: hasCheckout,
         checkout_url: checkoutUrl,
-        access_state: isEnrolled ? 'enrolled' : hasPreview ? 'preview' : hasCheckout ? 'locked' : 'hidden',
+        access_state: isEnrolled ? 'enrolled' : hasPreview ? 'preview' : hasCheckout ? 'locked' : 'available',
         sales_count: salesCountMap.get(course.id) || 0,
       };
     };
