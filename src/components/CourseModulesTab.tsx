@@ -187,6 +187,13 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
     setModuleDialog({ open: true, editId: mod.id });
   };
 
+  const inferContentType = (lesson: any): "video" | "pdf" | "file" | "link" => {
+    if (lesson.video_url) return "video";
+    if (lesson.content_url?.endsWith(".pdf")) return "pdf";
+    if (lesson.content_url) return "file";
+    return "link";
+  };
+
   const openCreateLesson = (moduleId: string) => {
     setLesTitle("");
     setLesDesc("");
@@ -194,6 +201,9 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
     setLesContentUrl("");
     setLesFreePreview(false);
     setLesDuration("0:00");
+    setLesContentType("video");
+    setLesThumbnailUrl("");
+    setLesPublished(true);
     setLessonDialog({ open: true, moduleId });
   };
 
@@ -204,6 +214,9 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
     setLesContentUrl(lesson.content_url || "");
     setLesFreePreview(lesson.is_free_preview || false);
     setLesDuration(lesson.duration || "0:00");
+    setLesContentType(inferContentType(lesson));
+    setLesThumbnailUrl("");
+    setLesPublished(true);
     setLessonDialog({ open: true, moduleId: lesson.module_id, editId: lesson.id });
   };
 
