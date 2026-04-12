@@ -149,12 +149,8 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
 
       courses = courses.map(enrichCourse);
 
-      if (!isAdmin) {
-        courses = courses.filter(
-          (course: any) =>
-            course.is_enrolled || course.has_preview || course.has_checkout
-        );
-      }
+      // All published courses are visible in the storefront
+      // access_state determines what the student can do (enrolled, preview, locked, available)
 
       if (courses.length > 0) {
         result.push({
