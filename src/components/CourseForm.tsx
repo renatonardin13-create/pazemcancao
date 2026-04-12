@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Video, BookText, Save, Loader2 } from "lucide-react";
+import { ImageFieldHint } from "@/components/ImageFieldHint";
 
 interface CourseFormProps {
   initialValues?: any;
@@ -159,6 +160,13 @@ export function CourseForm({
             placeholder="https://..."
             className="bg-card/10 border-border/15"
           />
+          <ImageFieldHint
+            ratio="16:9"
+            recommendedSize="400x225"
+            autoCrop
+            note="Para melhor resultado nos cards da vitrine, prefira imagem vertical em proporção 2:3."
+            previewUrl={coverUrl || null}
+          />
           {coverUrl && (
             <img
               src={coverUrl}
@@ -175,6 +183,12 @@ export function CourseForm({
             onChange={(e) => setBannerUrl(e.target.value)}
             placeholder="https://..."
             className="bg-card/10 border-border/15"
+          />
+          <ImageFieldHint
+            ratio="3.84:1"
+            recommendedSize="1920x500"
+            autoCrop
+            previewUrl={bannerUrl || null}
           />
           {bannerUrl && (
             <img
