@@ -7,15 +7,18 @@ import {
 } from "@/lib/courses.functions";
 import {
   ArrowLeft,
-  Play,
-  Pause,
   CheckCircle2,
   Circle,
   Clock,
   BookOpen,
   Video,
+  ChevronDown,
+  ChevronRight,
+  FileText,
+  File as FileIcon,
+  Link2,
 } from "lucide-react";
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
@@ -27,7 +30,7 @@ export const Route = createFileRoute("/_authenticated/cursos/$courseId")({
       <div className="text-center">
         <p className="text-muted-foreground/50">Curso não encontrado.</p>
         <Link
-          to="/musicas"
+          to="/cursos"
           className="mt-4 inline-block text-gold/50 hover:text-gold/80 text-sm"
         >
           Voltar
@@ -45,10 +48,6 @@ function CourseDetailPage() {
     queryKey: ["course-detail", courseId],
     queryFn: () => getCourseDetail({ data: { courseId } }),
   });
-
-  const [playingLessonId, setPlayingLessonId] = useState<string | null>(null);
-  const [loadingLessonId, setLoadingLessonId] = useState<string | null>(null);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
 
   const enrollMutation = useMutation({
     mutationFn: () => enrollInCourse({ data: { courseId } }),
@@ -73,63 +72,18 @@ function CourseDetailPage() {
     },
   });
 
-  const handlePlay = useCallback(
-    (lessonId: string, videoUrl: string) => {
-      if (videoRef.current) {
-        videoRef.current.pause();
-        videoRef.current.currentTime = 0;
-      }
-
-      if (playingLessonId === lessonId) {
-        setPlayingLessonId(null);
-        return;
-      }
-
-      setLoadingLessonId(lessonId);
-      const video = document.createElement("video") as HTMLVideoElement;
-      video.src = videoUrl;
-      video.preload = "auto";
-      videoRef.current = video;
-
-      video.addEventListener(
-        "canplaythrough",
-        () => {
-          setLoadingLessonId(null);
-          setPlayingLessonId(lessonId);
-        },
-        { once: true }
-      );
-
-      video.addEventListener("error", () => {
-        setLoadingLessonId(null);
-        videoRef.current = null;
-        toast.error("Erro ao carregar o vídeo");
-      });
-
-      video.onended = () => {
-        setPlayingLessonId(null);
-        videoRef.current = null;
-        progressMutation.mutate({
-          lessonId,
-          watchedSeconds: Math.floor(video.duration || 0),
-          completed: true,
-        });
-      };
-
-      video.play().catch(() => {
-        setLoadingLessonId(null);
-        toast.error("Erro ao reproduzir");
-      });
-    },
-    [playingLessonId, progressMutation]
+  const [expandedModules, setExpandedModules] = useState<Set<string>>(
+    new Set()
   );
 
-  useEffect(() => {
-    return () => {
-      videoRef.current?.pause();
-      videoRef.current = null;
-    };
-  }, []);
+  const toggleModule = (id: string) => {
+    setExpandedModules((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   if (isLoading) {
     return (
@@ -147,7 +101,7 @@ function CourseDetailPage() {
         <div className="text-center">
           <p className="text-muted-foreground/50">Erro ao carregar o curso.</p>
           <Link
-            to="/musicas"
+            to="/cursos"
             className="mt-4 inline-block text-gold/50 hover:text-gold/80 text-sm"
           >
             Voltar
@@ -159,6 +113,19 @@ function CourseDetailPage() {
 
   const { course, lessons, progress, enrollment } = data;
 
+  // Group lessons by module
+  const modules = data.modules || [];
+  const moduleMap: Record<string, any[]> = {};
+  const unmoduled: any[] = [];
+  for (const l of lessons) {
+    if (l.module_id) {
+      if (!moduleMap[l.module_id]) moduleMap[l.module_id] = [];
+      moduleMap[l.module_id].push(l);
+    } else {
+      unmoduled.push(l);
+    }
+  }
+
   const completedLessons = progress.filter((p: any) => p.completed).length;
   const totalLessons = lessons.length;
   const progressPercent =
@@ -166,6 +133,79 @@ function CourseDetailPage() {
 
   const isLessonCompleted = (lessonId: string) =>
     progress.some((p: any) => p.lesson_id === lessonId && p.completed);
+
+  const getLessonIcon = (lesson: any) => {
+    const ct = lesson.content_type || "video";
+    if (ct === "pdf") return <FileText className="h-3.5 w-3.5 text-muted-foreground/25" />;
+    if (ct === "file") return <FileIcon className="h-3.5 w-3.5 text-muted-foreground/25" />;
+    if (ct === "link") return <Link2 className="h-3.5 w-3.5 text-muted-foreground/25" />;
+    return <Video className="h-3.5 w-3.5 text-muted-foreground/25" />;
+  };
+
+  const renderLesson = (lesson: any, index: number) => {
+    const completed = isLessonCompleted(lesson.id);
+
+    return (
+      <div
+        key={lesson.id}
+        className="flex items-center gap-4 px-5 py-4 border-b border-border/8 last:border-0 transition-colors hover:bg-card/10"
+      >
+        <div className="shrink-0">
+          {completed ? (
+            <CheckCircle2 className="h-5 w-5 text-emerald-400/60" />
+          ) : (
+            <Circle className="h-5 w-5 text-muted-foreground/15" />
+          )}
+        </div>
+
+        <span className="text-[10px] font-bold text-muted-foreground/15 tabular-nums shrink-0 w-6 text-center">
+          {String(index + 1).padStart(2, "0")}
+        </span>
+
+        <div className="flex-1 min-w-0">
+          <Link
+            to="/cursos/$courseId/aula/$lessonId"
+            params={{ courseId, lessonId: lesson.id }}
+            className={`text-sm font-medium truncate block hover:text-gold/70 transition-colors ${
+              completed
+                ? "text-muted-foreground/40 line-through"
+                : "text-foreground/70"
+            }`}
+          >
+            {lesson.title}
+          </Link>
+          <div className="flex items-center gap-3 mt-1">
+            {getLessonIcon(lesson)}
+            {lesson.duration && lesson.duration !== "0:00" && (
+              <span className="text-[10px] text-muted-foreground/25">
+                {lesson.duration}
+              </span>
+            )}
+            {lesson.is_free_preview && (
+              <span className="text-[9px] uppercase tracking-wider text-gold/40 font-semibold">
+                Preview
+              </span>
+            )}
+          </div>
+        </div>
+
+        {!completed && enrollment && (
+          <button
+            onClick={() =>
+              progressMutation.mutate({
+                lessonId: lesson.id,
+                watchedSeconds: 0,
+                completed: true,
+              })
+            }
+            className="shrink-0 text-[9px] uppercase tracking-wider text-muted-foreground/20 hover:text-emerald-400/50 transition-colors font-semibold"
+          >
+            Concluir
+          </button>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-background pb-32 relative">
@@ -179,11 +219,11 @@ function CourseDetailPage() {
         className="fixed top-6 left-6 z-30"
       >
         <Link
-          to="/musicas"
+          to="/cursos"
           className="group flex items-center gap-2.5 text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/30 hover:text-gold/50 transition-colors duration-500"
         >
           <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-x-1" />
-          Voltar
+          Cursos
         </Link>
       </motion.div>
 
@@ -195,7 +235,6 @@ function CourseDetailPage() {
           transition={{ duration: 0.8 }}
           className="mb-12"
         >
-          {/* Banner */}
           {course.banner_image_url && (
             <div className="mb-8 rounded-2xl overflow-hidden aspect-[21/9] border border-border/10">
               <img
@@ -207,7 +246,6 @@ function CourseDetailPage() {
           )}
 
           <div className="flex items-start gap-6">
-            {/* Cover */}
             {course.cover_image_url ? (
               <div className="hidden sm:block shrink-0 h-28 w-28 rounded-xl overflow-hidden border border-border/10">
                 <img
@@ -310,121 +348,98 @@ function CourseDetailPage() {
           </motion.div>
         )}
 
-        {/* Lesson List */}
+        {/* Lessons grouped by module */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.35 }}
         >
           <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/40 mb-5">
-            Aulas
+            Conteúdo do Curso
           </h2>
 
-          {lessons.length === 0 ? (
+          {totalLessons === 0 ? (
             <div className="text-center py-12 rounded-2xl border border-border/10 bg-card/5">
               <p className="text-sm text-muted-foreground/35">
                 Nenhuma aula disponível ainda.
               </p>
             </div>
           ) : (
-            <div className="rounded-2xl border border-border/10 overflow-hidden">
-              {lessons.map((lesson: any, index: number) => {
-                const completed = isLessonCompleted(lesson.id);
-                const isPlaying = playingLessonId === lesson.id;
-                const isLoadingLesson = loadingLessonId === lesson.id;
-                const hasVideo = !!lesson.video_url;
+            <div className="space-y-4">
+              {/* Modules */}
+              {modules
+                .sort((a: any, b: any) => a.sort_order - b.sort_order)
+                .map((mod: any) => {
+                  const modLessons = (moduleMap[mod.id] || []).sort(
+                    (a: any, b: any) => a.sort_order - b.sort_order
+                  );
+                  if (modLessons.length === 0) return null;
 
-                return (
-                  <div
-                    key={lesson.id}
-                    className={`flex items-center gap-4 px-5 py-4 border-b border-border/8 last:border-0 transition-colors ${
-                      isPlaying
-                        ? "bg-gold/[0.04]"
-                        : "hover:bg-card/10"
-                    }`}
-                  >
-                    {/* Status icon */}
-                    <div className="shrink-0">
-                      {completed ? (
-                        <CheckCircle2 className="h-5 w-5 text-emerald-400/60" />
-                      ) : (
-                        <Circle className="h-5 w-5 text-muted-foreground/15" />
+                  const isExpanded = expandedModules.has(mod.id);
+                  const modCompleted = modLessons.filter((l: any) =>
+                    isLessonCompleted(l.id)
+                  ).length;
+
+                  return (
+                    <div
+                      key={mod.id}
+                      className="rounded-2xl border border-border/10 overflow-hidden"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => toggleModule(mod.id)}
+                        className="w-full flex items-center gap-3 px-5 py-4 hover:bg-card/10 transition-colors text-left"
+                      >
+                        <div className="shrink-0 w-6 h-6 flex items-center justify-center rounded-lg bg-card/10 border border-border/10">
+                          {isExpanded ? (
+                            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/40" />
+                          ) : (
+                            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/40" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-semibold text-foreground/80 truncate">
+                            {mod.title}
+                          </p>
+                          {mod.description && (
+                            <p className="text-[11px] text-muted-foreground/30 mt-0.5 truncate">
+                              {mod.description}
+                            </p>
+                          )}
+                        </div>
+                        <span className="text-[10px] text-muted-foreground/25 shrink-0">
+                          {modCompleted}/{modLessons.length}
+                        </span>
+                      </button>
+
+                      {isExpanded && (
+                        <div className="border-t border-border/8">
+                          {modLessons.map((lesson: any, idx: number) =>
+                            renderLesson(lesson, idx)
+                          )}
+                        </div>
                       )}
                     </div>
+                  );
+                })}
 
-                    {/* Lesson number */}
-                    <span className="text-[10px] font-bold text-muted-foreground/15 tabular-nums shrink-0 w-6 text-center">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-
-                    {/* Info */}
-                    <div className="flex-1 min-w-0">
-                      <Link
-                        to="/cursos/$courseId/aula/$lessonId"
-                        params={{ courseId, lessonId: lesson.id }}
-                        className={`text-sm font-medium truncate block hover:text-gold/70 transition-colors ${
-                          completed
-                            ? "text-muted-foreground/40 line-through"
-                            : "text-foreground/70"
-                        }`}
-                      >
-                        {lesson.title}
-                      </Link>
-                      <div className="flex items-center gap-3 mt-1">
-                        {lesson.duration && (
-                          <span className="text-[10px] text-muted-foreground/25">
-                            {lesson.duration}
-                          </span>
-                        )}
-                        {lesson.is_free_preview && (
-                          <span className="text-[9px] uppercase tracking-wider text-gold/40 font-semibold">
-                            Preview
-                          </span>
-                        )}
-                      </div>
+              {/* Lessons without module */}
+              {unmoduled.length > 0 && (
+                <div className="rounded-2xl border border-border/10 overflow-hidden">
+                  {modules.length > 0 && (
+                    <div className="px-5 py-3 border-b border-border/8">
+                      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/30">
+                        Aulas avulsas
+                      </p>
                     </div>
-
-                    {/* Play button */}
-                    {hasVideo && (
-                      <button
-                        onClick={() =>
-                          handlePlay(lesson.id, lesson.video_url!)
-                        }
-                        disabled={isLoadingLesson}
-                        className={`shrink-0 flex items-center justify-center h-9 w-9 rounded-full border transition-all duration-500 ${
-                          isPlaying
-                            ? "bg-gold/20 border-gold/25 text-gold/70"
-                            : "border-border/12 text-muted-foreground/25 hover:border-gold/20 hover:text-gold/50 hover:bg-gold/[0.04]"
-                        } disabled:opacity-40`}
-                      >
-                        {isLoadingLesson ? (
-                          <div className="h-3.5 w-3.5 border-2 border-gold/30 border-t-transparent rounded-full animate-spin" />
-                        ) : isPlaying ? (
-                          <Pause className="h-3.5 w-3.5" />
-                        ) : (
-                          <Play className="h-3.5 w-3.5 ml-0.5" />
-                        )}
-                      </button>
+                  )}
+                  {unmoduled
+                    .sort((a: any, b: any) => a.sort_order - b.sort_order)
+                    .map((lesson: any, idx: number) =>
+                      renderLesson(lesson, idx)
                     )}
-
-                    {/* Mark as complete */}
-                    {!completed && enrollment && (
-                      <button
-                        onClick={() =>
-                          progressMutation.mutate({
-                            lessonId: lesson.id,
-                            watchedSeconds: 0,
-                            completed: true,
-                          })
-                        }
-                        className="shrink-0 text-[9px] uppercase tracking-wider text-muted-foreground/20 hover:text-emerald-400/50 transition-colors font-semibold"
-                      >
-                        Concluir
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
+                </div>
+              )}
             </div>
           )}
         </motion.div>
