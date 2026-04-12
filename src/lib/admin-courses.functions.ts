@@ -42,7 +42,7 @@ export const getAdminCourse = createServerFn({ method: 'POST' })
 
     const { data: course, error } = await supabaseAdmin
       .from('courses')
-      .select('*, categories(name, slug, icon), lessons(*)')
+      .select('*, categories(name, slug, icon), lessons(*), modules(*)')
       .eq('id', data.courseId)
       .single();
 
