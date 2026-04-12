@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Upload, Loader2, ImageIcon, Music, X, Gift } from "lucide-react";
+import { ImageFieldHint } from "@/components/ImageFieldHint";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 

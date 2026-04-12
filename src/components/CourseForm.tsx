@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Video, BookText, Save, Loader2 } from "lucide-react";
+import { ImageFieldHint } from "@/components/ImageFieldHint";
 
 interface CourseFormProps {
   initialValues?: any;
