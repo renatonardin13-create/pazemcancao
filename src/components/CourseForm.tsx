@@ -36,6 +36,16 @@ export function CourseForm({
   const [status, setStatus] = useState("draft");
   const [courseType, setCourseType] = useState("video");
   const [launchDate, setLaunchDate] = useState("");
+  const [bannerRatio, setBannerRatio] = useState("3.84:1");
+
+  const bannerRatioOptions = [
+    { value: "3.84:1", label: "Hero Wide (3.84:1)", size: "1920x500" },
+    { value: "21:9", label: "Ultra Wide (21:9)", size: "2100x900" },
+    { value: "16:9", label: "Widescreen (16:9)", size: "1920x1080" },
+    { value: "3:1", label: "Promo (3:1)", size: "1200x400" },
+  ];
+
+  const currentBannerOption = bannerRatioOptions.find((o) => o.value === bannerRatio) || bannerRatioOptions[0];
 
   const { data: categoriesData } = useQuery({
     queryKey: ["admin-categories"],
@@ -184,9 +194,26 @@ export function CourseForm({
             placeholder="https://..."
             className="bg-card/10 border-border/15"
           />
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-[10px] text-muted-foreground/35 shrink-0">Proporção:</span>
+            {bannerRatioOptions.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setBannerRatio(opt.value)}
+                className={`px-2.5 py-1 rounded-md text-[10px] font-medium border transition-all ${
+                  bannerRatio === opt.value
+                    ? "border-gold/30 bg-gold/10 text-gold"
+                    : "border-border/15 bg-card/5 text-muted-foreground/35 hover:border-border/30"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
           <ImageFieldHint
-            ratio="3.84:1"
-            recommendedSize="1920x500"
+            ratio={currentBannerOption.value}
+            recommendedSize={currentBannerOption.size}
             autoCrop
             previewUrl={bannerUrl || null}
           />
