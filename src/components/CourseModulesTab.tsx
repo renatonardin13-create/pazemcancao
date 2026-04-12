@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { StatusBadge } from "@/components/StatusBadge";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -12,6 +12,11 @@ import {
   deleteLesson,
   reorderLessons,
 } from "@/lib/admin-modules.functions";
+import {
+  listLessonMaterials,
+  createLessonMaterial,
+  deleteLessonMaterial,
+} from "@/lib/lesson-materials.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -54,6 +59,9 @@ import {
   Trash2,
   Loader2,
   Layers,
+  Download,
+  ExternalLink,
+  X,
 } from "lucide-react";
 import { toast } from "sonner";
 
