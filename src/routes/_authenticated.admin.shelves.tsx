@@ -1,8 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { toast } from "sonner";
-import { Layout, Plus, Pencil, Trash2, GripVertical, ToggleLeft, ToggleRight, BookOpen } from "lucide-react";
+import {
+  Layout,
+  Plus,
+  Pencil,
+  Trash2,
+  GripVertical,
+  BookOpen,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,12 +39,75 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { listShelves, createShelf, updateShelf, deleteShelf, setShelfCourses } from "@/lib/admin-shelves.functions";
+import {
+  listShelves,
+  createShelf,
+  updateShelf,
+  deleteShelf,
+  setShelfCourses,
+  reorderShelves,
+  reorderShelfCourses,
+} from "@/lib/admin-shelves.functions";
 import { listCoursesForSelector } from "@/lib/admin-trial.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/shelves")({
   component: AdminShelvesPage,
 });
+
+/* ── Generic drag-and-drop hook ── */
+
+function useDragReorder<T extends { id: string }>(
+  items: T[],
+  onReorder: (newItems: T[]) => void
+) {
+  const dragIdx = useRef<number | null>(null);
+  const overIdx = useRef<number | null>(null);
+
+  const handleDragStart = useCallback(
+    (index: number) => (e: React.DragEvent) => {
+      dragIdx.current = index;
+      e.dataTransfer.effectAllowed = "move";
+      // For Firefox
+      e.dataTransfer.setData("text/plain", String(index));
+      const el = e.currentTarget as HTMLElement;
+      el.style.opacity = "0.5";
+    },
+    []
+  );
+
+  const handleDragEnd = useCallback(
+    (e: React.DragEvent) => {
+      const el = e.currentTarget as HTMLElement;
+      el.style.opacity = "1";
+      if (
+        dragIdx.current !== null &&
+        overIdx.current !== null &&
+        dragIdx.current !== overIdx.current
+      ) {
+        const newItems = [...items];
+        const [moved] = newItems.splice(dragIdx.current, 1);
+        newItems.splice(overIdx.current, 0, moved);
+        onReorder(newItems);
+      }
+      dragIdx.current = null;
+      overIdx.current = null;
+    },
+    [items, onReorder]
+  );
+
+  const handleDragOver = useCallback(
+    (index: number) => (e: React.DragEvent) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      overIdx.current = index;
+    },
+    []
+  );
+
+  return { handleDragStart, handleDragEnd, handleDragOver };
+}
+
+/* ── Page ── */
 
 function AdminShelvesPage() {
   const queryClient = useQueryClient();
@@ -68,6 +138,8 @@ function AdminShelvesPage() {
 
   const shelves = data?.shelves ?? [];
   const courses = coursesData?.courses ?? [];
+
+  // ── Mutations ──
 
   const createMut = useMutation({
     mutationFn: (input: any) => createShelf({ data: input }),
@@ -109,6 +181,34 @@ function AdminShelvesPage() {
     onError: (err: any) => toast.error(err.message),
   });
 
+  const reorderShelvesMut = useMutation({
+    mutationFn: (orderedIds: string[]) =>
+      reorderShelves({ data: { orderedIds } }),
+    onSuccess: () => {
+      toast.success("Ordem das prateleiras atualizada!");
+      queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const reorderCoursesMut = useMutation({
+    mutationFn: (input: { shelfId: string; orderedCourseIds: string[] }) =>
+      reorderShelfCourses({ data: input }),
+    onSuccess: () => {
+      toast.success("Ordem dos cursos atualizada!");
+      queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  // ── Drag and drop for shelves ──
+
+  const shelfDrag = useDragReorder(shelves, (newShelves) => {
+    reorderShelvesMut.mutate(newShelves.map((s: any) => s.id));
+  });
+
+  // ── Dialog handlers ──
+
   const openCreate = () => {
     setEditingShelf(null);
     setFormName("");
@@ -131,7 +231,9 @@ function AdminShelvesPage() {
 
   const openCourses = (shelf: any) => {
     setCoursesDialogShelf(shelf);
-    const existing = (shelf.shelf_courses || []).map((sc: any) => sc.course_id);
+    const existing = (shelf.shelf_courses || [])
+      .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+      .map((sc: any) => sc.course_id);
     setSelectedCourseIds(existing);
   };
 
@@ -159,11 +261,14 @@ function AdminShelvesPage() {
 
   const toggleCourse = (courseId: string) => {
     setSelectedCourseIds((prev) =>
-      prev.includes(courseId) ? prev.filter((id) => id !== courseId) : [...prev, courseId]
+      prev.includes(courseId)
+        ? prev.filter((id) => id !== courseId)
+        : [...prev, courseId]
     );
   };
 
-  const modeLabel = (mode: string) => (mode === "auto" ? "Automática" : "Manual");
+  const modeLabel = (mode: string) =>
+    mode === "auto" ? "Automática" : "Manual";
   const criteriaLabel = (c: string) => {
     const map: Record<string, string> = {
       recent: "Mais recentes",
@@ -175,6 +280,15 @@ function AdminShelvesPage() {
     return map[c] || c;
   };
 
+  // ── Courses drag reorder within the dialog ──
+
+  const coursesDrag = useDragReorder(
+    selectedCourseIds.map((id) => ({ id })),
+    (newItems) => {
+      setSelectedCourseIds(newItems.map((item) => item.id));
+    }
+  );
+
   return (
     <div className="max-w-5xl mx-auto space-y-8">
       <div className="flex items-center justify-between">
@@ -183,10 +297,13 @@ function AdminShelvesPage() {
             Prateleiras
           </h1>
           <p className="mt-1 text-[13px] text-muted-foreground/40">
-            Organize a vitrine da área do aluno
+            Organize a vitrine da área do aluno — arraste para reordenar
           </p>
         </div>
-        <Button className="gap-2 bg-gold/90 text-black hover:bg-gold" onClick={openCreate}>
+        <Button
+          className="gap-2 bg-gold/90 text-black hover:bg-gold"
+          onClick={openCreate}
+        >
           <Plus className="h-4 w-4" />
           Nova Prateleira
         </Button>
@@ -201,24 +318,30 @@ function AdminShelvesPage() {
       ) : shelves.length === 0 ? (
         <div className="rounded-2xl border border-border/15 bg-card/5 py-16 text-center">
           <Layout className="mx-auto mb-4 h-8 w-8 text-muted-foreground/15" />
-          <p className="text-sm text-muted-foreground/35">Nenhuma prateleira criada ainda.</p>
+          <p className="text-sm text-muted-foreground/35">
+            Nenhuma prateleira criada ainda.
+          </p>
           <p className="text-[12px] text-muted-foreground/25 mt-1">
             Crie prateleiras para organizar os cursos na vitrine do aluno.
           </p>
         </div>
       ) : (
         <div className="space-y-3">
-          {shelves.map((shelf: any) => {
+          {shelves.map((shelf: any, idx: number) => {
             const courseCount = shelf.shelf_courses?.length || 0;
             return (
               <div
                 key={shelf.id}
-                className="flex items-center gap-4 rounded-2xl border border-border/15 bg-card/10 px-5 py-4 transition-colors hover:bg-card/15"
+                draggable
+                onDragStart={shelfDrag.handleDragStart(idx)}
+                onDragEnd={shelfDrag.handleDragEnd}
+                onDragOver={shelfDrag.handleDragOver(idx)}
+                className="flex items-center gap-4 rounded-2xl border border-border/15 bg-card/10 px-5 py-4 transition-all hover:bg-card/15 cursor-grab active:cursor-grabbing"
               >
                 <GripVertical className="h-4 w-4 text-muted-foreground/20 shrink-0" />
 
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <p className="text-sm font-semibold text-foreground/80 truncate">
                       {shelf.name}
                     </p>
@@ -232,11 +355,17 @@ function AdminShelvesPage() {
                     >
                       {shelf.is_active ? "Ativa" : "Inativa"}
                     </Badge>
-                    <Badge variant="outline" className="text-[9px] text-muted-foreground/50 border-border/15">
+                    <Badge
+                      variant="outline"
+                      className="text-[9px] text-muted-foreground/50 border-border/15"
+                    >
                       {modeLabel(shelf.mode)}
                     </Badge>
                     {shelf.mode === "auto" && (
-                      <Badge variant="outline" className="text-[9px] text-gold/50 border-gold/15">
+                      <Badge
+                        variant="outline"
+                        className="text-[9px] text-gold/50 border-gold/15"
+                      >
                         {criteriaLabel(shelf.auto_criteria)}
                       </Badge>
                     )}
@@ -245,7 +374,6 @@ function AdminShelvesPage() {
                     {shelf.mode === "manual"
                       ? `${courseCount} curso(s) vinculado(s)`
                       : `Preenchimento automático: ${criteriaLabel(shelf.auto_criteria)}`}
-                    {" · "}Ordem: {shelf.sort_order}
                   </p>
                 </div>
 
@@ -297,13 +425,20 @@ function AdminShelvesPage() {
           <form onSubmit={handleSubmit} className="space-y-4 mt-4">
             <div className="space-y-2">
               <Label>Nome</Label>
-              <Input value={formName} onChange={(e) => setFormName(e.target.value)} placeholder="Ex: Lançamentos" required />
+              <Input
+                value={formName}
+                onChange={(e) => setFormName(e.target.value)}
+                placeholder="Ex: Lançamentos"
+                required
+              />
             </div>
 
             <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
               <div>
                 <p className="text-sm font-medium text-foreground/70">Ativa</p>
-                <p className="text-[11px] text-muted-foreground/40">Visível na área do aluno</p>
+                <p className="text-[11px] text-muted-foreground/40">
+                  Visível na área do aluno
+                </p>
               </div>
               <Switch checked={formActive} onCheckedChange={setFormActive} />
             </div>
@@ -315,8 +450,12 @@ function AdminShelvesPage() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="manual">Manual — eu escolho os cursos</SelectItem>
-                  <SelectItem value="auto">Automática — por critério</SelectItem>
+                  <SelectItem value="manual">
+                    Manual — eu escolho os cursos
+                  </SelectItem>
+                  <SelectItem value="auto">
+                    Automática — por critério
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -330,9 +469,13 @@ function AdminShelvesPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="recent">Mais recentes</SelectItem>
-                    <SelectItem value="best_selling">Mais liberados</SelectItem>
+                    <SelectItem value="best_selling">
+                      Mais liberados
+                    </SelectItem>
                     <SelectItem value="featured">Em destaque</SelectItem>
-                    <SelectItem value="enrolled">Cursos liberados do aluno</SelectItem>
+                    <SelectItem value="enrolled">
+                      Cursos liberados do aluno
+                    </SelectItem>
                     <SelectItem value="all">Todos os cursos</SelectItem>
                   </SelectContent>
                 </Select>
@@ -341,18 +484,37 @@ function AdminShelvesPage() {
 
             <div className="space-y-2">
               <Label>Ordem de exibição</Label>
-              <Input type="number" min={0} max={999} value={formOrder} onChange={(e) => setFormOrder(Number(e.target.value))} />
+              <Input
+                type="number"
+                min={0}
+                max={999}
+                value={formOrder}
+                onChange={(e) => setFormOrder(Number(e.target.value))}
+              />
             </div>
 
-            <Button type="submit" className="w-full bg-gold/90 text-black hover:bg-gold" disabled={createMut.isPending || updateMut.isPending}>
-              {createMut.isPending || updateMut.isPending ? "Salvando..." : editingShelf ? "Salvar" : "Criar Prateleira"}
+            <Button
+              type="submit"
+              className="w-full bg-gold/90 text-black hover:bg-gold"
+              disabled={createMut.isPending || updateMut.isPending}
+            >
+              {createMut.isPending || updateMut.isPending
+                ? "Salvando..."
+                : editingShelf
+                  ? "Salvar"
+                  : "Criar Prateleira"}
             </Button>
           </form>
         </DialogContent>
       </Dialog>
 
-      {/* Courses Dialog */}
-      <Dialog open={!!coursesDialogShelf} onOpenChange={(v) => { if (!v) setCoursesDialogShelf(null); }}>
+      {/* Courses Dialog with drag-and-drop ordering */}
+      <Dialog
+        open={!!coursesDialogShelf}
+        onOpenChange={(v) => {
+          if (!v) setCoursesDialogShelf(null);
+        }}
+      >
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="font-display">
@@ -360,43 +522,105 @@ function AdminShelvesPage() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 mt-4">
-            {courses.length === 0 ? (
-              <p className="text-[12px] text-muted-foreground/40 text-center py-4">
-                Nenhum curso cadastrado.
-              </p>
-            ) : (
-              <div className="rounded-xl border border-border/10 bg-muted/5 max-h-64 overflow-y-auto divide-y divide-border/5">
-                {courses.map((course: any) => {
-                  const isSelected = selectedCourseIds.includes(course.id);
-                  return (
-                    <label
-                      key={course.id}
-                      className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-muted/10 ${
-                        isSelected ? "bg-gold/5" : ""
-                      }`}
-                    >
-                      <Checkbox
-                        checked={isSelected}
-                        onCheckedChange={() => toggleCourse(course.id)}
-                      />
-                      <span className="text-sm font-medium text-foreground/70 truncate flex-1">
-                        {course.title}
-                      </span>
-                      <Badge
-                        variant="outline"
-                        className={`text-[9px] shrink-0 ${
-                          course.status === "published"
-                            ? "text-emerald-400/70 border-emerald-500/20"
-                            : "text-muted-foreground/40 border-border/15"
-                        }`}
+            {/* Selected courses - draggable order */}
+            {selectedCourseIds.length > 0 && (
+              <div>
+                <Label className="text-[11px] uppercase tracking-wider text-muted-foreground/40 mb-2 block">
+                  Ordem dos cursos (arraste para reordenar)
+                </Label>
+                <div className="rounded-xl border border-border/10 bg-muted/5 divide-y divide-border/5">
+                  {selectedCourseIds.map((courseId, idx) => {
+                    const course = courses.find((c: any) => c.id === courseId);
+                    if (!course) return null;
+                    return (
+                      <div
+                        key={courseId}
+                        draggable
+                        onDragStart={coursesDrag.handleDragStart(idx)}
+                        onDragEnd={coursesDrag.handleDragEnd}
+                        onDragOver={coursesDrag.handleDragOver(idx)}
+                        className="flex items-center gap-3 px-4 py-3 cursor-grab active:cursor-grabbing hover:bg-muted/10 transition-colors"
                       >
-                        {course.status === "published" ? "Publicado" : "Rascunho"}
-                      </Badge>
-                    </label>
-                  );
-                })}
+                        <GripVertical className="h-3.5 w-3.5 text-muted-foreground/20 shrink-0" />
+                        <span className="text-[10px] font-bold text-muted-foreground/20 tabular-nums w-5 shrink-0">
+                          {idx + 1}
+                        </span>
+                        {course.cover_image_url && (
+                          <img
+                            src={course.cover_image_url}
+                            alt=""
+                            className="h-8 w-8 rounded-md object-cover shrink-0"
+                          />
+                        )}
+                        <span className="text-sm font-medium text-foreground/70 truncate flex-1">
+                          {course.title}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => toggleCourse(courseId)}
+                          className="text-[10px] text-destructive/50 hover:text-destructive/80 shrink-0 transition-colors"
+                        >
+                          Remover
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             )}
+
+            {/* Available courses to add */}
+            <div>
+              <Label className="text-[11px] uppercase tracking-wider text-muted-foreground/40 mb-2 block">
+                Adicionar cursos
+              </Label>
+              {courses.length === 0 ? (
+                <p className="text-[12px] text-muted-foreground/40 text-center py-4">
+                  Nenhum curso cadastrado.
+                </p>
+              ) : (
+                <div className="rounded-xl border border-border/10 bg-muted/5 max-h-48 overflow-y-auto divide-y divide-border/5">
+                  {courses
+                    .filter(
+                      (c: any) => !selectedCourseIds.includes(c.id)
+                    )
+                    .map((course: any) => (
+                      <label
+                        key={course.id}
+                        className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-muted/10"
+                      >
+                        <Checkbox
+                          checked={false}
+                          onCheckedChange={() => toggleCourse(course.id)}
+                        />
+                        {course.cover_image_url && (
+                          <img
+                            src={course.cover_image_url}
+                            alt=""
+                            className="h-8 w-8 rounded-md object-cover shrink-0"
+                          />
+                        )}
+                        <span className="text-sm font-medium text-foreground/70 truncate flex-1">
+                          {course.title}
+                        </span>
+                        <Badge
+                          variant="outline"
+                          className={`text-[9px] shrink-0 ${
+                            course.status === "published"
+                              ? "text-emerald-400/70 border-emerald-500/20"
+                              : "text-muted-foreground/40 border-border/15"
+                          }`}
+                        >
+                          {course.status === "published"
+                            ? "Publicado"
+                            : "Rascunho"}
+                        </Badge>
+                      </label>
+                    ))}
+                </div>
+              )}
+            </div>
+
             <p className="text-[11px] text-gold/60">
               {selectedCourseIds.length} curso(s) selecionado(s)
             </p>
@@ -419,7 +643,12 @@ function AdminShelvesPage() {
       </Dialog>
 
       {/* Delete Confirm */}
-      <AlertDialog open={!!deleteTarget} onOpenChange={(v) => { if (!v) setDeleteTarget(null); }}>
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={(v) => {
+          if (!v) setDeleteTarget(null);
+        }}
+      >
         <AlertDialogContent className="bg-card border-border/20">
           <AlertDialogHeader>
             <AlertDialogTitle className="text-foreground/85">
@@ -427,11 +656,16 @@ function AdminShelvesPage() {
             </AlertDialogTitle>
             <AlertDialogDescription className="text-muted-foreground/50">
               Tem certeza que deseja excluir a prateleira{" "}
-              <span className="font-semibold text-foreground/70">{deleteTarget?.name}</span>?
+              <span className="font-semibold text-foreground/70">
+                {deleteTarget?.name}
+              </span>
+              ?
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="text-muted-foreground/50">Cancelar</AlertDialogCancel>
+            <AlertDialogCancel className="text-muted-foreground/50">
+              Cancelar
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => {
                 if (deleteTarget) deleteMut.mutate(deleteTarget.id);
