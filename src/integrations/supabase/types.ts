@@ -732,6 +732,78 @@ export type Database = {
         }
         Relationships: []
       }
+      shelf_courses: {
+        Row: {
+          course_id: string
+          created_at: string
+          id: string
+          shelf_id: string
+          sort_order: number
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          id?: string
+          shelf_id: string
+          sort_order?: number
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          id?: string
+          shelf_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shelf_courses_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shelf_courses_shelf_id_fkey"
+            columns: ["shelf_id"]
+            isOneToOne: false
+            referencedRelation: "shelves"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shelves: {
+        Row: {
+          auto_criteria: string | null
+          created_at: string
+          id: string
+          is_active: boolean
+          mode: string
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          auto_criteria?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          mode?: string
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          auto_criteria?: string | null
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          mode?: string
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       tracks: {
         Row: {
           bonus_release_date: string | null
