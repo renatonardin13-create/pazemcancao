@@ -17,6 +17,8 @@ const adminItems = [
   { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
   { title: "Músicas", url: "/admin/tracks", icon: Music },
   { title: "Conteúdos", url: "/admin/conteudos", icon: BookOpen },
+  { title: "Cursos", url: "/admin/courses", icon: BookOpen },
+  { title: "Prateleiras", url: "/admin/shelves", icon: Layout },
   { title: "Categorias", url: "/admin/categories", icon: FolderOpen },
   { title: "Trilhas", url: "/admin/journeys", icon: Compass },
   { title: "Usuários", url: "/admin/users", icon: Users },
