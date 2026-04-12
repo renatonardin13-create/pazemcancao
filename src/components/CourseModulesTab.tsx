@@ -79,6 +79,9 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   const [lesContentUrl, setLesContentUrl] = useState("");
   const [lesFreePreview, setLesFreePreview] = useState(false);
   const [lesDuration, setLesDuration] = useState("0:00");
+  const [lesContentType, setLesContentType] = useState<"video" | "pdf" | "file" | "link">("video");
+  const [lesThumbnailUrl, setLesThumbnailUrl] = useState("");
+  const [lesPublished, setLesPublished] = useState(true);
 
   const { data, isLoading } = useQuery({
     queryKey,
