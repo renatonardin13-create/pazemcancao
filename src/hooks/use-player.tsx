@@ -168,6 +168,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const stop = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause();
+      audioRef.current.removeAttribute("src");
+      audioRef.current.load();
       audioRef.current = null;
     }
     setPlaying(false);
