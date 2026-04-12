@@ -92,6 +92,11 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   const [lesThumbnailUrl, setLesThumbnailUrl] = useState("");
   const [lesPublished, setLesPublished] = useState(true);
 
+  // Materials state
+  const [matTitle, setMatTitle] = useState("");
+  const [matUrl, setMatUrl] = useState("");
+  const [matType, setMatType] = useState<"file" | "link" | "pdf">("file");
+
   const { data, isLoading } = useQuery({
     queryKey,
     queryFn: () => listModules({ data: { courseId } }),
