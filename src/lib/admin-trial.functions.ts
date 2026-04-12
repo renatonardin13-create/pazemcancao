@@ -29,7 +29,7 @@ export const listCoursesForSelector = createServerFn({ method: 'POST' })
 
     const { data, error } = await supabaseAdmin
       .from('courses')
-      .select('id, title, status')
+      .select('id, title, status, cover_image_url')
       .order('title', { ascending: true });
 
     if (error) throw new Error(error.message);
