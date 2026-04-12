@@ -263,8 +263,9 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
       {/* Cover Upload */}
       <div className="space-y-2">
         <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
-          Capa da música (opcional) — PNG ou JPG, 500×500px
+          Capa da música (opcional)
         </Label>
+        <ImageFieldHint ratio="1:1" recommendedSize="500x500" file={coverFile} />
         {coverPreview ? (
           <div className="flex items-center gap-4">
             <img
