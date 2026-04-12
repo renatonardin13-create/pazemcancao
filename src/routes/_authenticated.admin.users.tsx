@@ -1,13 +1,14 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Users, ShieldCheck, Ban, Activity, UserPlus, Clock, Pencil, ToggleLeft, ToggleRight, Trash2, Copy, KeyRound } from "lucide-react";
+import { Users, ShieldCheck, Ban, Activity, UserPlus, Clock, Pencil, ToggleLeft, ToggleRight, Trash2, Copy, KeyRound, BookOpen, Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Checkbox } from "@/components/ui/checkbox";
 import { listApprovedBuyers } from "@/lib/admin-users.functions";
-import { createTrialUser, updateBuyer, toggleBuyerAccess, deleteBuyer } from "@/lib/admin-trial.functions";
+import { createTrialUser, updateBuyer, toggleBuyerAccess, deleteBuyer, addStudent, listCoursesForSelector } from "@/lib/admin-trial.functions";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -35,6 +36,7 @@ export const Route = createFileRoute("/_authenticated/admin/users")({
 function AdminUsersPage() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [addOpen, setAddOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [editBuyer, setEditBuyer] = useState<any>(null);
@@ -42,6 +44,13 @@ function AdminUsersPage() {
   const [trialName, setTrialName] = useState("");
   const [trialDays, setTrialDays] = useState(7);
   const [generatedPassword, setGeneratedPassword] = useState<string | null>(null);
+
+  // Add student form state
+  const [addName, setAddName] = useState("");
+  const [addEmail, setAddEmail] = useState("");
+  const [addEnabled, setAddEnabled] = useState(true);
+  const [addCourseIds, setAddCourseIds] = useState<string[]>([]);
+  const [addPassword, setAddPassword] = useState<string | null>(null);
 
   // Edit form state
   const [editNome, setEditNome] = useState("");
@@ -54,6 +63,13 @@ function AdminUsersPage() {
     queryKey: ["admin-users"],
     queryFn: () => listApprovedBuyers(),
   });
+
+  const { data: coursesData } = useQuery({
+    queryKey: ["admin-courses-selector"],
+    queryFn: () => listCoursesForSelector(),
+  });
+
+  const courses = coursesData?.courses ?? [];
 
   const createTrial = useMutation({
     mutationFn: (input: { email: string; nome: string; trialDays: number }) =>
@@ -68,6 +84,19 @@ function AdminUsersPage() {
     },
     onError: (err: any) => {
       toast.error(err.message || "Erro ao cadastrar cliente de teste");
+    },
+  });
+
+  const addStudentMut = useMutation({
+    mutationFn: (input: { nome: string; email: string; access_enabled: boolean; courseIds: string[] }) =>
+      addStudent({ data: input }),
+    onSuccess: (result: any) => {
+      toast.success("Aluno adicionado com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      setAddPassword(result.generatedPassword || null);
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Erro ao adicionar aluno");
     },
   });
 
@@ -138,6 +167,32 @@ function AdminUsersPage() {
     update.mutate(payload);
   };
 
+  const handleAddSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    addStudentMut.mutate({
+      nome: addName,
+      email: addEmail,
+      access_enabled: addEnabled,
+      courseIds: addCourseIds,
+    });
+  };
+
+  const resetAddForm = () => {
+    setAddName("");
+    setAddEmail("");
+    setAddEnabled(true);
+    setAddCourseIds([]);
+    setAddPassword(null);
+  };
+
+  const toggleCourseSelection = (courseId: string) => {
+    setAddCourseIds((prev) =>
+      prev.includes(courseId)
+        ? prev.filter((id) => id !== courseId)
+        : [...prev, courseId]
+    );
+  };
+
   const buyers = data?.buyers ?? [];
   const activeSessions = data?.activeSessions ?? [];
   const activeSessionEmails = new Set(
@@ -178,77 +233,210 @@ function AdminUsersPage() {
           </p>
         </div>
 
-        <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (v) setGeneratedPassword(null); }}>
-          <DialogTrigger asChild>
-            <Button variant="outline" className="gap-2">
-              <UserPlus className="h-4 w-4" />
-              Cadastrar Teste
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="font-display">Cadastrar Cliente de Teste</DialogTitle>
-            </DialogHeader>
+        <div className="flex items-center gap-2">
+          {/* Add Student Dialog */}
+          <Dialog open={addOpen} onOpenChange={(v) => { setAddOpen(v); if (!v) resetAddForm(); }}>
+            <DialogTrigger asChild>
+              <Button className="gap-2 bg-gold/90 text-black hover:bg-gold">
+                <UserPlus className="h-4 w-4" />
+                Adicionar Aluno
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-lg">
+              <DialogHeader>
+                <DialogTitle className="font-display">Adicionar Aluno</DialogTitle>
+              </DialogHeader>
 
-            {generatedPassword ? (
-              <div className="space-y-4 mt-4">
-                <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-center">
-                  <KeyRound className="h-8 w-8 text-emerald-400/60 mx-auto mb-3" />
-                  <p className="text-sm font-semibold text-foreground/80 mb-1">Cliente cadastrado!</p>
-                  <p className="text-[12px] text-muted-foreground/50 mb-4">Envie a senha abaixo para o cliente acessar:</p>
-                  <div className="flex items-center gap-2 justify-center">
-                    <code className="rounded-lg bg-card/20 border border-border/20 px-4 py-2 text-lg font-mono font-bold text-gold tracking-wider">
-                      {generatedPassword}
-                    </code>
-                    <button
-                      onClick={() => {
-                        navigator.clipboard.writeText(generatedPassword);
-                        toast.success("Senha copiada!");
-                      }}
-                      className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/40 hover:text-gold/70 hover:bg-gold/10 transition-all"
-                      title="Copiar senha"
-                    >
-                      <Copy className="h-4 w-4" />
-                    </button>
+              {addPassword ? (
+                <div className="space-y-4 mt-4">
+                  <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-center">
+                    <KeyRound className="h-8 w-8 text-emerald-400/60 mx-auto mb-3" />
+                    <p className="text-sm font-semibold text-foreground/80 mb-1">Aluno cadastrado!</p>
+                    <p className="text-[12px] text-muted-foreground/50 mb-4">Envie a senha abaixo para o aluno acessar:</p>
+                    <div className="flex items-center gap-2 justify-center">
+                      <code className="rounded-lg bg-card/20 border border-border/20 px-4 py-2 text-lg font-mono font-bold text-gold tracking-wider">
+                        {addPassword}
+                      </code>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(addPassword);
+                          toast.success("Senha copiada!");
+                        }}
+                        className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/40 hover:text-gold/70 hover:bg-gold/10 transition-all"
+                        title="Copiar senha"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </button>
+                    </div>
+                    {addCourseIds.length > 0 && (
+                      <p className="text-[11px] text-emerald-400/60 mt-3">
+                        <Check className="h-3 w-3 inline mr-1" />
+                        {addCourseIds.length} curso(s) liberado(s) automaticamente
+                      </p>
+                    )}
                   </div>
+                  <Button
+                    className="w-full"
+                    onClick={() => { resetAddForm(); setAddOpen(false); }}
+                  >
+                    Fechar
+                  </Button>
                 </div>
-                <Button
-                  className="w-full"
-                  onClick={() => { setGeneratedPassword(null); setOpen(false); }}
+              ) : (
+                <form onSubmit={handleAddSubmit} className="space-y-4 mt-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="add-name">Nome</Label>
+                    <Input id="add-name" value={addName} onChange={(e) => setAddName(e.target.value)} placeholder="Nome do aluno" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="add-email">E-mail</Label>
+                    <Input id="add-email" type="email" value={addEmail} onChange={(e) => setAddEmail(e.target.value)} placeholder="email@exemplo.com" required />
+                  </div>
+
+                  <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
+                    <div>
+                      <p className="text-sm font-medium text-foreground/70">Status</p>
+                      <p className="text-[11px] text-muted-foreground/40">
+                        {addEnabled ? "Ativo — aluno pode acessar a plataforma" : "Inativo — acesso bloqueado"}
+                      </p>
+                    </div>
+                    <Switch checked={addEnabled} onCheckedChange={setAddEnabled} />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="flex items-center gap-2">
+                      <BookOpen className="h-4 w-4 text-gold/60" />
+                      Cursos Liberados
+                    </Label>
+                    {courses.length === 0 ? (
+                      <div className="rounded-xl border border-border/10 bg-muted/5 p-4 text-center">
+                        <p className="text-[12px] text-muted-foreground/40">
+                          Nenhum curso cadastrado ainda.
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="rounded-xl border border-border/10 bg-muted/5 max-h-48 overflow-y-auto divide-y divide-border/5">
+                        {courses.map((course: any) => {
+                          const isSelected = addCourseIds.includes(course.id);
+                          return (
+                            <label
+                              key={course.id}
+                              className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-muted/10 ${
+                                isSelected ? "bg-gold/5" : ""
+                              }`}
+                            >
+                              <Checkbox
+                                checked={isSelected}
+                                onCheckedChange={() => toggleCourseSelection(course.id)}
+                              />
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-foreground/70 truncate">
+                                  {course.title}
+                                </p>
+                              </div>
+                              <Badge
+                                variant="outline"
+                                className={`text-[9px] shrink-0 ${
+                                  course.status === "published"
+                                    ? "text-emerald-400/70 border-emerald-500/20"
+                                    : "text-muted-foreground/40 border-border/15"
+                                }`}
+                              >
+                                {course.status === "published" ? "Publicado" : "Rascunho"}
+                              </Badge>
+                            </label>
+                          );
+                        })}
+                      </div>
+                    )}
+                    {addCourseIds.length > 0 && (
+                      <p className="text-[11px] text-gold/60">
+                        {addCourseIds.length} curso(s) selecionado(s)
+                      </p>
+                    )}
+                  </div>
+
+                  <Button type="submit" className="w-full bg-gold/90 text-black hover:bg-gold" disabled={addStudentMut.isPending}>
+                    {addStudentMut.isPending ? "Salvando..." : "Adicionar Aluno"}
+                  </Button>
+                </form>
+              )}
+            </DialogContent>
+          </Dialog>
+
+          {/* Trial Dialog */}
+          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (v) setGeneratedPassword(null); }}>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="gap-2">
+                <Clock className="h-4 w-4" />
+                Cadastrar Teste
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle className="font-display">Cadastrar Cliente de Teste</DialogTitle>
+              </DialogHeader>
+
+              {generatedPassword ? (
+                <div className="space-y-4 mt-4">
+                  <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-center">
+                    <KeyRound className="h-8 w-8 text-emerald-400/60 mx-auto mb-3" />
+                    <p className="text-sm font-semibold text-foreground/80 mb-1">Cliente cadastrado!</p>
+                    <p className="text-[12px] text-muted-foreground/50 mb-4">Envie a senha abaixo para o cliente acessar:</p>
+                    <div className="flex items-center gap-2 justify-center">
+                      <code className="rounded-lg bg-card/20 border border-border/20 px-4 py-2 text-lg font-mono font-bold text-gold tracking-wider">
+                        {generatedPassword}
+                      </code>
+                      <button
+                        onClick={() => {
+                          navigator.clipboard.writeText(generatedPassword);
+                          toast.success("Senha copiada!");
+                        }}
+                        className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/40 hover:text-gold/70 hover:bg-gold/10 transition-all"
+                        title="Copiar senha"
+                      >
+                        <Copy className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                  <Button
+                    className="w-full"
+                    onClick={() => { setGeneratedPassword(null); setOpen(false); }}
+                  >
+                    Fechar
+                  </Button>
+                </div>
+              ) : (
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    createTrial.mutate({ email: trialEmail, nome: trialName, trialDays });
+                  }}
+                  className="space-y-4 mt-4"
                 >
-                  Fechar
-                </Button>
-              </div>
-            ) : (
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  createTrial.mutate({ email: trialEmail, nome: trialName, trialDays });
-                }}
-                className="space-y-4 mt-4"
-              >
-                <div className="space-y-2">
-                  <Label htmlFor="trial-name">Nome</Label>
-                  <Input id="trial-name" value={trialName} onChange={(e) => setTrialName(e.target.value)} placeholder="Nome do cliente" required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="trial-email">E-mail</Label>
-                  <Input id="trial-email" type="email" value={trialEmail} onChange={(e) => setTrialEmail(e.target.value)} placeholder="email@exemplo.com" required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="trial-days">Dias de teste</Label>
-                  <Input id="trial-days" type="number" min={1} max={90} value={trialDays} onChange={(e) => setTrialDays(Number(e.target.value))} required />
-                  <p className="text-[11px] text-muted-foreground/40">
-                    O cliente poderá apenas ouvir (sem download). Após o prazo, o acesso será bloqueado.
-                  </p>
-                </div>
-                <Button type="submit" className="w-full" disabled={createTrial.isPending}>
-                  {createTrial.isPending ? "Cadastrando..." : "Cadastrar Cliente de Teste"}
-                </Button>
-              </form>
-            )}
-          </DialogContent>
-        </Dialog>
+                  <div className="space-y-2">
+                    <Label htmlFor="trial-name">Nome</Label>
+                    <Input id="trial-name" value={trialName} onChange={(e) => setTrialName(e.target.value)} placeholder="Nome do cliente" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="trial-email">E-mail</Label>
+                    <Input id="trial-email" type="email" value={trialEmail} onChange={(e) => setTrialEmail(e.target.value)} placeholder="email@exemplo.com" required />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="trial-days">Dias de teste</Label>
+                    <Input id="trial-days" type="number" min={1} max={90} value={trialDays} onChange={(e) => setTrialDays(Number(e.target.value))} required />
+                    <p className="text-[11px] text-muted-foreground/40">
+                      O cliente poderá apenas ouvir (sem download). Após o prazo, o acesso será bloqueado.
+                    </p>
+                  </div>
+                  <Button type="submit" className="w-full" disabled={createTrial.isPending}>
+                    {createTrial.isPending ? "Cadastrando..." : "Cadastrar Cliente de Teste"}
+                  </Button>
+                </form>
+              )}
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
 
       {/* Edit Dialog */}
