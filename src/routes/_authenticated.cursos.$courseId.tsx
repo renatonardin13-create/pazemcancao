@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getCourseDetail,
   updateLessonProgress,
-  enrollInCourse,
 } from "@/lib/courses.functions";
 import {
   ArrowLeft,
@@ -16,11 +15,12 @@ import {
   ChevronRight,
   FileText,
   File as FileIcon,
+  ExternalLink,
   Link2,
+  Lock,
 } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 
 export const Route = createFileRoute("/_authenticated/cursos/$courseId")({
@@ -47,15 +47,6 @@ function CourseDetailPage() {
   const { data, isLoading, error } = useQuery({
     queryKey: ["course-detail", courseId],
     queryFn: () => getCourseDetail({ data: { courseId } }),
-  });
-
-  const enrollMutation = useMutation({
-    mutationFn: () => enrollInCourse({ data: { courseId } }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["course-detail", courseId] });
-      toast.success("Matrícula realizada!");
-    },
-    onError: (err: any) => toast.error(err.message),
   });
 
   const progressMutation = useMutation({
@@ -111,7 +102,9 @@ function CourseDetailPage() {
     );
   }
 
-  const { course, lessons, progress, enrollment } = data;
+  const { course, lessons, progress, enrollment, integration, access } = data;
+  const canAccessCourse = access?.canAccessCourse;
+  const hasCheckout = access?.hasCheckout && integration?.checkout_url;
 
   // Group lessons by module
   const modules = data.modules || [];
@@ -144,6 +137,14 @@ function CourseDetailPage() {
 
   const renderLesson = (lesson: any, index: number) => {
     const completed = isLessonCompleted(lesson.id);
+    const canOpenLesson = canAccessCourse || lesson.is_free_preview;
+    const lessonTitleClasses = `text-sm font-medium truncate block transition-colors ${
+      completed
+        ? "text-muted-foreground/40 line-through"
+        : canOpenLesson
+          ? "text-foreground/70 hover:text-gold/70"
+          : "text-muted-foreground/30"
+    }`;
 
     return (
       <div
@@ -163,17 +164,17 @@ function CourseDetailPage() {
         </span>
 
         <div className="flex-1 min-w-0">
-          <Link
-            to="/cursos/$courseId/aula/$lessonId"
-            params={{ courseId, lessonId: lesson.id }}
-            className={`text-sm font-medium truncate block hover:text-gold/70 transition-colors ${
-              completed
-                ? "text-muted-foreground/40 line-through"
-                : "text-foreground/70"
-            }`}
-          >
-            {lesson.title}
-          </Link>
+          {canOpenLesson ? (
+            <Link
+              to="/cursos/$courseId/aula/$lessonId"
+              params={{ courseId, lessonId: lesson.id }}
+              className={lessonTitleClasses}
+            >
+              {lesson.title}
+            </Link>
+          ) : (
+            <span className={lessonTitleClasses}>{lesson.title}</span>
+          )}
           <div className="flex items-center gap-3 mt-1">
             {getLessonIcon(lesson)}
             {lesson.duration && lesson.duration !== "0:00" && (
@@ -184,6 +185,12 @@ function CourseDetailPage() {
             {lesson.is_free_preview && (
               <span className="text-[9px] uppercase tracking-wider text-gold/40 font-semibold">
                 Preview
+              </span>
+            )}
+            {!canOpenLesson && (
+              <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider text-muted-foreground/25 font-semibold">
+                <Lock className="h-3 w-3" />
+                Bloqueada
               </span>
             )}
           </div>
@@ -301,16 +308,34 @@ function CourseDetailPage() {
           transition={{ duration: 0.8, delay: 0.15 }}
           className="mb-10"
         >
-          {!enrollment ? (
-            <button
-              onClick={() => enrollMutation.mutate()}
-              disabled={enrollMutation.isPending}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 rounded-xl h-12 px-8 text-[11px] font-semibold uppercase tracking-wider bg-gold/15 text-gold/70 border border-gold/12 hover:bg-gold/22 transition-all duration-500 disabled:opacity-50"
-            >
-              {enrollMutation.isPending
-                ? "Matriculando..."
-                : "Começar este curso"}
-            </button>
+          {!canAccessCourse ? (
+            <div className="rounded-2xl border border-border/10 bg-card/5 p-5">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <span className="inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-gold/45">
+                    <Lock className="h-3.5 w-3.5" />
+                    Curso bloqueado
+                  </span>
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground/45">
+                    {access?.hasFreePreview
+                      ? "Este curso possui aulas de prévia liberadas para o aluno."
+                      : "Este curso só aparece para o aluno quando houver liberação ou estratégia de venda configurada."}
+                  </p>
+                </div>
+
+                {hasCheckout ? (
+                  <a
+                    href={integration.checkout_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-gold/12 bg-gold/15 px-6 text-[11px] font-semibold uppercase tracking-wider text-gold/70 transition-all duration-500 hover:bg-gold/22"
+                  >
+                    Desbloquear curso
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                ) : null}
+              </div>
+            </div>
           ) : (
             <div className="rounded-2xl border border-border/10 bg-card/5 p-5">
               <div className="flex items-center justify-between mb-3">

@@ -28,6 +28,9 @@ function CoursesVitrinePage() {
   });
 
   const shelves = data?.shelves || [];
+  const featuredCourse = shelves
+    .flatMap((shelf: any) => shelf.courses || [])
+    .find((course: any) => course.banner_image_url || course.cover_image_url);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -35,7 +38,7 @@ function CoursesVitrinePage() {
 
       <main className="flex-1 mx-auto w-full max-w-6xl px-4 sm:px-6 py-8 pb-28">
         {/* Header */}
-        <motion.div initial="hidden" animate="visible" className="mb-10">
+        <motion.div initial="hidden" animate="visible" className="mb-8">
           <motion.div variants={fadeUp} custom={0} className="flex items-center gap-3 mb-2">
             <BookOpen className="h-6 w-6 text-gold/40" />
             <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground/90 tracking-tight">
@@ -50,6 +53,59 @@ function CoursesVitrinePage() {
             Explore os cursos disponíveis para você
           </motion.p>
         </motion.div>
+
+        {featuredCourse && (
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={fadeUp}
+            custom={0.15}
+            className="mb-10"
+          >
+            <Link
+              to="/cursos/$courseId"
+              params={{ courseId: featuredCourse.id }}
+              className="group block overflow-hidden rounded-[2rem] border border-border/10 bg-card/5"
+            >
+              <div className="relative aspect-[16/8] sm:aspect-[21/8] overflow-hidden">
+                {featuredCourse.banner_image_url || featuredCourse.cover_image_url ? (
+                  <img
+                    src={featuredCourse.banner_image_url || featuredCourse.cover_image_url}
+                    alt={featuredCourse.title}
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div className="h-full w-full bg-card/10" />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-background/15" />
+                <div className="absolute inset-0 flex items-end p-6 sm:p-8">
+                  <div className="max-w-xl">
+                    <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.35em] text-gold/45">
+                      Destaque da vitrine
+                    </p>
+                    <h2 className="font-display text-2xl sm:text-4xl font-bold tracking-tight text-foreground/90">
+                      {featuredCourse.title}
+                    </h2>
+                    {featuredCourse.short_description && (
+                      <p className="mt-3 max-w-lg text-sm leading-relaxed text-muted-foreground/55 line-clamp-3">
+                        {featuredCourse.short_description}
+                      </p>
+                    )}
+                    <div className="mt-5 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-gold/55 transition-colors group-hover:text-gold/75">
+                      {featuredCourse.is_enrolled
+                        ? "Continuar curso"
+                        : featuredCourse.has_preview
+                          ? "Ver prévia"
+                          : "Ver detalhes"}
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Link>
+          </motion.div>
+        )}
 
         {/* Loading */}
         {isLoading ? (
@@ -116,6 +172,8 @@ function ShelfRow({ shelf, shelfIdx }: { shelf: any; shelfIdx: number }) {
 
 function CourseCard({ course }: { course: any }) {
   const isEnrolled = course.is_enrolled;
+  const accessState = course.access_state || (isEnrolled ? "enrolled" : "locked");
+  const showLock = accessState === "locked";
 
   return (
     <Link
@@ -142,9 +200,17 @@ function CourseCard({ course }: { course: any }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
 
         {/* Lock badge if not enrolled */}
-        {!isEnrolled && (
+        {showLock && (
           <div className="absolute top-2.5 right-2.5 flex items-center justify-center h-7 w-7 rounded-full bg-black/40 backdrop-blur-sm border border-white/10">
             <Lock className="h-3.5 w-3.5 text-white/60" />
+          </div>
+        )}
+
+        {!isEnrolled && accessState !== "locked" && (
+          <div className="absolute top-2.5 right-2.5 rounded-full bg-card/70 backdrop-blur-sm border border-border/20 px-2.5 py-1">
+            <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-gold/55">
+              {accessState === "preview" ? "Preview" : "Curso"}
+            </span>
           </div>
         )}
 
@@ -165,7 +231,7 @@ function CourseCard({ course }: { course: any }) {
 
       {/* CTA */}
       <div className="mt-2 flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-gold/40 group-hover:text-gold/70 transition-colors">
-        {isEnrolled ? "Continuar" : "Ver curso"}
+        {isEnrolled ? "Continuar" : accessState === "preview" ? "Ver prévia" : "Ver curso"}
         <ChevronRight className="h-3 w-3" />
       </div>
     </Link>

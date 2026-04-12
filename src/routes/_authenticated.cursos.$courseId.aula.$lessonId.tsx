@@ -113,6 +113,8 @@ function LessonDetailPage() {
     completedCount,
     totalLessons,
     materials,
+    accessRestricted,
+    checkoutUrl,
   } = data;
 
   const progressPercent =
@@ -215,8 +217,45 @@ function LessonDetailPage() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 pt-6 flex flex-col lg:flex-row gap-6">
         {/* Main content */}
         <div className="flex-1 min-w-0">
+          {accessRestricted && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-6 rounded-2xl border border-border/10 bg-card/5 p-8 text-center"
+            >
+              <BookOpen className="mx-auto mb-4 h-10 w-10 text-gold/30" />
+              <h1 className="font-display text-2xl font-bold tracking-tight text-foreground/85">
+                Aula bloqueada
+              </h1>
+              <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-muted-foreground/45">
+                Esta aula só fica disponível após a liberação do curso para o aluno. Se houver checkout configurado, você pode usar o acesso abaixo como estratégia de desbloqueio.
+              </p>
+              <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                {checkoutUrl ? (
+                  <a
+                    href={checkoutUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 rounded-xl border border-gold/12 bg-gold/15 px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-gold/70 transition-all duration-500 hover:bg-gold/22"
+                  >
+                    <ExternalLink className="h-4 w-4" />
+                    Desbloquear curso
+                  </a>
+                ) : null}
+                <Link
+                  to="/cursos/$courseId"
+                  params={{ courseId }}
+                  className="inline-flex items-center gap-2 rounded-xl border border-border/10 bg-card/10 px-5 py-3 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/45 transition-colors hover:text-foreground/70"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  Voltar ao curso
+                </Link>
+              </div>
+            </motion.div>
+          )}
+
           {/* Video player */}
-          {hasVideo && (
+          {!accessRestricted && hasVideo && (
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -261,7 +300,7 @@ function LessonDetailPage() {
           )}
 
           {/* PDF viewer */}
-          {isPdf && (
+          {!accessRestricted && isPdf && (
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -305,7 +344,7 @@ function LessonDetailPage() {
           )}
 
           {/* External link */}
-          {isExternalLink && (
+          {!accessRestricted && isExternalLink && (
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -326,7 +365,7 @@ function LessonDetailPage() {
           )}
 
           {/* Downloadable file */}
-          {isDownloadableFile && (
+          {!accessRestricted && isDownloadableFile && (
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -349,7 +388,7 @@ function LessonDetailPage() {
           )}
 
           {/* No content fallback */}
-          {!hasVideo && !hasContentUrl && (
+          {!accessRestricted && !hasVideo && !hasContentUrl && (
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -409,7 +448,7 @@ function LessonDetailPage() {
           </motion.div>
 
           {/* Supplementary materials from DB + legacy lesson content */}
-          {displayedMaterials.length > 0 && (
+          {!accessRestricted && displayedMaterials.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}

@@ -1,11 +1,24 @@
 import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 export const getLessonDetail = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { courseId: string; lessonId: string }) => input)
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
+
+    const { data: userData } = await supabase.auth.getUser();
+    const email = userData?.user?.email?.toLowerCase();
+
+    const { data: adminRole } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    const isAdmin = !!adminRole || email === 'renatonardin13@gmail.com';
 
     // Course
     const { data: course, error: courseErr } = await supabase
@@ -28,7 +41,7 @@ export const getLessonDetail = createServerFn({ method: 'POST' })
     // All lessons ordered
     const { data: allLessons } = await supabase
       .from('lessons')
-      .select('id, title, sort_order, duration, module_id, video_url, content_url, content_type, is_free_preview')
+      .select('id, title, description, sort_order, duration, module_id, video_url, content_url, content_type, is_free_preview')
       .eq('course_id', data.courseId)
       .order('sort_order', { ascending: true });
 
@@ -38,12 +51,19 @@ export const getLessonDetail = createServerFn({ method: 'POST' })
     const currentLesson = lessons.find((l: any) => l.id === data.lessonId);
     if (!currentLesson) throw new Error('Aula não encontrada');
 
+    const canAccessCourse = isAdmin || !!enrollment;
+    const canAccessLesson = canAccessCourse || !!currentLesson.is_free_preview;
+
     // Full lesson data
-    const { data: lessonFull } = await supabase
-      .from('lessons')
-      .select('*')
-      .eq('id', data.lessonId)
-      .single();
+    const lessonFull = canAccessLesson
+      ? (
+          await supabase
+            .from('lessons')
+            .select('*')
+            .eq('id', data.lessonId)
+            .single()
+        ).data
+      : currentLesson;
 
     // Modules for this course
     const { data: modules } = await supabase
@@ -60,21 +80,35 @@ export const getLessonDetail = createServerFn({ method: 'POST' })
       .eq('user_id', userId);
 
     // Supplementary materials for this lesson
-    const { data: lessonMaterials } = await supabase
-      .from('lesson_materials')
-      .select('id, title, material_type, url, sort_order')
-      .eq('lesson_id', data.lessonId)
-      .order('sort_order', { ascending: true });
+    const { data: lessonMaterials } = canAccessLesson
+      ? await supabase
+          .from('lesson_materials')
+          .select('id, title, material_type, url, sort_order')
+          .eq('lesson_id', data.lessonId)
+          .order('sort_order', { ascending: true })
+      : { data: [] };
+
+    const { data: integration } = await supabaseAdmin
+      .from('course_integrations')
+      .select('is_enabled, checkout_url, external_product_name')
+      .eq('course_id', data.courseId)
+      .maybeSingle();
+
+    const checkoutUrl = integration?.is_enabled ? integration.checkout_url || null : null;
+
+    const accessibleLessons = canAccessCourse
+      ? lessons
+      : lessons.filter((lesson: any) => lesson.is_free_preview);
 
     // Find prev/next
-    const currentIndex = lessons.findIndex((l: any) => l.id === data.lessonId);
-    const prevLesson = currentIndex > 0 ? lessons[currentIndex - 1] : null;
-    const nextLesson = currentIndex < lessons.length - 1 ? lessons[currentIndex + 1] : null;
+    const currentIndex = accessibleLessons.findIndex((l: any) => l.id === data.lessonId);
+    const prevLesson = currentIndex > 0 ? accessibleLessons[currentIndex - 1] : null;
+    const nextLesson = currentIndex < accessibleLessons.length - 1 ? accessibleLessons[currentIndex + 1] : null;
 
     // Group lessons by module
     const moduleMap: Record<string, any[]> = {};
     const unmoduled: any[] = [];
-    for (const l of lessons) {
+    for (const l of accessibleLessons) {
       if (l.module_id) {
         if (!moduleMap[l.module_id]) moduleMap[l.module_id] = [];
         moduleMap[l.module_id].push(l);
@@ -98,7 +132,17 @@ export const getLessonDetail = createServerFn({ method: 'POST' })
       nextLesson,
       currentIndex,
       completedCount,
-      totalLessons: lessons.length,
+      totalLessons: accessibleLessons.length,
       materials: lessonMaterials || [],
+      accessRestricted: !canAccessLesson,
+      canAccessCourse,
+      canAccessLesson,
+      checkoutUrl,
+      integration: checkoutUrl
+        ? {
+            checkout_url: checkoutUrl,
+            external_product_name: integration?.external_product_name || null,
+          }
+        : null,
     };
   });

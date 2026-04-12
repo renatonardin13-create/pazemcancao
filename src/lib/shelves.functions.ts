@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 // ── Get shelves for the student area (respecting enrollment) ──
 export const getStudentShelves = createServerFn({ method: 'POST' })
@@ -19,7 +20,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       .eq('role', 'admin')
       .maybeSingle();
 
-    const isAdmin = !!adminRole;
+    const isAdmin = !!adminRole || email === 'renatonardin13@gmail.com';
 
     // Get active shelves
     const { data: shelves, error: shelvesErr } = await supabase
@@ -44,11 +45,62 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
     // Get all published courses
     const { data: allCourses } = await supabase
       .from('courses')
-      .select('id, title, short_description, cover_image_url, status, sort_order, created_at')
+      .select('id, title, short_description, cover_image_url, banner_image_url, status, sort_order, created_at')
       .eq('status', 'published')
       .order('sort_order', { ascending: true });
 
     const publishedCourses = allCourses || [];
+
+    // Courses with free preview lessons
+    const { data: previewLessons } = await supabase
+      .from('lessons')
+      .select('course_id')
+      .eq('is_free_preview', true);
+
+    const previewCourseIds = new Set((previewLessons || []).map((lesson: any) => lesson.course_id));
+
+    // Courses with sales strategy configured
+    const { data: integrations } = await supabaseAdmin
+      .from('course_integrations')
+      .select('course_id, is_enabled, checkout_url')
+      .eq('is_enabled', true);
+
+    const integrationMap = new Map(
+      (integrations || [])
+        .filter((item: any) => !!item.checkout_url)
+        .map((item: any) => [item.course_id, item.checkout_url])
+    );
+
+    // Best-selling criteria based on released/enrolled students
+    const { data: allActiveEnrollments } = await supabaseAdmin
+      .from('enrollments')
+      .select('course_id')
+      .eq('status', 'active');
+
+    const salesCountMap = new Map<string, number>();
+    for (const enrollment of allActiveEnrollments || []) {
+      const current = salesCountMap.get(enrollment.course_id) || 0;
+      salesCountMap.set(enrollment.course_id, current + 1);
+    }
+
+    const enrichCourse = (course: any) => {
+      const isEnrolled = enrolledCourseIds.has(course.id) || isAdmin;
+      const hasPreview = previewCourseIds.has(course.id);
+      const checkoutUrl = integrationMap.get(course.id) || null;
+      const hasCheckout = !!checkoutUrl;
+
+      return {
+        ...course,
+        is_enrolled: isEnrolled,
+        has_preview: hasPreview,
+        has_checkout: hasCheckout,
+        checkout_url: checkoutUrl,
+        access_state: isEnrolled ? 'enrolled' : hasPreview ? 'preview' : hasCheckout ? 'locked' : 'hidden',
+        sales_count: salesCountMap.get(course.id) || 0,
+      };
+    };
+
+    const courseMap = new Map(publishedCourses.map((course: any) => [course.id, enrichCourse(course)]));
 
     // For each shelf, resolve courses
     const result = [];
@@ -60,13 +112,13 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
         // Get manually linked courses
         const { data: shelfCourses } = await supabase
           .from('shelf_courses')
-          .select('course_id, sort_order, courses(id, title, short_description, cover_image_url, status)')
+          .select('course_id, sort_order')
           .eq('shelf_id', shelf.id)
           .order('sort_order', { ascending: true });
 
         courses = (shelfCourses || [])
-          .filter((sc: any) => sc.courses?.status === 'published')
-          .map((sc: any) => sc.courses);
+          .map((sc: any) => courseMap.get(sc.course_id))
+          .filter(Boolean);
       } else {
         // Auto mode
         switch (shelf.auto_criteria) {
@@ -74,6 +126,15 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
             courses = [...publishedCourses].sort(
               (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
             ).slice(0, 20);
+            break;
+          case 'best_selling':
+            courses = [...publishedCourses]
+              .sort((a: any, b: any) => {
+                const salesDiff = (salesCountMap.get(b.id) || 0) - (salesCountMap.get(a.id) || 0);
+                if (salesDiff !== 0) return salesDiff;
+                return a.sort_order - b.sort_order;
+              })
+              .slice(0, 20);
             break;
           case 'featured':
             courses = publishedCourses.filter((c: any) => c.sort_order <= 5).slice(0, 20);
@@ -86,17 +147,13 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
         }
       }
 
-      // If not admin, filter to only enrolled courses (unless shelf is 'all' type showing previews)
+      courses = courses.map(enrichCourse);
+
       if (!isAdmin) {
-        courses = courses.map((c: any) => ({
-          ...c,
-          is_enrolled: enrolledCourseIds.has(c.id),
-        }));
-      } else {
-        courses = courses.map((c: any) => ({
-          ...c,
-          is_enrolled: true,
-        }));
+        courses = courses.filter(
+          (course: any) =>
+            course.is_enrolled || course.has_preview || course.has_checkout
+        );
       }
 
       if (courses.length > 0) {
