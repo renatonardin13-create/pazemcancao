@@ -170,6 +170,20 @@ function LessonDetailPage() {
     }
   };
 
+  const legacySupplementaryMaterial =
+    hasVideo && hasContentUrl
+      ? {
+          id: "legacy-content-url",
+          title: lesson.title,
+          material_type: isExternalLink ? "link" : isPdf ? "pdf" : "file",
+          url: contentUrl,
+        }
+      : null;
+
+  const displayedMaterials = legacySupplementaryMaterial
+    ? [legacySupplementaryMaterial, ...(materials || [])]
+    : materials || [];
+
   return (
     <div className="min-h-screen bg-background pb-32">
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_30%,var(--color-gold)/0.03,transparent_70%)]" />
@@ -394,8 +408,8 @@ function LessonDetailPage() {
             </div>
           </motion.div>
 
-          {/* Supplementary materials from DB */}
-          {materials && materials.length > 0 && (
+          {/* Supplementary materials from DB + legacy lesson content */}
+          {displayedMaterials.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -406,7 +420,7 @@ function LessonDetailPage() {
                 Materiais Complementares
               </h3>
               <div className="space-y-2">
-                {materials.map((mat: any) => (
+                {displayedMaterials.map((mat: any) => (
                   <div key={mat.id} className="flex items-center gap-3 rounded-xl bg-muted/5 border border-border/8 px-4 py-3">
                     {mat.material_type === "pdf" ? (
                       <FileText className="h-4 w-4 text-gold/40 shrink-0" />
@@ -415,9 +429,16 @@ function LessonDetailPage() {
                     ) : (
                       <File className="h-4 w-4 text-gold/40 shrink-0" />
                     )}
-                    <span className="text-sm text-foreground/60 flex-1 truncate">
-                      {mat.title}
-                    </span>
+                    <div className="flex-1 min-w-0">
+                      <span className="block text-sm text-foreground/60 truncate">
+                        {mat.title}
+                      </span>
+                      {mat.id === "legacy-content-url" && (
+                        <span className="block text-[10px] text-muted-foreground/30 uppercase mt-0.5">
+                          Material já existente da aula
+                        </span>
+                      )}
+                    </div>
                     {mat.material_type === "link" ? (
                       <Button
                         variant="ghost"

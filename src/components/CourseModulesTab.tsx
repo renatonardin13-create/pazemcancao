@@ -17,6 +17,7 @@ import {
   createLessonMaterial,
   deleteLessonMaterial,
 } from "@/lib/lesson-materials.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -95,6 +96,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   // Materials state
   const [matTitle, setMatTitle] = useState("");
   const [matUrl, setMatUrl] = useState("");
+  const [matFile, setMatFile] = useState<File | null>(null);
   const [matType, setMatType] = useState<"file" | "link" | "pdf">("file");
 
   const { data, isLoading } = useQuery({
@@ -189,12 +191,60 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   const materials = materialsData?.materials || [];
 
   const createMatM = useMutation({
-    mutationFn: (input: { lessonId: string; title: string; material_type: string; url: string }) =>
-      createLessonMaterial({ data: input }),
+    mutationFn: async (input: {
+      lessonId: string;
+      title: string;
+      material_type: "file" | "link" | "pdf";
+      url?: string;
+      file?: File | null;
+    }) => {
+      let finalUrl = input.url?.trim() || "";
+
+      if (!finalUrl && input.file) {
+        const extension = input.file.name.split(".").pop() || "bin";
+        const baseName = input.file.name
+          .replace(/\.[^/.]+$/, "")
+          .toLowerCase()
+          .replace(/[^a-z0-9-_]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          .slice(0, 60) || "material";
+        const path = `lesson-materials/${input.lessonId}/${Date.now()}-${baseName}.${extension}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("content-files")
+          .upload(path, input.file, { upsert: true });
+
+        if (uploadError) {
+          throw new Error("Erro no upload do material: " + uploadError.message);
+        }
+
+        const { data: urlData } = supabase.storage.from("content-files").getPublicUrl(path);
+        finalUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+      }
+
+      if (!finalUrl) {
+        throw new Error(
+          input.material_type === "link"
+            ? "Informe o link do material"
+            : "Envie um arquivo ou informe a URL do material"
+        );
+      }
+
+      return createLessonMaterial({
+        data: {
+          lessonId: input.lessonId,
+          title: input.title,
+          material_type: input.material_type,
+          url: finalUrl,
+        },
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: materialsQueryKey });
       setMatTitle("");
       setMatUrl("");
+      setMatFile(null);
+      setMatType("file");
       toast.success("Material adicionado");
     },
     onError: (e: Error) => toast.error(e.message),
@@ -830,7 +880,6 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 Materiais Complementares
               </Label>
 
-              {/* Existing materials list */}
               {materials.length > 0 && (
                 <div className="space-y-2">
                   {materials.map((mat: any) => (
@@ -838,16 +887,16 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                       {mat.material_type === "link" ? (
                         <ExternalLink className="h-3.5 w-3.5 text-gold/40 shrink-0" />
                       ) : mat.material_type === "pdf" ? (
-                        <FileText className="h-3.5 w-3.5 text-red-400/40 shrink-0" />
+                        <FileText className="h-3.5 w-3.5 text-gold/40 shrink-0" />
                       ) : (
-                        <Download className="h-3.5 w-3.5 text-blue-400/40 shrink-0" />
+                        <File className="h-3.5 w-3.5 text-gold/40 shrink-0" />
                       )}
                       <span className="text-[12px] text-foreground/60 flex-1 truncate">{mat.title}</span>
                       <span className="text-[10px] text-muted-foreground/30 uppercase">{mat.material_type}</span>
                       <button
                         type="button"
                         onClick={() => deleteMatM.mutate(mat.id)}
-                        className="text-muted-foreground/30 hover:text-red-400/60 transition-colors"
+                        className="text-muted-foreground/30 hover:text-destructive transition-colors"
                       >
                         <X className="h-3.5 w-3.5" />
                       </button>
@@ -856,7 +905,6 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 </div>
               )}
 
-              {/* Add material form — only when editing existing lesson */}
               {lessonDialog.editId ? (
                 <div className="rounded-xl border border-dashed border-border/20 bg-card/3 p-4 space-y-3">
                   <div className="grid grid-cols-3 gap-2">
@@ -864,7 +912,11 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                       <button
                         key={t}
                         type="button"
-                        onClick={() => setMatType(t)}
+                        onClick={() => {
+                          setMatType(t);
+                          setMatUrl("");
+                          setMatFile(null);
+                        }}
                         className={`text-[10px] font-medium uppercase py-1.5 rounded-lg border transition-all ${
                           matType === t
                             ? "border-gold/25 bg-gold/8 text-gold/70"
@@ -875,29 +927,55 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                       </button>
                     ))}
                   </div>
+
                   <Input
                     value={matTitle}
                     onChange={(e) => setMatTitle(e.target.value)}
                     placeholder="Nome do material"
                     className="bg-card/10 border-border/15 text-sm"
                   />
-                  <Input
-                    value={matUrl}
-                    onChange={(e) => setMatUrl(e.target.value)}
-                    placeholder="URL do arquivo ou link"
-                    className="bg-card/10 border-border/15 text-sm"
-                  />
+
+                  {matType === "link" ? (
+                    <Input
+                      value={matUrl}
+                      onChange={(e) => setMatUrl(e.target.value)}
+                      placeholder="https://..."
+                      className="bg-card/10 border-border/15 text-sm"
+                    />
+                  ) : (
+                    <div className="space-y-3">
+                      <Input
+                        type="file"
+                        accept={matType === "pdf" ? ".pdf,application/pdf" : undefined}
+                        onChange={(e) => setMatFile(e.target.files?.[0] || null)}
+                        className="bg-card/10 border-border/15 text-sm"
+                      />
+                      <div className="text-center text-[10px] text-muted-foreground/30">ou</div>
+                      <Input
+                        value={matUrl}
+                        onChange={(e) => setMatUrl(e.target.value)}
+                        placeholder="URL pública do arquivo (opcional)"
+                        className="bg-card/10 border-border/15 text-sm"
+                      />
+                    </div>
+                  )}
+
                   <Button
                     type="button"
                     size="sm"
                     variant="outline"
-                    disabled={!matTitle.trim() || !matUrl.trim() || createMatM.isPending}
+                    disabled={
+                      !matTitle.trim() ||
+                      (matType === "link" ? !matUrl.trim() : !matFile && !matUrl.trim()) ||
+                      createMatM.isPending
+                    }
                     onClick={() => {
                       createMatM.mutate({
                         lessonId: lessonDialog.editId!,
                         title: matTitle.trim(),
                         material_type: matType,
-                        url: matUrl.trim(),
+                        url: matUrl.trim() || undefined,
+                        file: matFile,
                       });
                     }}
                     className="w-full gap-1.5"
