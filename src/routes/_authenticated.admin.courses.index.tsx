@@ -45,7 +45,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_authenticated/admin/courses")({
+export const Route = createFileRoute("/_authenticated/admin/courses/")({
   component: AdminCoursesPage,
 });
 
