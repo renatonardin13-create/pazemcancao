@@ -265,13 +265,15 @@ function AdminCoursesPage() {
 
                   {/* Modules */}
                   <TableCell className="text-center">
-                    <span className="text-xs text-muted-foreground/40">—</span>
+                    <span className="text-xs text-muted-foreground/50">
+                      {course.modules_count ?? 0}
+                    </span>
                   </TableCell>
 
                   {/* Lessons */}
                   <TableCell className="text-center">
                     <span className="text-xs text-muted-foreground/50">
-                      {course.total_lessons ?? 0}
+                      {course.lessons_count ?? 0}
                     </span>
                   </TableCell>
 
