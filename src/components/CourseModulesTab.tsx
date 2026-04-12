@@ -296,37 +296,42 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-semibold text-foreground/70 tracking-tight">
+          <h3 className="text-base font-bold text-foreground/85 tracking-tight">
             Módulos e Aulas
           </h3>
-          <p className="text-[11px] text-muted-foreground/35 mt-0.5">
+          <p className="text-[11px] text-muted-foreground/40 mt-1">
             Organize a estrutura do seu curso de forma hierárquica
           </p>
         </div>
-        <Button size="sm" onClick={openCreateModule}>
-          <Plus className="h-3.5 w-3.5 mr-1" />
+        <Button size="sm" onClick={openCreateModule} className="shadow-lg shadow-primary/20">
+          <Plus className="h-3.5 w-3.5 mr-1.5" />
           Criar Módulo
         </Button>
       </div>
 
-      {/* Empty state */}
+      {/* Empty state — no modules */}
       {modules.length === 0 ? (
-        <div className="text-center py-16 rounded-xl border border-border/15 bg-card/5">
-          <Layers className="h-10 w-10 text-muted-foreground/15 mx-auto mb-4" />
-          <p className="text-sm text-muted-foreground/40">
-            Nenhum módulo cadastrado neste curso.
+        <div className="text-center py-20 rounded-2xl border-2 border-dashed border-border/15 bg-card/3">
+          <div className="w-14 h-14 rounded-2xl bg-gold/8 border border-gold/15 flex items-center justify-center mx-auto mb-5">
+            <Layers className="h-7 w-7 text-gold/40" />
+          </div>
+          <p className="text-sm font-medium text-foreground/50 mb-1">
+            Nenhum módulo criado ainda
           </p>
-          <Button size="sm" className="mt-4" onClick={openCreateModule}>
-            <Plus className="h-3.5 w-3.5 mr-1" />
+          <p className="text-[12px] text-muted-foreground/30 max-w-xs mx-auto">
+            Crie o primeiro módulo para organizar seu curso.
+          </p>
+          <Button size="sm" className="mt-6 shadow-lg shadow-primary/20" onClick={openCreateModule}>
+            <Plus className="h-3.5 w-3.5 mr-1.5" />
             Criar primeiro módulo
           </Button>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {modules.map((mod: any, modIndex: number) => {
             const isExpanded = expandedModules.has(mod.id);
             const lessons = mod.lessons || [];
@@ -334,15 +339,15 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             return (
               <div
                 key={mod.id}
-                className="rounded-xl border border-border/15 bg-card/5 overflow-hidden"
+                className="rounded-2xl border border-border/20 bg-card/8 overflow-hidden shadow-sm"
               >
                 {/* Module header */}
-                <div className="flex items-center gap-2 px-4 py-3 hover:bg-card/10 transition-colors">
+                <div className="flex items-center gap-3 px-5 py-4 hover:bg-card/15 transition-colors">
                   {/* Drag handle */}
                   <div className="flex flex-col gap-0.5">
                     <button
                       type="button"
-                      className="text-muted-foreground/20 hover:text-muted-foreground/50 disabled:opacity-30"
+                      className="text-muted-foreground/15 hover:text-muted-foreground/40 disabled:opacity-20 transition-colors"
                       disabled={modIndex === 0}
                       onClick={() => moveModule(modIndex, "up")}
                     >
@@ -354,7 +359,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   <button
                     type="button"
                     onClick={() => toggleExpand(mod.id)}
-                    className="text-muted-foreground/40 hover:text-muted-foreground/70"
+                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-card/10 border border-border/10 text-muted-foreground/40 hover:text-foreground/60 hover:border-border/25 transition-all"
                   >
                     {isExpanded ? (
                       <ChevronDown className="h-4 w-4" />
@@ -365,33 +370,38 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
 
                   {/* Module name */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground/80 truncate">
+                    <p className="text-sm font-semibold text-foreground/85 truncate">
                       {mod.title}
                     </p>
+                    {mod.description && (
+                      <p className="text-[11px] text-muted-foreground/30 truncate mt-0.5">
+                        {mod.description}
+                      </p>
+                    )}
                   </div>
 
                   {/* Status badge */}
                   <Badge
                     variant="outline"
-                    className={`text-[9px] rounded-full px-2 border ${
+                    className={`text-[10px] rounded-full px-2.5 py-0.5 border font-medium ${
                       mod.status === "published"
-                        ? "text-emerald-400/80 border-emerald-500/20 bg-emerald-500/10"
-                        : "text-gold/60 border-gold/15 bg-gold/8"
+                        ? "text-emerald-400 border-emerald-500/25 bg-emerald-500/10"
+                        : "text-amber-400/80 border-amber-500/20 bg-amber-500/8"
                     }`}
                   >
                     {mod.status === "published" ? "Publicado" : "Rascunho"}
                   </Badge>
 
                   {/* Lesson count */}
-                  <span className="text-[11px] text-muted-foreground/30 shrink-0">
+                  <span className="text-[11px] text-muted-foreground/35 shrink-0 tabular-nums">
                     {lessons.length} aula{lessons.length !== 1 ? "s" : ""}
                   </span>
 
                   {/* Add lesson */}
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
-                    className="h-7 px-2 text-[11px]"
+                    className="h-7 px-3 text-[11px] border-gold/15 text-gold/70 hover:text-gold hover:border-gold/30 hover:bg-gold/5"
                     onClick={() => openCreateLesson(mod.id)}
                   >
                     <Plus className="h-3 w-3 mr-1" />
@@ -440,24 +450,39 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
 
                 {/* Expanded: lesson list */}
                 {isExpanded && (
-                  <div className="border-t border-border/10">
+                  <div className="border-t border-border/10 bg-background/30">
                     {lessons.length === 0 ? (
-                      <div className="px-10 py-6 text-center">
-                        <p className="text-[11px] text-muted-foreground/30">
-                          Nenhuma aula neste módulo.
+                      <div className="px-10 py-10 text-center">
+                        <div className="w-10 h-10 rounded-xl bg-card/10 border border-border/10 flex items-center justify-center mx-auto mb-3">
+                          <FileText className="h-5 w-5 text-muted-foreground/20" />
+                        </div>
+                        <p className="text-[12px] text-muted-foreground/35 mb-0.5">
+                          Este módulo ainda não possui aulas.
                         </p>
+                        <p className="text-[11px] text-muted-foreground/25">
+                          Clique em adicionar aula para começar.
+                        </p>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="mt-4 h-7 px-3 text-[11px] border-gold/15 text-gold/60 hover:text-gold hover:border-gold/30"
+                          onClick={() => openCreateLesson(mod.id)}
+                        >
+                          <Plus className="h-3 w-3 mr-1" />
+                          Adicionar Aula
+                        </Button>
                       </div>
                     ) : (
                       lessons.map((lesson: any, lesIndex: number) => (
                         <div
                           key={lesson.id}
-                          className="flex items-center gap-3 px-4 pl-12 py-2.5 border-b border-border/5 last:border-0 hover:bg-card/8 transition-colors"
+                          className="flex items-center gap-3 px-5 pl-14 py-3 border-b border-border/8 last:border-0 hover:bg-card/10 transition-colors group"
                         >
                           {/* Drag / reorder */}
                           <div className="flex flex-col gap-0.5">
                             <button
                               type="button"
-                              className="text-muted-foreground/15 hover:text-muted-foreground/40 disabled:opacity-30"
+                              className="text-muted-foreground/10 hover:text-muted-foreground/35 disabled:opacity-20 transition-colors opacity-0 group-hover:opacity-100"
                               disabled={lesIndex === 0}
                               onClick={() => moveLessonInModule(mod, lesIndex, "up")}
                             >
@@ -466,23 +491,25 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                           </div>
 
                           {/* Icon */}
-                          {getLessonTypeIcon(lesson)}
+                          <div className="w-7 h-7 rounded-lg bg-card/10 border border-border/10 flex items-center justify-center shrink-0">
+                            {getLessonTypeIcon(lesson)}
+                          </div>
 
                           {/* Lesson name */}
                           <div className="flex-1 min-w-0">
-                            <p className="text-[13px] text-foreground/70 truncate">
+                            <p className="text-[13px] text-foreground/75 truncate font-medium">
                               {lesson.title}
                             </p>
                           </div>
 
                           {/* Type label */}
-                          <span className="text-[10px] text-muted-foreground/30 shrink-0">
+                          <Badge variant="outline" className="text-[9px] rounded-full px-2 py-0 border-border/15 text-muted-foreground/35 font-normal">
                             {getLessonTypeLabel(lesson)}
-                          </span>
+                          </Badge>
 
                           {/* Duration */}
                           {lesson.duration && lesson.duration !== "0:00" && (
-                            <span className="text-[10px] text-muted-foreground/25 shrink-0">
+                            <span className="text-[10px] text-muted-foreground/30 shrink-0 tabular-nums">
                               {lesson.duration}
                             </span>
                           )}
@@ -491,7 +518,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                           {lesson.is_free_preview && (
                             <Badge
                               variant="outline"
-                              className="text-[8px] rounded-full px-1.5 border text-blue-400/60 border-blue-500/15 bg-blue-500/8"
+                              className="text-[9px] rounded-full px-2 py-0 border text-blue-400/70 border-blue-500/20 bg-blue-500/8 font-medium"
                             >
                               Preview
                             </Badge>
@@ -500,7 +527,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                           {/* Lesson actions */}
                           <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-6 w-6">
+                              <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity">
                                 <MoreHorizontal className="h-3.5 w-3.5" />
                               </Button>
                             </DropdownMenuTrigger>
@@ -527,18 +554,20 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                       ))
                     )}
 
-                    {/* Add lesson at bottom */}
-                    <div className="px-4 pl-12 py-2.5 border-t border-border/8">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 px-2 text-[11px] text-muted-foreground/40 hover:text-foreground/60"
-                        onClick={() => openCreateLesson(mod.id)}
-                      >
-                        <Plus className="h-3 w-3 mr-1" />
-                        Adicionar Aula
-                      </Button>
-                    </div>
+                    {/* Add lesson at bottom — only show if there are already lessons */}
+                    {lessons.length > 0 && (
+                      <div className="px-5 pl-14 py-3 border-t border-border/8">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 px-3 text-[11px] text-gold/50 hover:text-gold/80 hover:bg-gold/5"
+                          onClick={() => openCreateLesson(mod.id)}
+                        >
+                          <Plus className="h-3 w-3 mr-1" />
+                          Adicionar Aula
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -546,7 +575,6 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
           })}
         </div>
       )}
-
       {/* ─── Module Dialog ─── */}
       <Dialog
         open={moduleDialog.open}
