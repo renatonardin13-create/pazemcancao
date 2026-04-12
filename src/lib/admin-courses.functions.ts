@@ -18,8 +18,17 @@ export const listAdminCourses = createServerFn({ method: 'POST' })
 
     const { data: courses, error } = await supabaseAdmin
       .from('courses')
-      .select('*, categories(name, slug, icon)')
+      .select('*, categories(name, slug, icon), modules(id, lessons(id))')
       .order('sort_order', { ascending: true });
+
+    // Compute module/lesson counts
+    const enriched = (courses || []).map((c: any) => {
+      const mods = c.modules || [];
+      const modulesCount = mods.length;
+      const lessonsCount = mods.reduce((sum: number, m: any) => sum + (m.lessons?.length || 0), 0);
+      const { modules: _m, ...rest } = c;
+      return { ...rest, modules_count: modulesCount, lessons_count: lessonsCount };
+    });
 
     if (error) throw new Error(error.message);
     return { courses: courses || [] };
