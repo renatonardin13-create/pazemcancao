@@ -364,33 +364,45 @@ export type Database = {
       }
       enrollments: {
         Row: {
+          access_origin: string
           completed_at: string | null
           course_id: string
           created_at: string
+          email: string | null
           enrolled_at: string
+          granted_at: string
           id: string
+          notes: string | null
           progress_percentage: number
           status: string
           updated_at: string
           user_id: string
         }
         Insert: {
+          access_origin?: string
           completed_at?: string | null
           course_id: string
           created_at?: string
+          email?: string | null
           enrolled_at?: string
+          granted_at?: string
           id?: string
+          notes?: string | null
           progress_percentage?: number
           status?: string
           updated_at?: string
           user_id: string
         }
         Update: {
+          access_origin?: string
           completed_at?: string | null
           course_id?: string
           created_at?: string
+          email?: string | null
           enrolled_at?: string
+          granted_at?: string
           id?: string
+          notes?: string | null
           progress_percentage?: number
           status?: string
           updated_at?: string
