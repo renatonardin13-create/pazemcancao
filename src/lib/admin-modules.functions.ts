@@ -15,7 +15,7 @@ export const listModules = createServerFn({ method: 'POST' })
 
     const { data: modules, error } = await supabaseAdmin
       .from('modules')
-      .select('*, lessons(id, title, sort_order, duration, is_free_preview, video_url, content_url, description, module_id)')
+      .select('*, lessons(id, title, sort_order, duration, is_free_preview, video_url, content_url, content_type, description, module_id)')
       .eq('course_id', data.courseId)
       .order('sort_order', { ascending: true });
 
@@ -125,6 +125,7 @@ export const createLesson = createServerFn({ method: 'POST' })
     description?: string;
     video_url?: string;
     content_url?: string;
+    content_type?: string;
     is_free_preview?: boolean;
     duration?: string;
   }) => input)
@@ -152,6 +153,7 @@ export const createLesson = createServerFn({ method: 'POST' })
         description: data.description || null,
         video_url: data.video_url || null,
         content_url: data.content_url || null,
+        content_type: data.content_type || 'video',
         is_free_preview: data.is_free_preview ?? false,
         duration: data.duration || '0:00',
         sort_order: nextOrder,
@@ -171,6 +173,7 @@ export const updateLesson = createServerFn({ method: 'POST' })
     description?: string;
     video_url?: string;
     content_url?: string;
+    content_type?: string;
     is_free_preview?: boolean;
     duration?: string;
     sort_order?: number;
