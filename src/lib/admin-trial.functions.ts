@@ -3,6 +3,141 @@ import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
 import { z } from 'zod';
 
+// ── Helper: verify admin ──
+async function verifyAdmin(supabase: any, userId: string) {
+  const { data: adminRole } = await supabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', userId)
+    .eq('role', 'admin')
+    .maybeSingle();
+
+  const { data: userData } = await supabase.auth.getUser();
+  const isAdminEmail = userData?.user?.email?.toLowerCase() === 'renatonardin13@gmail.com';
+
+  if (!adminRole && !isAdminEmail) {
+    throw new Error('Acesso não autorizado');
+  }
+  return userData?.user;
+}
+
+// ── List courses for selector ──
+export const listCoursesForSelector = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await verifyAdmin(context.supabase, context.userId);
+
+    const { data, error } = await supabaseAdmin
+      .from('courses')
+      .select('id, title, status')
+      .order('title', { ascending: true });
+
+    if (error) throw new Error(error.message);
+    return { courses: data || [] };
+  });
+
+// ── Create student with optional course enrollments ──
+const addStudentSchema = z.object({
+  nome: z.string().min(1).max(255).trim(),
+  email: z.string().email().max(255).trim(),
+  access_enabled: z.boolean(),
+  courseIds: z.array(z.string().uuid()).max(50).optional(),
+});
+
+export const addStudent = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { nome: string; email: string; access_enabled: boolean; courseIds?: string[] }) =>
+    addStudentSchema.parse(input)
+  )
+  .handler(async ({ data, context }) => {
+    await verifyAdmin(context.supabase, context.userId);
+
+    const email = data.email.toLowerCase().trim();
+
+    // Upsert approved_buyer
+    const { data: existing } = await supabaseAdmin
+      .from('approved_buyers')
+      .select('id')
+      .eq('email', email)
+      .maybeSingle();
+
+    let buyerId: string;
+
+    if (existing) {
+      await supabaseAdmin
+        .from('approved_buyers')
+        .update({
+          nome: data.nome,
+          access_enabled: data.access_enabled,
+        })
+        .eq('id', existing.id);
+      buyerId = existing.id;
+    } else {
+      const { data: inserted, error } = await supabaseAdmin
+        .from('approved_buyers')
+        .insert({
+          email,
+          nome: data.nome,
+          access_enabled: data.access_enabled,
+          status: 'approved',
+          is_trial: false,
+          can_download: true,
+        })
+        .select('id')
+        .single();
+
+      if (error) throw new Error(error.message);
+      buyerId = inserted.id;
+    }
+
+    // Create auth user if needed
+    const generatedPassword = 'Paz' + Math.random().toString(36).slice(2, 8) + '!';
+    const { data: userList } = await supabaseAdmin.auth.admin.listUsers();
+    const existingUser = userList?.users?.find(
+      (u) => u.email?.toLowerCase() === email
+    );
+
+    let authUserId: string;
+    if (!existingUser) {
+      const { data: created, error: authErr } = await supabaseAdmin.auth.admin.createUser({
+        email,
+        password: generatedPassword,
+        email_confirm: true,
+      });
+      if (authErr) throw new Error(authErr.message);
+      authUserId = created.user.id;
+    } else {
+      await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
+        password: generatedPassword,
+      });
+      authUserId = existingUser.id;
+    }
+
+    // Create enrollments for selected courses
+    if (data.courseIds && data.courseIds.length > 0) {
+      // Remove existing enrollments for these courses to avoid duplicates
+      await supabaseAdmin
+        .from('enrollments')
+        .delete()
+        .eq('user_id', authUserId)
+        .in('course_id', data.courseIds);
+
+      const enrollments = data.courseIds.map((courseId) => ({
+        user_id: authUserId,
+        course_id: courseId,
+        status: 'active',
+      }));
+
+      const { error: enrollErr } = await supabaseAdmin
+        .from('enrollments')
+        .insert(enrollments);
+
+      if (enrollErr) throw new Error(enrollErr.message);
+    }
+
+    return { success: true, generatedPassword, buyerId };
+  });
+
 const trialSchema = z.object({
   email: z.string().email().max(255).trim(),
   nome: z.string().min(1).max(255).trim(),
