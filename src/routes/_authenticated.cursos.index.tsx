@@ -250,7 +250,7 @@ function ShelfRow({ shelf, shelfIdx }: { shelf: any; shelfIdx: number }) {
 function CourseCard({ course }: { course: any }) {
   const isEnrolled = course.is_enrolled;
   const accessState =
-    course.access_state || (isEnrolled ? "enrolled" : "locked");
+    course.access_state || (isEnrolled ? "enrolled" : "available");
   const showLock = accessState === "locked";
 
   return (
