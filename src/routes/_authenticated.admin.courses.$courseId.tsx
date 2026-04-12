@@ -125,14 +125,7 @@ function EditCoursePage() {
 
         <TabsContent value="modules" className="mt-6">
           <div className="rounded-2xl border border-border/15 bg-card/5 p-6">
-            <div className="text-center py-12">
-              <p className="text-sm text-muted-foreground/40">
-                Gerenciamento de módulos e aulas será disponibilizado em breve.
-              </p>
-              <p className="text-[11px] text-muted-foreground/25 mt-2">
-                {course?.total_lessons ?? 0} aula(s) cadastrada(s) neste curso.
-              </p>
-            </div>
+            <CourseModulesTab courseId={courseId} />
           </div>
         </TabsContent>
 
