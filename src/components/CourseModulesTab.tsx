@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { StatusBadge } from "@/components/StatusBadge";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   listModules,
@@ -381,16 +382,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   </div>
 
                   {/* Status badge */}
-                  <Badge
-                    variant="outline"
-                    className={`text-[10px] rounded-full px-2.5 py-0.5 border font-medium ${
-                      mod.status === "published"
-                        ? "text-emerald-400 border-emerald-500/25 bg-emerald-500/10"
-                        : "text-amber-400/80 border-amber-500/20 bg-amber-500/8"
-                    }`}
-                  >
-                    {mod.status === "published" ? "Publicado" : "Rascunho"}
-                  </Badge>
+                  <StatusBadge status={mod.status} />
 
                   {/* Lesson count */}
                   <span className="text-[11px] text-muted-foreground/35 shrink-0 tabular-nums">
