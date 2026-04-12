@@ -45,8 +45,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:title", content: "Paz em Canção — 30 Louvores Inéditos" },
       { name: "twitter:description", content: "Sua biblioteca espiritual privada com 30 louvores inéditos que tocam a alma." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/1d01eb3f-19ed-4f5f-9851-be389438ba4b/id-preview-dc89306e--7c271dbb-a0a4-4e86-a882-a3d0882beb59.lovable.app-1775650031233.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/1d01eb3f-19ed-4f5f-9851-be389438ba4b/id-preview-dc89306e--7c271dbb-a0a4-4e86-a882-a3d0882beb59.lovable.app-1775650031233.png" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/22114c34-0a3b-4085-8a82-b7fc792964ac" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/22114c34-0a3b-4085-8a82-b7fc792964ac" },
     ],
     links: [
       { rel: "icon", type: "image/png", href: "/favicon.png" },
