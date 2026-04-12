@@ -95,7 +95,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
         has_preview: hasPreview,
         has_checkout: hasCheckout,
         checkout_url: checkoutUrl,
-        access_state: isEnrolled ? 'enrolled' : hasPreview ? 'preview' : hasCheckout ? 'locked' : 'hidden',
+        access_state: isEnrolled ? 'enrolled' : hasPreview ? 'preview' : hasCheckout ? 'locked' : 'available',
         sales_count: salesCountMap.get(course.id) || 0,
       };
     };
@@ -149,12 +149,8 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
 
       courses = courses.map(enrichCourse);
 
-      if (!isAdmin) {
-        courses = courses.filter(
-          (course: any) =>
-            course.is_enrolled || course.has_preview || course.has_checkout
-        );
-      }
+      // All published courses are visible in the storefront
+      // access_state determines what the student can do (enrolled, preview, locked, available)
 
       if (courses.length > 0) {
         result.push({
