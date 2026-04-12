@@ -290,16 +290,18 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       </div>
 
       {/* Submit */}
-      <div className="flex justify-end pt-4 border-t border-border/15">
-        <Button type="submit" disabled={isSubmitting || !title.trim()}>
-          {isSubmitting ? (
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-          ) : (
-            <Save className="h-4 w-4 mr-2" />
-          )}
-          {initialValues ? "Salvar Alterações" : "Criar Curso"}
-        </Button>
-      </div>
+      {!hideSubmitButton && (
+        <div className="flex justify-end pt-4 border-t border-border/15">
+          <Button type="submit" disabled={isSubmitting || !title.trim()}>
+            {isSubmitting ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4 mr-2" />
+            )}
+            {initialValues ? "Salvar Alterações" : "Criar Curso"}
+          </Button>
+        </div>
+      )}
     </form>
   );
-}
+});
