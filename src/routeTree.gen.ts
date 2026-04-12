@@ -18,8 +18,10 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated.perfil'
 import { Route as AuthenticatedMusicasRouteImport } from './routes/_authenticated.musicas'
 import { Route as AuthenticatedDownloadsRouteImport } from './routes/_authenticated.downloads'
+import { Route as AuthenticatedCursosRouteImport } from './routes/_authenticated.cursos'
 import { Route as AuthenticatedConteudoRouteImport } from './routes/_authenticated.conteudo'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
+import { Route as AuthenticatedCursosIndexRouteImport } from './routes/_authenticated.cursos.index'
 import { Route as AuthenticatedConteudoIndexRouteImport } from './routes/_authenticated.conteudo.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated.admin.index'
 import { Route as ApiWebhookKiwifyRouteImport } from './routes/api/webhook/kiwify'
@@ -83,6 +85,11 @@ const AuthenticatedDownloadsRoute = AuthenticatedDownloadsRouteImport.update({
   path: '/downloads',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedCursosRoute = AuthenticatedCursosRouteImport.update({
+  id: '/cursos',
+  path: '/cursos',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedConteudoRoute = AuthenticatedConteudoRouteImport.update({
   id: '/conteudo',
   path: '/conteudo',
@@ -93,6 +100,12 @@ const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedCursosIndexRoute =
+  AuthenticatedCursosIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedCursosRoute,
+  } as any)
 const AuthenticatedConteudoIndexRoute =
   AuthenticatedConteudoIndexRouteImport.update({
     id: '/',
@@ -123,9 +136,9 @@ const AuthenticatedLouvorTrackIdRoute =
   } as any)
 const AuthenticatedCursosCourseIdRoute =
   AuthenticatedCursosCourseIdRouteImport.update({
-    id: '/cursos/$courseId',
-    path: '/cursos/$courseId',
-    getParentRoute: () => AuthenticatedRoute,
+    id: '/$courseId',
+    path: '/$courseId',
+    getParentRoute: () => AuthenticatedCursosRoute,
   } as any)
 const AuthenticatedConteudoTrackIdRoute =
   AuthenticatedConteudoTrackIdRouteImport.update({
@@ -207,6 +220,7 @@ export interface FileRoutesByFullPath {
   '/webhook': typeof WebhookRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/conteudo': typeof AuthenticatedConteudoRouteWithChildren
+  '/cursos': typeof AuthenticatedCursosRouteWithChildren
   '/downloads': typeof AuthenticatedDownloadsRoute
   '/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/perfil': typeof AuthenticatedPerfilRoute
@@ -225,6 +239,7 @@ export interface FileRoutesByFullPath {
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/conteudo/': typeof AuthenticatedConteudoIndexRoute
+  '/cursos/': typeof AuthenticatedCursosIndexRoute
   '/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
   '/admin/courses/new': typeof AuthenticatedAdminCoursesNewRoute
   '/cursos/$courseId/aula/$lessonId': typeof AuthenticatedCursosCourseIdAulaLessonIdRoute
@@ -253,6 +268,7 @@ export interface FileRoutesByTo {
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/conteudo': typeof AuthenticatedConteudoIndexRoute
+  '/cursos': typeof AuthenticatedCursosIndexRoute
   '/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
   '/admin/courses/new': typeof AuthenticatedAdminCoursesNewRoute
   '/cursos/$courseId/aula/$lessonId': typeof AuthenticatedCursosCourseIdAulaLessonIdRoute
@@ -267,6 +283,7 @@ export interface FileRoutesById {
   '/webhook': typeof WebhookRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/conteudo': typeof AuthenticatedConteudoRouteWithChildren
+  '/_authenticated/cursos': typeof AuthenticatedCursosRouteWithChildren
   '/_authenticated/downloads': typeof AuthenticatedDownloadsRoute
   '/_authenticated/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
@@ -285,6 +302,7 @@ export interface FileRoutesById {
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/conteudo/': typeof AuthenticatedConteudoIndexRoute
+  '/_authenticated/cursos/': typeof AuthenticatedCursosIndexRoute
   '/_authenticated/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
   '/_authenticated/admin/courses/new': typeof AuthenticatedAdminCoursesNewRoute
   '/_authenticated/cursos/$courseId/aula/$lessonId': typeof AuthenticatedCursosCourseIdAulaLessonIdRoute
@@ -299,6 +317,7 @@ export interface FileRouteTypes {
     | '/webhook'
     | '/admin'
     | '/conteudo'
+    | '/cursos'
     | '/downloads'
     | '/musicas'
     | '/perfil'
@@ -317,6 +336,7 @@ export interface FileRouteTypes {
     | '/api/webhook/kiwify'
     | '/admin/'
     | '/conteudo/'
+    | '/cursos/'
     | '/admin/courses/$courseId'
     | '/admin/courses/new'
     | '/cursos/$courseId/aula/$lessonId'
@@ -345,6 +365,7 @@ export interface FileRouteTypes {
     | '/api/webhook/kiwify'
     | '/admin'
     | '/conteudo'
+    | '/cursos'
     | '/admin/courses/$courseId'
     | '/admin/courses/new'
     | '/cursos/$courseId/aula/$lessonId'
@@ -358,6 +379,7 @@ export interface FileRouteTypes {
     | '/webhook'
     | '/_authenticated/admin'
     | '/_authenticated/conteudo'
+    | '/_authenticated/cursos'
     | '/_authenticated/downloads'
     | '/_authenticated/musicas'
     | '/_authenticated/perfil'
@@ -376,6 +398,7 @@ export interface FileRouteTypes {
     | '/api/webhook/kiwify'
     | '/_authenticated/admin/'
     | '/_authenticated/conteudo/'
+    | '/_authenticated/cursos/'
     | '/_authenticated/admin/courses/$courseId'
     | '/_authenticated/admin/courses/new'
     | '/_authenticated/cursos/$courseId/aula/$lessonId'
@@ -456,6 +479,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDownloadsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/cursos': {
+      id: '/_authenticated/cursos'
+      path: '/cursos'
+      fullPath: '/cursos'
+      preLoaderRoute: typeof AuthenticatedCursosRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/conteudo': {
       id: '/_authenticated/conteudo'
       path: '/conteudo'
@@ -469,6 +499,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin'
       preLoaderRoute: typeof AuthenticatedAdminRouteImport
       parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/cursos/': {
+      id: '/_authenticated/cursos/'
+      path: '/'
+      fullPath: '/cursos/'
+      preLoaderRoute: typeof AuthenticatedCursosIndexRouteImport
+      parentRoute: typeof AuthenticatedCursosRoute
     }
     '/_authenticated/conteudo/': {
       id: '/_authenticated/conteudo/'
@@ -507,10 +544,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/cursos/$courseId': {
       id: '/_authenticated/cursos/$courseId'
-      path: '/cursos/$courseId'
+      path: '/$courseId'
       fullPath: '/cursos/$courseId'
       preLoaderRoute: typeof AuthenticatedCursosCourseIdRouteImport
-      parentRoute: typeof AuthenticatedRoute
+      parentRoute: typeof AuthenticatedCursosRoute
     }
     '/_authenticated/conteudo/$trackId': {
       id: '/_authenticated/conteudo/$trackId'
@@ -658,17 +695,6 @@ const AuthenticatedConteudoRouteWithChildren =
     AuthenticatedConteudoRouteChildren,
   )
 
-interface AuthenticatedMusicasRouteChildren {
-  AuthenticatedMusicasTrackIdRoute: typeof AuthenticatedMusicasTrackIdRoute
-}
-
-const AuthenticatedMusicasRouteChildren: AuthenticatedMusicasRouteChildren = {
-  AuthenticatedMusicasTrackIdRoute: AuthenticatedMusicasTrackIdRoute,
-}
-
-const AuthenticatedMusicasRouteWithChildren =
-  AuthenticatedMusicasRoute._addFileChildren(AuthenticatedMusicasRouteChildren)
-
 interface AuthenticatedCursosCourseIdRouteChildren {
   AuthenticatedCursosCourseIdAulaLessonIdRoute: typeof AuthenticatedCursosCourseIdAulaLessonIdRoute
 }
@@ -684,24 +710,48 @@ const AuthenticatedCursosCourseIdRouteWithChildren =
     AuthenticatedCursosCourseIdRouteChildren,
   )
 
+interface AuthenticatedCursosRouteChildren {
+  AuthenticatedCursosCourseIdRoute: typeof AuthenticatedCursosCourseIdRouteWithChildren
+  AuthenticatedCursosIndexRoute: typeof AuthenticatedCursosIndexRoute
+}
+
+const AuthenticatedCursosRouteChildren: AuthenticatedCursosRouteChildren = {
+  AuthenticatedCursosCourseIdRoute:
+    AuthenticatedCursosCourseIdRouteWithChildren,
+  AuthenticatedCursosIndexRoute: AuthenticatedCursosIndexRoute,
+}
+
+const AuthenticatedCursosRouteWithChildren =
+  AuthenticatedCursosRoute._addFileChildren(AuthenticatedCursosRouteChildren)
+
+interface AuthenticatedMusicasRouteChildren {
+  AuthenticatedMusicasTrackIdRoute: typeof AuthenticatedMusicasTrackIdRoute
+}
+
+const AuthenticatedMusicasRouteChildren: AuthenticatedMusicasRouteChildren = {
+  AuthenticatedMusicasTrackIdRoute: AuthenticatedMusicasTrackIdRoute,
+}
+
+const AuthenticatedMusicasRouteWithChildren =
+  AuthenticatedMusicasRoute._addFileChildren(AuthenticatedMusicasRouteChildren)
+
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedConteudoRoute: typeof AuthenticatedConteudoRouteWithChildren
+  AuthenticatedCursosRoute: typeof AuthenticatedCursosRouteWithChildren
   AuthenticatedDownloadsRoute: typeof AuthenticatedDownloadsRoute
   AuthenticatedMusicasRoute: typeof AuthenticatedMusicasRouteWithChildren
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
-  AuthenticatedCursosCourseIdRoute: typeof AuthenticatedCursosCourseIdRouteWithChildren
   AuthenticatedLouvorTrackIdRoute: typeof AuthenticatedLouvorTrackIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
   AuthenticatedConteudoRoute: AuthenticatedConteudoRouteWithChildren,
+  AuthenticatedCursosRoute: AuthenticatedCursosRouteWithChildren,
   AuthenticatedDownloadsRoute: AuthenticatedDownloadsRoute,
   AuthenticatedMusicasRoute: AuthenticatedMusicasRouteWithChildren,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
-  AuthenticatedCursosCourseIdRoute:
-    AuthenticatedCursosCourseIdRouteWithChildren,
   AuthenticatedLouvorTrackIdRoute: AuthenticatedLouvorTrackIdRoute,
 }
 
