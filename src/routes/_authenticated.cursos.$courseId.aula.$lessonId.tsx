@@ -125,8 +125,8 @@ function LessonDetailPage() {
     progress.some((p: any) => p.lesson_id === id && p.completed);
 
   // Determine content type
-  const videoUrl = videoUrl ?? "";
-  const contentUrl = contentUrl ?? "";
+  const videoUrl = lesson.video_url ?? "";
+  const contentUrl = lesson.content_url ?? "";
   const hasVideo = !!videoUrl;
   const hasContentUrl = !!contentUrl;
   const isYouTube =
