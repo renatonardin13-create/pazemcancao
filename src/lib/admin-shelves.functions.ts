@@ -150,3 +150,53 @@ export const setShelfCourses = createServerFn({ method: 'POST' })
 
     return { success: true };
   });
+
+// ── Reorder shelves (batch update sort_order) ──
+const reorderShelvesSchema = z.object({
+  orderedIds: z.array(z.string().uuid()).min(1).max(100),
+});
+
+export const reorderShelves = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { orderedIds: string[] }) =>
+    reorderShelvesSchema.parse(input)
+  )
+  .handler(async ({ data, context }) => {
+    await verifyAdmin(context.supabase, context.userId);
+
+    for (let i = 0; i < data.orderedIds.length; i++) {
+      const { error } = await supabaseAdmin
+        .from('shelves')
+        .update({ sort_order: i })
+        .eq('id', data.orderedIds[i]);
+      if (error) throw new Error(error.message);
+    }
+
+    return { success: true };
+  });
+
+// ── Reorder courses within a shelf ──
+const reorderShelfCoursesSchema = z.object({
+  shelfId: z.string().uuid(),
+  orderedCourseIds: z.array(z.string().uuid()).min(1).max(100),
+});
+
+export const reorderShelfCourses = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { shelfId: string; orderedCourseIds: string[] }) =>
+    reorderShelfCoursesSchema.parse(input)
+  )
+  .handler(async ({ data, context }) => {
+    await verifyAdmin(context.supabase, context.userId);
+
+    for (let i = 0; i < data.orderedCourseIds.length; i++) {
+      const { error } = await supabaseAdmin
+        .from('shelf_courses')
+        .update({ sort_order: i })
+        .eq('shelf_id', data.shelfId)
+        .eq('course_id', data.orderedCourseIds[i]);
+      if (error) throw new Error(error.message);
+    }
+
+    return { success: true };
+  });
