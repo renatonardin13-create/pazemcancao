@@ -112,6 +112,7 @@ function LessonDetailPage() {
     currentIndex,
     completedCount,
     totalLessons,
+    materials,
   } = data;
 
   const progressPercent =
@@ -393,8 +394,8 @@ function LessonDetailPage() {
             </div>
           </motion.div>
 
-          {/* Supplementary materials */}
-          {contentUrl && hasVideo && (
+          {/* Supplementary materials from DB */}
+          {materials && materials.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -405,40 +406,41 @@ function LessonDetailPage() {
                 Materiais Complementares
               </h3>
               <div className="space-y-2">
-                <div className="flex items-center gap-3 rounded-xl bg-muted/5 border border-border/8 px-4 py-3">
-                  <FileText className="h-4 w-4 text-gold/40 shrink-0" />
-                  <span className="text-sm text-foreground/60 flex-1 truncate">
-                    {isPdf ? "Arquivo PDF" : isExternalLink ? "Link externo" : "Arquivo"}
-                  </span>
-                  {isPdf || isDownloadableFile ? (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 gap-1.5 text-[10px] text-gold/50 hover:text-gold/80"
-                      onClick={() =>
-                        handleDownload(
-                          contentUrl,
-                          `${lesson.title}${isPdf ? ".pdf" : ""}`
-                        )
-                      }
-                    >
-                      <Download className="h-3 w-3" />
-                      Baixar
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 gap-1.5 text-[10px] text-gold/50 hover:text-gold/80"
-                      onClick={() =>
-                        window.open(contentUrl, "_blank")
-                      }
-                    >
-                      <ExternalLink className="h-3 w-3" />
-                      Acessar
-                    </Button>
-                  )}
-                </div>
+                {materials.map((mat: any) => (
+                  <div key={mat.id} className="flex items-center gap-3 rounded-xl bg-muted/5 border border-border/8 px-4 py-3">
+                    {mat.material_type === "pdf" ? (
+                      <FileText className="h-4 w-4 text-gold/40 shrink-0" />
+                    ) : mat.material_type === "link" ? (
+                      <ExternalLink className="h-4 w-4 text-gold/40 shrink-0" />
+                    ) : (
+                      <File className="h-4 w-4 text-gold/40 shrink-0" />
+                    )}
+                    <span className="text-sm text-foreground/60 flex-1 truncate">
+                      {mat.title}
+                    </span>
+                    {mat.material_type === "link" ? (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 gap-1.5 text-[10px] text-gold/50 hover:text-gold/80"
+                        onClick={() => window.open(mat.url, "_blank")}
+                      >
+                        <ExternalLink className="h-3 w-3" />
+                        Acessar
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 gap-1.5 text-[10px] text-gold/50 hover:text-gold/80"
+                        onClick={() => handleDownload(mat.url, mat.title)}
+                      >
+                        <Download className="h-3 w-3" />
+                        Baixar
+                      </Button>
+                    )}
+                  </div>
+                ))}
               </div>
             </motion.div>
           )}

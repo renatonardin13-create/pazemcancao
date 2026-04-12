@@ -59,6 +59,13 @@ export const getLessonDetail = createServerFn({ method: 'POST' })
       .eq('course_id', data.courseId)
       .eq('user_id', userId);
 
+    // Supplementary materials for this lesson
+    const { data: lessonMaterials } = await supabase
+      .from('lesson_materials')
+      .select('id, title, material_type, url, sort_order')
+      .eq('lesson_id', data.lessonId)
+      .order('sort_order', { ascending: true });
+
     // Find prev/next
     const currentIndex = lessons.findIndex((l: any) => l.id === data.lessonId);
     const prevLesson = currentIndex > 0 ? lessons[currentIndex - 1] : null;
@@ -92,5 +99,6 @@ export const getLessonDetail = createServerFn({ method: 'POST' })
       currentIndex,
       completedCount,
       totalLessons: lessons.length,
+      materials: lessonMaterials || [],
     };
   });
