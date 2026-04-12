@@ -124,7 +124,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   });
 
   const createLesM = useMutation({
-    mutationFn: (input: { moduleId: string; title: string; description?: string; video_url?: string; content_url?: string; is_free_preview?: boolean; duration?: string }) =>
+    mutationFn: (input: { moduleId: string; title: string; description?: string; video_url?: string; content_url?: string; content_type?: string; is_free_preview?: boolean; duration?: string }) =>
       createLesson({ data: { courseId, ...input } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
@@ -135,7 +135,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   });
 
   const updateLesM = useMutation({
-    mutationFn: (input: { id: string; title?: string; description?: string; video_url?: string; content_url?: string; is_free_preview?: boolean; duration?: string }) =>
+    mutationFn: (input: { id: string; title?: string; description?: string; video_url?: string; content_url?: string; content_type?: string; is_free_preview?: boolean; duration?: string }) =>
       updateLesson({ data: input }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
@@ -189,10 +189,11 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   };
 
   const inferContentType = (lesson: any): "video" | "pdf" | "file" | "link" => {
+    if (lesson.content_type && lesson.content_type !== 'video') return lesson.content_type;
     if (lesson.video_url) return "video";
     if (lesson.content_url?.endsWith(".pdf")) return "pdf";
     if (lesson.content_url) return "file";
-    return "link";
+    return "video";
   };
 
   const openCreateLesson = (moduleId: string) => {
@@ -235,8 +236,9 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
     const payload = {
       title: lesTitle.trim(),
       description: lesDesc.trim() || undefined,
-      video_url: lesVideoUrl.trim() || undefined,
-      content_url: lesContentUrl.trim() || undefined,
+      video_url: lesContentType === "video" ? (lesVideoUrl.trim() || undefined) : undefined,
+      content_url: lesContentType !== "video" ? (lesContentUrl.trim() || undefined) : undefined,
+      content_type: lesContentType,
       is_free_preview: lesFreePreview,
       duration: lesDuration || "0:00",
     };

@@ -28,7 +28,7 @@ export const getLessonDetail = createServerFn({ method: 'POST' })
     // All lessons ordered
     const { data: allLessons } = await supabase
       .from('lessons')
-      .select('id, title, sort_order, duration, module_id, video_url, content_url, is_free_preview')
+      .select('id, title, sort_order, duration, module_id, video_url, content_url, content_type, is_free_preview')
       .eq('course_id', data.courseId)
       .order('sort_order', { ascending: true });
 

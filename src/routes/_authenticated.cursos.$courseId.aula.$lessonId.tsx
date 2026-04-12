@@ -124,21 +124,19 @@ function LessonDetailPage() {
   const isLessonCompleted = (id: string) =>
     progress.some((p: any) => p.lesson_id === id && p.completed);
 
-  // Determine content type
+  // Determine content type from DB field
+  const contentType = lesson.content_type || "video";
   const videoUrl = lesson.video_url ?? "";
   const contentUrl = lesson.content_url ?? "";
-  const hasVideo = !!videoUrl;
+  const hasVideo = contentType === "video" && !!videoUrl;
+  const isPdf = contentType === "pdf" && !!contentUrl;
+  const isDownloadableFile = contentType === "file" && !!contentUrl;
+  const isExternalLink = contentType === "link" && !!contentUrl;
   const hasContentUrl = !!contentUrl;
   const isYouTube =
     hasVideo &&
     (videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be"));
   const isVimeo = hasVideo && videoUrl.includes("vimeo.com");
-  const isPdf = hasContentUrl && contentUrl.toLowerCase().endsWith(".pdf");
-  const isExternalLink =
-    hasContentUrl &&
-    (contentUrl.startsWith("http://") || contentUrl.startsWith("https://")) &&
-    !isPdf;
-  const isDownloadableFile = hasContentUrl && !isPdf && !isExternalLink;
 
   // YouTube embed URL
   const getYouTubeEmbedUrl = (url: string) => {
