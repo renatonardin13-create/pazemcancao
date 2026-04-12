@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, forwardRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { listAdminCategories } from "@/lib/admin-courses.functions";
 import { Input } from "@/components/ui/input";
@@ -12,8 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Video, BookText, Save, Loader2 } from "lucide-react";
+import { Video, BookText, Save, Loader2, ImageIcon } from "lucide-react";
 import { ImageFieldHint } from "@/components/ImageFieldHint";
+import { Badge } from "@/components/ui/badge";
 
 interface CourseFormProps {
   initialValues?: any;
@@ -21,8 +22,6 @@ interface CourseFormProps {
   isSubmitting: boolean;
   hideSubmitButton?: boolean;
 }
-
-import { forwardRef } from "react";
 
 export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function CourseForm({
   initialValues,
@@ -91,201 +90,295 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
     });
   };
 
+  const statusLabel = status === "published" ? "Publicado" : status === "draft" ? "Rascunho" : "Arquivado";
+  const statusColor = status === "published"
+    ? "text-emerald-400/80 border-emerald-500/20 bg-emerald-500/10"
+    : status === "draft"
+      ? "text-gold/60 border-gold/15 bg-gold/8"
+      : "text-muted-foreground/40 border-border/20 bg-muted/10";
+
+  const selectedCategory = categories.find((c: any) => c.id === categoryId);
+
   return (
-    <form ref={ref} onSubmit={handleSubmit} className="space-y-6">
-      {/* Type selector */}
-      <div className="space-y-2">
-        <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
-          Modalidade
-        </Label>
-        <div className="flex gap-3">
-          {[
-            { value: "video", label: "Vídeo", icon: Video, color: "text-gold" },
-            {
-              value: "ebook",
-              label: "eBook",
-              icon: BookText,
-              color: "text-blue-400",
-            },
-          ].map((type) => (
-            <button
-              key={type.value}
-              type="button"
-              onClick={() => setCourseType(type.value)}
-              className={`flex items-center gap-2 px-5 py-3 rounded-xl border transition-all duration-300 ${
-                courseType === type.value
-                  ? `border-gold/30 bg-gold/10 ${type.color}`
-                  : "border-border/15 bg-card/5 text-muted-foreground/40 hover:border-border/30"
-              }`}
-            >
-              <type.icon className="h-4 w-4" />
-              <span className="text-sm font-medium">{type.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
+    <form ref={ref} onSubmit={handleSubmit} className="space-y-8">
+      {/* Main layout: info + preview */}
+      <div className="grid lg:grid-cols-[1fr_280px] gap-6">
+        {/* Left column — Course Info */}
+        <div className="space-y-6">
+          {/* Card: Informações do Curso */}
+          <div className="rounded-xl border border-border/15 bg-card/5 p-5 space-y-5">
+            <h3 className="text-sm font-semibold text-foreground/70 tracking-tight">
+              Informações do Curso
+            </h3>
 
-      {/* Title */}
-      <div className="space-y-2">
-        <Label htmlFor="title">Título do Curso *</Label>
-        <Input
-          id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Ex: Curso de Piano para Iniciantes"
-          required
-          className="bg-card/10 border-border/15"
-        />
-      </div>
+            {/* Type selector */}
+            <div className="space-y-2">
+              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+                Modalidade
+              </Label>
+              <div className="flex gap-3">
+                {[
+                  { value: "video", label: "Vídeo", icon: Video, color: "text-gold" },
+                  { value: "ebook", label: "eBook", icon: BookText, color: "text-blue-400" },
+                ].map((type) => (
+                  <button
+                    key={type.value}
+                    type="button"
+                    onClick={() => setCourseType(type.value)}
+                    className={`flex items-center gap-2 px-5 py-3 rounded-xl border transition-all duration-300 ${
+                      courseType === type.value
+                        ? `border-gold/30 bg-gold/10 ${type.color}`
+                        : "border-border/15 bg-card/5 text-muted-foreground/40 hover:border-border/30"
+                    }`}
+                  >
+                    <type.icon className="h-4 w-4" />
+                    <span className="text-sm font-medium">{type.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
 
-      {/* Short description */}
-      <div className="space-y-2">
-        <Label htmlFor="shortDesc">Descrição Curta</Label>
-        <Input
-          id="shortDesc"
-          value={shortDesc}
-          onChange={(e) => setShortDesc(e.target.value)}
-          placeholder="Breve descrição exibida nos cards"
-          className="bg-card/10 border-border/15"
-        />
-      </div>
+            {/* Title */}
+            <div className="space-y-2">
+              <Label htmlFor="title">Título do Curso *</Label>
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Ex: Curso de Piano para Iniciantes"
+                required
+                className="bg-card/10 border-border/15"
+              />
+            </div>
 
-      {/* Full description */}
-      <div className="space-y-2">
-        <Label htmlFor="fullDesc">Descrição Completa</Label>
-        <Textarea
-          id="fullDesc"
-          value={fullDesc}
-          onChange={(e) => setFullDesc(e.target.value)}
-          placeholder="Descrição detalhada do curso..."
-          rows={5}
-          className="bg-card/10 border-border/15"
-        />
-      </div>
+            {/* Short description */}
+            <div className="space-y-2">
+              <Label htmlFor="shortDesc">Descrição Curta</Label>
+              <Input
+                id="shortDesc"
+                value={shortDesc}
+                onChange={(e) => setShortDesc(e.target.value)}
+                placeholder="Breve descrição exibida nos cards"
+                className="bg-card/10 border-border/15"
+              />
+            </div>
 
-      {/* Images */}
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="coverUrl">URL da Imagem de Capa</Label>
-          <Input
-            id="coverUrl"
-            value={coverUrl}
-            onChange={(e) => setCoverUrl(e.target.value)}
-            placeholder="https://..."
-            className="bg-card/10 border-border/15"
-          />
-          <ImageFieldHint
-            ratio="16:9"
-            recommendedSize="400x225"
-            autoCrop
-            note="Para melhor resultado nos cards da vitrine, prefira imagem vertical em proporção 2:3."
-            previewUrl={coverUrl || null}
-          />
-          {coverUrl && (
-            <img
-              src={coverUrl}
-              alt="Capa"
-              className="mt-2 h-24 w-auto rounded-lg object-cover border border-border/15"
-            />
-          )}
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="bannerUrl">URL do Banner</Label>
-          <Input
-            id="bannerUrl"
-            value={bannerUrl}
-            onChange={(e) => setBannerUrl(e.target.value)}
-            placeholder="https://..."
-            className="bg-card/10 border-border/15"
-          />
-          <div className="flex items-center gap-2 mt-1">
-            <span className="text-[10px] text-muted-foreground/35 shrink-0">Proporção:</span>
-            {bannerRatioOptions.map((opt) => (
-              <button
-                key={opt.value}
-                type="button"
-                onClick={() => setBannerRatio(opt.value)}
-                className={`px-2.5 py-1 rounded-md text-[10px] font-medium border transition-all ${
-                  bannerRatio === opt.value
-                    ? "border-gold/30 bg-gold/10 text-gold"
-                    : "border-border/15 bg-card/5 text-muted-foreground/35 hover:border-border/30"
-                }`}
-              >
-                {opt.label}
-              </button>
-            ))}
+            {/* Full description */}
+            <div className="space-y-2">
+              <Label htmlFor="fullDesc">Descrição Completa</Label>
+              <Textarea
+                id="fullDesc"
+                value={fullDesc}
+                onChange={(e) => setFullDesc(e.target.value)}
+                placeholder="Descrição detalhada do curso..."
+                rows={5}
+                className="bg-card/10 border-border/15"
+              />
+            </div>
+
+            {/* Category & Status */}
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Categoria</Label>
+                <Select value={categoryId} onValueChange={setCategoryId}>
+                  <SelectTrigger className="bg-card/10 border-border/15">
+                    <SelectValue placeholder="Selecionar categoria" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((cat: any) => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {cat.icon || "📁"} {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Status</Label>
+                <Select value={status} onValueChange={setStatus}>
+                  <SelectTrigger className="bg-card/10 border-border/15">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="draft">Rascunho</SelectItem>
+                    <SelectItem value="published">Publicado</SelectItem>
+                    <SelectItem value="archived">Arquivado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Price & Launch date */}
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="price">Preço (R$)</Label>
+                <Input
+                  id="price"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={price}
+                  onChange={(e) => setPrice(e.target.value)}
+                  className="bg-card/10 border-border/15"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="launchDate">Data de Lançamento</Label>
+                <Input
+                  id="launchDate"
+                  type="date"
+                  value={launchDate}
+                  onChange={(e) => setLaunchDate(e.target.value)}
+                  className="bg-card/10 border-border/15"
+                />
+              </div>
+            </div>
           </div>
-          <ImageFieldHint
-            ratio={currentBannerOption.value}
-            recommendedSize={currentBannerOption.size}
-            autoCrop
-            previewUrl={bannerUrl || null}
-          />
-          {bannerUrl && (
-            <img
-              src={bannerUrl}
-              alt="Banner"
-              className="mt-2 h-24 w-auto rounded-lg object-cover border border-border/15"
+        </div>
+
+        {/* Right column — Preview */}
+        <div className="space-y-4">
+          <div className="rounded-xl border border-border/15 bg-card/5 p-4 space-y-4 sticky top-6">
+            <h3 className="text-sm font-semibold text-foreground/70 tracking-tight">
+              Preview
+            </h3>
+
+            {/* Cover preview */}
+            <div className="rounded-lg overflow-hidden border border-border/10 bg-muted/10 aspect-video flex items-center justify-center">
+              {coverUrl ? (
+                <img
+                  src={coverUrl}
+                  alt="Capa"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="flex flex-col items-center gap-2 text-muted-foreground/20">
+                  <ImageIcon className="h-8 w-8" />
+                  <span className="text-[10px] uppercase tracking-widest">Sem capa</span>
+                </div>
+              )}
+            </div>
+
+            {/* Title preview */}
+            <div className="space-y-1.5">
+              <p className="text-sm font-semibold text-foreground/80 leading-tight truncate">
+                {title || "Título do curso"}
+              </p>
+              {shortDesc && (
+                <p className="text-[11px] text-muted-foreground/40 line-clamp-2">
+                  {shortDesc}
+                </p>
+              )}
+            </div>
+
+            {/* Meta */}
+            <div className="flex flex-wrap items-center gap-2">
+              <Badge
+                variant="outline"
+                className={`text-[9px] rounded-full px-2 border ${statusColor}`}
+              >
+                {statusLabel}
+              </Badge>
+              <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground/30">
+                {courseType === "video" ? <Video className="h-3 w-3" /> : <BookText className="h-3 w-3" />}
+                {courseType === "video" ? "Vídeo" : "eBook"}
+              </span>
+              {selectedCategory && (
+                <span className="text-[10px] text-muted-foreground/30">
+                  {selectedCategory.icon || "📁"} {selectedCategory.name}
+                </span>
+              )}
+            </div>
+
+            {price && parseFloat(price) > 0 && (
+              <p className="text-xs font-semibold text-gold/60">
+                R$ {parseFloat(price).toFixed(2)}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Card: Imagens */}
+      <div className="rounded-xl border border-border/15 bg-card/5 p-5 space-y-5">
+        <h3 className="text-sm font-semibold text-foreground/70 tracking-tight">
+          Imagens
+        </h3>
+
+        <div className="grid sm:grid-cols-2 gap-6">
+          {/* Cover image */}
+          <div className="space-y-2">
+            <Label htmlFor="coverUrl">Capa do Curso</Label>
+            <Input
+              id="coverUrl"
+              value={coverUrl}
+              onChange={(e) => setCoverUrl(e.target.value)}
+              placeholder="https://..."
+              className="bg-card/10 border-border/15"
             />
-          )}
-        </div>
-      </div>
+            <ImageFieldHint
+              ratio="16:9"
+              recommendedSize="400x225"
+              autoCrop
+              note="Para melhor resultado nos cards da vitrine, prefira imagem vertical em proporção 2:3."
+              previewUrl={coverUrl || null}
+            />
+            <p className="text-[10px] text-muted-foreground/30">
+              Formatos aceitos: JPG, PNG, WebP
+            </p>
+            {coverUrl && (
+              <img
+                src={coverUrl}
+                alt="Capa"
+                className="mt-2 h-24 w-auto rounded-lg object-cover border border-border/15"
+              />
+            )}
+          </div>
 
-      {/* Category & Price */}
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label>Categoria</Label>
-          <Select value={categoryId} onValueChange={setCategoryId}>
-            <SelectTrigger className="bg-card/10 border-border/15">
-              <SelectValue placeholder="Selecionar categoria" />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((cat: any) => (
-                <SelectItem key={cat.id} value={cat.id}>
-                  {cat.icon || "📁"} {cat.name}
-                </SelectItem>
+          {/* Banner image */}
+          <div className="space-y-2">
+            <Label htmlFor="bannerUrl">Banner Principal</Label>
+            <Input
+              id="bannerUrl"
+              value={bannerUrl}
+              onChange={(e) => setBannerUrl(e.target.value)}
+              placeholder="https://..."
+              className="bg-card/10 border-border/15"
+            />
+            <div className="flex items-center gap-2 mt-1 flex-wrap">
+              <span className="text-[10px] text-muted-foreground/35 shrink-0">Proporção:</span>
+              {bannerRatioOptions.map((opt) => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setBannerRatio(opt.value)}
+                  className={`px-2.5 py-1 rounded-md text-[10px] font-medium border transition-all ${
+                    bannerRatio === opt.value
+                      ? "border-gold/30 bg-gold/10 text-gold"
+                      : "border-border/15 bg-card/5 text-muted-foreground/35 hover:border-border/30"
+                  }`}
+                >
+                  {opt.label}
+                </button>
               ))}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="price">Preço (R$)</Label>
-          <Input
-            id="price"
-            type="number"
-            step="0.01"
-            min="0"
-            value={price}
-            onChange={(e) => setPrice(e.target.value)}
-            className="bg-card/10 border-border/15"
-          />
-        </div>
-      </div>
-
-      {/* Status & Launch date */}
-      <div className="grid sm:grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label>Status</Label>
-          <Select value={status} onValueChange={setStatus}>
-            <SelectTrigger className="bg-card/10 border-border/15">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="draft">Rascunho</SelectItem>
-              <SelectItem value="published">Publicado</SelectItem>
-              <SelectItem value="archived">Arquivado</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="launchDate">Data de Lançamento</Label>
-          <Input
-            id="launchDate"
-            type="date"
-            value={launchDate}
-            onChange={(e) => setLaunchDate(e.target.value)}
-            className="bg-card/10 border-border/15"
-          />
+            </div>
+            <ImageFieldHint
+              ratio={currentBannerOption.value}
+              recommendedSize={currentBannerOption.size}
+              autoCrop
+              previewUrl={bannerUrl || null}
+            />
+            <p className="text-[10px] text-muted-foreground/30">
+              Formatos aceitos: JPG, PNG, WebP
+            </p>
+            {bannerUrl && (
+              <img
+                src={bannerUrl}
+                alt="Banner"
+                className="mt-2 h-24 w-auto rounded-lg object-cover border border-border/15"
+              />
+            )}
+          </div>
         </div>
       </div>
 
