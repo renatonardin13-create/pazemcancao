@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 export const listPublishedCourses = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
@@ -38,6 +39,18 @@ export const getCourseDetail = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
+    const { data: userData } = await supabase.auth.getUser();
+    const email = userData?.user?.email?.toLowerCase();
+
+    const { data: adminRole } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    const isAdmin = !!adminRole || email === 'renatonardin13@gmail.com';
+
     const { data: course, error } = await supabase
       .from('courses')
       .select('*, categories(name, slug, icon)')
@@ -69,7 +82,17 @@ export const getCourseDetail = createServerFn({ method: 'POST' })
       .select('*')
       .eq('course_id', data.courseId)
       .eq('user_id', userId)
+      .eq('status', 'active')
       .maybeSingle();
+
+    const { data: integration } = await supabaseAdmin
+      .from('course_integrations')
+      .select('is_enabled, checkout_url, external_product_name')
+      .eq('course_id', data.courseId)
+      .maybeSingle();
+
+    const hasFreePreview = (lessons || []).some((lesson: any) => lesson.is_free_preview);
+    const checkoutUrl = integration?.is_enabled ? integration.checkout_url || null : null;
 
     return {
       course,
@@ -77,6 +100,19 @@ export const getCourseDetail = createServerFn({ method: 'POST' })
       modules: modules || [],
       progress: progress || [],
       enrollment,
+      integration: checkoutUrl
+        ? {
+            checkout_url: checkoutUrl,
+            external_product_name: integration?.external_product_name || null,
+          }
+        : null,
+      access: {
+        isAdmin,
+        canAccessCourse: isAdmin || !!enrollment,
+        hasFreePreview,
+        previewLessonsCount: (lessons || []).filter((lesson: any) => lesson.is_free_preview).length,
+        hasCheckout: !!checkoutUrl,
+      },
     };
   });
 

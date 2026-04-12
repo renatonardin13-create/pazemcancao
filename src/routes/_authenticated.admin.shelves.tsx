@@ -167,6 +167,7 @@ function AdminShelvesPage() {
   const criteriaLabel = (c: string) => {
     const map: Record<string, string> = {
       recent: "Mais recentes",
+      best_selling: "Mais liberados",
       featured: "Em destaque",
       enrolled: "Cursos liberados",
       all: "Todos",
@@ -329,6 +330,7 @@ function AdminShelvesPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="recent">Mais recentes</SelectItem>
+                    <SelectItem value="best_selling">Mais liberados</SelectItem>
                     <SelectItem value="featured">Em destaque</SelectItem>
                     <SelectItem value="enrolled">Cursos liberados do aluno</SelectItem>
                     <SelectItem value="all">Todos os cursos</SelectItem>
