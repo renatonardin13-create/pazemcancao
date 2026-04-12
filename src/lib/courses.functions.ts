@@ -52,6 +52,12 @@ export const getCourseDetail = createServerFn({ method: 'POST' })
       .eq('course_id', data.courseId)
       .order('sort_order', { ascending: true });
 
+    const { data: modules } = await supabase
+      .from('modules')
+      .select('id, title, description, sort_order, status')
+      .eq('course_id', data.courseId)
+      .order('sort_order', { ascending: true });
+
     const { data: progress } = await supabase
       .from('lesson_progress')
       .select('*')
@@ -68,6 +74,7 @@ export const getCourseDetail = createServerFn({ method: 'POST' })
     return {
       course,
       lessons: lessons || [],
+      modules: modules || [],
       progress: progress || [],
       enrollment,
     };
