@@ -1,5 +1,5 @@
 import { LogoBrand } from "./LogoBrand";
-import { LogOut, Settings, UserCircle, Headphones, BookOpen } from "lucide-react";
+import { LogOut, Settings, UserCircle, Headphones, BookOpen, GraduationCap } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { NotificationBell } from "./NotificationBell";
@@ -38,6 +38,16 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
             <BookOpen className="h-4 w-4" />
             <span className="hidden sm:inline text-[10px] font-semibold uppercase tracking-[0.15em]">
               Conteúdos
+            </span>
+          </Link>
+
+          <Link
+            to="/cursos"
+            className="group flex items-center gap-2 rounded-xl px-3 py-2 text-muted-foreground/35 hover:text-gold/60 hover:bg-muted/15 transition-all duration-500"
+          >
+            <GraduationCap className="h-4 w-4" />
+            <span className="hidden sm:inline text-[10px] font-semibold uppercase tracking-[0.15em]">
+              Cursos
             </span>
           </Link>
 
