@@ -125,19 +125,18 @@ function LessonDetailPage() {
     progress.some((p: any) => p.lesson_id === id && p.completed);
 
   // Determine content type
-  const hasVideo = !!lesson.video_url;
-  const hasContentUrl = !!lesson.content_url;
+  const videoUrl = lesson.video_url ?? "";
+  const contentUrl = lesson.content_url ?? "";
+  const hasVideo = !!videoUrl;
+  const hasContentUrl = !!contentUrl;
   const isYouTube =
     hasVideo &&
-    (lesson.video_url.includes("youtube.com") ||
-      lesson.video_url.includes("youtu.be"));
-  const isVimeo = hasVideo && lesson.video_url.includes("vimeo.com");
-  const isPdf =
-    hasContentUrl && lesson.content_url.toLowerCase().endsWith(".pdf");
+    (videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be"));
+  const isVimeo = hasVideo && videoUrl.includes("vimeo.com");
+  const isPdf = hasContentUrl && contentUrl.toLowerCase().endsWith(".pdf");
   const isExternalLink =
     hasContentUrl &&
-    (lesson.content_url.startsWith("http://") ||
-      lesson.content_url.startsWith("https://")) &&
+    (contentUrl.startsWith("http://") || contentUrl.startsWith("https://")) &&
     !isPdf;
   const isDownloadableFile = hasContentUrl && !isPdf && !isExternalLink;
 
