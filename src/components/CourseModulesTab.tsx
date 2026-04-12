@@ -179,6 +179,36 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey }),
   });
 
+  // ─── Materials queries/mutations ───
+  const materialsQueryKey = ["lesson-materials", lessonDialog.editId];
+  const { data: materialsData } = useQuery({
+    queryKey: materialsQueryKey,
+    queryFn: () => listLessonMaterials({ data: { lessonId: lessonDialog.editId! } }),
+    enabled: !!lessonDialog.editId,
+  });
+  const materials = materialsData?.materials || [];
+
+  const createMatM = useMutation({
+    mutationFn: (input: { lessonId: string; title: string; material_type: string; url: string }) =>
+      createLessonMaterial({ data: input }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: materialsQueryKey });
+      setMatTitle("");
+      setMatUrl("");
+      toast.success("Material adicionado");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const deleteMatM = useMutation({
+    mutationFn: (id: string) => deleteLessonMaterial({ data: { id } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: materialsQueryKey });
+      toast.success("Material removido");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   // ─── Helpers ───
   const toggleExpand = (id: string) => {
     setExpandedModules((prev) => {
