@@ -55,33 +55,43 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const startAudio = useCallback((track: Track, autoNext = true) => {
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current = null;
+    let audio = audioRef.current;
+
+    // Reuse existing Audio element on mobile to preserve user-gesture permission
+    if (!audio) {
+      audio = new Audio();
+      audioRef.current = audio;
+    } else {
+      // Remove old listeners before reassigning
+      audio.pause();
+      audio.onloadedmetadata = null;
+      audio.ontimeupdate = null;
+      audio.onended = null;
+      audio.onerror = null;
     }
 
-    const audio = new Audio(track.audioUrl);
-    audioRef.current = audio;
+    audio.src = track.audioUrl;
+    audio.load();
     setCurrentTrack(track);
     setProgress(0);
     setCurrentTime(0);
     setDuration(0);
 
-    audio.addEventListener("loadedmetadata", () => setDuration(audio.duration));
+    audio.onloadedmetadata = () => setDuration(audio!.duration);
 
-    audio.addEventListener("timeupdate", () => {
-      if (audio.duration > 0) {
-        setCurrentTime(audio.currentTime);
-        setProgress((audio.currentTime / audio.duration) * 100);
+    audio.ontimeupdate = () => {
+      if (audio!.duration > 0) {
+        setCurrentTime(audio!.currentTime);
+        setProgress((audio!.currentTime / audio!.duration) * 100);
         // Log play after 30 seconds
-        if (audio.currentTime >= 30 && playLoggedRef.current !== String(track.id)) {
+        if (audio!.currentTime >= 30 && playLoggedRef.current !== String(track.id)) {
           playLoggedRef.current = String(track.id);
-          logPlay({ data: { trackId: String(track.id), durationSeconds: Math.round(audio.currentTime) } }).catch(() => {});
+          logPlay({ data: { trackId: String(track.id), durationSeconds: Math.round(audio!.currentTime) } }).catch(() => {});
         }
       }
-    });
+    };
 
-    audio.addEventListener("ended", () => {
+    audio.onended = () => {
       if (autoNext) {
         const q = queueRef.current;
         const idx = queueIndexRef.current;
@@ -94,12 +104,12 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       }
       setPlaying(false);
       setProgress(100);
-    });
+    };
 
-    audio.addEventListener("error", () => {
+    audio.onerror = () => {
       setPlaying(false);
       console.error("Audio playback error for:", track.title);
-    });
+    };
 
     audio.play().then(() => setPlaying(true)).catch((err) => {
       console.error("Play failed:", err);
@@ -158,6 +168,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const stop = useCallback(() => {
     if (audioRef.current) {
       audioRef.current.pause();
+      audioRef.current.removeAttribute("src");
+      audioRef.current.load();
       audioRef.current = null;
     }
     setPlaying(false);
