@@ -125,8 +125,8 @@ function LessonDetailPage() {
     progress.some((p: any) => p.lesson_id === id && p.completed);
 
   // Determine content type
-  const videoUrl = lesson.video_url ?? "";
-  const contentUrl = lesson.content_url ?? "";
+  const videoUrl = videoUrl ?? "";
+  const contentUrl = contentUrl ?? "";
   const hasVideo = !!videoUrl;
   const hasContentUrl = !!contentUrl;
   const isYouTube =
@@ -214,8 +214,8 @@ function LessonDetailPage() {
                   <iframe
                     src={
                       isYouTube
-                        ? getYouTubeEmbedUrl(lesson.video_url)
-                        : getVimeoEmbedUrl(lesson.video_url)
+                        ? getYouTubeEmbedUrl(videoUrl)
+                        : getVimeoEmbedUrl(videoUrl)
                     }
                     className="w-full h-full"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -227,7 +227,7 @@ function LessonDetailPage() {
                 <div className="rounded-2xl overflow-hidden border border-border/10 bg-black">
                   <video
                     ref={videoRef}
-                    src={lesson.video_url}
+                    src={videoUrl}
                     controls
                     className="w-full aspect-video"
                     onEnded={() => {
@@ -256,7 +256,7 @@ function LessonDetailPage() {
             >
               <div className="rounded-2xl overflow-hidden border border-border/10 bg-card/5">
                 <iframe
-                  src={lesson.content_url}
+                  src={contentUrl}
                   className="w-full h-[70vh]"
                   title={lesson.title}
                 />
@@ -266,7 +266,7 @@ function LessonDetailPage() {
                     size="sm"
                     className="gap-2 text-xs"
                     onClick={() =>
-                      window.open(lesson.content_url, "_blank")
+                      window.open(contentUrl, "_blank")
                     }
                   >
                     <ExternalLink className="h-3.5 w-3.5" />
@@ -278,7 +278,7 @@ function LessonDetailPage() {
                     className="gap-2 text-xs"
                     onClick={() =>
                       handleDownload(
-                        lesson.content_url,
+                        contentUrl,
                         `${lesson.title}.pdf`
                       )
                     }
@@ -304,7 +304,7 @@ function LessonDetailPage() {
               </p>
               <Button
                 className="gap-2 bg-gold/15 text-gold/70 border border-gold/12 hover:bg-gold/22"
-                onClick={() => window.open(lesson.content_url, "_blank")}
+                onClick={() => window.open(contentUrl, "_blank")}
               >
                 <ExternalLink className="h-4 w-4" />
                 Acessar conteúdo
@@ -326,7 +326,7 @@ function LessonDetailPage() {
               <Button
                 className="gap-2 bg-gold/15 text-gold/70 border border-gold/12 hover:bg-gold/22"
                 onClick={() =>
-                  handleDownload(lesson.content_url, lesson.title)
+                  handleDownload(contentUrl, lesson.title)
                 }
               >
                 <Download className="h-4 w-4" />
@@ -396,7 +396,7 @@ function LessonDetailPage() {
           </motion.div>
 
           {/* Supplementary materials */}
-          {lesson.content_url && hasVideo && (
+          {contentUrl && hasVideo && (
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -419,7 +419,7 @@ function LessonDetailPage() {
                       className="h-8 gap-1.5 text-[10px] text-gold/50 hover:text-gold/80"
                       onClick={() =>
                         handleDownload(
-                          lesson.content_url,
+                          contentUrl,
                           `${lesson.title}${isPdf ? ".pdf" : ""}`
                         )
                       }
@@ -433,7 +433,7 @@ function LessonDetailPage() {
                       size="sm"
                       className="h-8 gap-1.5 text-[10px] text-gold/50 hover:text-gold/80"
                       onClick={() =>
-                        window.open(lesson.content_url, "_blank")
+                        window.open(contentUrl, "_blank")
                       }
                     >
                       <ExternalLink className="h-3 w-3" />
