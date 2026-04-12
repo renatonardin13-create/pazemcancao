@@ -499,6 +499,7 @@ export type Database = {
           duration: string | null
           id: string
           is_free_preview: boolean
+          module_id: string | null
           sort_order: number
           title: string
           updated_at: string
@@ -512,6 +513,7 @@ export type Database = {
           duration?: string | null
           id?: string
           is_free_preview?: boolean
+          module_id?: string | null
           sort_order?: number
           title: string
           updated_at?: string
@@ -525,6 +527,7 @@ export type Database = {
           duration?: string | null
           id?: string
           is_free_preview?: boolean
+          module_id?: string | null
           sort_order?: number
           title?: string
           updated_at?: string
@@ -533,6 +536,54 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "lessons_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lessons_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      modules: {
+        Row: {
+          course_id: string
+          created_at: string
+          description: string | null
+          id: string
+          sort_order: number
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          sort_order?: number
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          sort_order?: number
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "modules_course_id_fkey"
             columns: ["course_id"]
             isOneToOne: false
             referencedRelation: "courses"
