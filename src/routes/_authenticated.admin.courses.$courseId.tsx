@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { CourseForm } from "@/components/CourseForm";
 import { CourseIntegrationSection } from "@/components/CourseIntegrationSection";
 import { getAdminCourse, updateCourse } from "@/lib/admin-courses.functions";
+import { CourseModulesTab } from "@/components/CourseModulesTab";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ArrowLeft, Save, Loader2, X } from "lucide-react";
