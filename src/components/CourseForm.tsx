@@ -19,13 +19,17 @@ interface CourseFormProps {
   initialValues?: any;
   onSubmit: (values: any) => void;
   isSubmitting: boolean;
+  hideSubmitButton?: boolean;
 }
 
-export function CourseForm({
+import { forwardRef } from "react";
+
+export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function CourseForm({
   initialValues,
   onSubmit,
   isSubmitting,
-}: CourseFormProps) {
+  hideSubmitButton,
+}, ref) {
   const [title, setTitle] = useState("");
   const [shortDesc, setShortDesc] = useState("");
   const [fullDesc, setFullDesc] = useState("");
@@ -88,7 +92,7 @@ export function CourseForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form ref={ref} onSubmit={handleSubmit} className="space-y-6">
       {/* Type selector */}
       <div className="space-y-2">
         <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
@@ -286,16 +290,18 @@ export function CourseForm({
       </div>
 
       {/* Submit */}
-      <div className="flex justify-end pt-4 border-t border-border/15">
-        <Button type="submit" disabled={isSubmitting || !title.trim()}>
-          {isSubmitting ? (
-            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-          ) : (
-            <Save className="h-4 w-4 mr-2" />
-          )}
-          {initialValues ? "Salvar Alterações" : "Criar Curso"}
-        </Button>
-      </div>
+      {!hideSubmitButton && (
+        <div className="flex justify-end pt-4 border-t border-border/15">
+          <Button type="submit" disabled={isSubmitting || !title.trim()}>
+            {isSubmitting ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Save className="h-4 w-4 mr-2" />
+            )}
+            {initialValues ? "Salvar Alterações" : "Criar Curso"}
+          </Button>
+        </div>
+      )}
     </form>
   );
-}
+});
