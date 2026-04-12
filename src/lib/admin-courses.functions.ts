@@ -31,7 +31,7 @@ export const listAdminCourses = createServerFn({ method: 'POST' })
     });
 
     if (error) throw new Error(error.message);
-    return { courses: courses || [] };
+    return { courses: enriched };
   });
 
 export const getAdminCourse = createServerFn({ method: 'POST' })
