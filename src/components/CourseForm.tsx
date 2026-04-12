@@ -19,13 +19,17 @@ interface CourseFormProps {
   initialValues?: any;
   onSubmit: (values: any) => void;
   isSubmitting: boolean;
+  hideSubmitButton?: boolean;
 }
 
-export function CourseForm({
+import { forwardRef } from "react";
+
+export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function CourseForm({
   initialValues,
   onSubmit,
   isSubmitting,
-}: CourseFormProps) {
+  hideSubmitButton,
+}, ref) {
   const [title, setTitle] = useState("");
   const [shortDesc, setShortDesc] = useState("");
   const [fullDesc, setFullDesc] = useState("");
