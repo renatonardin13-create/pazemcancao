@@ -115,24 +115,21 @@ export const addStudent = createServerFn({ method: 'POST' })
 
     // Create enrollments for selected courses
     if (data.courseIds && data.courseIds.length > 0) {
-      // Remove existing enrollments for these courses to avoid duplicates
-      await supabaseAdmin
-        .from('enrollments')
-        .delete()
-        .eq('user_id', authUserId)
-        .in('course_id', data.courseIds);
-
-      const enrollments = data.courseIds.map((courseId) => ({
-        user_id: authUserId,
-        course_id: courseId,
-        status: 'active',
-      }));
-
-      const { error: enrollErr } = await supabaseAdmin
-        .from('enrollments')
-        .insert(enrollments);
-
-      if (enrollErr) throw new Error(enrollErr.message);
+      for (const courseId of data.courseIds) {
+        await supabaseAdmin
+          .from('enrollments')
+          .upsert(
+            {
+              user_id: authUserId,
+              course_id: courseId,
+              status: 'active',
+              access_origin: 'manual',
+              email,
+              granted_at: new Date().toISOString(),
+            },
+            { onConflict: 'user_id,course_id' }
+          );
+      }
     }
 
     return { success: true, generatedPassword, buyerId };
