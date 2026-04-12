@@ -359,15 +359,17 @@ function CourseDetailPage() {
 
                     {/* Info */}
                     <div className="flex-1 min-w-0">
-                      <p
-                        className={`text-sm font-medium truncate ${
+                      <Link
+                        to="/cursos/$courseId/aula/$lessonId"
+                        params={{ courseId, lessonId: lesson.id }}
+                        className={`text-sm font-medium truncate block hover:text-gold/70 transition-colors ${
                           completed
                             ? "text-muted-foreground/40 line-through"
                             : "text-foreground/70"
                         }`}
                       >
                         {lesson.title}
-                      </p>
+                      </Link>
                       <div className="flex items-center gap-3 mt-1">
                         {lesson.duration && (
                           <span className="text-[10px] text-muted-foreground/25">
