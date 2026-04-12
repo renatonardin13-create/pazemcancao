@@ -92,7 +92,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form ref={ref} onSubmit={handleSubmit} className="space-y-6">
       {/* Type selector */}
       <div className="space-y-2">
         <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
