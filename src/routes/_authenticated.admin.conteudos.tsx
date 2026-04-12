@@ -29,6 +29,7 @@ import {
 import { useState, useRef, useMemo } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { ImageFieldHint } from "@/components/ImageFieldHint";
 
 export const Route = createFileRoute("/_authenticated/admin/conteudos")({
   component: AdminContentPage,
@@ -318,6 +319,7 @@ function AdminContentPage() {
             {/* Cover upload */}
             <div className="space-y-2">
               <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Capa</Label>
+              <ImageFieldHint ratio="16:9" recommendedSize="1280x720" autoCrop file={coverFile} previewUrl={editItem?.cover_url || null} />
               <div className="flex items-center gap-3">
                 {(editItem?.cover_url || coverFile) && (
                   <img

@@ -16,6 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Loader2, Upload, X, ImageIcon, Gift } from "lucide-react";
+import { ImageFieldHint } from "@/components/ImageFieldHint";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
@@ -196,8 +197,9 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
           {/* Cover */}
           <div className="space-y-2">
             <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
-              Capa (500×500px recomendado)
+              Capa
             </Label>
+            <ImageFieldHint ratio="1:1" recommendedSize="500x500" file={coverFile} previewUrl={coverPreview} />
             <div className="flex items-center gap-4">
               {coverPreview ? (
                 <div className="relative">
