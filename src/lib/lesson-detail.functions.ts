@@ -99,5 +99,6 @@ export const getLessonDetail = createServerFn({ method: 'POST' })
       currentIndex,
       completedCount,
       totalLessons: lessons.length,
+      materials: lessonMaterials || [],
     };
   });
