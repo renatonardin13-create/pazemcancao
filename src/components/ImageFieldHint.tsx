@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Info, AlertTriangle } from "lucide-react";
+import { Info, CheckCircle, AlertTriangle, XCircle } from "lucide-react";
 
 interface ImageFieldHintProps {
   /** e.g. "16:9", "3:1", "1:1", "2:3" */
@@ -27,6 +27,32 @@ function parseRatio(ratio: string): number | null {
   return w / h;
 }
 
+type StatusLevel = "ideal" | "acceptable" | "bad";
+
+function getStatus(diff: number): StatusLevel {
+  if (diff <= 0.05) return "ideal";
+  if (diff <= 0.15) return "acceptable";
+  return "bad";
+}
+
+const statusConfig: Record<StatusLevel, { label: string; icon: typeof CheckCircle; className: string }> = {
+  ideal: {
+    label: "Ideal",
+    icon: CheckCircle,
+    className: "text-emerald-400/70",
+  },
+  acceptable: {
+    label: "Aceitável",
+    icon: AlertTriangle,
+    className: "text-amber-400/70",
+  },
+  bad: {
+    label: "Fora do recomendado",
+    icon: XCircle,
+    className: "text-red-400/70",
+  },
+};
+
 export function ImageFieldHint({
   ratio,
   recommendedSize,
@@ -37,13 +63,13 @@ export function ImageFieldHint({
   previewUrl,
 }: ImageFieldHintProps) {
   const [dimensions, setDimensions] = useState<{ w: number; h: number } | null>(null);
-  const [warning, setWarning] = useState<string | null>(null);
+  const [status, setStatus] = useState<StatusLevel | null>(null);
 
   useEffect(() => {
     const src = file ? URL.createObjectURL(file) : previewUrl;
     if (!src) {
       setDimensions(null);
-      setWarning(null);
+      setStatus(null);
       return;
     }
 
@@ -57,26 +83,30 @@ export function ImageFieldHint({
       if (target && h > 0) {
         const actual = w / h;
         const diff = Math.abs(actual - target) / target;
-        if (diff > 0.15) {
-          setWarning(
-            "Esta imagem está fora da proporção recomendada e pode sofrer corte na exibição."
-          );
-        } else {
-          setWarning(null);
-        }
+        setStatus(getStatus(diff));
+      } else {
+        setStatus(null);
       }
 
       if (file) URL.revokeObjectURL(src);
     };
     img.onerror = () => {
       setDimensions(null);
-      setWarning(null);
+      setStatus(null);
     };
     img.src = src;
   }, [file, previewUrl, ratio]);
 
+  const actualRatioStr =
+    dimensions && dimensions.h > 0
+      ? (dimensions.w / dimensions.h).toFixed(2) + ":1"
+      : null;
+
+  const cfg = status ? statusConfig[status] : null;
+
   return (
     <div className="space-y-1 mt-1">
+      {/* Recommended specs */}
       <div className="flex items-start gap-1.5 text-[10px] text-muted-foreground/35 leading-relaxed">
         <Info className="h-3 w-3 mt-[1px] shrink-0 text-muted-foreground/25" />
         <div>
@@ -98,19 +128,17 @@ export function ImageFieldHint({
         <p className="text-[9px] text-muted-foreground/25 pl-[18px]">{note}</p>
       )}
 
-      {dimensions && (
-        <p className="text-[9px] text-muted-foreground/30 pl-[18px]">
-          Imagem enviada: {dimensions.w}×{dimensions.h} px
-          {dimensions.w > 0 && dimensions.h > 0 && (
-            <> (proporção {(dimensions.w / dimensions.h).toFixed(2)}:1)</>
-          )}
-        </p>
-      )}
-
-      {warning && (
-        <div className="flex items-center gap-1.5 text-[9px] text-amber-400/70 pl-[18px]">
-          <AlertTriangle className="h-3 w-3 shrink-0" />
-          <span>{warning}</span>
+      {/* Validation result */}
+      {dimensions && cfg && (
+        <div className={`flex items-center gap-1.5 text-[10px] pl-[18px] ${cfg.className}`}>
+          <cfg.icon className="h-3 w-3 shrink-0" />
+          <span>
+            {dimensions.w}×{dimensions.h} px
+            {actualRatioStr && <> · proporção {actualRatioStr}</>}
+            {" · "}
+            <span className="font-medium">{cfg.label}</span>
+            {status === "bad" && " para este campo"}
+          </span>
         </div>
       )}
     </div>
