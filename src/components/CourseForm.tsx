@@ -194,9 +194,26 @@ export function CourseForm({
             placeholder="https://..."
             className="bg-card/10 border-border/15"
           />
+          <div className="flex items-center gap-2 mt-1">
+            <span className="text-[10px] text-muted-foreground/35 shrink-0">Proporção:</span>
+            {bannerRatioOptions.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => setBannerRatio(opt.value)}
+                className={`px-2.5 py-1 rounded-md text-[10px] font-medium border transition-all ${
+                  bannerRatio === opt.value
+                    ? "border-gold/30 bg-gold/10 text-gold"
+                    : "border-border/15 bg-card/5 text-muted-foreground/35 hover:border-border/30"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
           <ImageFieldHint
-            ratio="3.84:1"
-            recommendedSize="1920x500"
+            ratio={currentBannerOption.value}
+            recommendedSize={currentBannerOption.size}
             autoCrop
             previewUrl={bannerUrl || null}
           />
