@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listAdminCourses, deleteCourse } from "@/lib/admin-courses.functions";
 import { useState, useMemo } from "react";
+import { StatusBadge } from "@/components/StatusBadge";
 import {
   Plus,
   Video,
@@ -246,12 +247,7 @@ function AdminCoursesPage() {
 
                   {/* Status */}
                   <TableCell>
-                    <Badge
-                      variant="outline"
-                      className={`text-[9px] rounded-full px-2 border ${statusClasses(course.status)}`}
-                    >
-                      {statusLabel(course.status)}
-                    </Badge>
+                    <StatusBadge status={course.status} />
                   </TableCell>
 
                   {/* Modules */}
