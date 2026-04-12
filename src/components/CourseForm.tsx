@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Video, BookText, Save, Loader2, ImageIcon } from "lucide-react";
 import { ImageFieldHint } from "@/components/ImageFieldHint";
-import { Badge } from "@/components/ui/badge";
+
 
 interface CourseFormProps {
   initialValues?: any;
