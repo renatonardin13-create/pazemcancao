@@ -36,6 +36,16 @@ export function CourseForm({
   const [status, setStatus] = useState("draft");
   const [courseType, setCourseType] = useState("video");
   const [launchDate, setLaunchDate] = useState("");
+  const [bannerRatio, setBannerRatio] = useState("3.84:1");
+
+  const bannerRatioOptions = [
+    { value: "3.84:1", label: "Hero Wide (3.84:1)", size: "1920x500" },
+    { value: "21:9", label: "Ultra Wide (21:9)", size: "2100x900" },
+    { value: "16:9", label: "Widescreen (16:9)", size: "1920x1080" },
+    { value: "3:1", label: "Promo (3:1)", size: "1200x400" },
+  ];
+
+  const currentBannerOption = bannerRatioOptions.find((o) => o.value === bannerRatio) || bannerRatioOptions[0];
 
   const { data: categoriesData } = useQuery({
     queryKey: ["admin-categories"],
