@@ -12,7 +12,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Video, FileText, Save, Loader2, ImageIcon, X, Upload } from "lucide-react";
+import { Video, FileText, Save, Loader2, ImageIcon } from "lucide-react";
+import { ImageUploadField } from "@/components/ImageUploadField";
 
 interface CourseFormProps {
   initialValues?: any;
@@ -292,65 +293,26 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
         {/* ===== LEFT: Imagens ===== */}
         <div className="order-3 lg:col-start-1">
           <CardSection title="Imagens">
-            {/* Capa */}
-            <div className="space-y-2.5">
-              <div>
-                <Label className={labelClass}>Capa do Curso</Label>
-                <p className="text-xs text-muted-foreground/50 mt-0.5">
-                  Imagem exibida na listagem de cursos (recomendado: 400×225)
-                </p>
-              </div>
-              <div className="rounded-lg border border-dashed border-border/20 bg-background/20 overflow-hidden">
-                {coverUrl ? (
-                  <div className="relative group">
-                    <img src={coverUrl} alt="Capa" className="w-full aspect-video object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => setCoverUrl("")}
-                      className="absolute top-2 right-2 p-1.5 rounded-lg bg-destructive text-destructive-foreground transition-colors"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="aspect-video flex flex-col items-center justify-center gap-2 text-muted-foreground/25 cursor-pointer hover:text-muted-foreground/40 transition-colors">
-                    <Upload className="h-7 w-7" />
-                    <span className="text-xs">Clique para fazer upload</span>
-                  </div>
-                )}
-              </div>
-            </div>
+            <ImageUploadField
+              label="Capa do Curso"
+              hint="Imagem exibida na listagem de cursos (recomendado: 400×225)"
+              value={coverUrl}
+              onChange={setCoverUrl}
+              folder="courses/covers"
+              aspectClass="aspect-video"
+            />
 
             <div className="border-t border-border/6" />
 
-            {/* Banner */}
-            <div className="space-y-2.5">
-              <div>
-                <Label className={labelClass}>Banner Principal</Label>
-                <p className="text-xs text-muted-foreground/50 mt-0.5">
-                  Banner grande exibido na vitrine Netflix (recomendado: 1920×600)
-                </p>
-              </div>
-              <div className="rounded-lg border border-dashed border-border/20 bg-background/20 overflow-hidden">
-                {bannerUrl ? (
-                  <div className="relative group">
-                    <img src={bannerUrl} alt="Banner" className="w-full object-cover" style={{ aspectRatio: "1920/600" }} />
-                    <button
-                      type="button"
-                      onClick={() => setBannerUrl("")}
-                      className="absolute top-2 right-2 p-1.5 rounded-lg bg-destructive text-destructive-foreground transition-colors"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground/25 py-10 cursor-pointer hover:text-muted-foreground/40 transition-colors">
-                    <Upload className="h-7 w-7" />
-                    <span className="text-xs">Clique para fazer upload do banner</span>
-                  </div>
-                )}
-              </div>
-            </div>
+            <ImageUploadField
+              label="Banner Principal"
+              hint="Banner grande exibido na vitrine Netflix (recomendado: 1920×600)"
+              value={bannerUrl}
+              onChange={setBannerUrl}
+              folder="courses/banners"
+              aspectRatio="1920/600"
+              aspectClass=""
+            />
           </CardSection>
         </div>
       </div>
