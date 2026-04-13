@@ -277,12 +277,16 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   const openCreateModule = () => {
     setModTitle("");
     setModDesc("");
+    setModThumbnailUrl("");
+    setModPublished(true);
     setModuleDialog({ open: true });
   };
 
   const openEditModule = (mod: any) => {
     setModTitle(mod.title);
     setModDesc(mod.description || "");
+    setModThumbnailUrl(mod.thumbnail_url || "");
+    setModPublished(mod.status === "published");
     setModuleDialog({ open: true, editId: mod.id });
   };
 
