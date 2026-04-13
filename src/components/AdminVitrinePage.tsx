@@ -348,6 +348,15 @@ export default function AdminVitrinePage() {
     setFormMode(shelf.mode);
     setFormCriteria(shelf.auto_criteria || "recent");
     setFormOrder(shelf.sort_order);
+    // Load existing courses for manual shelves
+    if (shelf.mode === "manual") {
+      const existing = (shelf.shelf_courses || [])
+        .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+        .map((sc: any) => sc.course_id);
+      setSelectedCourseIds(existing);
+    } else {
+      setSelectedCourseIds([]);
+    }
     setDialogOpen(true);
   };
 
