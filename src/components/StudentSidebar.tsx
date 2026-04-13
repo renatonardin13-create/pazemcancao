@@ -1,8 +1,9 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
-import { listCategories } from "@/lib/tracks.functions";
+import { listCategories, listActiveTracks } from "@/lib/tracks.functions";
 import { getStudentShelves } from "@/lib/shelves.functions";
+import { getMyCoursesData } from "@/lib/my-courses.functions";
 import { LogoBrand } from "./LogoBrand";
 import {
   Store,
@@ -37,8 +38,22 @@ export function StudentSidebar() {
     staleTime: 60_000,
   });
 
+  const { data: myCoursesData } = useQuery({
+    queryKey: ["my-courses"],
+    queryFn: () => getMyCoursesData(),
+    staleTime: 60_000,
+  });
+
+  const { data: tracksData } = useQuery({
+    queryKey: ["tracks-active"],
+    queryFn: () => listActiveTracks(),
+    staleTime: 60_000,
+  });
+
   const categories = catData?.categories || [];
   const hasVitrine = (shelvesData?.shelves || []).length > 0;
+  const hasCourses = (myCoursesData?.courses || []).length > 0;
+  const hasTracks = (tracksData?.tracks || []).length > 0;
 
   const isActive = (path: string) => location.pathname === path;
   const isActivePrefix = (path: string) => location.pathname.startsWith(path);
@@ -81,67 +96,71 @@ export function StudentSidebar() {
         )}
 
         {/* Meus Cursos */}
-        <Link
-          to="/cursos"
-          onClick={() => setMobileOpen(false)}
-          className={navItemClass(isActive("/cursos") || isActivePrefix("/cursos/"))}
-        >
-          <GraduationCap className="h-4 w-4" />
-          Meus Cursos
-        </Link>
+        {hasCourses && (
+          <Link
+            to="/cursos"
+            onClick={() => setMobileOpen(false)}
+            className={navItemClass(isActive("/cursos") || isActivePrefix("/cursos/"))}
+          >
+            <GraduationCap className="h-4 w-4" />
+            Meus Cursos
+          </Link>
+        )}
 
         {/* Louvores with subcategories */}
-        <div>
-          <button
-            onClick={() => setLouvoresOpen(!louvoresOpen)}
-            className={cn(
-              navItemClass(isActivePrefix("/musicas")),
-              "w-full justify-between"
-            )}
-          >
-            <span className="flex items-center gap-3">
-              <Music2 className="h-4 w-4" />
-              Louvores
-            </span>
-            {louvoresOpen ? (
-              <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/30" />
-            ) : (
-              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/30" />
-            )}
-          </button>
+        {hasTracks && (
+          <div>
+            <button
+              onClick={() => setLouvoresOpen(!louvoresOpen)}
+              className={cn(
+                navItemClass(isActivePrefix("/musicas")),
+                "w-full justify-between"
+              )}
+            >
+              <span className="flex items-center gap-3">
+                <Music2 className="h-4 w-4" />
+                Louvores
+              </span>
+              {louvoresOpen ? (
+                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/30" />
+              ) : (
+                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/30" />
+              )}
+            </button>
 
-          {louvoresOpen && (
-            <div className="mt-1 space-y-0.5">
-              <Link
-                to="/musicas"
-                search={{}}
-                onClick={() => setMobileOpen(false)}
-                className={subItemClass(
-                  isActive("/musicas") && !(location.search as any)?.categoria
-                )}
-              >
-                <span className="text-[10px]">🎵</span>
-                Todas
-              </Link>
-              {categories.map((cat: any) => {
-                const catSlug = cat.slug || cat.name.toLowerCase();
-                const isActiveCat = (location.search as any)?.categoria === catSlug;
-                return (
-                  <Link
-                    key={cat.id}
-                    to="/musicas"
-                    search={{ categoria: catSlug }}
-                    onClick={() => setMobileOpen(false)}
-                    className={subItemClass(isActiveCat)}
-                  >
-                    <span className="text-[10px]">{cat.icon || "🎵"}</span>
-                    {cat.name.replace(/^[^\w\s]+\s*/u, "")}
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </div>
+            {louvoresOpen && (
+              <div className="mt-1 space-y-0.5">
+                <Link
+                  to="/musicas"
+                  search={{}}
+                  onClick={() => setMobileOpen(false)}
+                  className={subItemClass(
+                    isActive("/musicas") && !(location.search as any)?.categoria
+                  )}
+                >
+                  <span className="text-[10px]">🎵</span>
+                  Todas
+                </Link>
+                {categories.map((cat: any) => {
+                  const catSlug = cat.slug || cat.name.toLowerCase();
+                  const isActiveCat = (location.search as any)?.categoria === catSlug;
+                  return (
+                    <Link
+                      key={cat.id}
+                      to="/musicas"
+                      search={{ categoria: catSlug }}
+                      onClick={() => setMobileOpen(false)}
+                      className={subItemClass(isActiveCat)}
+                    >
+                      <span className="text-[10px]">{cat.icon || "🎵"}</span>
+                      {cat.name.replace(/^[^\w\s]+\s*/u, "")}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Conteúdos */}
         <Link
