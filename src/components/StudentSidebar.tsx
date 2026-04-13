@@ -1,7 +1,7 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
-import { listCategories, listTracks } from "@/lib/tracks.functions";
+import { listCategories, listActiveTracks } from "@/lib/tracks.functions";
 import { getStudentShelves } from "@/lib/shelves.functions";
 import { getMyCoursesData } from "@/lib/my-courses.functions";
 import { LogoBrand } from "./LogoBrand";
@@ -45,8 +45,8 @@ export function StudentSidebar() {
   });
 
   const { data: tracksData } = useQuery({
-    queryKey: ["tracks-list"],
-    queryFn: () => listTracks(),
+    queryKey: ["tracks-active"],
+    queryFn: () => listActiveTracks(),
     staleTime: 60_000,
   });
 
