@@ -21,16 +21,16 @@ interface CourseFormProps {
   hideSubmitButton?: boolean;
 }
 
-const inputClass = "h-9 bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm";
-const labelClass = "text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wider";
+const inputClass = "h-11 bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm";
+const labelClass = "text-sm font-semibold text-foreground/80";
 
 function CardSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-xl border border-border/12 bg-card shadow-md shadow-black/5 overflow-hidden">
-      <div className="px-5 py-3 border-b border-border/8 bg-card/90">
-        <h3 className="text-[11px] font-black text-foreground/85 tracking-wider uppercase">{title}</h3>
+      <div className="px-6 py-4 border-b border-border/8 bg-card/90">
+        <h3 className="text-sm font-bold text-foreground/90 tracking-wide">{title}</h3>
       </div>
-      <div className="px-5 py-4 space-y-3.5">{children}</div>
+      <div className="px-6 py-5 space-y-5">{children}</div>
     </div>
   );
 }
@@ -94,14 +94,14 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
   return (
     <form ref={ref} onSubmit={handleSubmit}>
-      <div className="flex flex-col lg:grid lg:grid-cols-[1fr_300px] gap-4">
+      <div className="flex flex-col lg:grid lg:grid-cols-[1fr_340px] gap-5">
 
         {/* ===== LEFT: Informações + Configurações ===== */}
-        <div className="space-y-4 order-1 lg:col-start-1">
+        <div className="space-y-5 order-1 lg:col-start-1">
           <CardSection title="Informações do Curso">
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label htmlFor="title" className={labelClass}>
-                Título <span className="text-gold">*</span>
+                Título do Curso <span className="text-gold">*</span>
               </Label>
               <Input
                 id="title"
@@ -113,7 +113,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
               />
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label htmlFor="shortDesc" className={labelClass}>Descrição Curta</Label>
               <Textarea
                 id="shortDesc"
@@ -125,24 +125,24 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
               />
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label htmlFor="fullDesc" className={labelClass}>Descrição Completa</Label>
               <Textarea
                 id="fullDesc"
                 value={fullDesc}
                 onChange={(e) => setFullDesc(e.target.value)}
                 placeholder="Descrição detalhada do curso (aparece na página do curso)"
-                rows={5}
+                rows={4}
                 className="bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm resize-none"
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
                 <Label className={labelClass}>Categoria</Label>
                 <Select value={categoryId} onValueChange={setCategoryId}>
                   <SelectTrigger className={inputClass}>
-                    <SelectValue placeholder="Selecionar" />
+                    <SelectValue placeholder="Selecione uma categoria" />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((cat: any) => (
@@ -153,7 +153,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <Label className={labelClass}>Status</Label>
                 <Select value={status} onValueChange={setStatus}>
                   <SelectTrigger className={inputClass}>
@@ -225,26 +225,26 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
         {/* ===== RIGHT: Preview ===== */}
         <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2">
           <div className="rounded-xl border border-border/12 bg-card lg:sticky lg:top-6 shadow-md shadow-black/5 overflow-hidden">
-            <div className="px-4 py-2.5 border-b border-border/8 bg-card/90">
-              <h3 className="text-[10px] font-black text-foreground/70 tracking-wider uppercase">Preview</h3>
+            <div className="px-5 py-3.5 border-b border-border/8 bg-card/90">
+              <h3 className="text-sm font-bold text-foreground/80">Preview</h3>
             </div>
-            <div className="p-3">
+            <div className="p-4">
               <div className="rounded-lg overflow-hidden border border-border/8 bg-background/20">
                 <div className="aspect-[16/9] bg-muted/5 flex items-center justify-center overflow-hidden">
                   {coverUrl ? (
                     <img src={coverUrl} alt="Capa" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="flex flex-col items-center justify-center gap-1.5 text-muted-foreground/20">
-                      <ImageIcon className="h-7 w-7" />
-                      <span className="text-[10px]">Sem imagem</span>
+                    <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground/20">
+                      <ImageIcon className="h-8 w-8" />
+                      <span className="text-xs">Sem imagem</span>
                     </div>
                   )}
                 </div>
-                <div className="p-3 space-y-1">
-                  <p className="text-sm font-bold text-foreground/85 leading-snug line-clamp-2">
+                <div className="p-4 space-y-2">
+                  <p className="text-base font-bold text-foreground/90 leading-snug line-clamp-2">
                     {title || "Título do Curso"}
                   </p>
-                  <p className="text-[11px] text-muted-foreground/45 line-clamp-2 leading-relaxed">
+                  <p className="text-sm text-muted-foreground/50 line-clamp-3 leading-relaxed">
                     {shortDesc || "Descrição do curso aparecerá aqui"}
                   </p>
                 </div>
@@ -257,29 +257,29 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
         <div className="order-3 lg:col-start-1">
           <CardSection title="Imagens">
             {/* Capa */}
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <div>
                 <Label className={labelClass}>Capa do Curso</Label>
-                <p className="text-[10px] text-muted-foreground/40 mt-0.5">
+                <p className="text-xs text-muted-foreground/50 mt-0.5">
                   Imagem exibida na listagem de cursos (recomendado: 400×225)
                 </p>
               </div>
-              <div className="rounded-lg border border-dashed border-border/20 bg-background/20 overflow-hidden max-w-sm">
+              <div className="rounded-lg border border-dashed border-border/20 bg-background/20 overflow-hidden">
                 {coverUrl ? (
                   <div className="relative group">
                     <img src={coverUrl} alt="Capa" className="w-full aspect-video object-cover" />
                     <button
                       type="button"
                       onClick={() => setCoverUrl("")}
-                      className="absolute top-2 right-2 p-1 rounded-md bg-black/60 text-white/80 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-500/90 text-white hover:bg-red-500 transition-colors"
                     >
-                      <X className="h-3 w-3" />
+                      <X className="h-4 w-4" />
                     </button>
                   </div>
                 ) : (
                   <div className="aspect-video flex flex-col items-center justify-center gap-2 text-muted-foreground/25 cursor-pointer hover:text-muted-foreground/40 transition-colors">
-                    <Upload className="h-6 w-6" />
-                    <span className="text-[11px]">Clique para fazer upload</span>
+                    <Upload className="h-7 w-7" />
+                    <span className="text-xs">Clique para fazer upload</span>
                   </div>
                 )}
               </div>
@@ -287,17 +287,17 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 value={coverUrl}
                 onChange={(e) => setCoverUrl(e.target.value)}
                 placeholder="URL da imagem de capa..."
-                className="h-8 bg-background/50 border-border/15 rounded-lg text-[11px] max-w-sm"
+                className="h-9 bg-background/50 border-border/15 rounded-lg text-xs"
               />
             </div>
 
             <div className="border-t border-border/6" />
 
             {/* Banner */}
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <div>
                 <Label className={labelClass}>Banner Principal</Label>
-                <p className="text-[10px] text-muted-foreground/40 mt-0.5">
+                <p className="text-xs text-muted-foreground/50 mt-0.5">
                   Banner grande exibido na vitrine Netflix (recomendado: 1920×600)
                 </p>
               </div>
@@ -308,15 +308,15 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                     <button
                       type="button"
                       onClick={() => setBannerUrl("")}
-                      className="absolute top-2 right-2 p-1 rounded-md bg-black/60 text-white/80 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-500/90 text-white hover:bg-red-500 transition-colors"
                     >
-                      <X className="h-3 w-3" />
+                      <X className="h-4 w-4" />
                     </button>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground/25 py-8 cursor-pointer hover:text-muted-foreground/40 transition-colors">
-                    <Upload className="h-6 w-6" />
-                    <span className="text-[11px]">Clique para fazer upload do banner</span>
+                  <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground/25 py-10 cursor-pointer hover:text-muted-foreground/40 transition-colors">
+                    <Upload className="h-7 w-7" />
+                    <span className="text-xs">Clique para fazer upload do banner</span>
                   </div>
                 )}
               </div>
@@ -324,7 +324,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 value={bannerUrl}
                 onChange={(e) => setBannerUrl(e.target.value)}
                 placeholder="URL do banner..."
-                className="h-8 bg-background/50 border-border/15 rounded-lg text-[11px]"
+                className="h-9 bg-background/50 border-border/15 rounded-lg text-xs"
               />
             </div>
           </CardSection>
