@@ -48,6 +48,7 @@ import { Switch } from "@/components/ui/switch";
 import {
   Plus,
   ChevronDown,
+  ChevronUp,
   ChevronRight,
   MoreHorizontal,
   GripVertical,
