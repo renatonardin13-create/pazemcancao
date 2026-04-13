@@ -588,7 +588,7 @@ function AdminUsersPage() {
                         <Pencil className="h-3.5 w-3.5" />
                         Editar
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => { setDetailBuyer(buyer); setDetailTab("courses"); }} className="gap-2">
+                      <DropdownMenuItem onClick={() => setAccessBuyer(buyer)} className="gap-2">
                         <BookOpen className="h-3.5 w-3.5" />
                         Gerenciar Acessos
                       </DropdownMenuItem>
