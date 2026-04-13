@@ -100,84 +100,88 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       <div className="grid lg:grid-cols-[1fr_300px] gap-5 lg:gap-6">
         {/* LEFT COLUMN */}
         <div className="space-y-5 order-1">
-          {/* Card: Informações */}
-          <div className="rounded-2xl border border-border/15 bg-card p-6 space-y-5 shadow-lg shadow-black/10">
-            <h3 className="text-sm font-black text-foreground/80 tracking-tight border-b border-border/10 pb-3 uppercase">
-              Informações do Curso
-            </h3>
-
-            {/* Title */}
-            <div className="space-y-1.5">
-              <Label htmlFor="title" className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider">
-                Título do Curso <span className="text-gold/60">*</span>
-              </Label>
-              <Input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Ex: Curso de Piano para Iniciantes"
-                required
-                className="bg-background/40 border-border/15 focus:border-gold/30 rounded-xl"
-              />
+          {/* Card: Informações do Curso */}
+          <div className="rounded-2xl border border-border/15 bg-card shadow-lg shadow-black/10 overflow-hidden">
+            <div className="px-6 py-4 border-b border-border/10 bg-card/80">
+              <h3 className="text-sm font-black text-foreground/90 tracking-tight uppercase">
+                Informações do Curso
+              </h3>
             </div>
 
-            {/* Short description */}
-            <div className="space-y-1.5">
-              <Label htmlFor="shortDesc" className="text-xs font-medium text-muted-foreground/60">
-                Descrição Curta
-              </Label>
-              <Input
-                id="shortDesc"
-                value={shortDesc}
-                onChange={(e) => setShortDesc(e.target.value)}
-                placeholder="Breve descrição exibida nos cards"
-                className="bg-card/10 border-border/12 focus:border-gold/30"
-              />
-            </div>
-
-            {/* Full description */}
-            <div className="space-y-1.5">
-              <Label htmlFor="fullDesc" className="text-xs font-medium text-muted-foreground/60">
-                Descrição Completa
-              </Label>
-              <Textarea
-                id="fullDesc"
-                value={fullDesc}
-                onChange={(e) => setFullDesc(e.target.value)}
-                placeholder="Descrição detalhada do curso (aparece na página do curso)"
-                rows={5}
-                className="bg-card/10 border-border/12 focus:border-gold/30"
-              />
-            </div>
-
-            {/* Category & Status — side by side */}
-            <div className="grid sm:grid-cols-2 gap-5">
+            <div className="px-6 py-5 space-y-4">
+              {/* Título */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium text-muted-foreground/60">Categoria</Label>
-                <Select value={categoryId} onValueChange={setCategoryId}>
-                  <SelectTrigger className="bg-card/10 border-border/12">
-                    <SelectValue placeholder="Selecionar categoria" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((cat: any) => (
-                      <SelectItem key={cat.id} value={cat.id}>
-                        {cat.icon || "📁"} {cat.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="title" className="text-xs font-semibold text-muted-foreground/70">
+                  Título do Curso <span className="text-gold">*</span>
+                </Label>
+                <Input
+                  id="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Ex: Curso de Piano para Iniciantes"
+                  required
+                  className="h-10 bg-background/50 border-border/20 focus:border-gold/40 rounded-xl text-sm"
+                />
               </div>
+
+              {/* Descrição Curta */}
               <div className="space-y-1.5">
-                <Label className="text-xs font-medium text-muted-foreground/60">Status</Label>
-                <Select value={status} onValueChange={setStatus}>
-                  <SelectTrigger className="bg-card/10 border-border/12">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="draft">Rascunho</SelectItem>
-                    <SelectItem value="published">Publicado</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Label htmlFor="shortDesc" className="text-xs font-semibold text-muted-foreground/70">
+                  Descrição Curta
+                </Label>
+                <Input
+                  id="shortDesc"
+                  value={shortDesc}
+                  onChange={(e) => setShortDesc(e.target.value)}
+                  placeholder="Breve descrição exibida nos cards"
+                  className="h-10 bg-background/50 border-border/20 focus:border-gold/40 rounded-xl text-sm"
+                />
+              </div>
+
+              {/* Descrição Completa */}
+              <div className="space-y-1.5">
+                <Label htmlFor="fullDesc" className="text-xs font-semibold text-muted-foreground/70">
+                  Descrição Completa
+                </Label>
+                <Textarea
+                  id="fullDesc"
+                  value={fullDesc}
+                  onChange={(e) => setFullDesc(e.target.value)}
+                  placeholder="Descrição detalhada do curso (aparece na página do curso)"
+                  rows={6}
+                  className="bg-background/50 border-border/20 focus:border-gold/40 rounded-xl text-sm resize-none"
+                />
+              </div>
+
+              {/* Categoria & Status — lado a lado */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold text-muted-foreground/70">Categoria</Label>
+                  <Select value={categoryId} onValueChange={setCategoryId}>
+                    <SelectTrigger className="h-10 bg-background/50 border-border/20 rounded-xl text-sm">
+                      <SelectValue placeholder="Selecionar categoria" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((cat: any) => (
+                        <SelectItem key={cat.id} value={cat.id}>
+                          {cat.icon || "📁"} {cat.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-xs font-semibold text-muted-foreground/70">Status</Label>
+                  <Select value={status} onValueChange={setStatus}>
+                    <SelectTrigger className="h-10 bg-background/50 border-border/20 rounded-xl text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="draft">Rascunho</SelectItem>
+                      <SelectItem value="published">Publicado</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
             </div>
           </div>
