@@ -117,7 +117,7 @@ export function StudentSidebar() {
                 search={{}}
                 onClick={() => setMobileOpen(false)}
                 className={subItemClass(
-                  isActive("/musicas") && !new URLSearchParams(location.searchStr).has("categoria")
+                  isActive("/musicas") && !new URLSearchParams(location.searchStr || '').has("categoria")
                 )}
               >
                 <span className="text-[10px]">🎵</span>
