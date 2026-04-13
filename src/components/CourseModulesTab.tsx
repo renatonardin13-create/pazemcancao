@@ -702,24 +702,30 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
           if (!open) setModuleDialog({ open: false });
         }}
       >
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>
-              {moduleDialog.editId ? "Editar Módulo" : "Criar Módulo"}
+            <DialogTitle className="text-lg font-bold">
+              {moduleDialog.editId ? "Editar Módulo" : "Criar Novo Módulo"}
             </DialogTitle>
+            <p className="text-[13px] text-muted-foreground/50 mt-0.5">
+              {moduleDialog.editId
+                ? "Atualize as informações do módulo"
+                : "Preencha os dados para criar um novo módulo"}
+            </p>
           </DialogHeader>
-          <div className="space-y-4">
+
+          <div className="space-y-6 py-2">
             <div className="space-y-2">
-              <Label>Nome do Módulo *</Label>
+              <Label className="text-sm font-semibold">Nome do Módulo *</Label>
               <Input
                 value={modTitle}
                 onChange={(e) => setModTitle(e.target.value)}
-                placeholder="Ex: Módulo 1 — Introdução"
-                className="bg-card/10 border-border/15"
+                placeholder="Ex: Módulo 1 - Introdução"
+                className="bg-card/10 border-gold/20 focus:border-gold/40"
               />
             </div>
             <div className="space-y-2">
-              <Label>Descrição (opcional)</Label>
+              <Label className="text-sm font-semibold">Descrição (opcional)</Label>
               <Textarea
                 value={modDesc}
                 onChange={(e) => setModDesc(e.target.value)}
@@ -729,21 +735,24 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
               />
             </div>
           </div>
+
           <DialogFooter>
             <Button
               variant="outline"
               onClick={() => setModuleDialog({ open: false })}
+              className="border-border/20"
             >
               Cancelar
             </Button>
             <Button
               onClick={handleSaveModule}
               disabled={!modTitle.trim() || createModM.isPending || updateModM.isPending}
+              className="bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
             >
               {(createModM.isPending || updateModM.isPending) && (
                 <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
               )}
-              {moduleDialog.editId ? "Salvar" : "Criar"}
+              {moduleDialog.editId ? "Salvar" : "Criar Módulo"}
             </Button>
           </DialogFooter>
         </DialogContent>
