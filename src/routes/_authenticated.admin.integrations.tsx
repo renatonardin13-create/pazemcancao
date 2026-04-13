@@ -25,13 +25,22 @@ const platformColors: Record<string, { bg: string; text: string; dot: string }> 
 };
 
 function IntegrationsPage() {
+  const [logsOpen, setLogsOpen] = useState(false);
+
   const { data, isLoading } = useQuery({
     queryKey: ["integrations-dashboard"],
     queryFn: () => getIntegrationsDashboard(),
   });
 
+  const { data: logsData, isLoading: logsLoading } = useQuery({
+    queryKey: ["webhook-logs"],
+    queryFn: () => getWebhookLogs(),
+    enabled: logsOpen,
+  });
+
   const stats = data?.stats;
   const integrations = data?.integrations || [];
+  const logs = logsData?.logs || [];
 
   const webhookBaseUrl = "https://pazemcancao.lovable.app/api/webhook/kiwify";
 
@@ -59,8 +68,72 @@ function IntegrationsPage() {
             </p>
           </div>
         </div>
-        {/* Future: logs page */}
+        <Button variant="outline" size="sm" onClick={() => setLogsOpen(true)} className="gap-2">
+          <ScrollText className="h-4 w-4" />
+          Ver Logs Completos
+        </Button>
       </div>
+
+      {/* Logs Dialog */}
+      <Dialog open={logsOpen} onOpenChange={setLogsOpen}>
+        <DialogContent className="max-w-3xl max-h-[80vh]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <ScrollText className="h-5 w-5" />
+              Logs de Webhook
+            </DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="h-[60vh]">
+            {logsLoading ? (
+              <p className="text-center py-8 text-muted-foreground">Carregando logs...</p>
+            ) : logs.length === 0 ? (
+              <p className="text-center py-8 text-muted-foreground">Nenhum log encontrado</p>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Data</TableHead>
+                    <TableHead>Evento</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead>Mensagem</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {logs.map((log) => (
+                    <TableRow key={log.id}>
+                      <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
+                        {format(new Date(log.created_at), "dd/MM HH:mm")}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="text-[10px]">
+                          {log.event_type || "—"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-xs max-w-[160px] truncate">{log.email || "—"}</TableCell>
+                      <TableCell>
+                        <Badge
+                          variant="outline"
+                          className={`text-[10px] ${
+                            log.response_status === 200
+                              ? "border-emerald-500/30 text-emerald-400"
+                              : "border-red-500/30 text-red-400"
+                          }`}
+                        >
+                          {log.response_status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground max-w-[200px] truncate">
+                        {log.response_message || "—"}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
