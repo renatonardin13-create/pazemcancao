@@ -82,7 +82,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
     },
   });
 
-  const webhookUrl = `https://pazemcancao.lovable.app/webhook?course=${courseId}`;
+  const webhookUrl = `https://pazemcancao.lovable.app/api/webhook/kiwify?course=${courseId}`;
 
   const handleCopyWebhook = () => {
     navigator.clipboard.writeText(webhookUrl);

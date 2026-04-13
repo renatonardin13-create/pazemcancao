@@ -9,8 +9,10 @@ async function verifyAdmin(supabase: any, userId: string) {
     .eq('user_id', userId)
     .eq('role', 'admin')
     .maybeSingle();
+
   const { data: userData } = await supabase.auth.getUser();
   const isAdminEmail = userData?.user?.email?.toLowerCase() === 'renatonardin13@gmail.com';
+
   if (!role && !isAdminEmail) throw new Error('Não autorizado');
 }
 
@@ -19,58 +21,51 @@ export const getIntegrationsDashboard = createServerFn({ method: 'POST' })
   .handler(async ({ context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
-    // Get all course integrations with course titles
-    const { data: integrations } = await supabaseAdmin
-      .from('course_integrations')
-      .select('*, courses(title)')
-      .order('created_at', { ascending: false });
-
-    // Get webhook logs stats
-    const { data: logs } = await supabaseAdmin
-      .from('webhook_logs')
-      .select('response_status')
-      .limit(1000);
-
-    // Get processed webhooks for sales count
-    const { data: processedWebhooks } = await supabaseAdmin
-      .from('processed_webhooks')
-      .select('status, course_id:details')
-      .eq('status', 'processed');
+    const [{ data: integrations }, { data: logs }, { data: enrollments }] = await Promise.all([
+      supabaseAdmin
+        .from('course_integrations')
+        .select('*, courses(title)')
+        .order('created_at', { ascending: false }),
+      supabaseAdmin
+        .from('webhook_logs')
+        .select('response_status')
+        .eq('provider', 'kiwify')
+        .limit(1000),
+      supabaseAdmin
+        .from('enrollments')
+        .select('course_id, status, access_origin')
+        .eq('access_origin', 'webhook'),
+    ]);
 
     const allIntegrations = integrations || [];
-    const totalWebhooks = allIntegrations.length;
-    const activeWebhooks = allIntegrations.filter(i => i.webhook_active && i.is_enabled).length;
-
     const allLogs = logs || [];
-    const totalSales = (processedWebhooks || []).length;
-    const successLogs = allLogs.filter(l => l.response_status === 200).length;
-    const successRate = allLogs.length > 0 ? Math.round((successLogs / allLogs.length) * 100) : 0;
+    const allEnrollments = enrollments || [];
 
-    // Count sales per course integration (from processed_webhooks)
-    const salesPerCourse: Record<string, number> = {};
-    // For now, count from webhook_logs by matching order patterns
-    const { data: salesLogs } = await supabaseAdmin
-      .from('webhook_logs')
-      .select('payload')
-      .eq('response_status', 200);
+    const salesPerCourse = allEnrollments.reduce<Record<string, number>>((acc, enrollment) => {
+      if (enrollment.status !== 'active') return acc;
+      acc[enrollment.course_id] = (acc[enrollment.course_id] || 0) + 1;
+      return acc;
+    }, {});
 
     return {
       stats: {
-        totalWebhooks,
-        activeWebhooks,
-        totalSales,
-        successRate,
+        totalWebhooks: allIntegrations.length,
+        activeWebhooks: allIntegrations.filter((item) => item.webhook_active && item.is_enabled).length,
+        totalSales: allEnrollments.filter((item) => item.status === 'active').length,
+        successRate: allLogs.length > 0
+          ? Math.round((allLogs.filter((item) => item.response_status === 200).length / allLogs.length) * 100)
+          : 0,
       },
-      integrations: allIntegrations.map(i => ({
-        id: i.id,
-        courseId: i.course_id,
-        courseTitle: (i as any).courses?.title || 'Sem título',
-        platform: i.platform,
-        externalProductId: i.external_product_id,
-        isEnabled: i.is_enabled,
-        webhookActive: i.webhook_active,
-        checkoutUrl: i.checkout_url,
-        sales: 0, // placeholder
+      integrations: allIntegrations.map((item) => ({
+        id: item.id,
+        courseId: item.course_id,
+        courseTitle: (item as any).courses?.title || 'Sem título',
+        platform: item.platform,
+        externalProductId: item.external_product_id,
+        isEnabled: item.is_enabled,
+        webhookActive: item.webhook_active,
+        checkoutUrl: item.checkout_url,
+        sales: salesPerCourse[item.course_id] || 0,
       })),
     };
   });
