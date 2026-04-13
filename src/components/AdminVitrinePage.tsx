@@ -499,36 +499,66 @@ export default function AdminVitrinePage() {
       </div>
 
       {/* ── Main content ── */}
-      <div className={`flex gap-6 ${showPreview ? "" : ""}`}>
+      <div className="flex gap-6">
         {/* Left: tabs */}
         <div className={showPreview ? "flex-1 min-w-0" : "w-full"}>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="bg-card/5 border border-border/10 w-full justify-start gap-1 p-1.5 rounded-xl h-auto">
-              <TabsTrigger
-                value="banner"
-                className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
-              >
-                Banner Principal
-              </TabsTrigger>
-              <TabsTrigger
-                value="cards"
-                className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
-              >
-                Cards
-              </TabsTrigger>
-              <TabsTrigger
-                value="promo"
-                className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
-              >
-                Banners Promo
-              </TabsTrigger>
-              <TabsTrigger
-                value="shelves"
-                className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
-              >
-                Prateleiras
-              </TabsTrigger>
-            </TabsList>
+            <div className="flex items-center justify-between gap-4">
+              <TabsList className="bg-card/5 border border-border/10 justify-start gap-1 p-1.5 rounded-xl h-auto">
+                <TabsTrigger
+                  value="banner"
+                  className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
+                >
+                  Banner Principal
+                </TabsTrigger>
+                <TabsTrigger
+                  value="cards"
+                  className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
+                >
+                  Cards
+                </TabsTrigger>
+                <TabsTrigger
+                  value="promo"
+                  className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
+                >
+                  Banners Promo
+                </TabsTrigger>
+                <TabsTrigger
+                  value="shelves"
+                  className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
+                >
+                  Prateleiras
+                </TabsTrigger>
+              </TabsList>
+
+              {showPreview && (
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-gold/70 font-medium">Pré-visualização</span>
+                    <Badge variant="outline" className="text-[9px] border-emerald-500/30 text-emerald-400/70 px-1.5 py-0">
+                      Ao vivo
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-1 ml-2">
+                    <button className="p-1.5 rounded-md text-muted-foreground/30 hover:text-foreground/60 transition-colors" title="Desktop">
+                      <Monitor className="h-4 w-4" />
+                    </button>
+                    <button className="p-1.5 rounded-md text-muted-foreground/30 hover:text-foreground/60 transition-colors" title="Tablet">
+                      <Tablet className="h-4 w-4" />
+                    </button>
+                    <button className="p-1.5 rounded-md text-muted-foreground/30 hover:text-foreground/60 transition-colors" title="Mobile">
+                      <Smartphone className="h-4 w-4" />
+                    </button>
+                    <button className="p-1.5 rounded-md text-muted-foreground/30 hover:text-foreground/60 transition-colors" title="Tela cheia">
+                      <Maximize2 className="h-4 w-4" />
+                    </button>
+                    <button className="p-1.5 rounded-md text-muted-foreground/30 hover:text-foreground/60 transition-colors" title="Abrir">
+                      <ExternalLinkIcon className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* ── Banner Principal ── */}
             <TabsContent value="banner" className="mt-6 space-y-6">
