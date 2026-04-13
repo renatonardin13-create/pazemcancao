@@ -554,7 +554,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 {isExpanded && (
                   <div className="bg-background/30 border-t border-border/10 px-5 py-4">
                     {lessons.length === 0 ? (
-                      <div className="text-center py-8 ml-6 rounded-lg border border-dashed border-border/10 bg-card/3">
+                      <div className="text-center py-8 ml-8 rounded-lg border border-dashed border-border/10 bg-card/3">
                         <div className="w-10 h-10 rounded-xl bg-gold/5 border border-gold/10 flex items-center justify-center mx-auto mb-3">
                           <FileText className="h-5 w-5 text-gold/30" />
                         </div>
@@ -575,7 +575,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                         </Button>
                       </div>
                     ) : (
-                      <div className="ml-6 space-y-1.5">
+                      <div className="ml-8 space-y-2 border-l-2 border-border/8 pl-4">
                         {lessons.map((lesson: any, lesIndex: number) => (
                           <div
                             key={lesson.id}
