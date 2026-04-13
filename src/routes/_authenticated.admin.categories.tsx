@@ -10,6 +10,7 @@ import {
 import { FolderOpen, Plus, Trash2, Pencil, GripVertical, Check, X, Tag } from "lucide-react";
 import { useState, useCallback } from "react";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,17 +25,17 @@ export const Route = createFileRoute("/_authenticated/admin/categories")({
   component: AdminCategoriesPage,
 });
 
-const CATEGORY_COLORS = [
-  "bg-rose-500", "bg-emerald-500", "bg-purple-500", "bg-amber-500",
-  "bg-blue-500", "bg-cyan-500", "bg-pink-500", "bg-orange-500",
-  "bg-teal-500", "bg-indigo-500",
+const PICKER_COLORS = [
+  "#C8A951", "#3B82F6", "#EC4899", "#22C55E", "#F97316",
+  "#A855F7", "#06B6D4", "#F43F5E", "#14B8A6", "#F59E0B",
+  "#10B981",
 ];
 
 function AdminCategoriesPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingCat, setEditingCat] = useState<any>(null);
-  const [editValues, setEditValues] = useState({ name: "", slug: "", description: "", icon: "" });
-  const [newCat, setNewCat] = useState({ name: "", slug: "", description: "", icon: "" });
+  const [editValues, setEditValues] = useState({ name: "", slug: "", description: "", icon: "", color: "" });
+  const [newCat, setNewCat] = useState({ name: "", slug: "", description: "", icon: "", color: PICKER_COLORS[0] });
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -43,19 +44,19 @@ function AdminCategoriesPage() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (input: { name: string; slug: string; description?: string; icon?: string }) =>
+    mutationFn: (input: { name: string; slug: string; description?: string; icon?: string; color?: string }) =>
       createCategory({ data: input }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
       toast.success("Categoria criada");
       setShowForm(false);
-      setNewCat({ name: "", slug: "", description: "", icon: "" });
+      setNewCat({ name: "", slug: "", description: "", icon: "", color: PICKER_COLORS[0] });
     },
     onError: (err: any) => toast.error(err.message),
   });
 
   const updateMutation = useMutation({
-    mutationFn: (input: { id: string; name?: string; slug?: string; description?: string; icon?: string }) =>
+    mutationFn: (input: { id: string; name?: string; slug?: string; description?: string; icon?: string; color?: string }) =>
       updateCategory({ data: input }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
@@ -103,6 +104,7 @@ function AdminCategoriesPage() {
       slug: cat.slug,
       description: cat.description || "",
       icon: cat.icon || "",
+      color: cat.color || PICKER_COLORS[0],
     });
   };
 
