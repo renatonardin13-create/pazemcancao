@@ -57,6 +57,7 @@ function AdminUsersPage() {
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [detailBuyer, setDetailBuyer] = useState<any>(null);
   const [detailTab, setDetailTab] = useState("info");
+  const [accessBuyer, setAccessBuyer] = useState<any>(null);
   const [editBuyer, setEditBuyer] = useState<any>(null);
   const [trialEmail, setTrialEmail] = useState("");
   const [trialName, setTrialName] = useState("");
