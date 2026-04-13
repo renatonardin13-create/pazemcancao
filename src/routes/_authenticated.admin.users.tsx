@@ -965,6 +965,129 @@ function AdminUsersPage() {
         </DialogContent>
       </Dialog>
 
+      {/* Manage Access Dialog */}
+      <Dialog open={!!accessBuyer} onOpenChange={(v) => { if (!v) setAccessBuyer(null); }}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="font-display flex items-center gap-2">
+              <BookOpen className="h-5 w-5 text-gold/60" />
+              Gerenciar Acesso a Cursos
+            </DialogTitle>
+          </DialogHeader>
+          {accessBuyer && (
+            <div className="space-y-4 mt-2">
+              {/* Student info */}
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gold/15 text-sm font-bold text-gold shrink-0">
+                  {(accessBuyer.nome || accessBuyer.email).slice(0, 1).toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-foreground/90 truncate">{accessBuyer.nome || "Sem nome"}</p>
+                  <p className="text-[12px] text-muted-foreground/50">{accessBuyer.email}</p>
+                </div>
+              </div>
+
+              {/* Bulk actions */}
+              <div className="grid grid-cols-2 gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 border-emerald-500/20 text-emerald-400/80 hover:bg-emerald-500/10"
+                  disabled={toggleCourseAccess.isPending || accessLoading}
+                  onClick={async () => {
+                    const toGrant = (accessDetail?.courses || []).filter((c: any) => !c.hasAccess);
+                    for (const c of toGrant) {
+                      await toggleStudentCourseAccess({ data: { email: accessBuyer.email, courseId: c.id, grant: true } });
+                    }
+                    queryClient.invalidateQueries({ queryKey: ["student-detail"] });
+                    toast.success("Todos os cursos liberados!");
+                  }}
+                >
+                  <Check className="h-3.5 w-3.5" />
+                  Liberar Todos
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 border-destructive/20 text-destructive/80 hover:bg-destructive/10"
+                  disabled={toggleCourseAccess.isPending || accessLoading}
+                  onClick={async () => {
+                    const toRevoke = (accessDetail?.courses || []).filter((c: any) => c.hasAccess);
+                    for (const c of toRevoke) {
+                      await toggleStudentCourseAccess({ data: { email: accessBuyer.email, courseId: c.id, grant: false } });
+                    }
+                    queryClient.invalidateQueries({ queryKey: ["student-detail"] });
+                    toast.success("Todos os acessos revogados!");
+                  }}
+                >
+                  <Ban className="h-3.5 w-3.5" />
+                  Revogar Todos
+                </Button>
+              </div>
+
+              {/* Course list */}
+              {accessLoading ? (
+                <p className="text-center text-[11px] text-muted-foreground/30 py-8 animate-pulse">Carregando cursos...</p>
+              ) : !accessDetail?.courses?.length ? (
+                <p className="text-center text-sm text-muted-foreground/40 py-8">Nenhum curso cadastrado.</p>
+              ) : (
+                <div className="space-y-2 max-h-[360px] overflow-y-auto pr-1">
+                  {accessDetail.courses.map((course: any) => (
+                    <div
+                      key={course.id}
+                      className="flex items-center gap-3 rounded-xl border border-border/15 bg-card/8 p-3"
+                    >
+                      {course.cover_image_url ? (
+                        <img src={course.cover_image_url} alt="" className="h-11 w-11 rounded-lg object-cover shrink-0" />
+                      ) : (
+                        <div className="h-11 w-11 rounded-lg bg-muted/20 flex items-center justify-center shrink-0">
+                          <BookOpen className="h-4 w-4 text-muted-foreground/30" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-foreground/80 truncate">{course.title}</p>
+                        <Badge
+                          className={`text-[9px] mt-0.5 border-0 ${
+                            course.hasAccess
+                              ? "bg-emerald-500/15 text-emerald-400/80"
+                              : "bg-muted/20 text-muted-foreground/50"
+                          }`}
+                        >
+                          {course.hasAccess ? "Com acesso" : "Sem acesso"}
+                        </Badge>
+                      </div>
+                      <Calendar className="h-4 w-4 text-muted-foreground/25 shrink-0" />
+                      <Switch
+                        checked={course.hasAccess}
+                        onCheckedChange={(checked) =>
+                          toggleCourseAccess.mutate({
+                            email: accessBuyer.email,
+                            courseId: course.id,
+                            grant: checked,
+                          })
+                        }
+                        disabled={toggleCourseAccess.isPending}
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Footer */}
+              <div className="flex items-center justify-between pt-2 border-t border-border/10">
+                <p className="text-[12px] text-gold/60">
+                  <span className="font-semibold">{accessDetail?.enrolledCount ?? 0}</span> de{" "}
+                  {accessDetail?.courses?.length ?? 0} cursos liberados
+                </p>
+                <Button variant="outline" size="sm" onClick={() => setAccessBuyer(null)}>
+                  Fechar
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Delete Confirmation */}
       <AlertDialog open={!!deleteTarget} onOpenChange={(v) => { if (!v) setDeleteTarget(null); }}>
         <AlertDialogContent className="bg-card border-border/20">
