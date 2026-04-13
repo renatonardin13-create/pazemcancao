@@ -9,6 +9,16 @@ import {
   Trash2,
   GripVertical,
   BookOpen,
+  Image,
+  Eye,
+  EyeOff,
+  Layers,
+  ExternalLink,
+  ChevronRight,
+  X,
+  Loader2,
+  Sparkles,
+  Monitor,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +26,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -51,7 +62,7 @@ import {
 import { listCoursesForSelector } from "@/lib/admin-trial.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/shelves")({
-  component: AdminShelvesPage,
+  component: AdminVitrinePage,
 });
 
 /* ── Generic drag-and-drop hook ── */
@@ -67,7 +78,6 @@ function useDragReorder<T extends { id: string }>(
     (index: number) => (e: React.DragEvent) => {
       dragIdx.current = index;
       e.dataTransfer.effectAllowed = "move";
-      // For Firefox
       e.dataTransfer.setData("text/plain", String(index));
       const el = e.currentTarget as HTMLElement;
       el.style.opacity = "0.5";
@@ -109,8 +119,12 @@ function useDragReorder<T extends { id: string }>(
 
 /* ── Page ── */
 
-function AdminShelvesPage() {
+function AdminVitrinePage() {
   const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState("shelves");
+  const [showPreview, setShowPreview] = useState(true);
+
+  // Shelf dialogs
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingShelf, setEditingShelf] = useState<any>(null);
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
@@ -126,6 +140,12 @@ function AdminShelvesPage() {
   // Course selection state
   const [selectedCourseIds, setSelectedCourseIds] = useState<string[]>([]);
 
+  // Banner state
+  const [bannerTitle, setBannerTitle] = useState("");
+  const [bannerSubtitle, setBannerSubtitle] = useState("");
+  const [bannerImageUrl, setBannerImageUrl] = useState("");
+  const [bannerCourseId, setBannerCourseId] = useState("");
+
   const { data, isLoading } = useQuery({
     queryKey: ["admin-shelves"],
     queryFn: () => listShelves(),
@@ -138,6 +158,13 @@ function AdminShelvesPage() {
 
   const shelves = data?.shelves ?? [];
   const courses = coursesData?.courses ?? [];
+  const publishedCourses = courses.filter((c: any) => c.status === "published");
+  const activeShelves = shelves.filter((s: any) => s.is_active);
+
+  // Featured course for banner
+  const featuredCourse = bannerCourseId
+    ? courses.find((c: any) => c.id === bannerCourseId)
+    : courses.find((c: any) => c.banner_image_url || c.cover_image_url);
 
   // ── Mutations ──
 
@@ -185,7 +212,7 @@ function AdminShelvesPage() {
     mutationFn: (orderedIds: string[]) =>
       reorderShelves({ data: { orderedIds } }),
     onSuccess: () => {
-      toast.success("Ordem das prateleiras atualizada!");
+      toast.success("Ordem atualizada!");
       queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
     },
     onError: (err: any) => toast.error(err.message),
@@ -290,131 +317,544 @@ function AdminShelvesPage() {
   );
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-foreground/85 tracking-tight">
-            Prateleiras
-          </h1>
-          <p className="mt-1 text-[13px] text-muted-foreground/40">
-            Organize a vitrine da área do aluno — arraste para reordenar
-          </p>
-        </div>
-        <Button
-          className="gap-2 bg-gold/90 text-black hover:bg-gold"
-          onClick={openCreate}
-        >
-          <Plus className="h-4 w-4" />
-          Nova Prateleira
-        </Button>
+    <div className="max-w-[1400px] mx-auto space-y-6">
+      {/* ── Header ── */}
+      <div className="pb-5 border-b border-border/10">
+        <h1 className="font-display text-2xl font-bold text-foreground/90 tracking-tight">
+          Configuração da Vitrine
+        </h1>
+        <p className="mt-1 text-[13px] text-muted-foreground/45 tracking-wide">
+          Configure banner, cards e prateleiras da área do aluno
+        </p>
       </div>
 
-      {isLoading ? (
-        <div className="py-16 text-center">
-          <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
-            Carregando prateleiras...
-          </p>
-        </div>
-      ) : shelves.length === 0 ? (
-        <div className="rounded-2xl border border-border/15 bg-card/5 py-16 text-center">
-          <Layout className="mx-auto mb-4 h-8 w-8 text-muted-foreground/15" />
-          <p className="text-sm text-muted-foreground/35">
-            Nenhuma prateleira criada ainda.
-          </p>
-          <p className="text-[12px] text-muted-foreground/25 mt-1">
-            Crie prateleiras para organizar os cursos na vitrine do aluno.
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {shelves.map((shelf: any, idx: number) => {
-            const courseCount = shelf.shelf_courses?.length || 0;
-            return (
-              <div
-                key={shelf.id}
-                draggable
-                onDragStart={shelfDrag.handleDragStart(idx)}
-                onDragEnd={shelfDrag.handleDragEnd}
-                onDragOver={shelfDrag.handleDragOver(idx)}
-                className="flex items-center gap-4 rounded-2xl border border-border/15 bg-card/10 px-5 py-4 transition-all hover:bg-card/15 cursor-grab active:cursor-grabbing"
-              >
-                <GripVertical className="h-4 w-4 text-muted-foreground/20 shrink-0" />
+      {/* ── Summary Cards ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <SummaryCard
+          label="Cursos Publicados"
+          value={publishedCourses.length}
+          icon={BookOpen}
+          color="emerald"
+        />
+        <SummaryCard
+          label="Prateleiras Ativas"
+          value={activeShelves.length}
+          icon={Layers}
+          color="gold"
+        />
+        <SummaryCard
+          label="Banner Principal"
+          value={featuredCourse ? "Configurado" : "Não configurado"}
+          icon={Image}
+          color={featuredCourse ? "emerald" : "amber"}
+        />
+      </div>
 
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <p className="text-sm font-semibold text-foreground/80 truncate">
-                      {shelf.name}
-                    </p>
-                    <Badge
-                      variant="outline"
-                      className={`text-[9px] ${
-                        shelf.is_active
-                          ? "text-emerald-400/70 border-emerald-500/20"
-                          : "text-muted-foreground/40 border-border/15"
-                      }`}
-                    >
-                      {shelf.is_active ? "Ativa" : "Inativa"}
-                    </Badge>
-                    <Badge
-                      variant="outline"
-                      className="text-[9px] text-muted-foreground/50 border-border/15"
-                    >
-                      {modeLabel(shelf.mode)}
-                    </Badge>
-                    {shelf.mode === "auto" && (
-                      <Badge
-                        variant="outline"
-                        className="text-[9px] text-gold/50 border-gold/15"
-                      >
-                        {criteriaLabel(shelf.auto_criteria)}
-                      </Badge>
-                    )}
-                  </div>
-                  <p className="text-[11px] text-muted-foreground/30 mt-0.5">
-                    {shelf.mode === "manual"
-                      ? `${courseCount} curso(s) vinculado(s)`
-                      : `Preenchimento automático: ${criteriaLabel(shelf.auto_criteria)}`}
+      {/* ── Main content ── */}
+      <div className={`flex gap-6 ${showPreview ? "" : ""}`}>
+        {/* Left: tabs */}
+        <div className={showPreview ? "flex-1 min-w-0" : "w-full"}>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="bg-card/5 border border-border/10 w-full justify-start gap-1 p-1.5 rounded-xl h-auto">
+              <TabsTrigger
+                value="banner"
+                className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
+              >
+                Banner Principal
+              </TabsTrigger>
+              <TabsTrigger
+                value="cards"
+                className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
+              >
+                Cards
+              </TabsTrigger>
+              <TabsTrigger
+                value="promo"
+                className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
+              >
+                Banners Promo
+              </TabsTrigger>
+              <TabsTrigger
+                value="shelves"
+                className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
+              >
+                Prateleiras
+              </TabsTrigger>
+            </TabsList>
+
+            {/* ── Banner Principal ── */}
+            <TabsContent value="banner" className="mt-6 space-y-6">
+              <div className="rounded-xl border border-border/15 bg-card/5 p-6 space-y-5">
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground/70 mb-1">Banner Hero</h3>
+                  <p className="text-[11px] text-muted-foreground/35">
+                    O banner principal que aparece no topo da vitrine de cursos.
+                    Por padrão, exibe o primeiro curso com banner configurado.
                   </p>
                 </div>
 
-                <div className="flex items-center gap-1.5">
-                  {shelf.mode === "manual" && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0 text-muted-foreground/30 hover:text-gold/70"
-                      onClick={() => openCourses(shelf)}
-                      title="Gerenciar cursos"
-                    >
-                      <BookOpen className="h-3.5 w-3.5" />
-                    </Button>
-                  )}
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0 text-muted-foreground/30 hover:text-foreground/60"
-                    onClick={() => openEdit(shelf)}
-                    title="Editar"
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-8 w-8 p-0 text-muted-foreground/30 hover:text-destructive/70"
-                    onClick={() => setDeleteTarget(shelf)}
-                    title="Excluir"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </Button>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Curso em destaque</Label>
+                    <Select value={bannerCourseId} onValueChange={setBannerCourseId}>
+                      <SelectTrigger className="bg-card/10 border-border/15">
+                        <SelectValue placeholder="Automático — primeiro curso com banner" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="auto">Automático</SelectItem>
+                        {courses.map((c: any) => (
+                          <SelectItem key={c.id} value={c.id}>
+                            {c.title}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-[10px] text-muted-foreground/30">
+                      Selecione qual curso será exibido como destaque na vitrine
+                    </p>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Título customizado (opcional)</Label>
+                    <Input
+                      value={bannerTitle}
+                      onChange={(e) => setBannerTitle(e.target.value)}
+                      placeholder="Deixe vazio para usar o título do curso"
+                      className="bg-card/10 border-border/15"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Subtítulo (opcional)</Label>
+                    <Input
+                      value={bannerSubtitle}
+                      onChange={(e) => setBannerSubtitle(e.target.value)}
+                      placeholder="Deixe vazio para usar a descrição do curso"
+                      className="bg-card/10 border-border/15"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>URL do Banner (opcional)</Label>
+                    <Input
+                      value={bannerImageUrl}
+                      onChange={(e) => setBannerImageUrl(e.target.value)}
+                      placeholder="https://... imagem de banner customizada"
+                      className="bg-card/10 border-border/15"
+                    />
+                    <p className="text-[10px] text-muted-foreground/30">
+                      Proporção recomendada: 21:8 — 1920x730 px. Deixe vazio para usar o banner do curso.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Banner preview inline */}
+                {featuredCourse && (
+                  <div className="rounded-xl overflow-hidden border border-border/10">
+                    <div className="relative w-full aspect-[21/8] bg-card/10">
+                      {(bannerImageUrl || featuredCourse.banner_image_url || featuredCourse.cover_image_url) ? (
+                        <img
+                          src={bannerImageUrl || featuredCourse.banner_image_url || featuredCourse.cover_image_url}
+                          alt="Banner preview"
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-card/30 to-card/5 flex items-center justify-center">
+                          <Image className="h-8 w-8 text-muted-foreground/10" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                      <div className="absolute inset-0 flex items-end px-6 pb-6">
+                        <div>
+                          <p className="text-[8px] font-bold uppercase tracking-[0.5em] text-gold/50 mb-1">Em destaque</p>
+                          <p className="text-lg font-bold text-foreground/95 leading-tight">
+                            {bannerTitle || featuredCourse.title}
+                          </p>
+                          {(bannerSubtitle || featuredCourse.short_description) && (
+                            <p className="mt-1 text-[11px] text-muted-foreground/50 line-clamp-1">
+                              {bannerSubtitle || featuredCourse.short_description}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </TabsContent>
+
+            {/* ── Cards ── */}
+            <TabsContent value="cards" className="mt-6 space-y-6">
+              <div className="rounded-xl border border-border/15 bg-card/5 p-6 space-y-5">
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground/70 mb-1">Cards de Curso</h3>
+                  <p className="text-[11px] text-muted-foreground/35">
+                    Configurações visuais dos cards exibidos nas prateleiras.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="rounded-xl border border-border/10 bg-card/3 p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-gold/8 border border-gold/15 flex items-center justify-center">
+                        <Image className="h-4 w-4 text-gold/50" />
+                      </div>
+                      <div>
+                        <p className="text-[12px] font-semibold text-foreground/70">Proporção 2:3</p>
+                        <p className="text-[10px] text-muted-foreground/30">Vertical — estilo Netflix</p>
+                      </div>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground/25 leading-relaxed">
+                      Cada curso usa sua <strong className="text-foreground/50">capa vertical</strong> (cover_image_url).
+                      Recomendado: 1000×1500 px.
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-border/10 bg-card/3 p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-gold/8 border border-gold/15 flex items-center justify-center">
+                        <Sparkles className="h-4 w-4 text-gold/50" />
+                      </div>
+                      <div>
+                        <p className="text-[12px] font-semibold text-foreground/70">Efeitos Hover</p>
+                        <p className="text-[10px] text-muted-foreground/30">Zoom + glow dourado</p>
+                      </div>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground/25 leading-relaxed">
+                      Os cards possuem animação de hover com zoom sutil e brilho dourado na borda,
+                      criando uma experiência premium de streaming.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Card preview grid */}
+                <div>
+                  <p className="text-[11px] text-muted-foreground/40 mb-3 uppercase tracking-wider font-medium">
+                    Preview dos cards
+                  </p>
+                  <div className="flex gap-3 overflow-x-auto pb-2">
+                    {(publishedCourses.length > 0 ? publishedCourses.slice(0, 5) : [{ id: "1", title: "Curso Exemplo", cover_image_url: null }]).map((course: any) => (
+                      <div key={course.id} className="shrink-0 w-[120px]">
+                        <div className="relative aspect-[2/3] rounded-lg overflow-hidden border border-border/10 bg-card/10">
+                          {course.cover_image_url ? (
+                            <img src={course.cover_image_url} alt={course.title} className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-card/30 to-card/5">
+                              <BookOpen className="h-6 w-6 text-muted-foreground/10" />
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                          <div className="absolute bottom-0 left-0 right-0 p-2.5">
+                            <p className="text-[10px] font-bold text-white/90 line-clamp-2 leading-tight">
+                              {course.title}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            );
-          })}
+            </TabsContent>
+
+            {/* ── Banners Promo ── */}
+            <TabsContent value="promo" className="mt-6 space-y-6">
+              <div className="rounded-xl border border-border/15 bg-card/5 p-6 space-y-5">
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground/70 mb-1">Banners Promocionais</h3>
+                  <p className="text-[11px] text-muted-foreground/35">
+                    Banners adicionais exibidos entre as prateleiras de cursos. Em breve.
+                  </p>
+                </div>
+
+                <div className="text-center py-12 rounded-xl border border-dashed border-border/12 bg-card/3">
+                  <div className="w-12 h-12 rounded-2xl bg-gold/8 border border-gold/15 flex items-center justify-center mx-auto mb-4">
+                    <Image className="h-6 w-6 text-gold/30" />
+                  </div>
+                  <p className="text-[13px] font-medium text-foreground/50 mb-1">
+                    Banners promocionais
+                  </p>
+                  <p className="text-[11px] text-muted-foreground/30 max-w-xs mx-auto">
+                    Em breve você poderá inserir banners promocionais entre as prateleiras
+                    para destacar ofertas e novidades.
+                  </p>
+                  <Badge variant="outline" className="mt-4 text-[9px] text-gold/50 border-gold/15 bg-gold/5">
+                    Em breve
+                  </Badge>
+                </div>
+              </div>
+            </TabsContent>
+
+            {/* ── Prateleiras ── */}
+            <TabsContent value="shelves" className="mt-6 space-y-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-semibold text-foreground/70 tracking-tight">
+                    Prateleiras
+                  </h3>
+                  <p className="text-[11px] text-muted-foreground/35 mt-0.5">
+                    Organize a vitrine — arraste para reordenar
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  className="gap-1.5 bg-gold/90 text-gold-foreground hover:bg-gold shadow-lg shadow-gold/20 font-semibold"
+                  onClick={openCreate}
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Nova Prateleira
+                </Button>
+              </div>
+
+              {isLoading ? (
+                <div className="py-16 text-center">
+                  <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+                    Carregando prateleiras...
+                  </p>
+                </div>
+              ) : shelves.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-border/12 bg-card/3 py-16 text-center">
+                  <Layout className="mx-auto mb-4 h-8 w-8 text-muted-foreground/15" />
+                  <p className="text-sm text-muted-foreground/35">
+                    Nenhuma prateleira criada ainda.
+                  </p>
+                  <p className="text-[12px] text-muted-foreground/25 mt-1">
+                    Crie prateleiras para organizar os cursos na vitrine do aluno.
+                  </p>
+                  <Button
+                    size="sm"
+                    className="mt-5 bg-gold/90 text-gold-foreground hover:bg-gold shadow-lg shadow-gold/20"
+                    onClick={openCreate}
+                  >
+                    <Plus className="h-3.5 w-3.5 mr-1.5" />
+                    Criar primeira prateleira
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-2.5">
+                  {shelves.map((shelf: any, idx: number) => {
+                    const courseCount = shelf.shelf_courses?.length || 0;
+                    return (
+                      <div
+                        key={shelf.id}
+                        draggable
+                        onDragStart={shelfDrag.handleDragStart(idx)}
+                        onDragEnd={shelfDrag.handleDragEnd}
+                        onDragOver={shelfDrag.handleDragOver(idx)}
+                        className="flex items-center gap-4 rounded-xl border border-border/15 bg-card/8 px-5 py-3.5 transition-all hover:bg-card/12 cursor-grab active:cursor-grabbing"
+                      >
+                        <GripVertical className="h-4 w-4 text-muted-foreground/15 shrink-0" />
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <p className="text-[13px] font-semibold text-foreground/80 truncate">
+                              {shelf.name}
+                            </p>
+                            <Badge
+                              variant="outline"
+                              className={`text-[9px] rounded-full px-2 border font-medium ${
+                                shelf.is_active
+                                  ? "text-emerald-400/80 border-emerald-500/25 bg-emerald-500/10"
+                                  : "text-muted-foreground/40 border-border/15"
+                              }`}
+                            >
+                              {shelf.is_active ? "Ativa" : "Inativa"}
+                            </Badge>
+                            <Badge
+                              variant="outline"
+                              className="text-[9px] rounded-full px-2 border text-muted-foreground/50 border-border/15"
+                            >
+                              {modeLabel(shelf.mode)}
+                            </Badge>
+                            {shelf.mode === "auto" && (
+                              <Badge
+                                variant="outline"
+                                className="text-[9px] rounded-full px-2 border text-gold/50 border-gold/15 bg-gold/5"
+                              >
+                                {criteriaLabel(shelf.auto_criteria)}
+                              </Badge>
+                            )}
+                          </div>
+                          <p className="text-[10px] text-muted-foreground/25 mt-0.5">
+                            {shelf.mode === "manual"
+                              ? `${courseCount} curso(s) vinculado(s)`
+                              : `Preenchimento automático: ${criteriaLabel(shelf.auto_criteria)}`}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-1 shrink-0">
+                          {shelf.mode === "manual" && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7 text-muted-foreground/25 hover:text-gold/60"
+                              onClick={() => openCourses(shelf)}
+                              title="Gerenciar cursos"
+                            >
+                              <BookOpen className="h-3.5 w-3.5" />
+                            </Button>
+                          )}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-muted-foreground/25 hover:text-foreground/60"
+                            onClick={() => openEdit(shelf)}
+                            title="Editar"
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-muted-foreground/25 hover:text-destructive/60"
+                            onClick={() => setDeleteTarget(shelf)}
+                            title="Excluir"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        {/* Right: Preview panel */}
+        {showPreview && (
+          <div className="w-[340px] shrink-0 hidden lg:block">
+            <div className="sticky top-4 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Monitor className="h-4 w-4 text-muted-foreground/40" />
+                  <span className="text-[12px] font-semibold text-foreground/60">
+                    Pré-visualização
+                  </span>
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[9px] font-bold uppercase tracking-wider text-emerald-400/80">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/80 animate-pulse" />
+                    Ao vivo
+                  </span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 text-[10px] text-muted-foreground/30 hover:text-foreground/60"
+                  onClick={() => setShowPreview(false)}
+                >
+                  <EyeOff className="h-3 w-3 mr-1" />
+                  Esconder
+                </Button>
+              </div>
+
+              {/* Mini preview */}
+              <div className="rounded-xl border border-border/15 bg-background/50 overflow-hidden">
+                {/* Mini banner */}
+                <div className="relative w-full aspect-[21/8] bg-card/10">
+                  {featuredCourse && (bannerImageUrl || featuredCourse.banner_image_url || featuredCourse.cover_image_url) ? (
+                    <img
+                      src={bannerImageUrl || featuredCourse.banner_image_url || featuredCourse.cover_image_url}
+                      alt=""
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-card/20 to-card/5" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                  <div className="absolute bottom-2 left-3">
+                    <p className="text-[7px] font-bold uppercase tracking-[0.3em] text-gold/40">Em destaque</p>
+                    <p className="text-[10px] font-bold text-foreground/80 leading-tight mt-0.5 line-clamp-1">
+                      {bannerTitle || featuredCourse?.title || "Banner Principal"}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Mini shelves */}
+                <div className="p-3 space-y-3">
+                  {activeShelves.length === 0 ? (
+                    <p className="text-[9px] text-muted-foreground/25 text-center py-4">
+                      Nenhuma prateleira ativa
+                    </p>
+                  ) : (
+                    activeShelves.slice(0, 3).map((shelf: any) => {
+                      const shelfCourses = (shelf.shelf_courses || [])
+                        .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+                        .map((sc: any) => sc.courses)
+                        .filter(Boolean);
+                      return (
+                        <div key={shelf.id}>
+                          <p className="text-[9px] font-bold text-foreground/50 mb-1.5 truncate">
+                            {shelf.name}
+                          </p>
+                          <div className="flex gap-1.5 overflow-hidden">
+                            {shelfCourses.length > 0 ? (
+                              shelfCourses.slice(0, 4).map((c: any) => (
+                                <div key={c.id} className="shrink-0 w-[48px]">
+                                  <div className="aspect-[2/3] rounded-md overflow-hidden border border-border/8 bg-card/10">
+                                    {c.cover_image_url ? (
+                                      <img src={c.cover_image_url} alt="" className="w-full h-full object-cover" />
+                                    ) : (
+                                      <div className="w-full h-full bg-gradient-to-br from-card/20 to-card/5" />
+                                    )}
+                                  </div>
+                                </div>
+                              ))
+                            ) : (
+                              <>
+                                {[1, 2, 3, 4].map((i) => (
+                                  <div key={i} className="shrink-0 w-[48px]">
+                                    <div className="aspect-[2/3] rounded-md border border-border/6 bg-card/5" />
+                                  </div>
+                                ))}
+                              </>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                  {activeShelves.length > 3 && (
+                    <p className="text-[9px] text-muted-foreground/20 text-center">
+                      +{activeShelves.length - 3} prateleira(s)
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Link to student area */}
+              <a
+                href="/cursos"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-1.5 w-full py-2 rounded-lg border border-border/10 bg-card/5 text-[11px] text-muted-foreground/40 hover:text-gold/60 hover:border-gold/15 transition-all"
+              >
+                <ExternalLink className="h-3 w-3" />
+                Abrir vitrine do aluno
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Show preview button when hidden */}
+      {!showPreview && (
+        <div className="fixed bottom-6 right-6 z-40 hidden lg:block">
+          <Button
+            size="sm"
+            variant="outline"
+            className="gap-1.5 border-gold/20 text-gold/60 hover:text-gold hover:border-gold/30 bg-background/90 backdrop-blur-sm shadow-lg"
+            onClick={() => setShowPreview(true)}
+          >
+            <Eye className="h-3.5 w-3.5" />
+            Mostrar Preview
+          </Button>
         </div>
       )}
 
-      {/* Create/Edit Dialog */}
+      {/* ── Create/Edit Dialog ── */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -430,10 +870,11 @@ function AdminShelvesPage() {
                 onChange={(e) => setFormName(e.target.value)}
                 placeholder="Ex: Lançamentos"
                 required
+                className="bg-card/10 border-border/15"
               />
             </div>
 
-            <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
+            <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
               <div>
                 <p className="text-sm font-medium text-foreground/70">Ativa</p>
                 <p className="text-[11px] text-muted-foreground/40">
@@ -446,7 +887,7 @@ function AdminShelvesPage() {
             <div className="space-y-2">
               <Label>Modo</Label>
               <Select value={formMode} onValueChange={setFormMode}>
-                <SelectTrigger>
+                <SelectTrigger className="bg-card/10 border-border/15">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -464,18 +905,14 @@ function AdminShelvesPage() {
               <div className="space-y-2">
                 <Label>Critério</Label>
                 <Select value={formCriteria} onValueChange={setFormCriteria}>
-                  <SelectTrigger>
+                  <SelectTrigger className="bg-card/10 border-border/15">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="recent">Mais recentes</SelectItem>
-                    <SelectItem value="best_selling">
-                      Mais liberados
-                    </SelectItem>
+                    <SelectItem value="best_selling">Mais liberados</SelectItem>
                     <SelectItem value="featured">Em destaque</SelectItem>
-                    <SelectItem value="enrolled">
-                      Cursos liberados do aluno
-                    </SelectItem>
+                    <SelectItem value="enrolled">Cursos liberados do aluno</SelectItem>
                     <SelectItem value="all">Todos os cursos</SelectItem>
                   </SelectContent>
                 </Select>
@@ -490,25 +927,25 @@ function AdminShelvesPage() {
                 max={999}
                 value={formOrder}
                 onChange={(e) => setFormOrder(Number(e.target.value))}
+                className="bg-card/10 border-border/15"
               />
             </div>
 
             <Button
               type="submit"
-              className="w-full bg-gold/90 text-black hover:bg-gold"
+              className="w-full bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
               disabled={createMut.isPending || updateMut.isPending}
             >
-              {createMut.isPending || updateMut.isPending
-                ? "Salvando..."
-                : editingShelf
-                  ? "Salvar"
-                  : "Criar Prateleira"}
+              {(createMut.isPending || updateMut.isPending) && (
+                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+              )}
+              {editingShelf ? "Salvar" : "Criar Prateleira"}
             </Button>
           </form>
         </DialogContent>
       </Dialog>
 
-      {/* Courses Dialog with drag-and-drop ordering */}
+      {/* ── Courses Dialog ── */}
       <Dialog
         open={!!coursesDialogShelf}
         onOpenChange={(v) => {
@@ -528,7 +965,7 @@ function AdminShelvesPage() {
                 <Label className="text-[11px] uppercase tracking-wider text-muted-foreground/40 mb-2 block">
                   Ordem dos cursos (arraste para reordenar)
                 </Label>
-                <div className="rounded-xl border border-border/10 bg-muted/5 divide-y divide-border/5">
+                <div className="rounded-xl border border-border/10 bg-card/5 divide-y divide-border/5">
                   {selectedCourseIds.map((courseId, idx) => {
                     const course = courses.find((c: any) => c.id === courseId);
                     if (!course) return null;
@@ -539,9 +976,9 @@ function AdminShelvesPage() {
                         onDragStart={coursesDrag.handleDragStart(idx)}
                         onDragEnd={coursesDrag.handleDragEnd}
                         onDragOver={coursesDrag.handleDragOver(idx)}
-                        className="flex items-center gap-3 px-4 py-3 cursor-grab active:cursor-grabbing hover:bg-muted/10 transition-colors"
+                        className="flex items-center gap-3 px-4 py-3 cursor-grab active:cursor-grabbing hover:bg-card/10 transition-colors"
                       >
-                        <GripVertical className="h-3.5 w-3.5 text-muted-foreground/20 shrink-0" />
+                        <GripVertical className="h-3.5 w-3.5 text-muted-foreground/15 shrink-0" />
                         <span className="text-[10px] font-bold text-muted-foreground/20 tabular-nums w-5 shrink-0">
                           {idx + 1}
                         </span>
@@ -552,7 +989,7 @@ function AdminShelvesPage() {
                             className="h-8 w-8 rounded-md object-cover shrink-0"
                           />
                         )}
-                        <span className="text-sm font-medium text-foreground/70 truncate flex-1">
+                        <span className="text-[12px] font-medium text-foreground/70 truncate flex-1">
                           {course.title}
                         </span>
                         <button
@@ -579,15 +1016,13 @@ function AdminShelvesPage() {
                   Nenhum curso cadastrado.
                 </p>
               ) : (
-                <div className="rounded-xl border border-border/10 bg-muted/5 max-h-48 overflow-y-auto divide-y divide-border/5">
+                <div className="rounded-xl border border-border/10 bg-card/5 max-h-48 overflow-y-auto divide-y divide-border/5">
                   {courses
-                    .filter(
-                      (c: any) => !selectedCourseIds.includes(c.id)
-                    )
+                    .filter((c: any) => !selectedCourseIds.includes(c.id))
                     .map((course: any) => (
                       <label
                         key={course.id}
-                        className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-muted/10"
+                        className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-card/10"
                       >
                         <Checkbox
                           checked={false}
@@ -600,20 +1035,18 @@ function AdminShelvesPage() {
                             className="h-8 w-8 rounded-md object-cover shrink-0"
                           />
                         )}
-                        <span className="text-sm font-medium text-foreground/70 truncate flex-1">
+                        <span className="text-[12px] font-medium text-foreground/70 truncate flex-1">
                           {course.title}
                         </span>
                         <Badge
                           variant="outline"
-                          className={`text-[9px] shrink-0 ${
+                          className={`text-[9px] shrink-0 rounded-full px-2 border ${
                             course.status === "published"
-                              ? "text-emerald-400/70 border-emerald-500/20"
+                              ? "text-emerald-400/70 border-emerald-500/20 bg-emerald-500/8"
                               : "text-muted-foreground/40 border-border/15"
                           }`}
                         >
-                          {course.status === "published"
-                            ? "Publicado"
-                            : "Rascunho"}
+                          {course.status === "published" ? "Publicado" : "Rascunho"}
                         </Badge>
                       </label>
                     ))}
@@ -625,7 +1058,7 @@ function AdminShelvesPage() {
               {selectedCourseIds.length} curso(s) selecionado(s)
             </p>
             <Button
-              className="w-full bg-gold/90 text-black hover:bg-gold"
+              className="w-full bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
               disabled={setCoursesMut.isPending}
               onClick={() => {
                 if (coursesDialogShelf) {
@@ -636,13 +1069,16 @@ function AdminShelvesPage() {
                 }
               }}
             >
+              {setCoursesMut.isPending ? (
+                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+              ) : null}
               {setCoursesMut.isPending ? "Salvando..." : "Salvar Cursos"}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirm */}
+      {/* ── Delete Confirm ── */}
       <AlertDialog
         open={!!deleteTarget}
         onOpenChange={(v) => {
@@ -679,6 +1115,43 @@ function AdminShelvesPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+    </div>
+  );
+}
+
+/* ── Summary Card ── */
+
+function SummaryCard({
+  label,
+  value,
+  icon: Icon,
+  color,
+}: {
+  label: string;
+  value: string | number;
+  icon: any;
+  color: string;
+}) {
+  const colorMap: Record<string, string> = {
+    emerald: "bg-emerald-500/8 border-emerald-500/15 text-emerald-400/60",
+    gold: "bg-gold/8 border-gold/15 text-gold/60",
+    amber: "bg-amber-500/8 border-amber-500/15 text-amber-400/60",
+  };
+  const cls = colorMap[color] || colorMap.gold;
+
+  return (
+    <div className="rounded-xl border border-border/15 bg-card/5 px-5 py-4 flex items-center gap-4">
+      <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 ${cls}`}>
+        <Icon className="h-5 w-5" />
+      </div>
+      <div className="min-w-0">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground/35 font-medium">
+          {label}
+        </p>
+        <p className="text-lg font-bold text-foreground/80 tabular-nums mt-0.5">
+          {value}
+        </p>
+      </div>
     </div>
   );
 }
