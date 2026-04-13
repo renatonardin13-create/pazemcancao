@@ -176,7 +176,6 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   <SelectContent>
                     <SelectItem value="draft">Rascunho</SelectItem>
                     <SelectItem value="published">Publicado</SelectItem>
-                    <SelectItem value="archived">Arquivado</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
