@@ -1,8 +1,9 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
-import { listCategories } from "@/lib/tracks.functions";
+import { listCategories, listTracks } from "@/lib/tracks.functions";
 import { getStudentShelves } from "@/lib/shelves.functions";
+import { getMyCoursesData } from "@/lib/my-courses.functions";
 import { LogoBrand } from "./LogoBrand";
 import {
   Store,
@@ -37,8 +38,22 @@ export function StudentSidebar() {
     staleTime: 60_000,
   });
 
+  const { data: myCoursesData } = useQuery({
+    queryKey: ["my-courses"],
+    queryFn: () => getMyCoursesData(),
+    staleTime: 60_000,
+  });
+
+  const { data: tracksData } = useQuery({
+    queryKey: ["tracks-list"],
+    queryFn: () => listTracks(),
+    staleTime: 60_000,
+  });
+
   const categories = catData?.categories || [];
   const hasVitrine = (shelvesData?.shelves || []).length > 0;
+  const hasCourses = (myCoursesData?.courses || []).length > 0;
+  const hasTracks = (tracksData?.tracks || []).length > 0;
 
   const isActive = (path: string) => location.pathname === path;
   const isActivePrefix = (path: string) => location.pathname.startsWith(path);
