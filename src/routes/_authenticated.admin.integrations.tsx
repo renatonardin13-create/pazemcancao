@@ -51,27 +51,32 @@ function IntegrationsPage() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-6xl mx-auto space-y-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Link to="/admin" className="text-muted-foreground/50 hover:text-muted-foreground transition-colors">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-          <div>
-            <div className="flex items-center gap-2">
-              <Webhook className="h-5 w-5 text-gold/60" />
-              <h1 className="text-2xl font-bold text-foreground">Integrações</h1>
+      <div className="relative rounded-2xl border border-gold/10 bg-gradient-to-r from-card via-card/80 to-card px-6 py-4 overflow-hidden shadow-xl shadow-black/10">
+        <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gold/[0.05] blur-[60px]" />
+        <div className="flex items-center justify-between relative z-10">
+          <div className="flex items-center gap-3">
+            <Link
+              to="/admin"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/15 bg-background/30 text-muted-foreground/50 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all duration-200"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+            <div>
+              <h1 className="font-display text-xl font-black text-foreground tracking-tight">
+                Integrações
+              </h1>
+              <p className="text-[11px] text-muted-foreground/50 mt-0.5">
+                Configure webhooks para liberar acesso automático após compras
+              </p>
             </div>
-            <p className="text-sm text-muted-foreground mt-0.5">
-              Configure webhooks para liberar acesso automático após compras
-            </p>
           </div>
+          <Button variant="outline" size="sm" onClick={() => setLogsOpen(true)} className="gap-2">
+            <ScrollText className="h-4 w-4" />
+            Ver Logs
+          </Button>
         </div>
-        <Button variant="outline" size="sm" onClick={() => setLogsOpen(true)} className="gap-2">
-          <ScrollText className="h-4 w-4" />
-          Ver Logs Completos
-        </Button>
       </div>
 
       {/* Logs Dialog */}
