@@ -56,7 +56,9 @@ export const createModule = createServerFn({ method: 'POST' })
         title: data.title,
         description: data.description || null,
         sort_order: nextOrder,
-      })
+        status: data.status || 'published',
+        thumbnail_url: data.thumbnail_url || null,
+      } as any)
       .select()
       .single();
 
