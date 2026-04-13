@@ -264,410 +264,288 @@ function AdminUsersPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
+    <div className="max-w-7xl mx-auto space-y-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-foreground/85 tracking-tight">
-            Usuários
-          </h1>
-          <p className="mt-1 text-[13px] text-muted-foreground/40">
-            Gerencie os compradores e clientes de teste
-          </p>
+        <div className="flex items-center gap-3">
+          <Users className="h-6 w-6 text-gold/60" />
+          <div>
+            <h1 className="font-display text-2xl font-bold text-foreground/90 tracking-tight">
+              Alunos
+            </h1>
+            <p className="text-[13px] text-muted-foreground/45">
+              Gerencie os alunos da sua plataforma ({totalUsers} total)
+            </p>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
-          {/* Add Student Dialog */}
-          <Dialog open={addOpen} onOpenChange={(v) => { setAddOpen(v); if (!v) resetAddForm(); }}>
-            <DialogTrigger asChild>
-              <Button className="gap-2 bg-gold/90 text-black hover:bg-gold">
-                <UserPlus className="h-4 w-4" />
-                Adicionar Aluno
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-lg">
-              <DialogHeader>
-                <DialogTitle className="font-display">Adicionar Aluno</DialogTitle>
-              </DialogHeader>
+        <Dialog open={addOpen} onOpenChange={(v) => { setAddOpen(v); if (!v) resetAddForm(); }}>
+          <DialogTrigger asChild>
+            <Button className="gap-2 bg-gold/90 text-gold-foreground hover:bg-gold font-semibold">
+              <UserPlus className="h-4 w-4" />
+              Adicionar Aluno
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="font-display">Adicionar Aluno</DialogTitle>
+            </DialogHeader>
 
-              {addPassword ? (
-                <div className="space-y-4 mt-4">
-                  <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-center">
-                    <KeyRound className="h-8 w-8 text-emerald-400/60 mx-auto mb-3" />
-                    <p className="text-sm font-semibold text-foreground/80 mb-1">Aluno cadastrado!</p>
-                    <p className="text-[12px] text-muted-foreground/50 mb-4">Envie a senha abaixo para o aluno acessar:</p>
-                    <div className="flex items-center gap-2 justify-center">
-                      <code className="rounded-lg bg-card/20 border border-border/20 px-4 py-2 text-lg font-mono font-bold text-gold tracking-wider">
-                        {addPassword}
-                      </code>
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(addPassword);
-                          toast.success("Senha copiada!");
-                        }}
-                        className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/40 hover:text-gold/70 hover:bg-gold/10 transition-all"
-                        title="Copiar senha"
-                      >
-                        <Copy className="h-4 w-4" />
-                      </button>
-                    </div>
-                    {addCourseIds.length > 0 && (
-                      <p className="text-[11px] text-emerald-400/60 mt-3">
-                        <Check className="h-3 w-3 inline mr-1" />
-                        {addCourseIds.length} curso(s) liberado(s) automaticamente
-                      </p>
-                    )}
+            {addPassword ? (
+              <div className="space-y-4 mt-4">
+                <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-center">
+                  <KeyRound className="h-8 w-8 text-emerald-400/60 mx-auto mb-3" />
+                  <p className="text-sm font-semibold text-foreground/80 mb-1">Aluno cadastrado!</p>
+                  <p className="text-[12px] text-muted-foreground/50 mb-4">Envie a senha abaixo para o aluno acessar:</p>
+                  <div className="flex items-center gap-2 justify-center">
+                    <code className="rounded-lg bg-card/20 border border-border/20 px-4 py-2 text-lg font-mono font-bold text-gold tracking-wider">
+                      {addPassword}
+                    </code>
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(addPassword);
+                        toast.success("Senha copiada!");
+                      }}
+                      className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/40 hover:text-gold/70 hover:bg-gold/10 transition-all"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </button>
                   </div>
-                  <Button
-                    className="w-full"
-                    onClick={() => { resetAddForm(); setAddOpen(false); }}
-                  >
-                    Fechar
-                  </Button>
+                  {addCourseIds.length > 0 && (
+                    <p className="text-[11px] text-emerald-400/60 mt-3">
+                      <Check className="h-3 w-3 inline mr-1" />
+                      {addCourseIds.length} curso(s) liberado(s) automaticamente
+                    </p>
+                  )}
                 </div>
-              ) : (
-                <form onSubmit={handleAddSubmit} className="space-y-4 mt-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="add-name">Nome</Label>
-                    <Input id="add-name" value={addName} onChange={(e) => setAddName(e.target.value)} placeholder="Nome do aluno" required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="add-email">E-mail</Label>
-                    <Input id="add-email" type="email" value={addEmail} onChange={(e) => setAddEmail(e.target.value)} placeholder="email@exemplo.com" required />
-                  </div>
-
-                  <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
-                    <div>
-                      <p className="text-sm font-medium text-foreground/70">Status</p>
-                      <p className="text-[11px] text-muted-foreground/40">
-                        {addEnabled ? "Ativo — aluno pode acessar a plataforma" : "Inativo — acesso bloqueado"}
-                      </p>
-                    </div>
-                    <Switch checked={addEnabled} onCheckedChange={setAddEnabled} />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="flex items-center gap-2">
-                      <BookOpen className="h-4 w-4 text-gold/60" />
-                      Cursos Liberados
-                    </Label>
-                    {courses.length === 0 ? (
-                      <div className="rounded-xl border border-border/10 bg-muted/5 p-4 text-center">
-                        <p className="text-[12px] text-muted-foreground/40">
-                          Nenhum curso cadastrado ainda.
-                        </p>
-                      </div>
-                    ) : (
-                      <div className="rounded-xl border border-border/10 bg-muted/5 max-h-48 overflow-y-auto divide-y divide-border/5">
-                        {courses.map((course: any) => {
-                          const isSelected = addCourseIds.includes(course.id);
-                          return (
-                            <label
-                              key={course.id}
-                              className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-muted/10 ${
-                                isSelected ? "bg-gold/5" : ""
-                              }`}
-                            >
-                              <Checkbox
-                                checked={isSelected}
-                                onCheckedChange={() => toggleCourseSelection(course.id)}
-                              />
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-foreground/70 truncate">
-                                  {course.title}
-                                </p>
-                              </div>
-                              <Badge
-                                variant="outline"
-                                className={`text-[9px] shrink-0 ${
-                                  course.status === "published"
-                                    ? "text-emerald-400/70 border-emerald-500/20"
-                                    : "text-muted-foreground/40 border-border/15"
-                                }`}
-                              >
-                                {course.status === "published" ? "Publicado" : "Rascunho"}
-                              </Badge>
-                            </label>
-                          );
-                        })}
-                      </div>
-                    )}
-                    {addCourseIds.length > 0 && (
-                      <p className="text-[11px] text-gold/60">
-                        {addCourseIds.length} curso(s) selecionado(s)
-                      </p>
-                    )}
-                  </div>
-
-                  <Button type="submit" className="w-full bg-gold/90 text-black hover:bg-gold" disabled={addStudentMut.isPending}>
-                    {addStudentMut.isPending ? "Salvando..." : "Adicionar Aluno"}
-                  </Button>
-                </form>
-              )}
-            </DialogContent>
-          </Dialog>
-
-          {/* Trial Dialog */}
-          <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (v) setGeneratedPassword(null); }}>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="gap-2">
-                <Clock className="h-4 w-4" />
-                Cadastrar Teste
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle className="font-display">Cadastrar Cliente de Teste</DialogTitle>
-              </DialogHeader>
-
-              {generatedPassword ? (
-                <div className="space-y-4 mt-4">
-                  <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-center">
-                    <KeyRound className="h-8 w-8 text-emerald-400/60 mx-auto mb-3" />
-                    <p className="text-sm font-semibold text-foreground/80 mb-1">Cliente cadastrado!</p>
-                    <p className="text-[12px] text-muted-foreground/50 mb-4">Envie a senha abaixo para o cliente acessar:</p>
-                    <div className="flex items-center gap-2 justify-center">
-                      <code className="rounded-lg bg-card/20 border border-border/20 px-4 py-2 text-lg font-mono font-bold text-gold tracking-wider">
-                        {generatedPassword}
-                      </code>
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(generatedPassword);
-                          toast.success("Senha copiada!");
-                        }}
-                        className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/40 hover:text-gold/70 hover:bg-gold/10 transition-all"
-                        title="Copiar senha"
-                      >
-                        <Copy className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </div>
-                  <Button
-                    className="w-full"
-                    onClick={() => { setGeneratedPassword(null); setOpen(false); }}
-                  >
-                    Fechar
-                  </Button>
+                <Button className="w-full" onClick={() => { resetAddForm(); setAddOpen(false); }}>
+                  Fechar
+                </Button>
+              </div>
+            ) : (
+              <form onSubmit={handleAddSubmit} className="space-y-4 mt-4">
+                <div className="space-y-2">
+                  <Label htmlFor="add-name">Nome</Label>
+                  <Input id="add-name" value={addName} onChange={(e) => setAddName(e.target.value)} placeholder="Nome do aluno" required />
                 </div>
-              ) : (
-                <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    createTrial.mutate({ email: trialEmail, nome: trialName, trialDays });
-                  }}
-                  className="space-y-4 mt-4"
-                >
-                  <div className="space-y-2">
-                    <Label htmlFor="trial-name">Nome</Label>
-                    <Input id="trial-name" value={trialName} onChange={(e) => setTrialName(e.target.value)} placeholder="Nome do cliente" required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="trial-email">E-mail</Label>
-                    <Input id="trial-email" type="email" value={trialEmail} onChange={(e) => setTrialEmail(e.target.value)} placeholder="email@exemplo.com" required />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="trial-days">Dias de teste</Label>
-                    <Input id="trial-days" type="number" min={1} max={90} value={trialDays} onChange={(e) => setTrialDays(Number(e.target.value))} required />
+                <div className="space-y-2">
+                  <Label htmlFor="add-email">E-mail</Label>
+                  <Input id="add-email" type="email" value={addEmail} onChange={(e) => setAddEmail(e.target.value)} placeholder="email@exemplo.com" required />
+                </div>
+                <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
+                  <div>
+                    <p className="text-sm font-medium text-foreground/70">Status</p>
                     <p className="text-[11px] text-muted-foreground/40">
-                      O cliente poderá apenas ouvir (sem download). Após o prazo, o acesso será bloqueado.
+                      {addEnabled ? "Ativo — aluno pode acessar a plataforma" : "Inativo — acesso bloqueado"}
                     </p>
                   </div>
-                  <Button type="submit" className="w-full" disabled={createTrial.isPending}>
-                    {createTrial.isPending ? "Cadastrando..." : "Cadastrar Cliente de Teste"}
-                  </Button>
-                </form>
-              )}
-            </DialogContent>
-          </Dialog>
-        </div>
+                  <Switch checked={addEnabled} onCheckedChange={setAddEnabled} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="flex items-center gap-2">
+                    <BookOpen className="h-4 w-4 text-gold/60" />
+                    Cursos Liberados
+                  </Label>
+                  {courses.length === 0 ? (
+                    <div className="rounded-xl border border-border/10 bg-muted/5 p-4 text-center">
+                      <p className="text-[12px] text-muted-foreground/40">Nenhum curso cadastrado ainda.</p>
+                    </div>
+                  ) : (
+                    <div className="rounded-xl border border-border/10 bg-muted/5 max-h-48 overflow-y-auto divide-y divide-border/5">
+                      {courses.map((course: any) => {
+                        const isSelected = addCourseIds.includes(course.id);
+                        return (
+                          <label key={course.id} className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-muted/10 ${isSelected ? "bg-gold/5" : ""}`}>
+                            <Checkbox checked={isSelected} onCheckedChange={() => toggleCourseSelection(course.id)} />
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-foreground/70 truncate">{course.title}</p>
+                            </div>
+                            <Badge variant="outline" className={`text-[9px] shrink-0 ${course.status === "published" ? "text-emerald-400/70 border-emerald-500/20" : "text-muted-foreground/40 border-border/15"}`}>
+                              {course.status === "published" ? "Publicado" : "Rascunho"}
+                            </Badge>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  )}
+                  {addCourseIds.length > 0 && (
+                    <p className="text-[11px] text-gold/60">{addCourseIds.length} curso(s) selecionado(s)</p>
+                  )}
+                </div>
+                <Button type="submit" className="w-full bg-gold/90 text-gold-foreground hover:bg-gold" disabled={addStudentMut.isPending}>
+                  {addStudentMut.isPending ? "Salvando..." : "Adicionar Aluno"}
+                </Button>
+              </form>
+            )}
+          </DialogContent>
+        </Dialog>
       </div>
 
-      {/* Edit Dialog */}
-      <Dialog open={editOpen} onOpenChange={setEditOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="font-display">Editar Usuário</DialogTitle>
-          </DialogHeader>
-          {editBuyer && (
-            <form onSubmit={handleEditSubmit} className="space-y-4 mt-4">
-              <div className="rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
-                <p className="text-[11px] text-muted-foreground/40 uppercase tracking-wider">E-mail</p>
-                <p className="text-sm font-medium text-foreground/70 mt-0.5">{editBuyer.email}</p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="edit-nome">Nome</Label>
-                <Input id="edit-nome" value={editNome} onChange={(e) => setEditNome(e.target.value)} required />
-              </div>
-
-              <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
-                <div>
-                  <p className="text-sm font-medium text-foreground/70">Acesso ativo</p>
-                  <p className="text-[11px] text-muted-foreground/40">Habilitar ou bloquear acesso</p>
-                </div>
-                <Switch checked={editEnabled} onCheckedChange={setEditEnabled} />
-              </div>
-
-              <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
-                <div>
-                  <p className="text-sm font-medium text-foreground/70">Modo teste</p>
-                  <p className="text-[11px] text-muted-foreground/40">Apenas ouvir, sem download</p>
-                </div>
-                <Switch checked={editIsTrial} onCheckedChange={setEditIsTrial} />
-              </div>
-
-              {editIsTrial && (
-                <div className="space-y-2">
-                  <Label htmlFor="edit-trial-days">Renovar dias de teste</Label>
-                  <Input
-                    id="edit-trial-days"
-                    type="number"
-                    min={1}
-                    max={90}
-                    value={editTrialDays}
-                    onChange={(e) => setEditTrialDays(Number(e.target.value))}
-                  />
-                  <p className="text-[11px] text-muted-foreground/40">
-                    {editBuyer.trial_expires_at
-                      ? `Expira em: ${formatDate(editBuyer.trial_expires_at)}`
-                      : "Sem data de expiração definida"}
-                    . Ao salvar, será renovado por {editTrialDays} dias a partir de hoje.
-                  </p>
-                </div>
-              )}
-
-              <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
-                <div>
-                  <p className="text-sm font-medium text-foreground/70">Permitir download</p>
-                  <p className="text-[11px] text-muted-foreground/40">Baixar músicas em MP3</p>
-                </div>
-                <Switch checked={editCanDownload} onCheckedChange={setEditCanDownload} disabled={editIsTrial} />
-              </div>
-
-              <Button type="submit" className="w-full" disabled={update.isPending}>
-                {update.isPending ? "Salvando..." : "Salvar alterações"}
-              </Button>
-            </form>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+      {/* Stat Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {[
-          { label: "Usuários", value: totalUsers, icon: Users, color: "text-foreground/70" },
-          { label: "Com acesso", value: enabledUsers, icon: ShieldCheck, color: "text-emerald-400/60" },
-          { label: "Bloqueados", value: blockedUsers, icon: Ban, color: "text-destructive/60" },
-          { label: "Online", value: onlineUsers, icon: Activity, color: "text-gold/60" },
-          { label: "Em teste", value: trialUsers, icon: Clock, color: "text-amber-400/60" },
+          { label: "Ativos", value: enabledUsers, color: "text-gold" },
+          { label: "Inativos", value: inactiveUsers, color: "text-muted-foreground/60" },
+          { label: "Bloqueados", value: blockedUsers, color: "text-destructive/70" },
+          { label: "Progresso Médio", value: "0%", color: "text-gold", isProgress: true },
         ].map((stat) => (
           <div
             key={stat.label}
-            className="rounded-2xl border border-border/15 bg-card/10 p-5 transition-colors hover:bg-card/15"
+            className="rounded-xl border border-border/15 bg-card/8 p-5"
           >
-            <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-xl bg-muted/20">
-              <stat.icon className={`h-4 w-4 ${stat.color}`} />
-            </div>
-            <p className="font-display text-2xl font-bold text-foreground/80">
+            <p className="text-[11px] text-muted-foreground/45 mb-1">{stat.label}</p>
+            <p className={`font-display text-2xl font-bold ${stat.color}`}>
               {isLoading ? "—" : stat.value}
-            </p>
-            <p className="mt-1 text-[10px] uppercase tracking-[0.3em] text-muted-foreground/30">
-              {stat.label}
             </p>
           </div>
         ))}
       </div>
 
+      {/* Search & Filters */}
+      <div className="flex items-center gap-3">
+        <div className="flex-1 relative">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
+          <Input
+            value={searchQuery}
+            onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
+            placeholder="Buscar por nome ou email..."
+            className="pl-10 bg-card/10 border-border/15"
+          />
+        </div>
+        <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
+          <SelectTrigger className="w-[140px] bg-card/10 border-border/15">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos</SelectItem>
+            <SelectItem value="active">Ativos</SelectItem>
+            <SelectItem value="trial">Em teste</SelectItem>
+            <SelectItem value="blocked">Bloqueados</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={courseFilter} onValueChange={(v) => { setCourseFilter(v); setCurrentPage(1); }}>
+          <SelectTrigger className="w-[180px] bg-card/10 border-border/15">
+            <SelectValue placeholder="Todos os cursos" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Todos os cursos</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* Table */}
       {isLoading ? (
         <div className="py-16 text-center">
           <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
-            Carregando usuários...
+            Carregando alunos...
           </p>
         </div>
-      ) : !buyers.length ? (
-        <div className="rounded-2xl border border-border/15 bg-card/5 py-16 text-center">
+      ) : !filteredBuyers.length ? (
+        <div className="rounded-xl border border-border/15 bg-card/5 py-16 text-center">
           <Users className="mx-auto mb-4 h-8 w-8 text-muted-foreground/15" />
-          <p className="text-sm text-muted-foreground/35">Nenhum usuário encontrado.</p>
+          <p className="text-sm text-muted-foreground/35">Nenhum aluno encontrado.</p>
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-border/15">
-          {buyers.map((buyer: any) => {
+        <div className="rounded-xl border border-border/15 overflow-hidden">
+          {/* Table header */}
+          <div className="grid grid-cols-[1fr_1fr_100px_80px_140px_120px_50px] gap-4 px-5 py-3 border-b border-border/10 bg-card/5">
+            <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">Aluno</span>
+            <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">Email</span>
+            <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">Status</span>
+            <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider text-center">Cursos</span>
+            <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">Progresso</span>
+            <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">Último Acesso</span>
+            <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider text-center">Ações</span>
+          </div>
+
+          {/* Table rows */}
+          {paginatedBuyers.map((buyer: any) => {
             const isOnline = activeSessionEmails.has(buyer.email.toLowerCase());
-            const isEnabled = buyer.access_enabled;
+            const isEnabledBuyer = buyer.access_enabled;
             const isTrial = buyer.is_trial;
             const expired = isTrialExpired(buyer);
-            const remaining = daysLeft(buyer);
 
             return (
               <div
                 key={buyer.id}
-                className="flex items-center gap-4 border-b border-border/8 px-5 py-4 transition-colors hover:bg-card/10 last:border-0"
+                className="grid grid-cols-[1fr_1fr_100px_80px_140px_120px_50px] gap-4 items-center px-5 py-3.5 border-b border-border/6 hover:bg-card/8 transition-colors last:border-0"
               >
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted/15 text-sm font-semibold text-foreground/70 shrink-0">
-                  {(buyer.nome || buyer.email).slice(0, 1).toUpperCase()}
-                </div>
-
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-foreground/80">
+                {/* Aluno */}
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gold/15 text-sm font-bold text-gold shrink-0">
+                    {(buyer.nome || buyer.email).slice(0, 1).toUpperCase()}
+                  </div>
+                  <span className="text-sm font-semibold text-foreground/85 truncate">
                     {buyer.nome || "Sem nome"}
-                  </p>
-                  <p className="truncate text-[11px] text-muted-foreground/30">{buyer.email}</p>
+                  </span>
                 </div>
 
-                <div className="flex items-center gap-2 flex-wrap justify-end">
-                  {isTrial && (
-                    <Badge
-                      variant="outline"
-                      className={expired
-                        ? "border-destructive/20 bg-destructive/8 text-destructive/60"
-                        : "border-amber-500/20 bg-amber-500/8 text-amber-400/70"}
-                    >
-                      <Clock className="h-3 w-3 mr-1" />
-                      {expired ? "Expirado" : `${remaining}d restantes`}
+                {/* Email */}
+                <span className="text-[13px] text-muted-foreground/50 truncate">
+                  {buyer.email}
+                </span>
+
+                {/* Status */}
+                <div>
+                  {!isEnabledBuyer ? (
+                    <Badge className="bg-destructive/15 text-destructive/80 border-0 text-[10px] font-semibold">
+                      Bloqueado
+                    </Badge>
+                  ) : isTrial && expired ? (
+                    <Badge className="bg-amber-500/15 text-amber-400/80 border-0 text-[10px] font-semibold">
+                      Expirado
+                    </Badge>
+                  ) : (
+                    <Badge className="bg-emerald-500/15 text-emerald-400/80 border-0 text-[10px] font-semibold">
+                      Ativo
                     </Badge>
                   )}
-                  <Badge
-                    variant="outline"
-                    className={isOnline
-                      ? "border-gold/20 bg-gold/10 text-gold/70"
-                      : "border-border/20 text-muted-foreground/35"}
-                  >
-                    {isOnline ? "Online" : "Offline"}
-                  </Badge>
-                  <Badge
-                    variant="outline"
-                    className={isEnabled
-                      ? "border-emerald-500/15 bg-emerald-500/8 text-emerald-400/60"
-                      : "border-destructive/15 bg-destructive/8 text-destructive/60"}
-                  >
-                    {isEnabled ? (isTrial ? "Teste" : "Ativo") : "Bloqueado"}
-                  </Badge>
+                </div>
 
-                  <button
-                    onClick={() => toggleAccess.mutate({ buyerId: buyer.id, access_enabled: !isEnabled })}
-                    className={`flex h-8 w-8 items-center justify-center rounded-lg transition-all duration-300 ${
-                      isEnabled
-                        ? "text-emerald-400/50 hover:text-destructive/70 hover:bg-destructive/10"
-                        : "text-destructive/50 hover:text-emerald-400/70 hover:bg-emerald-500/10"
-                    }`}
-                    title={isEnabled ? "Bloquear acesso" : "Liberar acesso"}
-                  >
-                    {isEnabled ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
-                  </button>
+                {/* Cursos */}
+                <span className="text-sm text-foreground/60 text-center font-medium">0</span>
 
-                  <button
-                    onClick={() => openEditDialog(buyer)}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/30 hover:text-foreground/60 hover:bg-muted/20 transition-all duration-300"
-                    title="Editar"
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                  </button>
+                {/* Progresso */}
+                <div className="flex items-center gap-2">
+                  <Progress value={0} className="h-1.5 flex-1 bg-muted/20" />
+                  <span className="text-[11px] text-muted-foreground/40 tabular-nums w-8 text-right">0%</span>
+                </div>
 
-                  <button
-                    onClick={() => setDeleteTarget(buyer)}
-                    className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/30 hover:text-destructive/70 hover:bg-destructive/10 transition-all duration-300"
-                    title="Excluir"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
+                {/* Último Acesso */}
+                <span className="text-[12px] text-muted-foreground/40">
+                  {buyer.last_login_at ? formatDate(buyer.last_login_at) : "Nunca"}
+                </span>
+
+                {/* Ações */}
+                <div className="flex justify-center">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/30 hover:text-foreground/60 hover:bg-muted/20 transition-all">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem onClick={() => openEditDialog(buyer)} className="gap-2">
+                        <Pencil className="h-3.5 w-3.5" />
+                        Editar aluno
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={() => toggleAccess.mutate({ buyerId: buyer.id, access_enabled: !isEnabledBuyer })}
+                        className="gap-2"
+                      >
+                        {isEnabledBuyer ? <ToggleLeft className="h-3.5 w-3.5" /> : <ToggleRight className="h-3.5 w-3.5" />}
+                        {isEnabledBuyer ? "Bloquear acesso" : "Liberar acesso"}
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem
+                        onClick={() => setDeleteTarget(buyer)}
+                        className="gap-2 text-destructive focus:text-destructive"
+                      >
+                        <Trash2 className="h-3.5 w-3.5" />
+                        Excluir aluno
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
             );
@@ -675,29 +553,161 @@ function AdminUsersPage() {
         </div>
       )}
 
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-1">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/40 hover:text-foreground/70 hover:bg-muted/15 disabled:opacity-25 transition-all"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+            <button
+              key={page}
+              onClick={() => setCurrentPage(page)}
+              className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-all ${
+                page === currentPage
+                  ? "bg-gold/90 text-gold-foreground"
+                  : "text-muted-foreground/50 hover:text-foreground/70 hover:bg-muted/15"
+              }`}
+            >
+              {page}
+            </button>
+          ))}
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage === totalPages}
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/40 hover:text-foreground/70 hover:bg-muted/15 disabled:opacity-25 transition-all"
+          >
+            <ChevronRight className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
+      {/* Edit Dialog */}
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-display">Editar Aluno</DialogTitle>
+          </DialogHeader>
+          {editBuyer && (
+            <form onSubmit={handleEditSubmit} className="space-y-4 mt-4">
+              <div className="rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
+                <p className="text-[11px] text-muted-foreground/40 uppercase tracking-wider">E-mail</p>
+                <p className="text-sm font-medium text-foreground/70 mt-0.5">{editBuyer.email}</p>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-nome">Nome</Label>
+                <Input id="edit-nome" value={editNome} onChange={(e) => setEditNome(e.target.value)} required />
+              </div>
+              <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
+                <div>
+                  <p className="text-sm font-medium text-foreground/70">Acesso ativo</p>
+                  <p className="text-[11px] text-muted-foreground/40">Habilitar ou bloquear acesso</p>
+                </div>
+                <Switch checked={editEnabled} onCheckedChange={setEditEnabled} />
+              </div>
+              <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
+                <div>
+                  <p className="text-sm font-medium text-foreground/70">Modo teste</p>
+                  <p className="text-[11px] text-muted-foreground/40">Apenas ouvir, sem download</p>
+                </div>
+                <Switch checked={editIsTrial} onCheckedChange={setEditIsTrial} />
+              </div>
+              {editIsTrial && (
+                <div className="space-y-2">
+                  <Label htmlFor="edit-trial-days">Renovar dias de teste</Label>
+                  <Input id="edit-trial-days" type="number" min={1} max={90} value={editTrialDays} onChange={(e) => setEditTrialDays(Number(e.target.value))} />
+                  <p className="text-[11px] text-muted-foreground/40">
+                    {editBuyer.trial_expires_at ? `Expira em: ${formatDate(editBuyer.trial_expires_at)}` : "Sem data de expiração definida"}.
+                    Ao salvar, será renovado por {editTrialDays} dias a partir de hoje.
+                  </p>
+                </div>
+              )}
+              <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
+                <div>
+                  <p className="text-sm font-medium text-foreground/70">Permitir download</p>
+                  <p className="text-[11px] text-muted-foreground/40">Baixar músicas em MP3</p>
+                </div>
+                <Switch checked={editCanDownload} onCheckedChange={setEditCanDownload} disabled={editIsTrial} />
+              </div>
+              <Button type="submit" className="w-full bg-gold/90 text-gold-foreground hover:bg-gold" disabled={update.isPending}>
+                {update.isPending ? "Salvando..." : "Salvar alterações"}
+              </Button>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Trial Dialog */}
+      <Dialog open={open} onOpenChange={(v) => { setOpen(v); if (v) setGeneratedPassword(null); }}>
+        <DialogTrigger asChild>
+          <span />
+        </DialogTrigger>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-display">Cadastrar Cliente de Teste</DialogTitle>
+          </DialogHeader>
+          {generatedPassword ? (
+            <div className="space-y-4 mt-4">
+              <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-center">
+                <KeyRound className="h-8 w-8 text-emerald-400/60 mx-auto mb-3" />
+                <p className="text-sm font-semibold text-foreground/80 mb-1">Cliente cadastrado!</p>
+                <p className="text-[12px] text-muted-foreground/50 mb-4">Envie a senha abaixo para o cliente acessar:</p>
+                <div className="flex items-center gap-2 justify-center">
+                  <code className="rounded-lg bg-card/20 border border-border/20 px-4 py-2 text-lg font-mono font-bold text-gold tracking-wider">
+                    {generatedPassword}
+                  </code>
+                  <button
+                    onClick={() => { navigator.clipboard.writeText(generatedPassword); toast.success("Senha copiada!"); }}
+                    className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/40 hover:text-gold/70 hover:bg-gold/10 transition-all"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+              <Button className="w-full" onClick={() => { setGeneratedPassword(null); setOpen(false); }}>Fechar</Button>
+            </div>
+          ) : (
+            <form onSubmit={(e) => { e.preventDefault(); createTrial.mutate({ email: trialEmail, nome: trialName, trialDays }); }} className="space-y-4 mt-4">
+              <div className="space-y-2">
+                <Label htmlFor="trial-name">Nome</Label>
+                <Input id="trial-name" value={trialName} onChange={(e) => setTrialName(e.target.value)} placeholder="Nome do cliente" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="trial-email">E-mail</Label>
+                <Input id="trial-email" type="email" value={trialEmail} onChange={(e) => setTrialEmail(e.target.value)} placeholder="email@exemplo.com" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="trial-days">Dias de teste</Label>
+                <Input id="trial-days" type="number" min={1} max={90} value={trialDays} onChange={(e) => setTrialDays(Number(e.target.value))} required />
+                <p className="text-[11px] text-muted-foreground/40">O cliente poderá apenas ouvir (sem download). Após o prazo, o acesso será bloqueado.</p>
+              </div>
+              <Button type="submit" className="w-full" disabled={createTrial.isPending}>
+                {createTrial.isPending ? "Cadastrando..." : "Cadastrar Cliente de Teste"}
+              </Button>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation */}
       <AlertDialog open={!!deleteTarget} onOpenChange={(v) => { if (!v) setDeleteTarget(null); }}>
         <AlertDialogContent className="bg-card border-border/20">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-foreground/85">
-              Excluir usuário
-            </AlertDialogTitle>
+            <AlertDialogTitle className="text-foreground/85">Excluir aluno</AlertDialogTitle>
             <AlertDialogDescription className="text-muted-foreground/50">
               Tem certeza que deseja excluir{" "}
-              <span className="font-semibold text-foreground/70">
-                {deleteTarget?.nome || deleteTarget?.email}
-              </span>
-              ? Esta ação não pode ser desfeita.
+              <span className="font-semibold text-foreground/70">{deleteTarget?.nome || deleteTarget?.email}</span>?
+              Esta ação não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="text-muted-foreground/50">
-              Cancelar
-            </AlertDialogCancel>
+            <AlertDialogCancel className="text-muted-foreground/50">Cancelar</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => {
-                if (deleteTarget) removeBuyer.mutate(deleteTarget.id);
-                setDeleteTarget(null);
-              }}
+              onClick={() => { if (deleteTarget) removeBuyer.mutate(deleteTarget.id); setDeleteTarget(null); }}
               className="bg-destructive/80 text-destructive-foreground hover:bg-destructive"
             >
               <Trash2 className="h-3.5 w-3.5 mr-1.5" />
