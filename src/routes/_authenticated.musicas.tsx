@@ -433,6 +433,7 @@ function MusicLibraryPage() {
 
       <FooterLinks />
     </div>
+    </StudentLayout>
   );
 }
 
