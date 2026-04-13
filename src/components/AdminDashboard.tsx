@@ -45,58 +45,79 @@ export function AdminDashboard() {
   return (
     <div className="max-w-7xl mx-auto space-y-5">
       {/* Header bar */}
-      <div className="flex flex-col gap-3 pb-4 border-b border-border/15">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="relative rounded-2xl border border-border/15 bg-gradient-to-r from-card/40 via-card/20 to-card/40 backdrop-blur-sm p-5 overflow-hidden">
+        {/* Decorative glow */}
+        <div className="pointer-events-none absolute -top-20 -right-20 h-48 w-48 rounded-full bg-gold/[0.04] blur-[80px]" />
+        <div className="pointer-events-none absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-primary/[0.03] blur-[60px]" />
+
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative z-10">
           <div>
             <h1 className="font-display text-2xl font-bold text-foreground tracking-tight">
               Dashboard
             </h1>
-            <p className="text-sm text-muted-foreground/50 mt-1">
+            <p className="text-sm text-muted-foreground/60 mt-1">
               Bem-vindo de volta! Aqui está um resumo da sua plataforma.
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="relative hidden sm:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
+
+          <div className="flex items-center gap-2.5">
+            {/* Search */}
+            <div className="relative hidden md:block">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
               <Input
-                placeholder="Buscar..."
-                className="pl-9 h-9 w-48 bg-card/10 border-border/15 rounded-xl text-sm placeholder:text-muted-foreground/30 focus-visible:ring-gold/20"
+                placeholder="Buscar cursos, alunos..."
+                className="pl-9 h-10 w-56 bg-background/40 border-border/20 rounded-xl text-sm placeholder:text-muted-foreground/35 focus-visible:ring-gold/30 focus-visible:border-gold/30 transition-all"
               />
             </div>
+
+            {/* New Course CTA */}
             <Link
               to="/admin/courses/new"
-              className="flex items-center gap-1.5 h-9 px-4 rounded-xl bg-gold text-background text-xs font-bold hover:bg-gold/90 transition-colors shrink-0"
+              className="flex items-center gap-2 h-10 px-5 rounded-xl bg-gradient-to-r from-gold to-gold/85 text-background text-sm font-bold hover:shadow-lg hover:shadow-gold/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 shrink-0"
             >
               <Plus className="h-4 w-4" />
               <span className="hidden sm:inline">Novo Curso</span>
             </Link>
+
+            {/* Divider */}
+            <div className="hidden sm:block h-6 w-px bg-border/15" />
+
+            {/* Settings */}
             <Link
               to="/admin/settings"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/15 bg-card/10 text-muted-foreground/40 hover:text-foreground/70 hover:bg-card/20 transition-colors"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/15 bg-background/30 text-muted-foreground/50 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all duration-200"
             >
-              <Settings className="h-4 w-4" />
+              <Settings className="h-[18px] w-[18px]" />
             </Link>
-            <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/15 bg-card/10 text-muted-foreground/40 hover:text-foreground/70 hover:bg-card/20 transition-colors relative">
-              <Bell className="h-4 w-4" />
-              <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-gold" />
+
+            {/* Notifications */}
+            <button className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/15 bg-background/30 text-muted-foreground/50 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all duration-200 relative">
+              <Bell className="h-[18px] w-[18px]" />
+              <span className="absolute -top-0.5 -right-0.5 flex h-3 w-3">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold/60 opacity-75" />
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-gold border-2 border-background" />
+              </span>
             </button>
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gold/15 border border-gold/20">
+
+            {/* Avatar */}
+            <button className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-gold/20 to-gold/10 border-2 border-gold/25 hover:border-gold/40 hover:shadow-lg hover:shadow-gold/10 transition-all duration-200">
               <UserCircle className="h-5 w-5 text-gold" />
-            </div>
+            </button>
           </div>
         </div>
 
-        {/* Period selector */}
-        <div className="flex items-center justify-end">
-          <div className="flex gap-1 rounded-xl bg-muted/10 border border-border/15 p-1">
+        {/* Period selector row */}
+        <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/10 relative z-10">
+          <span className="text-xs text-muted-foreground/40 font-medium">Período de análise</span>
+          <div className="flex gap-1 rounded-xl bg-background/30 border border-border/15 p-1">
             {PERIOD_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
                 onClick={() => setDays(opt.value)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                   days === opt.value
-                    ? "bg-gold/15 text-gold border border-gold/20 shadow-sm"
-                    : "text-muted-foreground/40 hover:text-muted-foreground/70"
+                    ? "bg-gold/15 text-gold border border-gold/25 shadow-sm shadow-gold/10"
+                    : "text-muted-foreground/40 hover:text-muted-foreground/70 border border-transparent"
                 }`}
               >
                 {opt.label}
