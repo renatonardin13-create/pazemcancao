@@ -75,6 +75,7 @@ function NowPlayingBars() {
 }
 
 function MusicLibraryPage() {
+  const searchParams = Route.useSearch();
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
@@ -121,7 +122,16 @@ function MusicLibraryPage() {
   const dbCategories = catData?.categories || [];
   const tracks = data?.tracks || [];
 
+  // Sync category from URL search params (sidebar navigation)
   useEffect(() => {
+    if (searchParams.categoria && dbCategories.length > 0) {
+      const found = dbCategories.find((c: any) => c.slug === searchParams.categoria || c.name.toLowerCase() === searchParams.categoria);
+      if (found) {
+        setActiveCategory(found.name);
+        setInitialized(true);
+        return;
+      }
+    }
     if (!initialized && dbCategories.length > 0) {
       const destaques = dbCategories.find((c: any) =>
         c.slug === "destaques" || c.slug === "top-10-mais-fortes" || c.name.toLowerCase().includes("destaque")
@@ -131,7 +141,7 @@ function MusicLibraryPage() {
       }
       setInitialized(true);
     }
-  }, [dbCategories, initialized]);
+  }, [dbCategories, initialized, searchParams.categoria]);
 
   // Auto-scroll to active track when it changes
   useEffect(() => {
@@ -178,8 +188,8 @@ function MusicLibraryPage() {
   }, [regularTracks]);
 
   return (
+    <StudentLayout>
     <div className="min-h-screen bg-background flex flex-col">
-      <AppHeader />
 
       <main className="flex-1 mx-auto w-full max-w-6xl px-4 sm:px-6 py-8 pb-28">
         {/* Header */}
