@@ -374,6 +374,7 @@ function AdminVitrinePage() {
     }
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const payload = {
       name: formName,
