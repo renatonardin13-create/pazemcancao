@@ -637,48 +637,85 @@ function AdminUsersPage() {
           </DialogHeader>
           {editBuyer && (
             <form onSubmit={handleEditSubmit} className="space-y-4 mt-4">
-              <div className="rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
-                <p className="text-[11px] text-muted-foreground/40 uppercase tracking-wider">E-mail</p>
-                <p className="text-sm font-medium text-foreground/70 mt-0.5">{editBuyer.email}</p>
-              </div>
               <div className="space-y-2">
-                <Label htmlFor="edit-nome">Nome</Label>
+                <Label htmlFor="edit-nome">Nome *</Label>
                 <Input id="edit-nome" value={editNome} onChange={(e) => setEditNome(e.target.value)} required />
               </div>
-              <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
-                <div>
-                  <p className="text-sm font-medium text-foreground/70">Acesso ativo</p>
-                  <p className="text-[11px] text-muted-foreground/40">Habilitar ou bloquear acesso</p>
-                </div>
-                <Switch checked={editEnabled} onCheckedChange={setEditEnabled} />
+              <div className="space-y-2">
+                <Label htmlFor="edit-email">Email *</Label>
+                <Input id="edit-email" value={editBuyer.email} disabled className="opacity-60" />
               </div>
-              <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
-                <div>
-                  <p className="text-sm font-medium text-foreground/70">Modo teste</p>
-                  <p className="text-[11px] text-muted-foreground/40">Apenas ouvir, sem download</p>
-                </div>
-                <Switch checked={editIsTrial} onCheckedChange={setEditIsTrial} />
+              <div className="space-y-2">
+                <Label>Status</Label>
+                <Select value={editStatus} onValueChange={(v) => {
+                  setEditStatus(v);
+                  setEditEnabled(v !== "blocked");
+                  setEditIsTrial(v === "trial");
+                }}>
+                  <SelectTrigger className="bg-card/10 border-border/15">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="active">Ativo</SelectItem>
+                    <SelectItem value="trial">Em teste</SelectItem>
+                    <SelectItem value="blocked">Bloqueado</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-              {editIsTrial && (
-                <div className="space-y-2">
-                  <Label htmlFor="edit-trial-days">Renovar dias de teste</Label>
-                  <Input id="edit-trial-days" type="number" min={1} max={90} value={editTrialDays} onChange={(e) => setEditTrialDays(Number(e.target.value))} />
-                  <p className="text-[11px] text-muted-foreground/40">
-                    {editBuyer.trial_expires_at ? `Expira em: ${formatDate(editBuyer.trial_expires_at)}` : "Sem data de expiração definida"}.
-                    Ao salvar, será renovado por {editTrialDays} dias a partir de hoje.
-                  </p>
-                </div>
-              )}
-              <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
-                <div>
-                  <p className="text-sm font-medium text-foreground/70">Permitir download</p>
-                  <p className="text-[11px] text-muted-foreground/40">Baixar músicas em MP3</p>
-                </div>
-                <Switch checked={editCanDownload} onCheckedChange={setEditCanDownload} disabled={editIsTrial} />
+              <div className="space-y-2">
+                <Label>Cursos Liberados</Label>
+                {courses.length === 0 ? (
+                  <p className="text-[12px] text-muted-foreground/40 py-2">Nenhum curso cadastrado.</p>
+                ) : (
+                  <div className="rounded-xl border border-border/10 bg-muted/5 max-h-48 overflow-y-auto divide-y divide-border/5">
+                    {courses.map((course: any) => {
+                      const isEnrolled = editEnrolledIds.includes(course.id);
+                      const isSelected = editCourseIds.includes(course.id);
+                      const checked = isSelected !== isEnrolled; // toggled
+                      const effectiveChecked = isSelected ? true : (!isSelected && isEnrolled && !editCourseIds.includes(course.id));
+                      // Simple: show enrolled state, track toggles
+                      const currentlyHasAccess = editCourseIds.length > 0
+                        ? editCourseIds.includes(course.id)
+                        : isEnrolled;
+
+                      return (
+                        <label key={course.id} className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-muted/10 ${currentlyHasAccess ? "bg-gold/5" : ""}`}>
+                          <Checkbox
+                            checked={currentlyHasAccess}
+                            onCheckedChange={() => {
+                              // On first interaction, seed from enrolled
+                              if (editCourseIds.length === 0 && editEnrolledIds.length > 0) {
+                                const newIds = currentlyHasAccess
+                                  ? editEnrolledIds.filter((id: string) => id !== course.id)
+                                  : [...editEnrolledIds, course.id];
+                                setEditCourseIds(newIds);
+                              } else {
+                                setEditCourseIds((prev) =>
+                                  prev.includes(course.id)
+                                    ? prev.filter((id) => id !== course.id)
+                                    : [...prev, course.id]
+                                );
+                              }
+                            }}
+                          />
+                          <span className="text-sm text-foreground/70 truncate">{course.title}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                )}
+                <p className="text-[11px] text-gold/60">
+                  {(editCourseIds.length > 0 ? editCourseIds.length : editEnrolledIds.length)} curso(s) selecionado(s)
+                </p>
               </div>
-              <Button type="submit" className="w-full bg-gold/90 text-gold-foreground hover:bg-gold" disabled={update.isPending}>
-                {update.isPending ? "Salvando..." : "Salvar alterações"}
-              </Button>
+              <div className="flex gap-3 pt-2">
+                <Button type="button" variant="outline" className="flex-1" onClick={() => setEditOpen(false)}>
+                  Cancelar
+                </Button>
+                <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" disabled={update.isPending}>
+                  {update.isPending ? "Salvando..." : "Salvar Alterações"}
+                </Button>
+              </div>
             </form>
           )}
         </DialogContent>
