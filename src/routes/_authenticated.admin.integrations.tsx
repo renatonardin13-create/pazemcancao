@@ -56,12 +56,7 @@ function IntegrationsPage() {
             </p>
           </div>
         </div>
-        <Link to="/admin/integrations/logs" className="hidden">
-          <Button variant="outline" className="border-border/30">
-            <ScrollText className="h-4 w-4 mr-2" />
-            Ver Logs Completos
-          </Button>
-        </Link>
+        {/* Future: logs page */}
       </div>
 
       {/* Stats Cards */}
