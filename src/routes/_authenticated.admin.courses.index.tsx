@@ -111,16 +111,16 @@ function AdminCoursesPage() {
 
       {/* Filters */}
       <div className="flex items-center gap-3">
-        <div className="relative flex-1 max-w-sm">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
           <Input
-            placeholder="Buscar curso..."
+            placeholder="Buscar por nome do curso..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="pl-9 h-9 bg-card/20 border-border/20 text-sm"
+            className="pl-9 h-10 bg-card/20 border-border/20 text-sm"
           />
         </div>
         <Select
@@ -130,7 +130,7 @@ function AdminCoursesPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-[170px] h-9 bg-card/20 border-border/20 text-sm">
+          <SelectTrigger className="w-[180px] h-10 bg-card/20 border-border/20 text-sm">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
