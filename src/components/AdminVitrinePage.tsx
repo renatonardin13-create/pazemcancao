@@ -187,7 +187,7 @@ export default function AdminVitrinePage() {
   const [bannerCourseId, setBannerCourseId] = useState("");
   const [bannerEnabled, setBannerEnabled] = useState(true);
   const [bannerFit, setBannerFit] = useState<string>("cover");
-  const [bannerAspect, setBannerAspect] = useState<string>("hero");
+  const [bannerAspect, setBannerAspect] = useState<string>("auto");
   const [bannerImgDims, setBannerImgDims] = useState<{ w: number; h: number } | null>(null);
 
   // Promo banner state
