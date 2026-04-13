@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Users, ShieldCheck, Ban, Activity, UserPlus, Clock, Pencil, ToggleLeft, ToggleRight, Trash2, Copy, KeyRound, BookOpen, Check } from "lucide-react";
+import { Users, ShieldCheck, Ban, Activity, UserPlus, Clock, Pencil, ToggleLeft, ToggleRight, Trash2, Copy, KeyRound, BookOpen, Check, Search, MoreHorizontal, ChevronLeft, ChevronRight, TrendingUp } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
