@@ -49,7 +49,7 @@ export const Route = createFileRoute("/_authenticated/admin/courses/")({
   component: AdminCoursesPage,
 });
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 6;
 
 function AdminCoursesPage() {
   const queryClient = useQueryClient();
@@ -111,16 +111,16 @@ function AdminCoursesPage() {
 
       {/* Filters */}
       <div className="flex items-center gap-3">
-        <div className="relative flex-1 max-w-sm">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
           <Input
-            placeholder="Buscar curso..."
+            placeholder="Buscar por nome do curso..."
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="pl-9 h-9 bg-card/20 border-border/20 text-sm"
+            className="pl-9 h-10 bg-card/20 border-border/20 text-sm"
           />
         </div>
         <Select
@@ -130,7 +130,7 @@ function AdminCoursesPage() {
             setPage(1);
           }}
         >
-          <SelectTrigger className="w-[170px] h-9 bg-card/20 border-border/20 text-sm">
+          <SelectTrigger className="w-[180px] h-10 bg-card/20 border-border/20 text-sm">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -331,31 +331,36 @@ function AdminCoursesPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-5 py-3 border-t border-border/10">
-              <span className="text-[11px] text-muted-foreground/30">
-                {filtered.length} curso{filtered.length !== 1 ? "s" : ""} · Página{" "}
-                {page} de {totalPages}
-              </span>
-              <div className="flex items-center gap-1">
+            <div className="flex items-center justify-center px-5 py-3 border-t border-border/10 gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                disabled={page <= 1}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                 <Button
-                  variant="ghost"
+                  key={p}
+                  variant={p === page ? "default" : "ghost"}
                   size="icon"
-                  className="h-7 w-7"
-                  disabled={page <= 1}
-                  onClick={() => setPage((p) => p - 1)}
+                  className={`h-8 w-8 text-xs ${p === page ? "bg-primary text-primary-foreground" : ""}`}
+                  onClick={() => setPage(p)}
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  {p}
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  disabled={page >= totalPages}
-                  onClick={() => setPage((p) => p + 1)}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
+              ))}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                disabled={page >= totalPages}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
             </div>
           )}
         </div>
