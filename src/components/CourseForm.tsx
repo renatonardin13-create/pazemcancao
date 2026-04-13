@@ -238,18 +238,15 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                     </div>
                   )}
                 </div>
-                <div className="p-2.5 space-y-0.5">
-                  <p className="text-xs font-bold text-foreground/80 leading-snug line-clamp-2">
-                    {title || "Título do curso"}
+                <div className="p-3 space-y-1">
+                  <p className="text-sm font-bold text-foreground/85 leading-snug line-clamp-2">
+                    {title || "Título do Curso"}
                   </p>
-                  <p className="text-[10px] text-muted-foreground/40 line-clamp-2 leading-relaxed">
-                    {shortDesc || "Descrição curta aparecerá aqui..."}
+                  <p className="text-[11px] text-muted-foreground/45 line-clamp-2 leading-relaxed">
+                    {shortDesc || "Descrição do curso aparecerá aqui"}
                   </p>
                 </div>
               </div>
-              <p className="text-[7px] text-center text-muted-foreground/20 uppercase tracking-[0.2em] mt-2">
-                Atualização em tempo real
-              </p>
             </div>
           </div>
         </div>
