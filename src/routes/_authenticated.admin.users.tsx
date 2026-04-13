@@ -544,24 +544,32 @@ function AdminUsersPage() {
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem onClick={() => { setDetailBuyer(buyer); setDetailTab("info"); }} className="gap-2">
+                        <Eye className="h-3.5 w-3.5" />
+                        Ver Detalhes
+                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => openEditDialog(buyer)} className="gap-2">
                         <Pencil className="h-3.5 w-3.5" />
-                        Editar aluno
+                        Editar
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => { setDetailBuyer(buyer); setDetailTab("courses"); }} className="gap-2">
+                        <BookOpen className="h-3.5 w-3.5" />
+                        Gerenciar Acessos
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={() => toggleAccess.mutate({ buyerId: buyer.id, access_enabled: !isEnabledBuyer })}
                         className="gap-2"
                       >
-                        {isEnabledBuyer ? <ToggleLeft className="h-3.5 w-3.5" /> : <ToggleRight className="h-3.5 w-3.5" />}
-                        {isEnabledBuyer ? "Bloquear acesso" : "Liberar acesso"}
+                        {isEnabledBuyer ? <ShieldAlert className="h-3.5 w-3.5" /> : <ToggleRight className="h-3.5 w-3.5" />}
+                        {isEnabledBuyer ? "Bloquear" : "Liberar acesso"}
                       </DropdownMenuItem>
-                      <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={() => setDeleteTarget(buyer)}
                         className="gap-2 text-destructive focus:text-destructive"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
-                        Excluir aluno
+                        Excluir
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
