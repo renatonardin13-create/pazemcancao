@@ -141,7 +141,7 @@ function AdminCategoriesPage() {
               Categorias
             </h2>
             <Button
-              onClick={() => { setShowForm(true); setNewCat({ name: "", slug: "", description: "", icon: "" }); }}
+              onClick={() => { setShowForm(true); setNewCat({ name: "", slug: "", description: "", icon: "", color: PICKER_COLORS[0] }); }}
               className="gap-1.5 h-9 bg-gold/90 text-gold-foreground hover:bg-gold font-semibold text-[12px]"
               size="sm"
             >
@@ -172,7 +172,7 @@ function AdminCategoriesPage() {
                   <GripVertical className="h-4 w-4 text-muted-foreground/15 shrink-0 cursor-grab" />
 
                   {/* Color dot */}
-                  <div className={`h-3 w-3 rounded-full shrink-0 ${CATEGORY_COLORS[index % CATEGORY_COLORS.length]}`} />
+                  <div className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: cat.color || PICKER_COLORS[index % PICKER_COLORS.length] }} />
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
