@@ -96,8 +96,8 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
   return (
     <form ref={ref} onSubmit={handleSubmit} className="space-y-5">
-      {/* 2-column layout */}
-      <div className="grid lg:grid-cols-[1fr_300px] gap-5 lg:gap-6">
+      {/* Grid: 2 cols on desktop, 1 col on mobile with custom ordering */}
+      <div className="grid lg:grid-cols-[1fr_280px] gap-5">
         {/* LEFT COLUMN */}
         <div className="space-y-5 order-1">
           {/* Card: Informações do Curso */}
@@ -368,7 +368,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
         </div>
 
         {/* ========== RIGHT COLUMN — Preview ========== */}
-        <div className="order-2">
+        <div className="order-first lg:order-2">
           <div className="rounded-2xl border border-border/15 bg-card lg:sticky lg:top-6 shadow-lg shadow-black/10 overflow-hidden">
             <div className="px-5 py-3.5 border-b border-border/10 bg-card/80">
               <h3 className="text-xs font-black text-foreground/80 tracking-tight uppercase">
