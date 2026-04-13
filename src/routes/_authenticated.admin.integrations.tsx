@@ -1,810 +1,278 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getWebhookSettings, updateWebhookSettings, getWebhookLogs, sendTestWebhook } from "@/lib/webhook-settings.functions";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
-import { Checkbox } from "@/components/ui/checkbox";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getIntegrationsDashboard } from "@/lib/admin-integrations.functions";
+import { getWebhookLogs } from "@/lib/webhook-settings.functions";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { Webhook, Copy, Check, Shield, Loader2, ScrollText, CheckCircle2, XCircle, Clock, FlaskConical, Eye, EyeOff, Send, CircleDot, ArrowRight, ExternalLink, ClipboardCopy, AlertTriangle, ChevronDown, ChevronUp, Code } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { motion, AnimatePresence } from "framer-motion";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Webhook, CheckCircle2, ShoppingCart, TrendingUp, ArrowLeft, ScrollText, Copy, Settings, Lightbulb, ExternalLink } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/integrations")({
   component: IntegrationsPage,
 });
 
-const AVAILABLE_EVENTS = [
-  { id: "purchase_completed", label: "Compra aprovada" },
-];
-
-const fadeUp = {
-  hidden: { opacity: 0, y: 16 },
-  visible: (delay: number) => ({
-    opacity: 1, y: 0,
-    transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1], delay },
-  }),
+const platformColors: Record<string, { bg: string; text: string; dot: string }> = {
+  hotmart: { bg: "bg-orange-500/15 text-orange-400 border-orange-500/30", text: "text-orange-400", dot: "bg-orange-500" },
+  kiwify: { bg: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30", text: "text-emerald-400", dot: "bg-emerald-500" },
+  cakto: { bg: "bg-blue-500/15 text-blue-400 border-blue-500/30", text: "text-blue-400", dot: "bg-blue-500" },
 };
 
 function IntegrationsPage() {
-  const queryClient = useQueryClient();
-  const [copied, setCopied] = useState(false);
-  const [showToken, setShowToken] = useState(false);
-
   const { data, isLoading } = useQuery({
-    queryKey: ["webhook-settings"],
-    queryFn: () => getWebhookSettings(),
+    queryKey: ["integrations-dashboard"],
+    queryFn: () => getIntegrationsDashboard(),
   });
 
-  const { data: logsData } = useQuery({
-    queryKey: ["webhook-logs"],
-    queryFn: () => getWebhookLogs(),
-    refetchInterval: 30000,
-  });
+  const stats = data?.stats;
+  const integrations = data?.integrations || [];
 
-  const settings = data?.settings;
-  const logs = logsData?.logs || [];
-  const lastLog = logs[0] || null;
-  const hasRecentSuccess = lastLog?.response_status === 200;
-  const lastEventTime = lastLog ? new Date(lastLog.created_at) : null;
+  const webhookBaseUrl = "https://pazemcancao.lovable.app/api/webhook/kiwify";
 
-  const [isActive, setIsActive] = useState(false);
-  const [monitoredEvents, setMonitoredEvents] = useState<string[]>([]);
-  const [authToken, setAuthToken] = useState("");
-  const [allowedIps, setAllowedIps] = useState("");
-  const webhookUrl = "https://pazemcancao.lovable.app/api/webhook/kiwify";
-
-  useEffect(() => {
-    if (settings) {
-      setIsActive(settings.is_active);
-      setMonitoredEvents(settings.monitored_events || []);
-      setAuthToken(settings.auth_token || "");
-      setAllowedIps((settings.allowed_ips || []).join(", "));
-    }
-  }, [settings]);
-
-  const successCount = logs.filter((l: any) => l.response_status === 200).length;
-  const successRate = logs.length > 0 ? Math.round((successCount / logs.length) * 100) : -1;
-  const webhookActiveNoEvents = isActive && logs.length === 0;
-  const zeroSuccessRate = logs.length > 0 && successRate === 0;
-
-  const mutation = useMutation({
-    mutationFn: () =>
-      updateWebhookSettings({
-        data: {
-          is_active: isActive,
-          monitored_events: monitoredEvents,
-          auth_token: authToken || undefined,
-          webhook_url: webhookUrl,
-          allowed_ips: allowedIps
-            ? allowedIps.split(",").map((ip: string) => ip.trim()).filter(Boolean)
-            : [],
-        },
-      }),
-    onSuccess: () => {
-      toast.success("Configurações salvas com sucesso!");
-      queryClient.invalidateQueries({ queryKey: ["webhook-settings"] });
-    },
-    onError: (err: any) => {
-      toast.error("Erro ao salvar: " + err.message);
-    },
-  });
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(webhookUrl);
-    setCopied(true);
-    toast.success("URL copiada!");
-    setTimeout(() => setCopied(false), 2000);
+  const handleCopyUrl = (courseId: string) => {
+    const url = `${webhookBaseUrl}?course=${courseId}`;
+    navigator.clipboard.writeText(url);
+    toast.success("URL do webhook copiada!");
   };
-
-  const toggleEvent = (eventId: string) => {
-    setMonitoredEvents((prev) =>
-      prev.includes(eventId)
-        ? prev.filter((e) => e !== eventId)
-        : [...prev, eventId]
-    );
-  };
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground/40" />
-      </div>
-    );
-  }
 
   return (
-    <motion.div initial="hidden" animate="visible" className="w-full max-w-2xl space-y-6 overflow-hidden">
-      <motion.div variants={fadeUp} custom={0}>
-        <h1 className="font-display text-2xl font-bold tracking-tight text-foreground/90">
-          Integrações
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground/60">
-          Configure a integração com a Kiwify para processar compras automaticamente.
-        </p>
-      </motion.div>
-
-      {/* ── Status Banner ── */}
-      <motion.div variants={fadeUp} custom={0.05}>
-        <div className={`flex items-center gap-3 rounded-xl border p-4 ${
-          logs.length === 0
-            ? "border-border/15 bg-muted/5"
-            : hasRecentSuccess
-              ? "border-emerald-500/20 bg-emerald-500/[0.04]"
-              : "border-red-500/20 bg-red-500/[0.04]"
-        }`}>
-          <div className={`flex h-9 w-9 items-center justify-center rounded-full ${
-            logs.length === 0
-              ? "bg-muted/20"
-              : hasRecentSuccess
-                ? "bg-emerald-500/10"
-                : "bg-red-500/10"
-          }`}>
-            {logs.length === 0 ? (
-              <CircleDot className="h-4 w-4 text-muted-foreground/40" />
-            ) : hasRecentSuccess ? (
-              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-            ) : (
-              <XCircle className="h-4 w-4 text-red-500" />
-            )}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className={`text-sm font-medium ${
-              logs.length === 0
-                ? "text-muted-foreground/60"
-                : hasRecentSuccess
-                  ? "text-emerald-600 dark:text-emerald-400"
-                  : "text-red-600 dark:text-red-400"
-            }`}>
-              {logs.length === 0
-                ? "Nenhum evento recebido"
-                : hasRecentSuccess
-                  ? "Webhook funcionando"
-                  : `Último evento falhou (HTTP ${lastLog?.response_status})`}
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Link to="/admin" className="text-muted-foreground/50 hover:text-muted-foreground transition-colors">
+            <ArrowLeft className="h-5 w-5" />
+          </Link>
+          <div>
+            <div className="flex items-center gap-2">
+              <Webhook className="h-5 w-5 text-gold/60" />
+              <h1 className="text-2xl font-bold text-foreground">Integrações</h1>
+            </div>
+            <p className="text-sm text-muted-foreground mt-0.5">
+              Configure webhooks para liberar acesso automático após compras
             </p>
-            {lastEventTime && (
-              <p className="text-[11px] text-muted-foreground/40 mt-0.5">
-                Último evento: {lastEventTime.toLocaleString('pt-BR', {
-                  day: '2-digit', month: '2-digit', year: 'numeric',
-                  hour: '2-digit', minute: '2-digit',
-                })}
-                {lastLog?.email && ` · ${lastLog.email}`}
-              </p>
-            )}
           </div>
-          {lastLog && (
-            <Badge
-              variant="outline"
-              className={`text-[10px] font-mono shrink-0 ${
-                hasRecentSuccess
-                  ? "border-emerald-500/30 text-emerald-600 dark:text-emerald-400"
-                  : "border-red-500/30 text-red-600 dark:text-red-400"
-              }`}
-            >
-              HTTP {lastLog.response_status}
-            </Badge>
-          )}
         </div>
-      </motion.div>
+        {/* Future: logs page */}
+      </div>
 
-      {/* ── Automatic Alerts ── */}
-      {webhookActiveNoEvents && (
-        <motion.div variants={fadeUp} custom={0.07}>
-          <div className="flex items-start gap-3 rounded-xl border border-amber-500/25 bg-amber-500/[0.05] p-4">
-            <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm font-semibold text-amber-600 dark:text-amber-400">
-                Webhook ativo, mas sem eventos
-              </p>
-              <p className="text-[12px] text-muted-foreground/60 mt-1 leading-relaxed">
-                Seu webhook está ativo mas ainda não recebeu nenhum evento. Verifique se a URL foi configurada corretamente na plataforma de pagamento e se os eventos de compra estão habilitados.
-              </p>
-              <div className="flex flex-wrap gap-2 mt-3">
-                <Badge variant="outline" className="text-[10px] border-amber-500/20 text-amber-600 dark:text-amber-400">
-                  ⚠ Nenhuma venda processada
-                </Badge>
-              </div>
-            </div>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatCard
+          label="Total Webhooks"
+          value={String(stats?.totalWebhooks || 0)}
+          icon={<TrendingUp className="h-5 w-5" />}
+          color="text-gold/60"
+        />
+        <StatCard
+          label="Webhooks Ativos"
+          value={String(stats?.activeWebhooks || 0)}
+          icon={<CheckCircle2 className="h-5 w-5" />}
+          color="text-emerald-400"
+          valueColor="text-emerald-400"
+        />
+        <StatCard
+          label="Total Vendas"
+          value={String(stats?.totalSales || 0)}
+          icon={<ShoppingCart className="h-5 w-5" />}
+          color="text-gold/60"
+        />
+        <StatCard
+          label="Taxa Sucesso"
+          value={`${stats?.successRate || 0}%`}
+          icon={<TrendingUp className="h-5 w-5" />}
+          color="text-gold/60"
+        />
+      </div>
+
+      {/* Webhooks por Curso */}
+      <Card className="bg-card border-border/30">
+        <CardContent className="p-6">
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold text-foreground">Webhooks por Curso</h3>
+            <p className="text-sm text-muted-foreground">Webhooks configurados e vinculados a cursos específicos</p>
           </div>
-        </motion.div>
-      )}
 
-      {zeroSuccessRate && (
-        <motion.div variants={fadeUp} custom={0.07}>
-          <div className="flex items-start gap-3 rounded-xl border border-red-500/25 bg-red-500/[0.05] p-4">
-            <XCircle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm font-semibold text-red-600 dark:text-red-400">
-                Taxa de sucesso: 0%
-              </p>
-              <p className="text-[12px] text-muted-foreground/60 mt-1 leading-relaxed">
-                Todos os {logs.length} evento{logs.length !== 1 ? "s" : ""} recebido{logs.length !== 1 ? "s" : ""} falharam. Suas vendas <strong className="text-red-500">não estão sendo processadas</strong>. Verifique imediatamente:
-              </p>
-              <ul className="mt-2 space-y-1 text-[11px] text-muted-foreground/50">
-                <li className="flex items-center gap-1.5">
-                  <span className="h-1 w-1 rounded-full bg-red-500/50 shrink-0" />
-                  Token de autenticação está correto?
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <span className="h-1 w-1 rounded-full bg-red-500/50 shrink-0" />
-                  Formato do payload da plataforma é compatível?
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <span className="h-1 w-1 rounded-full bg-red-500/50 shrink-0" />
-                  Expanda os logs abaixo para ver as mensagens de erro
-                </li>
-              </ul>
-              <div className="flex flex-wrap gap-2 mt-3">
-                <Badge variant="outline" className="text-[10px] border-red-500/25 text-red-600 dark:text-red-400 font-mono">
-                  {logs.length} falha{logs.length !== 1 ? "s" : ""} · 0% sucesso
-                </Badge>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      {successRate > 0 && successRate < 50 && (
-        <motion.div variants={fadeUp} custom={0.07}>
-          <div className="flex items-start gap-3 rounded-xl border border-red-500/25 bg-red-500/[0.05] p-4">
-            <AlertTriangle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm font-semibold text-red-600 dark:text-red-400">
-                Taxa de sucesso crítica: {successRate}%
-              </p>
-              <p className="text-[12px] text-muted-foreground/60 mt-1 leading-relaxed">
-                Mais da metade dos webhooks recebidos estão falhando. Suas vendas podem <strong className="text-red-500">não estar sendo processadas corretamente</strong>. Verifique os logs abaixo e corrija a configuração.
-              </p>
-              <ul className="mt-2 space-y-1 text-[11px] text-muted-foreground/50">
-                <li className="flex items-center gap-1.5">
-                  <span className="h-1 w-1 rounded-full bg-red-500/50 shrink-0" />
-                  Verifique se o token de autenticação está correto
-                </li>
-                <li className="flex items-center gap-1.5">
-                  <span className="h-1 w-1 rounded-full bg-red-500/50 shrink-0" />
-                  Confira o formato do payload enviado pela plataforma
-                </li>
-              </ul>
-              <div className="flex flex-wrap gap-2 mt-3">
-                <Badge variant="outline" className="text-[10px] border-red-500/25 text-red-600 dark:text-red-400 font-mono">
-                  {successCount}/{logs.length} sucesso · {successRate}%
-                </Badge>
-              </div>
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      {successRate > 0 && successRate < 100 && (
-        <motion.div variants={fadeUp} custom={0.08}>
-          <div className="flex items-center gap-3 rounded-xl border border-border/15 bg-muted/5 p-3">
-            <div className="flex items-center gap-2 flex-1">
-              <span className="text-[11px] text-muted-foreground/50">Taxa de sucesso:</span>
-              <div className="flex-1 max-w-32 h-1.5 rounded-full bg-muted/15 overflow-hidden">
-                <div
-                  className={`h-full rounded-full transition-all ${successRate >= 80 ? "bg-emerald-500/60" : successRate >= 50 ? "bg-amber-500/60" : "bg-red-500/60"}`}
-                  style={{ width: `${successRate}%` }}
-                />
-              </div>
-              <span className={`text-[11px] font-mono font-medium ${successRate >= 80 ? "text-emerald-500" : successRate >= 50 ? "text-amber-500" : "text-red-500"}`}>
-                {successRate}%
-              </span>
-            </div>
-          </div>
-        </motion.div>
-      )}
-
-      {/* ── Setup Steps ── */}
-      <motion.div variants={fadeUp} custom={0.1}>
-        <Card className="border-border/20">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-semibold text-foreground/80">
-              Como configurar em 4 passos
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pb-5">
-            <div className="space-y-0">
-              {[
-                { step: 1, title: "Copie a URL do webhook", desc: "Clique no botão abaixo para copiar" },
-                { step: 2, title: "Acesse sua plataforma", desc: "Vá em Kiwify → Configurações → Webhooks" },
-                { step: 3, title: "Cole a URL", desc: "Adicione um novo webhook e cole a URL copiada" },
-                { step: 4, title: "Ative o evento de compra", desc: "Selecione 'Compra aprovada' como evento" },
-              ].map((item, i) => (
-                <div key={item.step} className="flex items-start gap-3 py-3 relative">
-                  {/* Vertical line connector */}
-                  {i < 3 && (
-                    <div className="absolute left-[13px] top-[40px] w-[2px] h-[calc(100%-28px)] bg-border/15" />
-                  )}
-                  <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gold/10 border border-gold/20 text-gold/70 text-[11px] font-bold shrink-0 relative z-10">
-                    {item.step}
-                  </div>
-                  <div className="pt-0.5">
-                    <p className="text-[13px] font-medium text-foreground/80">{item.title}</p>
-                    <p className="text-[11px] text-muted-foreground/40 mt-0.5">{item.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Copy URL button */}
-            <button
-              onClick={handleCopy}
-              className={`mt-4 w-full flex items-center gap-3 rounded-xl border p-3.5 transition-all duration-300 ${
-                copied
-                  ? "border-emerald-500/30 bg-emerald-500/[0.06]"
-                  : "border-border/15 bg-muted/5 hover:bg-muted/15 hover:border-gold/20"
-              }`}
-            >
-              <div className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${
-                copied ? "bg-emerald-500/15" : "bg-gold/[0.08]"
-              }`}>
-                {copied ? (
-                  <Check className="h-4 w-4 text-emerald-500" />
+          <div className="rounded-lg border border-border/20 overflow-hidden">
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border/20">
+                  <TableHead>Curso</TableHead>
+                  <TableHead>Plataforma</TableHead>
+                  <TableHead>Product ID</TableHead>
+                  <TableHead className="text-center">Vendas</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                      Carregando...
+                    </TableCell>
+                  </TableRow>
+                ) : integrations.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                      Nenhuma integração configurada
+                    </TableCell>
+                  </TableRow>
                 ) : (
-                  <ClipboardCopy className="h-4 w-4 text-gold/60" />
+                  integrations.map((integ) => {
+                    const pc = platformColors[integ.platform] || platformColors.kiwify;
+                    return (
+                      <TableRow key={integ.id} className="border-border/10">
+                        <TableCell className="font-medium">{integ.courseTitle}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className={`text-[10px] ${pc.bg}`}>
+                            {integ.platform.charAt(0).toUpperCase() + integ.platform.slice(1)}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="font-mono text-xs text-muted-foreground">
+                          {integ.externalProductId || "—"}
+                        </TableCell>
+                        <TableCell className="text-center">{integ.sales}</TableCell>
+                        <TableCell>
+                          <Badge
+                            variant="outline"
+                            className={`text-[10px] ${
+                              integ.webhookActive && integ.isEnabled
+                                ? "border-emerald-500/30 text-emerald-400"
+                                : "border-red-500/30 text-red-400"
+                            }`}
+                          >
+                            {integ.webhookActive && integ.isEnabled ? "Ativo" : "Inativo"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-1">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7"
+                              onClick={() => handleCopyUrl(integ.courseId)}
+                              title="Copiar URL do webhook"
+                            >
+                              <Copy className="h-3.5 w-3.5" />
+                            </Button>
+                            <Link to="/admin/courses/$courseId" params={{ courseId: integ.courseId }}>
+                              <Button variant="ghost" size="icon" className="h-7 w-7" title="Configurações do curso">
+                                <Settings className="h-3.5 w-3.5" />
+                              </Button>
+                            </Link>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 )}
-              </div>
-              <div className="flex-1 text-left min-w-0">
-                <p className="font-mono text-[11px] text-foreground/70 truncate">{webhookUrl}</p>
-              </div>
-              <span className={`text-[10px] font-medium shrink-0 ${
-                copied ? "text-emerald-500" : "text-gold/50"
-              }`}>
-                {copied ? "Copiado!" : "Copiar"}
-              </span>
-            </button>
-          </CardContent>
-        </Card>
-      </motion.div>
+              </TableBody>
+            </Table>
+          </div>
 
-      {/* ── Main Config ── */}
-      <motion.div variants={fadeUp} custom={0.15}>
-        <Card className="border-border/20">
-          <CardHeader className="pb-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold/[0.08] border border-gold/15">
-                <Webhook className="h-5 w-5 text-gold/60" />
-              </div>
-              <div>
-                <CardTitle className="text-base">Kiwify Webhook</CardTitle>
-                <CardDescription className="text-xs">
-                  Receba eventos de compra e assinatura automaticamente
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Toggle */}
-            <div className="flex items-center justify-between rounded-lg border border-border/15 p-4">
-              <div>
-                <Label className="text-sm font-medium">Ativar Webhook</Label>
-                <p className="text-[11px] text-muted-foreground/50 mt-0.5">
-                  Habilitar processamento automático de eventos
-                </p>
-              </div>
-              <Switch checked={isActive} onCheckedChange={setIsActive} />
-            </div>
+          {/* Hint */}
+          <div className="mt-4 flex items-center gap-2 rounded-lg bg-muted/10 border border-border/15 px-4 py-3">
+            <Lightbulb className="h-4 w-4 text-amber-400 shrink-0" />
+            <p className="text-xs text-muted-foreground">
+              Configure webhooks na aba <span className="font-semibold text-foreground/70">Configurações</span> de cada curso
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
-            {/* Events */}
-            <div className="space-y-3">
-              <Label className="text-xs font-medium text-muted-foreground/70">
-                Eventos a Serem Monitorados
-              </Label>
-              <div className="space-y-2">
-                {AVAILABLE_EVENTS.map((event) => (
-                  <label
-                    key={event.id}
-                    className="flex items-center gap-3 rounded-lg border border-border/10 p-3 cursor-pointer hover:bg-muted/20 transition-colors"
-                  >
-                    <Checkbox
-                      checked={monitoredEvents.includes(event.id)}
-                      onCheckedChange={() => toggleEvent(event.id)}
-                    />
-                    <span className="text-sm">{event.label}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
+      {/* Platform Guides */}
+      <Card className="bg-card border-border/30">
+        <CardContent className="p-6">
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold text-foreground">Como Integrar com as Plataformas</h3>
+            <p className="text-sm text-muted-foreground">Guias passo a passo para configurar webhooks em cada plataforma</p>
+          </div>
 
-            {/* Auth Token */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Shield className="h-3.5 w-3.5 text-muted-foreground/40" />
-                <Label className="text-xs font-medium text-muted-foreground/70">
-                  Token de Autenticação
-                </Label>
-              </div>
-              <p className="text-[11px] text-muted-foreground/40">
-                O webhook verificará este token em cada requisição recebida
-              </p>
-              <div className="flex gap-2">
-                <Input
-                  type={showToken ? "text" : "password"}
-                  value={authToken}
-                  onChange={(e) => setAuthToken(e.target.value)}
-                  placeholder="Cole aqui o token secret da Kiwify"
-                  className="font-mono text-xs"
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  type="button"
-                  onClick={() => setShowToken((v) => !v)}
-                  className="shrink-0"
-                >
-                  {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-              </div>
-            </div>
+          <Accordion type="single" collapsible className="space-y-2">
+            <AccordionItem value="hotmart" className="border border-border/15 rounded-lg px-4">
+              <AccordionTrigger className="hover:no-underline py-4">
+                <div className="flex items-center gap-3">
+                  <span className="h-2.5 w-2.5 rounded-full bg-orange-500" />
+                  <span className="font-semibold text-foreground">Hotmart</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pb-4">
+                <ol className="space-y-3 text-sm text-muted-foreground">
+                  <li className="flex gap-2"><span className="text-gold font-bold">1.</span> Acesse o painel da Hotmart → Ferramentas → Webhooks</li>
+                  <li className="flex gap-2"><span className="text-gold font-bold">2.</span> Clique em "Adicionar Webhook"</li>
+                  <li className="flex gap-2"><span className="text-gold font-bold">3.</span> Cole a URL do webhook do curso (copie na tabela acima)</li>
+                  <li className="flex gap-2"><span className="text-gold font-bold">4.</span> Selecione o evento "PURCHASE_APPROVED"</li>
+                  <li className="flex gap-2"><span className="text-gold font-bold">5.</span> Salve e teste a integração</li>
+                </ol>
+              </AccordionContent>
+            </AccordionItem>
 
-            {/* IP Whitelist */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <Shield className="h-3.5 w-3.5 text-muted-foreground/40" />
-                <Label className="text-xs font-medium text-muted-foreground/70">
-                  Whitelist de IPs (opcional)
-                </Label>
-              </div>
-              <p className="text-[11px] text-muted-foreground/40">
-                IPs permitidos separados por vírgula. Deixe vazio para aceitar de qualquer IP.
-              </p>
-              <Input
-                value={allowedIps}
-                onChange={(e) => setAllowedIps(e.target.value)}
-                placeholder="Ex: 104.18.0.0, 172.67.0.0"
-                className="font-mono text-xs"
-              />
-            </div>
+            <AccordionItem value="kiwify" className="border border-border/15 rounded-lg px-4">
+              <AccordionTrigger className="hover:no-underline py-4">
+                <div className="flex items-center gap-3">
+                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                  <span className="font-semibold text-foreground">Kiwify</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pb-4">
+                <ol className="space-y-3 text-sm text-muted-foreground">
+                  <li className="flex gap-2"><span className="text-gold font-bold">1.</span> Acesse a Kiwify → Configurações → Webhooks</li>
+                  <li className="flex gap-2"><span className="text-gold font-bold">2.</span> Clique em "Adicionar novo webhook"</li>
+                  <li className="flex gap-2"><span className="text-gold font-bold">3.</span> Cole a URL do webhook do curso</li>
+                  <li className="flex gap-2"><span className="text-gold font-bold">4.</span> Selecione "Compra aprovada" como evento</li>
+                  <li className="flex gap-2"><span className="text-gold font-bold">5.</span> Configure o token de autenticação (opcional)</li>
+                </ol>
+              </AccordionContent>
+            </AccordionItem>
 
-            {/* Test Webhook */}
-            <TestWebhookSection />
-
-            {/* Save */}
-            <Button
-              onClick={() => mutation.mutate()}
-              disabled={mutation.isPending}
-              className="w-full"
-            >
-              {mutation.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              ) : null}
-              Salvar Configurações
-            </Button>
-          </CardContent>
-        </Card>
-      </motion.div>
-
-      {/* Webhook Logs */}
-      <motion.div variants={fadeUp} custom={0.2}>
-        <WebhookLogsSection />
-      </motion.div>
-    </motion.div>
-  );
-}
-
-function TestWebhookSection() {
-  const queryClient = useQueryClient();
-  const [testEmail, setTestEmail] = useState("teste@exemplo.com");
-  const [testName, setTestName] = useState("Comprador Teste");
-  const [testToken, setTestToken] = useState("");
-
-  type TestWebhookResponse = {
-    status: number;
-    resultText: string;
-  };
-
-  const parseTestResponse = (resultText: string) => {
-    if (!resultText) return null;
-    try {
-      return JSON.parse(resultText) as Record<string, unknown>;
-    } catch {
-      return { raw: resultText };
-    }
-  };
-
-  const testMutation = useMutation({
-    mutationFn: () => sendTestWebhook({ data: { email: testEmail, name: testName, token: testToken } }) as Promise<TestWebhookResponse>,
-    onSuccess: (res: TestWebhookResponse) => {
-      if (res.status === 200) {
-        toast.success("Teste enviado com sucesso! Verifique os logs abaixo.");
-      } else {
-        const parsed = parseTestResponse(res.resultText);
-        const message = typeof parsed?.error === "string"
-          ? parsed.error
-          : JSON.stringify(parsed);
-        toast.error(`Teste falhou com status ${res.status}: ${message}`);
-      }
-      queryClient.invalidateQueries({ queryKey: ["webhook-logs"] });
-    },
-    onError: (err: any) => {
-      toast.error("Erro ao enviar teste: " + err.message);
-    },
-  });
-
-  return (
-    <div className="space-y-3 rounded-lg border border-dashed border-border/20 p-4">
-      <div className="flex items-center gap-2">
-        <FlaskConical className="h-3.5 w-3.5 text-muted-foreground/40" />
-        <Label className="text-xs font-medium text-muted-foreground/70">
-          Enviar Webhook de Teste
-        </Label>
-      </div>
-      <p className="text-[11px] text-muted-foreground/40">
-        Simula uma compra aprovada para verificar se o webhook está funcionando.
-      </p>
-      <div className="grid grid-cols-2 gap-2">
-        <Input
-          value={testName}
-          onChange={(e) => setTestName(e.target.value)}
-          placeholder="Nome"
-          className="text-xs"
-        />
-        <Input
-          value={testEmail}
-          onChange={(e) => setTestEmail(e.target.value)}
-          placeholder="Email"
-          className="text-xs"
-        />
-      </div>
-      <Input
-        value={testToken}
-        onChange={(e) => setTestToken(e.target.value)}
-        placeholder="Token (deixe vazio para ignorar validação)"
-        className="font-mono text-xs"
-      />
-      <Button
-        variant="outline"
-        onClick={() => testMutation.mutate()}
-        disabled={testMutation.isPending || !testEmail}
-        className="w-full gap-2"
-      >
-        {testMutation.isPending ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <Send className="h-4 w-4" />
-        )}
-        Enviar Teste
-      </Button>
+            <AccordionItem value="cakto" className="border border-border/15 rounded-lg px-4">
+              <AccordionTrigger className="hover:no-underline py-4">
+                <div className="flex items-center gap-3">
+                  <span className="h-2.5 w-2.5 rounded-full bg-blue-500" />
+                  <span className="font-semibold text-foreground">Cakto</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pb-4">
+                <ol className="space-y-3 text-sm text-muted-foreground">
+                  <li className="flex gap-2"><span className="text-gold font-bold">1.</span> Acesse o painel Cakto → Integrações → Webhooks</li>
+                  <li className="flex gap-2"><span className="text-gold font-bold">2.</span> Adicione uma nova URL de webhook</li>
+                  <li className="flex gap-2"><span className="text-gold font-bold">3.</span> Cole a URL do webhook do curso</li>
+                  <li className="flex gap-2"><span className="text-gold font-bold">4.</span> Selecione os eventos de compra aprovada</li>
+                  <li className="flex gap-2"><span className="text-gold font-bold">5.</span> Salve e faça um teste</li>
+                </ol>
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </CardContent>
+      </Card>
     </div>
   );
 }
 
-function WebhookLogsSection() {
-  const { data, isLoading } = useQuery({
-    queryKey: ["webhook-logs"],
-    queryFn: () => getWebhookLogs(),
-    refetchInterval: 30000,
-  });
-
-  const logs = data?.logs || [];
-  const recentFailures = logs.slice(0, 5).filter((l: any) => l.response_status !== 200).length;
-  const hasConsecutiveFailures = recentFailures >= 3;
-
+function StatCard({ label, value, icon, color, valueColor }: {
+  label: string;
+  value: string;
+  icon: React.ReactNode;
+  color: string;
+  valueColor?: string;
+}) {
   return (
-    <Card className="border-border/20">
-      <CardHeader className="pb-4">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted/30 border border-border/15">
-            <ScrollText className="h-5 w-5 text-muted-foreground/50" />
+    <Card className="bg-card border-border/30">
+      <CardContent className="p-5">
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-xs text-muted-foreground mb-1">{label}</p>
+            <p className={`text-2xl font-bold ${valueColor || "text-gold"}`}>{value}</p>
           </div>
-          <div className="flex-1">
-            <CardTitle className="text-base">Relatório de Transações</CardTitle>
-            <CardDescription className="text-xs">
-              Últimos 50 eventos recebidos do webhook
-            </CardDescription>
+          <div className={`h-9 w-9 rounded-lg bg-muted/15 flex items-center justify-center ${color}`}>
+            {icon}
           </div>
-          {logs.length > 0 && (
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="text-[10px] font-mono border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
-                ✓ {logs.filter((l: any) => l.response_status === 200).length}
-              </Badge>
-              <Badge variant="outline" className="text-[10px] font-mono border-red-500/20 text-red-600 dark:text-red-400">
-                ✗ {logs.filter((l: any) => l.response_status !== 200).length}
-              </Badge>
-            </div>
-          )}
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Alert: never called */}
-        {!isLoading && logs.length === 0 && (
-          <div className="flex items-start gap-3 rounded-xl border border-amber-500/20 bg-amber-500/[0.04] p-4">
-            <AlertTriangle className="h-5 w-5 text-amber-500 shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm font-medium text-amber-600 dark:text-amber-400">
-                Webhook nunca foi chamado
-              </p>
-              <p className="text-[11px] text-muted-foreground/50 mt-1">
-                Nenhum evento foi recebido ainda. Verifique se a URL do webhook foi configurada corretamente na sua plataforma de pagamento, ou envie um teste acima.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Alert: consecutive failures */}
-        {hasConsecutiveFailures && (
-          <div className="flex items-start gap-3 rounded-xl border border-red-500/20 bg-red-500/[0.04] p-4">
-            <XCircle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm font-medium text-red-600 dark:text-red-400">
-                Múltiplas falhas detectadas
-              </p>
-              <p className="text-[11px] text-muted-foreground/50 mt-1">
-                {recentFailures} dos últimos 5 eventos falharam. Verifique o token de autenticação, o formato do payload, e os logs abaixo para mais detalhes.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {isLoading ? (
-          <div className="flex justify-center py-8">
-            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground/40" />
-          </div>
-        ) : logs.length === 0 ? (
-          <div className="text-center py-6">
-            <CircleDot className="h-8 w-8 text-muted-foreground/15 mx-auto mb-3" />
-            <p className="text-sm text-muted-foreground/40">
-              Envie um webhook de teste para verificar a configuração
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-2 max-h-[520px] overflow-y-auto">
-            {logs.map((log: any, i: number) => (
-              <LogEntry key={log.id} log={log} index={i} />
-            ))}
-          </div>
-        )}
       </CardContent>
     </Card>
-  );
-}
-
-function LogEntry({ log, index }: { log: any; index: number }) {
-  const [expanded, setExpanded] = useState(false);
-  const isSuccess = log.response_status === 200;
-
-  const formattedDate = new Date(log.created_at).toLocaleString('pt-BR', {
-    day: '2-digit', month: '2-digit', year: 'numeric',
-    hour: '2-digit', minute: '2-digit', second: '2-digit',
-  });
-
-  const payloadStr = log.payload ? JSON.stringify(log.payload, null, 2) : null;
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3, delay: index * 0.02 }}
-    >
-      <div
-        className={`rounded-lg border transition-all duration-200 ${
-          index === 0
-            ? isSuccess
-              ? "border-emerald-500/15 bg-emerald-500/[0.02]"
-              : "border-red-500/15 bg-red-500/[0.02]"
-            : "border-border/10 hover:border-border/20"
-        }`}
-      >
-        {/* Main row */}
-        <button
-          onClick={() => setExpanded(!expanded)}
-          className="w-full flex items-center gap-3 p-3 text-left text-sm"
-        >
-          {isSuccess ? (
-            <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0" />
-          ) : (
-            <XCircle className="h-4 w-4 text-red-500 shrink-0" />
-          )}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <Badge
-                variant="outline"
-                className={`text-[10px] font-mono ${
-                  isSuccess
-                    ? 'border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
-                    : 'border-red-500/30 text-red-600 dark:text-red-400'
-                }`}
-              >
-                HTTP {log.response_status}
-              </Badge>
-              <Badge variant="outline" className="text-[10px] font-mono">
-                {log.event_type || '—'}
-              </Badge>
-              {log.payload?._test && (
-                <Badge variant="outline" className="text-[10px] font-mono border-primary/30 text-primary gap-1">
-                  <FlaskConical className="h-3 w-3" />
-                  Teste
-                </Badge>
-              )}
-              {log.email && (
-                <span className="text-xs text-muted-foreground/60 truncate">
-                  {log.email}
-                </span>
-              )}
-            </div>
-            <p className="text-[11px] text-muted-foreground/40 mt-1 truncate">
-              {log.response_message || "Sem mensagem"}
-            </p>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <div className="text-right hidden sm:block">
-              <p className="text-[10px] text-muted-foreground/30 tabular-nums">{formattedDate}</p>
-            </div>
-            {expanded ? (
-              <ChevronUp className="h-3.5 w-3.5 text-muted-foreground/30" />
-            ) : (
-              <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/30" />
-            )}
-          </div>
-        </button>
-
-        {/* Expanded details */}
-        <AnimatePresence>
-          {expanded && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="overflow-hidden"
-            >
-              <div className="px-3 pb-3 space-y-3 border-t border-border/10 pt-3">
-                {/* Details grid */}
-                <div className="grid grid-cols-2 gap-3 text-[11px]">
-                  <div>
-                    <p className="text-muted-foreground/40 mb-0.5">Data/Hora</p>
-                    <p className="text-foreground/70 font-medium tabular-nums">{formattedDate}</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground/40 mb-0.5">Status</p>
-                    <p className={`font-medium ${isSuccess ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
-                      {isSuccess ? "Sucesso" : "Erro"} · HTTP {log.response_status}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground/40 mb-0.5">Email</p>
-                    <p className="text-foreground/70 font-medium truncate">{log.email || "—"}</p>
-                  </div>
-                  <div>
-                    <p className="text-muted-foreground/40 mb-0.5">Evento</p>
-                    <p className="text-foreground/70 font-medium">{log.event_type || "—"}</p>
-                  </div>
-                </div>
-
-                {/* Response message */}
-                {log.response_message && (
-                  <div>
-                    <p className="text-[11px] text-muted-foreground/40 mb-1">Resposta</p>
-                    <div className={`rounded-lg border p-2.5 text-[11px] font-mono ${
-                      isSuccess
-                        ? "border-emerald-500/15 bg-emerald-500/[0.03] text-emerald-700 dark:text-emerald-300"
-                        : "border-red-500/15 bg-red-500/[0.03] text-red-700 dark:text-red-300"
-                    }`}>
-                      {log.response_message}
-                    </div>
-                  </div>
-                )}
-
-                {/* Payload */}
-                {payloadStr && (
-                  <div>
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <Code className="h-3 w-3 text-muted-foreground/30" />
-                      <p className="text-[11px] text-muted-foreground/40">Payload recebido</p>
-                    </div>
-                    <pre className="rounded-lg border border-border/10 bg-muted/5 p-3 text-[10px] font-mono text-foreground/60 overflow-x-auto max-h-48 whitespace-pre-wrap break-all">
-                      {payloadStr}
-                    </pre>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
-    </motion.div>
   );
 }
