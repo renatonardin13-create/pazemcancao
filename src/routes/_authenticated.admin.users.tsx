@@ -94,6 +94,22 @@ function AdminUsersPage() {
 
   const courses = coursesData?.courses ?? [];
 
+  const { data: studentDetail, isLoading: detailLoading } = useQuery({
+    queryKey: ["student-detail", detailBuyer?.email],
+    queryFn: () => getStudentDetails({ data: { email: detailBuyer!.email } }),
+    enabled: !!detailBuyer,
+  });
+
+  const toggleCourseAccess = useMutation({
+    mutationFn: (input: { email: string; courseId: string; grant: boolean }) =>
+      toggleStudentCourseAccess({ data: input }),
+    onSuccess: (_d, vars) => {
+      toast.success(vars.grant ? "Acesso liberado!" : "Acesso removido!");
+      queryClient.invalidateQueries({ queryKey: ["student-detail", detailBuyer?.email] });
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
   const createTrial = useMutation({
     mutationFn: (input: { email: string; nome: string; trialDays: number }) =>
       createTrialUser({ data: input }),
