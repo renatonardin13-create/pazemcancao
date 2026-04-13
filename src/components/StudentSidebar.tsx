@@ -138,8 +138,8 @@ export function StudentSidebar() {
                     isActive("/musicas") && !(location.search as any)?.categoria
                   )}
                 >
-                  <span className="text-[10px]">🎵</span>
-                  Todas
+                  <span className="text-[10px]">⭐</span>
+                  Destaques (Top 10)
                 </Link>
                 {categories.map((cat: any) => {
                   const catSlug = cat.slug || cat.name.toLowerCase();
