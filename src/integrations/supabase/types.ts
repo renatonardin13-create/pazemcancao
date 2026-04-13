@@ -290,6 +290,7 @@ export type Database = {
           id: string
           launch_date: string | null
           price: number
+          promotional_price: number | null
           short_description: string | null
           sort_order: number
           status: string
@@ -308,6 +309,7 @@ export type Database = {
           id?: string
           launch_date?: string | null
           price?: number
+          promotional_price?: number | null
           short_description?: string | null
           sort_order?: number
           status?: string
@@ -326,6 +328,7 @@ export type Database = {
           id?: string
           launch_date?: string | null
           price?: number
+          promotional_price?: number | null
           short_description?: string | null
           sort_order?: number
           status?: string

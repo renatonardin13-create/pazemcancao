@@ -55,6 +55,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   const [bannerUrl, setBannerUrl] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [price, setPrice] = useState("0");
+  const [promotionalPrice, setPromotionalPrice] = useState("");
   const [status, setStatus] = useState("draft");
   const [courseType, setCourseType] = useState("video");
   const [launchDate, setLaunchDate] = useState("");
@@ -75,6 +76,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       setBannerUrl(initialValues.banner_image_url || "");
       setCategoryId(initialValues.category_id || "");
       setPrice(String(initialValues.price ?? 0));
+      setPromotionalPrice(initialValues.promotional_price != null ? String(initialValues.promotional_price) : "");
       setStatus(initialValues.status || "draft");
       setCourseType(normalizeCourseType(initialValues.course_type));
       setLaunchDate(initialValues.launch_date || "");
@@ -93,6 +95,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       banner_image_url: bannerUrl.trim() || undefined,
       category_id: categoryId || undefined,
       price: parseFloat(price) || 0,
+      promotional_price: promotionalPrice.trim() ? parseFloat(promotionalPrice) : null,
       status,
       course_type: normalizeCourseType(courseType),
       launch_date: launchDate || undefined,
@@ -197,9 +200,9 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-3 gap-3">
               <div className="space-y-1">
-                <Label htmlFor="price" className={labelClass}>Preço (R$)</Label>
+                <Label htmlFor="price" className={labelClass}>Preço Normal (R$)</Label>
                 <Input
                   id="price"
                   type="number"
@@ -207,6 +210,19 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   min="0"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="promotionalPrice" className={labelClass}>Preço Promocional (R$)</Label>
+                <Input
+                  id="promotionalPrice"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value={promotionalPrice}
+                  onChange={(e) => setPromotionalPrice(e.target.value)}
+                  placeholder="Opcional"
                   className={inputClass}
                 />
               </div>
@@ -249,6 +265,24 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   <p className="text-sm text-muted-foreground/50 line-clamp-3 leading-relaxed">
                     {shortDesc || "Descrição do curso aparecerá aqui"}
                   </p>
+                  {(parseFloat(price) > 0 || promotionalPrice) && (
+                    <div className="flex items-center gap-2 pt-1">
+                      {promotionalPrice && parseFloat(promotionalPrice) > 0 ? (
+                        <>
+                          <span className="text-xs text-muted-foreground/40 line-through">
+                            R$ {parseFloat(price).toFixed(2)}
+                          </span>
+                          <span className="text-sm font-bold text-gold">
+                            R$ {parseFloat(promotionalPrice).toFixed(2)}
+                          </span>
+                        </>
+                      ) : parseFloat(price) > 0 ? (
+                        <span className="text-sm font-bold text-foreground/70">
+                          R$ {parseFloat(price).toFixed(2)}
+                        </span>
+                      ) : null}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
