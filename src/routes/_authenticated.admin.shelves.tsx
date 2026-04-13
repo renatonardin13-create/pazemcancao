@@ -1449,6 +1449,141 @@ function AdminVitrinePage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* ── Promo Create/Edit Dialog ── */}
+      <Dialog open={promoDialogOpen} onOpenChange={setPromoDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-display">
+              {editingPromo ? "Editar Banner Promo" : "Novo Banner Promo"}
+            </DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handlePromoSubmit} className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label>Título interno</Label>
+              <Input
+                value={promoTitle}
+                onChange={(e) => setPromoTitle(e.target.value)}
+                placeholder="Ex: Black Friday 2026"
+                required
+                className="bg-card/10 border-border/15"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>URL da imagem</Label>
+              <Input
+                value={promoImageUrl}
+                onChange={(e) => setPromoImageUrl(e.target.value)}
+                placeholder="https://... imagem 1200x400"
+                required
+                className="bg-card/10 border-border/15"
+              />
+              <p className="text-[10px] text-muted-foreground/30">
+                Recomendado: 1200×400 px — JPG, PNG ou WebP
+              </p>
+            </div>
+
+            {promoImageUrl && (
+              <div className="rounded-xl overflow-hidden border border-border/10 aspect-[3/1] bg-card/10">
+                <img src={promoImageUrl} alt="Preview" className="w-full h-full object-cover" />
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label>Link (opcional)</Label>
+              <Input
+                value={promoLinkUrl}
+                onChange={(e) => setPromoLinkUrl(e.target.value)}
+                placeholder="https://..."
+                className="bg-card/10 border-border/15"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Posição (após prateleira nº)</Label>
+                <Input
+                  type="number"
+                  min={1}
+                  max={99}
+                  value={promoPosition}
+                  onChange={(e) => setPromoPosition(Number(e.target.value))}
+                  className="bg-card/10 border-border/15"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Ordem de exibição</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  max={999}
+                  value={promoOrder}
+                  onChange={(e) => setPromoOrder(Number(e.target.value))}
+                  className="bg-card/10 border-border/15"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
+              <div>
+                <p className="text-sm font-medium text-foreground/70">Ativo</p>
+                <p className="text-[11px] text-muted-foreground/40">Visível na vitrine</p>
+              </div>
+              <Switch checked={promoActive} onCheckedChange={setPromoActive} />
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
+              disabled={createPromoMut.isPending || updatePromoMut.isPending}
+            >
+              {(createPromoMut.isPending || updatePromoMut.isPending) && (
+                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+              )}
+              {editingPromo ? "Salvar" : "Criar Banner"}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Promo Delete Confirm ── */}
+      <AlertDialog
+        open={!!deletePromoTarget}
+        onOpenChange={(v) => {
+          if (!v) setDeletePromoTarget(null);
+        }}
+      >
+        <AlertDialogContent className="bg-card border-border/20">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-foreground/85">
+              Excluir banner promo
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground/50">
+              Tem certeza que deseja excluir o banner{" "}
+              <span className="font-semibold text-foreground/70">
+                {deletePromoTarget?.title}
+              </span>
+              ?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="text-muted-foreground/50">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (deletePromoTarget) deletePromoMut.mutate(deletePromoTarget.id);
+                setDeletePromoTarget(null);
+              }}
+              className="bg-destructive/80 text-destructive-foreground hover:bg-destructive"
+            >
+              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
