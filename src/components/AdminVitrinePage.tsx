@@ -18,8 +18,12 @@ import {
   Loader2,
   Sparkles,
   Monitor,
+  Smartphone,
+  Tablet,
   Info,
   ImageIcon,
+  Maximize2,
+  ExternalLink as ExternalLinkIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
