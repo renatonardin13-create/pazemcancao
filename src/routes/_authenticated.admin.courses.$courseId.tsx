@@ -99,6 +99,7 @@ function EditCoursePage() {
             Salvar Curso
           </Button>
         </div>
+        </div>
       </div>
 
       {/* Tabs */}
