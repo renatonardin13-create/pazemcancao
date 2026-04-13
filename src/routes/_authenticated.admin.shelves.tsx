@@ -19,6 +19,8 @@ import {
   Loader2,
   Sparkles,
   Monitor,
+  Info,
+  ImageIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -145,6 +147,10 @@ function AdminVitrinePage() {
   const [bannerSubtitle, setBannerSubtitle] = useState("");
   const [bannerImageUrl, setBannerImageUrl] = useState("");
   const [bannerCourseId, setBannerCourseId] = useState("");
+  const [bannerEnabled, setBannerEnabled] = useState(true);
+  const [bannerFit, setBannerFit] = useState<string>("cover");
+  const [bannerAspect, setBannerAspect] = useState<string>("hero");
+  const [bannerImgDims, setBannerImgDims] = useState<{ w: number; h: number } | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-shelves"],
