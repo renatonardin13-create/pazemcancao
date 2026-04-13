@@ -8,8 +8,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { Webhook, CheckCircle2, ShoppingCart, TrendingUp, ArrowLeft, ScrollText, Copy, Settings, Lightbulb, ExternalLink } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Webhook, CheckCircle2, ShoppingCart, TrendingUp, ArrowLeft, ScrollText, Copy, Settings, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
+import { format } from "date-fns";
 
 export const Route = createFileRoute("/_authenticated/admin/integrations")({
   component: IntegrationsPage,
