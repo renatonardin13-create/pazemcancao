@@ -240,31 +240,44 @@ function AdminCategoriesPage() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              if (!newCat.name || !newCat.slug) { toast.error("Nome e slug são obrigatórios"); return; }
-              createMutation.mutate(newCat);
+              if (!newCat.name) { toast.error("Nome é obrigatório"); return; }
+              const slug = newCat.slug || newCat.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+              createMutation.mutate({ ...newCat, slug });
             }}
             className="space-y-4 mt-4"
           >
             <div className="space-y-2">
               <Label>Nome *</Label>
-              <Input value={newCat.name} onChange={(e) => handleNameChange(e.target.value, "new")} placeholder="Ex: Teologia" />
+              <Input value={newCat.name} onChange={(e) => handleNameChange(e.target.value, "new")} placeholder="Ex: Marketing Digital" />
             </div>
             <div className="space-y-2">
-              <Label>Slug</Label>
-              <Input value={newCat.slug} onChange={(e) => setNewCat((p) => ({ ...p, slug: e.target.value }))} placeholder="teologia" />
+              <Label>Cor</Label>
+              <div className="flex flex-wrap gap-2">
+                {PICKER_COLORS.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    onClick={() => setNewCat((p) => ({ ...p, color }))}
+                    className={`h-9 w-9 rounded-full transition-all ${newCat.color === color ? "ring-2 ring-gold ring-offset-2 ring-offset-background scale-110" : "hover:scale-105"}`}
+                    style={{ backgroundColor: color }}
+                  />
+                ))}
+              </div>
             </div>
             <div className="space-y-2">
-              <Label>Descrição</Label>
-              <Input value={newCat.description} onChange={(e) => setNewCat((p) => ({ ...p, description: e.target.value }))} placeholder="Breve descrição..." />
-            </div>
-            <div className="space-y-2">
-              <Label>Ícone (emoji)</Label>
-              <Input value={newCat.icon} onChange={(e) => setNewCat((p) => ({ ...p, icon: e.target.value }))} placeholder="📖" />
+              <Label>Descrição (opcional)</Label>
+              <Textarea
+                value={newCat.description}
+                onChange={(e) => setNewCat((p) => ({ ...p, description: e.target.value }))}
+                placeholder="Breve descrição da categoria"
+                rows={3}
+                className="resize-none"
+              />
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setShowForm(false)}>Cancelar</Button>
               <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" disabled={createMutation.isPending}>
-                {createMutation.isPending ? "Criando..." : "Criar Categoria"}
+                {createMutation.isPending ? "Salvando..." : "Salvar"}
               </Button>
             </div>
           </form>
@@ -290,16 +303,28 @@ function AdminCategoriesPage() {
               <Input value={editValues.name} onChange={(e) => handleNameChange(e.target.value, "edit")} />
             </div>
             <div className="space-y-2">
-              <Label>Slug</Label>
-              <Input value={editValues.slug} onChange={(e) => setEditValues((p) => ({ ...p, slug: e.target.value }))} />
+              <Label>Cor</Label>
+              <div className="flex flex-wrap gap-2">
+                {PICKER_COLORS.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    onClick={() => setEditValues((p) => ({ ...p, color }))}
+                    className={`h-9 w-9 rounded-full transition-all ${editValues.color === color ? "ring-2 ring-gold ring-offset-2 ring-offset-background scale-110" : "hover:scale-105"}`}
+                    style={{ backgroundColor: color }}
+                  />
+                ))}
+              </div>
             </div>
             <div className="space-y-2">
-              <Label>Descrição</Label>
-              <Input value={editValues.description} onChange={(e) => setEditValues((p) => ({ ...p, description: e.target.value }))} />
-            </div>
-            <div className="space-y-2">
-              <Label>Ícone (emoji)</Label>
-              <Input value={editValues.icon} onChange={(e) => setEditValues((p) => ({ ...p, icon: e.target.value }))} />
+              <Label>Descrição (opcional)</Label>
+              <Textarea
+                value={editValues.description}
+                onChange={(e) => setEditValues((p) => ({ ...p, description: e.target.value }))}
+                placeholder="Breve descrição da categoria"
+                rows={3}
+                className="resize-none"
+              />
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setEditingCat(null)}>Cancelar</Button>
