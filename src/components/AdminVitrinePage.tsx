@@ -574,29 +574,13 @@ export default function AdminVitrinePage() {
                   </p>
                 </div>
 
-                {/* Toggle banner visibility */}
-                <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
-                  <div>
-                    <p className="text-sm font-medium text-foreground/70">
-                      Exibir banner principal na vitrine
-                    </p>
-                    <p className="text-[11px] text-muted-foreground/40">
-                      Quando desativado, o hero não será exibido na home do aluno
-                    </p>
-                  </div>
-                  <Switch checked={bannerEnabled} onCheckedChange={setBannerEnabled} />
-                </div>
-
-                {/* Image preview with real dimensions */}
+                {/* Image preview */}
                 {(() => {
                   const imgSrc = bannerImageUrl || featuredCourse?.banner_image_url || featuredCourse?.cover_image_url;
                   const aspectClass = bannerAspect === "21:9" ? "aspect-[21/9]" : bannerAspect === "16:9" ? "aspect-[16/9]" : "aspect-[1920/500]";
                   const fitClass = bannerFit === "cover" ? "object-cover" : bannerFit === "contain" ? "object-contain" : "object-fill";
                   return (
-                    <div className="space-y-2">
-                      <Label className="text-[11px] uppercase tracking-wider text-muted-foreground/40">
-                        Preview do banner
-                      </Label>
+                    <div className="space-y-3">
                       <div className={`relative w-full ${aspectClass} rounded-xl overflow-hidden border border-border/10 bg-card/10`}>
                         {imgSrc ? (
                           <img
@@ -629,145 +613,92 @@ export default function AdminVitrinePage() {
                           </div>
                         </div>
                       </div>
-
-                      {/* Image dimensions info */}
-                      {bannerImgDims && (
-                        <div className="flex items-center gap-4 text-[10px] text-muted-foreground/35">
-                          <span>
-                            Dimensões reais: <strong className="text-foreground/50">{bannerImgDims.w}×{bannerImgDims.h} px</strong>
-                          </span>
-                          <span>
-                            Proporção: <strong className="text-foreground/50">{(bannerImgDims.w / bannerImgDims.h).toFixed(2)}:1</strong>
-                          </span>
-                        </div>
-                      )}
                     </div>
                   );
                 })()}
 
-                {/* Configuration fields */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Curso em destaque</Label>
-                    <Select value={bannerCourseId} onValueChange={setBannerCourseId}>
-                      <SelectTrigger className="bg-card/10 border-border/15">
-                        <SelectValue placeholder="Automático — primeiro curso com banner" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="auto">Automático</SelectItem>
-                        {courses.map((c: any) => (
-                          <SelectItem key={c.id} value={c.id}>
-                            {c.title}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <p className="text-[10px] text-muted-foreground/30">
-                      Curso exibido no hero da vitrine
+                {/* Dimensions info */}
+                {bannerImgDims && (
+                  <div className="rounded-xl border border-border/10 bg-card/5 px-4 py-3">
+                    <p className="text-xs text-muted-foreground/50">
+                      <strong className="text-foreground/60">Dimensões:</strong> {bannerImgDims.w} × {bannerImgDims.h}px{" "}
+                      <span className="text-gold/60">(Proporção: {(bannerImgDims.w / bannerImgDims.h).toFixed(2)}:1)</span>
                     </p>
                   </div>
+                )}
 
-                  <div className="space-y-2">
-                    <Label>URL do Banner (opcional)</Label>
-                    <Input
-                      value={bannerImageUrl}
-                      onChange={(e) => {
-                        setBannerImageUrl(e.target.value);
+                {/* Mode select */}
+                <div className="rounded-xl border border-border/10 bg-card/5 px-4 py-3 flex items-center justify-between gap-4">
+                  <Label className="text-sm text-foreground/60 shrink-0">Modo de exibição do banner</Label>
+                  <Select value={bannerFit} onValueChange={setBannerFit}>
+                    <SelectTrigger className="bg-card/10 border-border/15 w-auto min-w-[200px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cover">Preencher (pode cortar)</SelectItem>
+                      <SelectItem value="contain">Conter (sem cortar)</SelectItem>
+                      <SelectItem value="fill">Ajustar automaticamente</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Aspect ratio select */}
+                <div className="rounded-xl border border-border/10 bg-card/5 px-4 py-3 flex items-center justify-between gap-4">
+                  <Label className="text-sm text-foreground/60 shrink-0">Proporção do container</Label>
+                  <Select value={bannerAspect} onValueChange={setBannerAspect}>
+                    <SelectTrigger className="bg-card/10 border-border/15 w-auto min-w-[200px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="21:9">Ultrawide 21:9</SelectItem>
+                      <SelectItem value="16:9">Wide 16:9</SelectItem>
+                      <SelectItem value="hero">Hero padrão 1920×500</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Toggle + buttons */}
+                <div className="rounded-xl bg-gold/5 border border-gold/12 p-4 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium text-foreground/70">
+                      Exibir banner principal na vitrine
+                    </p>
+                    <Switch checked={bannerEnabled} onCheckedChange={setBannerEnabled} />
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5 border-border/20 text-muted-foreground/60 hover:text-foreground/80"
+                      onClick={() => {
+                        setBannerImageUrl("");
                         setBannerImgDims(null);
+                        toast.success("Banner removido");
                       }}
-                      placeholder="https://... imagem customizada"
-                      className="bg-card/10 border-border/15"
-                    />
-                    <p className="text-[10px] text-muted-foreground/30">
-                      Deixe vazio para usar o banner do curso selecionado
-                    </p>
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                      Remover Banner
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="gap-1.5 bg-gold/90 text-gold-foreground hover:bg-gold"
+                      onClick={() => {
+                        const url = prompt("Cole a URL da nova imagem do banner:");
+                        if (url) {
+                          setBannerImageUrl(url);
+                          setBannerImgDims(null);
+                          toast.success("Banner atualizado");
+                        }
+                      }}
+                    >
+                      <ImageIcon className="h-3.5 w-3.5" />
+                      Trocar Banner
+                    </Button>
                   </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Título customizado (opcional)</Label>
-                    <Input
-                      value={bannerTitle}
-                      onChange={(e) => setBannerTitle(e.target.value)}
-                      placeholder="Deixe vazio para usar o título do curso"
-                      className="bg-card/10 border-border/15"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Subtítulo (opcional)</Label>
-                    <Input
-                      value={bannerSubtitle}
-                      onChange={(e) => setBannerSubtitle(e.target.value)}
-                      placeholder="Deixe vazio para usar a descrição do curso"
-                      className="bg-card/10 border-border/15"
-                    />
-                  </div>
-                </div>
-
-                {/* Display mode & aspect ratio */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Modo de exibição do banner</Label>
-                    <Select value={bannerFit} onValueChange={setBannerFit}>
-                      <SelectTrigger className="bg-card/10 border-border/15">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="cover">Preencher (pode cortar)</SelectItem>
-                        <SelectItem value="contain">Conter (sem cortar)</SelectItem>
-                        <SelectItem value="fill">Ajustar automaticamente</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Proporção do container</Label>
-                    <Select value={bannerAspect} onValueChange={setBannerAspect}>
-                      <SelectTrigger className="bg-card/10 border-border/15">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="21:9">Ultra wide 21:9</SelectItem>
-                        <SelectItem value="16:9">Wide 16:9</SelectItem>
-                        <SelectItem value="hero">Hero padrão 1920×500</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {/* Action buttons */}
-                <div className="flex items-center gap-3 pt-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-1.5 border-destructive/20 text-destructive/60 hover:text-destructive hover:border-destructive/40"
-                    onClick={() => {
-                      setBannerImageUrl("");
-                      setBannerImgDims(null);
-                      toast.success("Banner removido");
-                    }}
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                    Remover Banner
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-1.5 border-gold/20 text-gold/60 hover:text-gold hover:border-gold/30"
-                    onClick={() => {
-                      const url = prompt("Cole a URL da nova imagem do banner:");
-                      if (url) {
-                        setBannerImageUrl(url);
-                        setBannerImgDims(null);
-                        toast.success("Banner atualizado");
-                      }
-                    }}
-                  >
-                    <ImageIcon className="h-3.5 w-3.5" />
-                    Trocar Banner
-                  </Button>
+                  <p className="text-[10px] text-muted-foreground/30 flex items-center gap-1">
+                    <Info className="h-3 w-3" />
+                    As alterações são salvas automaticamente no banco de dados
+                  </p>
                 </div>
               </div>
             </TabsContent>
