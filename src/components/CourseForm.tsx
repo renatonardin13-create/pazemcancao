@@ -94,7 +94,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
   return (
     <form ref={ref} onSubmit={handleSubmit}>
-      <div className="flex flex-col lg:grid lg:grid-cols-[1fr_300px] gap-4">
+      <div className="flex flex-col lg:grid lg:grid-cols-[1fr_340px] gap-5">
 
         {/* ===== LEFT: Informações + Configurações ===== */}
         <div className="space-y-4 order-1 lg:col-start-1">
