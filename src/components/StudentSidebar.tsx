@@ -117,7 +117,7 @@ export function StudentSidebar() {
                 search={{}}
                 onClick={() => setMobileOpen(false)}
                 className={subItemClass(
-                  isActive("/musicas") && !location.search.includes("categoria=")
+                  isActive("/musicas") && !new URLSearchParams(location.searchStr).has("categoria")
                 )}
               >
                 <span className="text-[10px]">🎵</span>
@@ -125,7 +125,7 @@ export function StudentSidebar() {
               </Link>
               {categories.map((cat: any) => {
                 const catSlug = cat.slug || cat.name.toLowerCase();
-                const isActiveCat = location.search.includes(`categoria=${encodeURIComponent(catSlug)}`);
+                const isActiveCat = new URLSearchParams(location.searchStr).get("categoria") === catSlug;
                 return (
                   <Link
                     key={cat.id}
