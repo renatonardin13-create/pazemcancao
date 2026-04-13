@@ -657,7 +657,7 @@ export function AdminDashboard() {
             </div>
           </TabsContent>
         </Tabs>
-      </div>
+      </motion.div>
     </div>
   );
 }
