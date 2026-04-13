@@ -656,75 +656,90 @@ export default function AdminVitrinePage() {
               </div>
             </TabsContent>
             <TabsContent value="cards" className="mt-6 space-y-6">
-              <div className="rounded-xl border border-border/15 bg-card/5 p-6 space-y-5">
+              <div className="space-y-5">
+                {/* Header */}
                 <div>
-                  <h3 className="text-sm font-semibold text-foreground/70 mb-1">Cards de Curso</h3>
-                  <p className="text-[11px] text-muted-foreground/35">
-                    Configurações visuais dos cards exibidos nas prateleiras.
+                  <h3 className="text-base font-bold text-foreground/85">
+                    Configuração dos Cards{" "}
+                    <span className="font-normal text-muted-foreground/50">(Netflix Style)</span>
+                  </h3>
+                  <p className="text-[11px] text-muted-foreground/40 mt-0.5">
+                    Personalize a aparência dos cards de cursos nas prateleiras
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="rounded-xl border border-border/10 bg-card/3 p-4 space-y-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-gold/8 border border-gold/15 flex items-center justify-center">
-                        <Image className="h-4 w-4 text-gold/50" />
-                      </div>
-                      <div>
-                        <p className="text-[12px] font-semibold text-foreground/70">Proporção 2:3</p>
-                        <p className="text-[10px] text-muted-foreground/30">Vertical — estilo Netflix</p>
-                      </div>
-                    </div>
-                    <p className="text-[10px] text-muted-foreground/25 leading-relaxed">
-                      Cada curso usa sua <strong className="text-foreground/50">capa vertical</strong> (cover_image_url).
-                      Recomendado: 1000×1500 px.
-                    </p>
+                {/* Toggle rows */}
+                {[
+                  { label: "Exibir título no card", key: "showTitle" },
+                  { label: "Exibir descrição curta", key: "showDesc" },
+                  { label: "Exibir categoria", key: "showCategory" },
+                  { label: "Mostrar barra de progresso", key: "showProgress" },
+                  { label: "Mostrar cadeado em cursos bloqueados", key: "showLock" },
+                  { label: "Aplicar efeito hover dourado", key: "hoverGold" },
+                  { label: "Mostrar borda nos cards", key: "showBorder" },
+                ].map((item) => (
+                  <div
+                    key={item.key}
+                    className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3"
+                  >
+                    <p className="text-sm font-medium text-foreground/60">{item.label}</p>
+                    <Switch defaultChecked={true} />
                   </div>
+                ))}
 
-                  <div className="rounded-xl border border-border/10 bg-card/3 p-4 space-y-3">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-lg bg-gold/8 border border-gold/15 flex items-center justify-center">
-                        <Sparkles className="h-4 w-4 text-gold/50" />
-                      </div>
-                      <div>
-                        <p className="text-[12px] font-semibold text-foreground/70">Efeitos Hover</p>
-                        <p className="text-[10px] text-muted-foreground/30">Zoom + glow dourado</p>
-                      </div>
-                    </div>
-                    <p className="text-[10px] text-muted-foreground/25 leading-relaxed">
-                      Os cards possuem animação de hover com zoom sutil e brilho dourado na borda,
-                      criando uma experiência premium de streaming.
-                    </p>
+                {/* Gradient intensity slider - cards */}
+                <div className="rounded-xl bg-card/5 border border-border/10 px-4 py-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium text-foreground/60">Intensidade do gradiente nos cards</p>
+                    <span className="text-sm font-semibold text-gold/70">20%</span>
                   </div>
-                </div>
-
-                {/* Card preview grid */}
-                <div>
-                  <p className="text-[11px] text-muted-foreground/40 mb-3 uppercase tracking-wider font-medium">
-                    Preview dos cards
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    defaultValue="20"
+                    className="w-full h-1.5 rounded-full appearance-none bg-muted/20 accent-gold cursor-pointer"
+                  />
+                  <p className="text-[10px] text-muted-foreground/30">
+                    0% = sem escurecimento | 100% = escurecimento total
                   </p>
-                  <div className="flex gap-3 overflow-x-auto pb-2">
-                    {(publishedCourses.length > 0 ? publishedCourses.slice(0, 5) : [{ id: "1", title: "Curso Exemplo", cover_image_url: null }]).map((course: any) => (
-                      <div key={course.id} className="shrink-0 w-[120px]">
-                        <div className="relative aspect-[2/3] rounded-lg overflow-hidden border border-border/10 bg-card/10">
-                          {course.cover_image_url ? (
-                            <img src={course.cover_image_url} alt={course.title} className="w-full h-full object-cover" />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-card/30 to-card/5">
-                              <BookOpen className="h-6 w-6 text-muted-foreground/10" />
-                            </div>
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                          <div className="absolute bottom-0 left-0 right-0 p-2.5">
-                            <p className="text-[10px] font-bold text-white/90 line-clamp-2 leading-tight">
-                              {course.title}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
                 </div>
+
+                {/* Gradient intensity slider - banner */}
+                <div className="rounded-xl bg-card/5 border border-border/10 px-4 py-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-medium text-foreground/60">Intensidade do gradiente no banner principal</p>
+                    <span className="text-sm font-semibold text-gold/70">20%</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    defaultValue="20"
+                    className="w-full h-1.5 rounded-full appearance-none bg-muted/20 accent-gold cursor-pointer"
+                  />
+                  <p className="text-[10px] text-muted-foreground/30">
+                    Controla a opacidade do gradiente sobre o banner hero
+                  </p>
+                </div>
+
+                {/* Cards per shelf limit */}
+                <div className="space-y-2">
+                  <Label className="text-sm text-foreground/60 font-medium">
+                    Limite global de cards por prateleira
+                  </Label>
+                  <Input
+                    type="number"
+                    defaultValue={20}
+                    className="bg-card/10 border-border/15 max-w-[200px]"
+                  />
+                </div>
+
+                {/* Save button */}
+                <Button className="w-full gap-2 bg-gold/90 text-gold-foreground hover:bg-gold shadow-lg shadow-gold/20 font-semibold">
+                  <BookOpen className="h-4 w-4" />
+                  Salvar Configurações
+                </Button>
               </div>
             </TabsContent>
 
