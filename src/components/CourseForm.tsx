@@ -101,14 +101,97 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
         {/* ========== LEFT COLUMN — Info + Images ========== */}
         <div className="space-y-6">
           {/* Card: Informações do Curso */}
-          <div className="rounded-xl border border-border/10 bg-card/5 p-5 space-y-5">
-            <h3 className="text-sm font-semibold text-foreground/70 tracking-tight">
+          <div className="rounded-xl border border-border/10 bg-card/5 p-6 space-y-6">
+            <h3 className="text-sm font-semibold text-foreground/70 tracking-tight border-b border-border/8 pb-3">
               Informações do Curso
             </h3>
 
+            {/* Title */}
+            <div className="space-y-1.5">
+              <Label htmlFor="title" className="text-xs font-medium text-muted-foreground/60">
+                Título do Curso <span className="text-gold/60">*</span>
+              </Label>
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Ex: Curso de Piano para Iniciantes"
+                required
+                className="bg-card/10 border-border/12 focus:border-gold/30"
+              />
+            </div>
+
+            {/* Short description */}
+            <div className="space-y-1.5">
+              <Label htmlFor="shortDesc" className="text-xs font-medium text-muted-foreground/60">
+                Descrição Curta
+              </Label>
+              <Input
+                id="shortDesc"
+                value={shortDesc}
+                onChange={(e) => setShortDesc(e.target.value)}
+                placeholder="Breve descrição exibida nos cards"
+                className="bg-card/10 border-border/12 focus:border-gold/30"
+              />
+            </div>
+
+            {/* Full description */}
+            <div className="space-y-1.5">
+              <Label htmlFor="fullDesc" className="text-xs font-medium text-muted-foreground/60">
+                Descrição Completa
+              </Label>
+              <Textarea
+                id="fullDesc"
+                value={fullDesc}
+                onChange={(e) => setFullDesc(e.target.value)}
+                placeholder="Descrição detalhada do curso..."
+                rows={5}
+                className="bg-card/10 border-border/12 focus:border-gold/30"
+              />
+            </div>
+
+            {/* Category & Status — side by side */}
+            <div className="grid sm:grid-cols-2 gap-5">
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-muted-foreground/60">Categoria</Label>
+                <Select value={categoryId} onValueChange={setCategoryId}>
+                  <SelectTrigger className="bg-card/10 border-border/12">
+                    <SelectValue placeholder="Selecionar categoria" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((cat: any) => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {cat.icon || "📁"} {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs font-medium text-muted-foreground/60">Status</Label>
+                <Select value={status} onValueChange={setStatus}>
+                  <SelectTrigger className="bg-card/10 border-border/12">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="draft">Rascunho</SelectItem>
+                    <SelectItem value="published">Publicado</SelectItem>
+                    <SelectItem value="archived">Arquivado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+
+          {/* Card: Configurações Adicionais */}
+          <div className="rounded-xl border border-border/10 bg-card/5 p-6 space-y-6">
+            <h3 className="text-sm font-semibold text-foreground/70 tracking-tight border-b border-border/8 pb-3">
+              Configurações Adicionais
+            </h3>
+
             {/* Type selector */}
-            <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-medium text-muted-foreground/60">
                 Modalidade
               </Label>
               <div className="flex gap-3">
@@ -133,80 +216,12 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
               </div>
             </div>
 
-            {/* Title */}
-            <div className="space-y-2">
-              <Label htmlFor="title">Título do Curso *</Label>
-              <Input
-                id="title"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Ex: Curso de Piano para Iniciantes"
-                required
-                className="bg-card/10 border-border/15"
-              />
-            </div>
-
-            {/* Short description */}
-            <div className="space-y-2">
-              <Label htmlFor="shortDesc">Descrição Curta</Label>
-              <Input
-                id="shortDesc"
-                value={shortDesc}
-                onChange={(e) => setShortDesc(e.target.value)}
-                placeholder="Breve descrição exibida nos cards"
-                className="bg-card/10 border-border/15"
-              />
-            </div>
-
-            {/* Full description */}
-            <div className="space-y-2">
-              <Label htmlFor="fullDesc">Descrição Completa</Label>
-              <Textarea
-                id="fullDesc"
-                value={fullDesc}
-                onChange={(e) => setFullDesc(e.target.value)}
-                placeholder="Descrição detalhada do curso..."
-                rows={5}
-                className="bg-card/10 border-border/15"
-              />
-            </div>
-
-            {/* Category & Status */}
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Categoria</Label>
-                <Select value={categoryId} onValueChange={setCategoryId}>
-                  <SelectTrigger className="bg-card/10 border-border/15">
-                    <SelectValue placeholder="Selecionar categoria" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((cat: any) => (
-                      <SelectItem key={cat.id} value={cat.id}>
-                        {cat.icon || "📁"} {cat.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-2">
-                <Label>Status</Label>
-                <Select value={status} onValueChange={setStatus}>
-                  <SelectTrigger className="bg-card/10 border-border/15">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="draft">Rascunho</SelectItem>
-                    <SelectItem value="published">Publicado</SelectItem>
-                    <SelectItem value="archived">Arquivado</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
             {/* Price & Launch date */}
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="price">Preço (R$)</Label>
+            <div className="grid sm:grid-cols-2 gap-5">
+              <div className="space-y-1.5">
+                <Label htmlFor="price" className="text-xs font-medium text-muted-foreground/60">
+                  Preço (R$)
+                </Label>
                 <Input
                   id="price"
                   type="number"
@@ -214,17 +229,19 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   min="0"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                  className="bg-card/10 border-border/15"
+                  className="bg-card/10 border-border/12 focus:border-gold/30"
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="launchDate">Data de Lançamento</Label>
+              <div className="space-y-1.5">
+                <Label htmlFor="launchDate" className="text-xs font-medium text-muted-foreground/60">
+                  Data de Lançamento
+                </Label>
                 <Input
                   id="launchDate"
                   type="date"
                   value={launchDate}
                   onChange={(e) => setLaunchDate(e.target.value)}
-                  className="bg-card/10 border-border/15"
+                  className="bg-card/10 border-border/12 focus:border-gold/30"
                 />
               </div>
             </div>
