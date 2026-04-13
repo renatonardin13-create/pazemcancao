@@ -107,7 +107,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
   return (
     <form ref={ref} onSubmit={handleSubmit}>
-      <div className="flex flex-col lg:grid lg:grid-cols-[1fr_340px] gap-5">
+      <div className="flex flex-col lg:grid lg:grid-cols-[1fr_280px] gap-5">
 
         {/* ===== LEFT: Informações + Configurações ===== */}
         <div className="space-y-5 order-1 lg:col-start-1">
@@ -246,10 +246,10 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
         {/* ===== RIGHT: Preview ===== */}
         <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2">
           <div className="rounded-xl border border-border/12 bg-card lg:sticky lg:top-6 shadow-md shadow-black/5 overflow-hidden">
-            <div className="px-5 py-3.5 border-b border-border/8 bg-card/90">
-              <h3 className="text-sm font-bold text-foreground/80">Preview</h3>
+            <div className="px-4 py-3 border-b border-border/8 bg-card/90">
+              <h3 className="text-xs font-bold text-foreground/80">Preview</h3>
             </div>
-            <div className="p-4">
+            <div className="p-3">
               <div className="rounded-lg overflow-hidden border border-border/8 bg-background/20">
                 <div className="aspect-[16/9] bg-muted/5 flex items-center justify-center overflow-hidden">
                   {coverUrl ? (
@@ -261,11 +261,11 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                     </div>
                   )}
                 </div>
-                <div className="p-4 space-y-2">
-                  <p className="text-base font-bold text-foreground/90 leading-snug line-clamp-2">
+                <div className="p-3 space-y-1.5">
+                  <p className="text-sm font-bold text-foreground/90 leading-snug line-clamp-2">
                     {title || "Título do Curso"}
                   </p>
-                  <p className="text-sm text-muted-foreground/50 line-clamp-3 leading-relaxed">
+                  <p className="text-xs text-muted-foreground/50 line-clamp-3 leading-relaxed">
                     {shortDesc || "Descrição do curso aparecerá aqui"}
                   </p>
                   {(parseFloat(price) > 0 || promotionalPrice) && (
