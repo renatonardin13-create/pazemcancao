@@ -117,7 +117,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Ex: Curso de Piano para Iniciantes"
                 required
-                className="bg-background/40 border-border/15 focus:border-gold/30 rounded-xl">
+                className="bg-background/40 border-border/15 focus:border-gold/30 rounded-xl"
               />
             </div>
 
