@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { RestrictedAccessCard } from "@/components/RestrictedAccessCard";
 import { checkBuyerAccess } from "@/lib/access.functions";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { LogOut, ShieldAlert } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated")({
@@ -15,11 +15,13 @@ function AuthenticatedLayout() {
 
   const [accessData, setAccessData] = useState<{ hasAccess: boolean; buyer: any; isTrial?: boolean; trialExpired?: boolean; canDownload?: boolean; trialExpiresAt?: string | null } | null>(null);
   const [accessLoading, setAccessLoading] = useState(true);
+  const lastCheckedEmail = useRef<string | null>(null);
 
   useEffect(() => {
     if (!isAuthenticated) {
       setAccessData(null);
       setAccessLoading(false);
+      lastCheckedEmail.current = null;
       return;
     }
 
@@ -31,20 +33,43 @@ function AuthenticatedLayout() {
     if (isAdmin) {
       setAccessData({ hasAccess: true, buyer: { nome: "Administrador", product_name: null } });
       setAccessLoading(false);
+      lastCheckedEmail.current = user?.email ?? null;
+      return;
+    }
+
+    // Prevent duplicate checks for the same email
+    const currentEmail = user?.email ?? null;
+    if (currentEmail && currentEmail === lastCheckedEmail.current && accessData !== null) {
       return;
     }
 
     let cancelled = false;
+    setAccessLoading(true);
+
     checkBuyerAccess().then((result) => {
       if (!cancelled) {
         setAccessData(result);
         setAccessLoading(false);
+        lastCheckedEmail.current = currentEmail;
       }
-    }).catch(() => {
-      if (!cancelled) setAccessLoading(false);
+    }).catch((err) => {
+      console.error("Access check failed:", err);
+      if (!cancelled) {
+        // On error, don't block — retry will happen on next render
+        setAccessData(null);
+        setAccessLoading(false);
+      }
     });
+
     return () => { cancelled = true; };
   }, [isAuthenticated, adminLoading, isAdmin, user?.email]);
+
+  // Redirect to login if not authenticated (after loading completes)
+  useEffect(() => {
+    if (!loading && !isAuthenticated && !blocked) {
+      navigate({ to: "/login" });
+    }
+  }, [loading, isAuthenticated, blocked, navigate]);
 
   if (loading || adminLoading || (isAuthenticated && !isAdmin && accessLoading)) {
     return (
