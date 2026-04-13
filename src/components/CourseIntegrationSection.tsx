@@ -104,7 +104,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
   }
 
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-6">
       {/* Integration Settings */}
       <Card className="border-border/20 bg-card/40">
         <CardHeader className="pb-4">
