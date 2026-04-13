@@ -321,26 +321,25 @@ function AdminUsersPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Users className="h-6 w-6 text-gold/60" />
+      <div className="relative rounded-2xl border border-gold/10 bg-gradient-to-r from-card via-card/80 to-card p-6 overflow-hidden shadow-xl shadow-black/10">
+        <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gold/[0.05] blur-[60px]" />
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative z-10">
           <div>
-            <h1 className="font-display text-2xl font-bold text-foreground/90 tracking-tight">
+            <h1 className="font-display text-2xl font-black text-foreground tracking-tight">
               Alunos
             </h1>
-            <p className="text-[13px] text-muted-foreground/45">
+            <p className="text-xs text-muted-foreground/50 mt-0.5">
               Gerencie os alunos da sua plataforma ({totalUsers} total)
             </p>
           </div>
-        </div>
 
-        <Dialog open={addOpen} onOpenChange={(v) => { setAddOpen(v); if (!v) resetAddForm(); }}>
-          <DialogTrigger asChild>
-            <Button className="gap-2 bg-gold/90 text-gold-foreground hover:bg-gold font-semibold">
-              <UserPlus className="h-4 w-4" />
-              Adicionar Aluno
-            </Button>
-          </DialogTrigger>
+          <Dialog open={addOpen} onOpenChange={(v) => { setAddOpen(v); if (!v) resetAddForm(); }}>
+            <DialogTrigger asChild>
+              <Button className="h-10 px-5 rounded-xl bg-gradient-to-r from-gold to-gold/85 text-background font-bold hover:shadow-lg hover:shadow-gold/20 transition-all gap-2">
+                <UserPlus className="h-4 w-4" />
+                Adicionar Aluno
+              </Button>
+            </DialogTrigger>
           <DialogContent className="sm:max-w-lg">
             <DialogHeader>
               <DialogTitle className="font-display">Adicionar Aluno</DialogTitle>
