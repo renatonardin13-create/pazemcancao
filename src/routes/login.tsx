@@ -395,14 +395,14 @@ function LoginPage() {
                       exit={{ opacity: 0, x: 10 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <div className="mb-7">
-                        <h2 className="text-2xl font-bold text-foreground font-display tracking-tight">
+                      <div className="mb-9">
+                        <h2 className="text-3xl font-bold text-foreground font-display tracking-tight">
                           Bem-vindo de volta
                         </h2>
-                        <p className="mt-3 text-[13px] text-muted-foreground/70 leading-[1.8]">
+                        <p className="mt-3 text-[15px] text-muted-foreground/70 leading-[1.8]">
                           Entre com suas credenciais para continuar
                         </p>
-                        <p className="mt-2 text-[11px] text-muted-foreground/50 leading-[1.7] text-center">
+                        <p className="mt-3 text-[13px] text-muted-foreground/50 leading-[1.7] text-center">
                           Use o e-mail da sua compra na Kiwify. Se é o seu primeiro acesso,
                           clique em{' '}
                           <button
@@ -426,38 +426,38 @@ function LoginPage() {
                         </motion.div>
                       )}
 
-                      <form onSubmit={handleLogin} className="space-y-5">
-                        <div className="space-y-2.5">
-                          <Label htmlFor="email" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                      <form onSubmit={handleLogin} className="space-y-6">
+                        <div className="space-y-3">
+                          <Label htmlFor="email" className="text-[12px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
                             E-mail
                           </Label>
                           <div className="relative">
-                            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/50" />
                             <Input
                               id="email"
                               type="email"
                               placeholder="seu@email.com"
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
-                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                              className="pl-12 h-14 bg-background/60 border-border/40 rounded-xl text-base placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                               required
                             />
                           </div>
                         </div>
 
-                        <div className="space-y-2.5">
-                          <Label htmlFor="password" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                        <div className="space-y-3">
+                          <Label htmlFor="password" className="text-[12px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
                             Senha
                           </Label>
                           <div className="relative">
-                            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
+                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/50" />
                             <Input
                               id="password"
                               type="password"
                               placeholder="••••••••"
                               value={password}
                               onChange={(e) => setPassword(e.target.value)}
-                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                              className="pl-12 h-14 bg-background/60 border-border/40 rounded-xl text-base placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                               required
                             />
                           </div>
@@ -466,10 +466,10 @@ function LoginPage() {
                         <button
                           type="submit"
                           disabled={loading}
-                          className="w-full flex items-center justify-center gap-2.5 rounded-xl h-12 text-[13px] font-bold tracking-wider bg-gold text-background border border-gold/80 hover:bg-gold/90 transition-all duration-500 active:scale-[0.98] disabled:opacity-40"
+                          className="w-full flex items-center justify-center gap-2.5 rounded-xl h-14 text-[15px] font-bold tracking-wider bg-gold text-background border border-gold/80 hover:bg-gold/90 transition-all duration-500 active:scale-[0.98] disabled:opacity-40"
                         >
                           {loading ? (
-                            <div className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-background/20 border-t-background/50" />
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-background/20 border-t-background/50" />
                           ) : (
                             <>
                               Entrar
