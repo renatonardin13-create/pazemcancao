@@ -159,7 +159,7 @@ export function StudentSidebar() {
                   <span className="text-[10px]">⭐</span>
                   Destaques (Top 10)
                 </Link>
-                {categories.map((cat: any) => {
+                {visibleCategories.map((cat: any) => {
                   const catSlug = cat.slug || cat.name.toLowerCase();
                   const isActiveCat = (location.search as any)?.categoria === catSlug;
                   return (
