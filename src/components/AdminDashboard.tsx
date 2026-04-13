@@ -358,8 +358,6 @@ export function AdminDashboard() {
                  <p className="text-sm text-muted-foreground/50 font-semibold">Aguardando primeiros dados</p>
                  <p className="text-[11px] text-muted-foreground/30 mt-1.5 max-w-xs">O gráfico será exibido automaticamente quando houver atividade de plays ou vendas na plataforma.</p>
                </div>
-                <p className="text-[11px] text-muted-foreground/25 mt-1.5">Os dados aparecerão aqui quando houver atividade</p>
-              </div>
             ) : (
               <ResponsiveContainer width="100%" height={280}>
                 <AreaChart data={analytics.dailyPlayData} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
