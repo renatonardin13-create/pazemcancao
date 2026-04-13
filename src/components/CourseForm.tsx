@@ -107,7 +107,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Ex: Curso de Piano para Iniciantes"
+                placeholder="Ex: Curso Completo de Marketing Digital"
                 required
                 className={inputClass}
               />
@@ -115,12 +115,13 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
             <div className="space-y-1">
               <Label htmlFor="shortDesc" className={labelClass}>Descrição Curta</Label>
-              <Input
+              <Textarea
                 id="shortDesc"
                 value={shortDesc}
                 onChange={(e) => setShortDesc(e.target.value)}
-                placeholder="Breve descrição exibida nos cards"
-                className={inputClass}
+                placeholder="Uma breve descrição do curso (aparece na vitrine)"
+                rows={3}
+                className="bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm resize-none"
               />
             </div>
 
