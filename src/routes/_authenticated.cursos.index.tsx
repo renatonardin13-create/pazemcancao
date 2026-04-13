@@ -133,11 +133,26 @@ function MeusCoursosPage() {
           ) : filtered.length === 0 ? (
             <div className="text-center py-24">
               <BookOpen className="h-10 w-10 text-muted-foreground/15 mx-auto mb-5" />
-              <p className="text-sm text-muted-foreground/40">
-                {courses.length === 0
-                  ? "Você ainda não tem acesso a nenhum curso."
-                  : "Nenhum curso encontrado com os filtros aplicados."}
-              </p>
+              {courses.length === 0 ? (
+                <>
+                  <p className="text-sm text-muted-foreground/40 mb-2">
+                    Você ainda não possui cursos liberados.
+                  </p>
+                  <p className="text-[12px] text-muted-foreground/30 mb-6">
+                    Adquira um curso na vitrine para começar sua jornada.
+                  </p>
+                  <Link
+                    to="/vitrine"
+                    className="inline-flex items-center gap-2 rounded-xl bg-gold/15 text-gold/70 border border-gold/20 px-6 py-2.5 text-[11px] font-bold uppercase tracking-wider hover:bg-gold/25 hover:text-gold/90 transition-all"
+                  >
+                    Explorar Vitrine <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </>
+              ) : (
+                <p className="text-sm text-muted-foreground/40">
+                  Nenhum curso encontrado com os filtros aplicados.
+                </p>
+              )}
             </div>
           ) : (
             <div className="space-y-4">
