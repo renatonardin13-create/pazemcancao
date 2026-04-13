@@ -924,10 +924,10 @@ function AdminVitrinePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-semibold text-foreground/70 tracking-tight">
-                    Prateleiras
+                    Prateleiras (Shelves) da Vitrine
                   </h3>
                   <p className="text-[11px] text-muted-foreground/35 mt-0.5">
-                    Organize a vitrine — arraste para reordenar
+                    Organize os cursos em fileiras horizontais estilo Netflix
                   </p>
                 </div>
                 <Button
@@ -936,7 +936,7 @@ function AdminVitrinePage() {
                   onClick={openCreate}
                 >
                   <Plus className="h-3.5 w-3.5" />
-                  Nova Prateleira
+                  Adicionar
                 </Button>
               </div>
 
