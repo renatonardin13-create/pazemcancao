@@ -456,13 +456,24 @@ export default function AdminVitrinePage() {
   return (
     <div className="max-w-[1400px] mx-auto space-y-6">
       {/* ── Header ── */}
-      <div className="pb-5 border-b border-border/10">
-        <h1 className="font-display text-2xl font-bold text-foreground/90 tracking-tight">
-          Configuração da Vitrine
-        </h1>
-        <p className="mt-1 text-[13px] text-muted-foreground/45 tracking-wide">
-          Configure banner, cards e prateleiras da área do aluno
-        </p>
+      <div className="flex items-start justify-between pb-5 border-b border-border/10">
+        <div>
+          <h1 className="font-display text-2xl font-bold text-foreground/90 tracking-tight">
+            Configuração da Vitrine
+          </h1>
+          <p className="mt-1 text-[13px] text-muted-foreground/45 tracking-wide">
+            Configure banner, cards e prateleiras da área do aluno
+          </p>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          className="gap-1.5 border-border/15 text-muted-foreground/50 hover:text-foreground/70 text-xs"
+          onClick={() => setShowPreview(!showPreview)}
+        >
+          <Eye className="h-3.5 w-3.5" />
+          {showPreview ? "Esconder Preview" : "Mostrar Preview"}
+        </Button>
       </div>
 
       {/* ── Summary Stats ── */}
