@@ -326,10 +326,11 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
 
   const handleSaveModule = () => {
     if (!modTitle.trim()) return;
+    const status = modPublished ? "published" : "draft";
     if (moduleDialog.editId) {
-      updateModM.mutate({ id: moduleDialog.editId, title: modTitle.trim(), description: modDesc.trim() || undefined });
+      updateModM.mutate({ id: moduleDialog.editId, title: modTitle.trim(), description: modDesc.trim() || undefined, status, thumbnail_url: modThumbnailUrl.trim() || undefined });
     } else {
-      createModM.mutate({ title: modTitle.trim(), description: modDesc.trim() || undefined });
+      createModM.mutate({ title: modTitle.trim(), description: modDesc.trim() || undefined, status, thumbnail_url: modThumbnailUrl.trim() || undefined });
     }
   };
 
