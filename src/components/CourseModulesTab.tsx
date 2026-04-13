@@ -756,47 +756,45 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
           if (!open) setLessonDialog({ open: false });
         }}
       >
-        <DialogContent className="sm:max-w-xl max-h-[85vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              {lessonDialog.editId ? "Editar Aula" : "Nova Aula"}
+            <DialogTitle className="text-lg font-bold">
+              {lessonDialog.editId ? "Editar Aula" : "Criar Nova Aula"}
             </DialogTitle>
-            <p className="text-[11px] text-muted-foreground/40 mt-0.5">
+            <p className="text-[13px] text-muted-foreground/50 mt-0.5">
               {lessonDialog.editId
                 ? "Atualize as informações da aula"
-                : "Preencha os dados da nova aula"}
+                : "Preencha os dados para criar uma nova aula"}
             </p>
           </DialogHeader>
 
           <div className="space-y-6 py-2">
-            {/* ── Main fields ── */}
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>Nome da Aula *</Label>
-                <Input
-                  value={lesTitle}
-                  onChange={(e) => setLesTitle(e.target.value)}
-                  placeholder="Ex: Aula 1 — Boas-vindas"
-                  className="bg-card/10 border-border/15"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Descrição</Label>
-                <Textarea
-                  value={lesDesc}
-                  onChange={(e) => setLesDesc(e.target.value)}
-                  placeholder="Descrição da aula..."
-                  rows={3}
-                  className="bg-card/10 border-border/15"
-                />
-              </div>
+            {/* Nome */}
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Nome da Aula *</Label>
+              <Input
+                value={lesTitle}
+                onChange={(e) => setLesTitle(e.target.value)}
+                placeholder="Ex: Aula 1 - Introdução"
+                className="bg-card/10 border-gold/20 focus:border-gold/40"
+              />
             </div>
 
-            {/* ── Content type selector ── */}
+            {/* Descrição */}
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold">Descrição</Label>
+              <Textarea
+                value={lesDesc}
+                onChange={(e) => setLesDesc(e.target.value)}
+                placeholder="Descreva o conteúdo desta aula"
+                rows={3}
+                className="bg-card/10 border-border/15"
+              />
+            </div>
+
+            {/* Tipo de Conteúdo */}
             <div className="space-y-3">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
-                Tipo de Conteúdo
-              </Label>
+              <Label className="text-sm font-semibold">Tipo de Conteúdo</Label>
               <div className="grid grid-cols-4 gap-2">
                 {([
                   { value: "video" as const, label: "Vídeo", icon: Video },
@@ -808,110 +806,74 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                     key={type.value}
                     type="button"
                     onClick={() => setLesContentType(type.value)}
-                    className={`flex flex-col items-center gap-1.5 px-3 py-3 rounded-xl border transition-all duration-200 ${
+                    className={`flex flex-col items-center gap-1.5 px-3 py-3.5 rounded-xl border-2 transition-all duration-200 ${
                       lesContentType === type.value
-                        ? "border-gold/30 bg-gold/10 text-gold"
-                        : "border-border/15 bg-card/5 text-muted-foreground/40 hover:border-border/30"
+                        ? "border-gold bg-gold/15 text-gold"
+                        : "border-border/15 bg-card/5 text-muted-foreground/50 hover:border-border/30 hover:text-muted-foreground/70"
                     }`}
                   >
-                    <type.icon className="h-4 w-4" />
-                    <span className="text-[11px] font-medium">{type.label}</span>
+                    <type.icon className="h-5 w-5" />
+                    <span className="text-[11px] font-semibold">{type.label}</span>
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* ── Dynamic fields by type ── */}
-            <div className="rounded-xl border border-border/15 bg-card/5 p-4 space-y-4">
-              {lesContentType === "video" && (
-                <>
-                  <div className="space-y-2">
-                    <Label>URL do Vídeo ou Código Embed</Label>
-                    <Input
-                      value={lesVideoUrl}
-                      onChange={(e) => setLesVideoUrl(e.target.value)}
-                      placeholder="https://youtube.com/watch?v=... ou código embed"
-                      className="bg-card/10 border-border/15"
-                    />
-                    <p className="text-[10px] text-muted-foreground/30">
-                      YouTube, Vimeo, Panda Video ou embed personalizado
-                    </p>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Miniatura (opcional)</Label>
-                    <Input
-                      value={lesThumbnailUrl}
-                      onChange={(e) => setLesThumbnailUrl(e.target.value)}
-                      placeholder="https://... imagem de capa do vídeo"
-                      className="bg-card/10 border-border/15"
-                    />
-                    <p className="text-[10px] text-muted-foreground/30">
-                      Proporção recomendada: 16:9 — 1280x720 px
-                    </p>
-                  </div>
-                  <div className="space-y-2">
-                    <Label>Duração</Label>
-                    <Input
-                      value={lesDuration}
-                      onChange={(e) => setLesDuration(e.target.value)}
-                      placeholder="10:30"
-                      className="bg-card/10 border-border/15 w-32"
-                    />
-                  </div>
-                </>
-              )}
-
-              {lesContentType === "pdf" && (
+            {/* Dynamic fields by content type */}
+            {lesContentType === "video" && (
+              <>
                 <div className="space-y-2">
-                  <Label>URL do PDF</Label>
-                  <Input
-                    value={lesContentUrl}
-                    onChange={(e) => setLesContentUrl(e.target.value)}
-                    placeholder="https://... link direto do PDF"
+                  <Label className="text-sm font-semibold">URL ou Código Embed</Label>
+                  <Textarea
+                    value={lesVideoUrl}
+                    onChange={(e) => setLesVideoUrl(e.target.value)}
+                    placeholder="Cole a URL (YouTube, Vimeo) ou código embed (Panda Video, Host VSL)"
+                    rows={3}
                     className="bg-card/10 border-border/15"
                   />
-                  <p className="text-[10px] text-muted-foreground/30">
-                    Cole a URL pública do arquivo PDF
-                  </p>
                 </div>
-              )}
 
-              {lesContentType === "file" && (
                 <div className="space-y-2">
-                  <Label>URL do Arquivo</Label>
-                  <Input
-                    value={lesContentUrl}
-                    onChange={(e) => setLesContentUrl(e.target.value)}
-                    placeholder="https://... link direto do arquivo"
-                    className="bg-card/10 border-border/15"
-                  />
-                  <p className="text-[10px] text-muted-foreground/30">
-                    Formatos aceitos: ZIP, DOCX, XLSX, MP3, etc.
-                  </p>
+                  <Label className="text-sm font-semibold">Miniatura (Opcional)</Label>
+                  <div className="border-2 border-dashed border-border/20 rounded-xl p-6 flex flex-col items-center gap-2 cursor-pointer hover:border-gold/30 hover:bg-gold/3 transition-all">
+                    <Download className="h-5 w-5 text-muted-foreground/30" />
+                    <span className="text-[12px] text-muted-foreground/40">Upload miniatura</span>
+                  </div>
                 </div>
-              )}
+              </>
+            )}
 
-              {lesContentType === "link" && (
-                <div className="space-y-2">
-                  <Label>URL Externa</Label>
-                  <Input
-                    value={lesContentUrl}
-                    onChange={(e) => setLesContentUrl(e.target.value)}
-                    placeholder="https://..."
-                    className="bg-card/10 border-border/15"
-                  />
-                  <p className="text-[10px] text-muted-foreground/30">
-                    Link para um recurso externo (site, ferramenta, etc.)
-                  </p>
+            {(lesContentType === "pdf" || lesContentType === "file") && (
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold">Upload de Arquivo</Label>
+                <div className="border-2 border-dashed border-border/20 rounded-xl p-8 flex flex-col items-center gap-2 cursor-pointer hover:border-gold/30 hover:bg-gold/3 transition-all">
+                  <Download className="h-5 w-5 text-muted-foreground/30" />
+                  <span className="text-[12px] text-muted-foreground/40">Clique para upload</span>
                 </div>
-              )}
-            </div>
+              </div>
+            )}
 
-            {/* ── Materiais Complementares ── */}
+            {lesContentType === "link" && (
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold">URL Externa</Label>
+                <Textarea
+                  value={lesContentUrl}
+                  onChange={(e) => setLesContentUrl(e.target.value)}
+                  placeholder="Cole a URL externa"
+                  rows={3}
+                  className="bg-card/10 border-border/15"
+                />
+              </div>
+            )}
+
+            {/* Materiais Complementares */}
             <div className="space-y-3">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
-                Materiais Complementares
-              </Label>
+              <div>
+                <Label className="text-sm font-semibold">Materiais Complementares</Label>
+                <p className="text-[12px] text-muted-foreground/40 mt-0.5">
+                  Adicione PDFs, documentos ou links externos
+                </p>
+              </div>
 
               {materials.length > 0 && (
                 <div className="space-y-2">
@@ -938,118 +900,56 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 </div>
               )}
 
-              {lessonDialog.editId ? (
-                <div className="rounded-xl border border-dashed border-border/20 bg-card/3 p-4 space-y-3">
-                  <div className="grid grid-cols-3 gap-2">
-                    {(["file", "pdf", "link"] as const).map((t) => (
-                      <button
-                        key={t}
-                        type="button"
-                        onClick={() => {
-                          setMatType(t);
-                          setMatUrl("");
-                          setMatFile(null);
-                        }}
-                        className={`text-[10px] font-medium uppercase py-1.5 rounded-lg border transition-all ${
-                          matType === t
-                            ? "border-gold/25 bg-gold/8 text-gold/70"
-                            : "border-border/10 text-muted-foreground/30 hover:border-border/25"
-                        }`}
-                      >
-                        {t === "file" ? "Arquivo" : t === "pdf" ? "PDF" : "Link"}
-                      </button>
-                    ))}
-                  </div>
-
-                  <Input
-                    value={matTitle}
-                    onChange={(e) => setMatTitle(e.target.value)}
-                    placeholder="Nome do material"
-                    className="bg-card/10 border-border/15 text-sm"
-                  />
-
-                  {matType === "link" ? (
-                    <Input
-                      value={matUrl}
-                      onChange={(e) => setMatUrl(e.target.value)}
-                      placeholder="https://..."
-                      className="bg-card/10 border-border/15 text-sm"
-                    />
-                  ) : (
-                    <div className="space-y-3">
-                      <Input
-                        type="file"
-                        accept={matType === "pdf" ? ".pdf,application/pdf" : undefined}
-                        onChange={(e) => setMatFile(e.target.files?.[0] || null)}
-                        className="bg-card/10 border-border/15 text-sm"
-                      />
-                      <div className="text-center text-[10px] text-muted-foreground/30">ou</div>
-                      <Input
-                        value={matUrl}
-                        onChange={(e) => setMatUrl(e.target.value)}
-                        placeholder="URL pública do arquivo (opcional)"
-                        className="bg-card/10 border-border/15 text-sm"
-                      />
-                    </div>
-                  )}
-
-                  <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    disabled={
-                      !matTitle.trim() ||
-                      (matType === "link" ? !matUrl.trim() : !matFile && !matUrl.trim()) ||
-                      createMatM.isPending
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="gap-2 border-border/20 text-muted-foreground/60 hover:text-foreground/80"
+                  onClick={() => {
+                    if (!lessonDialog.editId) {
+                      toast.info("Salve a aula primeiro para adicionar materiais");
+                      return;
                     }
-                    onClick={() => {
-                      createMatM.mutate({
-                        lessonId: lessonDialog.editId!,
-                        title: matTitle.trim(),
-                        material_type: matType,
-                        url: matUrl.trim() || undefined,
-                        file: matFile,
-                      });
-                    }}
-                    className="w-full gap-1.5"
-                  >
-                    {createMatM.isPending ? (
-                      <Loader2 className="h-3 w-3 animate-spin" />
-                    ) : (
-                      <Plus className="h-3 w-3" />
-                    )}
-                    Adicionar Material
-                  </Button>
-                </div>
-              ) : (
-                <div className="rounded-xl border border-dashed border-border/20 bg-card/3 p-4 text-center">
-                  <p className="text-[11px] text-muted-foreground/30">
-                    Salve a aula primeiro para adicionar materiais complementares.
-                  </p>
-                </div>
-              )}
+                    setMatType("file");
+                    setMatTitle("");
+                    setMatUrl("");
+                    setMatFile(null);
+                  }}
+                >
+                  <Download className="h-4 w-4" />
+                  Upload Arquivos
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="gap-2 border-border/20 text-muted-foreground/60 hover:text-foreground/80"
+                  onClick={() => {
+                    if (!lessonDialog.editId) {
+                      toast.info("Salve a aula primeiro para adicionar materiais");
+                      return;
+                    }
+                    setMatType("link");
+                    setMatTitle("");
+                    setMatUrl("");
+                  }}
+                >
+                  <LinkIcon className="h-4 w-4" />
+                  Adicionar Link
+                </Button>
+              </div>
+
+              {lessonDialog.editId && matTitle !== undefined && (matType === "link" ? true : matFile || matUrl) === false && null}
             </div>
 
-            {/* ── Publication ── */}
-            <div className="flex items-center justify-between rounded-xl border border-border/15 bg-card/5 p-4">
+            {/* Publicar aula */}
+            <div className="flex items-center justify-between py-2">
               <div>
-                <Label className="text-sm font-medium">Publicar aula</Label>
-                <p className="text-[11px] text-muted-foreground/40 mt-0.5">
+                <Label className="text-sm font-semibold">Publicar aula</Label>
+                <p className="text-[12px] text-muted-foreground/40 mt-0.5">
                   Aulas publicadas ficam visíveis para os alunos
                 </p>
               </div>
               <Switch checked={lesPublished} onCheckedChange={setLesPublished} />
-            </div>
-
-            {/* ── Free preview toggle ── */}
-            <div className="flex items-center justify-between rounded-xl border border-border/15 bg-card/5 p-4">
-              <div>
-                <Label className="text-sm font-medium">Preview gratuito</Label>
-                <p className="text-[11px] text-muted-foreground/40 mt-0.5">
-                  Permite assistir sem precisar comprar o curso
-                </p>
-              </div>
-              <Switch checked={lesFreePreview} onCheckedChange={setLesFreePreview} />
             </div>
           </div>
 
@@ -1057,12 +957,14 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             <Button
               variant="outline"
               onClick={() => setLessonDialog({ open: false })}
+              className="border-border/20"
             >
               Cancelar
             </Button>
             <Button
               onClick={handleSaveLesson}
               disabled={!lesTitle.trim() || createLesM.isPending || updateLesM.isPending}
+              className="bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
             >
               {(createLesM.isPending || updateLesM.isPending) && (
                 <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
