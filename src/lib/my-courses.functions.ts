@@ -6,20 +6,31 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
 
-    // Get enrollments
+    // Get only active enrollments for the authenticated user
     const { data: enrollments } = await supabase
       .from('enrollments')
-      .select('course_id, progress_percentage, status, enrolled_at')
+      .select('course_id, progress_percentage, status, enrolled_at, access_origin, granted_at')
       .eq('user_id', userId)
-      .eq('status', 'active');
+      .eq('status', 'active')
+      .order('granted_at', { ascending: false })
+      .order('enrolled_at', { ascending: false });
 
     if (!enrollments || enrollments.length === 0) {
       return { courses: [], stats: { total: 0, inProgress: 0, completed: 0 } };
     }
 
-    const courseIds = enrollments.map((e) => e.course_id);
+    // Keep a single active access record per course
+    const enrollmentByCourse = new Map<string, (typeof enrollments)[number]>();
+    for (const enrollment of enrollments) {
+      if (!enrollmentByCourse.has(enrollment.course_id)) {
+        enrollmentByCourse.set(enrollment.course_id, enrollment);
+      }
+    }
 
-    // Get courses
+    const uniqueEnrollments = Array.from(enrollmentByCourse.values());
+    const courseIds = uniqueEnrollments.map((e) => e.course_id);
+
+    // Get only courses that the user really has active access to
     const { data: courses } = await supabase
       .from('courses')
       .select('id, title, cover_image_url, short_description, total_lessons, total_duration, status')
