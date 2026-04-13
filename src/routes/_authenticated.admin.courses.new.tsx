@@ -114,10 +114,23 @@ function NewCoursePage() {
         </TabsContent>
 
         <TabsContent value="modulos" className="mt-4">
-          <div className="rounded-2xl border border-border/15 bg-card p-8 shadow-lg shadow-black/10 text-center">
-            <p className="text-sm text-muted-foreground/50">
-              Salve o curso primeiro para gerenciar módulos e aulas.
-            </p>
+          <div className="rounded-2xl border border-border/15 bg-card p-6 shadow-lg shadow-black/10 space-y-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-bold text-foreground">Módulos e Aulas</h3>
+                <p className="text-sm text-muted-foreground/50 mt-0.5">
+                  Organize a estrutura do seu curso de forma hierárquica
+                </p>
+              </div>
+              <Button variant="outline" size="sm" disabled>
+                + Criar Módulo
+              </Button>
+            </div>
+            <div className="rounded-xl border border-dashed border-gold/30 bg-gold/[0.03] p-8 text-center">
+              <p className="text-sm text-muted-foreground/60">
+                Salve o curso primeiro para gerenciar módulos e aulas.
+              </p>
+            </div>
           </div>
         </TabsContent>
 
