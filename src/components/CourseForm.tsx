@@ -96,10 +96,10 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
   return (
     <form ref={ref} onSubmit={handleSubmit} className="space-y-5">
-      {/* Flat grid: on desktop 2 cols, on mobile single col with custom order */}
-      <div className="grid lg:grid-cols-[1fr_280px] gap-5">
-        {/* Informações + Configurações — always left col on desktop, order 1-2 on mobile */}
-        <div className="space-y-5 order-1 lg:order-1 lg:row-span-3">
+      {/* Desktop: 2 columns. Mobile: single column with interleaved order */}
+      <div className="flex flex-col lg:grid lg:grid-cols-[1fr_280px] gap-5">
+        {/* ===== Informações + Configurações ===== */}
+        <div className="space-y-5 order-1 lg:col-start-1">
           {/* Card: Informações do Curso */}
           <div className="rounded-2xl border border-border/15 bg-card shadow-lg shadow-black/10 overflow-hidden">
             <div className="px-6 py-4 border-b border-border/10 bg-card/80">
