@@ -158,6 +158,17 @@ function AdminVitrinePage() {
   const [bannerAspect, setBannerAspect] = useState<string>("hero");
   const [bannerImgDims, setBannerImgDims] = useState<{ w: number; h: number } | null>(null);
 
+  // Promo banner state
+  const [promoDialogOpen, setPromoDialogOpen] = useState(false);
+  const [editingPromo, setEditingPromo] = useState<any>(null);
+  const [deletePromoTarget, setDeletePromoTarget] = useState<any>(null);
+  const [promoTitle, setPromoTitle] = useState("");
+  const [promoImageUrl, setPromoImageUrl] = useState("");
+  const [promoLinkUrl, setPromoLinkUrl] = useState("");
+  const [promoPosition, setPromoPosition] = useState(1);
+  const [promoOrder, setPromoOrder] = useState(0);
+  const [promoActive, setPromoActive] = useState(true);
+
   const { data, isLoading } = useQuery({
     queryKey: ["admin-shelves"],
     queryFn: () => listShelves(),
@@ -168,8 +179,14 @@ function AdminVitrinePage() {
     queryFn: () => listCoursesForSelector(),
   });
 
+  const { data: promoBannersData } = useQuery({
+    queryKey: ["admin-promo-banners"],
+    queryFn: () => listPromoBanners(),
+  });
+
   const shelves = data?.shelves ?? [];
   const courses = coursesData?.courses ?? [];
+  const promoBanners = promoBannersData?.banners ?? [];
   const publishedCourses = courses.filter((c: any) => c.status === "published");
   const activeShelves = shelves.filter((s: any) => s.is_active);
 
