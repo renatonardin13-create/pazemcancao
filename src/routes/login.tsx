@@ -38,7 +38,7 @@ function LoginPage() {
 
   useEffect(() => {
     if (!authLoading && isAuthenticated && view !== "success") {
-      navigate({ to: "/downloads" });
+      navigate({ to: "/cursos" });
     }
   }, [isAuthenticated, authLoading, navigate, view]);
 
@@ -81,7 +81,7 @@ function LoginPage() {
       setView("success");
       setLoading(false);
       setTimeout(() => {
-        navigate({ to: "/downloads" });
+        navigate({ to: "/cursos" });
       }, 2000);
     } catch {
       setError("Erro ao conectar com Google. Tente novamente.");
@@ -102,7 +102,7 @@ function LoginPage() {
       setView("success");
       setLoading(false);
       setTimeout(() => {
-        navigate({ to: "/downloads" });
+        navigate({ to: "/cursos" });
       }, 2000);
     }
   };
@@ -195,7 +195,7 @@ function LoginPage() {
     setLoading(false);
 
     setTimeout(() => {
-      navigate({ to: "/downloads" });
+      navigate({ to: "/cursos" });
     }, 1500);
   };
 

@@ -13,7 +13,7 @@ export const Route = createFileRoute("/_authenticated/musicas/$trackId")({
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="text-center">
         <p className="text-muted-foreground/50">Música não encontrada.</p>
-        <Link to="/musicas" className="mt-4 inline-block text-gold/50 hover:text-gold/80 text-sm">
+        <Link to="/musicas" search={{}} className="mt-4 inline-block text-gold/50 hover:text-gold/80 text-sm">
           Voltar à biblioteca
         </Link>
       </div>
@@ -90,7 +90,7 @@ function MusicDetailPage() {
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
           <p className="text-muted-foreground/50">Música não encontrada.</p>
-          <Link to="/musicas" className="mt-4 inline-block text-gold/50 hover:text-gold/80 text-sm">
+          <Link to="/musicas" search={{}} className="mt-4 inline-block text-gold/50 hover:text-gold/80 text-sm">
             Voltar à biblioteca
           </Link>
         </div>
@@ -127,7 +127,7 @@ function MusicDetailPage() {
         className="fixed top-6 left-6 z-30"
       >
         <Link
-          to="/musicas"
+          to="/musicas" search={{}}
           className="group flex items-center gap-2.5 text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/30 hover:text-gold/50 transition-colors duration-500"
         >
           <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-x-1" />

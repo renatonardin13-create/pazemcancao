@@ -1,7 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { logDownload } from "@/lib/analytics.functions";
 import { Music, Play, Pause, Download, Search, Headphones, Lock, Gift } from "lucide-react";
-import { AppHeader } from "@/components/AppHeader";
+import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { useQuery } from "@tanstack/react-query";
 import { listActiveTracks, listCategories } from "@/lib/tracks.functions";
@@ -14,6 +14,9 @@ import type { Track } from "@/lib/sample-tracks";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/musicas")({
+  validateSearch: (search: Record<string, unknown>): { categoria?: string } => ({
+    categoria: typeof search.categoria === 'string' ? search.categoria : undefined,
+  }),
   component: MusicLibraryPage,
 });
 
@@ -72,6 +75,7 @@ function NowPlayingBars() {
 }
 
 function MusicLibraryPage() {
+  const searchParams = Route.useSearch();
   const [searchTerm, setSearchTerm] = useState("");
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
@@ -118,7 +122,16 @@ function MusicLibraryPage() {
   const dbCategories = catData?.categories || [];
   const tracks = data?.tracks || [];
 
+  // Sync category from URL search params (sidebar navigation)
   useEffect(() => {
+    if (searchParams.categoria && dbCategories.length > 0) {
+      const found = dbCategories.find((c: any) => c.slug === searchParams.categoria || c.name.toLowerCase() === searchParams.categoria);
+      if (found) {
+        setActiveCategory(found.name);
+        setInitialized(true);
+        return;
+      }
+    }
     if (!initialized && dbCategories.length > 0) {
       const destaques = dbCategories.find((c: any) =>
         c.slug === "destaques" || c.slug === "top-10-mais-fortes" || c.name.toLowerCase().includes("destaque")
@@ -128,7 +141,7 @@ function MusicLibraryPage() {
       }
       setInitialized(true);
     }
-  }, [dbCategories, initialized]);
+  }, [dbCategories, initialized, searchParams.categoria]);
 
   // Auto-scroll to active track when it changes
   useEffect(() => {
@@ -175,8 +188,8 @@ function MusicLibraryPage() {
   }, [regularTracks]);
 
   return (
+    <StudentLayout>
     <div className="min-h-screen bg-background flex flex-col">
-      <AppHeader />
 
       <main className="flex-1 mx-auto w-full max-w-6xl px-4 sm:px-6 py-8 pb-28">
         {/* Header */}
@@ -230,9 +243,9 @@ function MusicLibraryPage() {
           animate="visible"
           variants={fadeUp}
           custom={0.2}
-          className="flex flex-col sm:flex-row gap-4 mb-8"
+          className="mb-8"
         >
-          <div className="relative flex-1 max-w-sm">
+          <div className="relative max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/25" />
             <Input
               value={searchTerm}
@@ -240,32 +253,6 @@ function MusicLibraryPage() {
               placeholder="Buscar músicas..."
               className="pl-9 bg-card/10 border-border/15 text-sm h-10"
             />
-          </div>
-
-          <div className="flex items-center gap-2 flex-wrap">
-            <button
-              onClick={() => setActiveCategory(null)}
-              className={`px-3 py-1.5 rounded-full text-[11px] font-medium transition-all duration-300 border ${
-                !activeCategory
-                  ? "border-gold/30 bg-gold/10 text-gold/80"
-                  : "border-border/15 bg-card/5 text-muted-foreground/40 hover:text-muted-foreground/60"
-              }`}
-            >
-              Todas
-            </button>
-            {dbCategories.map((cat: any) => (
-              <button
-                key={cat.id}
-                onClick={() => setActiveCategory(cat.name)}
-                className={`px-3 py-1.5 rounded-full text-[11px] font-medium transition-all duration-300 border ${
-                  activeCategory === cat.name
-                    ? "border-gold/30 bg-gold/10 text-gold/80"
-                    : "border-border/15 bg-card/5 text-muted-foreground/40 hover:text-muted-foreground/60"
-                }`}
-              >
-                {cat.icon || "🎵"} {cat.name.replace(/^[^\w\s]+\s*/, '')}
-              </button>
-            ))}
           </div>
         </motion.div>
 
@@ -420,6 +407,7 @@ function MusicLibraryPage() {
 
       <FooterLinks />
     </div>
+    </StudentLayout>
   );
 }
 

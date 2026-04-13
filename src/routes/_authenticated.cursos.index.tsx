@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { getMyCoursesData } from "@/lib/my-courses.functions";
-import { AppHeader } from "@/components/AppHeader";
+import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { motion } from "framer-motion";
 import { BookOpen, Search, ArrowRight, Layers, Clock } from "lucide-react";
@@ -44,8 +44,8 @@ function MeusCoursosPage() {
   });
 
   return (
+    <StudentLayout>
     <div className="min-h-screen bg-background flex flex-col">
-      <AppHeader />
 
       <main className="flex-1 w-full pb-28">
         <div className="mx-auto w-full max-w-[1100px] px-4 sm:px-8 lg:px-12 pt-8 sm:pt-12">
@@ -212,5 +212,6 @@ function MeusCoursosPage() {
 
       <FooterLinks />
     </div>
+    </StudentLayout>
   );
 }

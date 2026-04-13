@@ -1,0 +1,289 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useQuery } from "@tanstack/react-query";
+import { getStudentShelves } from "@/lib/shelves.functions";
+import { StudentLayout } from "@/components/StudentLayout";
+import { FooterLinks } from "@/components/FooterLinks";
+import { motion } from "framer-motion";
+import { Store, Lock, Play, ArrowRight, ShoppingCart } from "lucide-react";
+
+export const Route = createFileRoute("/_authenticated/vitrine")({
+  component: VitrinePage,
+});
+
+function VitrinePage() {
+  const { data, isLoading } = useQuery({
+    queryKey: ["student-shelves"],
+    queryFn: () => getStudentShelves(),
+    staleTime: 60_000,
+  });
+
+  const shelves = data?.shelves || [];
+  const promoBanners = data?.promoBanners || [];
+  const featuredCourse = data?.featuredCourse;
+
+  return (
+    <StudentLayout>
+      <div className="min-h-screen flex flex-col">
+        <div className="flex-1 w-full pb-28">
+          {/* Hero Banner */}
+          {featuredCourse && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8 }}
+              className="relative w-full h-[280px] sm:h-[380px] overflow-hidden"
+            >
+              <img
+                src={featuredCourse.banner_image_url || featuredCourse.cover_image_url}
+                alt={featuredCourse.title}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+              <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
+                <h2 className="font-display text-2xl sm:text-4xl font-bold text-foreground/90 tracking-tight mb-2">
+                  {featuredCourse.title}
+                </h2>
+                {featuredCourse.short_description && (
+                  <p className="text-[13px] text-muted-foreground/50 mb-4 max-w-lg">
+                    {featuredCourse.short_description}
+                  </p>
+                )}
+                <CourseActionButton course={featuredCourse} />
+              </div>
+            </motion.div>
+          )}
+
+          <div className="mx-auto w-full max-w-[1100px] px-4 sm:px-8 lg:px-12 pt-8">
+            {!featuredCourse && (
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="flex items-center gap-3 mb-8"
+              >
+                <Store className="h-7 w-7 text-gold" />
+                <div>
+                  <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
+                    Vitrine
+                  </h1>
+                  <p className="text-[13px] text-muted-foreground/50 mt-0.5">
+                    Explore nossos cursos e conteúdos
+                  </p>
+                </div>
+              </motion.div>
+            )}
+
+            {isLoading ? (
+              <div className="text-center py-24">
+                <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+                  Carregando vitrine...
+                </p>
+              </div>
+            ) : shelves.length === 0 ? (
+              <div className="text-center py-24">
+                <Store className="h-10 w-10 text-muted-foreground/15 mx-auto mb-5" />
+                <p className="text-sm text-muted-foreground/40">
+                  Nenhum conteúdo disponível na vitrine no momento.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-10">
+                {shelves.map((shelf: any, shelfIdx: number) => (
+                  <motion.section
+                    key={shelf.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: shelfIdx * 0.1 }}
+                  >
+                    <div className="flex items-center gap-3 mb-5">
+                      <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
+                        {shelf.name}
+                      </h2>
+                      <div className="flex-1 h-px bg-gradient-to-r from-border/15 to-transparent" />
+                      <span className="text-[10px] text-muted-foreground/25">
+                        {shelf.courses.length} curso{shelf.courses.length !== 1 ? "s" : ""}
+                      </span>
+                    </div>
+
+                    {/* Horizontal scroll */}
+                    <div className="relative -mx-4 sm:-mx-8 px-4 sm:px-8">
+                      <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+                        {shelf.courses.map((course: any) => (
+                          <CourseCard key={course.id} course={course} />
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Promo banner after shelf */}
+                    {promoBanners
+                      .filter((b: any) => b.position_after_shelf === shelfIdx + 1)
+                      .map((banner: any) => (
+                        <motion.div
+                          key={banner.id}
+                          initial={{ opacity: 0, y: 12 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.5, delay: 0.3 }}
+                          className="mt-6"
+                        >
+                          {banner.link_url ? (
+                            <a href={banner.link_url} target="_blank" rel="noopener noreferrer">
+                              <img
+                                src={banner.image_url}
+                                alt={banner.title}
+                                className="w-full rounded-xl border border-border/10 hover:border-gold/20 transition-colors"
+                              />
+                            </a>
+                          ) : (
+                            <img
+                              src={banner.image_url}
+                              alt={banner.title}
+                              className="w-full rounded-xl border border-border/10"
+                            />
+                          )}
+                        </motion.div>
+                      ))}
+                  </motion.section>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <FooterLinks />
+      </div>
+    </StudentLayout>
+  );
+}
+
+function CourseCard({ course }: { course: any }) {
+  const isEnrolled = course.access_state === "enrolled";
+  const isLocked = course.access_state === "locked";
+  const hasPreview = course.access_state === "preview";
+
+  const handleLockedClick = () => {
+    if (isLocked && course.checkout_url) {
+      window.open(course.checkout_url, "_blank");
+    }
+  };
+
+  const cardContent = (
+    <div className="group relative w-[220px] sm:w-[260px] shrink-0 snap-start">
+      {/* Cover */}
+      <div className="relative aspect-[3/4] rounded-xl overflow-hidden border border-border/15 group-hover:border-gold/20 transition-all duration-500">
+        {course.cover_image_url ? (
+          <img
+            src={course.cover_image_url}
+            alt={course.title}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <div className="w-full h-full bg-muted/20 flex items-center justify-center">
+            <Store className="h-8 w-8 text-muted-foreground/15" />
+          </div>
+        )}
+
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/30 to-transparent" />
+
+        {/* Lock badge */}
+        {isLocked && (
+          <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-black/60 backdrop-blur-sm px-3 py-1.5 border border-border/20">
+            <Lock className="h-3 w-3 text-gold/60" />
+            <span className="text-[9px] font-bold uppercase tracking-wider text-gold/60">
+              Premium
+            </span>
+          </div>
+        )}
+
+        {/* Preview badge */}
+        {hasPreview && (
+          <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-emerald-500/20 backdrop-blur-sm px-3 py-1.5 border border-emerald-500/20">
+            <Play className="h-3 w-3 text-emerald-400/70" />
+            <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-400/70">
+              Preview
+            </span>
+          </div>
+        )}
+
+        {/* Bottom info */}
+        <div className="absolute bottom-0 left-0 right-0 p-4">
+          <h3 className="font-display text-sm font-bold text-foreground/90 leading-tight line-clamp-2 group-hover:text-gold transition-colors">
+            {course.title}
+          </h3>
+          {course.short_description && (
+            <p className="text-[10px] text-muted-foreground/40 mt-1 line-clamp-1">
+              {course.short_description}
+            </p>
+          )}
+
+          {/* CTA */}
+          <div className="mt-3">
+            {isEnrolled ? (
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gold/70">
+                Acessar <ArrowRight className="h-3 w-3" />
+              </span>
+            ) : isLocked ? (
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gold/50">
+                <ShoppingCart className="h-3 w-3" /> Adquirir
+              </span>
+            ) : hasPreview ? (
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-400/60">
+                <Play className="h-3 w-3" /> Pré-visualizar
+              </span>
+            ) : null}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (isEnrolled || hasPreview) {
+    return (
+      <Link to="/cursos/$courseId" params={{ courseId: course.id }}>
+        {cardContent}
+      </Link>
+    );
+  }
+
+  if (isLocked) {
+    return (
+      <button onClick={handleLockedClick} className="text-left">
+        {cardContent}
+      </button>
+    );
+  }
+
+  return cardContent;
+}
+
+function CourseActionButton({ course }: { course: any }) {
+  const isEnrolled = course.access_state === "enrolled";
+  const isLocked = course.access_state === "locked";
+
+  if (isEnrolled) {
+    return (
+      <Link
+        to="/cursos/$courseId"
+        params={{ courseId: course.id }}
+        className="inline-flex items-center gap-2 rounded-xl bg-gold/90 text-gold-foreground px-6 py-3 text-[12px] font-bold uppercase tracking-wider hover:bg-gold transition-colors"
+      >
+        Acessar Curso <ArrowRight className="h-3.5 w-3.5" />
+      </Link>
+    );
+  }
+
+  if (isLocked && course.checkout_url) {
+    return (
+      <a
+        href={course.checkout_url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2 rounded-xl bg-gold/15 text-gold/70 border border-gold/20 px-6 py-3 text-[12px] font-bold uppercase tracking-wider hover:bg-gold/25 hover:text-gold/90 transition-all"
+      >
+        <ShoppingCart className="h-3.5 w-3.5" /> Adquirir Agora
+      </a>
+    );
+  }
+
+  return null;
+}

@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { listContentItems } from "@/lib/content.functions";
-import { AppHeader } from "@/components/AppHeader";
+import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { ContentCard } from "@/components/ContentCard";
 import { RecommendedSection } from "@/components/RecommendedSection";
@@ -113,8 +113,8 @@ function ContentPage() {
   const otherCategories = sortedCategories.filter(([cat]) => !categoryLookup[cat]?.isFeatured);
 
   return (
+    <StudentLayout>
     <div className="min-h-screen bg-background text-foreground">
-      <AppHeader />
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8 space-y-12">
         {/* 1. Banner / Destaque */}
@@ -317,5 +317,6 @@ function ContentPage() {
 
       <FooterLinks />
     </div>
+    </StudentLayout>
   );
 }
