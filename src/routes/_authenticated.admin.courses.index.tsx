@@ -292,26 +292,26 @@ function AdminCoursesPage() {
                             className="flex items-center gap-2"
                           >
                             <Pencil className="h-3.5 w-3.5" />
-                            Editar curso
+                            Gerenciar Curso
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link
-                            to="/admin/courses/$courseId"
-                            params={{ courseId: course.id }}
-                            className="flex items-center gap-2"
-                          >
-                            <Layers className="h-3.5 w-3.5" />
-                            Gerenciar módulos e aulas
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="flex items-center gap-2">
-                          <Eye className="h-3.5 w-3.5" />
-                          Visualizar
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="flex items-center gap-2">
-                          <Copy className="h-3.5 w-3.5" />
-                          Duplicar
+                        <DropdownMenuItem
+                          className="flex items-center gap-2"
+                          onClick={() =>
+                            toggleStatusM.mutate({ id: course.id, currentStatus: course.status })
+                          }
+                        >
+                          {course.status === "published" ? (
+                            <>
+                              <EyeOff className="h-3.5 w-3.5" />
+                              Despublicar
+                            </>
+                          ) : (
+                            <>
+                              <Eye className="h-3.5 w-3.5" />
+                              Publicar
+                            </>
+                          )}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
