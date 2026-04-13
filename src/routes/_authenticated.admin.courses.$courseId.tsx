@@ -133,9 +133,7 @@ function EditCoursePage() {
         </TabsContent>
 
         <TabsContent value="modules" className="mt-6">
-          <div className="rounded-2xl border border-border/15 bg-card/5 p-6">
-            <CourseModulesTab courseId={courseId} />
-          </div>
+          <CourseModulesTab courseId={courseId} />
         </TabsContent>
 
         <TabsContent value="settings" className="mt-6">

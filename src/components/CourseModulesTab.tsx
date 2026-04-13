@@ -392,26 +392,30 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between pb-4 border-b border-border/8">
         <div>
-          <h3 className="text-base font-bold text-foreground/85 tracking-tight">
+          <h3 className="text-sm font-semibold text-foreground/70 tracking-tight">
             Módulos e Aulas
           </h3>
-          <p className="text-[11px] text-muted-foreground/40 mt-1">
+          <p className="text-[11px] text-muted-foreground/35 mt-1">
             Organize a estrutura do seu curso de forma hierárquica
           </p>
         </div>
-        <Button size="sm" onClick={openCreateModule} className="shadow-lg shadow-primary/20">
+        <Button
+          size="sm"
+          onClick={openCreateModule}
+          className="bg-gold/90 text-gold-foreground hover:bg-gold shadow-lg shadow-gold/20 hover:shadow-gold/30 font-semibold"
+        >
           <Plus className="h-3.5 w-3.5 mr-1.5" />
           Criar Módulo
         </Button>
       </div>
 
-      {/* Empty state — no modules */}
+      {/* Empty state */}
       {modules.length === 0 ? (
-        <div className="text-center py-20 rounded-2xl border-2 border-dashed border-border/15 bg-card/3">
+        <div className="text-center py-20 rounded-xl border border-dashed border-border/12 bg-card/3">
           <div className="w-14 h-14 rounded-2xl bg-gold/8 border border-gold/15 flex items-center justify-center mx-auto mb-5">
             <Layers className="h-7 w-7 text-gold/40" />
           </div>
@@ -421,13 +425,17 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
           <p className="text-[12px] text-muted-foreground/30 max-w-xs mx-auto">
             Crie o primeiro módulo para organizar seu curso.
           </p>
-          <Button size="sm" className="mt-6 shadow-lg shadow-primary/20" onClick={openCreateModule}>
+          <Button
+            size="sm"
+            className="mt-6 bg-gold/90 text-gold-foreground hover:bg-gold shadow-lg shadow-gold/20"
+            onClick={openCreateModule}
+          >
             <Plus className="h-3.5 w-3.5 mr-1.5" />
             Criar primeiro módulo
           </Button>
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-3">
           {modules.map((mod: any, modIndex: number) => {
             const isExpanded = expandedModules.has(mod.id);
             const lessons = mod.lessons || [];
@@ -435,7 +443,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             return (
               <div
                 key={mod.id}
-                className="rounded-2xl border border-border/20 bg-card/8 overflow-hidden shadow-sm"
+                className="rounded-xl border border-border/10 bg-card/5 overflow-hidden"
               >
                 {/* Module header */}
                 <div className="flex items-center gap-3 px-5 py-4 hover:bg-card/15 transition-colors">
