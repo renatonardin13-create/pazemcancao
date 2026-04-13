@@ -13,17 +13,23 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const adminItems = [
-  { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
+const contentItems = [
   { title: "Músicas", url: "/admin/tracks", icon: Music },
   { title: "Conteúdos", url: "/admin/conteudos", icon: BookOpen },
   { title: "Cursos", url: "/admin/courses", icon: BookOpen },
   { title: "Vitrine", url: "/admin/shelves", icon: Layout },
   { title: "Categorias", url: "/admin/categories", icon: FolderOpen },
   { title: "Trilhas", url: "/admin/journeys", icon: Compass },
+];
+
+const toolItems = [
   { title: "Usuários", url: "/admin/users", icon: Users },
   { title: "Vendas", url: "/admin/vendas", icon: DollarSign },
   { title: "Integrações", url: "/admin/integrations", icon: Webhook },
+];
+
+const systemItems = [
+  { title: "Configurações", url: "/admin/settings", icon: Settings },
 ];
 
 export function AdminSidebar() {
