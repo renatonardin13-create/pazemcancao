@@ -27,6 +27,7 @@ export function ImageUploadField({
   folder = "courses",
   aspectRatio,
   aspectClass = "aspect-video",
+  uploadLabel = "Clique para fazer upload",
 }: ImageUploadFieldProps) {
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
