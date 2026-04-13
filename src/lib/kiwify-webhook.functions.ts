@@ -219,9 +219,10 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
     return jsonResponse({ error: 'Invalid JSON body' }, 400);
   }
 
+  const requestUrl = new URL(request.url);
+  const courseIdFromQuery = requestUrl.searchParams.get('course')?.trim() || null;
   const { status, customerEmail, customerName, orderId, uniqueEventId } = extractFields(rawBody);
 
-  // ── 1. Validate: email required ──
   if (!customerEmail) {
     await logWebhookEvent({
       eventType: status || 'unknown',
@@ -232,10 +233,8 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
     return jsonResponse({ error: 'Missing customer email' }, 400);
   }
 
-  // ── 2. Validate: must have a recognized status ──
   const approvedStatuses = ['paid', 'approved', 'completed'];
   const cancelledStatuses = ['refunded', 'chargedback', 'chargeback', 'cancelled'];
-  const allKnownStatuses = [...approvedStatuses, ...cancelledStatuses, 'waiting_payment', 'pending'];
 
   if (!status) {
     await logWebhookEvent({
@@ -249,9 +248,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
     return jsonResponse({ error: 'Missing order status' }, 400);
   }
 
-  // ── 3. Auth token validation ──
   try {
-    const requestUrl = new URL(request.url);
     const explicitToken = (
       request.headers.get('x-kiwify-token') ||
       request.headers.get('x-webhook-token') ||
@@ -287,14 +284,10 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
     console.error('Auth validation error:', authErr);
   }
 
-  console.log(`📩 Kiwify webhook: status=${status} email=${customerEmail} event=${uniqueEventId || orderId}`);
-
-  // ── 4. Handle approved purchase ──
   if (approvedStatuses.includes(status)) {
-    // Atomic idempotency: try to claim this event
-    const claimedId = await claimEvent(uniqueEventId || orderId, rawBody, customerEmail, status);
+    const eventKey = uniqueEventId || orderId;
+    const claimedId = await claimEvent(eventKey, rawBody, customerEmail, status);
     if (claimedId === null) {
-      console.log(`⚠️ Event ${uniqueEventId || orderId} already processed, skipping`);
       await logWebhookEvent({
         eventType: status,
         email: customerEmail,
@@ -306,11 +299,8 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       return jsonResponse({ success: true, message: 'Already processed' });
     }
 
-    const eventKey = uniqueEventId || orderId;
-
     try {
-      // Step 1: Register buyer
-      const { error: dbError } = await supabaseAdmin
+      const { error: buyerError } = await supabaseAdmin
         .from('approved_buyers')
         .upsert(
           {
@@ -324,51 +314,81 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
           { onConflict: 'email' }
         );
 
-      if (dbError) {
-        console.error('❌ DB upsert error:', dbError);
-        await markEventFailed(eventKey, `DB upsert error: ${dbError.message}`);
+      if (buyerError) {
+        await markEventFailed(eventKey, `DB upsert error: ${buyerError.message}`);
         await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 500, responseMessage: 'Failed to register buyer' });
         return jsonResponse({ error: 'Failed to register buyer' }, 500);
       }
 
-      // Step 2: Provision user account
       const userResult = await provisionUserAccess(customerEmail);
-
-      // Step 3: Calculate unlock dates for timed content
       const unlocksCreated = await calculateContentUnlocks(customerEmail, orderId);
 
-      // Step 4: Mark as completed with details
+      let linkedCourseId: string | null = null;
+      if (courseIdFromQuery) {
+        const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
+        const authUser = authUsers.users.find((user) => user.email?.toLowerCase() === customerEmail);
+
+        if (authUser) {
+          const { error: enrollmentError } = await supabaseAdmin
+            .from('enrollments')
+            .upsert(
+              {
+                user_id: authUser.id,
+                course_id: courseIdFromQuery,
+                email: customerEmail,
+                access_origin: 'webhook',
+                status: 'active',
+                granted_at: new Date().toISOString(),
+              },
+              { onConflict: 'user_id,course_id' }
+            );
+
+          if (!enrollmentError) {
+            linkedCourseId = courseIdFromQuery;
+          }
+        }
+      }
+
       await markEventCompleted(eventKey, {
         user_created: userResult.userCreated,
         user_found: userResult.userFound,
         purchase_linked: orderId,
         content_unlocks_created: unlocksCreated,
+        course_id: linkedCourseId,
       });
 
-      console.log(`✅ Buyer approved and provisioned: ${customerEmail} (user_created=${userResult.userCreated}, unlocks=${unlocksCreated})`);
-      await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: 'Buyer approved' });
-      return jsonResponse({ success: true });
-
+      await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: linkedCourseId ? 'Buyer approved and enrolled' : 'Buyer approved' });
+      return jsonResponse({ success: true, course_id: linkedCourseId });
     } catch (processErr: any) {
-      console.error('❌ Processing error:', processErr);
       await markEventFailed(eventKey, processErr.message || 'Unknown processing error');
       await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 500, responseMessage: processErr.message || 'Processing failed' });
       return jsonResponse({ error: 'Processing failed' }, 500);
     }
   }
 
-  // ── 5. Handle cancellation/refund ──
   if (cancelledStatuses.includes(status)) {
     await supabaseAdmin
       .from('approved_buyers')
       .update({ access_enabled: false, status })
       .eq('email', customerEmail);
 
+    if (courseIdFromQuery) {
+      const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
+      const authUser = authUsers.users.find((user) => user.email?.toLowerCase() === customerEmail);
+      if (authUser) {
+        await supabaseAdmin
+          .from('enrollments')
+          .update({ status })
+          .eq('user_id', authUser.id)
+          .eq('course_id', courseIdFromQuery)
+          .eq('status', 'active');
+      }
+    }
+
     await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Access revoked: ${status}` });
     return jsonResponse({ success: true });
   }
 
-  // ── 6. Unrecognized or no-action status ──
   await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: 'No action required' });
   return jsonResponse({ success: true, message: 'No action required' });
 }
