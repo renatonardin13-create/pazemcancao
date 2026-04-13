@@ -62,6 +62,12 @@ import {
   reorderShelfCourses,
 } from "@/lib/admin-shelves.functions";
 import { listCoursesForSelector } from "@/lib/admin-trial.functions";
+import {
+  listPromoBanners,
+  createPromoBanner,
+  updatePromoBanner,
+  deletePromoBanner,
+} from "@/lib/admin-promo-banners.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/shelves")({
   component: AdminVitrinePage,
