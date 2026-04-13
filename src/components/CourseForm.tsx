@@ -232,9 +232,9 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   {coverUrl ? (
                     <img src={coverUrl} alt="Capa" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="flex flex-col items-center gap-1 text-muted-foreground/15">
-                      <ImageIcon className="h-6 w-6" />
-                      <span className="text-[7px] uppercase tracking-[0.2em]">Sem capa</span>
+                    <div className="flex flex-col items-center justify-center gap-1.5 text-muted-foreground/20">
+                      <ImageIcon className="h-7 w-7" />
+                      <span className="text-[10px]">Sem imagem</span>
                     </div>
                   )}
                 </div>
