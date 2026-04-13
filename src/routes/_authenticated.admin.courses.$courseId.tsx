@@ -54,25 +54,27 @@ function EditCoursePage() {
   const courseTitle = course?.title || "Curso";
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="max-w-5xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between gap-4 pb-6 border-b border-border/10">
-        <div className="flex items-start gap-4 min-w-0">
-          <Link
-            to="/admin/courses"
-            className="mt-1 flex h-9 w-9 items-center justify-center rounded-xl border border-gold/15 bg-gold/5 text-gold/60 hover:text-gold hover:bg-gold/10 hover:border-gold/30 transition-all shrink-0"
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Link>
-          <div className="min-w-0">
-            <h1 className="font-display text-2xl font-bold text-foreground/90 tracking-tight truncate">
-              Gerenciar: <span className="text-gold/80">{courseTitle}</span>
-            </h1>
-            <p className="mt-1 text-[13px] text-muted-foreground/45 tracking-wide">
-              Gerencie detalhes, módulos e aulas do curso
-            </p>
+      <div className="relative rounded-2xl border border-gold/10 bg-gradient-to-r from-card via-card/80 to-card p-6 overflow-hidden shadow-xl shadow-black/10">
+        <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gold/[0.05] blur-[60px]" />
+        <div className="flex items-start justify-between gap-4 relative z-10">
+          <div className="flex items-start gap-4 min-w-0">
+            <Link
+              to="/admin/courses"
+              className="mt-1 flex h-10 w-10 items-center justify-center rounded-xl border border-border/15 bg-background/30 text-muted-foreground/50 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all duration-200 shrink-0"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+            <div className="min-w-0">
+              <h1 className="font-display text-2xl font-black text-foreground tracking-tight truncate">
+                Gerenciar: <span className="text-gold">{courseTitle}</span>
+              </h1>
+              <p className="mt-0.5 text-xs text-muted-foreground/50">
+                Gerencie detalhes, módulos e aulas do curso
+              </p>
+            </div>
           </div>
-        </div>
         <div className="flex items-center gap-3 shrink-0">
           <Button
             variant="outline"
@@ -96,6 +98,7 @@ function EditCoursePage() {
             )}
             Salvar Curso
           </Button>
+        </div>
         </div>
       </div>
 

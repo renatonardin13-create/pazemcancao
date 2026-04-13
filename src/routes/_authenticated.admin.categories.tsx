@@ -199,19 +199,22 @@ function AdminCategoriesPage() {
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="font-display text-2xl font-bold text-foreground/90 tracking-tight">
-          Categorias e Tags
-        </h1>
-        <p className="mt-1 text-[13px] text-muted-foreground/45">
-          Organize seus cursos com categorias e tags personalizadas
-        </p>
+      <div className="relative rounded-2xl border border-gold/10 bg-gradient-to-r from-card via-card/80 to-card p-6 overflow-hidden shadow-xl shadow-black/10">
+        <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gold/[0.05] blur-[60px]" />
+        <div className="relative z-10">
+          <h1 className="font-display text-2xl font-black text-foreground tracking-tight">
+            Categorias e Tags
+          </h1>
+          <p className="text-xs text-muted-foreground/50 mt-0.5">
+            Organize seus cursos com categorias e tags personalizadas
+          </p>
+        </div>
       </div>
 
       {/* Two-column layout */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* ─── Categories Panel ─── */}
-        <div className="rounded-2xl border border-border/15 bg-card/5 p-5">
+      <div className="grid lg:grid-cols-2 gap-5">
+        {/* Categories Panel */}
+        <div className="rounded-2xl border border-border/15 bg-card p-5 shadow-lg shadow-black/10">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display text-base font-semibold text-foreground/85 flex items-center gap-2">
               <FolderOpen className="h-4 w-4 text-gold/60" />

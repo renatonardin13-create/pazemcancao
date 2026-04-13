@@ -95,23 +95,27 @@ function AdminTracksPage() {
   const categories = catData?.categories || [];
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-foreground/85 tracking-tight">
-            Músicas
-          </h1>
-          <p className="mt-1 text-[13px] text-muted-foreground/40">
-            Gerencie as músicas disponíveis para ouvir e baixar
-          </p>
+    <div className="max-w-6xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="relative rounded-2xl border border-gold/10 bg-gradient-to-r from-card via-card/80 to-card p-6 overflow-hidden shadow-xl shadow-black/10">
+        <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gold/[0.05] blur-[60px]" />
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative z-10">
+          <div>
+            <h1 className="font-display text-2xl font-black text-foreground tracking-tight">
+              Músicas
+            </h1>
+            <p className="text-xs text-muted-foreground/50 mt-0.5">
+              Gerencie as músicas disponíveis para ouvir e baixar
+            </p>
+          </div>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="flex items-center gap-2 h-10 px-5 rounded-xl bg-gradient-to-r from-gold to-gold/85 text-background text-sm font-bold hover:shadow-lg hover:shadow-gold/20 transition-all shrink-0"
+          >
+            <Plus className="h-4 w-4" />
+            Nova Música
+          </button>
         </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 rounded-xl h-10 px-4 text-[11px] font-semibold uppercase tracking-wider bg-gold/15 text-gold/70 border border-gold/12 hover:bg-gold/22 transition-all duration-500"
-        >
-          <Plus className="h-3.5 w-3.5" />
-          Nova Música
-        </button>
       </div>
 
       {/* Filtros */}

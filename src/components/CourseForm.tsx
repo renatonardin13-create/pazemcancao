@@ -95,20 +95,20 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   const selectedCategory = categories.find((c: any) => c.id === categoryId);
 
   return (
-    <form ref={ref} onSubmit={handleSubmit} className="space-y-6">
-      {/* 2-column layout: desktop side-by-side, mobile stacked */}
-      <div className="grid lg:grid-cols-[1fr_300px] gap-6 lg:gap-8">
-        {/* ========== LEFT COLUMN — Info + Images ========== */}
-        <div className="space-y-6 order-1">
-          {/* Card: Informações do Curso */}
-          <div className="rounded-xl border border-border/10 bg-card/5 p-6 space-y-6">
-            <h3 className="text-sm font-semibold text-foreground/70 tracking-tight border-b border-border/8 pb-3">
+    <form ref={ref} onSubmit={handleSubmit} className="space-y-5">
+      {/* 2-column layout */}
+      <div className="grid lg:grid-cols-[1fr_300px] gap-5 lg:gap-6">
+        {/* LEFT COLUMN */}
+        <div className="space-y-5 order-1">
+          {/* Card: Informações */}
+          <div className="rounded-2xl border border-border/15 bg-card p-6 space-y-5 shadow-lg shadow-black/10">
+            <h3 className="text-sm font-black text-foreground/80 tracking-tight border-b border-border/10 pb-3 uppercase">
               Informações do Curso
             </h3>
 
             {/* Title */}
             <div className="space-y-1.5">
-              <Label htmlFor="title" className="text-xs font-medium text-muted-foreground/60">
+              <Label htmlFor="title" className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider">
                 Título do Curso <span className="text-gold/60">*</span>
               </Label>
               <Input
@@ -117,7 +117,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="Ex: Curso de Piano para Iniciantes"
                 required
-                className="bg-card/10 border-border/12 focus:border-gold/30"
+                className="bg-background/40 border-border/15 focus:border-gold/30 rounded-xl"
               />
             </div>
 
@@ -183,8 +183,8 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
           </div>
 
           {/* Card: Configurações Adicionais */}
-          <div className="rounded-xl border border-border/10 bg-card/5 p-6 space-y-6">
-            <h3 className="text-sm font-semibold text-foreground/70 tracking-tight border-b border-border/8 pb-3">
+          <div className="rounded-2xl border border-border/15 bg-card p-6 space-y-5 shadow-lg shadow-black/10">
+            <h3 className="text-sm font-black text-foreground/80 tracking-tight border-b border-border/10 pb-3 uppercase">
               Configurações Adicionais
             </h3>
 
@@ -247,8 +247,8 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
           </div>
 
           {/* Card: Imagens */}
-          <div className="rounded-xl border border-border/10 bg-card/5 p-6 space-y-6">
-            <h3 className="text-sm font-semibold text-foreground/70 tracking-tight border-b border-border/8 pb-3">
+          <div className="rounded-2xl border border-border/15 bg-card p-6 space-y-5 shadow-lg shadow-black/10">
+            <h3 className="text-sm font-black text-foreground/80 tracking-tight border-b border-border/10 pb-3 uppercase">
               Imagens
             </h3>
 
@@ -383,8 +383,8 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
         {/* ========== RIGHT COLUMN — Preview ========== */}
         <div className="order-2 lg:order-2">
-          <div className="rounded-xl border border-border/10 bg-card/5 p-5 lg:sticky lg:top-6 space-y-1">
-            <h3 className="text-sm font-semibold text-foreground/70 tracking-tight pb-3 border-b border-border/8">
+          <div className="rounded-2xl border border-gold/15 bg-card p-5 lg:sticky lg:top-6 space-y-1 shadow-lg shadow-black/10">
+            <h3 className="text-sm font-black text-foreground/80 tracking-tight pb-3 border-b border-border/10 uppercase">
               Preview
             </h3>
 

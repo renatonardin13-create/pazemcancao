@@ -25,18 +25,26 @@ function NewCoursePage() {
   });
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      <div>
-        <Link
-          to="/admin/courses"
-          className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground/40 hover:text-muted-foreground/60 transition-colors mb-4"
-        >
-          <ArrowLeft className="h-3 w-3" />
-          Voltar
-        </Link>
-        <h1 className="font-display text-2xl font-bold text-foreground/85 tracking-tight">
-          Novo Curso
-        </h1>
+    <div className="max-w-5xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="relative rounded-2xl border border-gold/10 bg-gradient-to-r from-card via-card/80 to-card p-6 overflow-hidden shadow-xl shadow-black/10">
+        <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gold/[0.05] blur-[60px]" />
+        <div className="flex items-center justify-between relative z-10">
+          <div className="flex items-center gap-4">
+            <Link
+              to="/admin/courses"
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/15 bg-background/30 text-muted-foreground/50 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all duration-200"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+            <div>
+              <h1 className="font-display text-2xl font-black text-foreground tracking-tight">
+                Novo Curso
+              </h1>
+              <p className="text-xs text-muted-foreground/50 mt-0.5">Preencha os dados para criar um novo curso</p>
+            </div>
+          </div>
+        </div>
       </div>
 
       <CourseForm

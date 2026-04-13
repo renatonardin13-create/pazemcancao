@@ -100,54 +100,46 @@ function AdminCoursesPage() {
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-foreground/85 tracking-tight">
-            Cursos
-          </h1>
-          <p className="mt-1 text-[13px] text-muted-foreground/40">
-            Gerencie seu catálogo e conteúdo de cursos.
-          </p>
+      <div className="relative rounded-2xl border border-gold/10 bg-gradient-to-r from-card via-card/80 to-card p-6 overflow-hidden shadow-xl shadow-black/10">
+        <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gold/[0.05] blur-[60px]" />
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative z-10">
+          <div>
+            <h1 className="font-display text-2xl font-black text-foreground tracking-tight">
+              Cursos
+            </h1>
+            <p className="text-xs text-muted-foreground/50 mt-0.5">
+              Gerencie seu catálogo e conteúdo de cursos.
+            </p>
+          </div>
+          <div className="flex items-center gap-2.5">
+            <div className="relative hidden sm:block">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
+              <Input
+                placeholder="Buscar por nome..."
+                value={search}
+                onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+                className="pl-9 h-10 w-52 bg-background/40 border-border/20 rounded-xl text-sm placeholder:text-muted-foreground/35"
+              />
+            </div>
+            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+              <SelectTrigger className="w-[150px] h-10 bg-background/40 border-border/20 rounded-xl text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="published">Publicado</SelectItem>
+                <SelectItem value="draft">Rascunho</SelectItem>
+                <SelectItem value="archived">Arquivado</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button asChild className="h-10 px-5 rounded-xl bg-gradient-to-r from-gold to-gold/85 text-background font-bold hover:shadow-lg hover:shadow-gold/20 transition-all">
+              <Link to="/admin/courses/new">
+                <Plus className="h-4 w-4 mr-1.5" />
+                Novo Curso
+              </Link>
+            </Button>
+          </div>
         </div>
-        <Button asChild size="sm">
-          <Link to="/admin/courses/new">
-            <Plus className="h-4 w-4 mr-1" />
-            Criar Novo Curso
-          </Link>
-        </Button>
-      </div>
-
-      {/* Filters */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
-          <Input
-            placeholder="Buscar por nome do curso..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setPage(1);
-            }}
-            className="pl-9 h-10 bg-card/20 border-border/20 text-sm"
-          />
-        </div>
-        <Select
-          value={statusFilter}
-          onValueChange={(v) => {
-            setStatusFilter(v);
-            setPage(1);
-          }}
-        >
-          <SelectTrigger className="w-[180px] h-10 bg-card/20 border-border/20 text-sm">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos os status</SelectItem>
-            <SelectItem value="published">Publicado</SelectItem>
-            <SelectItem value="draft">Rascunho</SelectItem>
-            <SelectItem value="archived">Arquivado</SelectItem>
-          </SelectContent>
-        </Select>
       </div>
 
       {/* Table */}
@@ -158,11 +150,11 @@ function AdminCoursesPage() {
           </p>
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-20 rounded-2xl border border-border/15 bg-card/5">
-          <Video className="h-10 w-10 text-muted-foreground/15 mx-auto mb-4" />
-          <p className="text-sm text-muted-foreground/40">
+        <div className="text-center py-20 rounded-2xl border border-border/15 bg-card shadow-lg shadow-black/10">
+          <Video className="h-10 w-10 text-gold/20 mx-auto mb-4" />
+          <p className="text-sm text-muted-foreground/50 font-medium">
             {allCourses.length === 0
-              ? "Nenhum curso cadastrado."
+              ? "Nenhum curso cadastrado ainda."
               : "Nenhum curso encontrado com esses filtros."}
           </p>
           {allCourses.length === 0 && (
@@ -175,7 +167,7 @@ function AdminCoursesPage() {
           )}
         </div>
       ) : (
-        <div className="rounded-2xl border border-border/15 overflow-hidden">
+        <div className="rounded-2xl border border-border/15 bg-card overflow-hidden shadow-lg shadow-black/10">
           <Table>
             <TableHeader>
               <TableRow className="border-border/10 hover:bg-transparent">
