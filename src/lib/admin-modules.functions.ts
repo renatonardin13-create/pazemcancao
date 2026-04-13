@@ -68,7 +68,7 @@ export const createModule = createServerFn({ method: 'POST' })
 
 export const updateModule = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { id: string; title?: string; description?: string; status?: string; sort_order?: number }) => input)
+  .inputValidator((input: { id: string; title?: string; description?: string; status?: string; sort_order?: number; thumbnail_url?: string }) => input)
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: role } = await supabase
