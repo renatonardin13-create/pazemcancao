@@ -49,7 +49,7 @@ export const Route = createFileRoute("/_authenticated/admin/courses/")({
   component: AdminCoursesPage,
 });
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 6;
 
 function AdminCoursesPage() {
   const queryClient = useQueryClient();
