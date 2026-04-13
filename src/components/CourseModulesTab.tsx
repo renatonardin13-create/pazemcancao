@@ -552,9 +552,9 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
 
                 {/* Expanded: lesson list */}
                 {isExpanded && (
-                  <div className="bg-background/30 border-t border-border/10 px-5 py-4">
+                  <div className="border-t border-border/10 px-5 py-4 space-y-2">
                     {lessons.length === 0 ? (
-                      <div className="text-center py-8 ml-8 rounded-lg border border-dashed border-border/10 bg-card/3">
+                      <div className="text-center py-8 rounded-lg border border-dashed border-border/10 bg-card/3">
                         <div className="w-10 h-10 rounded-xl bg-gold/5 border border-gold/10 flex items-center justify-center mx-auto mb-3">
                           <FileText className="h-5 w-5 text-gold/30" />
                         </div>
@@ -575,56 +575,37 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                         </Button>
                       </div>
                     ) : (
-                      <div className="ml-8 space-y-2 border-l-2 border-border/8 pl-4">
+                      <>
                         {lessons.map((lesson: any, lesIndex: number) => (
                           <div
                             key={lesson.id}
-                            className="flex items-center gap-3 px-4 py-2.5 rounded-lg border border-border/8 bg-card/5 hover:bg-card/10 hover:border-border/15 transition-all group"
+                            className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border/12 bg-card/5 hover:bg-card/10 hover:border-border/20 transition-all group"
                           >
-                            {/* Drag handle — up/down */}
-                            <div className="flex flex-col items-center shrink-0 -my-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                              <button
-                                type="button"
-                                className="p-0.5 text-muted-foreground/15 hover:text-gold/60 disabled:opacity-15 transition-colors"
-                                disabled={lesIndex === 0}
-                                onClick={() => moveLessonInModule(mod, lesIndex, "up")}
-                              >
-                                <ChevronUp className="h-3 w-3" />
-                              </button>
-                              <GripVertical className="h-3 w-3 text-muted-foreground/15 cursor-grab active:cursor-grabbing" />
-                              <button
-                                type="button"
-                                className="p-0.5 text-muted-foreground/15 hover:text-gold/60 disabled:opacity-15 transition-colors"
-                                disabled={lesIndex === lessons.length - 1}
-                                onClick={() => moveLessonInModule(mod, lesIndex, "down")}
-                              >
-                                <ChevronDown className="h-3 w-3" />
-                              </button>
-                            </div>
+                            {/* Drag handle */}
+                            <GripVertical className="h-4 w-4 text-muted-foreground/15 cursor-grab active:cursor-grabbing shrink-0" />
 
                             {/* Content type icon */}
-                            <div className="w-7 h-7 rounded-lg bg-card/10 border border-border/8 flex items-center justify-center shrink-0">
-                              {getLessonTypeIcon(lesson)}
+                            <div className="w-9 h-9 rounded-lg bg-gold/10 border border-gold/20 flex items-center justify-center shrink-0">
+                              {lesson.content_type === "pdf" || lesson.content_url?.endsWith(".pdf") ? (
+                                <FileText className="h-4 w-4 text-gold/70" />
+                              ) : lesson.video_url ? (
+                                <Video className="h-4 w-4 text-gold/70" />
+                              ) : lesson.content_url ? (
+                                <File className="h-4 w-4 text-gold/70" />
+                              ) : (
+                                <LinkIcon className="h-4 w-4 text-gold/70" />
+                              )}
                             </div>
 
-                            {/* Lesson name */}
+                            {/* Lesson title + type */}
                             <div className="flex-1 min-w-0">
-                              <p className="text-[12px] text-foreground/70 truncate font-medium">
+                              <p className="text-[13px] text-foreground/85 truncate font-semibold">
                                 {lesson.title}
                               </p>
+                              <p className="text-[11px] text-muted-foreground/40 mt-0.5">
+                                {getLessonTypeLabel(lesson)}
+                              </p>
                             </div>
-
-                            {/* Type label */}
-                            <span className="text-[9px] text-muted-foreground/30 px-2 py-0.5 rounded-md bg-card/10 border border-border/6 shrink-0">
-                              {getLessonTypeLabel(lesson)}
-                            </span>
-
-                            {/* Duration */}
-                            {lesson.duration && lesson.duration !== "0:00" && (
-                              <span className="text-[10px] text-muted-foreground/25 shrink-0 tabular-nums">
-                                {lesson.duration}
-                              </span>
-                            )}
 
                             {/* Free preview badge */}
                             {lesson.is_free_preview && (
@@ -636,11 +617,14 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                               </Badge>
                             )}
 
+                            {/* Published badge */}
+                            <StatusBadge status="published" />
+
                             {/* Lesson actions */}
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                                  <MoreHorizontal className="h-3.5 w-3.5" />
+                                <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/30 hover:text-foreground/60 shrink-0">
+                                  <MoreHorizontal className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="w-44">
@@ -687,12 +671,12 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                         <button
                           type="button"
                           onClick={() => openCreateLesson(mod.id)}
-                          className="w-full mt-1 py-2.5 rounded-lg border border-dashed border-gold/15 bg-gold/3 text-gold/50 hover:text-gold/80 hover:bg-gold/8 hover:border-gold/25 transition-all text-[11px] font-medium flex items-center justify-center gap-1.5"
+                          className="w-full py-3 rounded-xl border border-dashed border-gold/15 bg-gold/3 text-gold/50 hover:text-gold/80 hover:bg-gold/8 hover:border-gold/25 transition-all text-[12px] font-medium flex items-center justify-center gap-1.5"
                         >
                           <Plus className="h-3.5 w-3.5" />
                           Adicionar Aula
                         </button>
-                      </div>
+                      </>
                     )}
                   </div>
                 )}
