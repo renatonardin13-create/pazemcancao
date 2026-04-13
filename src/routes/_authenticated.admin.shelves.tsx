@@ -257,7 +257,37 @@ function AdminVitrinePage() {
     onError: (err: any) => toast.error(err.message),
   });
 
-  // ── Drag and drop for shelves ──
+  // ── Promo banner mutations ──
+
+  const createPromoMut = useMutation({
+    mutationFn: (input: any) => createPromoBanner({ data: input }),
+    onSuccess: () => {
+      toast.success("Banner promo criado!");
+      queryClient.invalidateQueries({ queryKey: ["admin-promo-banners"] });
+      closePromoDialog();
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const updatePromoMut = useMutation({
+    mutationFn: (input: any) => updatePromoBanner({ data: input }),
+    onSuccess: () => {
+      toast.success("Banner promo atualizado!");
+      queryClient.invalidateQueries({ queryKey: ["admin-promo-banners"] });
+      closePromoDialog();
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const deletePromoMut = useMutation({
+    mutationFn: (id: string) => deletePromoBanner({ data: { id } }),
+    onSuccess: () => {
+      toast.success("Banner promo excluído!");
+      queryClient.invalidateQueries({ queryKey: ["admin-promo-banners"] });
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
 
   const shelfDrag = useDragReorder(shelves, (newShelves) => {
     reorderShelvesMut.mutate(newShelves.map((s: any) => s.id));
