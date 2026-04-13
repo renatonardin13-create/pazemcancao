@@ -371,9 +371,13 @@ export default function AdminVitrinePage() {
     setPromoTitle("");
     setPromoImageUrl("");
     setPromoLinkUrl("");
-    setPromoPosition(1);
+    setPromoPosition("before");
+    setPromoType("static");
     setPromoOrder(promoBanners.length);
     setPromoActive(true);
+    setPromoSchedule(false);
+    setPromoShowVitrine(true);
+    setPromoShowCommunity(false);
     setPromoDialogOpen(true);
   };
 
@@ -382,9 +386,13 @@ export default function AdminVitrinePage() {
     setPromoTitle(banner.title);
     setPromoImageUrl(banner.image_url);
     setPromoLinkUrl(banner.link_url || "");
-    setPromoPosition(banner.position_after_shelf);
+    setPromoPosition(String(banner.position_after_shelf) || "before");
+    setPromoType("static");
     setPromoOrder(banner.sort_order);
     setPromoActive(banner.is_active);
+    setPromoSchedule(false);
+    setPromoShowVitrine(true);
+    setPromoShowCommunity(false);
     setPromoDialogOpen(true);
   };
 
@@ -395,11 +403,12 @@ export default function AdminVitrinePage() {
 
   const handlePromoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const posMap: Record<string, number> = { before: 0, between: 1, after: 99 };
     const payload = {
       title: promoTitle,
       image_url: promoImageUrl,
       link_url: promoLinkUrl || undefined,
-      position_after_shelf: promoPosition,
+      position_after_shelf: posMap[promoPosition] ?? 1,
       sort_order: promoOrder,
       is_active: promoActive,
     };
