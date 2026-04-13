@@ -81,6 +81,8 @@ function AdminUsersPage() {
   const [editIsTrial, setEditIsTrial] = useState(false);
   const [editTrialDays, setEditTrialDays] = useState(7);
   const [editCanDownload, setEditCanDownload] = useState(true);
+  const [editStatus, setEditStatus] = useState("active");
+  const [editCourseIds, setEditCourseIds] = useState<string[]>([]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-users"],
