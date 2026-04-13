@@ -62,6 +62,12 @@ import {
   reorderShelfCourses,
 } from "@/lib/admin-shelves.functions";
 import { listCoursesForSelector } from "@/lib/admin-trial.functions";
+import {
+  listPromoBanners,
+  createPromoBanner,
+  updatePromoBanner,
+  deletePromoBanner,
+} from "@/lib/admin-promo-banners.functions";
 
 export const Route = createFileRoute("/_authenticated/admin/shelves")({
   component: AdminVitrinePage,
@@ -152,6 +158,17 @@ function AdminVitrinePage() {
   const [bannerAspect, setBannerAspect] = useState<string>("hero");
   const [bannerImgDims, setBannerImgDims] = useState<{ w: number; h: number } | null>(null);
 
+  // Promo banner state
+  const [promoDialogOpen, setPromoDialogOpen] = useState(false);
+  const [editingPromo, setEditingPromo] = useState<any>(null);
+  const [deletePromoTarget, setDeletePromoTarget] = useState<any>(null);
+  const [promoTitle, setPromoTitle] = useState("");
+  const [promoImageUrl, setPromoImageUrl] = useState("");
+  const [promoLinkUrl, setPromoLinkUrl] = useState("");
+  const [promoPosition, setPromoPosition] = useState(1);
+  const [promoOrder, setPromoOrder] = useState(0);
+  const [promoActive, setPromoActive] = useState(true);
+
   const { data, isLoading } = useQuery({
     queryKey: ["admin-shelves"],
     queryFn: () => listShelves(),
@@ -162,8 +179,14 @@ function AdminVitrinePage() {
     queryFn: () => listCoursesForSelector(),
   });
 
+  const { data: promoBannersData } = useQuery({
+    queryKey: ["admin-promo-banners"],
+    queryFn: () => listPromoBanners(),
+  });
+
   const shelves = data?.shelves ?? [];
   const courses = coursesData?.courses ?? [];
+  const promoBanners = promoBannersData?.banners ?? [];
   const publishedCourses = courses.filter((c: any) => c.status === "published");
   const activeShelves = shelves.filter((s: any) => s.is_active);
 
@@ -234,7 +257,37 @@ function AdminVitrinePage() {
     onError: (err: any) => toast.error(err.message),
   });
 
-  // ── Drag and drop for shelves ──
+  // ── Promo banner mutations ──
+
+  const createPromoMut = useMutation({
+    mutationFn: (input: any) => createPromoBanner({ data: input }),
+    onSuccess: () => {
+      toast.success("Banner promo criado!");
+      queryClient.invalidateQueries({ queryKey: ["admin-promo-banners"] });
+      closePromoDialog();
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const updatePromoMut = useMutation({
+    mutationFn: (input: any) => updatePromoBanner({ data: input }),
+    onSuccess: () => {
+      toast.success("Banner promo atualizado!");
+      queryClient.invalidateQueries({ queryKey: ["admin-promo-banners"] });
+      closePromoDialog();
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
+  const deletePromoMut = useMutation({
+    mutationFn: (id: string) => deletePromoBanner({ data: { id } }),
+    onSuccess: () => {
+      toast.success("Banner promo excluído!");
+      queryClient.invalidateQueries({ queryKey: ["admin-promo-banners"] });
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
 
   const shelfDrag = useDragReorder(shelves, (newShelves) => {
     reorderShelvesMut.mutate(newShelves.map((s: any) => s.id));
@@ -273,6 +326,52 @@ function AdminVitrinePage() {
   const closeDialog = () => {
     setDialogOpen(false);
     setEditingShelf(null);
+  };
+
+  // ── Promo dialog handlers ──
+
+  const openCreatePromo = () => {
+    setEditingPromo(null);
+    setPromoTitle("");
+    setPromoImageUrl("");
+    setPromoLinkUrl("");
+    setPromoPosition(1);
+    setPromoOrder(promoBanners.length);
+    setPromoActive(true);
+    setPromoDialogOpen(true);
+  };
+
+  const openEditPromo = (banner: any) => {
+    setEditingPromo(banner);
+    setPromoTitle(banner.title);
+    setPromoImageUrl(banner.image_url);
+    setPromoLinkUrl(banner.link_url || "");
+    setPromoPosition(banner.position_after_shelf);
+    setPromoOrder(banner.sort_order);
+    setPromoActive(banner.is_active);
+    setPromoDialogOpen(true);
+  };
+
+  const closePromoDialog = () => {
+    setPromoDialogOpen(false);
+    setEditingPromo(null);
+  };
+
+  const handlePromoSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const payload = {
+      title: promoTitle,
+      image_url: promoImageUrl,
+      link_url: promoLinkUrl || undefined,
+      position_after_shelf: promoPosition,
+      sort_order: promoOrder,
+      is_active: promoActive,
+    };
+    if (editingPromo) {
+      updatePromoMut.mutate({ id: editingPromo.id, ...payload });
+    } else {
+      createPromoMut.mutate(payload);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -693,28 +792,130 @@ function AdminVitrinePage() {
             {/* ── Banners Promo ── */}
             <TabsContent value="promo" className="mt-6 space-y-6">
               <div className="rounded-xl border border-border/15 bg-card/5 p-6 space-y-5">
-                <div>
-                  <h3 className="text-sm font-semibold text-foreground/70 mb-1">Banners Promocionais</h3>
-                  <p className="text-[11px] text-muted-foreground/35">
-                    Banners adicionais exibidos entre as prateleiras de cursos. Em breve.
-                  </p>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-sm font-semibold text-foreground/70 mb-1">Banners Promo</h3>
+                    <p className="text-[11px] text-muted-foreground/35">
+                      Campanhas, eventos e banners promocionais exibidos entre as prateleiras
+                    </p>
+                  </div>
+                  <Button
+                    size="sm"
+                    className="gap-1.5 bg-gold/90 text-gold-foreground hover:bg-gold shadow-lg shadow-gold/20 font-semibold"
+                    onClick={openCreatePromo}
+                  >
+                    <Plus className="h-3.5 w-3.5" />
+                    Adicionar
+                  </Button>
                 </div>
 
-                <div className="text-center py-12 rounded-xl border border-dashed border-border/12 bg-card/3">
-                  <div className="w-12 h-12 rounded-2xl bg-gold/8 border border-gold/15 flex items-center justify-center mx-auto mb-4">
-                    <Image className="h-6 w-6 text-gold/30" />
+                {/* Image specs info */}
+                <div className="flex items-start gap-3 rounded-xl bg-gold/5 border border-gold/12 p-4">
+                  <Info className="h-4 w-4 text-gold/50 shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <p className="text-[11px] font-semibold text-foreground/60">
+                      Requisitos da imagem
+                    </p>
+                    <div className="flex flex-wrap gap-3 text-[10px] text-muted-foreground/40">
+                      <span>
+                        Tamanho recomendado: <strong className="text-foreground/50">1200×400 px</strong>
+                      </span>
+                      <span>•</span>
+                      <span>
+                        Formatos: <strong className="text-foreground/50">JPG, PNG, WebP</strong>
+                      </span>
+                    </div>
                   </div>
-                  <p className="text-[13px] font-medium text-foreground/50 mb-1">
-                    Banners promocionais
-                  </p>
-                  <p className="text-[11px] text-muted-foreground/30 max-w-xs mx-auto">
-                    Em breve você poderá inserir banners promocionais entre as prateleiras
-                    para destacar ofertas e novidades.
-                  </p>
-                  <Badge variant="outline" className="mt-4 text-[9px] text-gold/50 border-gold/15 bg-gold/5">
-                    Em breve
-                  </Badge>
                 </div>
+
+                {/* List or empty state */}
+                {promoBanners.length === 0 ? (
+                  <div className="text-center py-12 rounded-xl border border-dashed border-border/12 bg-card/3">
+                    <div className="w-12 h-12 rounded-2xl bg-gold/8 border border-gold/15 flex items-center justify-center mx-auto mb-4">
+                      <ImageIcon className="h-6 w-6 text-gold/30" />
+                    </div>
+                    <p className="text-[13px] font-medium text-foreground/50 mb-1">
+                      Nenhum banner secundário cadastrado
+                    </p>
+                    <p className="text-[11px] text-muted-foreground/30 max-w-xs mx-auto">
+                      Adicione banners promocionais para a vitrine
+                    </p>
+                    <Button
+                      size="sm"
+                      className="mt-5 bg-gold/90 text-gold-foreground hover:bg-gold shadow-lg shadow-gold/20"
+                      onClick={openCreatePromo}
+                    >
+                      <Plus className="h-3.5 w-3.5 mr-1.5" />
+                      Criar primeiro banner
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-2.5">
+                    {promoBanners.map((banner: any) => (
+                      <div
+                        key={banner.id}
+                        className="flex items-center gap-4 rounded-xl border border-border/15 bg-card/8 px-5 py-3.5 transition-all hover:bg-card/12"
+                      >
+                        {/* Thumbnail */}
+                        <div className="w-20 h-[28px] rounded-lg overflow-hidden border border-border/10 bg-card/10 shrink-0">
+                          {banner.image_url ? (
+                            <img src={banner.image_url} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full bg-gradient-to-br from-card/20 to-card/5" />
+                          )}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <p className="text-[13px] font-semibold text-foreground/80 truncate">
+                              {banner.title}
+                            </p>
+                            <Badge
+                              variant="outline"
+                              className={`text-[9px] rounded-full px-2 border font-medium ${
+                                banner.is_active
+                                  ? "text-emerald-400/80 border-emerald-500/25 bg-emerald-500/10"
+                                  : "text-muted-foreground/40 border-border/15"
+                              }`}
+                            >
+                              {banner.is_active ? "Ativo" : "Inativo"}
+                            </Badge>
+                            <Badge
+                              variant="outline"
+                              className="text-[9px] rounded-full px-2 border text-muted-foreground/50 border-border/15"
+                            >
+                              Após prateleira {banner.position_after_shelf}
+                            </Badge>
+                          </div>
+                          <p className="text-[10px] text-muted-foreground/25 mt-0.5 truncate">
+                            {banner.link_url ? `Link: ${banner.link_url}` : "Sem link"}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center gap-1 shrink-0">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-muted-foreground/25 hover:text-foreground/60"
+                            onClick={() => openEditPromo(banner)}
+                            title="Editar"
+                          >
+                            <Pencil className="h-3.5 w-3.5" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-7 w-7 text-muted-foreground/25 hover:text-destructive/60"
+                            onClick={() => setDeletePromoTarget(banner)}
+                            title="Excluir"
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </TabsContent>
 
@@ -1240,6 +1441,141 @@ function AdminVitrinePage() {
               onClick={() => {
                 if (deleteTarget) deleteMut.mutate(deleteTarget.id);
                 setDeleteTarget(null);
+              }}
+              className="bg-destructive/80 text-destructive-foreground hover:bg-destructive"
+            >
+              <Trash2 className="h-3.5 w-3.5 mr-1.5" />
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* ── Promo Create/Edit Dialog ── */}
+      <Dialog open={promoDialogOpen} onOpenChange={setPromoDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-display">
+              {editingPromo ? "Editar Banner Promo" : "Novo Banner Promo"}
+            </DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handlePromoSubmit} className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label>Título interno</Label>
+              <Input
+                value={promoTitle}
+                onChange={(e) => setPromoTitle(e.target.value)}
+                placeholder="Ex: Black Friday 2026"
+                required
+                className="bg-card/10 border-border/15"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label>URL da imagem</Label>
+              <Input
+                value={promoImageUrl}
+                onChange={(e) => setPromoImageUrl(e.target.value)}
+                placeholder="https://... imagem 1200x400"
+                required
+                className="bg-card/10 border-border/15"
+              />
+              <p className="text-[10px] text-muted-foreground/30">
+                Recomendado: 1200×400 px — JPG, PNG ou WebP
+              </p>
+            </div>
+
+            {promoImageUrl && (
+              <div className="rounded-xl overflow-hidden border border-border/10 aspect-[3/1] bg-card/10">
+                <img src={promoImageUrl} alt="Preview" className="w-full h-full object-cover" />
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <Label>Link (opcional)</Label>
+              <Input
+                value={promoLinkUrl}
+                onChange={(e) => setPromoLinkUrl(e.target.value)}
+                placeholder="https://..."
+                className="bg-card/10 border-border/15"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Posição (após prateleira nº)</Label>
+                <Input
+                  type="number"
+                  min={1}
+                  max={99}
+                  value={promoPosition}
+                  onChange={(e) => setPromoPosition(Number(e.target.value))}
+                  className="bg-card/10 border-border/15"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Ordem de exibição</Label>
+                <Input
+                  type="number"
+                  min={0}
+                  max={999}
+                  value={promoOrder}
+                  onChange={(e) => setPromoOrder(Number(e.target.value))}
+                  className="bg-card/10 border-border/15"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
+              <div>
+                <p className="text-sm font-medium text-foreground/70">Ativo</p>
+                <p className="text-[11px] text-muted-foreground/40">Visível na vitrine</p>
+              </div>
+              <Switch checked={promoActive} onCheckedChange={setPromoActive} />
+            </div>
+
+            <Button
+              type="submit"
+              className="w-full bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
+              disabled={createPromoMut.isPending || updatePromoMut.isPending}
+            >
+              {(createPromoMut.isPending || updatePromoMut.isPending) && (
+                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+              )}
+              {editingPromo ? "Salvar" : "Criar Banner"}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Promo Delete Confirm ── */}
+      <AlertDialog
+        open={!!deletePromoTarget}
+        onOpenChange={(v) => {
+          if (!v) setDeletePromoTarget(null);
+        }}
+      >
+        <AlertDialogContent className="bg-card border-border/20">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-foreground/85">
+              Excluir banner promo
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-muted-foreground/50">
+              Tem certeza que deseja excluir o banner{" "}
+              <span className="font-semibold text-foreground/70">
+                {deletePromoTarget?.title}
+              </span>
+              ?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="text-muted-foreground/50">
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (deletePromoTarget) deletePromoMut.mutate(deletePromoTarget.id);
+                setDeletePromoTarget(null);
               }}
               className="bg-destructive/80 text-destructive-foreground hover:bg-destructive"
             >
