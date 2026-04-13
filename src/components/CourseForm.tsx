@@ -97,7 +97,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       <div className="flex flex-col lg:grid lg:grid-cols-[1fr_340px] gap-5">
 
         {/* ===== LEFT: Informações + Configurações ===== */}
-        <div className="space-y-4 order-1 lg:col-start-1">
+        <div className="space-y-5 order-1 lg:col-start-1">
           <CardSection title="Informações do Curso">
             <div className="space-y-1">
               <Label htmlFor="title" className={labelClass}>
