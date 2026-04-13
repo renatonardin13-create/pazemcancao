@@ -43,9 +43,9 @@ export function AdminDashboard() {
     val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
+    <div className="max-w-7xl mx-auto space-y-5">
       {/* Header bar */}
-      <div className="flex flex-col gap-5 pb-6 border-b border-border/15">
+      <div className="flex flex-col gap-3 pb-4 border-b border-border/15">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="font-display text-2xl font-bold text-foreground tracking-tight">
@@ -107,11 +107,11 @@ export function AdminDashboard() {
       </div>
 
       {/* 4 Main Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Receita Total */}
-        <div className="relative rounded-2xl border border-emerald-400/20 bg-gradient-to-br from-emerald-400/[0.06] to-card/5 p-6 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-400/5 group overflow-hidden">
+        <div className="relative rounded-2xl border border-emerald-400/20 bg-gradient-to-br from-emerald-400/[0.06] to-card/5 p-5 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-400/5 group overflow-hidden">
           <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-emerald-400/[0.05] blur-[60px] group-hover:bg-emerald-400/[0.08] transition-all" />
-          <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center justify-between mb-3">
             <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold">
               Receita Total
             </span>
@@ -119,7 +119,7 @@ export function AdminDashboard() {
               <DollarSign className="h-6 w-6 text-emerald-400" />
             </div>
           </div>
-          <p className="font-display text-4xl font-black text-foreground/95 tracking-tight">
+          <p className="font-display text-3xl font-black text-foreground/95 tracking-tight">
             {isLoading ? (
               <span className="inline-block h-10 w-32 animate-pulse rounded-xl bg-muted/15" />
             ) : formatCurrency(data?.totalRevenue ?? 0)}
@@ -134,9 +134,9 @@ export function AdminDashboard() {
         </div>
 
         {/* Alunos Registrados */}
-        <div className="relative rounded-2xl border border-gold/20 bg-gradient-to-br from-gold/[0.06] to-card/5 p-6 transition-all duration-300 hover:shadow-xl hover:shadow-gold/5 group overflow-hidden">
+        <div className="relative rounded-2xl border border-gold/20 bg-gradient-to-br from-gold/[0.06] to-card/5 p-5 transition-all duration-300 hover:shadow-xl hover:shadow-gold/5 group overflow-hidden">
           <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gold/[0.05] blur-[60px] group-hover:bg-gold/[0.08] transition-all" />
-          <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center justify-between mb-3">
             <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold">
               Alunos Registrados
             </span>
@@ -144,7 +144,7 @@ export function AdminDashboard() {
               <GraduationCap className="h-6 w-6 text-gold" />
             </div>
           </div>
-          <p className="font-display text-4xl font-black text-foreground/95 tracking-tight">
+          <p className="font-display text-3xl font-black text-foreground/95 tracking-tight">
             {isLoading ? (
               <span className="inline-block h-10 w-20 animate-pulse rounded-xl bg-muted/15" />
             ) : data?.totalStudents ?? 0}
@@ -159,9 +159,9 @@ export function AdminDashboard() {
         </div>
 
         {/* Cursos Ativos */}
-        <div className="relative rounded-2xl border border-blue-400/20 bg-gradient-to-br from-blue-400/[0.06] to-card/5 p-6 transition-all duration-300 hover:shadow-xl hover:shadow-blue-400/5 group overflow-hidden">
+        <div className="relative rounded-2xl border border-blue-400/20 bg-gradient-to-br from-blue-400/[0.06] to-card/5 p-5 transition-all duration-300 hover:shadow-xl hover:shadow-blue-400/5 group overflow-hidden">
           <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-blue-400/[0.05] blur-[60px] group-hover:bg-blue-400/[0.08] transition-all" />
-          <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center justify-between mb-3">
             <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold">
               Cursos Ativos
             </span>
@@ -169,7 +169,7 @@ export function AdminDashboard() {
               <BookOpen className="h-6 w-6 text-blue-400" />
             </div>
           </div>
-          <p className="font-display text-4xl font-black text-foreground/95 tracking-tight">
+          <p className="font-display text-3xl font-black text-foreground/95 tracking-tight">
             {isLoading ? (
               <span className="inline-block h-10 w-14 animate-pulse rounded-xl bg-muted/15" />
             ) : data?.activeCourses ?? 0}
@@ -184,9 +184,9 @@ export function AdminDashboard() {
         </div>
 
         {/* Matrículas Pendentes */}
-        <div className="relative rounded-2xl border border-amber-400/20 bg-gradient-to-br from-amber-400/[0.06] to-card/5 p-6 transition-all duration-300 hover:shadow-xl hover:shadow-amber-400/5 group overflow-hidden">
+        <div className="relative rounded-2xl border border-amber-400/20 bg-gradient-to-br from-amber-400/[0.06] to-card/5 p-5 transition-all duration-300 hover:shadow-xl hover:shadow-amber-400/5 group overflow-hidden">
           <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-amber-400/[0.05] blur-[60px] group-hover:bg-amber-400/[0.08] transition-all" />
-          <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center justify-between mb-3">
             <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold">
               Matrículas Pendentes
             </span>
@@ -194,7 +194,7 @@ export function AdminDashboard() {
               <Clock className="h-6 w-6 text-amber-400" />
             </div>
           </div>
-          <p className="font-display text-4xl font-black text-foreground/95 tracking-tight">
+          <p className="font-display text-3xl font-black text-foreground/95 tracking-tight">
             {isLoading ? (
               <span className="inline-block h-10 w-14 animate-pulse rounded-xl bg-muted/15" />
             ) : data?.pendingEnrollments ?? 0}
@@ -215,13 +215,32 @@ export function AdminDashboard() {
         </div>
       </div>
 
-      {/* Main Sales Chart + Best Performing Courses */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      {/* Secondary metrics row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { label: "Categorias", value: data?.totalCategories ?? 0, icon: BarChart3, color: "text-purple-400", bg: "bg-purple-400/8", border: "border-purple-400/15" },
+          { label: "Músicas Ativas", value: data?.activeTracks ?? 0, icon: Music, color: "text-pink-400", bg: "bg-pink-400/8", border: "border-pink-400/15" },
+          { label: "Sessões Ativas", value: data?.activeSessions ?? 0, icon: Activity, color: "text-cyan-400", bg: "bg-cyan-400/8", border: "border-cyan-400/15" },
+          { label: "Total de Músicas", value: data?.totalTracks ?? 0, icon: Headphones, color: "text-indigo-400", bg: "bg-indigo-400/8", border: "border-indigo-400/15" },
+        ].map((s) => (
+          <div key={s.label} className={`flex items-center gap-3 rounded-xl border ${s.border} ${s.bg} px-4 py-3 transition-all hover:shadow-sm`}>
+            <s.icon className={`h-4 w-4 ${s.color} shrink-0`} />
+            <div className="min-w-0">
+              <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/40 font-medium truncate">{s.label}</p>
+              <p className="text-lg font-bold text-foreground/85">
+                {isLoading ? <span className="inline-block h-5 w-8 animate-pulse rounded bg-muted/15" /> : s.value}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Sales Chart — large, prominent */}
-        <div className="lg:col-span-2 relative rounded-2xl border border-gold/15 bg-gradient-to-br from-gold/[0.03] to-card/5 p-6 sm:p-8 overflow-hidden">
+        <div className="lg:col-span-2 relative rounded-2xl border border-gold/15 bg-gradient-to-br from-gold/[0.03] to-card/5 p-5 sm:p-6 overflow-hidden">
           <div className="pointer-events-none absolute -top-32 -right-32 h-72 w-72 rounded-full bg-gold/[0.04] blur-[100px]" />
 
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6 relative">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4 relative">
             <div className="flex items-center gap-4">
               <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 border border-gold/20 shadow-lg shadow-gold/5">
                 <TrendingUp className="h-6 w-6 text-gold" />
@@ -249,7 +268,7 @@ export function AdminDashboard() {
           </div>
 
           {/* Summary strip */}
-          <div className="flex flex-wrap items-center gap-6 mb-6">
+          <div className="flex flex-wrap items-center gap-5 mb-4">
             <div className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-gold" />
               <span className="text-xs text-muted-foreground/50">Plays</span>
@@ -275,17 +294,17 @@ export function AdminDashboard() {
 
           <div className="relative">
             {analyticsLoading ? (
-              <div className="flex items-center justify-center py-24">
+              <div className="flex items-center justify-center py-16">
                 <div className="h-8 w-8 animate-spin rounded-full border-2 border-gold/20 border-t-gold/60" />
               </div>
             ) : !analytics?.dailyPlayData?.length ? (
-              <div className="flex flex-col items-center justify-center py-24 text-center">
+              <div className="flex flex-col items-center justify-center py-16 text-center">
                 <BarChart3 className="h-14 w-14 text-muted-foreground/10 mb-4" />
                 <p className="text-sm text-muted-foreground/40 font-medium">Nenhum dado de atividade ainda</p>
                 <p className="text-[11px] text-muted-foreground/25 mt-1.5">Os dados aparecerão aqui quando houver atividade</p>
               </div>
             ) : (
-              <ResponsiveContainer width="100%" height={320}>
+              <ResponsiveContainer width="100%" height={280}>
                 <AreaChart data={analytics.dailyPlayData} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
                   <defs>
                     <linearGradient id="salesGrad" x1="0" y1="0" x2="0" y2="1">
@@ -336,7 +355,7 @@ export function AdminDashboard() {
         </div>
 
         {/* Best Performing Courses — sidebar card */}
-        <div className="lg:col-span-1 rounded-2xl border border-border/15 bg-gradient-to-br from-card/10 to-card/5 p-6 flex flex-col">
+        <div className="lg:col-span-1 rounded-2xl border border-border/15 bg-gradient-to-br from-card/10 to-card/5 p-5 flex flex-col">
           <div className="flex items-center gap-3 mb-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gold/10 border border-gold/20">
               <GraduationCap className="h-5 w-5 text-gold" />
@@ -347,13 +366,13 @@ export function AdminDashboard() {
             </div>
           </div>
 
-          <div className="mt-4 flex-1">
+          <div className="mt-2 flex-1">
             {isLoading ? (
-              <div className="flex items-center justify-center py-16">
+              <div className="flex items-center justify-center py-10">
                 <div className="h-6 w-6 animate-spin rounded-full border-2 border-gold/20 border-t-gold/60" />
               </div>
             ) : !data?.topCourses?.length ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center">
+              <div className="flex flex-col items-center justify-center py-10 text-center">
                 <BookOpen className="h-10 w-10 text-muted-foreground/10 mb-3" />
                 <p className="text-sm text-muted-foreground/35">Nenhum curso publicado</p>
                 <p className="text-[11px] text-muted-foreground/25 mt-1">Publique cursos para ver o ranking</p>
@@ -404,7 +423,7 @@ export function AdminDashboard() {
       </div>
 
       {/* Engagement Analytics */}
-      <div className="space-y-5">
+      <div className="space-y-3">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-400/10 border border-purple-400/15">
             <Zap className="h-4 w-4 text-purple-400" />
@@ -415,7 +434,7 @@ export function AdminDashboard() {
           </div>
         </div>
 
-        <Tabs defaultValue="top-played" className="space-y-4">
+        <Tabs defaultValue="top-played" className="space-y-3">
           <TabsList className="bg-card/10 border border-border/15 p-1 rounded-xl">
             <TabsTrigger value="top-played" className="text-xs rounded-lg data-[state=active]:bg-gold/10 data-[state=active]:text-gold data-[state=active]:border-gold/15 data-[state=active]:border">
               <Headphones className="h-4 w-4 mr-2" /> Mais Ouvidas
