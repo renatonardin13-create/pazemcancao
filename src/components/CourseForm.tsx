@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Video, BookText, Save, Loader2, ImageIcon } from "lucide-react";
+import { Video, BookText, Save, Loader2, ImageIcon, X } from "lucide-react";
 import { ImageFieldHint } from "@/components/ImageFieldHint";
 
 
@@ -248,84 +248,135 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
           </div>
 
           {/* Card: Imagens */}
-          <div className="rounded-xl border border-border/10 bg-card/5 p-5 space-y-5">
-            <h3 className="text-sm font-semibold text-foreground/70 tracking-tight">
+          <div className="rounded-xl border border-border/10 bg-card/5 p-6 space-y-6">
+            <h3 className="text-sm font-semibold text-foreground/70 tracking-tight border-b border-border/8 pb-3">
               Imagens
             </h3>
 
-            <div className="grid sm:grid-cols-2 gap-6">
-              {/* Cover image */}
-              <div className="space-y-2">
-                <Label htmlFor="coverUrl">Capa do Curso</Label>
-                <Input
-                  id="coverUrl"
-                  value={coverUrl}
-                  onChange={(e) => setCoverUrl(e.target.value)}
-                  placeholder="https://..."
-                  className="bg-card/10 border-border/15"
-                />
-                <ImageFieldHint
-                  ratio="16:9"
-                  recommendedSize="400x225"
-                  autoCrop
-                  note="Para melhor resultado nos cards da vitrine, prefira imagem vertical em proporção 2:3."
-                  previewUrl={coverUrl || null}
-                />
-                <p className="text-[10px] text-muted-foreground/30">
-                  Formatos aceitos: JPG, PNG, WebP
-                </p>
-                {coverUrl && (
-                  <img
-                    src={coverUrl}
-                    alt="Capa"
-                    className="mt-2 h-24 w-auto rounded-lg object-cover border border-border/10"
-                  />
+            {/* CAPA DO CURSO */}
+            <div className="space-y-3">
+              <Label className="text-xs font-medium text-muted-foreground/60">
+                Capa do Curso
+              </Label>
+              <p className="text-[11px] text-muted-foreground/35 -mt-1">
+                Imagem exibida na listagem de cursos
+              </p>
+
+              {/* Preview or placeholder */}
+              <div className="rounded-lg border border-border/10 bg-muted/5 overflow-hidden">
+                {coverUrl ? (
+                  <div className="relative group">
+                    <img
+                      src={coverUrl}
+                      alt="Capa do curso"
+                      className="w-full aspect-video object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <label className="cursor-pointer px-3 py-1.5 rounded-lg bg-card/80 border border-border/20 text-xs font-medium text-foreground/80 hover:bg-card transition-colors">
+                        Trocar imagem
+                        <input type="hidden" />
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setCoverUrl("")}
+                        className="p-1.5 rounded-lg bg-destructive/80 text-destructive-foreground hover:bg-destructive transition-colors"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="aspect-video flex flex-col items-center justify-center gap-2 text-muted-foreground/20">
+                    <ImageIcon className="h-8 w-8" />
+                    <span className="text-[10px] uppercase tracking-widest">Sem imagem</span>
+                  </div>
                 )}
               </div>
 
-              {/* Banner image */}
-              <div className="space-y-2">
-                <Label htmlFor="bannerUrl">Banner Principal</Label>
-                <Input
-                  id="bannerUrl"
-                  value={bannerUrl}
-                  onChange={(e) => setBannerUrl(e.target.value)}
-                  placeholder="https://..."
-                  className="bg-card/10 border-border/15"
-                />
-                <div className="flex items-center gap-2 mt-1 flex-wrap">
-                  <span className="text-[10px] text-muted-foreground/35 shrink-0">Proporção:</span>
-                  {bannerRatioOptions.map((opt) => (
-                    <button
-                      key={opt.value}
-                      type="button"
-                      onClick={() => setBannerRatio(opt.value)}
-                      className={`px-2.5 py-1 rounded-md text-[10px] font-medium border transition-all ${
-                        bannerRatio === opt.value
-                          ? "border-gold/30 bg-gold/10 text-gold"
-                          : "border-border/15 bg-card/5 text-muted-foreground/35 hover:border-border/30"
-                      }`}
-                    >
-                      {opt.label}
-                    </button>
-                  ))}
-                </div>
-                <ImageFieldHint
-                  ratio={currentBannerOption.value}
-                  recommendedSize={currentBannerOption.size}
-                  autoCrop
-                  previewUrl={bannerUrl || null}
-                />
-                <p className="text-[10px] text-muted-foreground/30">
-                  Formatos aceitos: JPG, PNG, WebP
-                </p>
-                {bannerUrl && (
-                  <img
-                    src={bannerUrl}
-                    alt="Banner"
-                    className="mt-2 h-24 w-auto rounded-lg object-cover border border-border/10"
-                  />
+              {/* URL input */}
+              <Input
+                id="coverUrl"
+                value={coverUrl}
+                onChange={(e) => setCoverUrl(e.target.value)}
+                placeholder="Cole a URL da imagem..."
+                className="bg-card/10 border-border/12 focus:border-gold/30 text-xs"
+              />
+
+              {/* Specs */}
+              <div className="flex flex-wrap items-center gap-3 text-[10px] text-muted-foreground/30">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-card/10 border border-border/8">
+                  Proporção: <strong className="text-muted-foreground/50">16:9</strong>
+                </span>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-card/10 border border-border/8">
+                  Tamanho: <strong className="text-muted-foreground/50">400×225 px</strong>
+                </span>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-card/10 border border-border/8">
+                  Formatos: <strong className="text-muted-foreground/50">JPG, PNG, WebP</strong>
+                </span>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-border/8" />
+
+            {/* BANNER PRINCIPAL */}
+            <div className="space-y-3">
+              <Label className="text-xs font-medium text-muted-foreground/60">
+                Banner Principal
+              </Label>
+              <p className="text-[11px] text-muted-foreground/35 -mt-1">
+                Banner exibido na vitrine
+              </p>
+
+              {/* Preview or placeholder */}
+              <div className="rounded-lg border border-border/10 bg-muted/5 overflow-hidden">
+                {bannerUrl ? (
+                  <div className="relative group">
+                    <img
+                      src={bannerUrl}
+                      alt="Banner do curso"
+                      className="w-full object-cover"
+                      style={{ aspectRatio: "1920/500" }}
+                    />
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <label className="cursor-pointer px-3 py-1.5 rounded-lg bg-card/80 border border-border/20 text-xs font-medium text-foreground/80 hover:bg-card transition-colors">
+                        Trocar imagem
+                        <input type="hidden" />
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setBannerUrl("")}
+                        className="p-1.5 rounded-lg bg-destructive/80 text-destructive-foreground hover:bg-destructive transition-colors"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground/20 py-8">
+                    <ImageIcon className="h-8 w-8" />
+                    <span className="text-[10px] uppercase tracking-widest">Sem banner</span>
+                  </div>
                 )}
+              </div>
+
+              {/* URL input */}
+              <Input
+                id="bannerUrl"
+                value={bannerUrl}
+                onChange={(e) => setBannerUrl(e.target.value)}
+                placeholder="Cole a URL do banner..."
+                className="bg-card/10 border-border/12 focus:border-gold/30 text-xs"
+              />
+
+              {/* Specs */}
+              <div className="flex flex-wrap items-center gap-3 text-[10px] text-muted-foreground/30">
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-card/10 border border-border/8">
+                  Tamanho: <strong className="text-muted-foreground/50">1920×500 px</strong>
+                </span>
+                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-card/10 border border-border/8">
+                  Formatos: <strong className="text-muted-foreground/50">JPG, PNG, WebP</strong>
+                </span>
               </div>
             </div>
           </div>
