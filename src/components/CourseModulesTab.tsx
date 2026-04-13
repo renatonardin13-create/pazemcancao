@@ -84,6 +84,8 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   // Module form state
   const [modTitle, setModTitle] = useState("");
   const [modDesc, setModDesc] = useState("");
+  const [modThumbnailUrl, setModThumbnailUrl] = useState("");
+  const [modPublished, setModPublished] = useState(true);
 
   // Lesson form state
   const [lesTitle, setLesTitle] = useState("");
