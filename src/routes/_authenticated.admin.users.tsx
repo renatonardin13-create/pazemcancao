@@ -58,6 +58,11 @@ function AdminUsersPage() {
   const [trialEmail, setTrialEmail] = useState("");
   const [trialName, setTrialName] = useState("");
   const [trialDays, setTrialDays] = useState(7);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [courseFilter, setCourseFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 8;
   const [generatedPassword, setGeneratedPassword] = useState<string | null>(null);
 
   // Add student form state
