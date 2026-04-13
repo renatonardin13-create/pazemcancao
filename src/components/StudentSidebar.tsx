@@ -180,16 +180,6 @@ export function StudentSidebar() {
           </div>
         )}
 
-        {/* Conteúdos */}
-        <Link
-          to="/conteudo"
-          onClick={() => setMobileOpen(false)}
-          className={navItemClass(isActivePrefix("/conteudo"))}
-        >
-          <BookOpen className="h-4 w-4" />
-          Conteúdos
-        </Link>
-
         {/* Perfil */}
         <Link
           to="/perfil"
