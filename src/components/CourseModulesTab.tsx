@@ -554,17 +554,20 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 {isExpanded && (
                   <div className="bg-background/20 px-4 py-3">
                     {lessons.length === 0 ? (
-                      <div className="text-center py-10 ml-6 rounded-lg border border-dashed border-border/10 bg-card/3">
-                        <div className="w-10 h-10 rounded-xl bg-card/10 border border-border/10 flex items-center justify-center mx-auto mb-3">
-                          <FileText className="h-5 w-5 text-muted-foreground/20" />
+                      <div className="text-center py-8 ml-6 rounded-lg border border-dashed border-border/10 bg-card/3">
+                        <div className="w-10 h-10 rounded-xl bg-gold/5 border border-gold/10 flex items-center justify-center mx-auto mb-3">
+                          <FileText className="h-5 w-5 text-gold/30" />
                         </div>
-                        <p className="text-[12px] text-muted-foreground/35 mb-0.5">
+                        <p className="text-[12px] font-medium text-foreground/45 mb-0.5">
                           Este módulo ainda não possui aulas.
+                        </p>
+                        <p className="text-[11px] text-muted-foreground/25 max-w-[220px] mx-auto">
+                          Clique em adicionar aula para começar.
                         </p>
                         <Button
                           variant="outline"
                           size="sm"
-                          className="mt-4 h-7 px-3 text-[11px] border-gold/15 text-gold/60 hover:text-gold hover:border-gold/30"
+                          className="mt-4 h-7 px-3 text-[11px] border-gold/15 text-gold/60 hover:text-gold hover:border-gold/30 hover:bg-gold/5"
                           onClick={() => openCreateLesson(mod.id)}
                         >
                           <Plus className="h-3 w-3 mr-1" />
