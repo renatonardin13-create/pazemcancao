@@ -64,6 +64,8 @@ import {
   Download,
   ExternalLink,
   X,
+  Play,
+  EyeOff,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -627,10 +629,14 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                                   <MoreHorizontal className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end" className="w-44">
+                              <DropdownMenuContent align="end" className="w-48">
+                                <DropdownMenuItem className="gap-2">
+                                  <Play className="h-3.5 w-3.5" />
+                                  Preview
+                                </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => openEditLesson(lesson)} className="gap-2">
                                   <Pencil className="h-3.5 w-3.5" />
-                                  Editar aula
+                                  Editar Aula
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
                                   onClick={() => {
@@ -648,7 +654,11 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                                   className="gap-2"
                                 >
                                   <Copy className="h-3.5 w-3.5" />
-                                  Duplicar aula
+                                  Duplicar Aula
+                                </DropdownMenuItem>
+                                <DropdownMenuItem className="gap-2">
+                                  <EyeOff className="h-3.5 w-3.5" />
+                                  Despublicar
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
@@ -660,7 +670,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                                   }}
                                 >
                                   <Trash2 className="h-3.5 w-3.5" />
-                                  Excluir aula
+                                  Excluir Aula
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
                             </DropdownMenu>
