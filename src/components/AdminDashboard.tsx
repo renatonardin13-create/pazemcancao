@@ -215,7 +215,26 @@ export function AdminDashboard() {
         </div>
       </div>
 
-      {/* Main Sales Chart + Best Performing Courses */}
+      {/* Secondary metrics row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { label: "Categorias", value: data?.totalCategories ?? 0, icon: BarChart3, color: "text-purple-400", bg: "bg-purple-400/8", border: "border-purple-400/15" },
+          { label: "Músicas Ativas", value: data?.activeTracks ?? 0, icon: Music, color: "text-pink-400", bg: "bg-pink-400/8", border: "border-pink-400/15" },
+          { label: "Sessões Ativas", value: data?.activeSessions ?? 0, icon: Activity, color: "text-cyan-400", bg: "bg-cyan-400/8", border: "border-cyan-400/15" },
+          { label: "Total de Músicas", value: data?.totalTracks ?? 0, icon: Headphones, color: "text-indigo-400", bg: "bg-indigo-400/8", border: "border-indigo-400/15" },
+        ].map((s) => (
+          <div key={s.label} className={`flex items-center gap-3 rounded-xl border ${s.border} ${s.bg} px-4 py-3 transition-all hover:shadow-sm`}>
+            <s.icon className={`h-4 w-4 ${s.color} shrink-0`} />
+            <div className="min-w-0">
+              <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/40 font-medium truncate">{s.label}</p>
+              <p className="text-lg font-bold text-foreground/85">
+                {isLoading ? <span className="inline-block h-5 w-8 animate-pulse rounded bg-muted/15" /> : s.value}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Sales Chart — large, prominent */}
         <div className="lg:col-span-2 relative rounded-2xl border border-gold/15 bg-gradient-to-br from-gold/[0.03] to-card/5 p-5 sm:p-6 overflow-hidden">
