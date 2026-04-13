@@ -1,0 +1,1 @@
+INSERT INTO public.platform_settings (key, value) VALUES ('advanced', '{"maintenance_mode": false, "allow_signups": true}'::jsonb) ON CONFLICT (key) DO NOTHING;

@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, Settings, Upload, Palette, Globe, Link2, Bell, Wrench, RefreshCw, Save } from "lucide-react";
+import { ArrowLeft, Settings, Upload, Palette, Globe, Link2, Bell, Wrench, RefreshCw, Save, Download, UploadCloud, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
@@ -102,7 +102,7 @@ function SettingsPage() {
           <NotificationsTab settings={settings.notifications || {}} onSave={(v) => mutation.mutate({ key: "notifications", value: v })} saving={mutation.isPending} />
         </TabsContent>
         <TabsContent value="advanced">
-          <AdvancedTab />
+          <AdvancedTab settings={settings.advanced || {}} onSave={(v) => mutation.mutate({ key: "advanced", value: v })} saving={mutation.isPending} />
         </TabsContent>
       </Tabs>
     </div>
@@ -443,20 +443,106 @@ function NotificationsTab({ settings, onSave, saving }: { settings: any; onSave:
 }
 
 /* ─── Advanced ─── */
-function AdvancedTab() {
+function AdvancedTab({ settings, onSave, saving }: { settings: any; onSave: (v: any) => void; saving: boolean }) {
+  const [maintenance, setMaintenance] = useState(settings.maintenance_mode ?? false);
+  const [allowSignups, setAllowSignups] = useState(settings.allow_signups ?? true);
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  const handleExport = () => {
+    const blob = new Blob([JSON.stringify(settings, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `platform-settings-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    toast.success("Configurações exportadas!");
+  };
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const imported = JSON.parse(reader.result as string);
+        onSave({ ...settings, ...imported });
+        toast.success("Configurações importadas!");
+      } catch {
+        toast.error("Arquivo inválido");
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const handleReset = () => {
+    if (!confirm("Tem certeza que deseja restaurar TODAS as configurações para os valores padrão? Esta ação é irreversível.")) return;
+    onSave({ maintenance_mode: false, allow_signups: true });
+    toast.success("Configurações restauradas para o padrão!");
+  };
+
   return (
-    <Card className="bg-card border-border/30">
-      <CardContent className="p-6 space-y-4">
-        <div>
-          <h3 className="text-lg font-semibold text-foreground">Configurações Avançadas</h3>
-          <p className="text-sm text-muted-foreground">Opções avançadas para administradores</p>
-        </div>
-        <div className="rounded-lg bg-muted/10 border border-border/15 p-4">
-          <p className="text-sm text-muted-foreground">
-            Configurações avançadas como cache, CDN e manutenção estarão disponíveis em breve.
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+    <div className="space-y-6">
+      {/* Controles */}
+      <Card className="bg-card border-border/30">
+        <CardContent className="p-6 space-y-5">
+          <div>
+            <h3 className="text-lg font-semibold text-foreground">Controles da Plataforma</h3>
+            <p className="text-sm text-muted-foreground">Configurações avançadas de funcionamento</p>
+          </div>
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold">Modo Manutenção</p>
+                <p className="text-xs text-muted-foreground">Quando ativo, apenas administradores podem acessar a plataforma</p>
+              </div>
+              <Switch checked={maintenance} onCheckedChange={setMaintenance} />
+            </div>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold">Permitir Novos Cadastros</p>
+                <p className="text-xs text-muted-foreground">Permite que novos usuários se registrem na plataforma</p>
+              </div>
+              <Switch checked={allowSignups} onCheckedChange={setAllowSignups} />
+            </div>
+          </div>
+          <Button onClick={() => onSave({ ...settings, maintenance_mode: maintenance, allow_signups: allowSignups })} disabled={saving} className="w-full gap-2">
+            <Save className="h-4 w-4" /> Salvar Controles
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* Backup */}
+      <Card className="bg-card border-border/30">
+        <CardContent className="p-6 space-y-4">
+          <div>
+            <h3 className="text-lg font-semibold text-foreground">Backup e Restauração</h3>
+            <p className="text-sm text-muted-foreground">Exporte ou importe suas configurações</p>
+          </div>
+          <div className="flex gap-3">
+            <Button variant="outline" className="gap-2" onClick={handleExport}>
+              <Download className="h-4 w-4" /> Exportar Configurações
+            </Button>
+            <Button variant="outline" className="gap-2" onClick={() => fileRef.current?.click()}>
+              <UploadCloud className="h-4 w-4" /> Importar Configurações
+            </Button>
+            <input ref={fileRef} type="file" accept=".json" className="hidden" onChange={handleImport} />
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Danger Zone */}
+      <Card className="bg-card border-red-500/30">
+        <CardContent className="p-6 space-y-4">
+          <div>
+            <h3 className="text-lg font-semibold text-red-400">Zona de Perigo</h3>
+            <p className="text-sm text-muted-foreground">Ações irreversíveis</p>
+          </div>
+          <Button variant="destructive" className="gap-2" onClick={handleReset}>
+            <RefreshCw className="h-4 w-4" /> Restaurar Todas as Configurações
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
