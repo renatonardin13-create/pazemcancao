@@ -90,7 +90,7 @@ function ProfilePage() {
   const email = data?.email || "";
   const name = displayName || data?.profile?.display_name || email.split("@")[0] || "Aluno";
   const initials = name.slice(0, 2).toUpperCase();
-  const memberSince = data?.profile?.created_at
+  const memberSince = data?.profile && "created_at" in data.profile && data.profile.created_at
     ? new Date(data.profile.created_at).toLocaleDateString("pt-BR", { month: "long", year: "numeric" })
     : "";
 
