@@ -143,14 +143,24 @@ export function AdminDashboard() {
           <p className="font-display text-4xl font-black text-foreground tracking-tight leading-none">
             {isLoading ? (
               <span className="inline-block h-11 w-36 animate-pulse rounded-xl bg-muted/20" />
-            ) : formatCurrency(data?.totalRevenue ?? 0)}
+            ) : (data?.totalRevenue ?? 0) > 0 ? (
+              formatCurrency(data?.totalRevenue ?? 0)
+            ) : (
+              <span className="text-2xl text-muted-foreground/30">R$ 0,00</span>
+            )}
           </p>
           <div className="flex items-center gap-2 mt-4">
-            <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-400/12 border border-emerald-400/15">
-              <ArrowUpRight className="h-3.5 w-3.5 text-emerald-400" />
-              <span className="text-[11px] font-bold text-emerald-400">Receita total</span>
-            </div>
-            <span className="text-[10px] text-muted-foreground/40">vendas confirmadas</span>
+            {(data?.totalRevenue ?? 0) > 0 ? (
+              <>
+                <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-400/12 border border-emerald-400/15">
+                  <ArrowUpRight className="h-3.5 w-3.5 text-emerald-400" />
+                  <span className="text-[11px] font-bold text-emerald-400">Receita total</span>
+                </div>
+                <span className="text-[10px] text-muted-foreground/40">vendas confirmadas</span>
+              </>
+            ) : (
+              <span className="text-[11px] text-muted-foreground/35">Nenhuma venda registrada ainda</span>
+            )}
           </div>
         </div>
 
@@ -168,14 +178,24 @@ export function AdminDashboard() {
           <p className="font-display text-4xl font-black text-foreground tracking-tight leading-none">
             {isLoading ? (
               <span className="inline-block h-11 w-24 animate-pulse rounded-xl bg-muted/20" />
-            ) : data?.totalStudents ?? 0}
+            ) : (data?.totalStudents ?? 0) > 0 ? (
+              data?.totalStudents ?? 0
+            ) : (
+              <span className="text-2xl text-muted-foreground/30">0</span>
+            )}
           </p>
           <div className="flex items-center gap-2 mt-4">
-            <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-gold/12 border border-gold/15">
-              <Users className="h-3.5 w-3.5 text-gold" />
-              <span className="text-[11px] font-bold text-gold">Compradores</span>
-            </div>
-            <span className="text-[10px] text-muted-foreground/40">com acesso ativo</span>
+            {(data?.totalStudents ?? 0) > 0 ? (
+              <>
+                <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-gold/12 border border-gold/15">
+                  <Users className="h-3.5 w-3.5 text-gold" />
+                  <span className="text-[11px] font-bold text-gold">Compradores</span>
+                </div>
+                <span className="text-[10px] text-muted-foreground/40">com acesso ativo</span>
+              </>
+            ) : (
+              <span className="text-[11px] text-muted-foreground/35">Libere acesso para seus primeiros alunos</span>
+            )}
           </div>
         </div>
 
@@ -193,14 +213,26 @@ export function AdminDashboard() {
           <p className="font-display text-4xl font-black text-foreground tracking-tight leading-none">
             {isLoading ? (
               <span className="inline-block h-11 w-16 animate-pulse rounded-xl bg-muted/20" />
-            ) : data?.activeCourses ?? 0}
+            ) : (data?.activeCourses ?? 0) > 0 ? (
+              data?.activeCourses ?? 0
+            ) : (
+              <span className="text-2xl text-muted-foreground/30">0</span>
+            )}
           </p>
           <div className="flex items-center gap-2 mt-4">
-            <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-400/12 border border-blue-400/15">
-              <BookOpen className="h-3.5 w-3.5 text-blue-400" />
-              <span className="text-[11px] font-bold text-blue-400">Publicados</span>
-            </div>
-            <span className="text-[10px] text-muted-foreground/40">de {isLoading ? "—" : data?.totalCourses ?? 0} total</span>
+            {(data?.activeCourses ?? 0) > 0 ? (
+              <>
+                <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-400/12 border border-blue-400/15">
+                  <BookOpen className="h-3.5 w-3.5 text-blue-400" />
+                  <span className="text-[11px] font-bold text-blue-400">Publicados</span>
+                </div>
+                <span className="text-[10px] text-muted-foreground/40">de {isLoading ? "—" : data?.totalCourses ?? 0} total</span>
+              </>
+            ) : (
+              <Link to="/admin/courses/new" className="text-[11px] text-gold/60 hover:text-gold transition-colors">
+                + Crie seu primeiro curso
+              </Link>
+            )}
           </div>
         </div>
 
@@ -321,11 +353,11 @@ export function AdminDashboard() {
                 <div className="h-8 w-8 animate-spin rounded-full border-2 border-gold/20 border-t-gold/60" />
               </div>
             ) : !analytics?.dailyPlayData?.length ? (
-              <div className="flex flex-col items-center justify-center py-16 text-center">
-                <BarChart3 className="h-14 w-14 text-muted-foreground/10 mb-4" />
-                <p className="text-sm text-muted-foreground/40 font-medium">Nenhum dado de atividade ainda</p>
-                <p className="text-[11px] text-muted-foreground/25 mt-1.5">Os dados aparecerão aqui quando houver atividade</p>
-              </div>
+               <div className="flex flex-col items-center justify-center py-16 text-center">
+                 <BarChart3 className="h-12 w-12 text-gold/15 mb-4" />
+                 <p className="text-sm text-muted-foreground/50 font-semibold">Aguardando primeiros dados</p>
+                 <p className="text-[11px] text-muted-foreground/30 mt-1.5 max-w-xs">O gráfico será exibido automaticamente quando houver atividade de plays ou vendas na plataforma.</p>
+               </div>
             ) : (
               <ResponsiveContainer width="100%" height={280}>
                 <AreaChart data={analytics.dailyPlayData} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
@@ -396,9 +428,10 @@ export function AdminDashboard() {
               </div>
             ) : !data?.topCourses?.length ? (
               <div className="flex flex-col items-center justify-center py-10 text-center">
-                <BookOpen className="h-10 w-10 text-muted-foreground/10 mb-3" />
-                <p className="text-sm text-muted-foreground/35">Nenhum curso publicado</p>
-                <p className="text-[11px] text-muted-foreground/25 mt-1">Publique cursos para ver o ranking</p>
+                <BookOpen className="h-10 w-10 text-gold/15 mb-3" />
+                <p className="text-sm text-muted-foreground/50 font-semibold">Sem ranking ainda</p>
+                <p className="text-[11px] text-muted-foreground/30 mt-1 max-w-[200px]">Nenhum curso com vendas suficientes para exibir o ranking.</p>
+                <Link to="/admin/courses/new" className="mt-3 text-[11px] text-gold/60 hover:text-gold transition-colors font-semibold">+ Criar curso</Link>
               </div>
             ) : (
               <div className="space-y-1">
