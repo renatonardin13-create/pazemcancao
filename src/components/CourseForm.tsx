@@ -245,6 +245,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 />
               </div>
             </div>
+          </div>
 
           {/* Card: Imagens */}
           <div className="rounded-xl border border-border/10 bg-card/5 p-5 space-y-5">
