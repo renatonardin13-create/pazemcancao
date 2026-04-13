@@ -454,7 +454,7 @@ function AdminVitrinePage() {
                     <div className="relative w-full aspect-[21/8] bg-card/10">
                       {(bannerImageUrl || featuredCourse.banner_image_url || featuredCourse.cover_image_url) ? (
                         <img
-                          src={bannerImageUrl || featuredCourse.banner_image_url || featuredCourse.cover_image_url}
+                          src={bannerImageUrl || featuredCourse.banner_image_url || featuredCourse.cover_image_url || undefined}
                           alt="Banner preview"
                           className="w-full h-full object-cover"
                         />
@@ -755,7 +755,7 @@ function AdminVitrinePage() {
                 <div className="relative w-full aspect-[21/8] bg-card/10">
                   {featuredCourse && (bannerImageUrl || featuredCourse.banner_image_url || featuredCourse.cover_image_url) ? (
                     <img
-                      src={bannerImageUrl || featuredCourse.banner_image_url || featuredCourse.cover_image_url}
+                      src={bannerImageUrl || featuredCourse.banner_image_url || featuredCourse.cover_image_url || undefined}
                       alt=""
                       className="w-full h-full object-cover"
                     />
