@@ -448,15 +448,26 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
               >
                 {/* Module header */}
                 <div className={`flex items-center gap-3 px-5 py-3.5 transition-colors ${isExpanded ? "bg-card/10 border-b border-border/8" : "hover:bg-card/8"}`}>
-                  {/* Drag handle */}
-                  <button
-                    type="button"
-                    className="text-muted-foreground/15 hover:text-muted-foreground/40 disabled:opacity-20 transition-colors cursor-grab active:cursor-grabbing shrink-0"
-                    disabled={modIndex === 0}
-                    onClick={() => moveModule(modIndex, "up")}
-                  >
-                    <GripVertical className="h-4 w-4" />
-                  </button>
+                  {/* Drag handle — up/down */}
+                  <div className="flex flex-col items-center shrink-0 -my-1">
+                    <button
+                      type="button"
+                      className="p-0.5 text-muted-foreground/15 hover:text-gold/60 disabled:opacity-15 transition-colors"
+                      disabled={modIndex === 0}
+                      onClick={() => moveModule(modIndex, "up")}
+                    >
+                      <ChevronUp className="h-3.5 w-3.5" />
+                    </button>
+                    <GripVertical className="h-3.5 w-3.5 text-muted-foreground/15 cursor-grab active:cursor-grabbing" />
+                    <button
+                      type="button"
+                      className="p-0.5 text-muted-foreground/15 hover:text-gold/60 disabled:opacity-15 transition-colors"
+                      disabled={modIndex === modules.length - 1}
+                      onClick={() => moveModule(modIndex, "down")}
+                    >
+                      <ChevronDown className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
 
                   {/* Expand/collapse */}
                   <button
