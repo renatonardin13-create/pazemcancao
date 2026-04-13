@@ -884,12 +884,13 @@ function AdminVitrinePage() {
               {/* Mini preview */}
               <div className="rounded-xl border border-border/15 bg-background/50 overflow-hidden">
                 {/* Mini banner */}
-                <div className="relative w-full aspect-[21/8] bg-card/10">
+                {bannerEnabled && (
+                <div className={`relative w-full ${bannerAspect === "21:9" ? "aspect-[21/9]" : bannerAspect === "16:9" ? "aspect-[16/9]" : "aspect-[1920/500]"} bg-card/10`}>
                   {featuredCourse && (bannerImageUrl || featuredCourse.banner_image_url || featuredCourse.cover_image_url) ? (
                     <img
                       src={bannerImageUrl || featuredCourse.banner_image_url || featuredCourse.cover_image_url || undefined}
                       alt=""
-                      className="w-full h-full object-cover"
+                      className={`w-full h-full ${bannerFit === "cover" ? "object-cover" : bannerFit === "contain" ? "object-contain" : "object-fill"}`}
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-card/20 to-card/5" />
@@ -903,6 +904,7 @@ function AdminVitrinePage() {
                     </p>
                   </div>
                 </div>
+                )}
 
                 {/* Mini shelves */}
                 <div className="p-3 space-y-3">
