@@ -2,7 +2,7 @@ import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
-// ── Get shelves for the student area (respecting enrollment) ──
+// ── Get shelves, promo banners, and banner config for the student area ──
 export const getStudentShelves = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -30,6 +30,13 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       .order('sort_order', { ascending: true });
 
     if (shelvesErr) throw new Error(shelvesErr.message);
+
+    // Get active promo banners
+    const { data: promoBanners } = await supabase
+      .from('promo_banners')
+      .select('id, title, image_url, link_url, position_after_shelf, sort_order, is_active')
+      .eq('is_active', true)
+      .order('sort_order', { ascending: true });
 
     // Get user enrollments
     const { data: enrollments } = await supabase
@@ -109,7 +116,6 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       let courses: any[] = [];
 
       if (shelf.mode === 'manual') {
-        // Get manually linked courses
         const { data: shelfCourses } = await supabase
           .from('shelf_courses')
           .select('course_id, sort_order')
@@ -120,7 +126,6 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
           .map((sc: any) => courseMap.get(sc.course_id))
           .filter(Boolean);
       } else {
-        // Auto mode
         switch (shelf.auto_criteria) {
           case 'recent':
             courses = [...publishedCourses].sort(
@@ -149,17 +154,25 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
 
       courses = courses.map(enrichCourse);
 
-      // All published courses are visible in the storefront
-      // access_state determines what the student can do (enrolled, preview, locked, available)
-
       if (courses.length > 0) {
         result.push({
           id: shelf.id,
           name: shelf.name,
+          sort_order: shelf.sort_order,
           courses,
         });
       }
     }
 
-    return { shelves: result };
+    // Find the best featured course for the banner
+    const allEnrichedCourses = publishedCourses.map(enrichCourse);
+    const featuredCourse = allEnrichedCourses.find(
+      (c: any) => c.banner_image_url || c.cover_image_url
+    ) || null;
+
+    return {
+      shelves: result,
+      promoBanners: promoBanners || [],
+      featuredCourse,
+    };
   });
