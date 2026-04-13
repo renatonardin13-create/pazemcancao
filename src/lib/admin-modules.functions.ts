@@ -78,7 +78,7 @@ export const updateModule = createServerFn({ method: 'POST' })
     const { id, ...updates } = data;
     const { data: mod, error } = await supabaseAdmin
       .from('modules')
-      .update(updates)
+      .update(updates as any)
       .eq('id', id)
       .select()
       .single();
