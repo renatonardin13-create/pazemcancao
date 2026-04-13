@@ -197,9 +197,13 @@ export default function AdminVitrinePage() {
   const [promoTitle, setPromoTitle] = useState("");
   const [promoImageUrl, setPromoImageUrl] = useState("");
   const [promoLinkUrl, setPromoLinkUrl] = useState("");
-  const [promoPosition, setPromoPosition] = useState(1);
+  const [promoPosition, setPromoPosition] = useState("before");
+  const [promoType, setPromoType] = useState("static");
   const [promoOrder, setPromoOrder] = useState(0);
   const [promoActive, setPromoActive] = useState(true);
+  const [promoSchedule, setPromoSchedule] = useState(false);
+  const [promoShowVitrine, setPromoShowVitrine] = useState(true);
+  const [promoShowCommunity, setPromoShowCommunity] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-shelves"],
