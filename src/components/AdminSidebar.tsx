@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { LayoutDashboard, Users, FolderOpen, Settings, Shield, Music, Webhook, BookOpen, Compass, Layout } from "lucide-react";
+import { LayoutDashboard, Users, FolderOpen, Settings, Shield, Music, Webhook, BookOpen, Compass, Layout, DollarSign } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
   Sidebar,
@@ -22,6 +22,7 @@ const adminItems = [
   { title: "Categorias", url: "/admin/categories", icon: FolderOpen },
   { title: "Trilhas", url: "/admin/journeys", icon: Compass },
   { title: "Usuários", url: "/admin/users", icon: Users },
+  { title: "Vendas", url: "/admin/vendas", icon: DollarSign },
   { title: "Integrações", url: "/admin/integrations", icon: Webhook },
 ];
 
