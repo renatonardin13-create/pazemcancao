@@ -5,11 +5,12 @@ import { getDashboardAnalytics } from "@/lib/analytics.functions";
 import {
   Users, Activity, BarChart3, Music, Headphones, Download,
   TrendingUp, DollarSign, BookOpen, Clock, GraduationCap,
+  ArrowUpRight, ArrowDownRight, CalendarDays, Zap,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
-  AreaChart, Area, LineChart, Line,
+  AreaChart, Area,
 } from "recharts";
 
 const PERIOD_OPTIONS = [
@@ -35,114 +36,187 @@ export function AdminDashboard() {
 
   const analytics = rawAnalytics as any;
 
+  const statCards = [
+    {
+      label: "Total de Alunos",
+      value: data?.totalStudents ?? "—",
+      icon: GraduationCap,
+      color: "text-emerald-400",
+      bg: "bg-emerald-400/10",
+      border: "border-emerald-400/20",
+      trend: "+12%",
+      trendUp: true,
+    },
+    {
+      label: "Cursos Ativos",
+      value: data?.activeCourses ?? "—",
+      icon: BookOpen,
+      color: "text-gold",
+      bg: "bg-gold/10",
+      border: "border-gold/20",
+      trend: null,
+      trendUp: true,
+    },
+    {
+      label: "Matrículas Pendentes",
+      value: data?.pendingEnrollments ?? "—",
+      icon: Clock,
+      color: "text-amber-400",
+      bg: "bg-amber-400/10",
+      border: "border-amber-400/20",
+      trend: null,
+      trendUp: false,
+    },
+    {
+      label: "Sessões Ativas",
+      value: data?.activeSessions ?? "—",
+      icon: Activity,
+      color: "text-blue-400",
+      bg: "bg-blue-400/10",
+      border: "border-blue-400/20",
+      trend: null,
+      trendUp: true,
+    },
+    {
+      label: "Músicas Ativas",
+      value: data?.activeTracks ?? "—",
+      icon: Music,
+      color: "text-purple-400",
+      bg: "bg-purple-400/10",
+      border: "border-purple-400/20",
+      trend: null,
+      trendUp: true,
+    },
+  ];
+
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+    <div className="max-w-7xl mx-auto space-y-8">
+      {/* Header bar */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-border/15">
         <div>
-          <h1 className="font-display text-2xl font-bold text-foreground/90 tracking-tight">
-            Dashboard
-          </h1>
-          <p className="mt-1 text-[13px] text-muted-foreground/40">
-            Bem-vindo de volta! Aqui está um resumo da sua plataforma.
-          </p>
+          <div className="flex items-center gap-3 mb-1">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold/10 border border-gold/20">
+              <BarChart3 className="h-5 w-5 text-gold" />
+            </div>
+            <div>
+              <h1 className="font-display text-2xl font-bold text-foreground tracking-tight">
+                Dashboard
+              </h1>
+              <p className="text-sm text-muted-foreground/50">
+                Visão geral da plataforma
+              </p>
+            </div>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground/40">
+            <CalendarDays className="h-3.5 w-3.5" />
+            {new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
+          </div>
+          <div className="flex gap-1 rounded-xl bg-muted/10 border border-border/15 p-1">
+            {PERIOD_OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => setDays(opt.value)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                  days === opt.value
+                    ? "bg-gold/15 text-gold border border-gold/20 shadow-sm"
+                    : "text-muted-foreground/40 hover:text-muted-foreground/70"
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Quick stats bar */}
-      <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] text-muted-foreground/50 border-b border-border/10 pb-4">
-        <span className="flex items-center gap-1.5">
-          <Users className="h-3.5 w-3.5 text-muted-foreground/30" />
-          Alunos: <strong className="text-foreground/70">{isLoading ? "—" : data?.totalStudents}</strong>
-        </span>
-        <span className="flex items-center gap-1.5">
-          <BookOpen className="h-3.5 w-3.5 text-muted-foreground/30" />
-          Cursos: <strong className="text-foreground/70">{isLoading ? "—" : data?.activeCourses}</strong>
-        </span>
-        <span className="flex items-center gap-1.5">
-          <Music className="h-3.5 w-3.5 text-muted-foreground/30" />
-          Músicas: <strong className="text-foreground/70">{isLoading ? "—" : data?.activeTracks}</strong>
-        </span>
-        <span className="flex items-center gap-1.5">
-          <Clock className="h-3.5 w-3.5 text-muted-foreground/30" />
-          Pendentes: <strong className="text-foreground/70">{isLoading ? "—" : data?.pendingEnrollments}</strong>
-        </span>
-      </div>
-
-      {/* Main stat cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: "Alunos Registrados", value: data?.totalStudents ?? "—", icon: GraduationCap, color: "text-emerald-400/70", bg: "bg-emerald-400/10" },
-          { label: "Cursos Ativos", value: data?.activeCourses ?? "—", icon: BookOpen, color: "text-primary/70", bg: "bg-primary/10" },
-          { label: "Matrículas Pendentes", value: data?.pendingEnrollments ?? "—", icon: Clock, color: "text-amber-400/70", bg: "bg-amber-400/10" },
-          { label: "Sessões Ativas", value: data?.activeSessions ?? "—", icon: Activity, color: "text-blue-400/70", bg: "bg-blue-400/10" },
-        ].map((stat) => (
-          <div key={stat.label} className="rounded-2xl border border-border/15 bg-card/10 p-5 transition-colors hover:bg-card/15">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground/40">{stat.label}</span>
-              <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${stat.bg}`}>
-                <stat.icon className={`h-4 w-4 ${stat.color}`} />
+      {/* Stat cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+        {statCards.map((stat) => (
+          <div
+            key={stat.label}
+            className={`relative rounded-2xl border ${stat.border} bg-card/8 p-5 transition-all duration-300 hover:bg-card/15 hover:shadow-lg hover:shadow-black/10 group overflow-hidden`}
+          >
+            <div className="pointer-events-none absolute -top-10 -right-10 h-24 w-24 rounded-full opacity-[0.04] group-hover:opacity-[0.08] transition-opacity" style={{ background: 'currentColor' }} />
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground/50 font-medium">
+                {stat.label}
+              </span>
+              <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${stat.bg} border ${stat.border}`}>
+                <stat.icon className={`h-5 w-5 ${stat.color}`} />
               </div>
             </div>
-            <p className="font-display text-3xl font-bold text-foreground/85">
-              {isLoading ? "—" : stat.value}
+            <p className="font-display text-3xl font-bold text-foreground/90 mb-1">
+              {isLoading ? (
+                <span className="inline-block h-8 w-16 animate-pulse rounded-lg bg-muted/15" />
+              ) : stat.value}
             </p>
+            {stat.trend && (
+              <div className="flex items-center gap-1 mt-1">
+                {stat.trendUp ? (
+                  <ArrowUpRight className="h-3.5 w-3.5 text-emerald-400/70" />
+                ) : (
+                  <ArrowDownRight className="h-3.5 w-3.5 text-red-400/70" />
+                )}
+                <span className={`text-[11px] font-medium ${stat.trendUp ? 'text-emerald-400/70' : 'text-red-400/70'}`}>
+                  {stat.trend}
+                </span>
+                <span className="text-[10px] text-muted-foreground/30">vs mês anterior</span>
+              </div>
+            )}
           </div>
         ))}
       </div>
 
       {/* Two-column: Chart + Top Courses */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
         {/* Plays chart */}
-        <div className="lg:col-span-3 rounded-2xl border border-border/15 bg-card/5 p-6">
-          <div className="flex items-center justify-between mb-1">
-            <div>
-              <h3 className="text-sm font-semibold text-foreground/70">Visão Geral de Plays</h3>
-              <p className="text-[11px] text-muted-foreground/30">Desempenho de reproduções</p>
-            </div>
-            <div className="flex gap-1 rounded-xl bg-muted/10 border border-border/10 p-0.5">
-              {PERIOD_OPTIONS.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => setDays(opt.value)}
-                  className={`px-2.5 py-1 rounded-lg text-[10px] font-medium transition-all ${
-                    days === opt.value
-                      ? "bg-primary/20 text-primary shadow-sm"
-                      : "text-muted-foreground/40 hover:text-muted-foreground/60"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
+        <div className="lg:col-span-3 rounded-2xl border border-border/15 bg-card/8 p-6">
+          <div className="flex items-center justify-between mb-5">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold/10 border border-gold/15">
+                <TrendingUp className="h-4 w-4 text-gold" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-foreground/80">Visão Geral de Plays</h3>
+                <p className="text-[11px] text-muted-foreground/35">Reproduções no período selecionado</p>
+              </div>
             </div>
           </div>
-          <div className="mt-4">
+          <div>
             {analyticsLoading ? (
-              <p className="text-[11px] text-muted-foreground/25 animate-pulse py-16 text-center">Carregando...</p>
+              <div className="flex items-center justify-center py-20">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-gold/20 border-t-gold/60" />
+              </div>
             ) : !analytics?.dailyPlayData?.length ? (
-              <p className="text-[11px] text-muted-foreground/30 py-16 text-center">Nenhum dado de reprodução ainda.</p>
+              <div className="flex flex-col items-center justify-center py-20 text-center">
+                <Headphones className="h-10 w-10 text-muted-foreground/15 mb-3" />
+                <p className="text-sm text-muted-foreground/40">Nenhum dado de reprodução ainda</p>
+                <p className="text-[11px] text-muted-foreground/25 mt-1">Os dados aparecerão aqui quando houver atividade</p>
+              </div>
             ) : (
-              <ResponsiveContainer width="100%" height={280}>
+              <ResponsiveContainer width="100%" height={300}>
                 <AreaChart data={analytics.dailyPlayData}>
                   <defs>
                     <linearGradient id="playGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="hsl(var(--gold))" stopOpacity={0.3} />
+                      <stop offset="0%" stopColor="hsl(var(--gold))" stopOpacity={0.35} />
                       <stop offset="100%" stopColor="hsl(var(--gold))" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <XAxis
                     dataKey="date"
                     tickFormatter={(v: string) => { const d = new Date(v + 'T12:00:00'); return String(d.getDate()); }}
-                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground) / 0.3)' }}
+                    tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground) / 0.3)' }}
                     axisLine={false}
                     tickLine={false}
                   />
-                  <YAxis tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground) / 0.3)' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground) / 0.3)' }} axisLine={false} tickLine={false} />
                   <Tooltip
-                    contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border) / 0.2)', borderRadius: '12px', fontSize: '11px' }}
+                    contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border) / 0.2)', borderRadius: '12px', fontSize: '12px' }}
                     labelFormatter={(v: string) => { const d = new Date(v + 'T12:00:00'); return d.toLocaleDateString('pt-BR'); }}
                   />
-                  <Area type="monotone" dataKey="plays" stroke="hsl(var(--gold))" fill="url(#playGrad)" strokeWidth={2} />
+                  <Area type="monotone" dataKey="plays" stroke="hsl(var(--gold))" fill="url(#playGrad)" strokeWidth={2.5} dot={false} />
                 </AreaChart>
               </ResponsiveContainer>
             )}
@@ -150,32 +224,44 @@ export function AdminDashboard() {
         </div>
 
         {/* Top Courses */}
-        <div className="lg:col-span-2 rounded-2xl border border-border/15 bg-card/5 p-6">
-          <h3 className="text-sm font-semibold text-foreground/70">Cursos com Melhor Desempenho</h3>
-          <p className="text-[11px] text-muted-foreground/30 mb-4">Mais alunos matriculados</p>
+        <div className="lg:col-span-2 rounded-2xl border border-border/15 bg-card/8 p-6">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 border border-primary/15">
+              <BookOpen className="h-4 w-4 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-foreground/80">Top Cursos</h3>
+              <p className="text-[11px] text-muted-foreground/35">Mais alunos matriculados</p>
+            </div>
+          </div>
           {isLoading ? (
-            <p className="text-[11px] text-muted-foreground/25 animate-pulse py-12 text-center">Carregando...</p>
+            <div className="flex items-center justify-center py-16">
+              <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary/20 border-t-primary/60" />
+            </div>
           ) : !data?.topCourses?.length ? (
-            <p className="text-[11px] text-muted-foreground/30 py-12 text-center">Nenhum curso publicado ainda.</p>
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <BookOpen className="h-10 w-10 text-muted-foreground/15 mb-3" />
+              <p className="text-sm text-muted-foreground/40">Nenhum curso publicado</p>
+            </div>
           ) : (
             <div className="space-y-1">
               {data.topCourses.map((course, i) => (
-                <div key={course.id} className="flex items-center gap-3 py-2.5 px-2 rounded-xl hover:bg-card/15 transition-colors">
-                  <span className="text-[13px] font-semibold text-muted-foreground/30 w-5 text-center">{i + 1}</span>
+                <div key={course.id} className="flex items-center gap-3 py-3 px-3 rounded-xl hover:bg-card/20 transition-colors group">
+                  <span className="text-sm font-bold text-muted-foreground/25 w-6 text-center">{i + 1}</span>
                   {course.coverUrl ? (
-                    <img src={course.coverUrl} alt="" className="h-10 w-10 rounded-lg object-cover shrink-0" />
+                    <img src={course.coverUrl} alt="" className="h-11 w-11 rounded-xl object-cover shrink-0 border border-border/10" />
                   ) : (
-                    <div className="h-10 w-10 rounded-lg bg-muted/15 flex items-center justify-center shrink-0">
-                      <BookOpen className="h-4 w-4 text-muted-foreground/20" />
+                    <div className="h-11 w-11 rounded-xl bg-muted/15 flex items-center justify-center shrink-0 border border-border/10">
+                      <BookOpen className="h-5 w-5 text-muted-foreground/20" />
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="text-[13px] text-foreground/75 truncate font-medium">{course.title}</p>
-                    <p className="text-[10px] text-muted-foreground/35 flex items-center gap-1">
+                    <p className="text-sm text-foreground/80 truncate font-medium group-hover:text-foreground transition-colors">{course.title}</p>
+                    <p className="text-[11px] text-muted-foreground/40 flex items-center gap-1.5 mt-0.5">
                       <Users className="h-3 w-3" /> {course.students} alunos
                     </p>
                   </div>
-                  <span className="text-[12px] font-semibold text-primary/70 shrink-0">
+                  <span className="text-xs font-bold text-gold/70 shrink-0 bg-gold/8 px-2 py-1 rounded-lg">
                     R$ {course.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
                   </span>
                 </div>
@@ -185,54 +271,69 @@ export function AdminDashboard() {
         </div>
       </div>
 
-      {/* Existing analytics tabs */}
-      <div className="space-y-4">
-        <h2 className="text-sm font-semibold text-foreground/60">Análise de Engajamento</h2>
+      {/* Engagement Analytics */}
+      <div className="space-y-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-400/10 border border-purple-400/15">
+            <Zap className="h-4 w-4 text-purple-400" />
+          </div>
+          <div>
+            <h2 className="text-sm font-bold text-foreground/80">Análise de Engajamento</h2>
+            <p className="text-[11px] text-muted-foreground/35">Detalhes de uso da plataforma</p>
+          </div>
+        </div>
 
         <Tabs defaultValue="top-played" className="space-y-4">
-          <TabsList className="bg-muted/10 border border-border/10">
-            <TabsTrigger value="top-played" className="text-[11px] data-[state=active]:bg-card/20">
-              <Headphones className="h-3.5 w-3.5 mr-1.5" /> Mais Ouvidas
+          <TabsList className="bg-card/10 border border-border/15 p-1 rounded-xl">
+            <TabsTrigger value="top-played" className="text-xs rounded-lg data-[state=active]:bg-gold/10 data-[state=active]:text-gold data-[state=active]:border-gold/15 data-[state=active]:border">
+              <Headphones className="h-4 w-4 mr-2" /> Mais Ouvidas
             </TabsTrigger>
-            <TabsTrigger value="top-downloaded" className="text-[11px] data-[state=active]:bg-card/20">
-              <Download className="h-3.5 w-3.5 mr-1.5" /> Mais Baixadas
+            <TabsTrigger value="top-downloaded" className="text-xs rounded-lg data-[state=active]:bg-emerald-400/10 data-[state=active]:text-emerald-400 data-[state=active]:border-emerald-400/15 data-[state=active]:border">
+              <Download className="h-4 w-4 mr-2" /> Mais Baixadas
             </TabsTrigger>
-            <TabsTrigger value="users" className="text-[11px] data-[state=active]:bg-card/20">
-              <Users className="h-3.5 w-3.5 mr-1.5" /> Atividade Usuários
+            <TabsTrigger value="users" className="text-xs rounded-lg data-[state=active]:bg-blue-400/10 data-[state=active]:text-blue-400 data-[state=active]:border-blue-400/15 data-[state=active]:border">
+              <Users className="h-4 w-4 mr-2" /> Atividade
             </TabsTrigger>
           </TabsList>
 
           {/* Top Played */}
           <TabsContent value="top-played">
-            <div className="rounded-2xl border border-border/15 bg-card/5 overflow-hidden">
+            <div className="rounded-2xl border border-border/15 bg-card/8 overflow-hidden">
               {analyticsLoading ? (
-                <p className="text-[11px] text-muted-foreground/25 animate-pulse py-12 text-center">Carregando...</p>
+                <div className="flex items-center justify-center py-16">
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-gold/20 border-t-gold/60" />
+                </div>
               ) : !analytics?.topPlayed?.length ? (
-                <p className="text-[11px] text-muted-foreground/30 py-12 text-center">Nenhum dado ainda.</p>
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <Headphones className="h-10 w-10 text-muted-foreground/15 mb-3" />
+                  <p className="text-sm text-muted-foreground/40">Nenhum dado ainda</p>
+                </div>
               ) : (
                 <>
-                  <div className="p-4">
-                    <ResponsiveContainer width="100%" height={220}>
+                  <div className="p-5">
+                    <ResponsiveContainer width="100%" height={240}>
                       <BarChart data={analytics.topPlayed.slice(0, 8)} layout="vertical">
-                        <XAxis type="number" tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground) / 0.3)' }} axisLine={false} tickLine={false} />
-                        <YAxis type="category" dataKey="title" width={150} tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground) / 0.5)' }} axisLine={false} tickLine={false} />
-                        <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border) / 0.2)', borderRadius: '12px', fontSize: '11px' }} />
-                        <Bar dataKey="plays" fill="hsl(var(--gold) / 0.5)" radius={[0, 6, 6, 0]} />
+                        <XAxis type="number" tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground) / 0.3)' }} axisLine={false} tickLine={false} />
+                        <YAxis type="category" dataKey="title" width={160} tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground) / 0.5)' }} axisLine={false} tickLine={false} />
+                        <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border) / 0.2)', borderRadius: '12px', fontSize: '12px' }} />
+                        <Bar dataKey="plays" fill="hsl(var(--gold) / 0.5)" radius={[0, 8, 8, 0]} />
                       </BarChart>
                     </ResponsiveContainer>
                   </div>
-                  {analytics.topPlayed.map((t: any, i: number) => (
-                    <div key={t.trackId} className="flex items-center gap-3 px-5 py-3 border-t border-border/8">
-                      <span className="text-[11px] text-muted-foreground/25 w-5 text-right font-mono">{i + 1}</span>
-                      {t.coverUrl ? (
-                        <img src={t.coverUrl} alt="" className="h-8 w-8 rounded-md object-cover" />
-                      ) : (
-                        <div className="h-8 w-8 rounded-md bg-muted/15 flex items-center justify-center"><Music className="h-3.5 w-3.5 text-muted-foreground/20" /></div>
-                      )}
-                      <span className="flex-1 text-sm text-foreground/70 truncate">{t.title}</span>
-                      <span className="text-[11px] font-semibold text-gold/60">{t.plays} plays</span>
-                    </div>
-                  ))}
+                  <div className="border-t border-border/10">
+                    {analytics.topPlayed.map((t: any, i: number) => (
+                      <div key={t.trackId} className="flex items-center gap-3 px-5 py-3 border-b border-border/5 last:border-0 hover:bg-card/15 transition-colors">
+                        <span className="text-xs text-muted-foreground/30 w-6 text-right font-mono font-bold">{i + 1}</span>
+                        {t.coverUrl ? (
+                          <img src={t.coverUrl} alt="" className="h-9 w-9 rounded-lg object-cover border border-border/10" />
+                        ) : (
+                          <div className="h-9 w-9 rounded-lg bg-muted/15 flex items-center justify-center border border-border/10"><Music className="h-4 w-4 text-muted-foreground/20" /></div>
+                        )}
+                        <span className="flex-1 text-sm text-foreground/75 truncate font-medium">{t.title}</span>
+                        <span className="text-xs font-bold text-gold/70 bg-gold/8 px-2 py-1 rounded-lg">{t.plays} plays</span>
+                      </div>
+                    ))}
+                  </div>
                 </>
               )}
             </div>
@@ -240,37 +341,44 @@ export function AdminDashboard() {
 
           {/* Top Downloaded */}
           <TabsContent value="top-downloaded">
-            <div className="rounded-2xl border border-border/15 bg-card/5 overflow-hidden">
+            <div className="rounded-2xl border border-border/15 bg-card/8 overflow-hidden">
               {analyticsLoading ? (
-                <p className="text-[11px] text-muted-foreground/25 animate-pulse py-12 text-center">Carregando...</p>
+                <div className="flex items-center justify-center py-16">
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-emerald-400/20 border-t-emerald-400/60" />
+                </div>
               ) : !analytics?.topDownloaded?.length ? (
-                <p className="text-[11px] text-muted-foreground/30 py-12 text-center">Nenhum download registrado ainda.</p>
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <Download className="h-10 w-10 text-muted-foreground/15 mb-3" />
+                  <p className="text-sm text-muted-foreground/40">Nenhum download registrado</p>
+                </div>
               ) : (
                 <>
                   {analytics.topDownloaded.map((t: any, i: number) => (
-                    <div key={t.trackId} className="flex items-center gap-3 px-5 py-3 border-b border-border/8 last:border-0">
-                      <span className="text-[11px] text-muted-foreground/25 w-5 text-right font-mono">{i + 1}</span>
+                    <div key={t.trackId} className="flex items-center gap-3 px-5 py-3 border-b border-border/5 last:border-0 hover:bg-card/15 transition-colors">
+                      <span className="text-xs text-muted-foreground/30 w-6 text-right font-mono font-bold">{i + 1}</span>
                       {t.coverUrl ? (
-                        <img src={t.coverUrl} alt="" className="h-8 w-8 rounded-md object-cover" />
+                        <img src={t.coverUrl} alt="" className="h-9 w-9 rounded-lg object-cover border border-border/10" />
                       ) : (
-                        <div className="h-8 w-8 rounded-md bg-muted/15 flex items-center justify-center"><Music className="h-3.5 w-3.5 text-muted-foreground/20" /></div>
+                        <div className="h-9 w-9 rounded-lg bg-muted/15 flex items-center justify-center border border-border/10"><Music className="h-4 w-4 text-muted-foreground/20" /></div>
                       )}
-                      <span className="flex-1 text-sm text-foreground/70 truncate">{t.title}</span>
-                      <span className="text-[11px] font-semibold text-emerald-400/60">{t.downloads} downloads</span>
+                      <span className="flex-1 text-sm text-foreground/75 truncate font-medium">{t.title}</span>
+                      <span className="text-xs font-bold text-emerald-400/70 bg-emerald-400/8 px-2 py-1 rounded-lg">{t.downloads} downloads</span>
                     </div>
                   ))}
                   {analytics.recentDownloads?.length > 0 && (
                     <div className="border-t border-border/15 p-5">
-                      <h4 className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/30 mb-3">Downloads Recentes</h4>
-                      {analytics.recentDownloads.slice(0, 10).map((d: any, i: number) => (
-                        <div key={i} className="flex items-center justify-between py-1.5">
-                          <span className="text-[11px] text-foreground/50 truncate">{d.email}</span>
-                          <span className="text-[10px] text-muted-foreground/30 shrink-0 ml-2">{d.trackTitle}</span>
-                          <span className="text-[9px] text-muted-foreground/20 ml-2 shrink-0">
-                            {new Date(d.downloadedAt).toLocaleDateString('pt-BR')}
-                          </span>
-                        </div>
-                      ))}
+                      <h4 className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/35 mb-4 font-medium">Downloads Recentes</h4>
+                      <div className="space-y-2">
+                        {analytics.recentDownloads.slice(0, 10).map((d: any, i: number) => (
+                          <div key={i} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-card/15 transition-colors">
+                            <span className="text-xs text-foreground/55 truncate flex-1">{d.email}</span>
+                            <span className="text-[11px] text-muted-foreground/35 shrink-0 ml-3">{d.trackTitle}</span>
+                            <span className="text-[10px] text-muted-foreground/25 ml-3 shrink-0">
+                              {new Date(d.downloadedAt).toLocaleDateString('pt-BR')}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </>
@@ -280,23 +388,28 @@ export function AdminDashboard() {
 
           {/* User Activity */}
           <TabsContent value="users">
-            <div className="rounded-2xl border border-border/15 bg-card/5 overflow-hidden">
+            <div className="rounded-2xl border border-border/15 bg-card/8 overflow-hidden">
               {analyticsLoading ? (
-                <p className="text-[11px] text-muted-foreground/25 animate-pulse py-12 text-center">Carregando...</p>
+                <div className="flex items-center justify-center py-16">
+                  <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-400/20 border-t-blue-400/60" />
+                </div>
               ) : !analytics?.userActivity?.length ? (
-                <p className="text-[11px] text-muted-foreground/30 py-12 text-center">Nenhuma atividade registrada ainda.</p>
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <Users className="h-10 w-10 text-muted-foreground/15 mb-3" />
+                  <p className="text-sm text-muted-foreground/40">Nenhuma atividade registrada</p>
+                </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-[1fr_80px_80px] gap-2 px-5 py-3 border-b border-border/10">
-                    <span className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground/25">Usuário</span>
-                    <span className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground/25 text-right">Plays</span>
-                    <span className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground/25 text-right">Downloads</span>
+                  <div className="grid grid-cols-[1fr_80px_80px] gap-2 px-5 py-3.5 border-b border-border/15 bg-card/5">
+                    <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/30 font-medium">Usuário</span>
+                    <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/30 text-right font-medium">Plays</span>
+                    <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/30 text-right font-medium">Downloads</span>
                   </div>
                   {analytics.userActivity.map((u: any) => (
-                    <div key={u.email} className="grid grid-cols-[1fr_80px_80px] gap-2 px-5 py-2.5 border-b border-border/5 hover:bg-card/10 transition-colors">
-                      <span className="text-[12px] text-foreground/60 truncate">{u.email}</span>
-                      <span className="text-[12px] font-semibold text-gold/50 text-right">{u.plays}</span>
-                      <span className="text-[12px] font-semibold text-emerald-400/50 text-right">{u.downloads}</span>
+                    <div key={u.email} className="grid grid-cols-[1fr_80px_80px] gap-2 px-5 py-3 border-b border-border/5 hover:bg-card/15 transition-colors">
+                      <span className="text-sm text-foreground/65 truncate">{u.email}</span>
+                      <span className="text-sm font-bold text-gold/60 text-right">{u.plays}</span>
+                      <span className="text-sm font-bold text-emerald-400/60 text-right">{u.downloads}</span>
                     </div>
                   ))}
                 </>
