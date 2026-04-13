@@ -78,7 +78,7 @@ export function StudentSidebar() {
 
   const navItemClass = (active: boolean) =>
     cn(
-      "flex items-center gap-3 rounded-xl px-4 py-2.5 text-[12px] font-semibold uppercase tracking-[0.12em] transition-all duration-300",
+      "flex items-center gap-3 rounded-xl px-4 py-3 text-[14px] font-semibold uppercase tracking-[0.08em] transition-all duration-300",
       active
         ? "text-gold bg-gold/[0.08] border border-gold/15"
         : "text-muted-foreground/45 hover:text-gold/60 hover:bg-muted/10 border border-transparent"
@@ -86,7 +86,7 @@ export function StudentSidebar() {
 
   const subItemClass = (active: boolean) =>
     cn(
-      "flex items-center gap-2.5 rounded-lg px-4 py-2 ml-4 text-[11px] font-medium transition-all duration-300",
+      "flex items-center gap-2.5 rounded-lg px-4 py-2.5 ml-4 text-[13px] font-medium transition-all duration-300",
       active
         ? "text-gold/80 bg-gold/[0.06]"
         : "text-muted-foreground/35 hover:text-gold/50 hover:bg-muted/8"
@@ -100,7 +100,7 @@ export function StudentSidebar() {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1.5">
         {/* Vitrine */}
         {hasVitrine && (
           <Link
@@ -136,7 +136,7 @@ export function StudentSidebar() {
               )}
             >
               <span className="flex items-center gap-3">
-                <Music2 className="h-4 w-4" />
+                <Music2 className="h-4.5 w-4.5" />
                 Louvores
               </span>
               {louvoresOpen ? (
@@ -156,10 +156,16 @@ export function StudentSidebar() {
                     isActive("/musicas") && !(location.search as any)?.categoria
                   )}
                 >
-                  <span className="text-[10px]">⭐</span>
-                  Destaques (Top 10)
-                </Link>
-                {visibleCategories.map((cat: any) => {
+                   <span className="text-[12px]">⭐</span>
+                   Destaques (Top 10)
+                 </Link>
+                 {visibleCategories
+                   .filter((cat: any) => {
+                     const slug = (cat.slug || cat.name.toLowerCase()).toLowerCase();
+                     const name = cat.name.toLowerCase();
+                     return slug !== "destaques" && name !== "destaques" && name !== "destaques (top 10)";
+                   })
+                   .map((cat: any) => {
                   const catSlug = cat.slug || cat.name.toLowerCase();
                   const isActiveCat = (location.search as any)?.categoria === catSlug;
                   return (
@@ -170,9 +176,9 @@ export function StudentSidebar() {
                       onClick={() => setMobileOpen(false)}
                       className={subItemClass(isActiveCat)}
                     >
-                      <span className="text-[10px]">{cat.icon || "🎵"}</span>
-                      {cat.name.replace(/^[^\w\s]+\s*/u, "")}
-                    </Link>
+                     <span className="text-[12px]">{cat.icon || "🎵"}</span>
+                     {cat.name.replace(/^[^\w\s]+\s*/u, "")}
+                   </Link>
                   );
                 })}
               </div>
