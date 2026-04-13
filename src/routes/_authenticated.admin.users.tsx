@@ -274,6 +274,22 @@ function AdminUsersPage() {
     activeSessions.map((session: { email: string }) => session.email.toLowerCase())
   );
 
+  const formatDate = (dateStr: string | null) => {
+    if (!dateStr) return "—";
+    return new Date(dateStr).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
+  };
+
+  const isTrialExpired = (buyer: any) => {
+    if (!buyer.is_trial || !buyer.trial_expires_at) return false;
+    return new Date(buyer.trial_expires_at) < new Date();
+  };
+
+  const daysLeft = (buyer: any) => {
+    if (!buyer.is_trial || !buyer.trial_expires_at) return null;
+    const diff = new Date(buyer.trial_expires_at).getTime() - Date.now();
+    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+  };
+
   const totalUsers = buyers.length;
   const enabledUsers = buyers.filter((buyer: any) => buyer.access_enabled).length;
   const inactiveUsers = buyers.filter((buyer: any) => buyer.is_trial && isTrialExpired(buyer)).length;
@@ -301,22 +317,6 @@ function AdminUsersPage() {
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE
   );
-
-  const formatDate = (dateStr: string | null) => {
-    if (!dateStr) return "—";
-    return new Date(dateStr).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric" });
-  };
-
-  const isTrialExpired = (buyer: any) => {
-    if (!buyer.is_trial || !buyer.trial_expires_at) return false;
-    return new Date(buyer.trial_expires_at) < new Date();
-  };
-
-  const daysLeft = (buyer: any) => {
-    if (!buyer.is_trial || !buyer.trial_expires_at) return null;
-    const diff = new Date(buyer.trial_expires_at).getTime() - Date.now();
-    return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
-  };
 
   return (
     <div className="max-w-7xl mx-auto space-y-6">
