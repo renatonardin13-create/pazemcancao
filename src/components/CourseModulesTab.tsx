@@ -444,10 +444,10 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             return (
               <div
                 key={mod.id}
-                className="rounded-xl border border-border/12 bg-card/5 overflow-hidden transition-all"
+                className="rounded-xl border border-border/15 bg-card/8 overflow-hidden transition-all shadow-sm"
               >
                 {/* Module header */}
-                <div className={`flex items-center gap-3 px-5 py-3.5 transition-colors ${isExpanded ? "bg-card/10 border-b border-border/8" : "hover:bg-card/8"}`}>
+                <div className={`flex items-center gap-3 px-5 py-4 transition-colors ${isExpanded ? "bg-card/12" : "hover:bg-card/10"}`}>
                   {/* Drag handle — up/down */}
                   <div className="flex flex-col items-center shrink-0 -my-1">
                     <button
@@ -484,7 +484,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
 
                   {/* Module name */}
                   <div className="flex-1 min-w-0 cursor-pointer" onClick={() => toggleExpand(mod.id)}>
-                    <p className="text-[13px] font-semibold text-foreground/85 truncate">
+                    <p className="text-[13px] font-bold text-foreground/90 truncate">
                       {mod.title}
                     </p>
                     {mod.description && (
@@ -498,7 +498,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   <StatusBadge status={mod.status} />
 
                   {/* Lesson count */}
-                  <span className="text-[10px] text-muted-foreground/30 shrink-0 tabular-nums px-2 py-0.5 rounded-md bg-card/10 border border-border/8">
+                  <span className="text-[10px] font-medium text-muted-foreground/40 shrink-0 tabular-nums px-2.5 py-1 rounded-lg bg-card/15 border border-border/10">
                     {lessons.length} aula{lessons.length !== 1 ? "s" : ""}
                   </span>
 
@@ -506,7 +506,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-7 px-3 text-[10px] border-gold/15 text-gold/60 hover:text-gold hover:border-gold/25 hover:bg-gold/5 shrink-0"
+                    className="h-7 px-3.5 text-[10px] font-semibold border-gold/20 text-gold/70 hover:text-gold hover:border-gold/30 hover:bg-gold/8 shrink-0"
                     onClick={() => openCreateLesson(mod.id)}
                   >
                     <Plus className="h-3 w-3 mr-1" />
@@ -552,7 +552,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
 
                 {/* Expanded: lesson list */}
                 {isExpanded && (
-                  <div className="bg-background/20 px-4 py-3">
+                  <div className="bg-background/30 border-t border-border/10 px-5 py-4">
                     {lessons.length === 0 ? (
                       <div className="text-center py-8 ml-6 rounded-lg border border-dashed border-border/10 bg-card/3">
                         <div className="w-10 h-10 rounded-xl bg-gold/5 border border-gold/10 flex items-center justify-center mx-auto mb-3">
