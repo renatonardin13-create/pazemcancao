@@ -1095,227 +1095,145 @@ export default function AdminVitrinePage() {
         </div>
       )}
 
-      {/* ── Create/Edit Dialog ── */}
+      {/* ── Create/Edit Shelf Dialog ── */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="font-display">
-              {editingShelf ? "Editar Prateleira" : "Nova Prateleira"}
-            </DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-            <div className="space-y-2">
-              <Label>Nome</Label>
-              <Input
-                value={formName}
-                onChange={(e) => setFormName(e.target.value)}
-                placeholder="Ex: Lançamentos"
-                required
-                className="bg-card/10 border-border/15"
-              />
-            </div>
+        <DialogContent className="sm:max-w-md p-0 overflow-hidden">
+          <div className="px-6 pt-5 pb-3">
+            <DialogHeader>
+              <DialogTitle className="font-display text-base font-bold text-foreground/85">
+                {editingShelf ? "Editar Prateleira" : "Nova Prateleira"}
+              </DialogTitle>
+              <p className="text-[11px] text-muted-foreground/40">
+                Configure uma prateleira de cursos para a vitrine
+              </p>
+            </DialogHeader>
+          </div>
 
-            <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
-              <div>
-                <p className="text-sm font-medium text-foreground/70">Ativa</p>
-                <p className="text-[11px] text-muted-foreground/40">
-                  Visível na área do aluno
-                </p>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              const payload = {
+                name: formName,
+                is_active: formActive,
+                mode: formMode,
+                auto_criteria: formMode === "auto" ? formCriteria : undefined,
+                sort_order: formOrder,
+              };
+              if (editingShelf) {
+                updateMut.mutate({ id: editingShelf.id, ...payload });
+                if (formMode === "manual") {
+                  setCoursesMut.mutate({
+                    shelfId: editingShelf.id,
+                    courseIds: selectedCourseIds,
+                  });
+                }
+              } else {
+                createMut.mutate(payload);
+              }
+            }}
+          >
+            <div className="px-6 pb-4 space-y-4">
+              <div className="space-y-1.5">
+                <Label className="text-[11px] font-semibold text-foreground/60">Nome da Prateleira</Label>
+                <Input
+                  value={formName}
+                  onChange={(e) => setFormName(e.target.value)}
+                  placeholder="Ex: Lançamentos"
+                  required
+                  className="bg-card/10 border-border/15"
+                />
               </div>
-              <Switch checked={formActive} onCheckedChange={setFormActive} />
-            </div>
 
-            <div className="space-y-2">
-              <Label>Modo</Label>
-              <Select value={formMode} onValueChange={setFormMode}>
-                <SelectTrigger className="bg-card/10 border-border/15">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="manual">
-                    Manual — eu escolho os cursos
-                  </SelectItem>
-                  <SelectItem value="auto">
-                    Automática — por critério
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {formMode === "auto" && (
-              <div className="space-y-2">
-                <Label>Critério</Label>
-                <Select value={formCriteria} onValueChange={setFormCriteria}>
+              <div className="space-y-1.5">
+                <Label className="text-[11px] font-semibold text-foreground/60">Tipo</Label>
+                <Select value={formMode} onValueChange={(v) => {
+                  setFormMode(v);
+                  if (v === "manual" && editingShelf) {
+                    const existing = (editingShelf.shelf_courses || [])
+                      .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
+                      .map((sc: any) => sc.course_id);
+                    setSelectedCourseIds(existing);
+                  }
+                }}>
                   <SelectTrigger className="bg-card/10 border-border/15">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="recent">Mais recentes</SelectItem>
-                    <SelectItem value="best_selling">Mais liberados</SelectItem>
-                    <SelectItem value="featured">Em destaque</SelectItem>
-                    <SelectItem value="enrolled">Cursos liberados do aluno</SelectItem>
-                    <SelectItem value="all">Todos os cursos</SelectItem>
+                    <SelectItem value="manual">Manual (selecionar cursos)</SelectItem>
+                    <SelectItem value="auto">Automática (por critério)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-            )}
 
-            <div className="space-y-2">
-              <Label>Ordem de exibição</Label>
-              <Input
-                type="number"
-                min={0}
-                max={999}
-                value={formOrder}
-                onChange={(e) => setFormOrder(Number(e.target.value))}
-                className="bg-card/10 border-border/15"
-              />
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
-              disabled={createMut.isPending || updateMut.isPending}
-            >
-              {(createMut.isPending || updateMut.isPending) && (
-                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
-              )}
-              {editingShelf ? "Salvar" : "Criar Prateleira"}
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
-
-      {/* ── Courses Dialog ── */}
-      <Dialog
-        open={!!coursesDialogShelf}
-        onOpenChange={(v) => {
-          if (!v) setCoursesDialogShelf(null);
-        }}
-      >
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="font-display">
-              Cursos — {coursesDialogShelf?.name}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 mt-4">
-            {/* Selected courses - draggable order */}
-            {selectedCourseIds.length > 0 && (
-              <div>
-                <Label className="text-[11px] uppercase tracking-wider text-muted-foreground/40 mb-2 block">
-                  Ordem dos cursos (arraste para reordenar)
-                </Label>
-                <div className="rounded-xl border border-border/10 bg-card/5 divide-y divide-border/5">
-                  {selectedCourseIds.map((courseId, idx) => {
-                    const course = courses.find((c: any) => c.id === courseId);
-                    if (!course) return null;
-                    return (
-                      <div
-                        key={courseId}
-                        draggable
-                        onDragStart={coursesDrag.handleDragStart(idx)}
-                        onDragEnd={coursesDrag.handleDragEnd}
-                        onDragOver={coursesDrag.handleDragOver(idx)}
-                        className="flex items-center gap-3 px-4 py-3 cursor-grab active:cursor-grabbing hover:bg-card/10 transition-colors"
-                      >
-                        <GripVertical className="h-3.5 w-3.5 text-muted-foreground/15 shrink-0" />
-                        <span className="text-[10px] font-bold text-muted-foreground/20 tabular-nums w-5 shrink-0">
-                          {idx + 1}
-                        </span>
-                        {course.cover_image_url && (
-                          <img
-                            src={course.cover_image_url}
-                            alt=""
-                            className="h-8 w-8 rounded-md object-cover shrink-0"
-                          />
-                        )}
-                        <span className="text-[12px] font-medium text-foreground/70 truncate flex-1">
-                          {course.title}
-                        </span>
-                        <button
-                          type="button"
-                          onClick={() => toggleCourse(courseId)}
-                          className="text-[10px] text-destructive/50 hover:text-destructive/80 shrink-0 transition-colors"
-                        >
-                          Remover
-                        </button>
-                      </div>
-                    );
-                  })}
+              {formMode === "auto" && (
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] font-semibold text-foreground/60">Critério</Label>
+                  <Select value={formCriteria} onValueChange={setFormCriteria}>
+                    <SelectTrigger className="bg-card/10 border-border/15">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="recent">Mais recentes</SelectItem>
+                      <SelectItem value="best_selling">Mais liberados</SelectItem>
+                      <SelectItem value="featured">Em destaque</SelectItem>
+                      <SelectItem value="enrolled">Cursos liberados do aluno</SelectItem>
+                      <SelectItem value="all">Todos os cursos</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
+              )}
+
+              {formMode === "manual" && (
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] font-semibold text-foreground/60">Selecionar Cursos</Label>
+                  <div className="rounded-xl border border-border/10 bg-card/5 max-h-[220px] overflow-y-auto divide-y divide-border/5">
+                    {courses.map((course: any) => {
+                      const isSelected = selectedCourseIds.includes(course.id);
+                      return (
+                        <div
+                          key={course.id}
+                          className="flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors hover:bg-card/10"
+                          onClick={() => toggleCourse(course.id)}
+                        >
+                          <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${isSelected ? "border-gold bg-gold" : "border-muted-foreground/20"}`}>
+                            {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-gold-foreground" />}
+                          </div>
+                          <span className="text-[12px] font-medium text-foreground/70 truncate flex-1">
+                            {course.title}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <p className="text-[11px] text-muted-foreground/35">
+                    {selectedCourseIds.length} curso(s) selecionado(s)
+                  </p>
+                </div>
+              )}
+
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium text-foreground/60">Exibir na vitrine</span>
+                <Switch checked={formActive} onCheckedChange={setFormActive} />
               </div>
-            )}
-
-            {/* Available courses to add */}
-            <div>
-              <Label className="text-[11px] uppercase tracking-wider text-muted-foreground/40 mb-2 block">
-                Adicionar cursos
-              </Label>
-              {courses.length === 0 ? (
-                <p className="text-[12px] text-muted-foreground/40 text-center py-4">
-                  Nenhum curso cadastrado.
-                </p>
-              ) : (
-                <div className="rounded-xl border border-border/10 bg-card/5 max-h-48 overflow-y-auto divide-y divide-border/5">
-                  {courses
-                    .filter((c: any) => !selectedCourseIds.includes(c.id))
-                    .map((course: any) => (
-                      <label
-                        key={course.id}
-                        className="flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-card/10"
-                      >
-                        <Checkbox
-                          checked={false}
-                          onCheckedChange={() => toggleCourse(course.id)}
-                        />
-                        {course.cover_image_url && (
-                          <img
-                            src={course.cover_image_url}
-                            alt=""
-                            className="h-8 w-8 rounded-md object-cover shrink-0"
-                          />
-                        )}
-                        <span className="text-[12px] font-medium text-foreground/70 truncate flex-1">
-                          {course.title}
-                        </span>
-                        <Badge
-                          variant="outline"
-                          className={`text-[9px] shrink-0 rounded-full px-2 border ${
-                            course.status === "published"
-                              ? "text-emerald-400/70 border-emerald-500/20 bg-emerald-500/8"
-                              : "text-muted-foreground/40 border-border/15"
-                          }`}
-                        >
-                          {course.status === "published" ? "Publicado" : "Rascunho"}
-                        </Badge>
-                      </label>
-                    ))}
-                </div>
-              )}
             </div>
 
-            <p className="text-[11px] text-gold/60">
-              {selectedCourseIds.length} curso(s) selecionado(s)
-            </p>
-            <Button
-              className="w-full bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
-              disabled={setCoursesMut.isPending}
-              onClick={() => {
-                if (coursesDialogShelf) {
-                  setCoursesMut.mutate({
-                    shelfId: coursesDialogShelf.id,
-                    courseIds: selectedCourseIds,
-                  });
-                }
-              }}
-            >
-              {setCoursesMut.isPending ? (
-                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
-              ) : null}
-              {setCoursesMut.isPending ? "Salvando..." : "Salvar Cursos"}
-            </Button>
-          </div>
+            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border/10">
+              <Button type="button" variant="outline" onClick={closeDialog}>
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                className="gap-1.5 bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
+                disabled={createMut.isPending || updateMut.isPending}
+              >
+                {(createMut.isPending || updateMut.isPending) && (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                )}
+                <BookOpen className="h-3.5 w-3.5" />
+                Salvar
+              </Button>
+            </div>
+          </form>
         </DialogContent>
       </Dialog>
 
