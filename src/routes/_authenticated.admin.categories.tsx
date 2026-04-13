@@ -7,21 +7,33 @@ import {
   deleteCategory,
   reorderCategories,
 } from "@/lib/admin-categories.functions";
-import { FolderOpen, Plus, Trash2, Pencil, GripVertical, Check, X, Star } from "lucide-react";
+import { FolderOpen, Plus, Trash2, Pencil, GripVertical, Check, X, Tag } from "lucide-react";
 import { useState, useCallback } from "react";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/categories")({
   component: AdminCategoriesPage,
 });
 
+const CATEGORY_COLORS = [
+  "bg-rose-500", "bg-emerald-500", "bg-purple-500", "bg-amber-500",
+  "bg-blue-500", "bg-cyan-500", "bg-pink-500", "bg-orange-500",
+  "bg-teal-500", "bg-indigo-500",
+];
+
 function AdminCategoriesPage() {
   const [showForm, setShowForm] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editValues, setEditValues] = useState<{ name: string; slug: string; description: string; icon: string }>({
-    name: "", slug: "", description: "", icon: "",
-  });
+  const [editingCat, setEditingCat] = useState<any>(null);
+  const [editValues, setEditValues] = useState({ name: "", slug: "", description: "", icon: "" });
   const [newCat, setNewCat] = useState({ name: "", slug: "", description: "", icon: "" });
   const queryClient = useQueryClient();
 
@@ -48,7 +60,7 @@ function AdminCategoriesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
       toast.success("Categoria atualizada");
-      setEditingId(null);
+      setEditingCat(null);
     },
     onError: (err: any) => toast.error(err.message),
   });
@@ -64,36 +76,28 @@ function AdminCategoriesPage() {
 
   const reorderMutation = useMutation({
     mutationFn: (orderedIds: string[]) => reorderCategories({ data: { orderedIds } }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
-      toast.success("Ordem atualizada");
-    },
-    onError: (err: any) => toast.error(err.message),
-  });
-
-  const toggleFeaturedMutation = useMutation({
-    mutationFn: (cat: any) => updateCategory({ data: { id: cat.id, is_featured: !cat.is_featured } }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
-      toast.success("Destaque atualizado");
-    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin-categories"] }),
     onError: (err: any) => toast.error(err.message),
   });
 
   const categories = data?.categories || [];
 
-  const handleNameChange = (value: string) => {
+  const handleNameChange = (value: string, target: "new" | "edit") => {
     const slug = value
       .toLowerCase()
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
-    setNewCat((prev) => ({ ...prev, name: value, slug }));
+    if (target === "new") {
+      setNewCat((prev) => ({ ...prev, name: value, slug }));
+    } else {
+      setEditValues((prev) => ({ ...prev, name: value, slug }));
+    }
   };
 
   const startEdit = (cat: any) => {
-    setEditingId(cat.id);
+    setEditingCat(cat);
     setEditValues({
       name: cat.name,
       slug: cat.slug,
@@ -114,235 +118,196 @@ function AdminCategoriesPage() {
   );
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-foreground/85 tracking-tight">
-            Categorias
-          </h1>
-          <p className="mt-1 text-[13px] text-muted-foreground/40">
-            Gerencie as categorias dos louvores
-          </p>
-        </div>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          className="flex items-center gap-2 rounded-xl h-10 px-4 text-[11px] font-semibold uppercase tracking-wider bg-gold/15 text-gold/70 border border-gold/12 hover:bg-gold/22 transition-all duration-500"
-        >
-          <Plus className="h-3.5 w-3.5" />
-          Nova Categoria
-        </button>
+    <div className="max-w-6xl mx-auto space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="font-display text-2xl font-bold text-foreground/90 tracking-tight">
+          Categorias e Tags
+        </h1>
+        <p className="mt-1 text-[13px] text-muted-foreground/45">
+          Organize seus cursos com categorias e tags personalizadas
+        </p>
       </div>
 
-      {/* Create form */}
-      {showForm && (
-        <div className="rounded-2xl border border-border/15 bg-card/10 p-6 space-y-4">
-          <h3 className="text-sm font-semibold text-foreground/70">Nova Categoria</h3>
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div>
-              <label className="text-[11px] text-muted-foreground/40 uppercase tracking-wider mb-1.5 block">Nome</label>
-              <Input
-                value={newCat.name}
-                onChange={(e) => handleNameChange(e.target.value)}
-                placeholder="Ex: Música Gospel"
-                className="bg-card/10 border-border/15"
-              />
-            </div>
-            <div>
-              <label className="text-[11px] text-muted-foreground/40 uppercase tracking-wider mb-1.5 block">Slug</label>
-              <Input
-                value={newCat.slug}
-                onChange={(e) => setNewCat((prev) => ({ ...prev, slug: e.target.value }))}
-                placeholder="musica-gospel"
-                className="bg-card/10 border-border/15"
-              />
-            </div>
-            <div>
-              <label className="text-[11px] text-muted-foreground/40 uppercase tracking-wider mb-1.5 block">Ícone (emoji)</label>
-              <Input
-                value={newCat.icon}
-                onChange={(e) => setNewCat((prev) => ({ ...prev, icon: e.target.value }))}
-                placeholder="🎵"
-                className="bg-card/10 border-border/15"
-              />
-            </div>
-            <div>
-              <label className="text-[11px] text-muted-foreground/40 uppercase tracking-wider mb-1.5 block">Descrição</label>
-              <Input
-                value={newCat.description}
-                onChange={(e) => setNewCat((prev) => ({ ...prev, description: e.target.value }))}
-                placeholder="Breve descrição..."
-                className="bg-card/10 border-border/15"
-              />
-            </div>
+      {/* Two-column layout */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Categories Panel */}
+        <div className="rounded-2xl border border-border/15 bg-card/5 p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display text-base font-semibold text-foreground/85 flex items-center gap-2">
+              <FolderOpen className="h-4 w-4 text-gold/60" />
+              Categorias
+            </h2>
+            <Button
+              onClick={() => { setShowForm(true); setNewCat({ name: "", slug: "", description: "", icon: "" }); }}
+              className="gap-1.5 h-9 bg-gold/90 text-gold-foreground hover:bg-gold font-semibold text-[12px]"
+              size="sm"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Nova Categoria
+            </Button>
           </div>
-          <div className="flex justify-end gap-3 pt-2">
-            <button
-              onClick={() => setShowForm(false)}
-              className="px-4 py-2 text-[11px] uppercase tracking-wider text-muted-foreground/40 hover:text-muted-foreground/60 transition-colors"
-            >
-              Cancelar
-            </button>
-            <button
-              onClick={() => {
-                if (!newCat.name || !newCat.slug) {
-                  toast.error("Nome e slug são obrigatórios");
-                  return;
-                }
-                createMutation.mutate(newCat);
-              }}
-              disabled={createMutation.isPending}
-              className="flex items-center gap-2 rounded-xl h-9 px-5 text-[11px] font-semibold uppercase tracking-wider bg-gold/20 text-gold/80 border border-gold/15 hover:bg-gold/30 transition-all duration-500 disabled:opacity-50"
-            >
-              {createMutation.isPending ? "Criando..." : "Criar"}
-            </button>
-          </div>
-        </div>
-      )}
 
-      {/* Category list */}
-      {isLoading ? (
-        <div className="text-center py-16">
-          <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
-            Carregando...
-          </p>
-        </div>
-      ) : !categories.length ? (
-        <div className="text-center py-16 rounded-2xl border border-border/15 bg-card/5">
-          <FolderOpen className="h-8 w-8 text-muted-foreground/15 mx-auto mb-4" />
-          <p className="text-sm text-muted-foreground/35">Nenhuma categoria cadastrada.</p>
-        </div>
-      ) : (
-        <div className="rounded-2xl border border-border/15 overflow-hidden">
-          {categories.map((cat: any, index: number) => (
-            <div
-              key={cat.id}
-              className="flex items-center gap-4 px-5 py-4 border-b border-border/8 last:border-0 hover:bg-card/10 transition-colors"
-            >
-              {/* Reorder controls */}
-              <div className="flex flex-col gap-0.5 shrink-0">
-                <button
-                  onClick={() => moveCategory(index, "up")}
-                  disabled={index === 0}
-                  className="text-muted-foreground/20 hover:text-gold/50 disabled:opacity-20 disabled:cursor-not-allowed transition-colors text-[10px]"
+          {isLoading ? (
+            <div className="text-center py-12">
+              <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+                Carregando...
+              </p>
+            </div>
+          ) : !categories.length ? (
+            <div className="text-center py-12">
+              <FolderOpen className="h-8 w-8 text-muted-foreground/15 mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground/35">Nenhuma categoria cadastrada</p>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {categories.map((cat: any, index: number) => (
+                <div
+                  key={cat.id}
+                  className="flex items-center gap-3 rounded-xl border border-border/10 bg-card/8 px-4 py-3 hover:bg-card/15 transition-colors group"
                 >
-                  ▲
-                </button>
-                <button
-                  onClick={() => moveCategory(index, "down")}
-                  disabled={index === categories.length - 1}
-                  className="text-muted-foreground/20 hover:text-gold/50 disabled:opacity-20 disabled:cursor-not-allowed transition-colors text-[10px]"
-                >
-                  ▼
-                </button>
-              </div>
+                  {/* Drag handle */}
+                  <GripVertical className="h-4 w-4 text-muted-foreground/15 shrink-0 cursor-grab" />
 
-              {/* Icon */}
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted/15 shrink-0 text-lg">
-                {cat.icon || "📁"}
-              </div>
+                  {/* Color dot */}
+                  <div className={`h-3 w-3 rounded-full shrink-0 ${CATEGORY_COLORS[index % CATEGORY_COLORS.length]}`} />
 
-              {/* Content - view or edit mode */}
-              {editingId === cat.id ? (
-                <div className="flex-1 grid sm:grid-cols-4 gap-2">
-                  <Input
-                    value={editValues.name}
-                    onChange={(e) => setEditValues((prev) => ({ ...prev, name: e.target.value }))}
-                    placeholder="Nome"
-                    className="bg-card/10 border-border/15 text-sm h-8"
-                  />
-                  <Input
-                    value={editValues.slug}
-                    onChange={(e) => setEditValues((prev) => ({ ...prev, slug: e.target.value }))}
-                    placeholder="Slug"
-                    className="bg-card/10 border-border/15 text-sm h-8"
-                  />
-                  <Input
-                    value={editValues.icon}
-                    onChange={(e) => setEditValues((prev) => ({ ...prev, icon: e.target.value }))}
-                    placeholder="Ícone"
-                    className="bg-card/10 border-border/15 text-sm h-8"
-                  />
-                  <Input
-                    value={editValues.description}
-                    onChange={(e) => setEditValues((prev) => ({ ...prev, description: e.target.value }))}
-                    placeholder="Descrição"
-                    className="bg-card/10 border-border/15 text-sm h-8"
-                  />
-                </div>
-              ) : (
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-foreground/75 truncate">
-                    {cat.name}
-                  </p>
-                  <p className="text-[11px] text-muted-foreground/30">
-                    /{cat.slug}
-                    {cat.description && ` · ${cat.description}`}
-                  </p>
-                </div>
-              )}
+                  {/* Content */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground/85 truncate">{cat.name}</p>
+                    {cat.description && (
+                      <p className="text-[11px] text-muted-foreground/40 truncate">{cat.description}</p>
+                    )}
+                  </div>
 
-              {/* Sort order badge */}
-              <span className="text-[9px] text-muted-foreground/20 tabular-nums shrink-0">
-                #{cat.sort_order}
-              </span>
-
-              {/* Featured toggle */}
-              <button
-                onClick={() => toggleFeaturedMutation.mutate(cat)}
-                className={`p-2 transition-colors shrink-0 ${cat.is_featured ? 'text-amber-400' : 'text-muted-foreground/20 hover:text-amber-400/50'}`}
-                title={cat.is_featured ? "Remover destaque" : "Marcar como destaque"}
-              >
-                <Star className="h-3.5 w-3.5" fill={cat.is_featured ? "currentColor" : "none"} />
-              </button>
-
-              {/* Actions */}
-              <div className="flex items-center gap-1 shrink-0">
-                {editingId === cat.id ? (
-                  <>
-                    <button
-                      onClick={() => {
-                        updateMutation.mutate({ id: cat.id, ...editValues });
-                      }}
-                      className="p-2 text-emerald-400/50 hover:text-emerald-400/80 transition-colors"
-                      title="Salvar"
-                    >
-                      <Check className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      onClick={() => setEditingId(null)}
-                      className="p-2 text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors"
-                      title="Cancelar"
-                    >
-                      <X className="h-3.5 w-3.5" />
-                    </button>
-                  </>
-                ) : (
-                  <>
+                  {/* Actions (visible on hover) */}
+                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                     <button
                       onClick={() => startEdit(cat)}
-                      className="p-2 text-muted-foreground/30 hover:text-gold/60 transition-colors"
+                      className="p-1.5 text-muted-foreground/30 hover:text-gold/60 transition-colors rounded-lg hover:bg-muted/10"
                       title="Editar"
                     >
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
                     <button
                       onClick={() => {
-                        if (confirm("Remover esta categoria?")) {
-                          deleteMutation.mutate(cat.id);
-                        }
+                        if (confirm("Remover esta categoria?")) deleteMutation.mutate(cat.id);
                       }}
-                      className="p-2 text-muted-foreground/30 hover:text-destructive/60 transition-colors"
+                      className="p-1.5 text-muted-foreground/30 hover:text-destructive/60 transition-colors rounded-lg hover:bg-muted/10"
                       title="Remover"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
-                  </>
-                )}
-              </div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
         </div>
-      )}
+
+        {/* Tags Panel */}
+        <div className="rounded-2xl border border-border/15 bg-card/5 p-5">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display text-base font-semibold text-foreground/85 flex items-center gap-2">
+              <Tag className="h-4 w-4 text-gold/60" />
+              Tags
+            </h2>
+            <Button
+              className="gap-1.5 h-9 bg-gold/90 text-gold-foreground hover:bg-gold font-semibold text-[12px]"
+              size="sm"
+              disabled
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Nova Tag
+            </Button>
+          </div>
+
+          <div className="text-center py-12">
+            <Tag className="h-8 w-8 text-muted-foreground/15 mx-auto mb-3" />
+            <p className="text-sm text-muted-foreground/35">Nenhuma tag cadastrada</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Create Category Dialog */}
+      <Dialog open={showForm} onOpenChange={setShowForm}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-display">Nova Categoria</DialogTitle>
+          </DialogHeader>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!newCat.name || !newCat.slug) { toast.error("Nome e slug são obrigatórios"); return; }
+              createMutation.mutate(newCat);
+            }}
+            className="space-y-4 mt-4"
+          >
+            <div className="space-y-2">
+              <Label>Nome *</Label>
+              <Input value={newCat.name} onChange={(e) => handleNameChange(e.target.value, "new")} placeholder="Ex: Teologia" />
+            </div>
+            <div className="space-y-2">
+              <Label>Slug</Label>
+              <Input value={newCat.slug} onChange={(e) => setNewCat((p) => ({ ...p, slug: e.target.value }))} placeholder="teologia" />
+            </div>
+            <div className="space-y-2">
+              <Label>Descrição</Label>
+              <Input value={newCat.description} onChange={(e) => setNewCat((p) => ({ ...p, description: e.target.value }))} placeholder="Breve descrição..." />
+            </div>
+            <div className="space-y-2">
+              <Label>Ícone (emoji)</Label>
+              <Input value={newCat.icon} onChange={(e) => setNewCat((p) => ({ ...p, icon: e.target.value }))} placeholder="📖" />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button type="button" variant="outline" className="flex-1" onClick={() => setShowForm(false)}>Cancelar</Button>
+              <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" disabled={createMutation.isPending}>
+                {createMutation.isPending ? "Criando..." : "Criar Categoria"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Category Dialog */}
+      <Dialog open={!!editingCat} onOpenChange={(v) => { if (!v) setEditingCat(null); }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="font-display">Editar Categoria</DialogTitle>
+          </DialogHeader>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (!editingCat) return;
+              updateMutation.mutate({ id: editingCat.id, ...editValues });
+            }}
+            className="space-y-4 mt-4"
+          >
+            <div className="space-y-2">
+              <Label>Nome *</Label>
+              <Input value={editValues.name} onChange={(e) => handleNameChange(e.target.value, "edit")} />
+            </div>
+            <div className="space-y-2">
+              <Label>Slug</Label>
+              <Input value={editValues.slug} onChange={(e) => setEditValues((p) => ({ ...p, slug: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Descrição</Label>
+              <Input value={editValues.description} onChange={(e) => setEditValues((p) => ({ ...p, description: e.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Ícone (emoji)</Label>
+              <Input value={editValues.icon} onChange={(e) => setEditValues((p) => ({ ...p, icon: e.target.value }))} />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button type="button" variant="outline" className="flex-1" onClick={() => setEditingCat(null)}>Cancelar</Button>
+              <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" disabled={updateMutation.isPending}>
+                {updateMutation.isPending ? "Salvando..." : "Salvar"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
