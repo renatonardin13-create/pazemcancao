@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Video, FileText, File, Link as LinkIcon, Save, Loader2, ImageIcon, X, Upload } from "lucide-react";
+import { Video, FileText, Save, Loader2, ImageIcon, X, Upload } from "lucide-react";
 
 interface CourseFormProps {
   initialValues?: any;
@@ -23,6 +23,13 @@ interface CourseFormProps {
 
 const inputClass = "h-11 bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm";
 const labelClass = "text-sm font-semibold text-foreground/80";
+
+const COURSE_TYPE_OPTIONS = [
+  { value: "video", label: "Vídeo", icon: Video },
+  { value: "ebook", label: "E-book / PDF", icon: FileText },
+] as const;
+
+const normalizeCourseType = (value?: string) => (value === "video" ? "video" : "ebook");
 
 function CardSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -69,7 +76,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       setCategoryId(initialValues.category_id || "");
       setPrice(String(initialValues.price ?? 0));
       setStatus(initialValues.status || "draft");
-      setCourseType(initialValues.course_type || "video");
+      setCourseType(normalizeCourseType(initialValues.course_type));
       setLaunchDate(initialValues.launch_date || "");
     }
   }, [initialValues]);
@@ -87,7 +94,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       category_id: categoryId || undefined,
       price: parseFloat(price) || 0,
       status,
-      course_type: courseType,
+      course_type: normalizeCourseType(courseType),
       launch_date: launchDate || undefined,
     });
   };
@@ -172,12 +179,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
             <div className="space-y-1">
               <Label className={labelClass}>Tipo de Conteúdo</Label>
               <div className="flex gap-2">
-                {[
-                  { value: "video", label: "Vídeo", icon: Video },
-                  { value: "pdf", label: "PDF", icon: FileText },
-                  { value: "arquivo", label: "Arquivo", icon: File },
-                  { value: "link", label: "Link", icon: LinkIcon },
-                ].map((type) => (
+                {COURSE_TYPE_OPTIONS.map((type) => (
                   <button
                     key={type.value}
                     type="button"
@@ -271,7 +273,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                     <button
                       type="button"
                       onClick={() => setCoverUrl("")}
-                      className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-500/90 text-white hover:bg-red-500 transition-colors"
+                      className="absolute top-2 right-2 p-1.5 rounded-lg bg-destructive text-destructive-foreground transition-colors"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -302,7 +304,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                     <button
                       type="button"
                       onClick={() => setBannerUrl("")}
-                      className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-500/90 text-white hover:bg-red-500 transition-colors"
+                      className="absolute top-2 right-2 p-1.5 rounded-lg bg-destructive text-destructive-foreground transition-colors"
                     >
                       <X className="h-4 w-4" />
                     </button>

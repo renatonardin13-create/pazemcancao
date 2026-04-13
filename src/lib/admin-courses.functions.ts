@@ -2,6 +2,8 @@ import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
+const normalizeCourseType = (value?: string) => (value === 'video' ? 'video' : 'ebook');
+
 export const listAdminCourses = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
@@ -21,7 +23,6 @@ export const listAdminCourses = createServerFn({ method: 'POST' })
       .select('*, categories(name, slug, icon), modules(id, lessons(id))')
       .order('sort_order', { ascending: true });
 
-    // Compute module/lesson counts
     const enriched = (courses || []).map((c: any) => {
       const mods = c.modules || [];
       const modulesCount = mods.length;
@@ -96,7 +97,7 @@ export const createCourse = createServerFn({ method: 'POST' })
         category_id: data.category_id || null,
         price: data.price ?? 0,
         status: data.status || 'draft',
-        course_type: data.course_type || 'video',
+        course_type: normalizeCourseType(data.course_type),
         launch_date: data.launch_date || null,
       })
       .select()
@@ -134,10 +135,16 @@ export const updateCourse = createServerFn({ method: 'POST' })
     if (!role) throw new Error('Não autorizado');
 
     const { id, ...updates } = data;
+    const normalizedUpdates = {
+      ...updates,
+      ...(updates.course_type !== undefined
+        ? { course_type: normalizeCourseType(updates.course_type) }
+        : {}),
+    };
 
     const { data: course, error } = await supabaseAdmin
       .from('courses')
-      .update(updates)
+      .update(normalizedUpdates)
       .eq('id', id)
       .select()
       .single();
