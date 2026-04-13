@@ -32,7 +32,7 @@ export const listModules = createServerFn({ method: 'POST' })
 
 export const createModule = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { courseId: string; title: string; description?: string }) => input)
+  .inputValidator((input: { courseId: string; title: string; description?: string; status?: string; thumbnail_url?: string }) => input)
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: role } = await supabase
