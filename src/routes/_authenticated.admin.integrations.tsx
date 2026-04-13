@@ -201,13 +201,19 @@ function IntegrationsPage() {
                 </div>
               </AccordionTrigger>
               <AccordionContent className="pb-4">
-                <ol className="space-y-3 text-sm text-muted-foreground">
-                  <li className="flex gap-2"><span className="text-gold font-bold">1.</span> Acesse o painel da Hotmart → Ferramentas → Webhooks</li>
-                  <li className="flex gap-2"><span className="text-gold font-bold">2.</span> Clique em "Adicionar Webhook"</li>
-                  <li className="flex gap-2"><span className="text-gold font-bold">3.</span> Cole a URL do webhook do curso (copie na tabela acima)</li>
-                  <li className="flex gap-2"><span className="text-gold font-bold">4.</span> Selecione o evento "PURCHASE_APPROVED"</li>
-                  <li className="flex gap-2"><span className="text-gold font-bold">5.</span> Salve e teste a integração</li>
+                <ol className="space-y-2.5 text-sm text-muted-foreground">
+                  <li>1. Acesse o <span className="font-bold text-foreground">Painel Hotmart</span> → Produtos → Seu Produto</li>
+                  <li>2. Vá em <span className="font-bold text-foreground">Configurações</span> → <span className="font-bold text-foreground">Integrações</span> → <span className="font-bold text-foreground">Webhooks</span></li>
+                  <li>3. Clique em <span className="font-bold text-foreground">Adicionar webhook</span></li>
+                  <li>4. Cole a URL do webhook gerada no MemberHero</li>
+                  <li>5. Selecione os eventos: <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">purchase.approved</code></li>
+                  <li>6. Salve e teste o webhook</li>
                 </ol>
+                <div className="mt-4 rounded-lg bg-muted/10 border border-border/15 px-4 py-2.5">
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-semibold text-foreground/70">Dica:</span> O email do comprador virá no campo <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">buyer.email</code>
+                  </p>
+                </div>
               </AccordionContent>
             </AccordionItem>
 
@@ -219,31 +225,43 @@ function IntegrationsPage() {
                 </div>
               </AccordionTrigger>
               <AccordionContent className="pb-4">
-                <ol className="space-y-3 text-sm text-muted-foreground">
-                  <li className="flex gap-2"><span className="text-gold font-bold">1.</span> Acesse a Kiwify → Configurações → Webhooks</li>
-                  <li className="flex gap-2"><span className="text-gold font-bold">2.</span> Clique em "Adicionar novo webhook"</li>
-                  <li className="flex gap-2"><span className="text-gold font-bold">3.</span> Cole a URL do webhook do curso</li>
-                  <li className="flex gap-2"><span className="text-gold font-bold">4.</span> Selecione "Compra aprovada" como evento</li>
-                  <li className="flex gap-2"><span className="text-gold font-bold">5.</span> Configure o token de autenticação (opcional)</li>
+                <ol className="space-y-2.5 text-sm text-muted-foreground">
+                  <li>1. Acesse o <span className="font-bold text-foreground">Dashboard Kiwify</span> → Produtos</li>
+                  <li>2. Selecione seu produto → <span className="font-bold text-foreground">Webhooks</span></li>
+                  <li>3. Clique em <span className="font-bold text-foreground">Novo Webhook</span></li>
+                  <li>4. Cole a URL do webhook do MemberHero</li>
+                  <li>5. Ative os eventos: <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">order.paid</code></li>
+                  <li>6. Salve a configuração</li>
                 </ol>
+                <div className="mt-4 rounded-lg bg-muted/10 border border-border/15 px-4 py-2.5">
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-semibold text-foreground/70">Dica:</span> O email virá em <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">Customer.email</code>
+                  </p>
+                </div>
               </AccordionContent>
             </AccordionItem>
 
             <AccordionItem value="cakto" className="border border-border/15 rounded-lg px-4">
               <AccordionTrigger className="hover:no-underline py-4">
                 <div className="flex items-center gap-3">
-                  <span className="h-2.5 w-2.5 rounded-full bg-blue-500" />
+                  <span className="h-2.5 w-2.5 rounded-full bg-purple-500" />
                   <span className="font-semibold text-foreground">Cakto</span>
                 </div>
               </AccordionTrigger>
               <AccordionContent className="pb-4">
-                <ol className="space-y-3 text-sm text-muted-foreground">
-                  <li className="flex gap-2"><span className="text-gold font-bold">1.</span> Acesse o painel Cakto → Integrações → Webhooks</li>
-                  <li className="flex gap-2"><span className="text-gold font-bold">2.</span> Adicione uma nova URL de webhook</li>
-                  <li className="flex gap-2"><span className="text-gold font-bold">3.</span> Cole a URL do webhook do curso</li>
-                  <li className="flex gap-2"><span className="text-gold font-bold">4.</span> Selecione os eventos de compra aprovada</li>
-                  <li className="flex gap-2"><span className="text-gold font-bold">5.</span> Salve e faça um teste</li>
+                <ol className="space-y-2.5 text-sm text-muted-foreground">
+                  <li>1. Acesse o <span className="font-bold text-foreground">Painel Cakto</span> → Produtos</li>
+                  <li>2. Selecione seu produto → <span className="font-bold text-foreground">Integrações</span></li>
+                  <li>3. Clique em <span className="font-bold text-foreground">Adicionar Webhook</span></li>
+                  <li>4. Cole a URL do webhook gerada no MemberHero</li>
+                  <li>5. Selecione os eventos de compra aprovada</li>
+                  <li>6. Salve e teste a integração</li>
                 </ol>
+                <div className="mt-4 rounded-lg bg-muted/10 border border-border/15 px-4 py-2.5">
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-semibold text-foreground/70">Dica:</span> O email do comprador virá no campo de dados do cliente
+                  </p>
+                </div>
               </AccordionContent>
             </AccordionItem>
           </Accordion>
