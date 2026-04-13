@@ -45,10 +45,10 @@ export function AdminDashboard() {
   return (
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Header bar */}
-      <div className="relative rounded-2xl border border-border/15 bg-gradient-to-r from-card/40 via-card/20 to-card/40 backdrop-blur-sm p-5 overflow-hidden">
+      <div className="relative rounded-2xl border border-gold/10 bg-gradient-to-r from-card via-card/80 to-card backdrop-blur-sm p-6 overflow-hidden shadow-xl shadow-black/10">
         {/* Decorative glow */}
-        <div className="pointer-events-none absolute -top-20 -right-20 h-48 w-48 rounded-full bg-gold/[0.04] blur-[80px]" />
-        <div className="pointer-events-none absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-primary/[0.03] blur-[60px]" />
+        <div className="pointer-events-none absolute -top-20 -right-20 h-56 w-56 rounded-full bg-gold/[0.06] blur-[80px]" />
+        <div className="pointer-events-none absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-gold/[0.04] blur-[60px]" />
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative z-10">
           <div>
@@ -130,7 +130,7 @@ export function AdminDashboard() {
       {/* 4 Main Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Receita Total */}
-        <div className="relative rounded-2xl border border-emerald-400/25 bg-gradient-to-br from-emerald-400/[0.08] via-card/10 to-card/5 p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-400/10 hover:border-emerald-400/35 group overflow-hidden">
+        <div className="relative rounded-2xl border border-emerald-400/25 bg-gradient-to-br from-emerald-400/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-400/10 hover:border-emerald-400/35 group overflow-hidden shadow-lg shadow-black/10">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-emerald-400/[0.07] blur-[50px] group-hover:bg-emerald-400/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -165,7 +165,7 @@ export function AdminDashboard() {
         </div>
 
         {/* Alunos Registrados */}
-        <div className="relative rounded-2xl border border-gold/25 bg-gradient-to-br from-gold/[0.08] via-card/10 to-card/5 p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-gold/10 hover:border-gold/35 group overflow-hidden">
+        <div className="relative rounded-2xl border border-gold/25 bg-gradient-to-br from-gold/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-gold/10 hover:border-gold/35 group overflow-hidden shadow-lg shadow-black/10">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-gold/[0.07] blur-[50px] group-hover:bg-gold/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -200,7 +200,7 @@ export function AdminDashboard() {
         </div>
 
         {/* Cursos Ativos */}
-        <div className="relative rounded-2xl border border-blue-400/25 bg-gradient-to-br from-blue-400/[0.08] via-card/10 to-card/5 p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-400/10 hover:border-blue-400/35 group overflow-hidden">
+        <div className="relative rounded-2xl border border-blue-400/25 bg-gradient-to-br from-blue-400/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-400/10 hover:border-blue-400/35 group overflow-hidden shadow-lg shadow-black/10">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-blue-400/[0.07] blur-[50px] group-hover:bg-blue-400/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -237,7 +237,7 @@ export function AdminDashboard() {
         </div>
 
         {/* Matrículas Pendentes */}
-        <div className="relative rounded-2xl border border-amber-400/25 bg-gradient-to-br from-amber-400/[0.08] via-card/10 to-card/5 p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-400/10 hover:border-amber-400/35 group overflow-hidden">
+        <div className="relative rounded-2xl border border-amber-400/25 bg-gradient-to-br from-amber-400/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-400/10 hover:border-amber-400/35 group overflow-hidden shadow-lg shadow-black/10">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-amber-400/[0.07] blur-[50px] group-hover:bg-amber-400/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -276,7 +276,7 @@ export function AdminDashboard() {
           { label: "Sessões Ativas", value: data?.activeSessions ?? 0, icon: Activity, color: "text-cyan-400", bg: "bg-cyan-400/10", border: "border-cyan-400/20" },
           { label: "Total de Músicas", value: data?.totalTracks ?? 0, icon: Headphones, color: "text-indigo-400", bg: "bg-indigo-400/10", border: "border-indigo-400/20" },
         ].map((s) => (
-          <div key={s.label} className={`flex items-center gap-3.5 rounded-xl border ${s.border} ${s.bg} px-4 py-3.5 transition-all hover:shadow-md`}>
+          <div key={s.label} className={`flex items-center gap-3.5 rounded-xl border ${s.border} ${s.bg} px-4 py-3.5 transition-all hover:shadow-md bg-card shadow-md shadow-black/5`}>
             <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${s.bg} border ${s.border} shrink-0`}>
               <s.icon className={`h-4.5 w-4.5 ${s.color}`} />
             </div>
@@ -292,8 +292,8 @@ export function AdminDashboard() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Sales Chart — large, prominent */}
-        <div className="lg:col-span-2 relative rounded-2xl border border-gold/20 bg-gradient-to-br from-gold/[0.04] via-card/10 to-card/5 p-6 sm:p-7 overflow-hidden shadow-lg shadow-black/5">
-          <div className="pointer-events-none absolute -top-32 -right-32 h-72 w-72 rounded-full bg-gold/[0.06] blur-[100px]" />
+        <div className="lg:col-span-2 relative rounded-2xl border border-gold/20 bg-gradient-to-br from-gold/[0.04] via-card to-card p-6 sm:p-7 overflow-hidden shadow-xl shadow-black/10">
+          <div className="pointer-events-none absolute -top-32 -right-32 h-72 w-72 rounded-full bg-gold/[0.08] blur-[100px]" />
 
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-5 relative">
             <div className="flex items-center gap-4">
@@ -410,7 +410,7 @@ export function AdminDashboard() {
         </div>
 
         {/* Best Performing Courses — sidebar card */}
-        <div className="lg:col-span-1 rounded-2xl border border-border/20 bg-gradient-to-br from-card/15 via-card/10 to-card/5 p-5 flex flex-col shadow-lg shadow-black/5">
+        <div className="lg:col-span-1 rounded-2xl border border-gold/15 bg-gradient-to-br from-card via-card/90 to-card p-5 flex flex-col shadow-xl shadow-black/10">
           <div className="flex items-center gap-3 mb-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gold/15 border border-gold/25 shadow-lg shadow-gold/10">
               <GraduationCap className="h-5.5 w-5.5 text-gold" />
