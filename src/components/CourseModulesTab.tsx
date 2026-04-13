@@ -938,7 +938,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 </Button>
               </div>
 
-              {lessonDialog.editId && matTitle !== undefined && (matType === "link" ? true : matFile || matUrl) === false && null}
+              
             </div>
 
             {/* Publicar aula */}
