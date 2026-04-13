@@ -39,58 +39,8 @@ export function AdminDashboard() {
 
   const analytics = rawAnalytics as any;
 
-  const statCards = [
-    {
-      label: "Total de Alunos",
-      value: data?.totalStudents ?? "—",
-      icon: GraduationCap,
-      color: "text-emerald-400",
-      bg: "bg-emerald-400/10",
-      border: "border-emerald-400/20",
-      trend: "+12%",
-      trendUp: true,
-    },
-    {
-      label: "Cursos Ativos",
-      value: data?.activeCourses ?? "—",
-      icon: BookOpen,
-      color: "text-gold",
-      bg: "bg-gold/10",
-      border: "border-gold/20",
-      trend: null,
-      trendUp: true,
-    },
-    {
-      label: "Matrículas Pendentes",
-      value: data?.pendingEnrollments ?? "—",
-      icon: Clock,
-      color: "text-amber-400",
-      bg: "bg-amber-400/10",
-      border: "border-amber-400/20",
-      trend: null,
-      trendUp: false,
-    },
-    {
-      label: "Sessões Ativas",
-      value: data?.activeSessions ?? "—",
-      icon: Activity,
-      color: "text-blue-400",
-      bg: "bg-blue-400/10",
-      border: "border-blue-400/20",
-      trend: null,
-      trendUp: true,
-    },
-    {
-      label: "Músicas Ativas",
-      value: data?.activeTracks ?? "—",
-      icon: Music,
-      color: "text-purple-400",
-      bg: "bg-purple-400/10",
-      border: "border-purple-400/20",
-      trend: null,
-      trendUp: true,
-    },
-  ];
+  const formatCurrency = (val: number) =>
+    val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
@@ -136,23 +86,9 @@ export function AdminDashboard() {
           </div>
         </div>
 
-        {/* Quick indicators strip */}
-        <div className="flex flex-wrap items-center gap-6 text-sm">
-          {[
-            { label: "Receita", icon: DollarSign, value: "—", color: "text-emerald-400" },
-            { label: "Alunos", icon: GraduationCap, value: data?.totalStudents ?? "—", color: "text-gold" },
-            { label: "Cursos", icon: BookOpen, value: data?.activeCourses ?? "—", color: "text-primary" },
-            { label: "Pendentes", icon: Clock, value: data?.pendingEnrollments ?? "—", color: "text-amber-400" },
-          ].map((item) => (
-            <span key={item.label} className="flex items-center gap-2 text-muted-foreground/50">
-              <item.icon className={`h-4 w-4 ${item.color}/60`} />
-              {item.label}:
-              <strong className="text-foreground/80 font-bold">
-                {isLoading ? "—" : item.value}
-              </strong>
-            </span>
-          ))}
-          <div className="ml-auto flex gap-1 rounded-xl bg-muted/10 border border-border/15 p-1">
+        {/* Period selector */}
+        <div className="flex items-center justify-end">
+          <div className="flex gap-1 rounded-xl bg-muted/10 border border-border/15 p-1">
             {PERIOD_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
@@ -170,42 +106,113 @@ export function AdminDashboard() {
         </div>
       </div>
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-        {statCards.map((stat) => (
-          <div
-            key={stat.label}
-            className={`relative rounded-2xl border ${stat.border} bg-card/8 p-5 transition-all duration-300 hover:bg-card/15 hover:shadow-lg hover:shadow-black/10 group overflow-hidden`}
-          >
-            <div className="pointer-events-none absolute -top-10 -right-10 h-24 w-24 rounded-full opacity-[0.04] group-hover:opacity-[0.08] transition-opacity" style={{ background: 'currentColor' }} />
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-[11px] uppercase tracking-[0.15em] text-muted-foreground/50 font-medium">
-                {stat.label}
-              </span>
-              <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${stat.bg} border ${stat.border}`}>
-                <stat.icon className={`h-5 w-5 ${stat.color}`} />
-              </div>
+      {/* 4 Main Metric Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        {/* Receita Total */}
+        <div className="relative rounded-2xl border border-emerald-400/20 bg-gradient-to-br from-emerald-400/[0.06] to-card/5 p-6 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-400/5 group overflow-hidden">
+          <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-emerald-400/[0.05] blur-[60px] group-hover:bg-emerald-400/[0.08] transition-all" />
+          <div className="flex items-center justify-between mb-5">
+            <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold">
+              Receita Total
+            </span>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-400/10 border border-emerald-400/20">
+              <DollarSign className="h-6 w-6 text-emerald-400" />
             </div>
-            <p className="font-display text-3xl font-bold text-foreground/90 mb-1">
-              {isLoading ? (
-                <span className="inline-block h-8 w-16 animate-pulse rounded-lg bg-muted/15" />
-              ) : stat.value}
-            </p>
-            {stat.trend && (
-              <div className="flex items-center gap-1 mt-1">
-                {stat.trendUp ? (
-                  <ArrowUpRight className="h-3.5 w-3.5 text-emerald-400/70" />
-                ) : (
-                  <ArrowDownRight className="h-3.5 w-3.5 text-red-400/70" />
-                )}
-                <span className={`text-[11px] font-medium ${stat.trendUp ? 'text-emerald-400/70' : 'text-red-400/70'}`}>
-                  {stat.trend}
-                </span>
-                <span className="text-[10px] text-muted-foreground/30">vs mês anterior</span>
-              </div>
-            )}
           </div>
-        ))}
+          <p className="font-display text-4xl font-black text-foreground/95 tracking-tight">
+            {isLoading ? (
+              <span className="inline-block h-10 w-32 animate-pulse rounded-xl bg-muted/15" />
+            ) : formatCurrency(data?.totalRevenue ?? 0)}
+          </p>
+          <div className="flex items-center gap-1.5 mt-3">
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-400/10">
+              <ArrowUpRight className="h-3.5 w-3.5 text-emerald-400" />
+              <span className="text-[11px] font-bold text-emerald-400">Receita total</span>
+            </div>
+            <span className="text-[10px] text-muted-foreground/30">vendas confirmadas</span>
+          </div>
+        </div>
+
+        {/* Alunos Registrados */}
+        <div className="relative rounded-2xl border border-gold/20 bg-gradient-to-br from-gold/[0.06] to-card/5 p-6 transition-all duration-300 hover:shadow-xl hover:shadow-gold/5 group overflow-hidden">
+          <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gold/[0.05] blur-[60px] group-hover:bg-gold/[0.08] transition-all" />
+          <div className="flex items-center justify-between mb-5">
+            <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold">
+              Alunos Registrados
+            </span>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 border border-gold/20">
+              <GraduationCap className="h-6 w-6 text-gold" />
+            </div>
+          </div>
+          <p className="font-display text-4xl font-black text-foreground/95 tracking-tight">
+            {isLoading ? (
+              <span className="inline-block h-10 w-20 animate-pulse rounded-xl bg-muted/15" />
+            ) : data?.totalStudents ?? 0}
+          </p>
+          <div className="flex items-center gap-1.5 mt-3">
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-gold/10">
+              <Users className="h-3.5 w-3.5 text-gold" />
+              <span className="text-[11px] font-bold text-gold">Compradores</span>
+            </div>
+            <span className="text-[10px] text-muted-foreground/30">com acesso ativo</span>
+          </div>
+        </div>
+
+        {/* Cursos Ativos */}
+        <div className="relative rounded-2xl border border-blue-400/20 bg-gradient-to-br from-blue-400/[0.06] to-card/5 p-6 transition-all duration-300 hover:shadow-xl hover:shadow-blue-400/5 group overflow-hidden">
+          <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-blue-400/[0.05] blur-[60px] group-hover:bg-blue-400/[0.08] transition-all" />
+          <div className="flex items-center justify-between mb-5">
+            <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold">
+              Cursos Ativos
+            </span>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-400/10 border border-blue-400/20">
+              <BookOpen className="h-6 w-6 text-blue-400" />
+            </div>
+          </div>
+          <p className="font-display text-4xl font-black text-foreground/95 tracking-tight">
+            {isLoading ? (
+              <span className="inline-block h-10 w-14 animate-pulse rounded-xl bg-muted/15" />
+            ) : data?.activeCourses ?? 0}
+          </p>
+          <div className="flex items-center gap-1.5 mt-3">
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-blue-400/10">
+              <BookOpen className="h-3.5 w-3.5 text-blue-400" />
+              <span className="text-[11px] font-bold text-blue-400">Publicados</span>
+            </div>
+            <span className="text-[10px] text-muted-foreground/30">de {isLoading ? "—" : data?.totalCourses ?? 0} total</span>
+          </div>
+        </div>
+
+        {/* Matrículas Pendentes */}
+        <div className="relative rounded-2xl border border-amber-400/20 bg-gradient-to-br from-amber-400/[0.06] to-card/5 p-6 transition-all duration-300 hover:shadow-xl hover:shadow-amber-400/5 group overflow-hidden">
+          <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-amber-400/[0.05] blur-[60px] group-hover:bg-amber-400/[0.08] transition-all" />
+          <div className="flex items-center justify-between mb-5">
+            <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold">
+              Matrículas Pendentes
+            </span>
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-400/10 border border-amber-400/20">
+              <Clock className="h-6 w-6 text-amber-400" />
+            </div>
+          </div>
+          <p className="font-display text-4xl font-black text-foreground/95 tracking-tight">
+            {isLoading ? (
+              <span className="inline-block h-10 w-14 animate-pulse rounded-xl bg-muted/15" />
+            ) : data?.pendingEnrollments ?? 0}
+          </p>
+          <div className="flex items-center gap-1.5 mt-3">
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-amber-400/10">
+              {(data?.pendingEnrollments ?? 0) > 0 ? (
+                <ArrowUpRight className="h-3.5 w-3.5 text-amber-400" />
+              ) : (
+                <ArrowDownRight className="h-3.5 w-3.5 text-emerald-400" />
+              )}
+              <span className={`text-[11px] font-bold ${(data?.pendingEnrollments ?? 0) > 0 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                {(data?.pendingEnrollments ?? 0) > 0 ? 'Ação necessária' : 'Tudo em dia'}
+              </span>
+            </div>
+            <span className="text-[10px] text-muted-foreground/30">aguardando aprovação</span>
+          </div>
+        </div>
       </div>
 
       {/* Two-column: Chart + Top Courses */}

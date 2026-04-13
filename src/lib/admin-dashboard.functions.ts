@@ -30,6 +30,7 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
       { count: totalCourses },
       { count: activeCourses },
       { count: pendingEnrollments },
+      { data: revenueData },
     ] = await Promise.all([
       supabaseAdmin.from('categories').select('*', { count: 'exact', head: true }),
       supabaseAdmin.from('tracks').select('*', { count: 'exact', head: true }),
@@ -39,6 +40,7 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
       supabaseAdmin.from('courses').select('*', { count: 'exact', head: true }),
       supabaseAdmin.from('courses').select('*', { count: 'exact', head: true }).eq('status', 'published'),
       supabaseAdmin.from('enrollments').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+      supabaseAdmin.from('transactions').select('amount').eq('status', 'paid'),
     ]);
 
     // Fetch top courses by enrollment count
@@ -71,6 +73,8 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
       })).sort((a, b) => b.students - a.students);
     }
 
+    const totalRevenue = (revenueData || []).reduce((sum, t) => sum + Number(t.amount || 0), 0);
+
     return {
       totalCategories: totalCategories || 0,
       totalTracks: totalTracks || 0,
@@ -80,6 +84,7 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
       totalCourses: totalCourses || 0,
       activeCourses: activeCourses || 0,
       pendingEnrollments: pendingEnrollments || 0,
+      totalRevenue,
       topCourses,
     };
   });
