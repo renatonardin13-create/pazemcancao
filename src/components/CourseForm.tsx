@@ -225,26 +225,26 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
         {/* ===== RIGHT: Preview ===== */}
         <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2">
           <div className="rounded-xl border border-border/12 bg-card lg:sticky lg:top-6 shadow-md shadow-black/5 overflow-hidden">
-            <div className="px-4 py-2.5 border-b border-border/8 bg-card/90">
-              <h3 className="text-[10px] font-black text-foreground/70 tracking-wider uppercase">Preview</h3>
+            <div className="px-5 py-3.5 border-b border-border/8 bg-card/90">
+              <h3 className="text-sm font-bold text-foreground/80">Preview</h3>
             </div>
-            <div className="p-3">
+            <div className="p-4">
               <div className="rounded-lg overflow-hidden border border-border/8 bg-background/20">
                 <div className="aspect-[16/9] bg-muted/5 flex items-center justify-center overflow-hidden">
                   {coverUrl ? (
                     <img src={coverUrl} alt="Capa" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="flex flex-col items-center justify-center gap-1.5 text-muted-foreground/20">
-                      <ImageIcon className="h-7 w-7" />
-                      <span className="text-[10px]">Sem imagem</span>
+                    <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground/20">
+                      <ImageIcon className="h-8 w-8" />
+                      <span className="text-xs">Sem imagem</span>
                     </div>
                   )}
                 </div>
-                <div className="p-3 space-y-1">
-                  <p className="text-sm font-bold text-foreground/85 leading-snug line-clamp-2">
+                <div className="p-4 space-y-2">
+                  <p className="text-base font-bold text-foreground/90 leading-snug line-clamp-2">
                     {title || "Título do Curso"}
                   </p>
-                  <p className="text-[11px] text-muted-foreground/45 line-clamp-2 leading-relaxed">
+                  <p className="text-sm text-muted-foreground/50 line-clamp-3 leading-relaxed">
                     {shortDesc || "Descrição do curso aparecerá aqui"}
                   </p>
                 </div>
