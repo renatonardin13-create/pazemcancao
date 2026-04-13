@@ -96,17 +96,19 @@ export function StudentSidebar() {
         )}
 
         {/* Meus Cursos */}
-        <Link
-          to="/cursos"
-          onClick={() => setMobileOpen(false)}
-          className={navItemClass(isActive("/cursos") || isActivePrefix("/cursos/"))}
-        >
-          <GraduationCap className="h-4 w-4" />
-          Meus Cursos
-        </Link>
+        {hasCourses && (
+          <Link
+            to="/cursos"
+            onClick={() => setMobileOpen(false)}
+            className={navItemClass(isActive("/cursos") || isActivePrefix("/cursos/"))}
+          >
+            <GraduationCap className="h-4 w-4" />
+            Meus Cursos
+          </Link>
+        )}
 
         {/* Louvores with subcategories */}
-        <div>
+        {hasTracks && (
           <button
             onClick={() => setLouvoresOpen(!louvoresOpen)}
             className={cn(
