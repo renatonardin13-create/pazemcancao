@@ -521,60 +521,33 @@ export default function AdminVitrinePage() {
 
             {/* ── Banner Principal ── */}
             <TabsContent value="banner" className="mt-6 space-y-6">
-              <div className="rounded-xl border border-border/15 bg-card/5 p-6 space-y-6">
+              <div className="space-y-5">
                 {/* Header */}
                 <div>
-                  <h3 className="text-sm font-semibold text-foreground/70 mb-1">
-                    Banner Principal (Hero da Home)
+                  <h3 className="text-base font-bold text-foreground/85">
+                    Banner Principal{" "}
+                    <span className="font-normal text-muted-foreground/50">(Hero da Home)</span>
                   </h3>
-                  <p className="text-[11px] text-muted-foreground/35">
-                    O banner hero que aparece no topo da vitrine de cursos do aluno.
+                  <p className="text-[11px] text-muted-foreground/40 mt-0.5">
+                    Tamanho recomendado: 1920×500px • Formatos: JPG, PNG, WebP
                   </p>
                 </div>
 
-                {/* Image specs info */}
-                <div className="flex items-start gap-3 rounded-xl bg-gold/5 border border-gold/12 p-4">
-                  <Info className="h-4 w-4 text-gold/50 shrink-0 mt-0.5" />
-                  <div className="space-y-1">
-                    <p className="text-[11px] font-semibold text-foreground/60">
-                      Requisitos da imagem
-                    </p>
-                    <div className="flex flex-wrap gap-3 text-[10px] text-muted-foreground/40">
-                      <span>
-                        Tamanho recomendado: <strong className="text-foreground/50">1920×500 px</strong>
-                      </span>
-                      <span>•</span>
-                      <span>
-                        Formatos: <strong className="text-foreground/50">JPG, PNG, WebP</strong>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Toggle banner visibility */}
-                <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
-                  <div>
-                    <p className="text-sm font-medium text-foreground/70">
-                      Exibir banner principal na vitrine
-                    </p>
-                    <p className="text-[11px] text-muted-foreground/40">
-                      Quando desativado, o hero não será exibido na home do aluno
-                    </p>
-                  </div>
-                  <Switch checked={bannerEnabled} onCheckedChange={setBannerEnabled} />
-                </div>
-
-                {/* Image preview with real dimensions */}
+                {/* Image preview */}
                 {(() => {
                   const imgSrc = bannerImageUrl || featuredCourse?.banner_image_url || featuredCourse?.cover_image_url;
-                  const aspectClass = bannerAspect === "21:9" ? "aspect-[21/9]" : bannerAspect === "16:9" ? "aspect-[16/9]" : "aspect-[1920/500]";
-                  const fitClass = bannerFit === "cover" ? "object-cover" : bannerFit === "contain" ? "object-contain" : "object-fill";
+                  const aspectMap: Record<string, string> = {
+                    auto: "",
+                    "4:1": "aspect-[4/1]",
+                    "3:1": "aspect-[3/1]",
+                    "16:5": "aspect-[16/5]",
+                    "21:9": "aspect-[21/9]",
+                  };
+                  const aspectClass = aspectMap[bannerAspect] || "";
+                  const fitClass = bannerFit === "cover" ? "object-cover" : "object-contain";
                   return (
-                    <div className="space-y-2">
-                      <Label className="text-[11px] uppercase tracking-wider text-muted-foreground/40">
-                        Preview do banner
-                      </Label>
-                      <div className={`relative w-full ${aspectClass} rounded-xl overflow-hidden border border-border/10 bg-card/10`}>
+                    <div className="space-y-3">
+                      <div className={`relative w-full ${aspectClass} rounded-xl overflow-hidden border border-border/10 bg-card/10 ${!aspectClass ? "max-h-[400px]" : ""}`}>
                         {imgSrc ? (
                           <img
                             src={imgSrc}
@@ -586,136 +559,65 @@ export default function AdminVitrinePage() {
                             }}
                           />
                         ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-card/30 to-card/5 flex items-center justify-center">
+                          <div className="w-full h-full min-h-[200px] bg-gradient-to-br from-card/30 to-card/5 flex items-center justify-center">
                             <ImageIcon className="h-8 w-8 text-muted-foreground/10" />
                           </div>
                         )}
-                        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-                        <div className="absolute inset-0 flex items-end px-6 pb-6">
-                          <div>
-                            <p className="text-[8px] font-bold uppercase tracking-[0.5em] text-gold/50 mb-1">Em destaque</p>
-                            <p className="text-lg font-bold text-foreground/95 leading-tight">
-                              {bannerTitle || featuredCourse?.title || "Título do curso"}
-                            </p>
-                            {(bannerSubtitle || featuredCourse?.short_description) && (
-                              <p className="mt-1 text-[11px] text-muted-foreground/50 line-clamp-1">
-                                {bannerSubtitle || featuredCourse?.short_description}
-                              </p>
-                            )}
-                          </div>
-                        </div>
                       </div>
 
-                      {/* Image dimensions info */}
+                      {/* Dimensions info */}
                       {bannerImgDims && (
-                        <div className="flex items-center gap-4 text-[10px] text-muted-foreground/35">
-                          <span>
-                            Dimensões reais: <strong className="text-foreground/50">{bannerImgDims.w}×{bannerImgDims.h} px</strong>
-                          </span>
-                          <span>
-                            Proporção: <strong className="text-foreground/50">{(bannerImgDims.w / bannerImgDims.h).toFixed(2)}:1</strong>
-                          </span>
-                        </div>
+                        <p className="text-center text-[11px] text-muted-foreground/40">
+                          Dimensões:{" "}
+                          <strong className="text-foreground/60">{bannerImgDims.w} × {bannerImgDims.h}px</strong>
+                          {"  "}(Proporção: {(bannerImgDims.w / bannerImgDims.h).toFixed(2)}:1)
+                        </p>
                       )}
                     </div>
                   );
                 })()}
 
-                {/* Configuration fields */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Curso em destaque</Label>
-                    <Select value={bannerCourseId} onValueChange={setBannerCourseId}>
-                      <SelectTrigger className="bg-card/10 border-border/15">
-                        <SelectValue placeholder="Automático — primeiro curso com banner" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="auto">Automático</SelectItem>
-                        {courses.map((c: any) => (
-                          <SelectItem key={c.id} value={c.id}>
-                            {c.title}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <p className="text-[10px] text-muted-foreground/30">
-                      Curso exibido no hero da vitrine
-                    </p>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>URL do Banner (opcional)</Label>
-                    <Input
-                      value={bannerImageUrl}
-                      onChange={(e) => {
-                        setBannerImageUrl(e.target.value);
-                        setBannerImgDims(null);
-                      }}
-                      placeholder="https://... imagem customizada"
-                      className="bg-card/10 border-border/15"
-                    />
-                    <p className="text-[10px] text-muted-foreground/30">
-                      Deixe vazio para usar o banner do curso selecionado
-                    </p>
-                  </div>
+                {/* Display mode */}
+                <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
+                  <Label className="text-sm text-foreground/60 font-medium">Modo de exibição do banner</Label>
+                  <Select value={bannerFit} onValueChange={setBannerFit}>
+                    <SelectTrigger className="w-[220px] bg-card/10 border-border/15">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cover">Preencher (pode cortar)</SelectItem>
+                      <SelectItem value="contain">Mostrar inteiro (sem corte)</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Título customizado (opcional)</Label>
-                    <Input
-                      value={bannerTitle}
-                      onChange={(e) => setBannerTitle(e.target.value)}
-                      placeholder="Deixe vazio para usar o título do curso"
-                      className="bg-card/10 border-border/15"
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Subtítulo (opcional)</Label>
-                    <Input
-                      value={bannerSubtitle}
-                      onChange={(e) => setBannerSubtitle(e.target.value)}
-                      placeholder="Deixe vazio para usar a descrição do curso"
-                      className="bg-card/10 border-border/15"
-                    />
-                  </div>
+                {/* Aspect ratio */}
+                <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
+                  <Label className="text-sm text-foreground/60 font-medium">Proporção do container</Label>
+                  <Select value={bannerAspect} onValueChange={setBannerAspect}>
+                    <SelectTrigger className="w-[220px] bg-card/10 border-border/15">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="auto">Automático (da imagem)</SelectItem>
+                      <SelectItem value="4:1">Widescreen 4:1</SelectItem>
+                      <SelectItem value="3:1">Ultra-wide 3:1</SelectItem>
+                      <SelectItem value="16:5">Cinema 16:5</SelectItem>
+                      <SelectItem value="21:9">Ultrawide 21:9</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                {/* Display mode & aspect ratio */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Modo de exibição do banner</Label>
-                    <Select value={bannerFit} onValueChange={setBannerFit}>
-                      <SelectTrigger className="bg-card/10 border-border/15">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="cover">Preencher (pode cortar)</SelectItem>
-                        <SelectItem value="contain">Conter (sem cortar)</SelectItem>
-                        <SelectItem value="fill">Ajustar automaticamente</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label>Proporção do container</Label>
-                    <Select value={bannerAspect} onValueChange={setBannerAspect}>
-                      <SelectTrigger className="bg-card/10 border-border/15">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="21:9">Ultra wide 21:9</SelectItem>
-                        <SelectItem value="16:9">Wide 16:9</SelectItem>
-                        <SelectItem value="hero">Hero padrão 1920×500</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                {/* Toggle visibility */}
+                <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
+                  <p className="text-sm font-medium text-foreground/60">
+                    Exibir banner principal na vitrine
+                  </p>
+                  <Switch checked={bannerEnabled} onCheckedChange={setBannerEnabled} />
                 </div>
 
                 {/* Action buttons */}
-                <div className="flex items-center gap-3 pt-2">
+                <div className="flex items-center gap-3">
                   <Button
                     variant="outline"
                     size="sm"
@@ -746,6 +648,11 @@ export default function AdminVitrinePage() {
                     Trocar Banner
                   </Button>
                 </div>
+
+                {/* Auto-save warning */}
+                <p className="text-[10px] text-amber-400/50 flex items-center gap-1.5">
+                  <span>⚠</span> As alterações são salvas automaticamente no banco de dados
+                </p>
               </div>
             </TabsContent>
             <TabsContent value="cards" className="mt-6 space-y-6">
