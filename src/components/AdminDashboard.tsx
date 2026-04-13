@@ -505,7 +505,7 @@ export function AdminDashboard() {
 
           {/* Top Played */}
           <TabsContent value="top-played">
-            <div className="rounded-2xl border border-border/15 bg-card/8 overflow-hidden">
+            <div className="rounded-2xl border border-border/15 bg-card overflow-hidden shadow-lg shadow-black/10">
               {analyticsLoading ? (
                 <div className="flex items-center justify-center py-16">
                   <div className="h-6 w-6 animate-spin rounded-full border-2 border-gold/20 border-t-gold/60" />
