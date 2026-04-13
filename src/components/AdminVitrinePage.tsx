@@ -863,18 +863,21 @@ export default function AdminVitrinePage() {
 
             {/* ── Prateleiras ── */}
             <TabsContent value="shelves" className="mt-6 space-y-5">
-              <div className="flex items-center justify-between">
+              {/* Header */}
+              <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="text-sm font-semibold text-foreground/70 tracking-tight">
-                    Prateleiras (Shelves) da Vitrine
+                  <h3 className="text-base font-bold text-foreground/85">
+                    Prateleiras (Shelves){" "}
+                    <span className="font-normal text-muted-foreground/50">da Vitrine</span>
                   </h3>
-                  <p className="text-[11px] text-muted-foreground/35 mt-0.5">
+                  <p className="text-[11px] text-muted-foreground/40 mt-0.5">
                     Organize os cursos em fileiras horizontais estilo Netflix
                   </p>
                 </div>
                 <Button
+                  variant="outline"
                   size="sm"
-                  className="gap-1.5 bg-gold/90 text-gold-foreground hover:bg-gold shadow-lg shadow-gold/20 font-semibold"
+                  className="gap-1.5 shrink-0"
                   onClick={openCreate}
                 >
                   <Plus className="h-3.5 w-3.5" />
@@ -897,14 +900,6 @@ export default function AdminVitrinePage() {
                   <p className="text-[12px] text-muted-foreground/25 mt-1">
                     Crie prateleiras para organizar os cursos na vitrine do aluno.
                   </p>
-                  <Button
-                    size="sm"
-                    className="mt-5 bg-gold/90 text-gold-foreground hover:bg-gold shadow-lg shadow-gold/20"
-                    onClick={openCreate}
-                  >
-                    <Plus className="h-3.5 w-3.5 mr-1.5" />
-                    Criar primeira prateleira
-                  </Button>
                 </div>
               ) : (
                 <div className="space-y-2.5">
@@ -917,44 +912,18 @@ export default function AdminVitrinePage() {
                         onDragStart={shelfDrag.handleDragStart(idx)}
                         onDragEnd={shelfDrag.handleDragEnd}
                         onDragOver={shelfDrag.handleDragOver(idx)}
-                        className="flex items-center gap-4 rounded-xl border border-border/15 bg-card/8 px-5 py-3.5 transition-all hover:bg-card/12 cursor-grab active:cursor-grabbing"
+                        className="flex items-center gap-4 rounded-xl border border-border/15 bg-card/8 px-4 py-3.5 transition-all hover:bg-card/12 cursor-grab active:cursor-grabbing"
                       >
                         <GripVertical className="h-4 w-4 text-muted-foreground/15 shrink-0" />
 
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <p className="text-[13px] font-semibold text-foreground/80 truncate">
-                              {shelf.name}
-                            </p>
-                            <Badge
-                              variant="outline"
-                              className={`text-[9px] rounded-full px-2 border font-medium ${
-                                shelf.mode === "auto"
-                                  ? "text-gold/60 border-gold/20 bg-gold/8"
-                                  : "text-sky-400/70 border-sky-500/20 bg-sky-500/8"
-                              }`}
-                            >
-                              {modeLabel(shelf.mode)}
-                            </Badge>
-                            {shelf.mode === "auto" && (
-                              <Badge
-                                variant="outline"
-                                className="text-[9px] rounded-full px-2 border text-gold/50 border-gold/15 bg-gold/5"
-                              >
-                                {criteriaLabel(shelf.auto_criteria)}
-                              </Badge>
-                            )}
-                            <Badge
-                              variant="outline"
-                              className="text-[9px] rounded-full px-2 border text-muted-foreground/50 border-border/15"
-                            >
-                              {courseCount} curso{courseCount !== 1 ? "s" : ""}
-                            </Badge>
-                          </div>
-                          <p className="text-[10px] text-muted-foreground/25 mt-0.5">
-                            {shelf.mode === "manual"
-                              ? `${courseCount} curso(s) vinculado(s)`
-                              : `Preenchimento automático: ${criteriaLabel(shelf.auto_criteria)}`}
+                          <p className="text-sm font-bold text-foreground/80 uppercase tracking-wide truncate">
+                            {shelf.name}
+                          </p>
+                          <p className="text-[11px] text-muted-foreground/35 mt-0.5">
+                            {modeLabel(shelf.mode)}
+                            {shelf.mode === "auto" && ` — ${criteriaLabel(shelf.auto_criteria)}`}
+                            {shelf.mode === "manual" && ` • ${courseCount} curso${courseCount !== 1 ? "s" : ""}`}
                           </p>
                         </div>
 
@@ -964,32 +933,20 @@ export default function AdminVitrinePage() {
                             onCheckedChange={(checked) => {
                               updateMut.mutate({ id: shelf.id, is_active: checked });
                             }}
-                            className="scale-75"
                           />
-                          {shelf.mode === "manual" && (
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-7 w-7 text-muted-foreground/25 hover:text-gold/60"
-                              onClick={() => openCourses(shelf)}
-                              title="Gerenciar cursos"
-                            >
-                              <BookOpen className="h-3.5 w-3.5" />
-                            </Button>
-                          )}
                           <Button
-                            variant="ghost"
+                            variant="outline"
                             size="icon"
-                            className="h-7 w-7 text-muted-foreground/25 hover:text-foreground/60"
+                            className="h-8 w-8 border-border/15 text-muted-foreground/40 hover:text-foreground/60"
                             onClick={() => openEdit(shelf)}
                             title="Editar"
                           >
                             <Pencil className="h-3.5 w-3.5" />
                           </Button>
                           <Button
-                            variant="ghost"
+                            variant="outline"
                             size="icon"
-                            className="h-7 w-7 text-muted-foreground/25 hover:text-destructive/60"
+                            className="h-8 w-8 border-border/15 text-muted-foreground/40 hover:text-destructive/60"
                             onClick={() => setDeleteTarget(shelf)}
                             title="Excluir"
                           >
