@@ -178,13 +178,27 @@ function AdminUsersPage() {
     },
   });
 
+  // Fetch student detail for edit dialog
+  const { data: editStudentDetail } = useQuery({
+    queryKey: ["student-detail-edit", editBuyer?.email],
+    queryFn: () => getStudentDetails({ data: { email: editBuyer!.email } }),
+    enabled: !!editBuyer && editOpen,
+  });
+
+  // Sync editCourseIds when detail loads
+  const editEnrolledIds = (editStudentDetail?.courses || [])
+    .filter((c: any) => c.hasAccess)
+    .map((c: any) => c.id);
+
   const openEditDialog = (buyer: any) => {
     setEditBuyer(buyer);
     setEditNome(buyer.nome || "");
     setEditEnabled(buyer.access_enabled);
+    setEditStatus(!buyer.access_enabled ? "blocked" : buyer.is_trial ? "trial" : "active");
     setEditIsTrial(buyer.is_trial || false);
     setEditCanDownload(buyer.can_download !== false);
     setEditTrialDays(7);
+    setEditCourseIds([]);
     setEditOpen(true);
   };
 
