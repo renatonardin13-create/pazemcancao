@@ -131,8 +131,8 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 id="fullDesc"
                 value={fullDesc}
                 onChange={(e) => setFullDesc(e.target.value)}
-                placeholder="Descrição detalhada do curso"
-                rows={4}
+                placeholder="Descrição detalhada do curso (aparece na página do curso)"
+                rows={5}
                 className="bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm resize-none"
               />
             </div>
