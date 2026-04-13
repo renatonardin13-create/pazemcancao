@@ -99,9 +99,9 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
         {/* ===== LEFT: Informações + Configurações ===== */}
         <div className="space-y-5 order-1 lg:col-start-1">
           <CardSection title="Informações do Curso">
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label htmlFor="title" className={labelClass}>
-                Título <span className="text-gold">*</span>
+                Título do Curso <span className="text-gold">*</span>
               </Label>
               <Input
                 id="title"
@@ -113,7 +113,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
               />
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label htmlFor="shortDesc" className={labelClass}>Descrição Curta</Label>
               <Textarea
                 id="shortDesc"
@@ -125,24 +125,24 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
               />
             </div>
 
-            <div className="space-y-1">
+            <div className="space-y-1.5">
               <Label htmlFor="fullDesc" className={labelClass}>Descrição Completa</Label>
               <Textarea
                 id="fullDesc"
                 value={fullDesc}
                 onChange={(e) => setFullDesc(e.target.value)}
                 placeholder="Descrição detalhada do curso (aparece na página do curso)"
-                rows={5}
+                rows={4}
                 className="bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm resize-none"
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-1">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
                 <Label className={labelClass}>Categoria</Label>
                 <Select value={categoryId} onValueChange={setCategoryId}>
                   <SelectTrigger className={inputClass}>
-                    <SelectValue placeholder="Selecionar" />
+                    <SelectValue placeholder="Selecione uma categoria" />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((cat: any) => (
@@ -153,7 +153,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <Label className={labelClass}>Status</Label>
                 <Select value={status} onValueChange={setStatus}>
                   <SelectTrigger className={inputClass}>
