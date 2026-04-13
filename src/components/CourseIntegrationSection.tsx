@@ -21,6 +21,7 @@ const PLATFORMS = [
   { value: "hotmart", label: "Hotmart", color: "text-orange-400" },
   { value: "kiwify", label: "Kiwify", color: "text-emerald-400" },
   { value: "cakto", label: "Cakto", color: "text-blue-400" },
+  { value: "outra", label: "Outra", color: "text-purple-400" },
 ];
 
 interface CourseIntegrationSectionProps {
