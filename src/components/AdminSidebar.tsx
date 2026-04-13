@@ -22,6 +22,7 @@ const adminItems = [
   { title: "Categorias", url: "/admin/categories", icon: FolderOpen },
   { title: "Trilhas", url: "/admin/journeys", icon: Compass },
   { title: "Usuários", url: "/admin/users", icon: Users },
+  { title: "Vendas", url: "/admin/vendas", icon: DollarSign },
   { title: "Integrações", url: "/admin/integrations", icon: Webhook },
 ];
 

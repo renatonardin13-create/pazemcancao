@@ -29,6 +29,7 @@ import { Route as AuthenticatedMusicasTrackIdRouteImport } from './routes/_authe
 import { Route as AuthenticatedLouvorTrackIdRouteImport } from './routes/_authenticated.louvor.$trackId'
 import { Route as AuthenticatedCursosCourseIdRouteImport } from './routes/_authenticated.cursos.$courseId'
 import { Route as AuthenticatedConteudoTrackIdRouteImport } from './routes/_authenticated.conteudo.$trackId'
+import { Route as AuthenticatedAdminVendasRouteImport } from './routes/_authenticated.admin.vendas'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated.admin.users'
 import { Route as AuthenticatedAdminTracksRouteImport } from './routes/_authenticated.admin.tracks'
 import { Route as AuthenticatedAdminShelvesRouteImport } from './routes/_authenticated.admin.shelves'
@@ -147,6 +148,12 @@ const AuthenticatedConteudoTrackIdRoute =
     path: '/$trackId',
     getParentRoute: () => AuthenticatedConteudoRoute,
   } as any)
+const AuthenticatedAdminVendasRoute =
+  AuthenticatedAdminVendasRouteImport.update({
+    id: '/vendas',
+    path: '/vendas',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
   id: '/users',
   path: '/users',
@@ -239,6 +246,7 @@ export interface FileRoutesByFullPath {
   '/admin/shelves': typeof AuthenticatedAdminShelvesRoute
   '/admin/tracks': typeof AuthenticatedAdminTracksRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/admin/vendas': typeof AuthenticatedAdminVendasRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/cursos/$courseId': typeof AuthenticatedCursosCourseIdRouteWithChildren
   '/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
@@ -268,6 +276,7 @@ export interface FileRoutesByTo {
   '/admin/shelves': typeof AuthenticatedAdminShelvesRoute
   '/admin/tracks': typeof AuthenticatedAdminTracksRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/admin/vendas': typeof AuthenticatedAdminVendasRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/cursos/$courseId': typeof AuthenticatedCursosCourseIdRouteWithChildren
   '/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
@@ -303,6 +312,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/shelves': typeof AuthenticatedAdminShelvesRoute
   '/_authenticated/admin/tracks': typeof AuthenticatedAdminTracksRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/_authenticated/admin/vendas': typeof AuthenticatedAdminVendasRoute
   '/_authenticated/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/_authenticated/cursos/$courseId': typeof AuthenticatedCursosCourseIdRouteWithChildren
   '/_authenticated/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
@@ -338,6 +348,7 @@ export interface FileRouteTypes {
     | '/admin/shelves'
     | '/admin/tracks'
     | '/admin/users'
+    | '/admin/vendas'
     | '/conteudo/$trackId'
     | '/cursos/$courseId'
     | '/louvor/$trackId'
@@ -367,6 +378,7 @@ export interface FileRouteTypes {
     | '/admin/shelves'
     | '/admin/tracks'
     | '/admin/users'
+    | '/admin/vendas'
     | '/conteudo/$trackId'
     | '/cursos/$courseId'
     | '/louvor/$trackId'
@@ -401,6 +413,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/shelves'
     | '/_authenticated/admin/tracks'
     | '/_authenticated/admin/users'
+    | '/_authenticated/admin/vendas'
     | '/_authenticated/conteudo/$trackId'
     | '/_authenticated/cursos/$courseId'
     | '/_authenticated/louvor/$trackId'
@@ -567,6 +580,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConteudoTrackIdRouteImport
       parentRoute: typeof AuthenticatedConteudoRoute
     }
+    '/_authenticated/admin/vendas': {
+      id: '/_authenticated/admin/vendas'
+      path: '/vendas'
+      fullPath: '/admin/vendas'
+      preLoaderRoute: typeof AuthenticatedAdminVendasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/users': {
       id: '/_authenticated/admin/users'
       path: '/users'
@@ -682,6 +702,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminShelvesRoute: typeof AuthenticatedAdminShelvesRoute
   AuthenticatedAdminTracksRoute: typeof AuthenticatedAdminTracksRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
+  AuthenticatedAdminVendasRoute: typeof AuthenticatedAdminVendasRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
@@ -694,6 +715,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminShelvesRoute: AuthenticatedAdminShelvesRoute,
   AuthenticatedAdminTracksRoute: AuthenticatedAdminTracksRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
+  AuthenticatedAdminVendasRoute: AuthenticatedAdminVendasRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
