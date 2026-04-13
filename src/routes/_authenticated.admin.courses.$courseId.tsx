@@ -71,7 +71,7 @@ function EditCoursePage() {
             </Link>
             <div className="min-w-0">
               <h1 className="font-display text-xl font-black text-foreground tracking-tight truncate">
-                Editar: <span className="text-gold">{courseTitle}</span>
+                Gerenciar: <span className="text-gold">{courseTitle}</span>
               </h1>
               <p className="text-[11px] text-muted-foreground/50 mt-0.5">
                 Gerencie detalhes, módulos e aulas do curso
