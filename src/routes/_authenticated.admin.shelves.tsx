@@ -328,7 +328,52 @@ function AdminVitrinePage() {
     setEditingShelf(null);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // ── Promo dialog handlers ──
+
+  const openCreatePromo = () => {
+    setEditingPromo(null);
+    setPromoTitle("");
+    setPromoImageUrl("");
+    setPromoLinkUrl("");
+    setPromoPosition(1);
+    setPromoOrder(promoBanners.length);
+    setPromoActive(true);
+    setPromoDialogOpen(true);
+  };
+
+  const openEditPromo = (banner: any) => {
+    setEditingPromo(banner);
+    setPromoTitle(banner.title);
+    setPromoImageUrl(banner.image_url);
+    setPromoLinkUrl(banner.link_url || "");
+    setPromoPosition(banner.position_after_shelf);
+    setPromoOrder(banner.sort_order);
+    setPromoActive(banner.is_active);
+    setPromoDialogOpen(true);
+  };
+
+  const closePromoDialog = () => {
+    setPromoDialogOpen(false);
+    setEditingPromo(null);
+  };
+
+  const handlePromoSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const payload = {
+      title: promoTitle,
+      image_url: promoImageUrl,
+      link_url: promoLinkUrl || undefined,
+      position_after_shelf: promoPosition,
+      sort_order: promoOrder,
+      is_active: promoActive,
+    };
+    if (editingPromo) {
+      updatePromoMut.mutate({ id: editingPromo.id, ...payload });
+    } else {
+      createPromoMut.mutate(payload);
+    }
+  };
+
     e.preventDefault();
     const payload = {
       name: formName,
