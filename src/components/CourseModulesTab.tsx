@@ -642,18 +642,15 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                           </div>
                         ))}
 
-                        {/* Add lesson at bottom */}
-                        <div className="pt-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-7 px-3 text-[11px] text-gold/50 hover:text-gold/80 hover:bg-gold/5"
-                            onClick={() => openCreateLesson(mod.id)}
-                          >
-                            <Plus className="h-3 w-3 mr-1" />
-                            Adicionar Aula
-                          </Button>
-                        </div>
+                        {/* Add lesson — full width */}
+                        <button
+                          type="button"
+                          onClick={() => openCreateLesson(mod.id)}
+                          className="w-full mt-1 py-2.5 rounded-lg border border-dashed border-gold/15 bg-gold/3 text-gold/50 hover:text-gold/80 hover:bg-gold/8 hover:border-gold/25 transition-all text-[11px] font-medium flex items-center justify-center gap-1.5"
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                          Adicionar Aula
+                        </button>
                       </div>
                     )}
                   </div>
