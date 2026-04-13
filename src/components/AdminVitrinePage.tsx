@@ -565,31 +565,13 @@ export default function AdminVitrinePage() {
               <div className="rounded-xl border border-border/15 bg-card/5 p-6 space-y-6">
                 {/* Header */}
                 <div>
-                  <h3 className="text-sm font-semibold text-foreground/70 mb-1">
-                    Banner Principal (Hero da Home)
+                  <h3 className="text-sm font-semibold text-gold/80 mb-1">
+                    <span className="text-gold">Banner Principal</span>{" "}
+                    <span className="text-muted-foreground/50 font-normal">(Hero da Home)</span>
                   </h3>
                   <p className="text-[11px] text-muted-foreground/35">
-                    O banner hero que aparece no topo da vitrine de cursos do aluno.
+                    Tamanho recomendado: 1920×500px • Formatos: JPG, PNG, WebP
                   </p>
-                </div>
-
-                {/* Image specs info */}
-                <div className="flex items-start gap-3 rounded-xl bg-gold/5 border border-gold/12 p-4">
-                  <Info className="h-4 w-4 text-gold/50 shrink-0 mt-0.5" />
-                  <div className="space-y-1">
-                    <p className="text-[11px] font-semibold text-foreground/60">
-                      Requisitos da imagem
-                    </p>
-                    <div className="flex flex-wrap gap-3 text-[10px] text-muted-foreground/40">
-                      <span>
-                        Tamanho recomendado: <strong className="text-foreground/50">1920×500 px</strong>
-                      </span>
-                      <span>•</span>
-                      <span>
-                        Formatos: <strong className="text-foreground/50">JPG, PNG, WebP</strong>
-                      </span>
-                    </div>
-                  </div>
                 </div>
 
                 {/* Toggle banner visibility */}
