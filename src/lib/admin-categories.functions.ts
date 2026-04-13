@@ -83,7 +83,7 @@ export const updateCategory = createServerFn({ method: 'POST' })
     const { id, ...updates } = data;
     const { error } = await supabaseAdmin
       .from('categories')
-      .update(updates)
+      .update(updates as any)
       .eq('id', id);
 
     if (error) throw new Error(error.message);
