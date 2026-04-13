@@ -69,6 +69,16 @@ function AdminCoursesPage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const toggleStatusM = useMutation({
+    mutationFn: ({ id, currentStatus }: { id: string; currentStatus: string }) =>
+      updateCourse({ data: { id, status: currentStatus === "published" ? "draft" : "published" } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
+      toast.success("Status atualizado");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
   const allCourses = data?.courses || [];
 
   const filtered = useMemo(() => {
