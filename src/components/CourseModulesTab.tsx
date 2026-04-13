@@ -699,6 +699,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
           })}
         </div>
       )}
+      </div>
       {/* ─── Module Dialog ─── */}
       <Dialog
         open={moduleDialog.open}
