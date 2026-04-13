@@ -14,8 +14,8 @@ import type { Track } from "@/lib/sample-tracks";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/musicas")({
-  validateSearch: (search: Record<string, unknown>) => ({
-    categoria: (search.categoria as string) || undefined,
+  validateSearch: (search: Record<string, unknown>): { categoria?: string } => ({
+    categoria: typeof search.categoria === 'string' ? search.categoria : undefined,
   }),
   component: MusicLibraryPage,
 });
