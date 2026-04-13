@@ -617,10 +617,28 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                                   <MoreHorizontal className="h-3.5 w-3.5" />
                                 </Button>
                               </DropdownMenuTrigger>
-                              <DropdownMenuContent align="end" className="w-40">
+                              <DropdownMenuContent align="end" className="w-44">
                                 <DropdownMenuItem onClick={() => openEditLesson(lesson)} className="gap-2">
                                   <Pencil className="h-3.5 w-3.5" />
                                   Editar aula
+                                </DropdownMenuItem>
+                                <DropdownMenuItem
+                                  onClick={() => {
+                                    createLesM.mutate({
+                                      moduleId: mod.id,
+                                      title: `${lesson.title} (cópia)`,
+                                      description: lesson.description || undefined,
+                                      video_url: lesson.video_url || undefined,
+                                      content_url: lesson.content_url || undefined,
+                                      content_type: lesson.content_type || "video",
+                                      is_free_preview: lesson.is_free_preview || false,
+                                      duration: lesson.duration || "0:00",
+                                    });
+                                  }}
+                                  className="gap-2"
+                                >
+                                  <Copy className="h-3.5 w-3.5" />
+                                  Duplicar aula
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
