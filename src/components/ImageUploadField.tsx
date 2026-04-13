@@ -13,6 +13,7 @@ interface ImageUploadFieldProps {
   folder?: string;
   aspectRatio?: string;
   aspectClass?: string;
+  uploadLabel?: string;
 }
 
 const labelClass = "text-sm font-semibold text-foreground/80";
@@ -96,7 +97,9 @@ export function ImageUploadField({
       />
 
       <div
-        className="rounded-lg border border-dashed border-border/20 bg-background/20 overflow-hidden"
+        className={`rounded-lg border-2 border-dashed overflow-hidden transition-colors ${
+          value ? "border-border/20 bg-background/20" : "border-gold/40 bg-gold/[0.03] hover:bg-gold/[0.06]"
+        }`}
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
       >
@@ -130,18 +133,18 @@ export function ImageUploadField({
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className={`w-full flex flex-col items-center justify-center gap-2 text-muted-foreground/25 cursor-pointer hover:text-muted-foreground/40 transition-colors ${aspectClass}`}
+            className={`w-full flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors ${aspectClass} min-h-[120px]`}
             style={aspectRatio ? { aspectRatio } : undefined}
           >
             {uploading ? (
               <>
-                <Loader2 className="h-7 w-7 animate-spin text-gold/50" />
-                <span className="text-xs">Enviando...</span>
+                <Loader2 className="h-7 w-7 animate-spin text-gold/60" />
+                <span className="text-xs text-gold/60 font-medium">Enviando...</span>
               </>
             ) : (
               <>
-                <Upload className="h-7 w-7" />
-                <span className="text-xs">Clique ou arraste para fazer upload</span>
+                <Upload className="h-7 w-7 text-gold/50" />
+                <span className="text-xs text-muted-foreground/60 font-medium">{uploadLabel}</span>
               </>
             )}
           </button>
