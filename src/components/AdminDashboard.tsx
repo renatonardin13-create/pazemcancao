@@ -43,7 +43,7 @@ export function AdminDashboard() {
     val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
   return (
-    <div className="max-w-7xl mx-auto space-y-5">
+    <div className="max-w-7xl mx-auto space-y-6">
       {/* Header bar */}
       <div className="relative rounded-2xl border border-border/15 bg-gradient-to-r from-card/40 via-card/20 to-card/40 backdrop-blur-sm p-5 overflow-hidden">
         {/* Decorative glow */}
@@ -52,10 +52,10 @@ export function AdminDashboard() {
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative z-10">
           <div>
-            <h1 className="font-display text-2xl font-bold text-foreground tracking-tight">
+            <h1 className="font-display text-3xl font-black text-foreground tracking-tight">
               Dashboard
             </h1>
-            <p className="text-sm text-muted-foreground/60 mt-1">
+            <p className="text-sm text-muted-foreground/70 mt-1.5">
               Bem-vindo de volta! Aqui está um resumo da sua plataforma.
             </p>
           </div>
@@ -130,98 +130,98 @@ export function AdminDashboard() {
       {/* 4 Main Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Receita Total */}
-        <div className="relative rounded-2xl border border-emerald-400/20 bg-gradient-to-br from-emerald-400/[0.06] to-card/5 p-5 transition-all duration-300 hover:shadow-xl hover:shadow-emerald-400/5 group overflow-hidden">
-          <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-emerald-400/[0.05] blur-[60px] group-hover:bg-emerald-400/[0.08] transition-all" />
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold">
+        <div className="relative rounded-2xl border border-emerald-400/25 bg-gradient-to-br from-emerald-400/[0.08] via-card/10 to-card/5 p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-400/10 hover:border-emerald-400/35 group overflow-hidden">
+          <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-emerald-400/[0.07] blur-[50px] group-hover:bg-emerald-400/[0.12] transition-all duration-500" />
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
               Receita Total
             </span>
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-400/10 border border-emerald-400/20">
-              <DollarSign className="h-6 w-6 text-emerald-400" />
+            <div className="flex h-13 w-13 items-center justify-center rounded-2xl bg-emerald-400/15 border border-emerald-400/25 shadow-lg shadow-emerald-400/10">
+              <DollarSign className="h-7 w-7 text-emerald-400" />
             </div>
           </div>
-          <p className="font-display text-3xl font-black text-foreground/95 tracking-tight">
+          <p className="font-display text-4xl font-black text-foreground tracking-tight leading-none">
             {isLoading ? (
-              <span className="inline-block h-10 w-32 animate-pulse rounded-xl bg-muted/15" />
+              <span className="inline-block h-11 w-36 animate-pulse rounded-xl bg-muted/20" />
             ) : formatCurrency(data?.totalRevenue ?? 0)}
           </p>
-          <div className="flex items-center gap-1.5 mt-3">
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-400/10">
+          <div className="flex items-center gap-2 mt-4">
+            <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-400/12 border border-emerald-400/15">
               <ArrowUpRight className="h-3.5 w-3.5 text-emerald-400" />
               <span className="text-[11px] font-bold text-emerald-400">Receita total</span>
             </div>
-            <span className="text-[10px] text-muted-foreground/30">vendas confirmadas</span>
+            <span className="text-[10px] text-muted-foreground/40">vendas confirmadas</span>
           </div>
         </div>
 
         {/* Alunos Registrados */}
-        <div className="relative rounded-2xl border border-gold/20 bg-gradient-to-br from-gold/[0.06] to-card/5 p-5 transition-all duration-300 hover:shadow-xl hover:shadow-gold/5 group overflow-hidden">
-          <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gold/[0.05] blur-[60px] group-hover:bg-gold/[0.08] transition-all" />
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold">
+        <div className="relative rounded-2xl border border-gold/25 bg-gradient-to-br from-gold/[0.08] via-card/10 to-card/5 p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-gold/10 hover:border-gold/35 group overflow-hidden">
+          <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-gold/[0.07] blur-[50px] group-hover:bg-gold/[0.12] transition-all duration-500" />
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
               Alunos Registrados
             </span>
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 border border-gold/20">
-              <GraduationCap className="h-6 w-6 text-gold" />
+            <div className="flex h-13 w-13 items-center justify-center rounded-2xl bg-gold/15 border border-gold/25 shadow-lg shadow-gold/10">
+              <GraduationCap className="h-7 w-7 text-gold" />
             </div>
           </div>
-          <p className="font-display text-3xl font-black text-foreground/95 tracking-tight">
+          <p className="font-display text-4xl font-black text-foreground tracking-tight leading-none">
             {isLoading ? (
-              <span className="inline-block h-10 w-20 animate-pulse rounded-xl bg-muted/15" />
+              <span className="inline-block h-11 w-24 animate-pulse rounded-xl bg-muted/20" />
             ) : data?.totalStudents ?? 0}
           </p>
-          <div className="flex items-center gap-1.5 mt-3">
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-gold/10">
+          <div className="flex items-center gap-2 mt-4">
+            <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-gold/12 border border-gold/15">
               <Users className="h-3.5 w-3.5 text-gold" />
               <span className="text-[11px] font-bold text-gold">Compradores</span>
             </div>
-            <span className="text-[10px] text-muted-foreground/30">com acesso ativo</span>
+            <span className="text-[10px] text-muted-foreground/40">com acesso ativo</span>
           </div>
         </div>
 
         {/* Cursos Ativos */}
-        <div className="relative rounded-2xl border border-blue-400/20 bg-gradient-to-br from-blue-400/[0.06] to-card/5 p-5 transition-all duration-300 hover:shadow-xl hover:shadow-blue-400/5 group overflow-hidden">
-          <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-blue-400/[0.05] blur-[60px] group-hover:bg-blue-400/[0.08] transition-all" />
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold">
+        <div className="relative rounded-2xl border border-blue-400/25 bg-gradient-to-br from-blue-400/[0.08] via-card/10 to-card/5 p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-400/10 hover:border-blue-400/35 group overflow-hidden">
+          <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-blue-400/[0.07] blur-[50px] group-hover:bg-blue-400/[0.12] transition-all duration-500" />
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
               Cursos Ativos
             </span>
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-400/10 border border-blue-400/20">
-              <BookOpen className="h-6 w-6 text-blue-400" />
+            <div className="flex h-13 w-13 items-center justify-center rounded-2xl bg-blue-400/15 border border-blue-400/25 shadow-lg shadow-blue-400/10">
+              <BookOpen className="h-7 w-7 text-blue-400" />
             </div>
           </div>
-          <p className="font-display text-3xl font-black text-foreground/95 tracking-tight">
+          <p className="font-display text-4xl font-black text-foreground tracking-tight leading-none">
             {isLoading ? (
-              <span className="inline-block h-10 w-14 animate-pulse rounded-xl bg-muted/15" />
+              <span className="inline-block h-11 w-16 animate-pulse rounded-xl bg-muted/20" />
             ) : data?.activeCourses ?? 0}
           </p>
-          <div className="flex items-center gap-1.5 mt-3">
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-blue-400/10">
+          <div className="flex items-center gap-2 mt-4">
+            <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-400/12 border border-blue-400/15">
               <BookOpen className="h-3.5 w-3.5 text-blue-400" />
               <span className="text-[11px] font-bold text-blue-400">Publicados</span>
             </div>
-            <span className="text-[10px] text-muted-foreground/30">de {isLoading ? "—" : data?.totalCourses ?? 0} total</span>
+            <span className="text-[10px] text-muted-foreground/40">de {isLoading ? "—" : data?.totalCourses ?? 0} total</span>
           </div>
         </div>
 
         {/* Matrículas Pendentes */}
-        <div className="relative rounded-2xl border border-amber-400/20 bg-gradient-to-br from-amber-400/[0.06] to-card/5 p-5 transition-all duration-300 hover:shadow-xl hover:shadow-amber-400/5 group overflow-hidden">
-          <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-amber-400/[0.05] blur-[60px] group-hover:bg-amber-400/[0.08] transition-all" />
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs uppercase tracking-[0.15em] text-muted-foreground/50 font-semibold">
+        <div className="relative rounded-2xl border border-amber-400/25 bg-gradient-to-br from-amber-400/[0.08] via-card/10 to-card/5 p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-400/10 hover:border-amber-400/35 group overflow-hidden">
+          <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-amber-400/[0.07] blur-[50px] group-hover:bg-amber-400/[0.12] transition-all duration-500" />
+          <div className="flex items-center justify-between mb-4">
+            <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
               Matrículas Pendentes
             </span>
-            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-400/10 border border-amber-400/20">
-              <Clock className="h-6 w-6 text-amber-400" />
+            <div className="flex h-13 w-13 items-center justify-center rounded-2xl bg-amber-400/15 border border-amber-400/25 shadow-lg shadow-amber-400/10">
+              <Clock className="h-7 w-7 text-amber-400" />
             </div>
           </div>
-          <p className="font-display text-3xl font-black text-foreground/95 tracking-tight">
+          <p className="font-display text-4xl font-black text-foreground tracking-tight leading-none">
             {isLoading ? (
-              <span className="inline-block h-10 w-14 animate-pulse rounded-xl bg-muted/15" />
+              <span className="inline-block h-11 w-16 animate-pulse rounded-xl bg-muted/20" />
             ) : data?.pendingEnrollments ?? 0}
           </p>
-          <div className="flex items-center gap-1.5 mt-3">
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-lg bg-amber-400/10">
+          <div className="flex items-center gap-2 mt-4">
+            <div className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-amber-400/12 border border-amber-400/15">
               {(data?.pendingEnrollments ?? 0) > 0 ? (
                 <ArrowUpRight className="h-3.5 w-3.5 text-amber-400" />
               ) : (
@@ -231,7 +231,7 @@ export function AdminDashboard() {
                 {(data?.pendingEnrollments ?? 0) > 0 ? 'Ação necessária' : 'Tudo em dia'}
               </span>
             </div>
-            <span className="text-[10px] text-muted-foreground/30">aguardando aprovação</span>
+            <span className="text-[10px] text-muted-foreground/40">aguardando aprovação</span>
           </div>
         </div>
       </div>
@@ -239,36 +239,38 @@ export function AdminDashboard() {
       {/* Secondary metrics row */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: "Categorias", value: data?.totalCategories ?? 0, icon: BarChart3, color: "text-purple-400", bg: "bg-purple-400/8", border: "border-purple-400/15" },
-          { label: "Músicas Ativas", value: data?.activeTracks ?? 0, icon: Music, color: "text-pink-400", bg: "bg-pink-400/8", border: "border-pink-400/15" },
-          { label: "Sessões Ativas", value: data?.activeSessions ?? 0, icon: Activity, color: "text-cyan-400", bg: "bg-cyan-400/8", border: "border-cyan-400/15" },
-          { label: "Total de Músicas", value: data?.totalTracks ?? 0, icon: Headphones, color: "text-indigo-400", bg: "bg-indigo-400/8", border: "border-indigo-400/15" },
+          { label: "Categorias", value: data?.totalCategories ?? 0, icon: BarChart3, color: "text-purple-400", bg: "bg-purple-400/10", border: "border-purple-400/20" },
+          { label: "Músicas Ativas", value: data?.activeTracks ?? 0, icon: Music, color: "text-pink-400", bg: "bg-pink-400/10", border: "border-pink-400/20" },
+          { label: "Sessões Ativas", value: data?.activeSessions ?? 0, icon: Activity, color: "text-cyan-400", bg: "bg-cyan-400/10", border: "border-cyan-400/20" },
+          { label: "Total de Músicas", value: data?.totalTracks ?? 0, icon: Headphones, color: "text-indigo-400", bg: "bg-indigo-400/10", border: "border-indigo-400/20" },
         ].map((s) => (
-          <div key={s.label} className={`flex items-center gap-3 rounded-xl border ${s.border} ${s.bg} px-4 py-3 transition-all hover:shadow-sm`}>
-            <s.icon className={`h-4 w-4 ${s.color} shrink-0`} />
+          <div key={s.label} className={`flex items-center gap-3.5 rounded-xl border ${s.border} ${s.bg} px-4 py-3.5 transition-all hover:shadow-md`}>
+            <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${s.bg} border ${s.border} shrink-0`}>
+              <s.icon className={`h-4.5 w-4.5 ${s.color}`} />
+            </div>
             <div className="min-w-0">
-              <p className="text-[10px] uppercase tracking-[0.15em] text-muted-foreground/40 font-medium truncate">{s.label}</p>
-              <p className="text-lg font-bold text-foreground/85">
-                {isLoading ? <span className="inline-block h-5 w-8 animate-pulse rounded bg-muted/15" /> : s.value}
+              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/50 font-bold truncate">{s.label}</p>
+              <p className="text-xl font-black text-foreground/90">
+                {isLoading ? <span className="inline-block h-6 w-10 animate-pulse rounded bg-muted/20" /> : s.value}
               </p>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Sales Chart — large, prominent */}
-        <div className="lg:col-span-2 relative rounded-2xl border border-gold/15 bg-gradient-to-br from-gold/[0.03] to-card/5 p-5 sm:p-6 overflow-hidden">
-          <div className="pointer-events-none absolute -top-32 -right-32 h-72 w-72 rounded-full bg-gold/[0.04] blur-[100px]" />
+        <div className="lg:col-span-2 relative rounded-2xl border border-gold/20 bg-gradient-to-br from-gold/[0.04] via-card/10 to-card/5 p-6 sm:p-7 overflow-hidden shadow-lg shadow-black/5">
+          <div className="pointer-events-none absolute -top-32 -right-32 h-72 w-72 rounded-full bg-gold/[0.06] blur-[100px]" />
 
-          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4 relative">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-5 relative">
             <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 border border-gold/20 shadow-lg shadow-gold/5">
-                <TrendingUp className="h-6 w-6 text-gold" />
+              <div className="flex h-13 w-13 items-center justify-center rounded-2xl bg-gold/15 border border-gold/25 shadow-xl shadow-gold/10">
+                <TrendingUp className="h-7 w-7 text-gold" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-foreground/90 tracking-tight">Visão Geral de Vendas</h3>
-                <p className="text-xs text-muted-foreground/40 mt-0.5">Desempenho de receita mensal</p>
+                <h3 className="text-xl font-black text-foreground tracking-tight">Visão Geral de Vendas</h3>
+                <p className="text-xs text-muted-foreground/50 mt-0.5">Desempenho de receita mensal</p>
               </div>
             </div>
             <div className="flex gap-1 rounded-xl bg-muted/10 border border-border/15 p-1 self-start">
@@ -376,14 +378,14 @@ export function AdminDashboard() {
         </div>
 
         {/* Best Performing Courses — sidebar card */}
-        <div className="lg:col-span-1 rounded-2xl border border-border/15 bg-gradient-to-br from-card/10 to-card/5 p-5 flex flex-col">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gold/10 border border-gold/20">
-              <GraduationCap className="h-5 w-5 text-gold" />
+        <div className="lg:col-span-1 rounded-2xl border border-border/20 bg-gradient-to-br from-card/15 via-card/10 to-card/5 p-5 flex flex-col shadow-lg shadow-black/5">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gold/15 border border-gold/25 shadow-lg shadow-gold/10">
+              <GraduationCap className="h-5.5 w-5.5 text-gold" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-foreground/85 tracking-tight">Cursos com Melhor Desempenho</h3>
-              <p className="text-[11px] text-muted-foreground/35">Mais vendidos este mês</p>
+              <h3 className="text-base font-black text-foreground tracking-tight">Melhor Desempenho</h3>
+              <p className="text-[11px] text-muted-foreground/45">Mais vendidos este mês</p>
             </div>
           </div>
 
@@ -415,7 +417,7 @@ export function AdminDashboard() {
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-foreground/80 truncate font-semibold group-hover:text-foreground transition-colors">{course.title}</p>
+                        <p className="text-sm text-foreground/90 truncate font-bold group-hover:text-foreground transition-colors">{course.title}</p>
                         <div className="flex items-center gap-3 mt-1">
                           <span className="text-[11px] text-muted-foreground/40 flex items-center gap-1">
                             <Users className="h-3 w-3" /> {course.students}
@@ -444,18 +446,18 @@ export function AdminDashboard() {
       </div>
 
       {/* Engagement Analytics */}
-      <div className="space-y-3">
+      <div className="space-y-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-purple-400/10 border border-purple-400/15">
-            <Zap className="h-4 w-4 text-purple-400" />
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-400/15 border border-purple-400/20 shadow-lg shadow-purple-400/5">
+            <Zap className="h-5 w-5 text-purple-400" />
           </div>
           <div>
-            <h2 className="text-sm font-bold text-foreground/80">Análise de Engajamento</h2>
-            <p className="text-[11px] text-muted-foreground/35">Detalhes de uso da plataforma</p>
+            <h2 className="text-lg font-black text-foreground tracking-tight">Análise de Engajamento</h2>
+            <p className="text-xs text-muted-foreground/45">Detalhes de uso da plataforma</p>
           </div>
         </div>
 
-        <Tabs defaultValue="top-played" className="space-y-3">
+        <Tabs defaultValue="top-played" className="space-y-4">
           <TabsList className="bg-card/10 border border-border/15 p-1 rounded-xl">
             <TabsTrigger value="top-played" className="text-xs rounded-lg data-[state=active]:bg-gold/10 data-[state=active]:text-gold data-[state=active]:border-gold/15 data-[state=active]:border">
               <Headphones className="h-4 w-4 mr-2" /> Mais Ouvidas
