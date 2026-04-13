@@ -50,10 +50,28 @@ export function StudentSidebar() {
     staleTime: 60_000,
   });
 
+  const allTracks = tracksData?.tracks || [];
   const categories = catData?.categories || [];
   const hasVitrine = (shelvesData?.shelves || []).length > 0;
   const hasCourses = (myCoursesData?.courses || []).length > 0;
-  const hasTracks = (tracksData?.tracks || []).length > 0;
+  const hasTracks = allTracks.length > 0;
+
+  // Build set of categories that have at least one active track
+  const categoriesWithTracks = useMemo(() => {
+    const catSet = new Set<string>();
+    for (const t of allTracks) {
+      if (t.category) catSet.add(t.category.toLowerCase());
+    }
+    return catSet;
+  }, [allTracks]);
+
+  const visibleCategories = useMemo(() => {
+    return categories.filter((cat: any) => {
+      const slug = (cat.slug || cat.name.toLowerCase()).toLowerCase();
+      const name = cat.name.toLowerCase();
+      return categoriesWithTracks.has(slug) || categoriesWithTracks.has(name);
+    });
+  }, [categories, categoriesWithTracks]);
 
   const isActive = (path: string) => location.pathname === path;
   const isActivePrefix = (path: string) => location.pathname.startsWith(path);
