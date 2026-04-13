@@ -433,6 +433,7 @@ function AdminUsersPage() {
             )}
           </DialogContent>
         </Dialog>
+        </div>
       </div>
 
       {/* Stat Cards */}
