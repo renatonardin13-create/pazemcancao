@@ -283,12 +283,6 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   </div>
                 )}
               </div>
-              <Input
-                value={coverUrl}
-                onChange={(e) => setCoverUrl(e.target.value)}
-                placeholder="URL da imagem de capa..."
-                className="h-9 bg-background/50 border-border/15 rounded-lg text-xs"
-              />
             </div>
 
             <div className="border-t border-border/6" />
@@ -320,12 +314,6 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   </div>
                 )}
               </div>
-              <Input
-                value={bannerUrl}
-                onChange={(e) => setBannerUrl(e.target.value)}
-                placeholder="URL do banner..."
-                className="h-9 bg-background/50 border-border/15 rounded-lg text-xs"
-              />
             </div>
           </CardSection>
         </div>
