@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Video, BookText, Save, Loader2, ImageIcon, X } from "lucide-react";
+import { Video, BookText, Save, Loader2, ImageIcon, X, Upload } from "lucide-react";
 
 interface CourseFormProps {
   initialValues?: any;
@@ -94,7 +94,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
   return (
     <form ref={ref} onSubmit={handleSubmit}>
-      <div className="flex flex-col lg:grid lg:grid-cols-[1fr_260px] gap-4">
+      <div className="flex flex-col lg:grid lg:grid-cols-[1fr_300px] gap-4">
 
         {/* ===== LEFT: Informações + Configurações ===== */}
         <div className="space-y-4 order-1 lg:col-start-1">
@@ -107,7 +107,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder="Ex: Curso de Piano para Iniciantes"
+                placeholder="Ex: Curso Completo de Marketing Digital"
                 required
                 className={inputClass}
               />
@@ -115,12 +115,13 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
             <div className="space-y-1">
               <Label htmlFor="shortDesc" className={labelClass}>Descrição Curta</Label>
-              <Input
+              <Textarea
                 id="shortDesc"
                 value={shortDesc}
                 onChange={(e) => setShortDesc(e.target.value)}
-                placeholder="Breve descrição exibida nos cards"
-                className={inputClass}
+                placeholder="Uma breve descrição do curso (aparece na vitrine)"
+                rows={3}
+                className="bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm resize-none"
               />
             </div>
 
@@ -130,8 +131,8 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 id="fullDesc"
                 value={fullDesc}
                 onChange={(e) => setFullDesc(e.target.value)}
-                placeholder="Descrição detalhada do curso"
-                rows={4}
+                placeholder="Descrição detalhada do curso (aparece na página do curso)"
+                rows={5}
                 className="bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm resize-none"
               />
             </div>
@@ -231,24 +232,21 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   {coverUrl ? (
                     <img src={coverUrl} alt="Capa" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="flex flex-col items-center gap-1 text-muted-foreground/15">
-                      <ImageIcon className="h-6 w-6" />
-                      <span className="text-[7px] uppercase tracking-[0.2em]">Sem capa</span>
+                    <div className="flex flex-col items-center justify-center gap-1.5 text-muted-foreground/20">
+                      <ImageIcon className="h-7 w-7" />
+                      <span className="text-[10px]">Sem imagem</span>
                     </div>
                   )}
                 </div>
-                <div className="p-2.5 space-y-0.5">
-                  <p className="text-xs font-bold text-foreground/80 leading-snug line-clamp-2">
-                    {title || "Título do curso"}
+                <div className="p-3 space-y-1">
+                  <p className="text-sm font-bold text-foreground/85 leading-snug line-clamp-2">
+                    {title || "Título do Curso"}
                   </p>
-                  <p className="text-[10px] text-muted-foreground/40 line-clamp-2 leading-relaxed">
-                    {shortDesc || "Descrição curta aparecerá aqui..."}
+                  <p className="text-[11px] text-muted-foreground/45 line-clamp-2 leading-relaxed">
+                    {shortDesc || "Descrição do curso aparecerá aqui"}
                   </p>
                 </div>
               </div>
-              <p className="text-[7px] text-center text-muted-foreground/20 uppercase tracking-[0.2em] mt-2">
-                Atualização em tempo real
-              </p>
             </div>
           </div>
         </div>
@@ -258,11 +256,13 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
           <CardSection title="Imagens">
             {/* Capa */}
             <div className="space-y-2">
-              <div className="flex items-baseline justify-between">
+              <div>
                 <Label className={labelClass}>Capa do Curso</Label>
-                <span className="text-[9px] text-muted-foreground/30">400×225 px · 16:9</span>
+                <p className="text-[10px] text-muted-foreground/40 mt-0.5">
+                  Imagem exibida na listagem de cursos (recomendado: 400×225)
+                </p>
               </div>
-              <div className="rounded-lg border border-dashed border-border/15 bg-background/20 overflow-hidden">
+              <div className="rounded-lg border border-dashed border-border/20 bg-background/20 overflow-hidden max-w-sm">
                 {coverUrl ? (
                   <div className="relative group">
                     <img src={coverUrl} alt="Capa" className="w-full aspect-video object-cover" />
@@ -275,9 +275,9 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                     </button>
                   </div>
                 ) : (
-                  <div className="aspect-video flex flex-col items-center justify-center gap-1 text-muted-foreground/15">
-                    <ImageIcon className="h-5 w-5" />
-                    <span className="text-[8px] uppercase tracking-widest">Sem imagem</span>
+                  <div className="aspect-video flex flex-col items-center justify-center gap-2 text-muted-foreground/25 cursor-pointer hover:text-muted-foreground/40 transition-colors">
+                    <Upload className="h-6 w-6" />
+                    <span className="text-[11px]">Clique para fazer upload</span>
                   </div>
                 )}
               </div>
@@ -285,7 +285,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 value={coverUrl}
                 onChange={(e) => setCoverUrl(e.target.value)}
                 placeholder="URL da imagem de capa..."
-                className="h-8 bg-background/50 border-border/15 rounded-lg text-[11px]"
+                className="h-8 bg-background/50 border-border/15 rounded-lg text-[11px] max-w-sm"
               />
             </div>
 
@@ -293,11 +293,13 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
             {/* Banner */}
             <div className="space-y-2">
-              <div className="flex items-baseline justify-between">
+              <div>
                 <Label className={labelClass}>Banner Principal</Label>
-                <span className="text-[9px] text-muted-foreground/30">1920×600 px</span>
+                <p className="text-[10px] text-muted-foreground/40 mt-0.5">
+                  Banner grande exibido na vitrine Netflix (recomendado: 1920×600)
+                </p>
               </div>
-              <div className="rounded-lg border border-dashed border-border/15 bg-background/20 overflow-hidden">
+              <div className="rounded-lg border border-dashed border-border/20 bg-background/20 overflow-hidden">
                 {bannerUrl ? (
                   <div className="relative group">
                     <img src={bannerUrl} alt="Banner" className="w-full object-cover" style={{ aspectRatio: "1920/600" }} />
@@ -310,9 +312,9 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                     </button>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center gap-1 text-muted-foreground/15 py-5">
-                    <ImageIcon className="h-5 w-5" />
-                    <span className="text-[8px] uppercase tracking-widest">Sem banner</span>
+                  <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground/25 py-8 cursor-pointer hover:text-muted-foreground/40 transition-colors">
+                    <Upload className="h-6 w-6" />
+                    <span className="text-[11px]">Clique para fazer upload do banner</span>
                   </div>
                 )}
               </div>
