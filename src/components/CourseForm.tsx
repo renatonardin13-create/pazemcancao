@@ -370,8 +370,8 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
           </div>
         </div>
 
-        {/* ========== RIGHT COLUMN — Preview ========== */}
-        <div className="order-first lg:order-2">
+        {/* ========== Preview — order 2 on mobile, right col spanning on desktop ========== */}
+        <div className="order-2 lg:order-2 lg:col-start-2 lg:row-start-1 lg:row-span-3">
           <div className="rounded-2xl border border-border/15 bg-card lg:sticky lg:top-6 shadow-lg shadow-black/10 overflow-hidden">
             <div className="px-5 py-3.5 border-b border-border/10 bg-card/80">
               <h3 className="text-xs font-black text-foreground/80 tracking-tight uppercase">
