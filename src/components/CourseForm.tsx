@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Video, FileText, Save, Loader2, ImageIcon } from "lucide-react";
+import { Video, FileText, Save, Loader2, ImageIcon, File, Link as LinkIcon } from "lucide-react";
 import { ImageUploadField } from "@/components/ImageUploadField";
 
 interface CourseFormProps {
@@ -27,7 +27,9 @@ const labelClass = "text-sm font-semibold text-foreground/80";
 
 const COURSE_TYPE_OPTIONS = [
   { value: "video", label: "Vídeo", icon: Video },
-  { value: "ebook", label: "E-book / PDF", icon: FileText },
+  { value: "ebook", label: "PDF", icon: FileText },
+  { value: "file", label: "Arquivo", icon: File },
+  { value: "link", label: "Link", icon: LinkIcon },
 ] as const;
 
 const normalizeCourseType = (value?: string) => (value === "video" ? "video" : "ebook");
