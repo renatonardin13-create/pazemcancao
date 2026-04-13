@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { listAdminCourses, deleteCourse } from "@/lib/admin-courses.functions";
+import { listAdminCourses, deleteCourse, updateCourse } from "@/lib/admin-courses.functions";
 import { useState, useMemo } from "react";
 import { StatusBadge } from "@/components/StatusBadge";
 import {
@@ -9,14 +9,12 @@ import {
   BookText,
   Pencil,
   Trash2,
-  Eye,
-  Copy,
   Search,
   MoreHorizontal,
-  Layers,
-  GraduationCap,
   ChevronLeft,
   ChevronRight,
+  EyeOff,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -67,6 +65,16 @@ function AdminCoursesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
       toast.success("Curso excluído com sucesso");
+    },
+    onError: (e: Error) => toast.error(e.message),
+  });
+
+  const toggleStatusM = useMutation({
+    mutationFn: ({ id, currentStatus }: { id: string; currentStatus: string }) =>
+      updateCourse({ data: { id, status: currentStatus === "published" ? "draft" : "published" } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
+      toast.success("Status atualizado");
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -284,26 +292,26 @@ function AdminCoursesPage() {
                             className="flex items-center gap-2"
                           >
                             <Pencil className="h-3.5 w-3.5" />
-                            Editar curso
+                            Gerenciar Curso
                           </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link
-                            to="/admin/courses/$courseId"
-                            params={{ courseId: course.id }}
-                            className="flex items-center gap-2"
-                          >
-                            <Layers className="h-3.5 w-3.5" />
-                            Gerenciar módulos e aulas
-                          </Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="flex items-center gap-2">
-                          <Eye className="h-3.5 w-3.5" />
-                          Visualizar
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="flex items-center gap-2">
-                          <Copy className="h-3.5 w-3.5" />
-                          Duplicar
+                        <DropdownMenuItem
+                          className="flex items-center gap-2"
+                          onClick={() =>
+                            toggleStatusM.mutate({ id: course.id, currentStatus: course.status })
+                          }
+                        >
+                          {course.status === "published" ? (
+                            <>
+                              <EyeOff className="h-3.5 w-3.5" />
+                              Despublicar
+                            </>
+                          ) : (
+                            <>
+                              <Eye className="h-3.5 w-3.5" />
+                              Publicar
+                            </>
+                          )}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
