@@ -47,61 +47,69 @@ function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="max-w-6xl mx-auto space-y-4">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <Link to="/admin" className="text-muted-foreground/50 hover:text-muted-foreground transition-colors">
-          <ArrowLeft className="h-5 w-5" />
-        </Link>
-        <div>
-          <div className="flex items-center gap-2">
-            <Settings className="h-5 w-5 text-gold/60" />
-            <h1 className="text-2xl font-bold text-foreground">Configurações da Plataforma</h1>
+      <div className="relative rounded-2xl border border-gold/10 bg-gradient-to-r from-card via-card/80 to-card px-6 py-4 overflow-hidden shadow-xl shadow-black/10">
+        <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gold/[0.05] blur-[60px]" />
+        <div className="flex items-center justify-between relative z-10">
+          <div className="flex items-center gap-3">
+            <Link
+              to="/admin"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/15 bg-background/30 text-muted-foreground/50 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all duration-200"
+            >
+              <ArrowLeft className="h-4 w-4" />
+            </Link>
+            <div>
+              <h1 className="font-display text-xl font-black text-foreground tracking-tight">
+                Configurações da Plataforma
+              </h1>
+              <p className="text-[11px] text-muted-foreground/50 mt-0.5">
+                Personalize a aparência e comportamento da sua área de membros
+              </p>
+            </div>
           </div>
-          <p className="text-sm text-muted-foreground mt-0.5">
-            Personalize a aparência e comportamento da sua área de membros
-          </p>
         </div>
       </div>
 
+      {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="bg-muted/10 border border-border/20">
-          <TabsTrigger value="branding" className="gap-1.5 text-xs">
+        <TabsList className="bg-card/60 border border-border/10 p-1 rounded-xl flex-wrap h-auto">
+          <TabsTrigger value="branding" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
             <Upload className="h-3.5 w-3.5" /> Identidade Visual
           </TabsTrigger>
-          <TabsTrigger value="colors" className="gap-1.5 text-xs">
+          <TabsTrigger value="colors" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
             <Palette className="h-3.5 w-3.5" /> Cores
           </TabsTrigger>
-          <TabsTrigger value="general" className="gap-1.5 text-xs">
+          <TabsTrigger value="general" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
             <Globe className="h-3.5 w-3.5" /> Geral
           </TabsTrigger>
-          <TabsTrigger value="analytics" className="gap-1.5 text-xs">
+          <TabsTrigger value="analytics" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
             <Link2 className="h-3.5 w-3.5" /> Integrações
           </TabsTrigger>
-          <TabsTrigger value="notifications" className="gap-1.5 text-xs">
+          <TabsTrigger value="notifications" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
             <Bell className="h-3.5 w-3.5" /> Notificações
           </TabsTrigger>
-          <TabsTrigger value="advanced" className="gap-1.5 text-xs">
+          <TabsTrigger value="advanced" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
             <Wrench className="h-3.5 w-3.5" /> Avançado
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="branding">
+        <TabsContent value="branding" className="mt-4">
           <BrandingTab settings={settings.branding || {}} onSave={(v) => mutation.mutate({ key: "branding", value: v })} saving={mutation.isPending} />
         </TabsContent>
-        <TabsContent value="colors">
+        <TabsContent value="colors" className="mt-4">
           <ColorsTab settings={settings.colors || {}} onSave={(v) => mutation.mutate({ key: "colors", value: v })} saving={mutation.isPending} />
         </TabsContent>
-        <TabsContent value="general">
+        <TabsContent value="general" className="mt-4">
           <GeneralTab settings={settings.general || {}} onSave={(v) => mutation.mutate({ key: "general", value: v })} saving={mutation.isPending} />
         </TabsContent>
-        <TabsContent value="analytics">
+        <TabsContent value="analytics" className="mt-4">
           <AnalyticsTab settings={settings.analytics || {}} onSave={(v) => mutation.mutate({ key: "analytics", value: v })} saving={mutation.isPending} />
         </TabsContent>
-        <TabsContent value="notifications">
+        <TabsContent value="notifications" className="mt-4">
           <NotificationsTab settings={settings.notifications || {}} onSave={(v) => mutation.mutate({ key: "notifications", value: v })} saving={mutation.isPending} />
         </TabsContent>
-        <TabsContent value="advanced">
+        <TabsContent value="advanced" className="mt-4">
           <AdvancedTab settings={settings.advanced || {}} onSave={(v) => mutation.mutate({ key: "advanced", value: v })} saving={mutation.isPending} />
         </TabsContent>
       </Tabs>
