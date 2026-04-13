@@ -543,17 +543,14 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
 
                 {/* Expanded: lesson list */}
                 {isExpanded && (
-                  <div className="border-t border-border/10 bg-background/30">
+                  <div className="bg-background/20 px-4 py-3">
                     {lessons.length === 0 ? (
-                      <div className="px-10 py-10 text-center">
+                      <div className="text-center py-10 ml-6 rounded-lg border border-dashed border-border/10 bg-card/3">
                         <div className="w-10 h-10 rounded-xl bg-card/10 border border-border/10 flex items-center justify-center mx-auto mb-3">
                           <FileText className="h-5 w-5 text-muted-foreground/20" />
                         </div>
                         <p className="text-[12px] text-muted-foreground/35 mb-0.5">
                           Este módulo ainda não possui aulas.
-                        </p>
-                        <p className="text-[11px] text-muted-foreground/25">
-                          Clique em adicionar aula para começar.
                         </p>
                         <Button
                           variant="outline"
@@ -566,99 +563,97 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                         </Button>
                       </div>
                     ) : (
-                      lessons.map((lesson: any, lesIndex: number) => (
-                        <div
-                          key={lesson.id}
-                          className="flex items-center gap-3 px-5 pl-14 py-3 border-b border-border/8 last:border-0 hover:bg-card/10 transition-colors group"
-                        >
-                          {/* Drag / reorder */}
-                          <div className="flex flex-col gap-0.5">
+                      <div className="ml-6 space-y-1.5">
+                        {lessons.map((lesson: any, lesIndex: number) => (
+                          <div
+                            key={lesson.id}
+                            className="flex items-center gap-3 px-4 py-2.5 rounded-lg border border-border/8 bg-card/5 hover:bg-card/10 hover:border-border/15 transition-all group"
+                          >
+                            {/* Drag */}
                             <button
                               type="button"
-                              className="text-muted-foreground/10 hover:text-muted-foreground/35 disabled:opacity-20 transition-colors opacity-0 group-hover:opacity-100"
+                              className="text-muted-foreground/10 hover:text-muted-foreground/35 disabled:opacity-20 transition-colors opacity-0 group-hover:opacity-100 cursor-grab active:cursor-grabbing shrink-0"
                               disabled={lesIndex === 0}
                               onClick={() => moveLessonInModule(mod, lesIndex, "up")}
                             >
                               <GripVertical className="h-3.5 w-3.5" />
                             </button>
-                          </div>
 
-                          {/* Icon */}
-                          <div className="w-7 h-7 rounded-lg bg-card/10 border border-border/10 flex items-center justify-center shrink-0">
-                            {getLessonTypeIcon(lesson)}
-                          </div>
+                            {/* Content type icon */}
+                            <div className="w-7 h-7 rounded-lg bg-card/10 border border-border/8 flex items-center justify-center shrink-0">
+                              {getLessonTypeIcon(lesson)}
+                            </div>
 
-                          {/* Lesson name */}
-                          <div className="flex-1 min-w-0">
-                            <p className="text-[13px] text-foreground/75 truncate font-medium">
-                              {lesson.title}
-                            </p>
-                          </div>
+                            {/* Lesson name */}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[12px] text-foreground/70 truncate font-medium">
+                                {lesson.title}
+                              </p>
+                            </div>
 
-                          {/* Type label */}
-                          <Badge variant="outline" className="text-[9px] rounded-full px-2 py-0 border-border/15 text-muted-foreground/35 font-normal">
-                            {getLessonTypeLabel(lesson)}
-                          </Badge>
-
-                          {/* Duration */}
-                          {lesson.duration && lesson.duration !== "0:00" && (
-                            <span className="text-[10px] text-muted-foreground/30 shrink-0 tabular-nums">
-                              {lesson.duration}
+                            {/* Type label */}
+                            <span className="text-[9px] text-muted-foreground/30 px-2 py-0.5 rounded-md bg-card/10 border border-border/6 shrink-0">
+                              {getLessonTypeLabel(lesson)}
                             </span>
-                          )}
 
-                          {/* Free preview */}
-                          {lesson.is_free_preview && (
-                            <Badge
-                              variant="outline"
-                              className="text-[9px] rounded-full px-2 py-0 border text-blue-400/70 border-blue-500/20 bg-blue-500/8 font-medium"
-                            >
-                              Preview
-                            </Badge>
-                          )}
+                            {/* Duration */}
+                            {lesson.duration && lesson.duration !== "0:00" && (
+                              <span className="text-[10px] text-muted-foreground/25 shrink-0 tabular-nums">
+                                {lesson.duration}
+                              </span>
+                            )}
 
-                          {/* Lesson actions */}
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <MoreHorizontal className="h-3.5 w-3.5" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-40">
-                              <DropdownMenuItem onClick={() => openEditLesson(lesson)} className="gap-2">
-                                <Pencil className="h-3.5 w-3.5" />
-                                Editar aula
-                              </DropdownMenuItem>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem
-                                className="gap-2 text-destructive focus:text-destructive"
-                                onClick={() => {
-                                  if (confirm("Excluir esta aula?")) {
-                                    deleteLesM.mutate(lesson.id);
-                                  }
-                                }}
+                            {/* Free preview badge */}
+                            {lesson.is_free_preview && (
+                              <Badge
+                                variant="outline"
+                                className="text-[9px] rounded-full px-2 py-0 border text-blue-400/70 border-blue-500/20 bg-blue-500/8 font-medium shrink-0"
                               >
-                                <Trash2 className="h-3.5 w-3.5" />
-                                Excluir aula
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                      ))
-                    )}
+                                Preview
+                              </Badge>
+                            )}
 
-                    {/* Add lesson at bottom — only show if there are already lessons */}
-                    {lessons.length > 0 && (
-                      <div className="px-5 pl-14 py-3 border-t border-border/8">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 px-3 text-[11px] text-gold/50 hover:text-gold/80 hover:bg-gold/5"
-                          onClick={() => openCreateLesson(mod.id)}
-                        >
-                          <Plus className="h-3 w-3 mr-1" />
-                          Adicionar Aula
-                        </Button>
+                            {/* Lesson actions */}
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground/20 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                                  <MoreHorizontal className="h-3.5 w-3.5" />
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-40">
+                                <DropdownMenuItem onClick={() => openEditLesson(lesson)} className="gap-2">
+                                  <Pencil className="h-3.5 w-3.5" />
+                                  Editar aula
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem
+                                  className="gap-2 text-destructive focus:text-destructive"
+                                  onClick={() => {
+                                    if (confirm("Excluir esta aula?")) {
+                                      deleteLesM.mutate(lesson.id);
+                                    }
+                                  }}
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                  Excluir aula
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </div>
+                        ))}
+
+                        {/* Add lesson at bottom */}
+                        <div className="pt-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 px-3 text-[11px] text-gold/50 hover:text-gold/80 hover:bg-gold/5"
+                            onClick={() => openCreateLesson(mod.id)}
+                          >
+                            <Plus className="h-3 w-3 mr-1" />
+                            Adicionar Aula
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </div>
