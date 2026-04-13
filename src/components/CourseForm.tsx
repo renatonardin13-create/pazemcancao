@@ -95,13 +95,13 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   const selectedCategory = categories.find((c: any) => c.id === categoryId);
 
   return (
-    <form ref={ref} onSubmit={handleSubmit} className="space-y-8">
-      {/* Main layout: info + preview */}
-      <div className="grid lg:grid-cols-[1fr_280px] gap-6">
-        {/* Left column — Course Info */}
+    <form ref={ref} onSubmit={handleSubmit} className="space-y-6">
+      {/* 2-column layout: desktop side-by-side, mobile stacked */}
+      <div className="grid lg:grid-cols-[1fr_300px] gap-6">
+        {/* ========== LEFT COLUMN — Info + Images ========== */}
         <div className="space-y-6">
           {/* Card: Informações do Curso */}
-          <div className="rounded-xl border border-border/15 bg-card/5 p-5 space-y-5">
+          <div className="rounded-xl border border-border/10 bg-card/5 p-5 space-y-5">
             <h3 className="text-sm font-semibold text-foreground/70 tracking-tight">
               Informações do Curso
             </h3>
@@ -229,13 +229,96 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
               </div>
             </div>
           </div>
+
+          {/* Card: Imagens */}
+          <div className="rounded-xl border border-border/10 bg-card/5 p-5 space-y-5">
+            <h3 className="text-sm font-semibold text-foreground/70 tracking-tight">
+              Imagens
+            </h3>
+
+            <div className="grid sm:grid-cols-2 gap-6">
+              {/* Cover image */}
+              <div className="space-y-2">
+                <Label htmlFor="coverUrl">Capa do Curso</Label>
+                <Input
+                  id="coverUrl"
+                  value={coverUrl}
+                  onChange={(e) => setCoverUrl(e.target.value)}
+                  placeholder="https://..."
+                  className="bg-card/10 border-border/15"
+                />
+                <ImageFieldHint
+                  ratio="16:9"
+                  recommendedSize="400x225"
+                  autoCrop
+                  note="Para melhor resultado nos cards da vitrine, prefira imagem vertical em proporção 2:3."
+                  previewUrl={coverUrl || null}
+                />
+                <p className="text-[10px] text-muted-foreground/30">
+                  Formatos aceitos: JPG, PNG, WebP
+                </p>
+                {coverUrl && (
+                  <img
+                    src={coverUrl}
+                    alt="Capa"
+                    className="mt-2 h-24 w-auto rounded-lg object-cover border border-border/10"
+                  />
+                )}
+              </div>
+
+              {/* Banner image */}
+              <div className="space-y-2">
+                <Label htmlFor="bannerUrl">Banner Principal</Label>
+                <Input
+                  id="bannerUrl"
+                  value={bannerUrl}
+                  onChange={(e) => setBannerUrl(e.target.value)}
+                  placeholder="https://..."
+                  className="bg-card/10 border-border/15"
+                />
+                <div className="flex items-center gap-2 mt-1 flex-wrap">
+                  <span className="text-[10px] text-muted-foreground/35 shrink-0">Proporção:</span>
+                  {bannerRatioOptions.map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => setBannerRatio(opt.value)}
+                      className={`px-2.5 py-1 rounded-md text-[10px] font-medium border transition-all ${
+                        bannerRatio === opt.value
+                          ? "border-gold/30 bg-gold/10 text-gold"
+                          : "border-border/15 bg-card/5 text-muted-foreground/35 hover:border-border/30"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                <ImageFieldHint
+                  ratio={currentBannerOption.value}
+                  recommendedSize={currentBannerOption.size}
+                  autoCrop
+                  previewUrl={bannerUrl || null}
+                />
+                <p className="text-[10px] text-muted-foreground/30">
+                  Formatos aceitos: JPG, PNG, WebP
+                </p>
+                {bannerUrl && (
+                  <img
+                    src={bannerUrl}
+                    alt="Banner"
+                    className="mt-2 h-24 w-auto rounded-lg object-cover border border-border/10"
+                  />
+                )}
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Right column — Preview */}
-        <div className="space-y-4">
-          <div className="rounded-xl border border-border/15 bg-card/5 p-4 space-y-4 sticky top-6">
+        {/* ========== RIGHT COLUMN — Preview ========== */}
+        <div>
+          <div className="rounded-xl border border-border/10 bg-card/5 p-4 space-y-4 sticky top-6">
             <h3 className="text-sm font-semibold text-foreground/70 tracking-tight">
-              Preview
+              Preview do Curso
             </h3>
 
             {/* Cover preview */}
@@ -285,88 +368,19 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 R$ {parseFloat(price).toFixed(2)}
               </p>
             )}
-          </div>
-        </div>
-      </div>
 
-      {/* Card: Imagens */}
-      <div className="rounded-xl border border-border/15 bg-card/5 p-5 space-y-5">
-        <h3 className="text-sm font-semibold text-foreground/70 tracking-tight">
-          Imagens
-        </h3>
-
-        <div className="grid sm:grid-cols-2 gap-6">
-          {/* Cover image */}
-          <div className="space-y-2">
-            <Label htmlFor="coverUrl">Capa do Curso</Label>
-            <Input
-              id="coverUrl"
-              value={coverUrl}
-              onChange={(e) => setCoverUrl(e.target.value)}
-              placeholder="https://..."
-              className="bg-card/10 border-border/15"
-            />
-            <ImageFieldHint
-              ratio="16:9"
-              recommendedSize="400x225"
-              autoCrop
-              note="Para melhor resultado nos cards da vitrine, prefira imagem vertical em proporção 2:3."
-              previewUrl={coverUrl || null}
-            />
-            <p className="text-[10px] text-muted-foreground/30">
-              Formatos aceitos: JPG, PNG, WebP
-            </p>
-            {coverUrl && (
-              <img
-                src={coverUrl}
-                alt="Capa"
-                className="mt-2 h-24 w-auto rounded-lg object-cover border border-border/15"
-              />
-            )}
-          </div>
-
-          {/* Banner image */}
-          <div className="space-y-2">
-            <Label htmlFor="bannerUrl">Banner Principal</Label>
-            <Input
-              id="bannerUrl"
-              value={bannerUrl}
-              onChange={(e) => setBannerUrl(e.target.value)}
-              placeholder="https://..."
-              className="bg-card/10 border-border/15"
-            />
-            <div className="flex items-center gap-2 mt-1 flex-wrap">
-              <span className="text-[10px] text-muted-foreground/35 shrink-0">Proporção:</span>
-              {bannerRatioOptions.map((opt) => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => setBannerRatio(opt.value)}
-                  className={`px-2.5 py-1 rounded-md text-[10px] font-medium border transition-all ${
-                    bannerRatio === opt.value
-                      ? "border-gold/30 bg-gold/10 text-gold"
-                      : "border-border/15 bg-card/5 text-muted-foreground/35 hover:border-border/30"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-            <ImageFieldHint
-              ratio={currentBannerOption.value}
-              recommendedSize={currentBannerOption.size}
-              autoCrop
-              previewUrl={bannerUrl || null}
-            />
-            <p className="text-[10px] text-muted-foreground/30">
-              Formatos aceitos: JPG, PNG, WebP
-            </p>
+            {/* Banner preview */}
             {bannerUrl && (
-              <img
-                src={bannerUrl}
-                alt="Banner"
-                className="mt-2 h-24 w-auto rounded-lg object-cover border border-border/15"
-              />
+              <div className="space-y-1.5 pt-2 border-t border-border/10">
+                <p className="text-[10px] uppercase tracking-widest text-muted-foreground/25">Banner</p>
+                <div className="rounded-lg overflow-hidden border border-border/10">
+                  <img
+                    src={bannerUrl}
+                    alt="Banner"
+                    className="w-full h-auto object-cover"
+                  />
+                </div>
+              </div>
             )}
           </div>
         </div>
@@ -374,7 +388,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
       {/* Submit */}
       {!hideSubmitButton && (
-        <div className="flex justify-end pt-4 border-t border-border/15">
+        <div className="flex justify-end pt-4 border-t border-border/10">
           <Button type="submit" disabled={isSubmitting || !title.trim()}>
             {isSubmitting ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
