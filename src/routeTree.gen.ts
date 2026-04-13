@@ -15,6 +15,7 @@ import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedVitrineRouteImport } from './routes/_authenticated.vitrine'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated.perfil'
 import { Route as AuthenticatedMusicasRouteImport } from './routes/_authenticated.musicas'
 import { Route as AuthenticatedDownloadsRouteImport } from './routes/_authenticated.downloads'
@@ -72,6 +73,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedVitrineRoute = AuthenticatedVitrineRouteImport.update({
+  id: '/vitrine',
+  path: '/vitrine',
+  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
   id: '/perfil',
@@ -245,6 +251,7 @@ export interface FileRoutesByFullPath {
   '/downloads': typeof AuthenticatedDownloadsRoute
   '/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/perfil': typeof AuthenticatedPerfilRoute
+  '/vitrine': typeof AuthenticatedVitrineRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
@@ -277,6 +284,7 @@ export interface FileRoutesByTo {
   '/downloads': typeof AuthenticatedDownloadsRoute
   '/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/perfil': typeof AuthenticatedPerfilRoute
+  '/vitrine': typeof AuthenticatedVitrineRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
@@ -313,6 +321,7 @@ export interface FileRoutesById {
   '/_authenticated/downloads': typeof AuthenticatedDownloadsRoute
   '/_authenticated/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
+  '/_authenticated/vitrine': typeof AuthenticatedVitrineRoute
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/_authenticated/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
   '/_authenticated/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
@@ -350,6 +359,7 @@ export interface FileRouteTypes {
     | '/downloads'
     | '/musicas'
     | '/perfil'
+    | '/vitrine'
     | '/admin/categories'
     | '/admin/conteudos'
     | '/admin/courses'
@@ -382,6 +392,7 @@ export interface FileRouteTypes {
     | '/downloads'
     | '/musicas'
     | '/perfil'
+    | '/vitrine'
     | '/admin/categories'
     | '/admin/conteudos'
     | '/admin/integrations'
@@ -417,6 +428,7 @@ export interface FileRouteTypes {
     | '/_authenticated/downloads'
     | '/_authenticated/musicas'
     | '/_authenticated/perfil'
+    | '/_authenticated/vitrine'
     | '/_authenticated/admin/categories'
     | '/_authenticated/admin/conteudos'
     | '/_authenticated/admin/courses'
@@ -494,6 +506,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/vitrine': {
+      id: '/_authenticated/vitrine'
+      path: '/vitrine'
+      fullPath: '/vitrine'
+      preLoaderRoute: typeof AuthenticatedVitrineRouteImport
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/perfil': {
       id: '/_authenticated/perfil'
@@ -806,6 +825,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedDownloadsRoute: typeof AuthenticatedDownloadsRoute
   AuthenticatedMusicasRoute: typeof AuthenticatedMusicasRouteWithChildren
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
+  AuthenticatedVitrineRoute: typeof AuthenticatedVitrineRoute
   AuthenticatedLouvorTrackIdRoute: typeof AuthenticatedLouvorTrackIdRoute
 }
 
@@ -816,6 +836,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedDownloadsRoute: AuthenticatedDownloadsRoute,
   AuthenticatedMusicasRoute: AuthenticatedMusicasRouteWithChildren,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
+  AuthenticatedVitrineRoute: AuthenticatedVitrineRoute,
   AuthenticatedLouvorTrackIdRoute: AuthenticatedLouvorTrackIdRoute,
 }
 
