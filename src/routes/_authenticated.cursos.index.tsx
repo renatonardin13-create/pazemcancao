@@ -28,9 +28,35 @@ function CoursesVitrinePage() {
   });
 
   const shelves = data?.shelves || [];
-  const featuredCourse = shelves
-    .flatMap((shelf: any) => shelf.courses || [])
-    .find((course: any) => course.banner_image_url || course.cover_image_url);
+  const promoBanners = data?.promoBanners || [];
+  const featuredCourse = data?.featuredCourse || null;
+
+  // Build interleaved list: shelves + promo banners at configured positions
+  const interleaved: Array<
+    | { type: "shelf"; data: any; index: number }
+    | { type: "promo"; data: any }
+  > = [];
+
+  shelves.forEach((shelf: any, idx: number) => {
+    interleaved.push({ type: "shelf", data: shelf, index: idx });
+
+    // Insert promo banners configured to appear after this shelf position (1-based)
+    const bannersAfter = promoBanners
+      .filter((b: any) => b.position_after_shelf === idx + 1)
+      .sort((a: any, b: any) => a.sort_order - b.sort_order);
+
+    for (const banner of bannersAfter) {
+      interleaved.push({ type: "promo", data: banner });
+    }
+  });
+
+  // Promo banners with position beyond the last shelf go at the end
+  const bannersAtEnd = promoBanners
+    .filter((b: any) => b.position_after_shelf > shelves.length)
+    .sort((a: any, b: any) => a.sort_order - b.sort_order);
+  for (const banner of bannersAtEnd) {
+    interleaved.push({ type: "promo", data: banner });
+  }
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -120,7 +146,7 @@ function CoursesVitrinePage() {
           </motion.div>
         )}
 
-        {/* Shelves */}
+        {/* Shelves + Promo Banners */}
         <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mt-6 sm:mt-8">
           {isLoading ? (
             <div className="text-center py-24">
@@ -129,7 +155,7 @@ function CoursesVitrinePage() {
                 Carregando cursos...
               </p>
             </div>
-          ) : shelves.length === 0 ? (
+          ) : interleaved.length === 0 ? (
             <div className="text-center py-24">
               <BookOpen className="h-10 w-10 text-muted-foreground/15 mx-auto mb-5" />
               <p className="text-sm text-muted-foreground/40">
@@ -138,9 +164,24 @@ function CoursesVitrinePage() {
             </div>
           ) : (
             <div className="space-y-10 sm:space-y-14">
-              {shelves.map((shelf: any, shelfIdx: number) => (
-                <ShelfRow key={shelf.id} shelf={shelf} shelfIdx={shelfIdx} />
-              ))}
+              {interleaved.map((item, idx) => {
+                if (item.type === "shelf") {
+                  return (
+                    <ShelfRow
+                      key={`shelf-${item.data.id}`}
+                      shelf={item.data}
+                      shelfIdx={item.index}
+                    />
+                  );
+                }
+                return (
+                  <PromoBannerRow
+                    key={`promo-${item.data.id}`}
+                    banner={item.data}
+                    index={idx}
+                  />
+                );
+              })}
             </div>
           )}
         </div>
@@ -149,6 +190,45 @@ function CoursesVitrinePage() {
       <FooterLinks />
     </div>
   );
+}
+
+/* ── Promo Banner Row ── */
+
+function PromoBannerRow({ banner, index }: { banner: any; index: number }) {
+  const content = (
+    <motion.div
+      initial="hidden"
+      animate="visible"
+      variants={fadeUp}
+      custom={0.1 + index * 0.05}
+      className="w-full rounded-xl overflow-hidden border border-border/10 bg-card/5 transition-all hover:border-gold/15 hover:shadow-lg hover:shadow-gold/5"
+    >
+      <div className="relative w-full aspect-[3/1] sm:aspect-[4/1]">
+        <img
+          src={banner.image_url}
+          alt={banner.title}
+          className="w-full h-full object-cover"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+      </div>
+    </motion.div>
+  );
+
+  if (banner.link_url) {
+    return (
+      <a
+        href={banner.link_url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="block"
+      >
+        {content}
+      </a>
+    );
+  }
+
+  return content;
 }
 
 /* ── Shelf Row with scroll arrows ── */
