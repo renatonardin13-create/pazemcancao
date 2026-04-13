@@ -515,15 +515,12 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={() => {
-                          updateModM.mutate({
-                            id: mod.id,
-                            status: mod.status === "published" ? "draft" : "published",
-                          });
+                          createModM.mutate({ title: `${mod.title} (cópia)`, description: mod.description || undefined });
                         }}
                         className="gap-2"
                       >
                         <Copy className="h-3.5 w-3.5" />
-                        {mod.status === "published" ? "Despublicar" : "Publicar"}
+                        Duplicar módulo
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
