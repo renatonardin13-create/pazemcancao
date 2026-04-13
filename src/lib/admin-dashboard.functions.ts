@@ -21,20 +21,55 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
       if (!isAdminEmail) throw new Error('Acesso não autorizado');
     }
 
-    // Fetch all counts in parallel using head:true (no row data transferred)
     const [
       { count: totalCategories },
       { count: totalTracks },
       { count: activeTracks },
       { count: totalStudents },
       { count: activeSessions },
+      { count: totalCourses },
+      { count: activeCourses },
+      { count: pendingEnrollments },
     ] = await Promise.all([
       supabaseAdmin.from('categories').select('*', { count: 'exact', head: true }),
       supabaseAdmin.from('tracks').select('*', { count: 'exact', head: true }),
       supabaseAdmin.from('tracks').select('*', { count: 'exact', head: true }).eq('is_active', true),
       supabaseAdmin.from('approved_buyers').select('*', { count: 'exact', head: true }),
       supabaseAdmin.from('active_sessions').select('*', { count: 'exact', head: true }).eq('is_valid', true),
+      supabaseAdmin.from('courses').select('*', { count: 'exact', head: true }),
+      supabaseAdmin.from('courses').select('*', { count: 'exact', head: true }).eq('status', 'published'),
+      supabaseAdmin.from('enrollments').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
     ]);
+
+    // Fetch top courses by enrollment count
+    const { data: topCoursesRaw } = await supabaseAdmin
+      .from('courses')
+      .select('id, title, cover_image_url, price')
+      .eq('status', 'published')
+      .order('sort_order', { ascending: true })
+      .limit(5);
+
+    let topCourses: { id: string; title: string; coverUrl: string | null; price: number; students: number }[] = [];
+
+    if (topCoursesRaw?.length) {
+      const courseIds = topCoursesRaw.map(c => c.id);
+      const { data: enrollCounts } = await supabaseAdmin
+        .from('enrollments')
+        .select('course_id')
+        .in('course_id', courseIds)
+        .eq('status', 'active');
+
+      const countMap: Record<string, number> = {};
+      enrollCounts?.forEach(e => { countMap[e.course_id] = (countMap[e.course_id] || 0) + 1; });
+
+      topCourses = topCoursesRaw.map(c => ({
+        id: c.id,
+        title: c.title,
+        coverUrl: c.cover_image_url,
+        price: c.price,
+        students: countMap[c.id] || 0,
+      })).sort((a, b) => b.students - a.students);
+    }
 
     return {
       totalCategories: totalCategories || 0,
@@ -42,5 +77,9 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
       activeTracks: activeTracks || 0,
       totalStudents: totalStudents || 0,
       activeSessions: activeSessions || 0,
+      totalCourses: totalCourses || 0,
+      activeCourses: activeCourses || 0,
+      pendingEnrollments: pendingEnrollments || 0,
+      topCourses,
     };
   });
