@@ -465,26 +465,22 @@ export default function AdminVitrinePage() {
         </p>
       </div>
 
-      {/* ── Summary Cards ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <SummaryCard
-          label="Cursos Publicados"
-          value={publishedCourses.length}
-          icon={BookOpen}
-          color="emerald"
-        />
-        <SummaryCard
-          label="Prateleiras Ativas"
-          value={activeShelves.length}
-          icon={Layers}
-          color="gold"
-        />
-        <SummaryCard
-          label="Banner Principal"
-          value={featuredCourse ? "Configurado" : "Não configurado"}
-          icon={Image}
-          color={featuredCourse ? "emerald" : "amber"}
-        />
+      {/* ── Summary Stats ── */}
+      <div className="flex flex-wrap items-center gap-x-10 gap-y-2">
+        <p className="text-sm text-muted-foreground/50">
+          Cursos Publicados:{" "}
+          <strong className="text-gold font-bold">{publishedCourses.length}</strong>
+        </p>
+        <p className="text-sm text-muted-foreground/50">
+          Prateleiras Ativas:{" "}
+          <strong className="text-gold font-bold">{activeShelves.length}</strong>
+        </p>
+        <p className="text-sm text-muted-foreground/50">
+          Banner Principal:{" "}
+          <strong className={`font-bold ${featuredCourse ? "text-emerald-400" : "text-amber-400"}`}>
+            {featuredCourse ? "Ativo" : "Inativo"}
+          </strong>
+        </p>
       </div>
 
       {/* ── Main content ── */}
