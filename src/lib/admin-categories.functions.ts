@@ -37,6 +37,7 @@ export const createCategory = createServerFn({ method: 'POST' })
     slug: string;
     description?: string;
     icon?: string;
+    color?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
@@ -55,8 +56,9 @@ export const createCategory = createServerFn({ method: 'POST' })
         slug: data.slug,
         description: data.description || null,
         icon: data.icon || null,
+        color: data.color || null,
         sort_order: (maxOrder?.sort_order ?? 0) + 1,
-      })
+      } as any)
       .select()
       .single();
 
@@ -72,6 +74,7 @@ export const updateCategory = createServerFn({ method: 'POST' })
     slug?: string;
     description?: string;
     icon?: string;
+    color?: string;
     is_featured?: boolean;
   }) => input)
   .handler(async ({ data, context }) => {
@@ -80,7 +83,7 @@ export const updateCategory = createServerFn({ method: 'POST' })
     const { id, ...updates } = data;
     const { error } = await supabaseAdmin
       .from('categories')
-      .update(updates)
+      .update(updates as any)
       .eq('id', id);
 
     if (error) throw new Error(error.message);

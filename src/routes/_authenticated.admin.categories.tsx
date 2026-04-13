@@ -10,6 +10,7 @@ import {
 import { FolderOpen, Plus, Trash2, Pencil, GripVertical, Check, X, Tag } from "lucide-react";
 import { useState, useCallback } from "react";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,17 +25,17 @@ export const Route = createFileRoute("/_authenticated/admin/categories")({
   component: AdminCategoriesPage,
 });
 
-const CATEGORY_COLORS = [
-  "bg-rose-500", "bg-emerald-500", "bg-purple-500", "bg-amber-500",
-  "bg-blue-500", "bg-cyan-500", "bg-pink-500", "bg-orange-500",
-  "bg-teal-500", "bg-indigo-500",
+const PICKER_COLORS = [
+  "#C8A951", "#3B82F6", "#EC4899", "#22C55E", "#F97316",
+  "#A855F7", "#06B6D4", "#F43F5E", "#14B8A6", "#F59E0B",
+  "#10B981",
 ];
 
 function AdminCategoriesPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingCat, setEditingCat] = useState<any>(null);
-  const [editValues, setEditValues] = useState({ name: "", slug: "", description: "", icon: "" });
-  const [newCat, setNewCat] = useState({ name: "", slug: "", description: "", icon: "" });
+  const [editValues, setEditValues] = useState({ name: "", slug: "", description: "", icon: "", color: "" });
+  const [newCat, setNewCat] = useState({ name: "", slug: "", description: "", icon: "", color: PICKER_COLORS[0] });
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
@@ -43,19 +44,19 @@ function AdminCategoriesPage() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (input: { name: string; slug: string; description?: string; icon?: string }) =>
+    mutationFn: (input: { name: string; slug: string; description?: string; icon?: string; color?: string }) =>
       createCategory({ data: input }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
       toast.success("Categoria criada");
       setShowForm(false);
-      setNewCat({ name: "", slug: "", description: "", icon: "" });
+      setNewCat({ name: "", slug: "", description: "", icon: "", color: PICKER_COLORS[0] });
     },
     onError: (err: any) => toast.error(err.message),
   });
 
   const updateMutation = useMutation({
-    mutationFn: (input: { id: string; name?: string; slug?: string; description?: string; icon?: string }) =>
+    mutationFn: (input: { id: string; name?: string; slug?: string; description?: string; icon?: string; color?: string }) =>
       updateCategory({ data: input }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
@@ -103,6 +104,7 @@ function AdminCategoriesPage() {
       slug: cat.slug,
       description: cat.description || "",
       icon: cat.icon || "",
+      color: cat.color || PICKER_COLORS[0],
     });
   };
 
@@ -139,7 +141,7 @@ function AdminCategoriesPage() {
               Categorias
             </h2>
             <Button
-              onClick={() => { setShowForm(true); setNewCat({ name: "", slug: "", description: "", icon: "" }); }}
+              onClick={() => { setShowForm(true); setNewCat({ name: "", slug: "", description: "", icon: "", color: PICKER_COLORS[0] }); }}
               className="gap-1.5 h-9 bg-gold/90 text-gold-foreground hover:bg-gold font-semibold text-[12px]"
               size="sm"
             >
@@ -170,7 +172,7 @@ function AdminCategoriesPage() {
                   <GripVertical className="h-4 w-4 text-muted-foreground/15 shrink-0 cursor-grab" />
 
                   {/* Color dot */}
-                  <div className={`h-3 w-3 rounded-full shrink-0 ${CATEGORY_COLORS[index % CATEGORY_COLORS.length]}`} />
+                  <div className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: cat.color || PICKER_COLORS[index % PICKER_COLORS.length] }} />
 
                   {/* Content */}
                   <div className="flex-1 min-w-0">
@@ -238,31 +240,44 @@ function AdminCategoriesPage() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              if (!newCat.name || !newCat.slug) { toast.error("Nome e slug são obrigatórios"); return; }
-              createMutation.mutate(newCat);
+              if (!newCat.name) { toast.error("Nome é obrigatório"); return; }
+              const slug = newCat.slug || newCat.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+              createMutation.mutate({ ...newCat, slug });
             }}
             className="space-y-4 mt-4"
           >
             <div className="space-y-2">
               <Label>Nome *</Label>
-              <Input value={newCat.name} onChange={(e) => handleNameChange(e.target.value, "new")} placeholder="Ex: Teologia" />
+              <Input value={newCat.name} onChange={(e) => handleNameChange(e.target.value, "new")} placeholder="Ex: Marketing Digital" />
             </div>
             <div className="space-y-2">
-              <Label>Slug</Label>
-              <Input value={newCat.slug} onChange={(e) => setNewCat((p) => ({ ...p, slug: e.target.value }))} placeholder="teologia" />
+              <Label>Cor</Label>
+              <div className="flex flex-wrap gap-2">
+                {PICKER_COLORS.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    onClick={() => setNewCat((p) => ({ ...p, color }))}
+                    className={`h-9 w-9 rounded-full transition-all ${newCat.color === color ? "ring-2 ring-gold ring-offset-2 ring-offset-background scale-110" : "hover:scale-105"}`}
+                    style={{ backgroundColor: color }}
+                  />
+                ))}
+              </div>
             </div>
             <div className="space-y-2">
-              <Label>Descrição</Label>
-              <Input value={newCat.description} onChange={(e) => setNewCat((p) => ({ ...p, description: e.target.value }))} placeholder="Breve descrição..." />
-            </div>
-            <div className="space-y-2">
-              <Label>Ícone (emoji)</Label>
-              <Input value={newCat.icon} onChange={(e) => setNewCat((p) => ({ ...p, icon: e.target.value }))} placeholder="📖" />
+              <Label>Descrição (opcional)</Label>
+              <Textarea
+                value={newCat.description}
+                onChange={(e) => setNewCat((p) => ({ ...p, description: e.target.value }))}
+                placeholder="Breve descrição da categoria"
+                rows={3}
+                className="resize-none"
+              />
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setShowForm(false)}>Cancelar</Button>
               <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" disabled={createMutation.isPending}>
-                {createMutation.isPending ? "Criando..." : "Criar Categoria"}
+                {createMutation.isPending ? "Salvando..." : "Salvar"}
               </Button>
             </div>
           </form>
@@ -288,16 +303,28 @@ function AdminCategoriesPage() {
               <Input value={editValues.name} onChange={(e) => handleNameChange(e.target.value, "edit")} />
             </div>
             <div className="space-y-2">
-              <Label>Slug</Label>
-              <Input value={editValues.slug} onChange={(e) => setEditValues((p) => ({ ...p, slug: e.target.value }))} />
+              <Label>Cor</Label>
+              <div className="flex flex-wrap gap-2">
+                {PICKER_COLORS.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    onClick={() => setEditValues((p) => ({ ...p, color }))}
+                    className={`h-9 w-9 rounded-full transition-all ${editValues.color === color ? "ring-2 ring-gold ring-offset-2 ring-offset-background scale-110" : "hover:scale-105"}`}
+                    style={{ backgroundColor: color }}
+                  />
+                ))}
+              </div>
             </div>
             <div className="space-y-2">
-              <Label>Descrição</Label>
-              <Input value={editValues.description} onChange={(e) => setEditValues((p) => ({ ...p, description: e.target.value }))} />
-            </div>
-            <div className="space-y-2">
-              <Label>Ícone (emoji)</Label>
-              <Input value={editValues.icon} onChange={(e) => setEditValues((p) => ({ ...p, icon: e.target.value }))} />
+              <Label>Descrição (opcional)</Label>
+              <Textarea
+                value={editValues.description}
+                onChange={(e) => setEditValues((p) => ({ ...p, description: e.target.value }))}
+                placeholder="Breve descrição da categoria"
+                rows={3}
+                className="resize-none"
+              />
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setEditingCat(null)}>Cancelar</Button>
