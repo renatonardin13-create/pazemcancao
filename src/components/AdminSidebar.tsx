@@ -15,7 +15,7 @@ import {
 
 const contentItems = [
   { title: "Músicas", url: "/admin/tracks", icon: Music },
-  { title: "Conteúdos", url: "/admin/conteudos", icon: BookOpen },
+  
   { title: "Cursos", url: "/admin/courses", icon: BookOpen },
   { title: "Vitrine", url: "/admin/shelves", icon: Layout },
   { title: "Categorias", url: "/admin/categories", icon: FolderOpen },
