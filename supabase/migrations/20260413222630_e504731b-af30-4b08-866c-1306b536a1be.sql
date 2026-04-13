@@ -1,0 +1,1 @@
+ALTER TABLE public.modules ADD COLUMN thumbnail_url TEXT;

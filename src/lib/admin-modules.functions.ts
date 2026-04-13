@@ -32,7 +32,7 @@ export const listModules = createServerFn({ method: 'POST' })
 
 export const createModule = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { courseId: string; title: string; description?: string }) => input)
+  .inputValidator((input: { courseId: string; title: string; description?: string; status?: string; thumbnail_url?: string }) => input)
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: role } = await supabase
@@ -56,7 +56,9 @@ export const createModule = createServerFn({ method: 'POST' })
         title: data.title,
         description: data.description || null,
         sort_order: nextOrder,
-      })
+        status: data.status || 'published',
+        thumbnail_url: data.thumbnail_url || null,
+      } as any)
       .select()
       .single();
 
@@ -66,7 +68,7 @@ export const createModule = createServerFn({ method: 'POST' })
 
 export const updateModule = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { id: string; title?: string; description?: string; status?: string; sort_order?: number }) => input)
+  .inputValidator((input: { id: string; title?: string; description?: string; status?: string; sort_order?: number; thumbnail_url?: string }) => input)
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
     const { data: role } = await supabase
@@ -76,7 +78,7 @@ export const updateModule = createServerFn({ method: 'POST' })
     const { id, ...updates } = data;
     const { data: mod, error } = await supabaseAdmin
       .from('modules')
-      .update(updates)
+      .update(updates as any)
       .eq('id', id)
       .select()
       .single();
