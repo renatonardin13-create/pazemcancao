@@ -73,7 +73,7 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
     }
 
     const enrichedCourses = (courses || []).map((course) => {
-      const enrollment = enrollments.find((e) => e.course_id === course.id);
+      const enrollment = enrollmentByCourse.get(course.id);
       const totalLessons = lessonCountMap.get(course.id) || course.total_lessons || 0;
       const completedLessons = completedLessonsMap.get(course.id) || 0;
       const progressPct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
@@ -86,7 +86,13 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
         completed_lessons: completedLessons,
         progress_pct: progressPct,
         enrolled_at: enrollment?.enrolled_at,
+        granted_at: enrollment?.granted_at,
+        access_origin: enrollment?.access_origin,
       };
+    }).sort((a, b) => {
+      const aDate = new Date(a.granted_at || a.enrolled_at || 0).getTime();
+      const bDate = new Date(b.granted_at || b.enrolled_at || 0).getTime();
+      return bDate - aDate;
     });
 
     const inProgress = enrichedCourses.filter((c) => c.progress_pct > 0 && c.progress_pct < 100).length;
