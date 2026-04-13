@@ -5,7 +5,7 @@ import { getAdminCourse, updateCourse } from "@/lib/admin-courses.functions";
 import { CourseModulesTab } from "@/components/CourseModulesTab";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Save, Loader2, X } from "lucide-react";
+import { ArrowLeft, Save, Loader2, X, CheckCircle, AlertCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { useState, useRef } from "react";
@@ -132,7 +132,23 @@ function EditCoursePage() {
           />
         </TabsContent>
 
-        <TabsContent value="modules" className="mt-6">
+        <TabsContent value="modules" className="mt-6 space-y-6">
+          {/* Status banner */}
+          {course?.status === "published" ? (
+            <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+              <CheckCircle className="h-4 w-4 text-emerald-400 shrink-0" />
+              <span className="text-[13px] text-emerald-400 font-medium">
+                Curso publicado e visível para os alunos
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
+              <AlertCircle className="h-4 w-4 text-amber-400 shrink-0" />
+              <span className="text-[13px] text-amber-400 font-medium">
+                Curso em rascunho — não visível para os alunos
+              </span>
+            </div>
+          )}
           <CourseModulesTab courseId={courseId} />
         </TabsContent>
 
