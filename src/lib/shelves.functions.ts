@@ -164,11 +164,15 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       }
     }
 
-    // Find the best featured course for the banner
-    const allEnrichedCourses = publishedCourses.map(enrichCourse);
-    const featuredCourse = allEnrichedCourses.find(
-      (c: any) => c.banner_image_url || c.cover_image_url
-    ) || null;
+    // Find the best featured course for the banner — only from shelf courses
+    const shelfCourseIds = new Set(
+      result.flatMap((s: any) => s.courses.map((c: any) => c.id))
+    );
+    const featuredCourse = result.length > 0
+      ? result[0].courses.find(
+          (c: any) => c.banner_image_url || c.cover_image_url
+        ) || null
+      : null;
 
     return {
       shelves: result,
