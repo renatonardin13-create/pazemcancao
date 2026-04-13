@@ -140,7 +140,6 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                 <Select value={platform} onValueChange={setPlatform}>
                   <SelectTrigger className="bg-card/10 border-gold/20 focus:border-gold/40">
                     <SelectValue placeholder="Selecione a plataforma" />
-                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {PLATFORMS.map((p) => (
