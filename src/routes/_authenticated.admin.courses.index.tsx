@@ -331,31 +331,36 @@ function AdminCoursesPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-5 py-3 border-t border-border/10">
-              <span className="text-[11px] text-muted-foreground/30">
-                {filtered.length} curso{filtered.length !== 1 ? "s" : ""} · Página{" "}
-                {page} de {totalPages}
-              </span>
-              <div className="flex items-center gap-1">
+            <div className="flex items-center justify-center px-5 py-3 border-t border-border/10 gap-1">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                disabled={page <= 1}
+                onClick={() => setPage((p) => p - 1)}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                 <Button
-                  variant="ghost"
+                  key={p}
+                  variant={p === page ? "default" : "ghost"}
                   size="icon"
-                  className="h-7 w-7"
-                  disabled={page <= 1}
-                  onClick={() => setPage((p) => p - 1)}
+                  className={`h-8 w-8 text-xs ${p === page ? "bg-primary text-primary-foreground" : ""}`}
+                  onClick={() => setPage(p)}
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  {p}
                 </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-7 w-7"
-                  disabled={page >= totalPages}
-                  onClick={() => setPage((p) => p + 1)}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
+              ))}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                disabled={page >= totalPages}
+                onClick={() => setPage((p) => p + 1)}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
             </div>
           )}
         </div>
