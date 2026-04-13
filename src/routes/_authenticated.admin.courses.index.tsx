@@ -171,7 +171,7 @@ function AdminCoursesPage() {
           <Table>
             <TableHeader>
               <TableRow className="border-border/10 hover:bg-transparent">
-                <TableHead className="w-[52px] text-[10px] uppercase tracking-widest text-muted-foreground/30">
+                <TableHead className="w-[72px] text-[10px] uppercase tracking-widest text-muted-foreground/30">
                   Capa
                 </TableHead>
                 <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/30">
