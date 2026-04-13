@@ -971,6 +971,62 @@ export type Database = {
         }
         Relationships: []
       }
+      transactions: {
+        Row: {
+          amount: number
+          buyer_email: string
+          buyer_name: string
+          course_id: string | null
+          course_title: string
+          created_at: string
+          external_order_id: string | null
+          id: string
+          payment_method: string | null
+          platform: string | null
+          status: string
+          transaction_code: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          buyer_email: string
+          buyer_name: string
+          course_id?: string | null
+          course_title: string
+          created_at?: string
+          external_order_id?: string | null
+          id?: string
+          payment_method?: string | null
+          platform?: string | null
+          status?: string
+          transaction_code: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          buyer_email?: string
+          buyer_name?: string
+          course_id?: string | null
+          course_title?: string
+          created_at?: string
+          external_order_id?: string | null
+          id?: string
+          payment_method?: string | null
+          platform?: string | null
+          status?: string
+          transaction_code?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_access_logs: {
         Row: {
           block_reason: string | null
