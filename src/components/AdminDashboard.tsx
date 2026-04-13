@@ -43,7 +43,7 @@ export function AdminDashboard() {
     val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
+    <div className="max-w-7xl mx-auto space-y-5">
       {/* Header bar */}
       <div className="flex flex-col gap-5 pb-6 border-b border-border/15">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
