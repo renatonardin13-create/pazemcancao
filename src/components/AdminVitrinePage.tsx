@@ -745,17 +745,22 @@ export default function AdminVitrinePage() {
 
             {/* ── Banners Promo ── */}
             <TabsContent value="promo" className="mt-6 space-y-6">
-              <div className="rounded-xl border border-border/15 bg-card/5 p-6 space-y-5">
-                <div className="flex items-center justify-between">
+              <div className="space-y-5">
+                {/* Header with button */}
+                <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="text-sm font-semibold text-foreground/70 mb-1">Banners Promo</h3>
-                    <p className="text-[11px] text-muted-foreground/35">
-                      Campanhas, eventos e banners promocionais exibidos entre as prateleiras
+                    <h3 className="text-base font-bold text-foreground/85">
+                      Banners Promo{" "}
+                      <span className="font-normal text-muted-foreground/50">Campanhas Eventos</span>
+                    </h3>
+                    <p className="text-[11px] text-muted-foreground/40 mt-0.5">
+                      Tamanho recomendado: 1200×400px • Aparecem entre as prateleiras
                     </p>
                   </div>
                   <Button
+                    variant="outline"
                     size="sm"
-                    className="gap-1.5 bg-gold/90 text-gold-foreground hover:bg-gold shadow-lg shadow-gold/20 font-semibold"
+                    className="gap-1.5 shrink-0"
                     onClick={openCreatePromo}
                   >
                     <Plus className="h-3.5 w-3.5" />
@@ -763,30 +768,11 @@ export default function AdminVitrinePage() {
                   </Button>
                 </div>
 
-                {/* Image specs info */}
-                <div className="flex items-start gap-3 rounded-xl bg-gold/5 border border-gold/12 p-4">
-                  <Info className="h-4 w-4 text-gold/50 shrink-0 mt-0.5" />
-                  <div className="space-y-1">
-                    <p className="text-[11px] font-semibold text-foreground/60">
-                      Requisitos da imagem
-                    </p>
-                    <div className="flex flex-wrap gap-3 text-[10px] text-muted-foreground/40">
-                      <span>
-                        Tamanho recomendado: <strong className="text-foreground/50">1200×400 px</strong>
-                      </span>
-                      <span>•</span>
-                      <span>
-                        Formatos: <strong className="text-foreground/50">JPG, PNG, WebP</strong>
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
                 {/* List or empty state */}
                 {promoBanners.length === 0 ? (
                   <div className="text-center py-12 rounded-xl border border-dashed border-border/12 bg-card/3">
-                    <div className="w-12 h-12 rounded-2xl bg-gold/8 border border-gold/15 flex items-center justify-center mx-auto mb-4">
-                      <ImageIcon className="h-6 w-6 text-gold/30" />
+                    <div className="w-12 h-12 rounded-2xl bg-card/8 border border-border/15 flex items-center justify-center mx-auto mb-4">
+                      <ImageIcon className="h-6 w-6 text-muted-foreground/20" />
                     </div>
                     <p className="text-[13px] font-medium text-foreground/50 mb-1">
                       Nenhum banner secundário cadastrado
@@ -794,14 +780,6 @@ export default function AdminVitrinePage() {
                     <p className="text-[11px] text-muted-foreground/30 max-w-xs mx-auto">
                       Adicione banners promocionais para a vitrine
                     </p>
-                    <Button
-                      size="sm"
-                      className="mt-5 bg-gold/90 text-gold-foreground hover:bg-gold shadow-lg shadow-gold/20"
-                      onClick={openCreatePromo}
-                    >
-                      <Plus className="h-3.5 w-3.5 mr-1.5" />
-                      Criar primeiro banner
-                    </Button>
                   </div>
                 ) : (
                   <div className="space-y-2.5">
@@ -810,7 +788,6 @@ export default function AdminVitrinePage() {
                         key={banner.id}
                         className="flex items-center gap-4 rounded-xl border border-border/15 bg-card/8 px-5 py-3.5 transition-all hover:bg-card/12"
                       >
-                        {/* Thumbnail */}
                         <div className="w-20 h-[28px] rounded-lg overflow-hidden border border-border/10 bg-card/10 shrink-0">
                           {banner.image_url ? (
                             <img src={banner.image_url} alt="" className="w-full h-full object-cover" />
@@ -818,7 +795,6 @@ export default function AdminVitrinePage() {
                             <div className="w-full h-full bg-gradient-to-br from-card/20 to-card/5" />
                           )}
                         </div>
-
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
                             <p className="text-[13px] font-semibold text-foreground/80 truncate">
@@ -845,7 +821,6 @@ export default function AdminVitrinePage() {
                             {banner.link_url ? `Link: ${banner.link_url}` : "Sem link"}
                           </p>
                         </div>
-
                         <div className="flex items-center gap-1 shrink-0">
                           <Button
                             variant="ghost"
