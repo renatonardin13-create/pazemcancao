@@ -221,9 +221,31 @@ function AdminUsersPage() {
 
   const totalUsers = buyers.length;
   const enabledUsers = buyers.filter((buyer: any) => buyer.access_enabled).length;
+  const inactiveUsers = buyers.filter((buyer: any) => buyer.is_trial && isTrialExpired(buyer)).length;
   const blockedUsers = buyers.filter((buyer: any) => !buyer.access_enabled).length;
   const onlineUsers = buyers.filter((buyer: any) => activeSessionEmails.has(buyer.email.toLowerCase())).length;
   const trialUsers = buyers.filter((buyer: any) => buyer.is_trial).length;
+
+  // Filter buyers
+  const filteredBuyers = buyers.filter((buyer: any) => {
+    const matchesSearch = !searchQuery ||
+      buyer.nome?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      buyer.email?.toLowerCase().includes(searchQuery.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "all" ||
+      (statusFilter === "active" && buyer.access_enabled && !buyer.is_trial) ||
+      (statusFilter === "trial" && buyer.is_trial) ||
+      (statusFilter === "blocked" && !buyer.access_enabled);
+
+    return matchesSearch && matchesStatus;
+  });
+
+  const totalPages = Math.max(1, Math.ceil(filteredBuyers.length / ITEMS_PER_PAGE));
+  const paginatedBuyers = filteredBuyers.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
 
   const formatDate = (dateStr: string | null) => {
     if (!dateStr) return "—";
