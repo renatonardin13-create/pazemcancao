@@ -257,29 +257,29 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
         <div className="order-3 lg:col-start-1">
           <CardSection title="Imagens">
             {/* Capa */}
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <div>
                 <Label className={labelClass}>Capa do Curso</Label>
-                <p className="text-[10px] text-muted-foreground/40 mt-0.5">
+                <p className="text-xs text-muted-foreground/50 mt-0.5">
                   Imagem exibida na listagem de cursos (recomendado: 400×225)
                 </p>
               </div>
-              <div className="rounded-lg border border-dashed border-border/20 bg-background/20 overflow-hidden max-w-sm">
+              <div className="rounded-lg border border-dashed border-border/20 bg-background/20 overflow-hidden">
                 {coverUrl ? (
                   <div className="relative group">
                     <img src={coverUrl} alt="Capa" className="w-full aspect-video object-cover" />
                     <button
                       type="button"
                       onClick={() => setCoverUrl("")}
-                      className="absolute top-2 right-2 p-1 rounded-md bg-black/60 text-white/80 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-500/90 text-white hover:bg-red-500 transition-colors"
                     >
-                      <X className="h-3 w-3" />
+                      <X className="h-4 w-4" />
                     </button>
                   </div>
                 ) : (
                   <div className="aspect-video flex flex-col items-center justify-center gap-2 text-muted-foreground/25 cursor-pointer hover:text-muted-foreground/40 transition-colors">
-                    <Upload className="h-6 w-6" />
-                    <span className="text-[11px]">Clique para fazer upload</span>
+                    <Upload className="h-7 w-7" />
+                    <span className="text-xs">Clique para fazer upload</span>
                   </div>
                 )}
               </div>
@@ -287,17 +287,17 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 value={coverUrl}
                 onChange={(e) => setCoverUrl(e.target.value)}
                 placeholder="URL da imagem de capa..."
-                className="h-8 bg-background/50 border-border/15 rounded-lg text-[11px] max-w-sm"
+                className="h-9 bg-background/50 border-border/15 rounded-lg text-xs"
               />
             </div>
 
             <div className="border-t border-border/6" />
 
             {/* Banner */}
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <div>
                 <Label className={labelClass}>Banner Principal</Label>
-                <p className="text-[10px] text-muted-foreground/40 mt-0.5">
+                <p className="text-xs text-muted-foreground/50 mt-0.5">
                   Banner grande exibido na vitrine Netflix (recomendado: 1920×600)
                 </p>
               </div>
@@ -308,15 +308,15 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                     <button
                       type="button"
                       onClick={() => setBannerUrl("")}
-                      className="absolute top-2 right-2 p-1 rounded-md bg-black/60 text-white/80 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-500/90 text-white hover:bg-red-500 transition-colors"
                     >
-                      <X className="h-3 w-3" />
+                      <X className="h-4 w-4" />
                     </button>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground/25 py-8 cursor-pointer hover:text-muted-foreground/40 transition-colors">
-                    <Upload className="h-6 w-6" />
-                    <span className="text-[11px]">Clique para fazer upload do banner</span>
+                  <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground/25 py-10 cursor-pointer hover:text-muted-foreground/40 transition-colors">
+                    <Upload className="h-7 w-7" />
+                    <span className="text-xs">Clique para fazer upload do banner</span>
                   </div>
                 )}
               </div>
@@ -324,7 +324,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 value={bannerUrl}
                 onChange={(e) => setBannerUrl(e.target.value)}
                 placeholder="URL do banner..."
-                className="h-8 bg-background/50 border-border/15 rounded-lg text-[11px]"
+                className="h-9 bg-background/50 border-border/15 rounded-lg text-xs"
               />
             </div>
           </CardSection>
