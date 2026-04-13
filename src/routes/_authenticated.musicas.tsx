@@ -243,9 +243,9 @@ function MusicLibraryPage() {
           animate="visible"
           variants={fadeUp}
           custom={0.2}
-          className="flex flex-col sm:flex-row gap-4 mb-8"
+          className="mb-8"
         >
-          <div className="relative flex-1 max-w-sm">
+          <div className="relative max-w-sm">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/25" />
             <Input
               value={searchTerm}
@@ -253,32 +253,6 @@ function MusicLibraryPage() {
               placeholder="Buscar músicas..."
               className="pl-9 bg-card/10 border-border/15 text-sm h-10"
             />
-          </div>
-
-          <div className="flex items-center gap-2 flex-wrap">
-            <button
-              onClick={() => setActiveCategory(null)}
-              className={`px-3 py-1.5 rounded-full text-[11px] font-medium transition-all duration-300 border ${
-                !activeCategory
-                  ? "border-gold/30 bg-gold/10 text-gold/80"
-                  : "border-border/15 bg-card/5 text-muted-foreground/40 hover:text-muted-foreground/60"
-              }`}
-            >
-              Todas
-            </button>
-            {dbCategories.map((cat: any) => (
-              <button
-                key={cat.id}
-                onClick={() => setActiveCategory(cat.name)}
-                className={`px-3 py-1.5 rounded-full text-[11px] font-medium transition-all duration-300 border ${
-                  activeCategory === cat.name
-                    ? "border-gold/30 bg-gold/10 text-gold/80"
-                    : "border-border/15 bg-card/5 text-muted-foreground/40 hover:text-muted-foreground/60"
-                }`}
-              >
-                {cat.icon || "🎵"} {cat.name.replace(/^[^\w\s]+\s*/, '')}
-              </button>
-            ))}
           </div>
         </motion.div>
 
