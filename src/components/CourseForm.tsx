@@ -259,11 +259,13 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
           <CardSection title="Imagens">
             {/* Capa */}
             <div className="space-y-2">
-              <div className="flex items-baseline justify-between">
+              <div>
                 <Label className={labelClass}>Capa do Curso</Label>
-                <span className="text-[9px] text-muted-foreground/30">400×225 px · 16:9</span>
+                <p className="text-[10px] text-muted-foreground/40 mt-0.5">
+                  Imagem exibida na listagem de cursos (recomendado: 400×225)
+                </p>
               </div>
-              <div className="rounded-lg border border-dashed border-border/15 bg-background/20 overflow-hidden">
+              <div className="rounded-lg border border-dashed border-border/20 bg-background/20 overflow-hidden max-w-sm">
                 {coverUrl ? (
                   <div className="relative group">
                     <img src={coverUrl} alt="Capa" className="w-full aspect-video object-cover" />
@@ -276,9 +278,9 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                     </button>
                   </div>
                 ) : (
-                  <div className="aspect-video flex flex-col items-center justify-center gap-1 text-muted-foreground/15">
-                    <ImageIcon className="h-5 w-5" />
-                    <span className="text-[8px] uppercase tracking-widest">Sem imagem</span>
+                  <div className="aspect-video flex flex-col items-center justify-center gap-2 text-muted-foreground/25 cursor-pointer hover:text-muted-foreground/40 transition-colors">
+                    <Upload className="h-6 w-6" />
+                    <span className="text-[11px]">Clique para fazer upload</span>
                   </div>
                 )}
               </div>
@@ -286,7 +288,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 value={coverUrl}
                 onChange={(e) => setCoverUrl(e.target.value)}
                 placeholder="URL da imagem de capa..."
-                className="h-8 bg-background/50 border-border/15 rounded-lg text-[11px]"
+                className="h-8 bg-background/50 border-border/15 rounded-lg text-[11px] max-w-sm"
               />
             </div>
 
@@ -294,11 +296,13 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
             {/* Banner */}
             <div className="space-y-2">
-              <div className="flex items-baseline justify-between">
+              <div>
                 <Label className={labelClass}>Banner Principal</Label>
-                <span className="text-[9px] text-muted-foreground/30">1920×600 px</span>
+                <p className="text-[10px] text-muted-foreground/40 mt-0.5">
+                  Banner grande exibido na vitrine Netflix (recomendado: 1920×600)
+                </p>
               </div>
-              <div className="rounded-lg border border-dashed border-border/15 bg-background/20 overflow-hidden">
+              <div className="rounded-lg border border-dashed border-border/20 bg-background/20 overflow-hidden">
                 {bannerUrl ? (
                   <div className="relative group">
                     <img src={bannerUrl} alt="Banner" className="w-full object-cover" style={{ aspectRatio: "1920/600" }} />
@@ -311,9 +315,9 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                     </button>
                   </div>
                 ) : (
-                  <div className="flex flex-col items-center justify-center gap-1 text-muted-foreground/15 py-5">
-                    <ImageIcon className="h-5 w-5" />
-                    <span className="text-[8px] uppercase tracking-widest">Sem banner</span>
+                  <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground/25 py-8 cursor-pointer hover:text-muted-foreground/40 transition-colors">
+                    <Upload className="h-6 w-6" />
+                    <span className="text-[11px]">Clique para fazer upload do banner</span>
                   </div>
                 )}
               </div>
