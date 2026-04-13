@@ -1,7 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 import { logDownload } from "@/lib/analytics.functions";
 import { Music, Play, Pause, Download, Search, Headphones, Lock, Gift } from "lucide-react";
-import { AppHeader } from "@/components/AppHeader";
+import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { useQuery } from "@tanstack/react-query";
 import { listActiveTracks, listCategories } from "@/lib/tracks.functions";
@@ -14,6 +14,9 @@ import type { Track } from "@/lib/sample-tracks";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/musicas")({
+  validateSearch: (search: Record<string, unknown>) => ({
+    categoria: (search.categoria as string) || undefined,
+  }),
   component: MusicLibraryPage,
 });
 
