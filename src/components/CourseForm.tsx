@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Video, BookText, Save, Loader2, ImageIcon, X, Upload } from "lucide-react";
+import { Video, FileText, File, Link as LinkIcon, Save, Loader2, ImageIcon, X, Upload } from "lucide-react";
 
 interface CourseFormProps {
   initialValues?: any;
@@ -170,23 +170,25 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
           <CardSection title="Configurações">
             <div className="space-y-1">
-              <Label className={labelClass}>Modalidade</Label>
+              <Label className={labelClass}>Tipo de Conteúdo</Label>
               <div className="flex gap-2">
                 {[
                   { value: "video", label: "Vídeo", icon: Video },
-                  { value: "ebook", label: "eBook", icon: BookText },
+                  { value: "pdf", label: "PDF", icon: FileText },
+                  { value: "arquivo", label: "Arquivo", icon: File },
+                  { value: "link", label: "Link", icon: LinkIcon },
                 ].map((type) => (
                   <button
                     key={type.value}
                     type="button"
                     onClick={() => setCourseType(type.value)}
-                    className={`flex items-center gap-1.5 px-4 py-2 rounded-lg border text-xs font-semibold transition-all ${
+                    className={`flex flex-col items-center gap-1.5 px-5 py-3 rounded-xl border text-xs font-semibold transition-all min-w-[72px] ${
                       courseType === type.value
-                        ? "border-gold/30 bg-gold/10 text-gold"
-                        : "border-border/15 bg-background/30 text-muted-foreground/40 hover:border-border/30"
+                        ? "border-gold/40 bg-gold text-black shadow-lg shadow-gold/20"
+                        : "border-border/15 bg-background/30 text-muted-foreground/50 hover:border-border/30 hover:text-muted-foreground/70"
                     }`}
                   >
-                    <type.icon className="h-3.5 w-3.5" />
+                    <type.icon className="h-5 w-5" />
                     {type.label}
                   </button>
                 ))}
