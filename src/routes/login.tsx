@@ -368,7 +368,7 @@ function LoginPage() {
         {leftPanel}
 
         <div className="flex flex-1 lg:flex-[1.2] items-center justify-center px-6 py-6 sm:py-12">
-          <div className="w-full max-w-[560px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          <div className="w-full max-w-[420px] sm:max-w-[480px] lg:max-w-[600px] lg:min-w-[500px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
             {/* Mobile header */}
             <div className="lg:hidden mb-6 sm:mb-10 text-center">
               <div className="mx-auto mb-5 w-px h-8 bg-gradient-to-b from-transparent via-gold/15 to-transparent" />
@@ -381,7 +381,7 @@ function LoginPage() {
               </p>
             </div>
 
-            <div className="rounded-3xl border border-gold/20 bg-[oklch(0.14_0.01_260)] p-10 sm:p-14 relative overflow-hidden shadow-[0_8px_60px_-12px_rgba(0,0,0,0.6)]">
+            <div className="rounded-3xl border border-gold/20 bg-[oklch(0.14_0.01_260)] p-7 sm:p-10 lg:p-14 relative overflow-hidden shadow-[0_8px_60px_-12px_rgba(0,0,0,0.6)]">
               <div className="pointer-events-none absolute -top-28 -right-28 h-56 w-56 rounded-full bg-gold/[0.04] blur-[80px]" />
 
               <div className="relative z-10">
