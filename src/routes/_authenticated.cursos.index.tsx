@@ -213,4 +213,5 @@ function MeusCoursosPage() {
       <FooterLinks />
     </div>
     </StudentLayout>
+  );
 }
