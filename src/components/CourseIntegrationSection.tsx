@@ -106,7 +106,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
   return (
     <div className="space-y-6">
       {/* Integration Settings */}
-      <Card className="border-border/20">
+      <Card className="border-border/20 bg-card/40">
         <CardHeader className="pb-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold/[0.08] border border-gold/15">
@@ -140,7 +140,6 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                 <Select value={platform} onValueChange={setPlatform}>
                   <SelectTrigger className="bg-card/10 border-gold/20 focus:border-gold/40">
                     <SelectValue placeholder="Selecione a plataforma" />
-                    <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
                     {PLATFORMS.map((p) => (
