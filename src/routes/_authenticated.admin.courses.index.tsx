@@ -171,7 +171,7 @@ function AdminCoursesPage() {
           <Table>
             <TableHeader>
               <TableRow className="border-border/10 hover:bg-transparent">
-                <TableHead className="w-[52px] text-[10px] uppercase tracking-widest text-muted-foreground/30">
+                <TableHead className="w-[72px] text-[10px] uppercase tracking-widest text-muted-foreground/30">
                   Capa
                 </TableHead>
                 <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/30">
@@ -201,21 +201,21 @@ function AdminCoursesPage() {
                   className="border-border/8 hover:bg-card/10"
                 >
                   {/* Cover */}
-                  <TableCell className="py-2.5">
-                    <div className="h-10 w-10 rounded-lg bg-muted/15 overflow-hidden shrink-0">
+                  <TableCell className="py-3">
+                    <div className="h-14 w-14 rounded-lg bg-muted/15 overflow-hidden shrink-0">
                       {course.cover_image_url ? (
                         <img
                           src={course.cover_image_url}
                           alt=""
-                          className="h-10 w-10 object-cover"
+                          className="h-14 w-14 object-cover"
                         />
                       ) : course.course_type === "video" ? (
-                        <div className="h-10 w-10 flex items-center justify-center">
-                          <Video className="h-4 w-4 text-gold/30" />
+                        <div className="h-14 w-14 flex items-center justify-center">
+                          <Video className="h-5 w-5 text-gold/30" />
                         </div>
                       ) : (
-                        <div className="h-10 w-10 flex items-center justify-center">
-                          <BookText className="h-4 w-4 text-blue-400/30" />
+                        <div className="h-14 w-14 flex items-center justify-center">
+                          <BookText className="h-5 w-5 text-muted-foreground/30" />
                         </div>
                       )}
                     </div>
