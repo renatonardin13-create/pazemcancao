@@ -161,20 +161,19 @@ function CourseCard({ course }: { course: any }) {
   const hasPreview = course.access_state === "preview";
 
   const handleLockedClick = () => {
-    if (isLocked && course.checkout_url) {
+    if (course.checkout_url) {
       window.open(course.checkout_url, "_blank");
     }
   };
 
   const cardContent = (
     <div className="group relative w-[220px] sm:w-[260px] shrink-0 snap-start">
-      {/* Cover */}
       <div className="relative aspect-[3/4] rounded-xl overflow-hidden border border-border/15 group-hover:border-gold/20 transition-all duration-500">
         {course.cover_image_url ? (
           <img
             src={course.cover_image_url}
             alt={course.title}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${isLocked ? "brightness-[0.35] saturate-[0.3]" : ""}`}
           />
         ) : (
           <div className="w-full h-full bg-muted/20 flex items-center justify-center">
@@ -182,21 +181,31 @@ function CourseCard({ course }: { course: any }) {
           </div>
         )}
 
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/30 to-transparent" />
+        {/* Dark overlay for locked */}
+        <div className={`absolute inset-0 ${isLocked ? "bg-gradient-to-t from-black/95 via-black/60 to-black/30" : "bg-gradient-to-t from-background/90 via-background/30 to-transparent"}`} />
 
-        {/* Lock badge */}
+        {/* Lock icon centered for locked courses */}
         {isLocked && (
-          <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-black/60 backdrop-blur-sm px-3 py-1.5 border border-border/20">
-            <Lock className="h-3 w-3 text-gold/60" />
-            <span className="text-[9px] font-bold uppercase tracking-wider text-gold/60">
-              Premium
-            </span>
-          </div>
+          <>
+            <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+              <div className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-md border border-gold/20 flex items-center justify-center mb-3">
+                <Lock className="h-6 w-6 text-gold/70" />
+              </div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold/50">
+                Conteúdo Premium
+              </span>
+            </div>
+            <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-gold/15 backdrop-blur-sm px-3 py-1.5 border border-gold/25">
+              <ShoppingCart className="h-3 w-3 text-gold/70" />
+              <span className="text-[9px] font-bold uppercase tracking-wider text-gold/70">
+                Adquirir
+              </span>
+            </div>
+          </>
         )}
 
         {/* Preview badge */}
-        {hasPreview && (
+        {hasPreview && !isLocked && (
           <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-emerald-500/20 backdrop-blur-sm px-3 py-1.5 border border-emerald-500/20">
             <Play className="h-3 w-3 text-emerald-400/70" />
             <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-400/70">
@@ -206,8 +215,8 @@ function CourseCard({ course }: { course: any }) {
         )}
 
         {/* Bottom info */}
-        <div className="absolute bottom-0 left-0 right-0 p-4">
-          <h3 className="font-display text-sm font-bold text-foreground/90 leading-tight line-clamp-2 group-hover:text-gold transition-colors">
+        <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
+          <h3 className={`font-display text-sm font-bold leading-tight line-clamp-2 transition-colors ${isLocked ? "text-foreground/60" : "text-foreground/90 group-hover:text-gold"}`}>
             {course.title}
           </h3>
           {course.short_description && (
@@ -216,7 +225,6 @@ function CourseCard({ course }: { course: any }) {
             </p>
           )}
 
-          {/* CTA */}
           <div className="mt-3">
             {isEnrolled ? (
               <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gold/70">
@@ -224,7 +232,7 @@ function CourseCard({ course }: { course: any }) {
               </span>
             ) : isLocked ? (
               <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gold/50">
-                <ShoppingCart className="h-3 w-3" /> Adquirir
+                <ShoppingCart className="h-3 w-3" /> Comprar Agora
               </span>
             ) : hasPreview ? (
               <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-400/60">
@@ -247,7 +255,7 @@ function CourseCard({ course }: { course: any }) {
 
   if (isLocked) {
     return (
-      <button onClick={handleLockedClick} className="text-left">
+      <button onClick={handleLockedClick} className="text-left cursor-pointer">
         {cardContent}
       </button>
     );

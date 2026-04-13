@@ -96,13 +96,16 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       const checkoutUrl = integrationMap.get(course.id) || null;
       const hasCheckout = !!checkoutUrl;
 
+      // For vitrine: non-enrolled without checkout URL are hidden
+      const accessState = isEnrolled ? 'enrolled' : hasPreview ? 'preview' : hasCheckout ? 'locked' : 'hidden';
+
       return {
         ...course,
         is_enrolled: isEnrolled,
         has_preview: hasPreview,
         has_checkout: hasCheckout,
         checkout_url: checkoutUrl,
-        access_state: isEnrolled ? 'enrolled' : hasPreview ? 'preview' : hasCheckout ? 'locked' : 'available',
+        access_state: accessState,
         sales_count: salesCountMap.get(course.id) || 0,
       };
     };
@@ -152,7 +155,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
         }
       }
 
-      courses = courses.map(enrichCourse);
+      courses = courses.map(enrichCourse).filter((c: any) => c.access_state !== 'hidden');
 
       if (courses.length > 0) {
         result.push({
