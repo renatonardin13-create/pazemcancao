@@ -443,42 +443,40 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             return (
               <div
                 key={mod.id}
-                className="rounded-xl border border-border/10 bg-card/5 overflow-hidden"
+                className="rounded-xl border border-border/12 bg-card/5 overflow-hidden transition-all"
               >
                 {/* Module header */}
-                <div className="flex items-center gap-3 px-5 py-4 hover:bg-card/15 transition-colors">
+                <div className={`flex items-center gap-3 px-5 py-3.5 transition-colors ${isExpanded ? "bg-card/10 border-b border-border/8" : "hover:bg-card/8"}`}>
                   {/* Drag handle */}
-                  <div className="flex flex-col gap-0.5">
-                    <button
-                      type="button"
-                      className="text-muted-foreground/15 hover:text-muted-foreground/40 disabled:opacity-20 transition-colors"
-                      disabled={modIndex === 0}
-                      onClick={() => moveModule(modIndex, "up")}
-                    >
-                      <GripVertical className="h-4 w-4" />
-                    </button>
-                  </div>
+                  <button
+                    type="button"
+                    className="text-muted-foreground/15 hover:text-muted-foreground/40 disabled:opacity-20 transition-colors cursor-grab active:cursor-grabbing shrink-0"
+                    disabled={modIndex === 0}
+                    onClick={() => moveModule(modIndex, "up")}
+                  >
+                    <GripVertical className="h-4 w-4" />
+                  </button>
 
                   {/* Expand/collapse */}
                   <button
                     type="button"
                     onClick={() => toggleExpand(mod.id)}
-                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-card/10 border border-border/10 text-muted-foreground/40 hover:text-foreground/60 hover:border-border/25 transition-all"
+                    className={`w-7 h-7 flex items-center justify-center rounded-lg border transition-all shrink-0 ${isExpanded ? "bg-gold/10 border-gold/20 text-gold/70" : "bg-card/10 border-border/10 text-muted-foreground/35 hover:text-foreground/60 hover:border-border/25"}`}
                   >
                     {isExpanded ? (
-                      <ChevronDown className="h-4 w-4" />
+                      <ChevronDown className="h-3.5 w-3.5" />
                     ) : (
-                      <ChevronRight className="h-4 w-4" />
+                      <ChevronRight className="h-3.5 w-3.5" />
                     )}
                   </button>
 
                   {/* Module name */}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground/85 truncate">
+                  <div className="flex-1 min-w-0 cursor-pointer" onClick={() => toggleExpand(mod.id)}>
+                    <p className="text-[13px] font-semibold text-foreground/85 truncate">
                       {mod.title}
                     </p>
                     {mod.description && (
-                      <p className="text-[11px] text-muted-foreground/30 truncate mt-0.5">
+                      <p className="text-[10px] text-muted-foreground/30 truncate mt-0.5">
                         {mod.description}
                       </p>
                     )}
@@ -488,7 +486,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   <StatusBadge status={mod.status} />
 
                   {/* Lesson count */}
-                  <span className="text-[11px] text-muted-foreground/35 shrink-0 tabular-nums">
+                  <span className="text-[10px] text-muted-foreground/30 shrink-0 tabular-nums px-2 py-0.5 rounded-md bg-card/10 border border-border/8">
                     {lessons.length} aula{lessons.length !== 1 ? "s" : ""}
                   </span>
 
@@ -496,7 +494,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-7 px-3 text-[11px] border-gold/15 text-gold/70 hover:text-gold hover:border-gold/30 hover:bg-gold/5"
+                    className="h-7 px-3 text-[10px] border-gold/15 text-gold/60 hover:text-gold hover:border-gold/25 hover:bg-gold/5 shrink-0"
                     onClick={() => openCreateLesson(mod.id)}
                   >
                     <Plus className="h-3 w-3 mr-1" />
@@ -506,7 +504,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   {/* Module actions */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-7 w-7">
+                      <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/30 hover:text-foreground/60 shrink-0">
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
