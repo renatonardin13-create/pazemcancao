@@ -924,10 +924,10 @@ function AdminVitrinePage() {
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-semibold text-foreground/70 tracking-tight">
-                    Prateleiras
+                    Prateleiras (Shelves) da Vitrine
                   </h3>
                   <p className="text-[11px] text-muted-foreground/35 mt-0.5">
-                    Organize a vitrine — arraste para reordenar
+                    Organize os cursos em fileiras horizontais estilo Netflix
                   </p>
                 </div>
                 <Button
@@ -936,7 +936,7 @@ function AdminVitrinePage() {
                   onClick={openCreate}
                 >
                   <Plus className="h-3.5 w-3.5" />
-                  Nova Prateleira
+                  Adicionar
                 </Button>
               </div>
 
@@ -987,16 +987,10 @@ function AdminVitrinePage() {
                             <Badge
                               variant="outline"
                               className={`text-[9px] rounded-full px-2 border font-medium ${
-                                shelf.is_active
-                                  ? "text-emerald-400/80 border-emerald-500/25 bg-emerald-500/10"
-                                  : "text-muted-foreground/40 border-border/15"
+                                shelf.mode === "auto"
+                                  ? "text-gold/60 border-gold/20 bg-gold/8"
+                                  : "text-sky-400/70 border-sky-500/20 bg-sky-500/8"
                               }`}
-                            >
-                              {shelf.is_active ? "Ativa" : "Inativa"}
-                            </Badge>
-                            <Badge
-                              variant="outline"
-                              className="text-[9px] rounded-full px-2 border text-muted-foreground/50 border-border/15"
                             >
                               {modeLabel(shelf.mode)}
                             </Badge>
@@ -1008,6 +1002,12 @@ function AdminVitrinePage() {
                                 {criteriaLabel(shelf.auto_criteria)}
                               </Badge>
                             )}
+                            <Badge
+                              variant="outline"
+                              className="text-[9px] rounded-full px-2 border text-muted-foreground/50 border-border/15"
+                            >
+                              {courseCount} curso{courseCount !== 1 ? "s" : ""}
+                            </Badge>
                           </div>
                           <p className="text-[10px] text-muted-foreground/25 mt-0.5">
                             {shelf.mode === "manual"
@@ -1016,7 +1016,14 @@ function AdminVitrinePage() {
                           </p>
                         </div>
 
-                        <div className="flex items-center gap-1 shrink-0">
+                        <div className="flex items-center gap-2 shrink-0">
+                          <Switch
+                            checked={shelf.is_active}
+                            onCheckedChange={(checked) => {
+                              updateMut.mutate({ id: shelf.id, is_active: checked });
+                            }}
+                            className="scale-75"
+                          />
                           {shelf.mode === "manual" && (
                             <Button
                               variant="ghost"
