@@ -19,6 +19,8 @@ import {
   Loader2,
   Sparkles,
   Monitor,
+  Info,
+  ImageIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -145,6 +147,10 @@ function AdminVitrinePage() {
   const [bannerSubtitle, setBannerSubtitle] = useState("");
   const [bannerImageUrl, setBannerImageUrl] = useState("");
   const [bannerCourseId, setBannerCourseId] = useState("");
+  const [bannerEnabled, setBannerEnabled] = useState(true);
+  const [bannerFit, setBannerFit] = useState<string>("cover");
+  const [bannerAspect, setBannerAspect] = useState<string>("hero");
+  const [bannerImgDims, setBannerImgDims] = useState<{ w: number; h: number } | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-shelves"],
@@ -384,16 +390,109 @@ function AdminVitrinePage() {
 
             {/* ── Banner Principal ── */}
             <TabsContent value="banner" className="mt-6 space-y-6">
-              <div className="rounded-xl border border-border/15 bg-card/5 p-6 space-y-5">
+              <div className="rounded-xl border border-border/15 bg-card/5 p-6 space-y-6">
+                {/* Header */}
                 <div>
-                  <h3 className="text-sm font-semibold text-foreground/70 mb-1">Banner Hero</h3>
+                  <h3 className="text-sm font-semibold text-foreground/70 mb-1">
+                    Banner Principal (Hero da Home)
+                  </h3>
                   <p className="text-[11px] text-muted-foreground/35">
-                    O banner principal que aparece no topo da vitrine de cursos.
-                    Por padrão, exibe o primeiro curso com banner configurado.
+                    O banner hero que aparece no topo da vitrine de cursos do aluno.
                   </p>
                 </div>
 
-                <div className="space-y-4">
+                {/* Image specs info */}
+                <div className="flex items-start gap-3 rounded-xl bg-gold/5 border border-gold/12 p-4">
+                  <Info className="h-4 w-4 text-gold/50 shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <p className="text-[11px] font-semibold text-foreground/60">
+                      Requisitos da imagem
+                    </p>
+                    <div className="flex flex-wrap gap-3 text-[10px] text-muted-foreground/40">
+                      <span>
+                        Tamanho recomendado: <strong className="text-foreground/50">1920×500 px</strong>
+                      </span>
+                      <span>•</span>
+                      <span>
+                        Formatos: <strong className="text-foreground/50">JPG, PNG, WebP</strong>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Toggle banner visibility */}
+                <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
+                  <div>
+                    <p className="text-sm font-medium text-foreground/70">
+                      Exibir banner principal na vitrine
+                    </p>
+                    <p className="text-[11px] text-muted-foreground/40">
+                      Quando desativado, o hero não será exibido na home do aluno
+                    </p>
+                  </div>
+                  <Switch checked={bannerEnabled} onCheckedChange={setBannerEnabled} />
+                </div>
+
+                {/* Image preview with real dimensions */}
+                {(() => {
+                  const imgSrc = bannerImageUrl || featuredCourse?.banner_image_url || featuredCourse?.cover_image_url;
+                  const aspectClass = bannerAspect === "21:9" ? "aspect-[21/9]" : bannerAspect === "16:9" ? "aspect-[16/9]" : "aspect-[1920/500]";
+                  const fitClass = bannerFit === "cover" ? "object-cover" : bannerFit === "contain" ? "object-contain" : "object-fill";
+                  return (
+                    <div className="space-y-2">
+                      <Label className="text-[11px] uppercase tracking-wider text-muted-foreground/40">
+                        Preview do banner
+                      </Label>
+                      <div className={`relative w-full ${aspectClass} rounded-xl overflow-hidden border border-border/10 bg-card/10`}>
+                        {imgSrc ? (
+                          <img
+                            src={imgSrc}
+                            alt="Banner preview"
+                            className={`w-full h-full ${fitClass}`}
+                            onLoad={(e) => {
+                              const img = e.currentTarget;
+                              setBannerImgDims({ w: img.naturalWidth, h: img.naturalHeight });
+                            }}
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-card/30 to-card/5 flex items-center justify-center">
+                            <ImageIcon className="h-8 w-8 text-muted-foreground/10" />
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                        <div className="absolute inset-0 flex items-end px-6 pb-6">
+                          <div>
+                            <p className="text-[8px] font-bold uppercase tracking-[0.5em] text-gold/50 mb-1">Em destaque</p>
+                            <p className="text-lg font-bold text-foreground/95 leading-tight">
+                              {bannerTitle || featuredCourse?.title || "Título do curso"}
+                            </p>
+                            {(bannerSubtitle || featuredCourse?.short_description) && (
+                              <p className="mt-1 text-[11px] text-muted-foreground/50 line-clamp-1">
+                                {bannerSubtitle || featuredCourse?.short_description}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Image dimensions info */}
+                      {bannerImgDims && (
+                        <div className="flex items-center gap-4 text-[10px] text-muted-foreground/35">
+                          <span>
+                            Dimensões reais: <strong className="text-foreground/50">{bannerImgDims.w}×{bannerImgDims.h} px</strong>
+                          </span>
+                          <span>
+                            Proporção: <strong className="text-foreground/50">{(bannerImgDims.w / bannerImgDims.h).toFixed(2)}:1</strong>
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
+
+                {/* Configuration fields */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Curso em destaque</Label>
                     <Select value={bannerCourseId} onValueChange={setBannerCourseId}>
@@ -410,10 +509,28 @@ function AdminVitrinePage() {
                       </SelectContent>
                     </Select>
                     <p className="text-[10px] text-muted-foreground/30">
-                      Selecione qual curso será exibido como destaque na vitrine
+                      Curso exibido no hero da vitrine
                     </p>
                   </div>
 
+                  <div className="space-y-2">
+                    <Label>URL do Banner (opcional)</Label>
+                    <Input
+                      value={bannerImageUrl}
+                      onChange={(e) => {
+                        setBannerImageUrl(e.target.value);
+                        setBannerImgDims(null);
+                      }}
+                      placeholder="https://... imagem customizada"
+                      className="bg-card/10 border-border/15"
+                    />
+                    <p className="text-[10px] text-muted-foreground/30">
+                      Deixe vazio para usar o banner do curso selecionado
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Título customizado (opcional)</Label>
                     <Input
@@ -433,58 +550,73 @@ function AdminVitrinePage() {
                       className="bg-card/10 border-border/15"
                     />
                   </div>
+                </div>
+
+                {/* Display mode & aspect ratio */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Modo de exibição do banner</Label>
+                    <Select value={bannerFit} onValueChange={setBannerFit}>
+                      <SelectTrigger className="bg-card/10 border-border/15">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="cover">Preencher (pode cortar)</SelectItem>
+                        <SelectItem value="contain">Conter (sem cortar)</SelectItem>
+                        <SelectItem value="fill">Ajustar automaticamente</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
                   <div className="space-y-2">
-                    <Label>URL do Banner (opcional)</Label>
-                    <Input
-                      value={bannerImageUrl}
-                      onChange={(e) => setBannerImageUrl(e.target.value)}
-                      placeholder="https://... imagem de banner customizada"
-                      className="bg-card/10 border-border/15"
-                    />
-                    <p className="text-[10px] text-muted-foreground/30">
-                      Proporção recomendada: 21:8 — 1920x730 px. Deixe vazio para usar o banner do curso.
-                    </p>
+                    <Label>Proporção do container</Label>
+                    <Select value={bannerAspect} onValueChange={setBannerAspect}>
+                      <SelectTrigger className="bg-card/10 border-border/15">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="21:9">Ultra wide 21:9</SelectItem>
+                        <SelectItem value="16:9">Wide 16:9</SelectItem>
+                        <SelectItem value="hero">Hero padrão 1920×500</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
-                {/* Banner preview inline */}
-                {featuredCourse && (
-                  <div className="rounded-xl overflow-hidden border border-border/10">
-                    <div className="relative w-full aspect-[21/8] bg-card/10">
-                      {(bannerImageUrl || featuredCourse.banner_image_url || featuredCourse.cover_image_url) ? (
-                        <img
-                          src={bannerImageUrl || featuredCourse.banner_image_url || featuredCourse.cover_image_url || undefined}
-                          alt="Banner preview"
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-card/30 to-card/5 flex items-center justify-center">
-                          <Image className="h-8 w-8 text-muted-foreground/10" />
-                        </div>
-                      )}
-                      <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
-                      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-                      <div className="absolute inset-0 flex items-end px-6 pb-6">
-                        <div>
-                          <p className="text-[8px] font-bold uppercase tracking-[0.5em] text-gold/50 mb-1">Em destaque</p>
-                          <p className="text-lg font-bold text-foreground/95 leading-tight">
-                            {bannerTitle || featuredCourse.title}
-                          </p>
-                          {(bannerSubtitle || featuredCourse.short_description) && (
-                            <p className="mt-1 text-[11px] text-muted-foreground/50 line-clamp-1">
-                              {bannerSubtitle || featuredCourse.short_description}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
+                {/* Action buttons */}
+                <div className="flex items-center gap-3 pt-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5 border-destructive/20 text-destructive/60 hover:text-destructive hover:border-destructive/40"
+                    onClick={() => {
+                      setBannerImageUrl("");
+                      setBannerImgDims(null);
+                      toast.success("Banner removido");
+                    }}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Remover Banner
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5 border-gold/20 text-gold/60 hover:text-gold hover:border-gold/30"
+                    onClick={() => {
+                      const url = prompt("Cole a URL da nova imagem do banner:");
+                      if (url) {
+                        setBannerImageUrl(url);
+                        setBannerImgDims(null);
+                        toast.success("Banner atualizado");
+                      }
+                    }}
+                  >
+                    <ImageIcon className="h-3.5 w-3.5" />
+                    Trocar Banner
+                  </Button>
+                </div>
               </div>
             </TabsContent>
-
-            {/* ── Cards ── */}
             <TabsContent value="cards" className="mt-6 space-y-6">
               <div className="rounded-xl border border-border/15 bg-card/5 p-6 space-y-5">
                 <div>
@@ -752,12 +884,13 @@ function AdminVitrinePage() {
               {/* Mini preview */}
               <div className="rounded-xl border border-border/15 bg-background/50 overflow-hidden">
                 {/* Mini banner */}
-                <div className="relative w-full aspect-[21/8] bg-card/10">
+                {bannerEnabled && (
+                <div className={`relative w-full ${bannerAspect === "21:9" ? "aspect-[21/9]" : bannerAspect === "16:9" ? "aspect-[16/9]" : "aspect-[1920/500]"} bg-card/10`}>
                   {featuredCourse && (bannerImageUrl || featuredCourse.banner_image_url || featuredCourse.cover_image_url) ? (
                     <img
                       src={bannerImageUrl || featuredCourse.banner_image_url || featuredCourse.cover_image_url || undefined}
                       alt=""
-                      className="w-full h-full object-cover"
+                      className={`w-full h-full ${bannerFit === "cover" ? "object-cover" : bannerFit === "contain" ? "object-contain" : "object-fill"}`}
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-card/20 to-card/5" />
@@ -771,6 +904,7 @@ function AdminVitrinePage() {
                     </p>
                   </div>
                 </div>
+                )}
 
                 {/* Mini shelves */}
                 <div className="p-3 space-y-3">
