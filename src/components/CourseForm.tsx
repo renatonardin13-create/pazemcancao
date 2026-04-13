@@ -96,10 +96,10 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
   return (
     <form ref={ref} onSubmit={handleSubmit} className="space-y-5">
-      {/* 2-column layout */}
-      <div className="grid lg:grid-cols-[1fr_300px] gap-5 lg:gap-6">
-        {/* LEFT COLUMN */}
-        <div className="space-y-5 order-1">
+      {/* Desktop: 2 columns. Mobile: single column with interleaved order */}
+      <div className="flex flex-col lg:grid lg:grid-cols-[1fr_280px] gap-5">
+        {/* ===== Informações + Configurações ===== */}
+        <div className="space-y-5 order-1 lg:col-start-1">
           {/* Card: Informações do Curso */}
           <div className="rounded-2xl border border-border/15 bg-card shadow-lg shadow-black/10 overflow-hidden">
             <div className="px-6 py-4 border-b border-border/10 bg-card/80">
@@ -249,7 +249,10 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
               </div>
             </div>
           </div>
+        </div>
 
+        {/* ===== Imagens — order 3 on mobile, left col on desktop ===== */}
+        <div className="order-3 lg:order-3 lg:col-start-1">
           {/* Card: Imagens */}
           <div className="rounded-2xl border border-border/15 bg-card shadow-lg shadow-black/10 overflow-hidden">
             <div className="px-6 py-4 border-b border-border/10 bg-card/80">
@@ -367,8 +370,8 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
           </div>
         </div>
 
-        {/* ========== RIGHT COLUMN — Preview ========== */}
-        <div className="order-2">
+        {/* ========== Preview — order 2 on mobile, right col spanning on desktop ========== */}
+        <div className="order-2 lg:order-2 lg:col-start-2 lg:row-start-1 lg:row-span-3">
           <div className="rounded-2xl border border-border/15 bg-card lg:sticky lg:top-6 shadow-lg shadow-black/10 overflow-hidden">
             <div className="px-5 py-3.5 border-b border-border/10 bg-card/80">
               <h3 className="text-xs font-black text-foreground/80 tracking-tight uppercase">
