@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { getDashboardStats } from "@/lib/admin-dashboard.functions";
 import { getDashboardAnalytics } from "@/lib/analytics.functions";
 import {
   Users, Activity, BarChart3, Music, Headphones, Download,
   TrendingUp, DollarSign, BookOpen, Clock, GraduationCap,
   ArrowUpRight, ArrowDownRight, CalendarDays, Zap,
+  Search, Plus, Settings, Bell, UserCircle,
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
@@ -92,28 +95,64 @@ export function AdminDashboard() {
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       {/* Header bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-border/15">
-        <div>
-          <div className="flex items-center gap-3 mb-1">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold/10 border border-gold/20">
-              <BarChart3 className="h-5 w-5 text-gold" />
+      <div className="flex flex-col gap-5 pb-6 border-b border-border/15">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="font-display text-2xl font-bold text-foreground tracking-tight">
+              Dashboard
+            </h1>
+            <p className="text-sm text-muted-foreground/50 mt-1">
+              Bem-vindo de volta! Aqui está um resumo da sua plataforma.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="relative hidden sm:block">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
+              <Input
+                placeholder="Buscar..."
+                className="pl-9 h-9 w-48 bg-card/10 border-border/15 rounded-xl text-sm placeholder:text-muted-foreground/30 focus-visible:ring-gold/20"
+              />
             </div>
-            <div>
-              <h1 className="font-display text-2xl font-bold text-foreground tracking-tight">
-                Dashboard
-              </h1>
-              <p className="text-sm text-muted-foreground/50">
-                Visão geral da plataforma
-              </p>
+            <Link
+              to="/admin/courses/new"
+              className="flex items-center gap-1.5 h-9 px-4 rounded-xl bg-gold text-background text-xs font-bold hover:bg-gold/90 transition-colors shrink-0"
+            >
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">Novo Curso</span>
+            </Link>
+            <Link
+              to="/admin/settings"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/15 bg-card/10 text-muted-foreground/40 hover:text-foreground/70 hover:bg-card/20 transition-colors"
+            >
+              <Settings className="h-4 w-4" />
+            </Link>
+            <button className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/15 bg-card/10 text-muted-foreground/40 hover:text-foreground/70 hover:bg-card/20 transition-colors relative">
+              <Bell className="h-4 w-4" />
+              <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-gold" />
+            </button>
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gold/15 border border-gold/20">
+              <UserCircle className="h-5 w-5 text-gold" />
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center gap-1.5 text-xs text-muted-foreground/40">
-            <CalendarDays className="h-3.5 w-3.5" />
-            {new Date().toLocaleDateString("pt-BR", { weekday: "long", day: "numeric", month: "long" })}
-          </div>
-          <div className="flex gap-1 rounded-xl bg-muted/10 border border-border/15 p-1">
+
+        {/* Quick indicators strip */}
+        <div className="flex flex-wrap items-center gap-6 text-sm">
+          {[
+            { label: "Receita", icon: DollarSign, value: "—", color: "text-emerald-400" },
+            { label: "Alunos", icon: GraduationCap, value: data?.totalStudents ?? "—", color: "text-gold" },
+            { label: "Cursos", icon: BookOpen, value: data?.activeCourses ?? "—", color: "text-primary" },
+            { label: "Pendentes", icon: Clock, value: data?.pendingEnrollments ?? "—", color: "text-amber-400" },
+          ].map((item) => (
+            <span key={item.label} className="flex items-center gap-2 text-muted-foreground/50">
+              <item.icon className={`h-4 w-4 ${item.color}/60`} />
+              {item.label}:
+              <strong className="text-foreground/80 font-bold">
+                {isLoading ? "—" : item.value}
+              </strong>
+            </span>
+          ))}
+          <div className="ml-auto flex gap-1 rounded-xl bg-muted/10 border border-border/15 p-1">
             {PERIOD_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
