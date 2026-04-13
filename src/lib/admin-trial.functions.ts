@@ -355,3 +355,146 @@ export const toggleBuyerAccess = createServerFn({ method: 'POST' })
     if (error) throw new Error(error.message);
     return { success: true, access_enabled: data.access_enabled };
   });
+
+// ── Get student details (enrollments + progress) ──
+export const getStudentDetails = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { email: string }) => z.object({ email: z.string().email() }).parse(input))
+  .handler(async ({ data, context }) => {
+    await verifyAdmin(context.supabase, context.userId);
+
+    const email = data.email.toLowerCase().trim();
+
+    // Get all courses
+    const { data: allCourses } = await supabaseAdmin
+      .from('courses')
+      .select('id, title, cover_image_url, status')
+      .order('title', { ascending: true });
+
+    // Get enrollments for this user email
+    const { data: enrollments } = await supabaseAdmin
+      .from('enrollments')
+      .select('id, course_id, status, progress_percentage')
+      .eq('email', email)
+      .eq('status', 'active');
+
+    // Also check by user_id if user exists in auth
+    const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+    const authUser = authUsers?.users?.find((u: any) => u.email?.toLowerCase() === email);
+
+    let enrollmentsByUserId: any[] = [];
+    if (authUser) {
+      const { data: uidEnrollments } = await supabaseAdmin
+        .from('enrollments')
+        .select('id, course_id, status, progress_percentage')
+        .eq('user_id', authUser.id)
+        .eq('status', 'active');
+      enrollmentsByUserId = uidEnrollments || [];
+    }
+
+    // Merge enrollments (by email and by user_id)
+    const enrolledCourseIds = new Set([
+      ...(enrollments || []).map((e: any) => e.course_id),
+      ...enrollmentsByUserId.map((e: any) => e.course_id),
+    ]);
+
+    // Get lesson progress if user exists
+    let lessonProgress: any[] = [];
+    if (authUser) {
+      const { data: progress } = await supabaseAdmin
+        .from('lesson_progress')
+        .select('course_id, completed')
+        .eq('user_id', authUser.id);
+      lessonProgress = progress || [];
+    }
+
+    // Get total lessons per course
+    const { data: allLessons } = await supabaseAdmin
+      .from('lessons')
+      .select('id, course_id');
+
+    const coursesWithAccess = (allCourses || []).map((course: any) => {
+      const hasAccess = enrolledCourseIds.has(course.id);
+      const totalLessons = (allLessons || []).filter((l: any) => l.course_id === course.id).length;
+      const completedLessons = lessonProgress.filter((p: any) => p.course_id === course.id && p.completed).length;
+      const progressPct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+
+      return {
+        ...course,
+        hasAccess,
+        totalLessons,
+        completedLessons,
+        progressPct,
+      };
+    });
+
+    const enrolledCourses = coursesWithAccess.filter((c: any) => c.hasAccess);
+    const overallProgress = enrolledCourses.length > 0
+      ? Math.round(enrolledCourses.reduce((sum: number, c: any) => sum + c.progressPct, 0) / enrolledCourses.length)
+      : 0;
+
+    return {
+      courses: coursesWithAccess,
+      enrolledCount: enrolledCourses.length,
+      overallProgress,
+      userId: authUser?.id || null,
+    };
+  });
+
+// ── Toggle course enrollment for a student ──
+export const toggleStudentCourseAccess = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { email: string; courseId: string; grant: boolean }) =>
+    z.object({ email: z.string().email(), courseId: z.string().uuid(), grant: z.boolean() }).parse(input)
+  )
+  .handler(async ({ data, context }) => {
+    await verifyAdmin(context.supabase, context.userId);
+
+    const email = data.email.toLowerCase().trim();
+
+    // Find auth user
+    const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+    const authUser = authUsers?.users?.find((u: any) => u.email?.toLowerCase() === email);
+
+    if (data.grant) {
+      if (!authUser) throw new Error('Usuário não encontrado no sistema de autenticação');
+
+      // Check if enrollment already exists
+      const { data: existing } = await supabaseAdmin
+        .from('enrollments')
+        .select('id')
+        .eq('user_id', authUser.id)
+        .eq('course_id', data.courseId)
+        .eq('status', 'active')
+        .maybeSingle();
+
+      if (!existing) {
+        await supabaseAdmin.from('enrollments').insert({
+          user_id: authUser.id,
+          course_id: data.courseId,
+          email,
+          access_origin: 'admin_manual',
+          status: 'active',
+        });
+      }
+    } else {
+      // Remove enrollment
+      if (authUser) {
+        await supabaseAdmin
+          .from('enrollments')
+          .update({ status: 'cancelled' })
+          .eq('user_id', authUser.id)
+          .eq('course_id', data.courseId)
+          .eq('status', 'active');
+      }
+      // Also remove by email
+      await supabaseAdmin
+        .from('enrollments')
+        .update({ status: 'cancelled' })
+        .eq('email', email)
+        .eq('course_id', data.courseId)
+        .eq('status', 'active');
+    }
+
+    return { success: true };
+  });

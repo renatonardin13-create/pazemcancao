@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Users, ShieldCheck, Ban, Activity, UserPlus, Clock, Pencil, ToggleLeft, ToggleRight, Trash2, Copy, KeyRound, BookOpen, Check, Search, MoreHorizontal, ChevronLeft, ChevronRight, TrendingUp } from "lucide-react";
+import { Users, ShieldCheck, Ban, Activity, UserPlus, Clock, Pencil, ToggleLeft, ToggleRight, Trash2, Copy, KeyRound, BookOpen, Check, Search, MoreHorizontal, ChevronLeft, ChevronRight, TrendingUp, Eye, Mail, Calendar, ShieldAlert } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -8,8 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { listApprovedBuyers } from "@/lib/admin-users.functions";
-import { createTrialUser, updateBuyer, toggleBuyerAccess, deleteBuyer, addStudent, listCoursesForSelector } from "@/lib/admin-trial.functions";
+import { createTrialUser, updateBuyer, toggleBuyerAccess, deleteBuyer, addStudent, listCoursesForSelector, getStudentDetails, toggleStudentCourseAccess } from "@/lib/admin-trial.functions";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -54,6 +55,8 @@ function AdminUsersPage() {
   const [addOpen, setAddOpen] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const [detailBuyer, setDetailBuyer] = useState<any>(null);
+  const [detailTab, setDetailTab] = useState("info");
   const [editBuyer, setEditBuyer] = useState<any>(null);
   const [trialEmail, setTrialEmail] = useState("");
   const [trialName, setTrialName] = useState("");
@@ -90,6 +93,22 @@ function AdminUsersPage() {
   });
 
   const courses = coursesData?.courses ?? [];
+
+  const { data: studentDetail, isLoading: detailLoading } = useQuery({
+    queryKey: ["student-detail", detailBuyer?.email],
+    queryFn: () => getStudentDetails({ data: { email: detailBuyer!.email } }),
+    enabled: !!detailBuyer,
+  });
+
+  const toggleCourseAccess = useMutation({
+    mutationFn: (input: { email: string; courseId: string; grant: boolean }) =>
+      toggleStudentCourseAccess({ data: input }),
+    onSuccess: (_d, vars) => {
+      toast.success(vars.grant ? "Acesso liberado!" : "Acesso removido!");
+      queryClient.invalidateQueries({ queryKey: ["student-detail", detailBuyer?.email] });
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
 
   const createTrial = useMutation({
     mutationFn: (input: { email: string; nome: string; trialDays: number }) =>
@@ -525,24 +544,32 @@ function AdminUsersPage() {
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-48">
+                      <DropdownMenuItem onClick={() => { setDetailBuyer(buyer); setDetailTab("info"); }} className="gap-2">
+                        <Eye className="h-3.5 w-3.5" />
+                        Ver Detalhes
+                      </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => openEditDialog(buyer)} className="gap-2">
                         <Pencil className="h-3.5 w-3.5" />
-                        Editar aluno
+                        Editar
                       </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => { setDetailBuyer(buyer); setDetailTab("courses"); }} className="gap-2">
+                        <BookOpen className="h-3.5 w-3.5" />
+                        Gerenciar Acessos
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={() => toggleAccess.mutate({ buyerId: buyer.id, access_enabled: !isEnabledBuyer })}
                         className="gap-2"
                       >
-                        {isEnabledBuyer ? <ToggleLeft className="h-3.5 w-3.5" /> : <ToggleRight className="h-3.5 w-3.5" />}
-                        {isEnabledBuyer ? "Bloquear acesso" : "Liberar acesso"}
+                        {isEnabledBuyer ? <ShieldAlert className="h-3.5 w-3.5" /> : <ToggleRight className="h-3.5 w-3.5" />}
+                        {isEnabledBuyer ? "Bloquear" : "Liberar acesso"}
                       </DropdownMenuItem>
-                      <DropdownMenuSeparator />
                       <DropdownMenuItem
                         onClick={() => setDeleteTarget(buyer)}
                         className="gap-2 text-destructive focus:text-destructive"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
-                        Excluir aluno
+                        Excluir
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
@@ -689,6 +716,178 @@ function AdminUsersPage() {
                 {createTrial.isPending ? "Cadastrando..." : "Cadastrar Cliente de Teste"}
               </Button>
             </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Student Details Dialog */}
+      <Dialog open={!!detailBuyer} onOpenChange={(v) => { if (!v) setDetailBuyer(null); }}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="font-display">Detalhes do Aluno</DialogTitle>
+          </DialogHeader>
+          {detailBuyer && (
+            <Tabs value={detailTab} onValueChange={setDetailTab} className="mt-2">
+              <TabsList className="w-full grid grid-cols-3">
+                <TabsTrigger value="info">Informações</TabsTrigger>
+                <TabsTrigger value="courses">Cursos</TabsTrigger>
+                <TabsTrigger value="progress">Progresso</TabsTrigger>
+              </TabsList>
+
+              {/* Tab: Informações */}
+              <TabsContent value="info" className="space-y-4 mt-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/15 text-xl font-bold text-gold shrink-0">
+                    {(detailBuyer.nome || detailBuyer.email).slice(0, 1).toUpperCase()}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-base font-semibold text-foreground/90 truncate">{detailBuyer.nome || "Sem nome"}</p>
+                    <p className="text-[13px] text-muted-foreground/50 flex items-center gap-1.5">
+                      <Mail className="h-3.5 w-3.5" />
+                      {detailBuyer.email}
+                    </p>
+                    <div className="mt-1">
+                      {!detailBuyer.access_enabled ? (
+                        <Badge className="bg-destructive/15 text-destructive/80 border-0 text-[10px]">Bloqueado</Badge>
+                      ) : (
+                        <Badge className="bg-emerald-500/15 text-emerald-400/80 border-0 text-[10px]">Ativo</Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-xl border border-border/15 bg-card/8 p-4">
+                    <p className="text-[11px] text-muted-foreground/45 flex items-center gap-1.5 mb-1">
+                      <Calendar className="h-3 w-3" />
+                      Cadastrado em
+                    </p>
+                    <p className="text-sm font-semibold text-foreground/80">
+                      {detailBuyer.created_at
+                        ? new Date(detailBuyer.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })
+                        : "—"}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-border/15 bg-card/8 p-4">
+                    <p className="text-[11px] text-muted-foreground/45 flex items-center gap-1.5 mb-1">
+                      <Clock className="h-3 w-3" />
+                      Último acesso
+                    </p>
+                    <p className="text-sm font-semibold text-foreground/80">
+                      {detailBuyer.last_login_at ? formatDate(detailBuyer.last_login_at) : "Nunca"}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-border/15 bg-card/8 p-4">
+                    <p className="text-[11px] text-muted-foreground/45 flex items-center gap-1.5 mb-1">
+                      <BookOpen className="h-3 w-3" />
+                      Cursos liberados
+                    </p>
+                    <p className="text-sm font-semibold text-foreground/80">
+                      {detailLoading ? "..." : studentDetail?.enrolledCount ?? 0}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-border/15 bg-card/8 p-4">
+                    <p className="text-[11px] text-muted-foreground/45 flex items-center gap-1.5 mb-1">
+                      <TrendingUp className="h-3 w-3" />
+                      Progresso geral
+                    </p>
+                    <p className="text-sm font-semibold text-foreground/80">
+                      {detailLoading ? "..." : `${studentDetail?.overallProgress ?? 0}%`}
+                    </p>
+                  </div>
+                </div>
+              </TabsContent>
+
+              {/* Tab: Cursos */}
+              <TabsContent value="courses" className="mt-4">
+                <p className="text-[13px] text-muted-foreground/50 mb-3">
+                  Gerencie o acesso do aluno aos cursos da plataforma.
+                </p>
+                {detailLoading ? (
+                  <p className="text-center text-[11px] text-muted-foreground/30 py-8 animate-pulse">Carregando cursos...</p>
+                ) : !studentDetail?.courses?.length ? (
+                  <p className="text-center text-sm text-muted-foreground/40 py-8">Nenhum curso cadastrado.</p>
+                ) : (
+                  <div className="space-y-2 max-h-[340px] overflow-y-auto pr-1">
+                    {studentDetail.courses.map((course: any) => (
+                      <div
+                        key={course.id}
+                        className="flex items-center gap-3 rounded-xl border border-border/15 bg-card/8 p-3"
+                      >
+                        {course.cover_image_url ? (
+                          <img src={course.cover_image_url} alt="" className="h-10 w-10 rounded-lg object-cover shrink-0" />
+                        ) : (
+                          <div className="h-10 w-10 rounded-lg bg-muted/20 flex items-center justify-center shrink-0">
+                            <BookOpen className="h-4 w-4 text-muted-foreground/30" />
+                          </div>
+                        )}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground/80 truncate">{course.title}</p>
+                          <p className="text-[11px] text-muted-foreground/40">
+                            {course.hasAccess ? "Com acesso" : "Sem acesso"}
+                          </p>
+                        </div>
+                        <Switch
+                          checked={course.hasAccess}
+                          onCheckedChange={(checked) =>
+                            toggleCourseAccess.mutate({
+                              email: detailBuyer.email,
+                              courseId: course.id,
+                              grant: checked,
+                            })
+                          }
+                          disabled={toggleCourseAccess.isPending}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* Tab: Progresso */}
+              <TabsContent value="progress" className="mt-4 space-y-4">
+                <div className="rounded-xl border border-border/15 bg-card/8 p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-sm font-semibold text-foreground/80">Progresso Geral</p>
+                    <span className="text-sm font-bold text-foreground/70">
+                      {detailLoading ? "..." : `${studentDetail?.overallProgress ?? 0}%`}
+                    </span>
+                  </div>
+                  <Progress value={studentDetail?.overallProgress ?? 0} className="h-2 bg-muted/20" />
+                </div>
+
+                <p className="text-[13px] text-muted-foreground/50">Progresso por curso:</p>
+
+                {detailLoading ? (
+                  <p className="text-center text-[11px] text-muted-foreground/30 py-8 animate-pulse">Carregando...</p>
+                ) : (() => {
+                  const enrolled = (studentDetail?.courses || []).filter((c: any) => c.hasAccess);
+                  if (!enrolled.length) {
+                    return (
+                      <p className="text-center text-sm text-muted-foreground/40 py-8">
+                        O aluno não tem acesso a nenhum curso.
+                      </p>
+                    );
+                  }
+                  return (
+                    <div className="space-y-3 max-h-[280px] overflow-y-auto pr-1">
+                      {enrolled.map((course: any) => (
+                        <div key={course.id} className="rounded-xl border border-border/15 bg-card/8 p-4">
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-sm font-medium text-foreground/80 truncate">{course.title}</p>
+                            <span className="text-[12px] text-muted-foreground/50 shrink-0 ml-2">{course.progressPct}%</span>
+                          </div>
+                          <Progress value={course.progressPct} className="h-1.5 bg-muted/20" />
+                          <p className="text-[11px] text-muted-foreground/40 mt-1.5">
+                            {course.completedLessons}/{course.totalLessons} aulas concluídas
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+              </TabsContent>
+            </Tabs>
           )}
         </DialogContent>
       </Dialog>
