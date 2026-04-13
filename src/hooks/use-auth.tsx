@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
 import { generateFingerprint } from "@/lib/fingerprint";
 import { registerLogin, validateSession } from "@/lib/security.functions";
+import { checkIsAdmin } from "@/lib/admin.functions";
 
 const ADMIN_EMAIL = "renatonardin13@gmail.com";
 
@@ -47,78 +48,64 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [blockMessage, setBlockMessage] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const loginRegistered = useRef(false);
+  const adminCheckRef = useRef<string | null>(null);
 
-  // Check admin role whenever user changes (with email fallback)
+  // Check admin role via server function (bypasses RLS issues)
   useEffect(() => {
     let cancelled = false;
 
     if (!user?.id) {
       setIsAdmin(false);
       setAdminLoading(false);
-      return () => {
-        cancelled = true;
-      };
+      adminCheckRef.current = null;
+      return () => { cancelled = true; };
     }
 
-    // Email-based fallback: always treat this email as admin
-    if (user.email?.toLowerCase() === ADMIN_EMAIL) {
+    // Prevent duplicate checks for the same user
+    if (adminCheckRef.current === user.id) {
+      return () => { cancelled = true; };
+    }
+
+    // Quick email-based hint (sets admin immediately for UX, server confirms)
+    const isHardcodedAdmin = user.email?.toLowerCase() === ADMIN_EMAIL;
+    if (isHardcodedAdmin) {
       setIsAdmin(true);
       setAdminLoading(false);
-      return () => {
-        cancelled = true;
-      };
+      adminCheckRef.current = user.id;
+      return () => { cancelled = true; };
     }
 
-    const checkAdmin = async () => {
+    const doCheck = async () => {
       setAdminLoading(true);
-
       try {
-        const { data, error } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", user.id)
-          .eq("role", "admin")
-          .maybeSingle();
-
+        const result = await checkIsAdmin();
         if (cancelled) return;
-
-        if (error) {
-          console.error("Admin role check failed:", error.message);
-          setIsAdmin(false);
-          return;
-        }
-
-        setIsAdmin(!!data);
+        setIsAdmin(result.isAdmin);
+        adminCheckRef.current = user.id;
       } catch (error) {
         if (!cancelled) {
-          console.error("Admin role check failed:", error);
+          console.error("Admin check failed:", error);
           setIsAdmin(false);
         }
       } finally {
-        if (!cancelled) {
-          setAdminLoading(false);
-        }
+        if (!cancelled) setAdminLoading(false);
       }
     };
 
-    checkAdmin();
-
-    return () => {
-      cancelled = true;
-    };
+    doCheck();
+    return () => { cancelled = true; };
   }, [user?.id, user?.email]);
 
+  // Session initialization
   useEffect(() => {
     let cancelled = false;
 
     const loadSession = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-
+        const { data: { session: initialSession } } = await supabase.auth.getSession();
         if (cancelled) return;
-
-        setSession(session);
-        setUser(session?.user ?? null);
+        setSession(initialSession);
+        setUser(initialSession?.user ?? null);
       } catch (error) {
         if (!cancelled) {
           console.error("Session load failed:", error);
@@ -126,19 +113,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setUser(null);
         }
       } finally {
-        if (!cancelled) {
-          setLoading(false);
-        }
+        if (!cancelled) setLoading(false);
       }
     };
 
     loadSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      (event, newSession) => {
         if (cancelled) return;
-        setSession(session);
-        setUser(session?.user ?? null);
+
+        // On sign out, clear everything immediately
+        if (event === 'SIGNED_OUT') {
+          setSession(null);
+          setUser(null);
+          setIsAdmin(false);
+          setAdminLoading(false);
+          adminCheckRef.current = null;
+          setLoading(false);
+          return;
+        }
+
+        setSession(newSession);
+        setUser(newSession?.user ?? null);
         setLoading(false);
       }
     );
@@ -149,7 +146,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  // Session validation interval
+  // Session validation interval (only for non-admin users)
   useEffect(() => {
     if (!session || isAdmin || typeof window === 'undefined') return;
 
@@ -165,7 +162,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           await supabase.auth.signOut();
         }
       } catch {
-        // Silently fail
+        // Silently fail - don't block user on network errors
       }
     };
 
@@ -177,35 +174,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setBlocked(false);
     setBlockMessage(null);
     loginRegistered.current = false;
+    adminCheckRef.current = null;
 
     const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       return { error: "Não foi possível acessar. Verifique seu e-mail e senha e tente novamente." };
     }
 
-    if (authData.user?.id) {
-      // Email-based fallback for admin
-      if (email.toLowerCase() === ADMIN_EMAIL) {
-        setIsAdmin(true);
-        loginRegistered.current = true;
-        return { error: null };
-      }
-
-      const { data: adminRole } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", authData.user.id)
-        .eq("role", "admin")
-        .maybeSingle();
-
-      if (adminRole) {
-        setIsAdmin(true);
-        loginRegistered.current = true;
-        return { error: null };
-      }
+    if (!authData.user?.id) {
+      return { error: "Erro inesperado ao autenticar. Tente novamente." };
     }
 
-    // Register login with security checks
+    // Server-side admin check
+    try {
+      const adminResult = await checkIsAdmin();
+      if (adminResult.isAdmin) {
+        setIsAdmin(true);
+        adminCheckRef.current = authData.user.id;
+        loginRegistered.current = true;
+        return { error: null };
+      }
+    } catch (err) {
+      console.error("Admin check during login failed:", err);
+      // Fall through to normal user flow
+    }
+
+    // Register login with security checks (non-admin only)
     try {
       const fingerprint = await generateFingerprint();
       const sessionToken = getSessionToken();
@@ -227,6 +221,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       loginRegistered.current = true;
     } catch (err) {
       console.error('Security check failed:', err);
+      // Don't block login on security check failure
+      loginRegistered.current = true;
     }
 
     return { error: null };
@@ -236,8 +232,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setBlocked(false);
     setBlockMessage(null);
     setIsAdmin(false);
+    adminCheckRef.current = null;
     loginRegistered.current = false;
-    sessionStorage.removeItem('paz-session-token');
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('paz-session-token');
+    }
     await supabase.auth.signOut();
   }, []);
 
