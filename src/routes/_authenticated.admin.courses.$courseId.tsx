@@ -123,15 +123,13 @@ function EditCoursePage() {
         </TabsList>
 
         <TabsContent value="details" className="mt-6">
-          <div className="rounded-2xl border border-border/15 bg-card/5 p-6">
-            <CourseForm
-              ref={formRef}
-              initialValues={course}
-              onSubmit={(values) => mutation.mutate(values)}
-              isSubmitting={mutation.isPending}
-              hideSubmitButton
-            />
-          </div>
+          <CourseForm
+            ref={formRef}
+            initialValues={course}
+            onSubmit={(values) => mutation.mutate(values)}
+            isSubmitting={mutation.isPending}
+            hideSubmitButton
+          />
         </TabsContent>
 
         <TabsContent value="modules" className="mt-6">
