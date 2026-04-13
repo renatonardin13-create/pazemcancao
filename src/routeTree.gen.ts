@@ -33,6 +33,7 @@ import { Route as AuthenticatedAdminVendasRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated.admin.users'
 import { Route as AuthenticatedAdminTracksRouteImport } from './routes/_authenticated.admin.tracks'
 import { Route as AuthenticatedAdminShelvesRouteImport } from './routes/_authenticated.admin.shelves'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated.admin.settings'
 import { Route as AuthenticatedAdminJourneysRouteImport } from './routes/_authenticated.admin.journeys'
 import { Route as AuthenticatedAdminIntegrationsRouteImport } from './routes/_authenticated.admin.integrations'
 import { Route as AuthenticatedAdminCoursesRouteImport } from './routes/_authenticated.admin.courses'
@@ -171,6 +172,12 @@ const AuthenticatedAdminShelvesRoute =
     path: '/shelves',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminJourneysRoute =
   AuthenticatedAdminJourneysRouteImport.update({
     id: '/journeys',
@@ -243,6 +250,7 @@ export interface FileRoutesByFullPath {
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/admin/journeys': typeof AuthenticatedAdminJourneysRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/shelves': typeof AuthenticatedAdminShelvesRoute
   '/admin/tracks': typeof AuthenticatedAdminTracksRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -273,6 +281,7 @@ export interface FileRoutesByTo {
   '/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/admin/journeys': typeof AuthenticatedAdminJourneysRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/shelves': typeof AuthenticatedAdminShelvesRoute
   '/admin/tracks': typeof AuthenticatedAdminTracksRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -309,6 +318,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/_authenticated/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/_authenticated/admin/journeys': typeof AuthenticatedAdminJourneysRoute
+  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/shelves': typeof AuthenticatedAdminShelvesRoute
   '/_authenticated/admin/tracks': typeof AuthenticatedAdminTracksRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
@@ -345,6 +355,7 @@ export interface FileRouteTypes {
     | '/admin/courses'
     | '/admin/integrations'
     | '/admin/journeys'
+    | '/admin/settings'
     | '/admin/shelves'
     | '/admin/tracks'
     | '/admin/users'
@@ -375,6 +386,7 @@ export interface FileRouteTypes {
     | '/admin/conteudos'
     | '/admin/integrations'
     | '/admin/journeys'
+    | '/admin/settings'
     | '/admin/shelves'
     | '/admin/tracks'
     | '/admin/users'
@@ -410,6 +422,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/courses'
     | '/_authenticated/admin/integrations'
     | '/_authenticated/admin/journeys'
+    | '/_authenticated/admin/settings'
     | '/_authenticated/admin/shelves'
     | '/_authenticated/admin/tracks'
     | '/_authenticated/admin/users'
@@ -608,6 +621,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminShelvesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/journeys': {
       id: '/_authenticated/admin/journeys'
       path: '/journeys'
@@ -699,6 +719,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCoursesRoute: typeof AuthenticatedAdminCoursesRouteWithChildren
   AuthenticatedAdminIntegrationsRoute: typeof AuthenticatedAdminIntegrationsRoute
   AuthenticatedAdminJourneysRoute: typeof AuthenticatedAdminJourneysRoute
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminShelvesRoute: typeof AuthenticatedAdminShelvesRoute
   AuthenticatedAdminTracksRoute: typeof AuthenticatedAdminTracksRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
@@ -712,6 +733,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCoursesRoute: AuthenticatedAdminCoursesRouteWithChildren,
   AuthenticatedAdminIntegrationsRoute: AuthenticatedAdminIntegrationsRoute,
   AuthenticatedAdminJourneysRoute: AuthenticatedAdminJourneysRoute,
+  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminShelvesRoute: AuthenticatedAdminShelvesRoute,
   AuthenticatedAdminTracksRoute: AuthenticatedAdminTracksRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,

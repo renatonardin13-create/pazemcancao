@@ -62,22 +62,80 @@ export function AdminSidebar() {
           )}
         </div>
 
+        {/* Dashboard */}
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton asChild isActive={isActive("/admin")} tooltip="Dashboard" className="transition-all duration-300">
+                  <Link to="/admin">
+                    <LayoutDashboard className="h-4 w-4 shrink-0" />
+                    <span>Dashboard</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Conteúdo */}
         <SidebarGroup>
           {!collapsed && (
             <SidebarGroupLabel className="text-[9px] uppercase tracking-[0.3em] text-sidebar-foreground/25 px-4">
-              Menu
+              Conteúdo
             </SidebarGroupLabel>
           )}
           <SidebarGroupContent>
             <SidebarMenu>
-              {adminItems.map((item) => (
+              {contentItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive(item.url)}
-                    tooltip={item.title}
-                    className="transition-all duration-300"
-                  >
+                  <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={item.title} className="transition-all duration-300">
+                    <Link to={item.url}>
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Ferramentas */}
+        <SidebarGroup>
+          {!collapsed && (
+            <SidebarGroupLabel className="text-[9px] uppercase tracking-[0.3em] text-sidebar-foreground/25 px-4">
+              Ferramentas
+            </SidebarGroupLabel>
+          )}
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {toolItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={item.title} className="transition-all duration-300">
+                    <Link to={item.url}>
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Sistema */}
+        <SidebarGroup>
+          {!collapsed && (
+            <SidebarGroupLabel className="text-[9px] uppercase tracking-[0.3em] text-sidebar-foreground/25 px-4">
+              Sistema
+            </SidebarGroupLabel>
+          )}
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {systemItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={isActive(item.url)} tooltip={item.title} className="transition-all duration-300">
                     <Link to={item.url}>
                       <item.icon className="h-4 w-4 shrink-0" />
                       <span>{item.title}</span>
