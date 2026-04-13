@@ -367,8 +367,8 @@ function LoginPage() {
       <div className="flex flex-1 relative z-10">
         {leftPanel}
 
-        <div className="flex flex-1 items-center justify-center px-6 py-6 sm:py-12">
-          <div className="w-full max-w-[520px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
+        <div className="flex flex-1 lg:flex-[1.2] items-center justify-center px-6 py-6 sm:py-12">
+          <div className="w-full max-w-[560px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
             {/* Mobile header */}
             <div className="lg:hidden mb-6 sm:mb-10 text-center">
               <div className="mx-auto mb-5 w-px h-8 bg-gradient-to-b from-transparent via-gold/15 to-transparent" />
