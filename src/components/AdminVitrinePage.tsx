@@ -197,9 +197,13 @@ export default function AdminVitrinePage() {
   const [promoTitle, setPromoTitle] = useState("");
   const [promoImageUrl, setPromoImageUrl] = useState("");
   const [promoLinkUrl, setPromoLinkUrl] = useState("");
-  const [promoPosition, setPromoPosition] = useState(1);
+  const [promoPosition, setPromoPosition] = useState("before");
+  const [promoType, setPromoType] = useState("static");
   const [promoOrder, setPromoOrder] = useState(0);
   const [promoActive, setPromoActive] = useState(true);
+  const [promoSchedule, setPromoSchedule] = useState(false);
+  const [promoShowVitrine, setPromoShowVitrine] = useState(true);
+  const [promoShowCommunity, setPromoShowCommunity] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-shelves"],
@@ -367,9 +371,13 @@ export default function AdminVitrinePage() {
     setPromoTitle("");
     setPromoImageUrl("");
     setPromoLinkUrl("");
-    setPromoPosition(1);
+    setPromoPosition("before");
+    setPromoType("static");
     setPromoOrder(promoBanners.length);
     setPromoActive(true);
+    setPromoSchedule(false);
+    setPromoShowVitrine(true);
+    setPromoShowCommunity(false);
     setPromoDialogOpen(true);
   };
 
@@ -378,9 +386,13 @@ export default function AdminVitrinePage() {
     setPromoTitle(banner.title);
     setPromoImageUrl(banner.image_url);
     setPromoLinkUrl(banner.link_url || "");
-    setPromoPosition(banner.position_after_shelf);
+    setPromoPosition(String(banner.position_after_shelf) || "before");
+    setPromoType("static");
     setPromoOrder(banner.sort_order);
     setPromoActive(banner.is_active);
+    setPromoSchedule(false);
+    setPromoShowVitrine(true);
+    setPromoShowCommunity(false);
     setPromoDialogOpen(true);
   };
 
@@ -391,11 +403,12 @@ export default function AdminVitrinePage() {
 
   const handlePromoSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const posMap: Record<string, number> = { before: 0, between: 1, after: 99 };
     const payload = {
       title: promoTitle,
       image_url: promoImageUrl,
       link_url: promoLinkUrl || undefined,
-      position_after_shelf: promoPosition,
+      position_after_shelf: posMap[promoPosition] ?? 1,
       sort_order: promoOrder,
       is_active: promoActive,
     };
@@ -1389,97 +1402,138 @@ export default function AdminVitrinePage() {
 
       {/* ── Promo Create/Edit Dialog ── */}
       <Dialog open={promoDialogOpen} onOpenChange={setPromoDialogOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="font-display">
-              {editingPromo ? "Editar Banner Promo" : "Novo Banner Promo"}
-            </DialogTitle>
-          </DialogHeader>
-          <form onSubmit={handlePromoSubmit} className="space-y-4 mt-4">
-            <div className="space-y-2">
-              <Label>Título interno</Label>
-              <Input
-                value={promoTitle}
-                onChange={(e) => setPromoTitle(e.target.value)}
-                placeholder="Ex: Black Friday 2026"
-                required
-                className="bg-card/10 border-border/15"
-              />
-            </div>
+        <DialogContent className="sm:max-w-[750px] p-0 overflow-hidden">
+          {/* Header */}
+          <div className="px-6 pt-5 pb-3">
+            <DialogHeader>
+              <DialogTitle className="font-display text-base font-bold text-foreground/85">
+                {editingPromo ? "Editar Banner Secundário" : "Novo Banner Secundário"}
+              </DialogTitle>
+              <p className="text-[11px] text-muted-foreground/40">Recomendado: 1200 × 400 px</p>
+            </DialogHeader>
+          </div>
 
-            <div className="space-y-2">
-              <Label>URL da imagem</Label>
-              <Input
-                value={promoImageUrl}
-                onChange={(e) => setPromoImageUrl(e.target.value)}
-                placeholder="https://... imagem 1200x400"
-                required
-                className="bg-card/10 border-border/15"
-              />
-              <p className="text-[10px] text-muted-foreground/30">
-                Recomendado: 1200×400 px — JPG, PNG ou WebP
-              </p>
-            </div>
+          <form onSubmit={handlePromoSubmit}>
+            <div className="flex divide-x divide-border/10">
+              {/* Left column */}
+              <div className="flex-1 px-6 pb-6 space-y-4">
+                {/* Name */}
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] font-semibold text-foreground/60">Nome da Promoção (opcional)</Label>
+                  <Input
+                    value={promoTitle}
+                    onChange={(e) => setPromoTitle(e.target.value)}
+                    placeholder="Ex: Black Friday 2024"
+                    className="bg-card/10 border-border/15"
+                  />
+                </div>
 
-            {promoImageUrl && (
-              <div className="rounded-xl overflow-hidden border border-border/10 aspect-[3/1] bg-card/10">
-                <img src={promoImageUrl} alt="Preview" className="w-full h-full object-cover" />
+                {/* Preview */}
+                <div className="space-y-1.5">
+                  <Label className="text-[11px] font-semibold text-foreground/60">Preview do Banner</Label>
+                  <div
+                    className="relative w-full aspect-[3/1] rounded-xl border-2 border-dashed border-border/15 bg-card/5 flex flex-col items-center justify-center cursor-pointer hover:border-gold/20 transition-colors overflow-hidden"
+                    onClick={() => {
+                      const url = prompt("Cole a URL da imagem do banner:");
+                      if (url) setPromoImageUrl(url);
+                    }}
+                  >
+                    {promoImageUrl ? (
+                      <img src={promoImageUrl} alt="Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <>
+                        <ImageIcon className="h-8 w-8 text-muted-foreground/15 mb-2" />
+                        <span className="text-gold/50 text-[11px] font-medium">↑ Clique para upload</span>
+                      </>
+                    )}
+                  </div>
+                </div>
               </div>
-            )}
 
-            <div className="space-y-2">
-              <Label>Link (opcional)</Label>
-              <Input
-                value={promoLinkUrl}
-                onChange={(e) => setPromoLinkUrl(e.target.value)}
-                placeholder="https://..."
-                className="bg-card/10 border-border/15"
-              />
+              {/* Right column */}
+              <div className="flex-1 px-6 pb-6 space-y-4">
+                {/* Position & Type */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <Label className="text-[11px] font-semibold text-foreground/60">Posição</Label>
+                    <Select value={promoPosition} onValueChange={setPromoPosition}>
+                      <SelectTrigger className="bg-card/10 border-border/15">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="before">Antes das prateleiras</SelectItem>
+                        <SelectItem value="between">Entre prateleiras</SelectItem>
+                        <SelectItem value="after">Após prateleiras</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-[11px] font-semibold text-foreground/60">Tipo</Label>
+                    <Select value={promoType} onValueChange={setPromoType}>
+                      <SelectTrigger className="bg-card/10 border-border/15">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="static">Estático</SelectItem>
+                        <SelectItem value="carousel">Carrossel</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                {/* Onde Exibir */}
+                <div className="rounded-xl bg-card/5 border border-border/10 px-4 py-3 space-y-2">
+                  <p className="text-[11px] font-semibold text-foreground/60">Onde Exibir</p>
+                  <div className="flex items-center gap-6">
+                    <div className="flex items-center gap-2">
+                      <Switch checked={promoShowVitrine} onCheckedChange={setPromoShowVitrine} />
+                      <span className="text-xs text-foreground/60">Vitrine (Showcase)</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Switch checked={promoShowCommunity} onCheckedChange={setPromoShowCommunity} />
+                      <span className="text-xs text-foreground/60">Comunidade</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Agendamento */}
+                <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
+                  <div>
+                    <p className="text-sm font-medium text-foreground/60">Agendamento Automático</p>
+                    <p className="text-[10px] text-muted-foreground/30">Ativar/desativar banner em datas específicas</p>
+                  </div>
+                  <Switch checked={promoSchedule} onCheckedChange={setPromoSchedule} />
+                </div>
+
+                {/* Ativar banner */}
+                <div className="flex items-center gap-3">
+                  <span className="text-sm font-medium text-foreground/60">Ativar banner</span>
+                  <Switch checked={promoActive} onCheckedChange={setPromoActive} />
+                </div>
+              </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Posição (após prateleira nº)</Label>
-                <Input
-                  type="number"
-                  min={1}
-                  max={99}
-                  value={promoPosition}
-                  onChange={(e) => setPromoPosition(Number(e.target.value))}
-                  className="bg-card/10 border-border/15"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Ordem de exibição</Label>
-                <Input
-                  type="number"
-                  min={0}
-                  max={999}
-                  value={promoOrder}
-                  onChange={(e) => setPromoOrder(Number(e.target.value))}
-                  className="bg-card/10 border-border/15"
-                />
-              </div>
+            {/* Footer */}
+            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border/10">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={closePromoDialog}
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                className="gap-1.5 bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
+                disabled={createPromoMut.isPending || updatePromoMut.isPending}
+              >
+                {(createPromoMut.isPending || updatePromoMut.isPending) && (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                )}
+                <BookOpen className="h-3.5 w-3.5" />
+                Salvar
+              </Button>
             </div>
-
-            <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
-              <div>
-                <p className="text-sm font-medium text-foreground/70">Ativo</p>
-                <p className="text-[11px] text-muted-foreground/40">Visível na vitrine</p>
-              </div>
-              <Switch checked={promoActive} onCheckedChange={setPromoActive} />
-            </div>
-
-            <Button
-              type="submit"
-              className="w-full bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
-              disabled={createPromoMut.isPending || updatePromoMut.isPending}
-            >
-              {(createPromoMut.isPending || updatePromoMut.isPending) && (
-                <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
-              )}
-              {editingPromo ? "Salvar" : "Criar Banner"}
-            </Button>
           </form>
         </DialogContent>
       </Dialog>
