@@ -714,30 +714,28 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
           if (!open) setModuleDialog({ open: false });
         }}
       >
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="text-lg font-bold">
               {moduleDialog.editId ? "Editar Módulo" : "Criar Novo Módulo"}
             </DialogTitle>
-            <p className="text-[13px] text-muted-foreground/50 mt-0.5">
-              {moduleDialog.editId
-                ? "Atualize as informações do módulo"
-                : "Preencha os dados para criar um novo módulo"}
+            <p className="text-sm text-muted-foreground/50 mt-0.5">
+              Configure as informações e a thumbnail do módulo
             </p>
           </DialogHeader>
 
-          <div className="space-y-6 py-2">
+          <div className="space-y-5 py-2">
             <div className="space-y-2">
-              <Label className="text-sm font-semibold">Nome do Módulo *</Label>
+              <Label className="text-sm font-bold">Nome do Módulo *</Label>
               <Input
                 value={modTitle}
                 onChange={(e) => setModTitle(e.target.value)}
                 placeholder="Ex: Módulo 1 - Introdução"
-                className="bg-card/10 border-gold/20 focus:border-gold/40"
+                className="h-11 bg-card/10 border-gold/20 focus:border-gold/40"
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-sm font-semibold">Descrição (opcional)</Label>
+              <Label className="text-sm font-bold">Descrição</Label>
               <Textarea
                 value={modDesc}
                 onChange={(e) => setModDesc(e.target.value)}
@@ -745,6 +743,50 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 rows={3}
                 className="bg-card/10 border-border/15"
               />
+            </div>
+
+            {/* Thumbnail */}
+            <div className="space-y-2">
+              <Label className="text-sm font-bold">Thumbnail do Módulo</Label>
+              <p className="text-xs text-muted-foreground/50">
+                Imagem exibida na vitrine do curso (recomendado: 16:10 ou 16:9)
+              </p>
+              <div className="rounded-lg border border-dashed border-border/20 bg-background/20 overflow-hidden">
+                {modThumbnailUrl ? (
+                  <div className="relative group">
+                    <img src={modThumbnailUrl} alt="Thumbnail" className="w-full aspect-video object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setModThumbnailUrl("")}
+                      className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-500/90 text-white hover:bg-red-500 transition-colors"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="aspect-video flex flex-col items-center justify-center gap-2 text-muted-foreground/30 cursor-pointer hover:text-muted-foreground/50 transition-colors">
+                    <Upload className="h-7 w-7" />
+                    <span className="text-xs">Clique para fazer upload</span>
+                  </div>
+                )}
+              </div>
+              <Input
+                value={modThumbnailUrl}
+                onChange={(e) => setModThumbnailUrl(e.target.value)}
+                placeholder="URL da thumbnail..."
+                className="h-9 bg-background/50 border-border/15 rounded-lg text-xs"
+              />
+            </div>
+
+            {/* Publish toggle */}
+            <div className="flex items-center justify-between rounded-lg border border-border/15 p-4">
+              <div>
+                <Label className="text-sm font-bold">Publicar módulo</Label>
+                <p className="text-xs text-muted-foreground/50 mt-0.5">
+                  Módulos publicados ficam visíveis para os alunos
+                </p>
+              </div>
+              <Switch checked={modPublished} onCheckedChange={setModPublished} />
             </div>
           </div>
 
@@ -764,7 +806,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
               {(createModM.isPending || updateModM.isPending) && (
                 <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
               )}
-              {moduleDialog.editId ? "Salvar" : "Criar Módulo"}
+              {moduleDialog.editId ? "Salvar Alterações" : "Criar Módulo"}
             </Button>
           </DialogFooter>
         </DialogContent>
