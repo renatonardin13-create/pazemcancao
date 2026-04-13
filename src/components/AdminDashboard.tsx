@@ -215,105 +215,191 @@ export function AdminDashboard() {
         </div>
       </div>
 
-      {/* Two-column: Chart + Top Courses */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-5">
-        {/* Plays chart */}
-        <div className="lg:col-span-3 rounded-2xl border border-border/15 bg-card/8 p-6">
-          <div className="flex items-center justify-between mb-5">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold/10 border border-gold/15">
-                <TrendingUp className="h-4 w-4 text-gold" />
+      {/* Main Sales Chart + Best Performing Courses */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        {/* Sales Chart — large, prominent */}
+        <div className="lg:col-span-2 relative rounded-2xl border border-gold/15 bg-gradient-to-br from-gold/[0.03] to-card/5 p-6 sm:p-8 overflow-hidden">
+          <div className="pointer-events-none absolute -top-32 -right-32 h-72 w-72 rounded-full bg-gold/[0.04] blur-[100px]" />
+
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6 relative">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gold/10 border border-gold/20 shadow-lg shadow-gold/5">
+                <TrendingUp className="h-6 w-6 text-gold" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-foreground/80">Visão Geral de Plays</h3>
-                <p className="text-[11px] text-muted-foreground/35">Reproduções no período selecionado</p>
+                <h3 className="text-lg font-bold text-foreground/90 tracking-tight">Visão Geral de Vendas</h3>
+                <p className="text-xs text-muted-foreground/40 mt-0.5">Desempenho de receita mensal</p>
               </div>
             </div>
+            <div className="flex gap-1 rounded-xl bg-muted/10 border border-border/15 p-1 self-start">
+              {PERIOD_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setDays(opt.value)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                    days === opt.value
+                      ? "bg-gold/15 text-gold border border-gold/20 shadow-sm"
+                      : "text-muted-foreground/40 hover:text-muted-foreground/70"
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
           </div>
-          <div>
+
+          {/* Summary strip */}
+          <div className="flex flex-wrap items-center gap-6 mb-6">
+            <div className="flex items-center gap-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-gold" />
+              <span className="text-xs text-muted-foreground/50">Plays</span>
+              <span className="text-sm font-bold text-foreground/80">
+                {analyticsLoading ? "—" : analytics?.totalPlays ?? 0}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+              <span className="text-xs text-muted-foreground/50">Downloads</span>
+              <span className="text-sm font-bold text-foreground/80">
+                {analyticsLoading ? "—" : analytics?.totalDownloads ?? 0}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="h-2.5 w-2.5 rounded-full bg-blue-400" />
+              <span className="text-xs text-muted-foreground/50">Receita</span>
+              <span className="text-sm font-bold text-foreground/80">
+                {isLoading ? "—" : formatCurrency(data?.totalRevenue ?? 0)}
+              </span>
+            </div>
+          </div>
+
+          <div className="relative">
             {analyticsLoading ? (
-              <div className="flex items-center justify-center py-20">
-                <div className="h-6 w-6 animate-spin rounded-full border-2 border-gold/20 border-t-gold/60" />
+              <div className="flex items-center justify-center py-24">
+                <div className="h-8 w-8 animate-spin rounded-full border-2 border-gold/20 border-t-gold/60" />
               </div>
             ) : !analytics?.dailyPlayData?.length ? (
-              <div className="flex flex-col items-center justify-center py-20 text-center">
-                <Headphones className="h-10 w-10 text-muted-foreground/15 mb-3" />
-                <p className="text-sm text-muted-foreground/40">Nenhum dado de reprodução ainda</p>
-                <p className="text-[11px] text-muted-foreground/25 mt-1">Os dados aparecerão aqui quando houver atividade</p>
+              <div className="flex flex-col items-center justify-center py-24 text-center">
+                <BarChart3 className="h-14 w-14 text-muted-foreground/10 mb-4" />
+                <p className="text-sm text-muted-foreground/40 font-medium">Nenhum dado de atividade ainda</p>
+                <p className="text-[11px] text-muted-foreground/25 mt-1.5">Os dados aparecerão aqui quando houver atividade</p>
               </div>
             ) : (
-              <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={analytics.dailyPlayData}>
+              <ResponsiveContainer width="100%" height={320}>
+                <AreaChart data={analytics.dailyPlayData} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
                   <defs>
-                    <linearGradient id="playGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="hsl(var(--gold))" stopOpacity={0.35} />
+                    <linearGradient id="salesGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="hsl(var(--gold))" stopOpacity={0.4} />
+                      <stop offset="50%" stopColor="hsl(var(--gold))" stopOpacity={0.1} />
                       <stop offset="100%" stopColor="hsl(var(--gold))" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <XAxis
                     dataKey="date"
-                    tickFormatter={(v: string) => { const d = new Date(v + 'T12:00:00'); return String(d.getDate()); }}
-                    tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground) / 0.3)' }}
+                    tickFormatter={(v: string) => { const d = new Date(v + 'T12:00:00'); return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }); }}
+                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground) / 0.3)' }}
                     axisLine={false}
                     tickLine={false}
+                    interval="preserveStartEnd"
                   />
-                  <YAxis tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground) / 0.3)' }} axisLine={false} tickLine={false} />
+                  <YAxis
+                    tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground) / 0.3)' }}
+                    axisLine={false}
+                    tickLine={false}
+                    width={35}
+                  />
                   <Tooltip
-                    contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border) / 0.2)', borderRadius: '12px', fontSize: '12px' }}
-                    labelFormatter={(v: string) => { const d = new Date(v + 'T12:00:00'); return d.toLocaleDateString('pt-BR'); }}
+                    contentStyle={{
+                      background: 'hsl(var(--card))',
+                      border: '1px solid hsl(var(--gold) / 0.2)',
+                      borderRadius: '14px',
+                      fontSize: '12px',
+                      boxShadow: '0 8px 32px -8px rgba(0,0,0,0.4)',
+                      padding: '10px 14px',
+                    }}
+                    labelFormatter={(v: string) => { const d = new Date(v + 'T12:00:00'); return d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' }); }}
+                    cursor={{ stroke: 'hsl(var(--gold) / 0.15)', strokeWidth: 1.5 }}
                   />
-                  <Area type="monotone" dataKey="plays" stroke="hsl(var(--gold))" fill="url(#playGrad)" strokeWidth={2.5} dot={false} />
+                  <Area
+                    type="monotone"
+                    dataKey="plays"
+                    stroke="hsl(var(--gold))"
+                    fill="url(#salesGrad)"
+                    strokeWidth={3}
+                    dot={false}
+                    activeDot={{ r: 5, stroke: 'hsl(var(--gold))', strokeWidth: 2, fill: 'hsl(var(--background))' }}
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             )}
           </div>
         </div>
 
-        {/* Top Courses */}
-        <div className="lg:col-span-2 rounded-2xl border border-border/15 bg-card/8 p-6">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary/10 border border-primary/15">
-              <BookOpen className="h-4 w-4 text-primary" />
+        {/* Best Performing Courses — sidebar card */}
+        <div className="lg:col-span-1 rounded-2xl border border-border/15 bg-gradient-to-br from-card/10 to-card/5 p-6 flex flex-col">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gold/10 border border-gold/20">
+              <GraduationCap className="h-5 w-5 text-gold" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-foreground/80">Top Cursos</h3>
-              <p className="text-[11px] text-muted-foreground/35">Mais alunos matriculados</p>
+              <h3 className="text-sm font-bold text-foreground/85 tracking-tight">Cursos com Melhor Desempenho</h3>
+              <p className="text-[11px] text-muted-foreground/35">Mais vendidos este mês</p>
             </div>
           </div>
-          {isLoading ? (
-            <div className="flex items-center justify-center py-16">
-              <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary/20 border-t-primary/60" />
-            </div>
-          ) : !data?.topCourses?.length ? (
-            <div className="flex flex-col items-center justify-center py-16 text-center">
-              <BookOpen className="h-10 w-10 text-muted-foreground/15 mb-3" />
-              <p className="text-sm text-muted-foreground/40">Nenhum curso publicado</p>
-            </div>
-          ) : (
-            <div className="space-y-1">
-              {data.topCourses.map((course, i) => (
-                <div key={course.id} className="flex items-center gap-3 py-3 px-3 rounded-xl hover:bg-card/20 transition-colors group">
-                  <span className="text-sm font-bold text-muted-foreground/25 w-6 text-center">{i + 1}</span>
-                  {course.coverUrl ? (
-                    <img src={course.coverUrl} alt="" className="h-11 w-11 rounded-xl object-cover shrink-0 border border-border/10" />
-                  ) : (
-                    <div className="h-11 w-11 rounded-xl bg-muted/15 flex items-center justify-center shrink-0 border border-border/10">
-                      <BookOpen className="h-5 w-5 text-muted-foreground/20" />
+
+          <div className="mt-4 flex-1">
+            {isLoading ? (
+              <div className="flex items-center justify-center py-16">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-gold/20 border-t-gold/60" />
+              </div>
+            ) : !data?.topCourses?.length ? (
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <BookOpen className="h-10 w-10 text-muted-foreground/10 mb-3" />
+                <p className="text-sm text-muted-foreground/35">Nenhum curso publicado</p>
+                <p className="text-[11px] text-muted-foreground/25 mt-1">Publique cursos para ver o ranking</p>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                {data.topCourses.map((course, i) => {
+                  const medals = ['🥇', '🥈', '🥉'];
+                  return (
+                    <div key={course.id} className="flex items-center gap-3 py-3 px-3 rounded-xl hover:bg-card/20 transition-colors group">
+                      <span className="text-lg w-7 text-center shrink-0">
+                        {i < 3 ? medals[i] : <span className="text-sm font-bold text-muted-foreground/25">{i + 1}</span>}
+                      </span>
+                      {course.coverUrl ? (
+                        <img src={course.coverUrl} alt="" className="h-12 w-12 rounded-xl object-cover shrink-0 border border-border/10 shadow-sm" />
+                      ) : (
+                        <div className="h-12 w-12 rounded-xl bg-muted/15 flex items-center justify-center shrink-0 border border-border/10">
+                          <BookOpen className="h-5 w-5 text-muted-foreground/20" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-foreground/80 truncate font-semibold group-hover:text-foreground transition-colors">{course.title}</p>
+                        <div className="flex items-center gap-3 mt-1">
+                          <span className="text-[11px] text-muted-foreground/40 flex items-center gap-1">
+                            <Users className="h-3 w-3" /> {course.students}
+                          </span>
+                          <span className="text-[11px] font-bold text-gold/60">
+                            R$ {course.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-foreground/80 truncate font-medium group-hover:text-foreground transition-colors">{course.title}</p>
-                    <p className="text-[11px] text-muted-foreground/40 flex items-center gap-1.5 mt-0.5">
-                      <Users className="h-3 w-3" /> {course.students} alunos
-                    </p>
-                  </div>
-                  <span className="text-xs font-bold text-gold/70 shrink-0 bg-gold/8 px-2 py-1 rounded-lg">
-                    R$ {course.price.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Footer link */}
+          <Link
+            to="/admin/courses"
+            className="mt-4 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border/10 text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/40 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all"
+          >
+            Ver todos os cursos
+            <ArrowUpRight className="h-3.5 w-3.5" />
+          </Link>
         </div>
       </div>
 
