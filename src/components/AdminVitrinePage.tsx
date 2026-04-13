@@ -18,12 +18,8 @@ import {
   Loader2,
   Sparkles,
   Monitor,
-  Smartphone,
-  Tablet,
   Info,
   ImageIcon,
-  Maximize2,
-  ExternalLink as ExternalLinkIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -191,7 +187,7 @@ export default function AdminVitrinePage() {
   const [bannerCourseId, setBannerCourseId] = useState("");
   const [bannerEnabled, setBannerEnabled] = useState(true);
   const [bannerFit, setBannerFit] = useState<string>("cover");
-  const [bannerAspect, setBannerAspect] = useState<string>("hero");
+  const [bannerAspect, setBannerAspect] = useState<string>("auto");
   const [bannerImgDims, setBannerImgDims] = useState<{ w: number; h: number } | null>(null);
 
   // Promo banner state
@@ -460,116 +456,79 @@ export default function AdminVitrinePage() {
   return (
     <div className="max-w-[1400px] mx-auto space-y-6">
       {/* ── Header ── */}
-      <div className="flex items-start justify-between pb-5 border-b border-border/10">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-foreground/90 tracking-tight">
-            Configuração da Vitrine
-          </h1>
-          <p className="mt-1 text-[13px] text-muted-foreground/45 tracking-wide">
-            Configure banner, cards e prateleiras da área do aluno
-          </p>
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          className="gap-1.5 border-border/15 text-muted-foreground/50 hover:text-foreground/70 text-xs"
-          onClick={() => setShowPreview(!showPreview)}
-        >
-          <Eye className="h-3.5 w-3.5" />
-          {showPreview ? "Esconder Preview" : "Mostrar Preview"}
-        </Button>
+      <div className="pb-5 border-b border-border/10">
+        <h1 className="font-display text-2xl font-bold text-foreground/90 tracking-tight">
+          Configuração da Vitrine
+        </h1>
+        <p className="mt-1 text-[13px] text-muted-foreground/45 tracking-wide">
+          Configure banner, cards e prateleiras da área do aluno
+        </p>
       </div>
 
-      {/* ── Summary Stats ── */}
-      <div className="flex flex-wrap items-center gap-x-10 gap-y-2">
-        <p className="text-sm text-muted-foreground/50">
-          Cursos Publicados:{" "}
-          <strong className="text-gold font-bold">{publishedCourses.length}</strong>
-        </p>
-        <p className="text-sm text-muted-foreground/50">
-          Prateleiras Ativas:{" "}
-          <strong className="text-gold font-bold">{activeShelves.length}</strong>
-        </p>
-        <p className="text-sm text-muted-foreground/50">
-          Banner Principal:{" "}
-          <strong className={`font-bold ${featuredCourse ? "text-emerald-400" : "text-amber-400"}`}>
-            {featuredCourse ? "Ativo" : "Inativo"}
-          </strong>
-        </p>
+      {/* ── Summary Cards ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <SummaryCard
+          label="Cursos Publicados"
+          value={publishedCourses.length}
+          icon={BookOpen}
+          color="emerald"
+        />
+        <SummaryCard
+          label="Prateleiras Ativas"
+          value={activeShelves.length}
+          icon={Layers}
+          color="gold"
+        />
+        <SummaryCard
+          label="Banner Principal"
+          value={featuredCourse ? "Configurado" : "Não configurado"}
+          icon={Image}
+          color={featuredCourse ? "emerald" : "amber"}
+        />
       </div>
 
       {/* ── Main content ── */}
-      <div className="flex gap-6">
+      <div className={`flex gap-6 ${showPreview ? "" : ""}`}>
         {/* Left: tabs */}
         <div className={showPreview ? "flex-1 min-w-0" : "w-full"}>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="flex items-center justify-between gap-4">
-              <TabsList className="bg-card/5 border border-border/10 justify-start gap-1 p-1.5 rounded-xl h-auto">
-                <TabsTrigger
-                  value="banner"
-                  className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
-                >
-                  Banner Principal
-                </TabsTrigger>
-                <TabsTrigger
-                  value="cards"
-                  className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
-                >
-                  Cards
-                </TabsTrigger>
-                <TabsTrigger
-                  value="promo"
-                  className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
-                >
-                  Banners Promo
-                </TabsTrigger>
-                <TabsTrigger
-                  value="shelves"
-                  className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
-                >
-                  Prateleiras
-                </TabsTrigger>
-              </TabsList>
-
-              {showPreview && (
-                <div className="flex items-center gap-3 shrink-0">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs text-gold/70 font-medium">Pré-visualização</span>
-                    <Badge variant="outline" className="text-[9px] border-emerald-500/30 text-emerald-400/70 px-1.5 py-0">
-                      Ao vivo
-                    </Badge>
-                  </div>
-                  <div className="flex items-center gap-1 ml-2">
-                    <button className="p-1.5 rounded-md text-muted-foreground/30 hover:text-foreground/60 transition-colors" title="Desktop">
-                      <Monitor className="h-4 w-4" />
-                    </button>
-                    <button className="p-1.5 rounded-md text-muted-foreground/30 hover:text-foreground/60 transition-colors" title="Tablet">
-                      <Tablet className="h-4 w-4" />
-                    </button>
-                    <button className="p-1.5 rounded-md text-muted-foreground/30 hover:text-foreground/60 transition-colors" title="Mobile">
-                      <Smartphone className="h-4 w-4" />
-                    </button>
-                    <button className="p-1.5 rounded-md text-muted-foreground/30 hover:text-foreground/60 transition-colors" title="Tela cheia">
-                      <Maximize2 className="h-4 w-4" />
-                    </button>
-                    <button className="p-1.5 rounded-md text-muted-foreground/30 hover:text-foreground/60 transition-colors" title="Abrir">
-                      <ExternalLinkIcon className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+            <TabsList className="bg-card/5 border border-border/10 w-full justify-start gap-1 p-1.5 rounded-xl h-auto">
+              <TabsTrigger
+                value="banner"
+                className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
+              >
+                Banner Principal
+              </TabsTrigger>
+              <TabsTrigger
+                value="cards"
+                className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
+              >
+                Cards
+              </TabsTrigger>
+              <TabsTrigger
+                value="promo"
+                className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
+              >
+                Banners Promo
+              </TabsTrigger>
+              <TabsTrigger
+                value="shelves"
+                className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
+              >
+                Prateleiras
+              </TabsTrigger>
+            </TabsList>
 
             {/* ── Banner Principal ── */}
             <TabsContent value="banner" className="mt-6 space-y-6">
-              <div className="rounded-xl border border-border/15 bg-card/5 p-6 space-y-6">
+              <div className="space-y-5">
                 {/* Header */}
                 <div>
-                  <h3 className="text-sm font-semibold text-gold/80 mb-1">
-                    <span className="text-gold">Banner Principal</span>{" "}
-                    <span className="text-muted-foreground/50 font-normal">(Hero da Home)</span>
+                  <h3 className="text-base font-bold text-foreground/85">
+                    Banner Principal{" "}
+                    <span className="font-normal text-muted-foreground/50">(Hero da Home)</span>
                   </h3>
-                  <p className="text-[11px] text-muted-foreground/35">
+                  <p className="text-[11px] text-muted-foreground/40 mt-0.5">
                     Tamanho recomendado: 1920×500px • Formatos: JPG, PNG, WebP
                   </p>
                 </div>
@@ -577,11 +536,18 @@ export default function AdminVitrinePage() {
                 {/* Image preview */}
                 {(() => {
                   const imgSrc = bannerImageUrl || featuredCourse?.banner_image_url || featuredCourse?.cover_image_url;
-                  const aspectClass = bannerAspect === "21:9" ? "aspect-[21/9]" : bannerAspect === "16:9" ? "aspect-[16/9]" : "aspect-[1920/500]";
-                  const fitClass = bannerFit === "cover" ? "object-cover" : bannerFit === "contain" ? "object-contain" : "object-fill";
+                  const aspectMap: Record<string, string> = {
+                    auto: "",
+                    "4:1": "aspect-[4/1]",
+                    "3:1": "aspect-[3/1]",
+                    "16:5": "aspect-[16/5]",
+                    "21:9": "aspect-[21/9]",
+                  };
+                  const aspectClass = aspectMap[bannerAspect] || "";
+                  const fitClass = bannerFit === "cover" ? "object-cover" : "object-contain";
                   return (
                     <div className="space-y-3">
-                      <div className={`relative w-full ${aspectClass} rounded-xl overflow-hidden border border-border/10 bg-card/10`}>
+                      <div className={`relative w-full ${aspectClass} rounded-xl overflow-hidden border border-border/10 bg-card/10 ${!aspectClass ? "max-h-[400px]" : ""}`}>
                         {imgSrc ? (
                           <img
                             src={imgSrc}
@@ -593,113 +559,100 @@ export default function AdminVitrinePage() {
                             }}
                           />
                         ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-card/30 to-card/5 flex items-center justify-center">
+                          <div className="w-full h-full min-h-[200px] bg-gradient-to-br from-card/30 to-card/5 flex items-center justify-center">
                             <ImageIcon className="h-8 w-8 text-muted-foreground/10" />
                           </div>
                         )}
-                        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-                        <div className="absolute inset-0 flex items-end px-6 pb-6">
-                          <div>
-                            <p className="text-[8px] font-bold uppercase tracking-[0.5em] text-gold/50 mb-1">Em destaque</p>
-                            <p className="text-lg font-bold text-foreground/95 leading-tight">
-                              {bannerTitle || featuredCourse?.title || "Título do curso"}
-                            </p>
-                            {(bannerSubtitle || featuredCourse?.short_description) && (
-                              <p className="mt-1 text-[11px] text-muted-foreground/50 line-clamp-1">
-                                {bannerSubtitle || featuredCourse?.short_description}
-                              </p>
-                            )}
-                          </div>
-                        </div>
                       </div>
+
+                      {/* Dimensions info */}
+                      {bannerImgDims && (
+                        <p className="text-center text-[11px] text-muted-foreground/40">
+                          Dimensões:{" "}
+                          <strong className="text-foreground/60">{bannerImgDims.w} × {bannerImgDims.h}px</strong>
+                          {"  "}(Proporção: {(bannerImgDims.w / bannerImgDims.h).toFixed(2)}:1)
+                        </p>
+                      )}
                     </div>
                   );
                 })()}
 
-                {/* Dimensions info */}
-                {bannerImgDims && (
-                  <div className="rounded-xl border border-border/10 bg-card/5 px-4 py-3">
-                    <p className="text-xs text-muted-foreground/50">
-                      <strong className="text-foreground/60">Dimensões:</strong> {bannerImgDims.w} × {bannerImgDims.h}px{" "}
-                      <span className="text-gold/60">(Proporção: {(bannerImgDims.w / bannerImgDims.h).toFixed(2)}:1)</span>
-                    </p>
-                  </div>
-                )}
-
-                {/* Mode select */}
-                <div className="rounded-xl border border-border/10 bg-card/5 px-4 py-3 flex items-center justify-between gap-4">
-                  <Label className="text-sm text-foreground/60 shrink-0">Modo de exibição do banner</Label>
+                {/* Display mode */}
+                <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
+                  <Label className="text-sm text-foreground/60 font-medium">Modo de exibição do banner</Label>
                   <Select value={bannerFit} onValueChange={setBannerFit}>
-                    <SelectTrigger className="bg-card/10 border-border/15 w-auto min-w-[200px]">
+                    <SelectTrigger className="w-[220px] bg-card/10 border-border/15">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="cover">Preencher (pode cortar)</SelectItem>
-                      <SelectItem value="contain">Conter (sem cortar)</SelectItem>
-                      <SelectItem value="fill">Ajustar automaticamente</SelectItem>
+                      <SelectItem value="contain">Mostrar inteiro (sem corte)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                {/* Aspect ratio select */}
-                <div className="rounded-xl border border-border/10 bg-card/5 px-4 py-3 flex items-center justify-between gap-4">
-                  <Label className="text-sm text-foreground/60 shrink-0">Proporção do container</Label>
+                {/* Aspect ratio */}
+                <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
+                  <Label className="text-sm text-foreground/60 font-medium">Proporção do container</Label>
                   <Select value={bannerAspect} onValueChange={setBannerAspect}>
-                    <SelectTrigger className="bg-card/10 border-border/15 w-auto min-w-[200px]">
+                    <SelectTrigger className="w-[220px] bg-card/10 border-border/15">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="auto">Automático (da imagem)</SelectItem>
+                      <SelectItem value="4:1">Widescreen 4:1</SelectItem>
+                      <SelectItem value="3:1">Ultra-wide 3:1</SelectItem>
+                      <SelectItem value="16:5">Cinema 16:5</SelectItem>
                       <SelectItem value="21:9">Ultrawide 21:9</SelectItem>
-                      <SelectItem value="16:9">Wide 16:9</SelectItem>
-                      <SelectItem value="hero">Hero padrão 1920×500</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                {/* Toggle + buttons */}
-                <div className="rounded-xl bg-gold/5 border border-gold/12 p-4 space-y-4">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-foreground/70">
-                      Exibir banner principal na vitrine
-                    </p>
-                    <Switch checked={bannerEnabled} onCheckedChange={setBannerEnabled} />
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="gap-1.5 border-border/20 text-muted-foreground/60 hover:text-foreground/80"
-                      onClick={() => {
-                        setBannerImageUrl("");
-                        setBannerImgDims(null);
-                        toast.success("Banner removido");
-                      }}
-                    >
-                      <Trash2 className="h-3.5 w-3.5" />
-                      Remover Banner
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="gap-1.5 bg-gold/90 text-gold-foreground hover:bg-gold"
-                      onClick={() => {
-                        const url = prompt("Cole a URL da nova imagem do banner:");
-                        if (url) {
-                          setBannerImageUrl(url);
-                          setBannerImgDims(null);
-                          toast.success("Banner atualizado");
-                        }
-                      }}
-                    >
-                      <ImageIcon className="h-3.5 w-3.5" />
-                      Trocar Banner
-                    </Button>
-                  </div>
-                  <p className="text-[10px] text-muted-foreground/30 flex items-center gap-1">
-                    <Info className="h-3 w-3" />
-                    As alterações são salvas automaticamente no banco de dados
+                {/* Toggle visibility */}
+                <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
+                  <p className="text-sm font-medium text-foreground/60">
+                    Exibir banner principal na vitrine
                   </p>
+                  <Switch checked={bannerEnabled} onCheckedChange={setBannerEnabled} />
                 </div>
+
+                {/* Action buttons */}
+                <div className="flex items-center gap-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5 border-destructive/20 text-destructive/60 hover:text-destructive hover:border-destructive/40"
+                    onClick={() => {
+                      setBannerImageUrl("");
+                      setBannerImgDims(null);
+                      toast.success("Banner removido");
+                    }}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Remover Banner
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="gap-1.5 border-gold/20 text-gold/60 hover:text-gold hover:border-gold/30"
+                    onClick={() => {
+                      const url = prompt("Cole a URL da nova imagem do banner:");
+                      if (url) {
+                        setBannerImageUrl(url);
+                        setBannerImgDims(null);
+                        toast.success("Banner atualizado");
+                      }
+                    }}
+                  >
+                    <ImageIcon className="h-3.5 w-3.5" />
+                    Trocar Banner
+                  </Button>
+                </div>
+
+                {/* Auto-save warning */}
+                <p className="text-[10px] text-amber-400/50 flex items-center gap-1.5">
+                  <span>⚠</span> As alterações são salvas automaticamente no banco de dados
+                </p>
               </div>
             </TabsContent>
             <TabsContent value="cards" className="mt-6 space-y-6">
