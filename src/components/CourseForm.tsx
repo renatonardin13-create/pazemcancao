@@ -384,72 +384,43 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
         {/* ========== RIGHT COLUMN — Preview ========== */}
         <div>
-          <div className="rounded-xl border border-border/10 bg-card/5 p-4 space-y-4 sticky top-6">
-            <h3 className="text-sm font-semibold text-foreground/70 tracking-tight">
-              Preview do Curso
+          <div className="rounded-xl border border-border/10 bg-card/5 p-5 sticky top-6 space-y-1">
+            <h3 className="text-sm font-semibold text-foreground/70 tracking-tight pb-3 border-b border-border/8">
+              Preview
             </h3>
 
-            {/* Cover preview */}
-            <div className="rounded-lg overflow-hidden border border-border/10 bg-muted/10 aspect-video flex items-center justify-center">
-              {coverUrl ? (
-                <img
-                  src={coverUrl}
-                  alt="Capa"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <div className="flex flex-col items-center gap-2 text-muted-foreground/20">
-                  <ImageIcon className="h-8 w-8" />
-                  <span className="text-[10px] uppercase tracking-widest">Sem capa</span>
-                </div>
-              )}
-            </div>
-
-            {/* Title preview */}
-            <div className="space-y-1.5">
-              <p className="text-sm font-semibold text-foreground/80 leading-tight truncate">
-                {title || "Título do curso"}
-              </p>
-              {shortDesc && (
-                <p className="text-[11px] text-muted-foreground/40 line-clamp-2">
-                  {shortDesc}
-                </p>
-              )}
-            </div>
-
-            {/* Meta */}
-            <div className="flex flex-wrap items-center gap-2">
-              <StatusBadge status={status} />
-              <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground/30">
-                {courseType === "video" ? <Video className="h-3 w-3" /> : <BookText className="h-3 w-3" />}
-                {courseType === "video" ? "Vídeo" : "eBook"}
-              </span>
-              {selectedCategory && (
-                <span className="text-[10px] text-muted-foreground/30">
-                  {selectedCategory.icon || "📁"} {selectedCategory.name}
-                </span>
-              )}
-            </div>
-
-            {price && parseFloat(price) > 0 && (
-              <p className="text-xs font-semibold text-gold/60">
-                R$ {parseFloat(price).toFixed(2)}
-              </p>
-            )}
-
-            {/* Banner preview */}
-            {bannerUrl && (
-              <div className="space-y-1.5 pt-2 border-t border-border/10">
-                <p className="text-[10px] uppercase tracking-widest text-muted-foreground/25">Banner</p>
-                <div className="rounded-lg overflow-hidden border border-border/10">
+            {/* Simulated course card */}
+            <div className="rounded-xl overflow-hidden border border-border/10 bg-background/40 shadow-lg">
+              {/* Cover */}
+              <div className="aspect-video bg-muted/10 flex items-center justify-center overflow-hidden">
+                {coverUrl ? (
                   <img
-                    src={bannerUrl}
-                    alt="Banner"
-                    className="w-full h-auto object-cover"
+                    src={coverUrl}
+                    alt="Capa"
+                    className="w-full h-full object-cover transition-all duration-500"
                   />
-                </div>
+                ) : (
+                  <div className="flex flex-col items-center gap-2 text-muted-foreground/15">
+                    <ImageIcon className="h-10 w-10" />
+                    <span className="text-[9px] uppercase tracking-[0.3em]">Sem capa</span>
+                  </div>
+                )}
               </div>
-            )}
+
+              {/* Card body */}
+              <div className="p-4 space-y-2">
+                <p className="text-sm font-bold text-foreground/85 leading-snug line-clamp-2 transition-all duration-300">
+                  {title || "Título do curso"}
+                </p>
+                <p className="text-[11px] text-muted-foreground/40 line-clamp-2 min-h-[2em] transition-all duration-300">
+                  {shortDesc || "Descrição curta do curso aparecerá aqui..."}
+                </p>
+              </div>
+            </div>
+
+            <p className="text-[9px] text-center text-muted-foreground/20 uppercase tracking-[0.3em] pt-3">
+              Visualização em tempo real
+            </p>
           </div>
         </div>
       </div>
