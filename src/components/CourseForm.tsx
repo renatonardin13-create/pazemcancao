@@ -1,5 +1,4 @@
 import { useState, useEffect, forwardRef } from "react";
-import { StatusBadge } from "@/components/StatusBadge";
 import { useQuery } from "@tanstack/react-query";
 import { listAdminCategories } from "@/lib/admin-courses.functions";
 import { Input } from "@/components/ui/input";
@@ -14,14 +13,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Video, BookText, Save, Loader2, ImageIcon, X } from "lucide-react";
-import { ImageFieldHint } from "@/components/ImageFieldHint";
-
 
 interface CourseFormProps {
   initialValues?: any;
   onSubmit: (values: any) => void;
   isSubmitting: boolean;
   hideSubmitButton?: boolean;
+}
+
+const inputClass = "h-9 bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm";
+const labelClass = "text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wider";
+
+function CardSection({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-xl border border-border/12 bg-card shadow-md shadow-black/5 overflow-hidden">
+      <div className="px-5 py-3 border-b border-border/8 bg-card/90">
+        <h3 className="text-[11px] font-black text-foreground/85 tracking-wider uppercase">{title}</h3>
+      </div>
+      <div className="px-5 py-4 space-y-3.5">{children}</div>
+    </div>
+  );
 }
 
 export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function CourseForm({
@@ -40,16 +51,6 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   const [status, setStatus] = useState("draft");
   const [courseType, setCourseType] = useState("video");
   const [launchDate, setLaunchDate] = useState("");
-  const [bannerRatio, setBannerRatio] = useState("3.84:1");
-
-  const bannerRatioOptions = [
-    { value: "3.84:1", label: "Hero Wide (3.84:1)", size: "1920x500" },
-    { value: "21:9", label: "Ultra Wide (21:9)", size: "2100x900" },
-    { value: "16:9", label: "Widescreen (16:9)", size: "1920x1080" },
-    { value: "3:1", label: "Promo (3:1)", size: "1200x400" },
-  ];
-
-  const currentBannerOption = bannerRatioOptions.find((o) => o.value === bannerRatio) || bannerRatioOptions[0];
 
   const { data: categoriesData } = useQuery({
     queryKey: ["admin-categories"],
@@ -91,140 +92,109 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
     });
   };
 
-
-  const selectedCategory = categories.find((c: any) => c.id === categoryId);
-
   return (
-    <form ref={ref} onSubmit={handleSubmit} className="space-y-5">
-      {/* Desktop: 2 columns. Mobile: single column with interleaved order */}
-      <div className="flex flex-col lg:grid lg:grid-cols-[1fr_280px] gap-5">
-        {/* ===== Informações + Configurações ===== */}
-        <div className="space-y-5 order-1 lg:col-start-1">
-          {/* Card: Informações do Curso */}
-          <div className="rounded-2xl border border-border/15 bg-card shadow-lg shadow-black/10 overflow-hidden">
-            <div className="px-6 py-4 border-b border-border/10 bg-card/80">
-              <h3 className="text-sm font-black text-foreground/90 tracking-tight uppercase">
-                Informações do Curso
-              </h3>
-            </div>
+    <form ref={ref} onSubmit={handleSubmit}>
+      <div className="flex flex-col lg:grid lg:grid-cols-[1fr_260px] gap-4">
 
-            <div className="px-6 py-5 space-y-4">
-              {/* Título */}
-              <div className="space-y-1.5">
-                <Label htmlFor="title" className="text-xs font-semibold text-muted-foreground/70">
-                  Título do Curso <span className="text-gold">*</span>
-                </Label>
-                <Input
-                  id="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Ex: Curso de Piano para Iniciantes"
-                  required
-                  className="h-10 bg-background/50 border-border/20 focus:border-gold/40 rounded-xl text-sm"
-                />
-              </div>
-
-              {/* Descrição Curta */}
-              <div className="space-y-1.5">
-                <Label htmlFor="shortDesc" className="text-xs font-semibold text-muted-foreground/70">
-                  Descrição Curta
-                </Label>
-                <Input
-                  id="shortDesc"
-                  value={shortDesc}
-                  onChange={(e) => setShortDesc(e.target.value)}
-                  placeholder="Breve descrição exibida nos cards"
-                  className="h-10 bg-background/50 border-border/20 focus:border-gold/40 rounded-xl text-sm"
-                />
-              </div>
-
-              {/* Descrição Completa */}
-              <div className="space-y-1.5">
-                <Label htmlFor="fullDesc" className="text-xs font-semibold text-muted-foreground/70">
-                  Descrição Completa
-                </Label>
-                <Textarea
-                  id="fullDesc"
-                  value={fullDesc}
-                  onChange={(e) => setFullDesc(e.target.value)}
-                  placeholder="Descrição detalhada do curso (aparece na página do curso)"
-                  rows={6}
-                  className="bg-background/50 border-border/20 focus:border-gold/40 rounded-xl text-sm resize-none"
-                />
-              </div>
-
-              {/* Categoria & Status — lado a lado */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-muted-foreground/70">Categoria</Label>
-                  <Select value={categoryId} onValueChange={setCategoryId}>
-                    <SelectTrigger className="h-10 bg-background/50 border-border/20 rounded-xl text-sm">
-                      <SelectValue placeholder="Selecionar categoria" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {categories.map((cat: any) => (
-                        <SelectItem key={cat.id} value={cat.id}>
-                          {cat.icon || "📁"} {cat.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs font-semibold text-muted-foreground/70">Status</Label>
-                  <Select value={status} onValueChange={setStatus}>
-                    <SelectTrigger className="h-10 bg-background/50 border-border/20 rounded-xl text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="draft">Rascunho</SelectItem>
-                      <SelectItem value="published">Publicado</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Card: Configurações Adicionais */}
-          <div className="rounded-2xl border border-border/15 bg-card p-6 space-y-5 shadow-lg shadow-black/10">
-            <h3 className="text-sm font-black text-foreground/80 tracking-tight border-b border-border/10 pb-3 uppercase">
-              Configurações Adicionais
-            </h3>
-
-            {/* Type selector */}
-            <div className="space-y-1.5">
-              <Label className="text-xs font-medium text-muted-foreground/60">
-                Modalidade
+        {/* ===== LEFT: Informações + Configurações ===== */}
+        <div className="space-y-4 order-1 lg:col-start-1">
+          <CardSection title="Informações do Curso">
+            <div className="space-y-1">
+              <Label htmlFor="title" className={labelClass}>
+                Título <span className="text-gold">*</span>
               </Label>
-              <div className="flex gap-3">
+              <Input
+                id="title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Ex: Curso de Piano para Iniciantes"
+                required
+                className={inputClass}
+              />
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="shortDesc" className={labelClass}>Descrição Curta</Label>
+              <Input
+                id="shortDesc"
+                value={shortDesc}
+                onChange={(e) => setShortDesc(e.target.value)}
+                placeholder="Breve descrição exibida nos cards"
+                className={inputClass}
+              />
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="fullDesc" className={labelClass}>Descrição Completa</Label>
+              <Textarea
+                id="fullDesc"
+                value={fullDesc}
+                onChange={(e) => setFullDesc(e.target.value)}
+                placeholder="Descrição detalhada do curso"
+                rows={4}
+                className="bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm resize-none"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label className={labelClass}>Categoria</Label>
+                <Select value={categoryId} onValueChange={setCategoryId}>
+                  <SelectTrigger className={inputClass}>
+                    <SelectValue placeholder="Selecionar" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((cat: any) => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {cat.icon || "📁"} {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1">
+                <Label className={labelClass}>Status</Label>
+                <Select value={status} onValueChange={setStatus}>
+                  <SelectTrigger className={inputClass}>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="draft">Rascunho</SelectItem>
+                    <SelectItem value="published">Publicado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </CardSection>
+
+          <CardSection title="Configurações">
+            <div className="space-y-1">
+              <Label className={labelClass}>Modalidade</Label>
+              <div className="flex gap-2">
                 {[
-                  { value: "video", label: "Vídeo", icon: Video, color: "text-gold" },
-                  { value: "ebook", label: "eBook", icon: BookText, color: "text-blue-400" },
+                  { value: "video", label: "Vídeo", icon: Video },
+                  { value: "ebook", label: "eBook", icon: BookText },
                 ].map((type) => (
                   <button
                     key={type.value}
                     type="button"
                     onClick={() => setCourseType(type.value)}
-                    className={`flex items-center gap-2 px-5 py-3 rounded-xl border transition-all duration-300 ${
+                    className={`flex items-center gap-1.5 px-4 py-2 rounded-lg border text-xs font-semibold transition-all ${
                       courseType === type.value
-                        ? `border-gold/30 bg-gold/10 ${type.color}`
-                        : "border-border/15 bg-card/5 text-muted-foreground/40 hover:border-border/30"
+                        ? "border-gold/30 bg-gold/10 text-gold"
+                        : "border-border/15 bg-background/30 text-muted-foreground/40 hover:border-border/30"
                     }`}
                   >
-                    <type.icon className="h-4 w-4" />
-                    <span className="text-sm font-medium">{type.label}</span>
+                    <type.icon className="h-3.5 w-3.5" />
+                    {type.label}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Price & Launch date */}
-            <div className="grid sm:grid-cols-2 gap-5">
-              <div className="space-y-1.5">
-                <Label htmlFor="price" className="text-xs font-medium text-muted-foreground/60">
-                  Preço (R$)
-                </Label>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1">
+                <Label htmlFor="price" className={labelClass}>Preço (R$)</Label>
                 <Input
                   id="price"
                   type="number"
@@ -232,199 +202,139 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   min="0"
                   value={price}
                   onChange={(e) => setPrice(e.target.value)}
-                  className="bg-card/10 border-border/12 focus:border-gold/30"
+                  className={inputClass}
                 />
               </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="launchDate" className="text-xs font-medium text-muted-foreground/60">
-                  Data de Lançamento
-                </Label>
+              <div className="space-y-1">
+                <Label htmlFor="launchDate" className={labelClass}>Lançamento</Label>
                 <Input
                   id="launchDate"
                   type="date"
                   value={launchDate}
                   onChange={(e) => setLaunchDate(e.target.value)}
-                  className="bg-card/10 border-border/12 focus:border-gold/30"
+                  className={inputClass}
                 />
               </div>
             </div>
-          </div>
+          </CardSection>
         </div>
 
-        {/* ===== Imagens — order 3 on mobile, left col on desktop ===== */}
-        <div className="order-3 lg:order-3 lg:col-start-1">
-          {/* Card: Imagens */}
-          <div className="rounded-2xl border border-border/15 bg-card shadow-lg shadow-black/10 overflow-hidden">
-            <div className="px-6 py-4 border-b border-border/10 bg-card/80">
-              <h3 className="text-sm font-black text-foreground/90 tracking-tight uppercase">
-                Imagens
-              </h3>
+        {/* ===== RIGHT: Preview ===== */}
+        <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2">
+          <div className="rounded-xl border border-border/12 bg-card lg:sticky lg:top-6 shadow-md shadow-black/5 overflow-hidden">
+            <div className="px-4 py-2.5 border-b border-border/8 bg-card/90">
+              <h3 className="text-[10px] font-black text-foreground/70 tracking-wider uppercase">Preview</h3>
             </div>
-
-            <div className="px-6 py-5 space-y-5">
-              {/* CAPA DO CURSO */}
-              <div className="space-y-2.5">
-                <div>
-                  <Label className="text-xs font-semibold text-muted-foreground/70">
-                    Capa do Curso
-                  </Label>
-                  <p className="text-[11px] text-muted-foreground/40 mt-0.5">
-                    Imagem exibida na listagem de cursos
-                  </p>
-                </div>
-
-                {/* Dropzone */}
-                <div className="rounded-xl border border-dashed border-border/20 bg-background/30 overflow-hidden">
+            <div className="p-3">
+              <div className="rounded-lg overflow-hidden border border-border/8 bg-background/20">
+                <div className="aspect-[16/9] bg-muted/5 flex items-center justify-center overflow-hidden">
                   {coverUrl ? (
-                    <div className="relative group">
-                      <img
-                        src={coverUrl}
-                        alt="Capa do curso"
-                        className="w-full aspect-video object-cover"
-                      />
-                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setCoverUrl("")}
-                          className="px-3 py-1.5 rounded-lg bg-card/90 border border-border/20 text-xs font-medium text-foreground/80 hover:bg-card transition-colors"
-                        >
-                          <X className="h-3 w-3 inline mr-1" />
-                          Remover
-                        </button>
-                      </div>
-                    </div>
+                    <img src={coverUrl} alt="Capa" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="aspect-video flex flex-col items-center justify-center gap-1.5 text-muted-foreground/20">
+                    <div className="flex flex-col items-center gap-1 text-muted-foreground/15">
                       <ImageIcon className="h-6 w-6" />
-                      <span className="text-[9px] uppercase tracking-widest">Sem imagem</span>
+                      <span className="text-[7px] uppercase tracking-[0.2em]">Sem capa</span>
                     </div>
                   )}
                 </div>
-
-                <Input
-                  value={coverUrl}
-                  onChange={(e) => setCoverUrl(e.target.value)}
-                  placeholder="Cole a URL da imagem de capa..."
-                  className="h-9 bg-background/50 border-border/20 focus:border-gold/40 rounded-xl text-xs"
-                />
-
-                <p className="text-[10px] text-muted-foreground/30">
-                  Recomendado: <strong className="text-muted-foreground/50">400×225 px</strong> · 16:9 · JPG, PNG ou WebP
-                </p>
-              </div>
-
-              <div className="border-t border-border/8" />
-
-              {/* BANNER PRINCIPAL */}
-              <div className="space-y-2.5">
-                <div>
-                  <Label className="text-xs font-semibold text-muted-foreground/70">
-                    Banner Principal
-                  </Label>
-                  <p className="text-[11px] text-muted-foreground/40 mt-0.5">
-                    Banner grande exibido na vitrine
-                  </p>
-                </div>
-
-                {/* Dropzone */}
-                <div className="rounded-xl border border-dashed border-border/20 bg-background/30 overflow-hidden">
-                  {bannerUrl ? (
-                    <div className="relative group">
-                      <img
-                        src={bannerUrl}
-                        alt="Banner do curso"
-                        className="w-full object-cover"
-                        style={{ aspectRatio: "1920/600" }}
-                      />
-                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => setBannerUrl("")}
-                          className="px-3 py-1.5 rounded-lg bg-card/90 border border-border/20 text-xs font-medium text-foreground/80 hover:bg-card transition-colors"
-                        >
-                          <X className="h-3 w-3 inline mr-1" />
-                          Remover
-                        </button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center justify-center gap-1.5 text-muted-foreground/20 py-6">
-                      <ImageIcon className="h-6 w-6" />
-                      <span className="text-[9px] uppercase tracking-widest">Sem banner</span>
-                    </div>
-                  )}
-                </div>
-
-                <Input
-                  value={bannerUrl}
-                  onChange={(e) => setBannerUrl(e.target.value)}
-                  placeholder="Cole a URL do banner..."
-                  className="h-9 bg-background/50 border-border/20 focus:border-gold/40 rounded-xl text-xs"
-                />
-
-                <p className="text-[10px] text-muted-foreground/30">
-                  Recomendado: <strong className="text-muted-foreground/50">1920×600 px</strong> · JPG, PNG ou WebP
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* ========== Preview — order 2 on mobile, right col spanning on desktop ========== */}
-        <div className="order-2 lg:order-2 lg:col-start-2 lg:row-start-1 lg:row-span-3">
-          <div className="rounded-2xl border border-border/15 bg-card lg:sticky lg:top-6 shadow-lg shadow-black/10 overflow-hidden">
-            <div className="px-5 py-3.5 border-b border-border/10 bg-card/80">
-              <h3 className="text-xs font-black text-foreground/80 tracking-tight uppercase">
-                Preview
-              </h3>
-            </div>
-
-            <div className="p-4">
-              {/* Mini course card */}
-              <div className="rounded-xl overflow-hidden border border-border/10 bg-background/30">
-                <div className="aspect-[16/10] bg-muted/8 flex items-center justify-center overflow-hidden">
-                  {coverUrl ? (
-                    <img
-                      src={coverUrl}
-                      alt="Capa"
-                      className="w-full h-full object-cover transition-all duration-300"
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center gap-1.5 text-muted-foreground/15">
-                      <ImageIcon className="h-8 w-8" />
-                      <span className="text-[8px] uppercase tracking-[0.25em]">Sem capa</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="p-3 space-y-1">
-                  <p className="text-[13px] font-bold text-foreground/85 leading-snug line-clamp-2 transition-all duration-300">
+                <div className="p-2.5 space-y-0.5">
+                  <p className="text-xs font-bold text-foreground/80 leading-snug line-clamp-2">
                     {title || "Título do curso"}
                   </p>
-                  <p className="text-[11px] text-muted-foreground/40 line-clamp-2 leading-relaxed transition-all duration-300">
+                  <p className="text-[10px] text-muted-foreground/40 line-clamp-2 leading-relaxed">
                     {shortDesc || "Descrição curta aparecerá aqui..."}
                   </p>
                 </div>
               </div>
-            </div>
-
-            <div className="px-4 pb-3">
-              <p className="text-[8px] text-center text-muted-foreground/20 uppercase tracking-[0.25em]">
+              <p className="text-[7px] text-center text-muted-foreground/20 uppercase tracking-[0.2em] mt-2">
                 Atualização em tempo real
               </p>
             </div>
           </div>
         </div>
+
+        {/* ===== LEFT: Imagens ===== */}
+        <div className="order-3 lg:col-start-1">
+          <CardSection title="Imagens">
+            {/* Capa */}
+            <div className="space-y-2">
+              <div className="flex items-baseline justify-between">
+                <Label className={labelClass}>Capa do Curso</Label>
+                <span className="text-[9px] text-muted-foreground/30">400×225 px · 16:9</span>
+              </div>
+              <div className="rounded-lg border border-dashed border-border/15 bg-background/20 overflow-hidden">
+                {coverUrl ? (
+                  <div className="relative group">
+                    <img src={coverUrl} alt="Capa" className="w-full aspect-video object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => setCoverUrl("")}
+                      className="absolute top-2 right-2 p-1 rounded-md bg-black/60 text-white/80 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="aspect-video flex flex-col items-center justify-center gap-1 text-muted-foreground/15">
+                    <ImageIcon className="h-5 w-5" />
+                    <span className="text-[8px] uppercase tracking-widest">Sem imagem</span>
+                  </div>
+                )}
+              </div>
+              <Input
+                value={coverUrl}
+                onChange={(e) => setCoverUrl(e.target.value)}
+                placeholder="URL da imagem de capa..."
+                className="h-8 bg-background/50 border-border/15 rounded-lg text-[11px]"
+              />
+            </div>
+
+            <div className="border-t border-border/6" />
+
+            {/* Banner */}
+            <div className="space-y-2">
+              <div className="flex items-baseline justify-between">
+                <Label className={labelClass}>Banner Principal</Label>
+                <span className="text-[9px] text-muted-foreground/30">1920×600 px</span>
+              </div>
+              <div className="rounded-lg border border-dashed border-border/15 bg-background/20 overflow-hidden">
+                {bannerUrl ? (
+                  <div className="relative group">
+                    <img src={bannerUrl} alt="Banner" className="w-full object-cover" style={{ aspectRatio: "1920/600" }} />
+                    <button
+                      type="button"
+                      onClick={() => setBannerUrl("")}
+                      className="absolute top-2 right-2 p-1 rounded-md bg-black/60 text-white/80 opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center gap-1 text-muted-foreground/15 py-5">
+                    <ImageIcon className="h-5 w-5" />
+                    <span className="text-[8px] uppercase tracking-widest">Sem banner</span>
+                  </div>
+                )}
+              </div>
+              <Input
+                value={bannerUrl}
+                onChange={(e) => setBannerUrl(e.target.value)}
+                placeholder="URL do banner..."
+                className="h-8 bg-background/50 border-border/15 rounded-lg text-[11px]"
+              />
+            </div>
+          </CardSection>
+        </div>
       </div>
 
       {/* Submit */}
       {!hideSubmitButton && (
-        <div className="flex justify-end pt-4 border-t border-border/10">
-          <Button type="submit" disabled={isSubmitting || !title.trim()}>
+        <div className="flex justify-end pt-4 mt-4 border-t border-border/8">
+          <Button type="submit" size="sm" disabled={isSubmitting || !title.trim()}>
             {isSubmitting ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
             ) : (
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="h-3.5 w-3.5 mr-1.5" />
             )}
             {initialValues ? "Salvar Alterações" : "Criar Curso"}
           </Button>
