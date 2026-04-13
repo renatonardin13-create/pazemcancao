@@ -9,14 +9,12 @@ import {
   BookText,
   Pencil,
   Trash2,
-  Eye,
-  Copy,
   Search,
   MoreHorizontal,
-  Layers,
-  GraduationCap,
   ChevronLeft,
   ChevronRight,
+  EyeOff,
+  Eye,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
