@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { getDashboardStats } from "@/lib/admin-dashboard.functions";
@@ -130,7 +131,11 @@ export function AdminDashboard() {
       {/* 4 Main Metric Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Receita Total */}
-        <div className="relative rounded-2xl border border-emerald-400/25 bg-gradient-to-br from-emerald-400/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-400/10 hover:border-emerald-400/35 group overflow-hidden shadow-lg shadow-black/10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.05 }}
+          className="relative rounded-2xl border border-emerald-400/25 bg-gradient-to-br from-emerald-400/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-400/10 hover:border-emerald-400/35 group overflow-hidden shadow-lg shadow-black/10">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-emerald-400/[0.07] blur-[50px] group-hover:bg-emerald-400/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -162,10 +167,14 @@ export function AdminDashboard() {
               <span className="text-[11px] text-muted-foreground/35">Nenhuma venda registrada ainda</span>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Alunos Registrados */}
-        <div className="relative rounded-2xl border border-gold/25 bg-gradient-to-br from-gold/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-gold/10 hover:border-gold/35 group overflow-hidden shadow-lg shadow-black/10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="relative rounded-2xl border border-gold/25 bg-gradient-to-br from-gold/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-gold/10 hover:border-gold/35 group overflow-hidden shadow-lg shadow-black/10">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-gold/[0.07] blur-[50px] group-hover:bg-gold/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -197,10 +206,14 @@ export function AdminDashboard() {
               <span className="text-[11px] text-muted-foreground/35">Libere acesso para seus primeiros alunos</span>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Cursos Ativos */}
-        <div className="relative rounded-2xl border border-blue-400/25 bg-gradient-to-br from-blue-400/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-400/10 hover:border-blue-400/35 group overflow-hidden shadow-lg shadow-black/10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.15 }}
+          className="relative rounded-2xl border border-blue-400/25 bg-gradient-to-br from-blue-400/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-400/10 hover:border-blue-400/35 group overflow-hidden shadow-lg shadow-black/10">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-blue-400/[0.07] blur-[50px] group-hover:bg-blue-400/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -234,10 +247,14 @@ export function AdminDashboard() {
               </Link>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Matrículas Pendentes */}
-        <div className="relative rounded-2xl border border-amber-400/25 bg-gradient-to-br from-amber-400/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-400/10 hover:border-amber-400/35 group overflow-hidden shadow-lg shadow-black/10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.2 }}
+          className="relative rounded-2xl border border-amber-400/25 bg-gradient-to-br from-amber-400/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-400/10 hover:border-amber-400/35 group overflow-hidden shadow-lg shadow-black/10">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-amber-400/[0.07] blur-[50px] group-hover:bg-amber-400/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -265,11 +282,15 @@ export function AdminDashboard() {
             </div>
             <span className="text-[10px] text-muted-foreground/40">aguardando aprovação</span>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       {/* Secondary metrics row */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <motion.div
+        initial={{ opacity: 0, y: 15 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.25 }}
+        className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
           { label: "Categorias", value: data?.totalCategories ?? 0, icon: BarChart3, color: "text-purple-400", bg: "bg-purple-400/10", border: "border-purple-400/20" },
           { label: "Músicas Ativas", value: data?.activeTracks ?? 0, icon: Music, color: "text-pink-400", bg: "bg-pink-400/10", border: "border-pink-400/20" },
@@ -288,11 +309,15 @@ export function AdminDashboard() {
             </div>
           </div>
         ))}
-      </div>
+      </motion.div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
         {/* Sales Chart — large, prominent */}
-        <div className="lg:col-span-2 relative rounded-2xl border border-gold/20 bg-gradient-to-br from-gold/[0.04] via-card to-card p-6 sm:p-7 overflow-hidden shadow-xl shadow-black/10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="lg:col-span-2 relative rounded-2xl border border-gold/20 bg-gradient-to-br from-gold/[0.04] via-card to-card p-6 sm:p-7 overflow-hidden shadow-xl shadow-black/10">
           <div className="pointer-events-none absolute -top-32 -right-32 h-72 w-72 rounded-full bg-gold/[0.08] blur-[100px]" />
 
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-5 relative">
@@ -407,10 +432,14 @@ export function AdminDashboard() {
               </ResponsiveContainer>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Best Performing Courses — sidebar card */}
-        <div className="lg:col-span-1 rounded-2xl border border-gold/15 bg-gradient-to-br from-card via-card/90 to-card p-5 flex flex-col shadow-xl shadow-black/10">
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.35 }}
+          className="lg:col-span-1 rounded-2xl border border-gold/15 bg-gradient-to-br from-card via-card/90 to-card p-5 flex flex-col shadow-xl shadow-black/10">
           <div className="flex items-center gap-3 mb-3">
             <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gold/15 border border-gold/25 shadow-lg shadow-gold/10">
               <GraduationCap className="h-5.5 w-5.5 text-gold" />
@@ -475,11 +504,15 @@ export function AdminDashboard() {
             Ver todos os cursos
             <ArrowUpRight className="h-3.5 w-3.5" />
           </Link>
-        </div>
+        </motion.div>
       </div>
 
       {/* Engagement Analytics */}
-      <div className="space-y-4">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.4 }}
+        className="space-y-4">
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-purple-400/15 border border-purple-400/20 shadow-lg shadow-purple-400/5">
             <Zap className="h-5 w-5 text-purple-400" />
