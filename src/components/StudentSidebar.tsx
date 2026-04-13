@@ -109,56 +109,58 @@ export function StudentSidebar() {
 
         {/* Louvores with subcategories */}
         {hasTracks && (
-          <button
-            onClick={() => setLouvoresOpen(!louvoresOpen)}
-            className={cn(
-              navItemClass(isActivePrefix("/musicas")),
-              "w-full justify-between"
-            )}
-          >
-            <span className="flex items-center gap-3">
-              <Music2 className="h-4 w-4" />
-              Louvores
-            </span>
-            {louvoresOpen ? (
-              <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/30" />
-            ) : (
-              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/30" />
-            )}
-          </button>
+          <div>
+            <button
+              onClick={() => setLouvoresOpen(!louvoresOpen)}
+              className={cn(
+                navItemClass(isActivePrefix("/musicas")),
+                "w-full justify-between"
+              )}
+            >
+              <span className="flex items-center gap-3">
+                <Music2 className="h-4 w-4" />
+                Louvores
+              </span>
+              {louvoresOpen ? (
+                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/30" />
+              ) : (
+                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/30" />
+              )}
+            </button>
 
-          {louvoresOpen && (
-            <div className="mt-1 space-y-0.5">
-              <Link
-                to="/musicas"
-                search={{}}
-                onClick={() => setMobileOpen(false)}
-                className={subItemClass(
-                  isActive("/musicas") && !(location.search as any)?.categoria
-                )}
-              >
-                <span className="text-[10px]">🎵</span>
-                Todas
-              </Link>
-              {categories.map((cat: any) => {
-                const catSlug = cat.slug || cat.name.toLowerCase();
-                const isActiveCat = (location.search as any)?.categoria === catSlug;
-                return (
-                  <Link
-                    key={cat.id}
-                    to="/musicas"
-                    search={{ categoria: catSlug }}
-                    onClick={() => setMobileOpen(false)}
-                    className={subItemClass(isActiveCat)}
-                  >
-                    <span className="text-[10px]">{cat.icon || "🎵"}</span>
-                    {cat.name.replace(/^[^\w\s]+\s*/u, "")}
-                  </Link>
-                );
-              })}
-            </div>
-          )}
-        </div>
+            {louvoresOpen && (
+              <div className="mt-1 space-y-0.5">
+                <Link
+                  to="/musicas"
+                  search={{}}
+                  onClick={() => setMobileOpen(false)}
+                  className={subItemClass(
+                    isActive("/musicas") && !(location.search as any)?.categoria
+                  )}
+                >
+                  <span className="text-[10px]">🎵</span>
+                  Todas
+                </Link>
+                {categories.map((cat: any) => {
+                  const catSlug = cat.slug || cat.name.toLowerCase();
+                  const isActiveCat = (location.search as any)?.categoria === catSlug;
+                  return (
+                    <Link
+                      key={cat.id}
+                      to="/musicas"
+                      search={{ categoria: catSlug }}
+                      onClick={() => setMobileOpen(false)}
+                      className={subItemClass(isActiveCat)}
+                    >
+                      <span className="text-[10px]">{cat.icon || "🎵"}</span>
+                      {cat.name.replace(/^[^\w\s]+\s*/u, "")}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Conteúdos */}
         <Link
