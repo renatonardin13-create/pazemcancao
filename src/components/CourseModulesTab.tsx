@@ -397,24 +397,26 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-border/8">
-        <div>
-          <h3 className="text-sm font-semibold text-foreground/70 tracking-tight">
-            Módulos e Aulas
-          </h3>
-          <p className="text-[11px] text-muted-foreground/35 mt-1">
-            Organize a estrutura do seu curso de forma hierárquica
-          </p>
+      <div className="rounded-xl border border-border/12 bg-card shadow-md shadow-black/5 overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-5">
+          <div>
+            <h3 className="text-base font-bold text-foreground/90 tracking-tight">
+              Módulos e Aulas
+            </h3>
+            <p className="text-sm text-muted-foreground/50 mt-1">
+              Organize a estrutura do seu curso de forma hierárquica
+            </p>
+          </div>
+          <Button
+            size="default"
+            variant="outline"
+            onClick={openCreateModule}
+            className="border-gold/30 text-gold hover:bg-gold/10 hover:border-gold/50 font-semibold"
+          >
+            <Plus className="h-4 w-4 mr-1.5" />
+            Criar Módulo
+          </Button>
         </div>
-        <Button
-          size="sm"
-          onClick={openCreateModule}
-          className="bg-gold/90 text-gold-foreground hover:bg-gold shadow-lg shadow-gold/20 hover:shadow-gold/30 font-semibold"
-        >
-          <Plus className="h-3.5 w-3.5 mr-1.5" />
-          Criar Módulo
-        </Button>
-      </div>
 
       {/* Empty state */}
       {modules.length === 0 ? (
