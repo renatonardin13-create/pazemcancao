@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Video, BookText, Save, Loader2, ImageIcon } from "lucide-react";
+import { Video, BookText, Save, Loader2, ImageIcon, X } from "lucide-react";
 import { ImageFieldHint } from "@/components/ImageFieldHint";
 
 
