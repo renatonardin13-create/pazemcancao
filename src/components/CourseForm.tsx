@@ -21,16 +21,16 @@ interface CourseFormProps {
   hideSubmitButton?: boolean;
 }
 
-const inputClass = "h-9 bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm";
-const labelClass = "text-[11px] font-semibold text-muted-foreground/70 uppercase tracking-wider";
+const inputClass = "h-11 bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm";
+const labelClass = "text-sm font-semibold text-foreground/80";
 
 function CardSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-xl border border-border/12 bg-card shadow-md shadow-black/5 overflow-hidden">
-      <div className="px-5 py-3 border-b border-border/8 bg-card/90">
-        <h3 className="text-[11px] font-black text-foreground/85 tracking-wider uppercase">{title}</h3>
+      <div className="px-6 py-4 border-b border-border/8 bg-card/90">
+        <h3 className="text-sm font-bold text-foreground/90 tracking-wide">{title}</h3>
       </div>
-      <div className="px-5 py-4 space-y-3.5">{children}</div>
+      <div className="px-6 py-5 space-y-5">{children}</div>
     </div>
   );
 }
