@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { listAdminCourses, deleteCourse } from "@/lib/admin-courses.functions";
+import { listAdminCourses, deleteCourse, updateCourse } from "@/lib/admin-courses.functions";
 import { useState, useMemo } from "react";
 import { StatusBadge } from "@/components/StatusBadge";
 import {
