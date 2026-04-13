@@ -312,6 +312,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
               folder="courses/banners"
               aspectRatio="1920/600"
               aspectClass=""
+              uploadLabel="Clique para fazer upload do banner"
             />
           </CardSection>
         </div>
