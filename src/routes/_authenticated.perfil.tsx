@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getMyProfile, updateMyProfile, changePassword } from "@/lib/profile.functions";
-import { AppHeader } from "@/components/AppHeader";
+import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -95,8 +95,8 @@ function ProfilePage() {
     : "";
 
   return (
+    <StudentLayout>
     <div className="min-h-screen bg-background flex flex-col">
-      <AppHeader />
 
       <main className="flex-1 mx-auto w-full max-w-[800px] px-4 sm:px-6 py-8 space-y-6">
         {isLoading ? (
@@ -326,5 +326,6 @@ function ProfilePage() {
 
       <FooterLinks />
     </div>
+    </StudentLayout>
   );
 }
