@@ -386,44 +386,48 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
         </div>
 
         {/* ========== RIGHT COLUMN — Preview ========== */}
-        <div className="order-2 lg:order-2">
-          <div className="rounded-2xl border border-gold/15 bg-card p-5 lg:sticky lg:top-6 space-y-1 shadow-lg shadow-black/10">
-            <h3 className="text-sm font-black text-foreground/80 tracking-tight pb-3 border-b border-border/10 uppercase">
-              Preview
-            </h3>
+        <div className="order-2">
+          <div className="rounded-2xl border border-border/15 bg-card lg:sticky lg:top-6 shadow-lg shadow-black/10 overflow-hidden">
+            <div className="px-5 py-3.5 border-b border-border/10 bg-card/80">
+              <h3 className="text-xs font-black text-foreground/80 tracking-tight uppercase">
+                Preview
+              </h3>
+            </div>
 
-            {/* Simulated course card */}
-            <div className="rounded-xl overflow-hidden border border-border/10 bg-background/40 shadow-lg">
-              {/* Cover */}
-              <div className="aspect-video bg-muted/10 flex items-center justify-center overflow-hidden">
-                {coverUrl ? (
-                  <img
-                    src={coverUrl}
-                    alt="Capa"
-                    className="w-full h-full object-cover transition-all duration-500"
-                  />
-                ) : (
-                  <div className="flex flex-col items-center gap-2 text-muted-foreground/15">
-                    <ImageIcon className="h-10 w-10" />
-                    <span className="text-[9px] uppercase tracking-[0.3em]">Sem capa</span>
-                  </div>
-                )}
-              </div>
+            <div className="p-4">
+              {/* Mini course card */}
+              <div className="rounded-xl overflow-hidden border border-border/10 bg-background/30">
+                <div className="aspect-[16/10] bg-muted/8 flex items-center justify-center overflow-hidden">
+                  {coverUrl ? (
+                    <img
+                      src={coverUrl}
+                      alt="Capa"
+                      className="w-full h-full object-cover transition-all duration-300"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center gap-1.5 text-muted-foreground/15">
+                      <ImageIcon className="h-8 w-8" />
+                      <span className="text-[8px] uppercase tracking-[0.25em]">Sem capa</span>
+                    </div>
+                  )}
+                </div>
 
-              {/* Card body */}
-              <div className="p-4 space-y-2">
-                <p className="text-sm font-bold text-foreground/85 leading-snug line-clamp-2 transition-all duration-300">
-                  {title || "Título do curso"}
-                </p>
-                <p className="text-[11px] text-muted-foreground/40 line-clamp-2 min-h-[2em] transition-all duration-300">
-                  {shortDesc || "Descrição curta do curso aparecerá aqui..."}
-                </p>
+                <div className="p-3 space-y-1">
+                  <p className="text-[13px] font-bold text-foreground/85 leading-snug line-clamp-2 transition-all duration-300">
+                    {title || "Título do curso"}
+                  </p>
+                  <p className="text-[11px] text-muted-foreground/40 line-clamp-2 leading-relaxed transition-all duration-300">
+                    {shortDesc || "Descrição curta aparecerá aqui..."}
+                  </p>
+                </div>
               </div>
             </div>
 
-            <p className="text-[9px] text-center text-muted-foreground/20 uppercase tracking-[0.3em] pt-3">
-              Visualização em tempo real
-            </p>
+            <div className="px-4 pb-3">
+              <p className="text-[8px] text-center text-muted-foreground/20 uppercase tracking-[0.25em]">
+                Atualização em tempo real
+              </p>
+            </div>
           </div>
         </div>
       </div>
