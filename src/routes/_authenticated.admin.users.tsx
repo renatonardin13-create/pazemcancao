@@ -202,7 +202,7 @@ function AdminUsersPage() {
     setEditOpen(true);
   };
 
-  const handleEditSubmit = (e: React.FormEvent) => {
+  const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editBuyer) return;
 
@@ -217,6 +217,19 @@ function AdminUsersPage() {
       payload.trialDays = editTrialDays;
     } else {
       payload.is_trial = false;
+    }
+
+    // Handle course enrollment changes
+    if (editCourseIds.length > 0) {
+      const toGrant = editCourseIds.filter((id: string) => !editEnrolledIds.includes(id));
+      const toRevoke = editEnrolledIds.filter((id: string) => !editCourseIds.includes(id));
+
+      for (const courseId of toGrant) {
+        await toggleStudentCourseAccess({ data: { email: editBuyer.email, courseId, grant: true } });
+      }
+      for (const courseId of toRevoke) {
+        await toggleStudentCourseAccess({ data: { email: editBuyer.email, courseId, grant: false } });
+      }
     }
 
     update.mutate(payload);
