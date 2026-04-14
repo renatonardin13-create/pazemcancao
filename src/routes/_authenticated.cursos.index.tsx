@@ -36,6 +36,12 @@ function MeusCoursosPage() {
     staleTime: 30_000,
   });
 
+  const { data: trendData } = useQuery({
+    queryKey: ["most-accessed-courses"],
+    queryFn: () => getMostAccessedCourses(),
+    staleTime: 60_000,
+  });
+
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
