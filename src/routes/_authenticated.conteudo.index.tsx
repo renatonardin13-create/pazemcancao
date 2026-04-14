@@ -578,6 +578,8 @@ function ContentShelf({
   lastAccessedId,
   onTrackView,
   onTrackDownload,
+  favoriteIds,
+  onToggleFavorite,
 }: {
   icon: React.ReactNode;
   title: string;
@@ -588,6 +590,8 @@ function ContentShelf({
   lastAccessedId: string | null;
   onTrackView?: (contentId: string) => void;
   onTrackDownload?: (contentId: string) => void;
+  favoriteIds?: Set<string>;
+  onToggleFavorite?: (contentId: string, isFav: boolean) => void;
 }) {
   return (
     <section className="space-y-5">
@@ -617,6 +621,8 @@ function ContentShelf({
               isLastAccessed={item.id === lastAccessedId}
               onTrackView={onTrackView}
               onTrackDownload={onTrackDownload}
+              isFavorite={favoriteIds?.has(item.id)}
+              onToggleFavorite={onToggleFavorite}
             />
           );
         })}
@@ -633,6 +639,8 @@ function ContentGrid({
   lastAccessedId,
   onTrackView,
   onTrackDownload,
+  favoriteIds,
+  onToggleFavorite,
 }: {
   items: any[];
   hasAccess: boolean;
@@ -641,6 +649,8 @@ function ContentGrid({
   lastAccessedId: string | null;
   onTrackView?: (contentId: string) => void;
   onTrackDownload?: (contentId: string) => void;
+  favoriteIds?: Set<string>;
+  onToggleFavorite?: (contentId: string, isFav: boolean) => void;
 }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
@@ -656,6 +666,8 @@ function ContentGrid({
           isLastAccessed={item.id === lastAccessedId}
           onTrackView={onTrackView}
           onTrackDownload={onTrackDownload}
+          isFavorite={favoriteIds?.has(item.id)}
+          onToggleFavorite={onToggleFavorite}
         />
       ))}
     </div>
