@@ -43,7 +43,7 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
     // Get only published courses that the user has active access to
     const { data: courses } = await supabase
       .from('courses')
-      .select('id, title, cover_image_url, short_description, total_lessons, total_duration, status')
+      .select('id, title, cover_image_url, banner_image_url, short_description, total_lessons, total_duration, status')
       .in('id', courseIds)
       .eq('status', 'published');
 
