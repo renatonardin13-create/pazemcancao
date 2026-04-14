@@ -89,21 +89,39 @@ function MeusCoursosPage() {
 
       <main className="flex-1 w-full pb-28">
         <div className="mx-auto w-full max-w-[1100px] px-4 sm:px-8 lg:px-12 pt-8 sm:pt-12">
-          {/* Header */}
+          {/* Personalized Greeting */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex items-center gap-3 mb-8"
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="mb-8"
           >
-            <BookOpen className="h-7 w-7 text-gold" />
-            <div>
+            <div className="flex items-start gap-1.5 mb-1">
+              <Heart className="h-4 w-4 text-gold/50 mt-1 flex-shrink-0" />
               <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
-                Meus Cursos
+                Olá, {firstName}.
               </h1>
-              <p className="text-[13px] text-muted-foreground/50 mt-0.5">
-                Todos os cursos que você tem acesso
-              </p>
+            </div>
+            <p className="text-[13px] sm:text-sm text-muted-foreground/50 mt-1 ml-[22px] italic leading-relaxed max-w-md">
+              Que sua jornada hoje seja leve, profunda e cheia de paz.
+            </p>
+          </motion.div>
+
+          {/* Search bar */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mb-8"
+          >
+            <div className="relative max-w-md">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Buscar entre seus cursos..."
+                className="pl-10 h-11 bg-card/15 border-border/20 rounded-xl text-sm placeholder:text-muted-foreground/30 focus:border-gold/30 focus:ring-gold/10"
+              />
             </div>
           </motion.div>
 
@@ -111,24 +129,24 @@ function MeusCoursosPage() {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="grid grid-cols-1 xs:grid-cols-3 gap-3 sm:gap-4 mb-8"
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="grid grid-cols-3 gap-3 sm:gap-4 mb-10"
           >
-            <div className="rounded-xl border border-border/30 bg-card/8 p-5">
-              <p className="text-xs text-muted-foreground/50 mb-1">Total</p>
-              <p className="font-display text-3xl font-bold text-gold">
+            <div className="rounded-xl border border-border/20 bg-card/8 p-4 sm:p-5 text-center">
+              <p className="text-[10px] sm:text-xs text-muted-foreground/40 mb-1 uppercase tracking-wider">Cursos</p>
+              <p className="font-display text-2xl sm:text-3xl font-bold text-gold">
                 {isLoading ? "—" : stats.total}
               </p>
             </div>
-            <div className="rounded-xl border border-border/30 bg-card/8 p-5">
-              <p className="text-xs text-muted-foreground/50 mb-1">Andamento</p>
-              <p className="font-display text-3xl font-bold text-gold">
+            <div className="rounded-xl border border-border/20 bg-card/8 p-4 sm:p-5 text-center">
+              <p className="text-[10px] sm:text-xs text-muted-foreground/40 mb-1 uppercase tracking-wider">Em andamento</p>
+              <p className="font-display text-2xl sm:text-3xl font-bold text-gold">
                 {isLoading ? "—" : stats.inProgress}
               </p>
             </div>
-            <div className="rounded-xl border border-border/30 bg-card/8 p-5">
-              <p className="text-xs text-muted-foreground/50 mb-1">Concluídos</p>
-              <p className="font-display text-3xl font-bold text-gold">
+            <div className="rounded-xl border border-border/20 bg-card/8 p-4 sm:p-5 text-center">
+              <p className="text-[10px] sm:text-xs text-muted-foreground/40 mb-1 uppercase tracking-wider">Concluídos</p>
+              <p className="font-display text-2xl sm:text-3xl font-bold text-gold">
                 {isLoading ? "—" : stats.completed}
               </p>
             </div>
