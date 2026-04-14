@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { StatusBadge } from "@/components/StatusBadge";
+import { ImageUploadField } from "@/components/ImageUploadField";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   listModules,
@@ -877,13 +878,14 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-sm font-semibold">Miniatura (Opcional)</Label>
-                  <div className="border-2 border-dashed border-border/20 rounded-xl p-6 flex flex-col items-center gap-2 cursor-pointer hover:border-gold/30 hover:bg-gold/3 transition-all">
-                    <Download className="h-5 w-5 text-muted-foreground/30" />
-                    <span className="text-[12px] text-muted-foreground/40">Upload miniatura</span>
-                  </div>
-                </div>
+                <ImageUploadField
+                  label="Miniatura (Opcional)"
+                  hint="Imagem da aula (recomendado: 16:9, 1280×720)"
+                  value={lesThumbnailUrl}
+                  onChange={setLesThumbnailUrl}
+                  folder="lessons/thumbnails"
+                  aspectClass="aspect-video"
+                />
               </>
             )}
 
