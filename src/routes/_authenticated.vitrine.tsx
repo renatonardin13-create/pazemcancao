@@ -233,7 +233,25 @@ function CourseCard({ course }: { course: any }) {
           )}
 
           <div className="mt-3">
-            {isEnrolled ? (
+            {isCompleted ? (
+              <>
+                <div className="w-full h-1 rounded-full bg-emerald-500/20 mb-2">
+                  <div className="h-full rounded-full bg-emerald-500/70" style={{ width: '100%' }} />
+                </div>
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-400/70">
+                  ✓ Concluído
+                </span>
+              </>
+            ) : isInProgress ? (
+              <>
+                <div className="w-full h-1 rounded-full bg-gold/20 mb-2">
+                  <div className="h-full rounded-full bg-gold/70" style={{ width: `${course.progress_pct}%` }} />
+                </div>
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gold/70">
+                  {course.progress_pct}% concluído <ArrowRight className="h-3 w-3" />
+                </span>
+              </>
+            ) : isEnrolled ? (
               <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gold/70">
                 Acessar <ArrowRight className="h-3 w-3" />
               </span>
