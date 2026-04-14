@@ -156,7 +156,9 @@ function VitrinePage() {
 }
 
 function CourseCard({ course }: { course: any }) {
-  const isEnrolled = course.access_state === "enrolled";
+  const isEnrolled = course.access_state === "enrolled" || course.access_state === "in_progress" || course.access_state === "completed";
+  const isInProgress = course.access_state === "in_progress";
+  const isCompleted = course.access_state === "completed";
   const isLocked = course.access_state === "locked";
   const hasPreview = course.access_state === "preview";
   const isAvailable = course.access_state === "available";
