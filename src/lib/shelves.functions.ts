@@ -38,16 +38,29 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       .eq('is_active', true)
       .order('sort_order', { ascending: true });
 
-    // Get user enrollments
+    // Get user enrollments with status and expiration info
     const { data: enrollments } = await supabase
       .from('enrollments')
-      .select('course_id')
-      .eq('user_id', userId)
-      .eq('status', 'active');
+      .select('course_id, status, expires_at')
+      .eq('user_id', userId);
 
-    const enrolledCourseIds = new Set(
-      (enrollments || []).map((e: any) => e.course_id)
-    );
+    // Active enrollments: status = active AND not expired
+    const activeEnrollmentIds = new Set<string>();
+    const blockedEnrollmentIds = new Set<string>();
+    const expiredEnrollmentIds = new Set<string>();
+
+    for (const e of enrollments || []) {
+      const isExpired = e.expires_at && new Date(e.expires_at) < new Date();
+      if (e.status === 'active' && !isExpired) {
+        activeEnrollmentIds.add(e.course_id);
+      } else if (e.status === 'blocked') {
+        blockedEnrollmentIds.add(e.course_id);
+      } else if (isExpired || e.status === 'expired') {
+        expiredEnrollmentIds.add(e.course_id);
+      }
+    }
+
+    const enrolledCourseIds = activeEnrollmentIds;
 
     // Get all published courses
     const { data: allCourses } = await supabase
