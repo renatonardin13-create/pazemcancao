@@ -94,23 +94,23 @@ function MeusCoursosPage() {
     <StudentLayout>
     <div className="min-h-screen bg-background flex flex-col">
 
-      <main className="flex-1 w-full pb-28">
+      <main className="flex-1 w-full pb-32">
 
         {/* ═══ SAUDAÇÃO + BUSCA ═══ */}
-        <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 pt-8 sm:pt-10">
+        <div className="w-full max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-14 pt-10 sm:pt-12">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-6"
+            className="mb-8"
           >
-            <div className="flex items-start gap-1.5 mb-1">
-              <Heart className="h-4 w-4 text-gold/50 mt-1 flex-shrink-0" />
-              <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground/90 tracking-tight">
+            <div className="flex items-start gap-2 mb-1">
+              <Heart className="h-4 w-4 text-gold/40 mt-1.5 flex-shrink-0" />
+              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight leading-tight">
                 Olá, {firstName}.
               </h1>
             </div>
-            <p className="text-[12px] sm:text-[13px] text-muted-foreground/50 mt-0.5 ml-[22px] italic leading-relaxed max-w-md">
+            <p className="text-[12px] sm:text-[13px] text-muted-foreground/40 mt-1 ml-[26px] italic leading-relaxed max-w-md">
               Que sua jornada hoje seja leve, profunda e cheia de paz.
             </p>
           </motion.div>
@@ -119,15 +119,15 @@ function MeusCoursosPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-6"
+            className="mb-8"
           >
-            <div className="relative max-w-md">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
+            <div className="relative max-w-lg">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar cursos..."
-                className="pl-10 h-11 bg-card/15 border-border/20 rounded-xl text-sm placeholder:text-muted-foreground/30 focus:border-gold/30 focus:ring-gold/10"
+                className="pl-11 h-12 bg-card/10 border-border/15 rounded-2xl text-sm placeholder:text-muted-foreground/25 focus:border-gold/25 focus:ring-gold/10 transition-all duration-300"
               />
             </div>
           </motion.div>
@@ -135,17 +135,17 @@ function MeusCoursosPage() {
 
         {/* ═══ SEARCH RESULTS ═══ */}
         {searchResults !== null ? (
-          <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12">
+          <div className="w-full max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-14">
             <SectionHeader title={`Resultados para "${search}"`} subtitle={`${searchResults.length} curso(s) encontrado(s)`} />
             {searchResults.length > 0 ? (
-              <div className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
+              <div className="flex gap-5 sm:gap-6 lg:gap-7 overflow-x-auto pb-6 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
                 {searchResults.map((course: any, idx: number) => (
                   <motion.div
                     key={`search-${course.id}`}
                     initial={{ opacity: 0, x: 30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
-                    className="flex-shrink-0 snap-start w-[280px] sm:w-[340px] md:w-[400px] lg:w-[440px]"
+                    className="flex-shrink-0 snap-start w-[300px] sm:w-[360px] md:w-[420px] lg:w-[480px]"
                   >
                     <CourseShelfCard course={course} showProgress />
                   </motion.div>
@@ -162,7 +162,7 @@ function MeusCoursosPage() {
               <HeroBanner course={featuredCourse} />
             )}
 
-            <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 pt-8">
+            <div className="w-full max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-14 pt-10">
 
               {isLoading ? (
                 <CardGridSkeleton count={6} />
@@ -184,14 +184,14 @@ function MeusCoursosPage() {
                   ))}
 
                   {/* ═══ BIBLIOTECA RESUMO ═══ */}
-                  <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} className="mb-16 rounded-2xl border border-border/20 bg-card/8 p-5 sm:p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
-                        <Layers className="h-4 w-4 text-primary/70" />
+                  <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} className="mb-20 rounded-2xl border border-border/10 bg-card/5 p-6 sm:p-8 backdrop-blur-sm">
+                    <div className="flex items-center gap-3.5 mb-5">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
+                        <Layers className="h-4 w-4 text-primary/60" />
                       </div>
-                      <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">Minha biblioteca</h2>
+                      <h2 className="font-display text-xl font-bold text-foreground/80 tracking-tight">Minha biblioteca</h2>
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                       <StatCard label="Cursos" value={stats.total} />
                       <StatCard label="Em andamento" value={stats.inProgress} />
                       <StatCard label="Concluídos" value={stats.completed} />
