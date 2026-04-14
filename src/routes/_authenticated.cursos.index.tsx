@@ -12,6 +12,7 @@ import { CourseShelfCard } from "@/components/CourseShelfCard";
 import { motion } from "framer-motion";
 import { BookOpen, Search, ArrowRight, PlayCircle, Heart, Play, Layers, CheckCircle2, GraduationCap } from "lucide-react";
 import { useState, useMemo } from "react";
+import { useDragScroll } from "@/hooks/use-drag-scroll";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
 import { getMyProfile } from "@/lib/profile.functions";
@@ -220,6 +221,7 @@ function MeusCoursosPage() {
    ══════════════════════════════════════════════════════════════ */
 
 function MyCoursesShelf({ courses }: { courses: any[] }) {
+  const dragRef = useDragScroll();
   return (
     <motion.section
       initial={{ opacity: 0, y: 14 }}
@@ -238,7 +240,7 @@ function MyCoursesShelf({ courses }: { courses: any[] }) {
         </div>
       </div>
 
-      <div className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
+      <div ref={dragRef} className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth cursor-grab select-none">
         {courses.map((course: any, idx: number) => (
           <motion.div
             key={`mc-${course.id}`}
@@ -335,6 +337,7 @@ function MyCoursesCard({ course }: { course: any }) {
 }
 
 function ContinueWatchingShelf({ courses }: { courses: any[] }) {
+  const dragRef = useDragScroll();
   return (
     <motion.section
       initial={{ opacity: 0, y: 14 }}
@@ -353,7 +356,7 @@ function ContinueWatchingShelf({ courses }: { courses: any[] }) {
         </div>
       </div>
 
-      <div className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
+      <div ref={dragRef} className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth cursor-grab select-none">
         {courses.map((course: any, idx: number) => (
           <motion.div
             key={`cw-${course.id}`}
@@ -440,6 +443,7 @@ function ShelfSection({ shelf, delay, promoBanners, shelfIndex }: {
   shelfIndex: number;
 }) {
   const bannersAfter = promoBanners.filter((b: any) => b.position_after_shelf === shelfIndex + 1);
+  const dragRef = useDragScroll();
 
   return (
     <>
@@ -462,7 +466,7 @@ function ShelfSection({ shelf, delay, promoBanners, shelfIndex }: {
         </div>
 
         {/* Horizontal scroll row */}
-        <div className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
+        <div ref={dragRef} className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth cursor-grab select-none">
           {(shelf.courses || []).map((course: any, idx: number) => (
             <motion.div
               key={`${shelf.id}-${course.id}`}
