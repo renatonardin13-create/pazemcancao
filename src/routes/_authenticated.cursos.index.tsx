@@ -127,13 +127,19 @@ function MeusCoursosPage() {
           <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12">
             <SectionHeader title={`Resultados para "${search}"`} subtitle={`${searchResults.length} curso(s) encontrado(s)`} />
             {searchResults.length > 0 ? (
-              <ShelfRow>
+              <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
                 {searchResults.map((course: any, idx: number) => (
-                  <ShelfItem key={`search-${course.id}`} idx={idx}>
+                  <motion.div
+                    key={`search-${course.id}`}
+                    initial={{ opacity: 0, x: 30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
+                    className="flex-shrink-0 snap-start w-[260px] sm:w-[300px] md:w-[320px]"
+                  >
                     <CourseShelfCard course={course} showProgress />
-                  </ShelfItem>
+                  </motion.div>
                 ))}
-              </ShelfRow>
+              </div>
             ) : (
               <EmptyState icon={Search} title="Nenhum curso encontrado" description="Tente buscar com outras palavras." />
             )}
