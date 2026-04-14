@@ -398,13 +398,13 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
 
       const payload: any = {
         title: lesTitle.trim(),
-        description: lesDesc.trim() || undefined,
-        video_url: lesContentType === "video" ? (lesVideoUrl.trim() || undefined) : (lessonDialog.editId ? "" : undefined),
-        content_url: lesContentType !== "video" ? (lesContentUrl.trim() || undefined) : (lessonDialog.editId ? "" : undefined),
+        description: lesDesc.trim() || null,
+        video_url: lesContentType === "video" ? (lesVideoUrl.trim() || null) : null,
+        content_url: lesContentType !== "video" ? (lesContentUrl.trim() || null) : null,
         content_type: lesContentType,
         is_free_preview: lesFreePreview,
         duration: lesDuration || "0:00",
-        thumbnail_url: lesThumbnailUrl.trim() || undefined,
+        thumbnail_url: lesThumbnailUrl.trim() || null,
         status: lesPublished ? "published" : "draft",
       };
 
@@ -422,17 +422,19 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   };
 
   const getLessonTypeIcon = (lesson: any) => {
-    if (lesson.video_url) return <Video className="h-3.5 w-3.5 text-gold/70" />;
-    if (lesson.content_url?.endsWith(".pdf")) return <FileText className="h-3.5 w-3.5 text-red-400/50" />;
-    if (lesson.content_url) return <File className="h-3.5 w-3.5 text-blue-400/50" />;
-    return <LinkIcon className="h-3.5 w-3.5 text-muted-foreground/60" />;
+    const ct = lesson.content_type || "video";
+    if (ct === "pdf") return <FileText className="h-3.5 w-3.5 text-red-400/50" />;
+    if (ct === "file") return <File className="h-3.5 w-3.5 text-blue-400/50" />;
+    if (ct === "link") return <LinkIcon className="h-3.5 w-3.5 text-muted-foreground/60" />;
+    return <Video className="h-3.5 w-3.5 text-gold/70" />;
   };
 
   const getLessonTypeLabel = (lesson: any) => {
-    if (lesson.video_url) return "Vídeo";
-    if (lesson.content_url?.endsWith(".pdf")) return "PDF";
-    if (lesson.content_url) return "Arquivo";
-    return "Link";
+    const ct = lesson.content_type || "video";
+    if (ct === "pdf") return "PDF";
+    if (ct === "file") return "Arquivo";
+    if (ct === "link") return "Link";
+    return "Vídeo";
   };
 
   const moveModule = (index: number, direction: "up" | "down") => {
@@ -700,7 +702,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                             )}
 
                             {/* Published badge */}
-                            <StatusBadge status="published" />
+                            <StatusBadge status={lesson.status || "published"} />
 
                             {/* Lesson actions */}
                             <DropdownMenu>
