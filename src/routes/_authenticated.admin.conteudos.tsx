@@ -250,6 +250,7 @@ function AdminContentPage() {
       queryClient.invalidateQueries({ queryKey: ["admin-content"] });
       toast.success("Status atualizado");
     },
+    onError: (err) => toastError(err, "Erro ao atualizar status"),
   });
 
   const removeMutation = useMutation({
@@ -258,6 +259,7 @@ function AdminContentPage() {
       queryClient.invalidateQueries({ queryKey: ["admin-content"] });
       toast.success("Conteúdo excluído!");
     },
+    onError: (err) => toastError(err, "Erro ao excluir conteúdo"),
   });
 
   const items = data?.items || [];
