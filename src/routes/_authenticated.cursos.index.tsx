@@ -30,6 +30,12 @@ function MeusCoursosPage() {
     refetchOnWindowFocus: true,
   });
 
+  const { data: recData } = useQuery({
+    queryKey: ["recommended-courses"],
+    queryFn: () => getRecommendedCourses(),
+    staleTime: 30_000,
+  });
+
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
