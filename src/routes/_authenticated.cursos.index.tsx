@@ -262,30 +262,58 @@ function MeusCoursosPage() {
             </div>
           </motion.div>
 
-          {/* Stat Cards */}
+          {/* Minha Biblioteca */}
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="grid grid-cols-3 gap-3 sm:gap-4 mb-10"
+            className="mb-10 rounded-2xl border border-border/20 bg-card/8 p-5 sm:p-6"
           >
-            <div className="rounded-xl border border-border/20 bg-card/8 p-4 sm:p-5 text-center">
-              <p className="text-[10px] sm:text-xs text-muted-foreground/40 mb-1 uppercase tracking-wider">Cursos</p>
-              <p className="font-display text-2xl sm:text-3xl font-bold text-gold">
-                {isLoading ? "—" : stats.total}
-              </p>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
+                  <BookOpen className="h-4 w-4 text-primary/70" />
+                </div>
+                <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
+                  Minha biblioteca
+                </h2>
+              </div>
+              <Link
+                to="/cursos"
+                search={{ filter: "all" } as any}
+                className="inline-flex items-center gap-1.5 text-[11px] font-bold text-gold/70 uppercase tracking-wider hover:text-gold transition-colors"
+              >
+                Ver tudo <ArrowRight className="h-3 w-3" />
+              </Link>
             </div>
-            <div className="rounded-xl border border-border/20 bg-card/8 p-4 sm:p-5 text-center">
-              <p className="text-[10px] sm:text-xs text-muted-foreground/40 mb-1 uppercase tracking-wider">Em andamento</p>
-              <p className="font-display text-2xl sm:text-3xl font-bold text-gold">
-                {isLoading ? "—" : stats.inProgress}
-              </p>
-            </div>
-            <div className="rounded-xl border border-border/20 bg-card/8 p-4 sm:p-5 text-center">
-              <p className="text-[10px] sm:text-xs text-muted-foreground/40 mb-1 uppercase tracking-wider">Concluídos</p>
-              <p className="font-display text-2xl sm:text-3xl font-bold text-gold">
-                {isLoading ? "—" : stats.completed}
-              </p>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="rounded-xl border border-border/15 bg-background/30 p-4 text-center">
+                <p className="font-display text-2xl font-bold text-gold">
+                  {isLoading ? "—" : stats.total}
+                </p>
+                <p className="text-[10px] text-muted-foreground/45 mt-1 uppercase tracking-wider">Cursos</p>
+              </div>
+              <div className="rounded-xl border border-border/15 bg-background/30 p-4 text-center">
+                <p className="font-display text-2xl font-bold text-gold">
+                  {isLoading ? "—" : stats.inProgress}
+                </p>
+                <p className="text-[10px] text-muted-foreground/45 mt-1 uppercase tracking-wider">Em andamento</p>
+              </div>
+              <div className="rounded-xl border border-border/15 bg-background/30 p-4 text-center">
+                <p className="font-display text-2xl font-bold text-gold">
+                  {isLoading ? "—" : stats.completed}
+                </p>
+                <p className="text-[10px] text-muted-foreground/45 mt-1 uppercase tracking-wider">Concluídos</p>
+              </div>
+              <div className="rounded-xl border border-border/15 bg-background/30 p-4 text-center">
+                <p className="font-display text-2xl font-bold text-gold">
+                  {favData?.count ?? "—"}
+                </p>
+                <p className="text-[10px] text-muted-foreground/45 mt-1 uppercase tracking-wider flex items-center justify-center gap-1">
+                  <Heart className="h-3 w-3" /> Favoritos
+                </p>
+              </div>
             </div>
           </motion.div>
           {/* Continue de onde parou */}
