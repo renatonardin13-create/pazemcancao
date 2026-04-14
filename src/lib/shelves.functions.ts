@@ -116,12 +116,28 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
 
     const enrichCourse = (course: any) => {
       const isEnrolled = enrolledCourseIds.has(course.id) || isAdmin;
+      const isBlocked = blockedEnrollmentIds.has(course.id);
+      const isExpired = expiredEnrollmentIds.has(course.id);
       const hasPreview = previewCourseIds.has(course.id);
       const checkoutUrl = integrationMap.get(course.id) || null;
       const hasCheckout = !!checkoutUrl;
 
-      // For vitrine: non-enrolled without checkout URL are hidden
-      const accessState = isEnrolled ? 'enrolled' : hasPreview ? 'preview' : hasCheckout ? 'locked' : 'hidden';
+      // Determine access state — NEVER hide published courses
+      let accessState: string;
+      if (isEnrolled) {
+        accessState = 'enrolled';
+      } else if (isBlocked) {
+        accessState = 'blocked';
+      } else if (isExpired) {
+        accessState = 'expired';
+      } else if (hasPreview) {
+        accessState = 'preview';
+      } else if (hasCheckout) {
+        accessState = 'locked';
+      } else {
+        // Course is published but user has no enrollment and no checkout — show as available
+        accessState = 'available';
+      }
 
       return {
         ...course,
