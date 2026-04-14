@@ -1203,10 +1203,15 @@ export type Database = {
         Row: {
           created_at: string
           email: string | null
+          error_details: string | null
           event_type: string
+          external_product_id: string | null
           id: string
+          internal_course_id: string | null
+          is_success: boolean | null
           order_id: string | null
           payload: Json | null
+          processed_at: string | null
           provider: string
           response_message: string | null
           response_status: number
@@ -1214,10 +1219,15 @@ export type Database = {
         Insert: {
           created_at?: string
           email?: string | null
+          error_details?: string | null
           event_type?: string
+          external_product_id?: string | null
           id?: string
+          internal_course_id?: string | null
+          is_success?: boolean | null
           order_id?: string | null
           payload?: Json | null
+          processed_at?: string | null
           provider?: string
           response_message?: string | null
           response_status?: number
@@ -1225,10 +1235,15 @@ export type Database = {
         Update: {
           created_at?: string
           email?: string | null
+          error_details?: string | null
           event_type?: string
+          external_product_id?: string | null
           id?: string
+          internal_course_id?: string | null
+          is_success?: boolean | null
           order_id?: string | null
           payload?: Json | null
+          processed_at?: string | null
           provider?: string
           response_message?: string | null
           response_status?: number
