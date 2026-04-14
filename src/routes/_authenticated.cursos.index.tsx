@@ -84,6 +84,7 @@ function MeusCoursosPage() {
   const continueIds = new Set(continueItems.map((c: any) => c.id));
   const recommendations = (recData?.recommendations || []).filter((c: any) => !continueIds.has(c.id));
   const trending = trendData?.ranked || [];
+  const newCourses = (newData?.courses || []).filter((c: any) => !continueIds.has(c.id));
 
   // Hero course — priority: in-progress > recommended > trending > first course
   const heroCourse = useMemo(() => {
