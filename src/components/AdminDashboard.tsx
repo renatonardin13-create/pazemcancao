@@ -524,14 +524,14 @@ export function AdminDashboard() {
         </div>
 
         <Tabs defaultValue="top-played" className="space-y-4">
-          <TabsList className="bg-card/20 border border-border/30 p-1 rounded-xl">
-            <TabsTrigger value="top-played" className="text-xs rounded-lg data-[state=active]:bg-gold/10 data-[state=active]:text-gold data-[state=active]:border-gold/15 data-[state=active]:border">
+          <TabsList className="bg-card/20 border border-border/30 p-1 rounded-xl w-full sm:w-auto flex-wrap">
+            <TabsTrigger value="top-played" className="text-xs rounded-lg data-[state=active]:bg-gold/10 data-[state=active]:text-gold data-[state=active]:border-gold/15 data-[state=active]:border flex-1 sm:flex-none">
               <Headphones className="h-4 w-4 mr-2" /> Mais Ouvidas
             </TabsTrigger>
-            <TabsTrigger value="top-downloaded" className="text-xs rounded-lg data-[state=active]:bg-emerald-400/10 data-[state=active]:text-emerald-400 data-[state=active]:border-emerald-400/15 data-[state=active]:border">
+            <TabsTrigger value="top-downloaded" className="text-xs rounded-lg data-[state=active]:bg-emerald-400/10 data-[state=active]:text-emerald-400 data-[state=active]:border-emerald-400/15 data-[state=active]:border flex-1 sm:flex-none">
               <Download className="h-4 w-4 mr-2" /> Mais Baixadas
             </TabsTrigger>
-            <TabsTrigger value="users" className="text-xs rounded-lg data-[state=active]:bg-blue-400/10 data-[state=active]:text-blue-400 data-[state=active]:border-blue-400/15 data-[state=active]:border">
+            <TabsTrigger value="users" className="text-xs rounded-lg data-[state=active]:bg-blue-400/10 data-[state=active]:text-blue-400 data-[state=active]:border-blue-400/15 data-[state=active]:border flex-1 sm:flex-none">
               <Users className="h-4 w-4 mr-2" /> Atividade
             </TabsTrigger>
           </TabsList>
