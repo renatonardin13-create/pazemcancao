@@ -199,7 +199,6 @@ function ShelfSection({ shelf, delay, promoBanners, shelfIndex }: {
   promoBanners: any[];
   shelfIndex: number;
 }) {
-  // Find promo banners that should appear after this shelf
   const bannersAfter = promoBanners.filter((b: any) => b.position_after_shelf === shelfIndex + 1);
 
   return (
@@ -208,19 +207,37 @@ function ShelfSection({ shelf, delay, promoBanners, shelfIndex }: {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay }}
-        className="mb-10"
+        className="mb-12"
       >
-        <SectionHeader title={shelf.name} subtitle="" />
-        <ShelfRow>
+        {/* Shelf header */}
+        <div className="flex items-end justify-between mb-5">
+          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground/90 tracking-tight">
+            {shelf.name}
+          </h2>
+          {(shelf.courses?.length ?? 0) > 5 && (
+            <span className="text-[11px] font-bold text-gold/50 uppercase tracking-widest hover:text-gold/80 transition-colors duration-300 cursor-pointer flex items-center gap-1">
+              Ver todos <ArrowRight className="h-3 w-3" />
+            </span>
+          )}
+        </div>
+
+        {/* Horizontal scroll row */}
+        <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
           {(shelf.courses || []).map((course: any, idx: number) => (
-            <ShelfItem key={`${shelf.id}-${course.id}`} idx={idx}>
+            <motion.div
+              key={`${shelf.id}-${course.id}`}
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
+              className="flex-shrink-0 snap-start w-[260px] sm:w-[300px] md:w-[320px]"
+            >
               <CourseShelfCard
                 course={course}
                 showProgress={course.access_state === 'in_progress' || course.access_state === 'enrolled'}
               />
-            </ShelfItem>
+            </motion.div>
           ))}
-        </ShelfRow>
+        </div>
       </motion.section>
 
       {/* Promo banners after shelf */}
@@ -230,7 +247,7 @@ function ShelfSection({ shelf, delay, promoBanners, shelfIndex }: {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: delay + 0.1 }}
-          className="mb-10"
+          className="mb-12"
         >
           {banner.link_url ? (
             <a href={banner.link_url} target="_blank" rel="noopener noreferrer" className="block rounded-2xl overflow-hidden border border-border/15 hover:border-gold/20 transition-all duration-300">
@@ -256,71 +273,50 @@ function HeroBanner({ course }: { course: any }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
-      className="relative w-full h-[260px] sm:h-[340px] md:h-[380px] overflow-hidden"
+      className="relative w-full h-[280px] sm:h-[360px] md:h-[420px] overflow-hidden"
     >
       {bannerImg ? (
         <img
           src={bannerImg}
           alt={course.display_title || course.title || ''}
           className="w-full h-full object-cover scale-105"
-          style={{ objectFit: course.banner_fit || 'cover' }}
+          style={{ objectFit: (course.banner_fit || 'cover') as any }}
         />
       ) : (
         <div className="w-full h-full bg-gradient-to-br from-card/30 via-background to-background" />
       )}
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 md:px-12 lg:px-16">
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/40 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 p-8 sm:p-12 md:px-16 lg:px-20">
         <div className="max-w-[1400px] mx-auto">
-          <motion.h2 initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.4 }} className="font-display text-xl sm:text-3xl md:text-4xl font-bold text-foreground/95 tracking-tight mb-2 max-w-lg leading-tight drop-shadow-lg">
+          <motion.h2 initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.3 }} className="font-display text-2xl sm:text-4xl md:text-5xl font-bold text-foreground tracking-tight mb-3 max-w-xl leading-[1.1] drop-shadow-lg">
             {course.display_title || course.title}
           </motion.h2>
           {(course.display_subtitle || course.short_description) && (
-            <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5 }} className="text-[13px] text-muted-foreground/60 mb-5 max-w-md line-clamp-2 leading-relaxed">
+            <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.45 }} className="text-sm text-muted-foreground/60 mb-6 max-w-lg line-clamp-2 leading-relaxed">
               {course.display_subtitle || course.short_description}
             </motion.p>
           )}
           {course.progress_pct > 0 && course.progress_pct < 100 && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.55 }} className="flex items-center gap-3 mb-4 max-w-xs">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.5 }} className="flex items-center gap-3 mb-5 max-w-xs">
               <Progress value={course.progress_pct} className="h-1.5 flex-1 bg-muted/15" />
               <span className="text-[11px] font-bold text-gold/80 tabular-nums">{course.progress_pct}%</span>
             </motion.div>
           )}
           {!isCustomBanner && (
-            <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.6 }}>
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.55 }}>
               <Link
                 to="/cursos/$courseId"
                 params={{ courseId: course.id }}
-                className="inline-flex items-center gap-2 rounded-xl bg-gold/90 text-background px-6 py-3 text-[12px] font-bold uppercase tracking-wider hover:bg-gold transition-all duration-300 hover:shadow-lg hover:shadow-gold/20"
+                className="inline-flex items-center gap-2.5 rounded-xl bg-gold text-background px-7 py-3.5 text-[13px] font-bold uppercase tracking-wider hover:bg-gold/90 transition-all duration-300 hover:shadow-xl hover:shadow-gold/25"
               >
-                {course.progress_pct > 0 ? 'Continuar agora' : 'Ver detalhes'}
-                <ArrowRight className="h-3.5 w-3.5" />
+                <Play className="h-4 w-4 fill-current" />
+                {course.progress_pct > 0 ? 'Continuar' : 'Assistir'}
               </Link>
             </motion.div>
           )}
         </div>
       </div>
-    </motion.div>
-  );
-}
-
-function ShelfRow({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory">
-      {children}
-    </div>
-  );
-}
-
-function ShelfItem({ children, idx = 0 }: { children: React.ReactNode; idx?: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: 24 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5, delay: 0.05 * Math.min(idx, 8) }}
-      className="flex-shrink-0 snap-start w-[160px] sm:w-[190px]"
-    >
-      {children}
     </motion.div>
   );
 }
