@@ -7,6 +7,7 @@ import { getNewCourses } from "@/lib/new-content.functions";
 import { getUserFavoritesCount } from "@/lib/user-library.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
+import { CourseShelfCard } from "@/components/CourseShelfCard";
 import { motion } from "framer-motion";
 import { BookOpen, Search, ArrowRight, Layers, Clock, PlayCircle, Sparkles, TrendingUp, CheckCircle2, Play, Heart, Star, Zap } from "lucide-react";
 import { useState, useMemo } from "react";
@@ -418,55 +419,23 @@ function MeusCoursosPage() {
                 </div>
               </div>
 
-              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
+              <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-hide -mx-1 px-1">
                 {recommendations.slice(0, 8).map((course: any, idx: number) => (
                   <motion.div
                     key={`rec-${course.id}`}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.06 * idx }}
-                    className="flex-shrink-0 w-[220px] sm:w-[240px]"
+                    className="flex-shrink-0 w-[200px] sm:w-[220px]"
                   >
-                    <Link
-                      to="/cursos/$courseId"
-                      params={{ courseId: course.id }}
-                      className="group block rounded-xl border border-border/20 bg-card/10 overflow-hidden transition-all duration-500 hover:border-gold/25 hover:bg-card/20 hover:shadow-lg hover:shadow-gold/5"
-                    >
-                      <div className="relative aspect-video overflow-hidden">
-                        {course.cover_image_url ? (
-                          <img
-                            src={course.cover_image_url}
-                            alt={course.title}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-muted/15 flex items-center justify-center">
-                            <BookOpen className="h-6 w-6 text-muted-foreground/30" />
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-60" />
-                        {course.enrollment_count > 0 && (
-                          <div className="absolute top-2 right-2 rounded-full bg-background/60 backdrop-blur-sm px-2 py-0.5 border border-border/20">
-                            <span className="text-[9px] font-bold text-muted-foreground/60">
-                              {course.enrollment_count} alunos
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <h3 className="text-sm font-bold text-foreground/80 line-clamp-2 leading-snug group-hover:text-gold transition-colors duration-300">
-                          {course.title}
-                        </h3>
-                        {course.short_description && (
-                          <p className="text-[10px] text-muted-foreground/40 mt-1 line-clamp-1">
-                            {course.short_description}
-                          </p>
-                        )}
-                        <div className="mt-2 flex items-center text-[10px] font-bold text-gold/60 uppercase tracking-wider">
-                          Conhecer <ArrowRight className="h-3 w-3 ml-1" />
-                        </div>
-                      </div>
-                    </Link>
+                    <CourseShelfCard
+                      course={course}
+                      badge={course.enrollment_count > 0 ? (
+                        <span className="rounded-full bg-background/60 backdrop-blur-sm px-2 py-0.5 border border-border/20 text-[9px] font-bold text-muted-foreground/60">
+                          {course.enrollment_count} alunos
+                        </span>
+                      ) : undefined}
+                    />
                   </motion.div>
                 ))}
               </div>
@@ -495,56 +464,33 @@ function MeusCoursosPage() {
                 </div>
               </div>
 
-              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
+              <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-hide -mx-1 px-1">
                 {trending.map((course: any, idx: number) => (
                   <motion.div
                     key={`trend-${course.id}`}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.06 * idx }}
-                    className="flex-shrink-0 w-[220px] sm:w-[240px]"
+                    className="flex-shrink-0 w-[200px] sm:w-[220px]"
                   >
-                    <Link
-                      to="/cursos/$courseId"
-                      params={{ courseId: course.id }}
-                      className="group block rounded-xl border border-border/20 bg-card/10 overflow-hidden transition-all duration-500 hover:border-gold/25 hover:bg-card/20 hover:shadow-lg hover:shadow-gold/5 relative"
-                    >
-                      {/* Rank badge */}
-                      <div className={`absolute top-2 left-2 z-10 flex h-7 w-7 items-center justify-center rounded-full border text-xs font-black tabular-nums ${
-                        idx === 0
-                          ? "bg-gold/90 border-gold text-background"
-                          : idx === 1
-                            ? "bg-muted/60 border-muted-foreground/20 text-foreground/70"
-                            : idx === 2
-                              ? "bg-amber-800/40 border-amber-700/30 text-amber-200/80"
-                              : "bg-background/60 backdrop-blur-sm border-border/30 text-muted-foreground/60"
-                      }`}>
-                        {idx + 1}
-                      </div>
-
-                      <div className="relative aspect-video overflow-hidden">
-                        {course.cover_image_url ? (
-                          <img
-                            src={course.cover_image_url}
-                            alt={course.title}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-muted/15 flex items-center justify-center">
-                            <BookOpen className="h-6 w-6 text-muted-foreground/30" />
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-60" />
-                      </div>
-                      <div className="p-3">
-                        <h3 className="text-sm font-bold text-foreground/80 line-clamp-2 leading-snug group-hover:text-gold transition-colors duration-300">
-                          {course.title}
-                        </h3>
-                        <p className="text-[10px] text-muted-foreground/40 mt-1">
-                          {course.access_count} {course.access_count === 1 ? "aluno" : "alunos"}
-                        </p>
-                      </div>
-                    </Link>
+                    <CourseShelfCard
+                      course={course}
+                      showDescription={false}
+                      badge={
+                        <div className={`flex h-7 w-7 items-center justify-center rounded-full border text-xs font-black tabular-nums ${
+                          idx === 0
+                            ? "bg-gold/90 border-gold text-background"
+                            : idx === 1
+                              ? "bg-muted/60 border-muted-foreground/20 text-foreground/70"
+                              : idx === 2
+                                ? "bg-amber-800/40 border-amber-700/30 text-amber-200/80"
+                                : "bg-background/60 backdrop-blur-sm border-border/30 text-muted-foreground/60"
+                        }`}>
+                          {idx + 1}
+                        </div>
+                      }
+                      ctaLabel={`${course.access_count} ${course.access_count === 1 ? "acesso" : "acessos"}`}
+                    />
                   </motion.div>
                 ))}
               </div>
@@ -632,51 +578,23 @@ function MeusCoursosPage() {
                 </div>
               </div>
 
-              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
+              <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-hide -mx-1 px-1">
                 {newCourses.slice(0, 8).map((course: any, idx: number) => (
                   <motion.div
                     key={`new-${course.id}`}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.06 * idx }}
-                    className="flex-shrink-0 w-[220px] sm:w-[240px]"
+                    className="flex-shrink-0 w-[200px] sm:w-[220px]"
                   >
-                    <Link
-                      to="/cursos/$courseId"
-                      params={{ courseId: course.id }}
-                      className="group block rounded-xl border border-border/20 bg-card/10 overflow-hidden transition-all duration-500 hover:border-gold/25 hover:bg-card/20 hover:shadow-lg hover:shadow-gold/5"
-                    >
-                      <div className="relative aspect-video overflow-hidden">
-                        {course.cover_image_url ? (
-                          <img
-                            src={course.cover_image_url}
-                            alt={course.title}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-muted/15 flex items-center justify-center">
-                            <BookOpen className="h-6 w-6 text-muted-foreground/30" />
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-60" />
-                        <div className="absolute top-2 left-2 rounded-full bg-gold/20 backdrop-blur-sm px-2.5 py-0.5 border border-gold/20">
-                          <span className="text-[9px] font-bold text-gold uppercase tracking-wider">Novo</span>
-                        </div>
-                      </div>
-                      <div className="p-3">
-                        <h3 className="text-sm font-bold text-foreground/80 line-clamp-2 leading-snug group-hover:text-gold transition-colors duration-300">
-                          {course.title}
-                        </h3>
-                        {course.short_description && (
-                          <p className="text-[10px] text-muted-foreground/40 mt-1 line-clamp-1">
-                            {course.short_description}
-                          </p>
-                        )}
-                        <div className="mt-2 flex items-center text-[10px] font-bold text-gold/60 uppercase tracking-wider">
-                          Conhecer <ArrowRight className="h-3 w-3 ml-1" />
-                        </div>
-                      </div>
-                    </Link>
+                    <CourseShelfCard
+                      course={course}
+                      badge={
+                        <span className="rounded-full bg-gold/20 backdrop-blur-sm px-2.5 py-0.5 border border-gold/20 text-[9px] font-bold text-gold uppercase tracking-wider">
+                          Novo
+                        </span>
+                      }
+                    />
                   </motion.div>
                 ))}
               </div>
@@ -742,7 +660,7 @@ function MeusCoursosPage() {
                   <Link
                     to="/cursos/$courseId"
                     params={{ courseId: course.id }}
-                    className="group relative block rounded-2xl overflow-hidden transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl hover:shadow-gold/8"
+                    className="group relative block rounded-2xl overflow-hidden border border-border/10 transition-all duration-500 hover:scale-[1.02] hover:border-gold/15 hover:shadow-2xl hover:shadow-gold/[0.07] hover:-translate-y-1"
                   >
                     {/* Full-bleed cover */}
                     <div className="relative aspect-[16/10] overflow-hidden">
