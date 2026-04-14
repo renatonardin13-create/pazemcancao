@@ -36,6 +36,7 @@ import {
   Search,
   Share2,
   List,
+} from "lucide-react";
 
 export const Route = createFileRoute(
   "/_authenticated/cursos/$courseId/aula/$lessonId"
