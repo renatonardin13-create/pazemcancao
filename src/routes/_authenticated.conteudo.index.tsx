@@ -9,6 +9,7 @@ import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { ContentCard } from "@/components/ContentCard";
 import { RecommendedSection } from "@/components/RecommendedSection";
+import { motion } from "framer-motion";
 import {
   BookOpen,
   Video,
@@ -17,6 +18,9 @@ import {
   PlayCircle,
   Sparkles,
   Clock,
+  CheckCircle2,
+  Library,
+  TrendingUp,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/conteudo/")({
