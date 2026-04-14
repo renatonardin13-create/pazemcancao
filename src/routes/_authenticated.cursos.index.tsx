@@ -100,21 +100,125 @@ function MeusCoursosPage() {
     <div className="min-h-screen bg-background flex flex-col">
 
       <main className="flex-1 w-full pb-28">
-        <div className="mx-auto w-full max-w-[1100px] px-4 sm:px-8 lg:px-12 pt-8 sm:pt-12">
+        {/* Hero Banner */}
+        {!isLoading && heroCourse && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            className="relative w-full h-[260px] sm:h-[340px] md:h-[380px] overflow-hidden"
+          >
+            {/* Background image */}
+            {(heroCourse.banner_image_url || heroCourse.cover_image_url) ? (
+              <img
+                src={heroCourse.banner_image_url || heroCourse.cover_image_url}
+                alt={heroCourse.title}
+                className="w-full h-full object-cover scale-105"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-card/30 via-background to-background" />
+            )}
+
+            {/* Cinematic gradient overlays */}
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-transparent" />
+
+            {/* Content */}
+            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 md:px-12 lg:px-16">
+              <div className="max-w-[1100px] mx-auto">
+                {/* Badge */}
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  className="mb-3"
+                >
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-gold/10 backdrop-blur-sm px-3 py-1 border border-gold/15 text-[10px] font-bold uppercase tracking-widest text-gold/80">
+                    {heroCourse._heroType === 'continue' && (
+                      <><PlayCircle className="h-3 w-3" /> Continue de onde parou</>
+                    )}
+                    {heroCourse._heroType === 'recommended' && (
+                      <><Sparkles className="h-3 w-3" /> Recomendado para você</>
+                    )}
+                    {heroCourse._heroType === 'trending' && (
+                      <><TrendingUp className="h-3 w-3" /> Em destaque</>
+                    )}
+                    {heroCourse._heroType === 'enrolled' && (
+                      <><Heart className="h-3 w-3" /> Seu curso</>
+                    )}
+                  </span>
+                </motion.div>
+
+                {/* Title */}
+                <motion.h2
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, delay: 0.4 }}
+                  className="font-display text-xl sm:text-3xl md:text-4xl font-bold text-foreground/95 tracking-tight mb-2 max-w-lg leading-tight drop-shadow-lg"
+                >
+                  {heroCourse.title}
+                </motion.h2>
+
+                {/* Description */}
+                {heroCourse.short_description && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.5 }}
+                    className="text-[13px] text-muted-foreground/60 mb-5 max-w-md line-clamp-2 leading-relaxed"
+                  >
+                    {heroCourse.short_description}
+                  </motion.p>
+                )}
+
+                {/* Progress bar for continue */}
+                {heroCourse._heroType === 'continue' && heroCourse.progress_pct > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.55 }}
+                    className="flex items-center gap-3 mb-4 max-w-xs"
+                  >
+                    <Progress value={heroCourse.progress_pct} className="h-1.5 flex-1 bg-muted/15" />
+                    <span className="text-[11px] font-bold text-gold/80 tabular-nums">{heroCourse.progress_pct}%</span>
+                  </motion.div>
+                )}
+
+                {/* CTA Button */}
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                >
+                  <Link
+                    to="/cursos/$courseId"
+                    params={{ courseId: heroCourse.id }}
+                    className="inline-flex items-center gap-2 rounded-xl bg-gold/90 text-background px-6 py-3 text-[12px] font-bold uppercase tracking-wider hover:bg-gold transition-all duration-300 hover:shadow-lg hover:shadow-gold/20"
+                  >
+                    {heroCourse._heroType === 'continue' ? 'Continuar agora' : 'Ver detalhes'}
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        <div className="mx-auto w-full max-w-[1100px] px-4 sm:px-8 lg:px-12 pt-8 sm:pt-10">
           {/* Personalized Greeting */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-8"
+            className="mb-6"
           >
             <div className="flex items-start gap-1.5 mb-1">
               <Heart className="h-4 w-4 text-gold/50 mt-1 flex-shrink-0" />
-              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
+              <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground/90 tracking-tight">
                 Olá, {firstName}.
               </h1>
             </div>
-            <p className="text-[13px] sm:text-sm text-muted-foreground/50 mt-1 ml-[22px] italic leading-relaxed max-w-md">
+            <p className="text-[12px] sm:text-[13px] text-muted-foreground/50 mt-0.5 ml-[22px] italic leading-relaxed max-w-md">
               Que sua jornada hoje seja leve, profunda e cheia de paz.
             </p>
           </motion.div>
