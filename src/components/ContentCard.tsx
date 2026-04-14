@@ -215,6 +215,26 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progre
             )}
           </div>
         )}
+
+        {/* Favorite button */}
+        {onToggleFavorite && !isLocked && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              onToggleFavorite(item.id, !!isFavorite);
+            }}
+            className={`absolute bottom-3 right-3 z-20 flex h-8 w-8 items-center justify-center rounded-full backdrop-blur-md transition-all duration-300 ${
+              isFavorite
+                ? "bg-red-500/20 border border-red-400/30 text-red-400 hover:bg-red-500/30"
+                : "bg-black/25 border border-white/10 text-white/35 hover:text-white/60 hover:bg-black/40"
+            }`}
+            title={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+          >
+            <Heart className={`h-3.5 w-3.5 ${isFavorite ? "fill-current" : ""}`} />
+          </button>
+        )}
       </div>
 
       {/* Content info — more breathing room */}
