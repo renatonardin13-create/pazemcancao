@@ -128,7 +128,7 @@ function AdminTracksPage() {
             placeholder="Buscar por título..."
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
-            className="w-full h-9 pl-9 pr-3 rounded-xl border border-border/15 bg-card/10 text-sm text-foreground/75 placeholder:text-muted-foreground/25 focus:outline-none focus:border-gold/25 transition-colors"
+            className="w-full h-9 pl-9 pr-3 rounded-xl border border-border/15 bg-card/10 text-sm text-foreground/90 placeholder:text-muted-foreground/25 focus:outline-none focus:border-gold/25 transition-colors"
           />
         </div>
         <select
@@ -150,7 +150,7 @@ function AdminTracksPage() {
           <option value="active">Ativos</option>
           <option value="inactive">Inativos</option>
         </select>
-        <span className="text-[10px] text-muted-foreground/30 self-center">
+        <span className="text-xs text-muted-foreground/30 self-center">
           {total} música{total !== 1 ? 's' : ''}
         </span>
       </div>
@@ -199,7 +199,7 @@ function AdminTracksPage() {
                 )}
 
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-foreground/75 truncate">
+                  <p className="text-sm font-semibold text-foreground/90 truncate">
                     {track.title}
                   </p>
                   <p className="text-[11px] text-muted-foreground/30">
@@ -210,7 +210,7 @@ function AdminTracksPage() {
                 <div className="flex items-center gap-1.5">
                   <Badge
                     variant="outline"
-                    className={`text-[9px] rounded-full px-2 border ${
+                    className={`text-[11px] rounded-full px-2 border ${
                       track.is_active
                         ? "text-emerald-400/60 border-emerald-500/15 bg-emerald-500/8"
                         : "text-muted-foreground/30 border-border/20"
@@ -221,7 +221,7 @@ function AdminTracksPage() {
                   {track.is_bonus && (
                     <Badge
                       variant="outline"
-                      className="text-[9px] rounded-full px-2 border text-amber-400/60 border-amber-500/15 bg-amber-500/8"
+                      className="text-[11px] rounded-full px-2 border text-amber-400/60 border-amber-500/15 bg-amber-500/8"
                     >
                       <Gift className="h-2.5 w-2.5 mr-1" />
                       Bônus{track.bonus_release_date ? ` · ${new Date(track.bonus_release_date + 'T00:00:00').toLocaleDateString('pt-BR')}` : ''}

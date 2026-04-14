@@ -12,7 +12,7 @@ export function ValueMessageCard({ message }: ValueMessageCardProps) {
       <div className="relative max-w-lg mx-auto text-center">
         <Heart className="h-4 w-4 text-gold/30 mx-auto mb-6" />
 
-        <p className="text-[10px] font-medium uppercase tracking-[0.4em] text-gold/30 mb-6">
+        <p className="text-xs font-medium uppercase tracking-[0.4em] text-gold/30 mb-6">
           Seu Espaço de Presença
         </p>
 
@@ -20,12 +20,12 @@ export function ValueMessageCard({ message }: ValueMessageCardProps) {
           {message || (
             <>
               Estas canções foram criadas para ser um{" "}
-              <em className="text-foreground/75 not-italic">refúgio</em>.<br />
+              <em className="text-foreground/90 not-italic">refúgio</em>.<br />
               Para momentos de{" "}
-              <em className="text-foreground/75 not-italic">oração</em>,{" "}
-              de <em className="text-foreground/75 not-italic">quietude</em>,{" "}
+              <em className="text-foreground/90 not-italic">oração</em>,{" "}
+              de <em className="text-foreground/90 not-italic">quietude</em>,{" "}
               de reencontro com a{" "}
-              <em className="text-foreground/75 not-italic">paz</em> que vem de Deus.
+              <em className="text-foreground/90 not-italic">paz</em> que vem de Deus.
             </>
           )}
         </p>

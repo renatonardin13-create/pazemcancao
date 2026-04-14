@@ -99,7 +99,7 @@ function AuthenticatedLayout() {
             <div className="mx-auto mb-8 flex items-center justify-center">
               <ShieldAlert className="h-8 w-8 text-destructive/60" />
             </div>
-            <h2 className="font-display text-2xl font-bold text-foreground/85 tracking-tight">
+            <h2 className="font-display text-2xl font-bold text-foreground tracking-tight">
               Acesso não autorizado detectado
             </h2>
             <div className="mx-auto mt-5 h-px w-10 bg-gradient-to-r from-transparent via-destructive/20 to-transparent" />
@@ -141,7 +141,7 @@ function AuthenticatedLayout() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_40%,var(--color-gold)/0.025,transparent_70%)]" />
         <div className="relative max-w-sm text-center px-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
           <div className="mx-auto mb-10 w-px h-16 bg-gradient-to-b from-transparent via-gold/15 to-transparent" />
-          <h2 className="font-display text-2xl font-bold text-foreground/85 tracking-tight">
+          <h2 className="font-display text-2xl font-bold text-foreground tracking-tight">
             Acesso não autorizado
           </h2>
           <div className="mx-auto mt-5 h-px w-10 bg-gradient-to-r from-transparent via-gold/12 to-transparent" />

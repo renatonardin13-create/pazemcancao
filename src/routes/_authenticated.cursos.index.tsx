@@ -136,7 +136,7 @@ function MeusCoursosPage() {
                   <p className="text-sm text-muted-foreground/40 mb-2">
                     Você ainda não possui cursos liberados.
                   </p>
-                  <p className="text-[12px] text-muted-foreground/30 mb-6">
+                  <p className="text-sm text-muted-foreground/30 mb-6">
                     Adquira um curso na vitrine para começar sua jornada.
                   </p>
                   <Link
@@ -185,7 +185,7 @@ function MeusCoursosPage() {
                         {course.title}
                       </h3>
                       {course.short_description && (
-                        <p className="text-[12px] text-muted-foreground/40 mt-1 line-clamp-1">
+                        <p className="text-sm text-muted-foreground/40 mt-1 line-clamp-1">
                           {course.short_description}
                         </p>
                       )}
@@ -202,7 +202,7 @@ function MeusCoursosPage() {
                       <div className="flex items-center gap-3 mt-3">
                         <span className="text-[11px] text-muted-foreground/40">Progresso</span>
                         <Progress value={course.progress_pct} className="h-1.5 flex-1 bg-muted/20" />
-                        <span className="text-[12px] font-bold text-gold tabular-nums w-10 text-right">
+                        <span className="text-sm font-bold text-gold tabular-nums w-10 text-right">
                           {course.progress_pct}%
                         </span>
                       </div>
@@ -210,7 +210,7 @@ function MeusCoursosPage() {
 
                     {/* CTA */}
                     <div className="shrink-0 hidden sm:block">
-                      <span className="inline-flex items-center gap-2 rounded-xl bg-gold/90 text-gold-foreground px-5 py-2.5 text-[12px] font-bold uppercase tracking-wider group-hover:bg-gold transition-colors">
+                      <span className="inline-flex items-center gap-2 rounded-xl bg-gold/90 text-gold-foreground px-5 py-2.5 text-sm font-bold uppercase tracking-wider group-hover:bg-gold transition-colors">
                         {course.progress_pct > 0 ? "Continuar" : "Iniciar"}
                         <ArrowRight className="h-3.5 w-3.5" />
                       </span>

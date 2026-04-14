@@ -150,10 +150,10 @@ function SummaryCard({
         <Icon className="h-5 w-5" />
       </div>
       <div className="min-w-0">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground/35 font-medium">
+        <p className="text-xs uppercase tracking-wider text-muted-foreground/35 font-medium">
           {label}
         </p>
-        <p className="text-lg font-bold text-foreground/80 tabular-nums mt-0.5">
+        <p className="text-lg font-bold text-foreground/95 tabular-nums mt-0.5">
           {value}
         </p>
       </div>
@@ -629,7 +629,7 @@ export default function AdminVitrinePage() {
               <div className="space-y-5">
                 {/* Header */}
                 <div>
-                  <h3 className="text-base font-bold text-foreground/85">
+                  <h3 className="text-base font-bold text-foreground">
                     Banner Principal{" "}
                     <span className="font-normal text-muted-foreground/50">(Hero da Home)</span>
                   </h3>
@@ -762,7 +762,7 @@ export default function AdminVitrinePage() {
                 {/* Header with button */}
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h3 className="text-base font-bold text-foreground/85">
+                    <h3 className="text-base font-bold text-foreground">
                       Banners Promo{" "}
                       <span className="font-normal text-muted-foreground/50">Campanhas Eventos</span>
                     </h3>
@@ -810,12 +810,12 @@ export default function AdminVitrinePage() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 flex-wrap">
-                            <p className="text-[13px] font-semibold text-foreground/80 truncate">
+                            <p className="text-[13px] font-semibold text-foreground/95 truncate">
                               {banner.title}
                             </p>
                             <Badge
                               variant="outline"
-                              className={`text-[9px] rounded-full px-2 border font-medium ${
+                              className={`text-[11px] rounded-full px-2 border font-medium ${
                                 banner.is_active
                                   ? "text-emerald-400/80 border-emerald-500/25 bg-emerald-500/10"
                                   : "text-muted-foreground/40 border-border/15"
@@ -825,12 +825,12 @@ export default function AdminVitrinePage() {
                             </Badge>
                             <Badge
                               variant="outline"
-                              className="text-[9px] rounded-full px-2 border text-muted-foreground/50 border-border/15"
+                              className="text-[11px] rounded-full px-2 border text-muted-foreground/50 border-border/15"
                             >
                               Após prateleira {banner.position_after_shelf}
                             </Badge>
                           </div>
-                          <p className="text-[10px] text-muted-foreground/25 mt-0.5 truncate">
+                          <p className="text-xs text-muted-foreground/25 mt-0.5 truncate">
                             {banner.link_url ? `Link: ${banner.link_url}` : "Sem link"}
                           </p>
                         </div>
@@ -866,7 +866,7 @@ export default function AdminVitrinePage() {
               {/* Header */}
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <h3 className="text-base font-bold text-foreground/85">
+                  <h3 className="text-base font-bold text-foreground">
                     Prateleiras (Shelves){" "}
                     <span className="font-normal text-muted-foreground/50">da Vitrine</span>
                   </h3>
@@ -897,7 +897,7 @@ export default function AdminVitrinePage() {
                   <p className="text-sm text-muted-foreground/35">
                     Nenhuma prateleira criada ainda.
                   </p>
-                  <p className="text-[12px] text-muted-foreground/25 mt-1">
+                  <p className="text-sm text-muted-foreground/25 mt-1">
                     Crie prateleiras para organizar os cursos na vitrine do aluno.
                   </p>
                 </div>
@@ -917,7 +917,7 @@ export default function AdminVitrinePage() {
                         <GripVertical className="h-4 w-4 text-muted-foreground/15 shrink-0" />
 
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-bold text-foreground/80 uppercase tracking-wide truncate">
+                          <p className="text-sm font-bold text-foreground/95 uppercase tracking-wide truncate">
                             {shelf.name}
                           </p>
                           <p className="text-[11px] text-muted-foreground/35 mt-0.5">
@@ -969,10 +969,10 @@ export default function AdminVitrinePage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Monitor className="h-4 w-4 text-muted-foreground/40" />
-                  <span className="text-[12px] font-semibold text-foreground/60">
+                  <span className="text-sm font-semibold text-foreground/60">
                     Pré-visualização
                   </span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[9px] font-bold uppercase tracking-wider text-emerald-400/80">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-bold uppercase tracking-wider text-emerald-400/80">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/80 animate-pulse" />
                     Ao vivo
                   </span>
@@ -980,7 +980,7 @@ export default function AdminVitrinePage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-7 px-2 text-[10px] text-muted-foreground/30 hover:text-foreground/60"
+                  className="h-7 px-2 text-xs text-muted-foreground/30 hover:text-foreground/60"
                   onClick={() => setShowPreview(false)}
                 >
                   <EyeOff className="h-3 w-3 mr-1" />
@@ -1010,7 +1010,7 @@ export default function AdminVitrinePage() {
                         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
                         <div className="absolute bottom-2 left-3">
                           <p className="text-[7px] font-bold uppercase tracking-[0.3em] text-gold/40">Em destaque</p>
-                          <p className="text-[10px] font-bold text-foreground/80 leading-tight mt-0.5 line-clamp-1">
+                          <p className="text-xs font-bold text-foreground/95 leading-tight mt-0.5 line-clamp-1">
                             {previewFeatured.display_title || previewFeatured.title || "Banner Principal"}
                           </p>
                         </div>
@@ -1020,13 +1020,13 @@ export default function AdminVitrinePage() {
                     {/* Mini shelves — from student data */}
                     <div className="p-3 space-y-3">
                       {previewShelves.length === 0 ? (
-                        <p className="text-[9px] text-muted-foreground/25 text-center py-4">
+                        <p className="text-[11px] text-muted-foreground/25 text-center py-4">
                           Nenhuma prateleira ativa
                         </p>
                       ) : (
                         previewShelves.slice(0, 3).map((shelf: any) => (
                           <div key={shelf.id}>
-                            <p className="text-[9px] font-bold text-foreground/50 mb-1.5 truncate">
+                            <p className="text-[11px] font-bold text-foreground/50 mb-1.5 truncate">
                               {shelf.name}
                             </p>
                             <div className="flex gap-1.5 overflow-hidden">
@@ -1046,7 +1046,7 @@ export default function AdminVitrinePage() {
                         ))
                       )}
                       {previewShelves.length > 3 && (
-                        <p className="text-[9px] text-muted-foreground/20 text-center">
+                        <p className="text-[11px] text-muted-foreground/20 text-center">
                           +{previewShelves.length - 3} prateleira(s)
                         </p>
                       )}
@@ -1090,7 +1090,7 @@ export default function AdminVitrinePage() {
         <DialogContent className="sm:max-w-md p-0 overflow-hidden">
           <div className="px-6 pt-5 pb-3">
             <DialogHeader>
-              <DialogTitle className="font-display text-base font-bold text-foreground/85">
+              <DialogTitle className="font-display text-base font-bold text-foreground">
                 {editingShelf ? "Editar Prateleira" : "Nova Prateleira"}
               </DialogTitle>
               <p className="text-[11px] text-muted-foreground/40">
@@ -1188,7 +1188,7 @@ export default function AdminVitrinePage() {
                           <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${isSelected ? "border-gold bg-gold" : "border-muted-foreground/20"}`}>
                             {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-gold-foreground" />}
                           </div>
-                          <span className="text-[12px] font-medium text-foreground/70 truncate flex-1">
+                          <span className="text-sm font-medium text-foreground/90 truncate flex-1">
                             {course.title}
                           </span>
                         </div>
@@ -1236,12 +1236,12 @@ export default function AdminVitrinePage() {
       >
         <AlertDialogContent className="bg-card border-border/20">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-foreground/85">
+            <AlertDialogTitle className="text-foreground">
               Excluir prateleira
             </AlertDialogTitle>
             <AlertDialogDescription className="text-muted-foreground/50">
               Tem certeza que deseja excluir a prateleira{" "}
-              <span className="font-semibold text-foreground/70">
+              <span className="font-semibold text-foreground/90">
                 {deleteTarget?.name}
               </span>
               ?
@@ -1271,7 +1271,7 @@ export default function AdminVitrinePage() {
           {/* Header */}
           <div className="px-6 pt-5 pb-3">
             <DialogHeader>
-              <DialogTitle className="font-display text-base font-bold text-foreground/85">
+              <DialogTitle className="font-display text-base font-bold text-foreground">
                 {editingPromo ? "Editar Banner Secundário" : "Novo Banner Secundário"}
               </DialogTitle>
               <p className="text-[11px] text-muted-foreground/40">Recomendado: 1200 × 400 px</p>
@@ -1356,7 +1356,7 @@ export default function AdminVitrinePage() {
                 <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
                   <div>
                     <p className="text-sm font-medium text-foreground/60">Agendamento Automático</p>
-                    <p className="text-[10px] text-muted-foreground/30">Ativar/desativar banner em datas específicas</p>
+                    <p className="text-xs text-muted-foreground/30">Ativar/desativar banner em datas específicas</p>
                   </div>
                   <Switch checked={promoSchedule} onCheckedChange={setPromoSchedule} />
                 </div>
@@ -1403,12 +1403,12 @@ export default function AdminVitrinePage() {
       >
         <AlertDialogContent className="bg-card border-border/20">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-foreground/85">
+            <AlertDialogTitle className="text-foreground">
               Excluir banner promo
             </AlertDialogTitle>
             <AlertDialogDescription className="text-muted-foreground/50">
               Tem certeza que deseja excluir o banner{" "}
-              <span className="font-semibold text-foreground/70">
+              <span className="font-semibold text-foreground/90">
                 {deletePromoTarget?.title}
               </span>
               ?
@@ -1461,7 +1461,7 @@ function CardsConfigTab({ settings, onSave, saving }: { settings: any; onSave: (
   return (
     <div className="space-y-5">
       <div>
-        <h3 className="text-base font-bold text-foreground/85">
+        <h3 className="text-base font-bold text-foreground">
           Configuração dos Cards{" "}
           <span className="font-normal text-muted-foreground/50">(Netflix Style)</span>
         </h3>
@@ -1497,7 +1497,7 @@ function CardsConfigTab({ settings, onSave, saving }: { settings: any; onSave: (
           onChange={(e) => setConfig((prev) => ({ ...prev, cardGradient: Number(e.target.value) }))}
           className="w-full h-1.5 rounded-full appearance-none bg-muted/20 accent-gold cursor-pointer"
         />
-        <p className="text-[10px] text-muted-foreground/30">
+        <p className="text-xs text-muted-foreground/30">
           0% = sem escurecimento | 100% = escurecimento total
         </p>
       </div>
@@ -1516,7 +1516,7 @@ function CardsConfigTab({ settings, onSave, saving }: { settings: any; onSave: (
           onChange={(e) => setConfig((prev) => ({ ...prev, bannerGradient: Number(e.target.value) }))}
           className="w-full h-1.5 rounded-full appearance-none bg-muted/20 accent-gold cursor-pointer"
         />
-        <p className="text-[10px] text-muted-foreground/30">
+        <p className="text-xs text-muted-foreground/30">
           Controla a opacidade do gradiente sobre o banner hero
         </p>
       </div>

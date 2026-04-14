@@ -175,25 +175,25 @@ function AdminCoursesPage() {
           <Table>
             <TableHeader>
               <TableRow className="border-border/10 hover:bg-transparent">
-                <TableHead className="w-[72px] text-[10px] uppercase tracking-widest text-muted-foreground/30">
+                <TableHead className="w-[72px] text-xs uppercase tracking-widest text-muted-foreground/30">
                   Capa
                 </TableHead>
-                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/30">
+                <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/30">
                   Nome do Curso
                 </TableHead>
-                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/30 w-[90px]">
+                <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/30 w-[90px]">
                   Tipo
                 </TableHead>
-                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/30 w-[100px]">
+                <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/30 w-[100px]">
                   Status
                 </TableHead>
-                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/30 w-[80px] text-center">
+                <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/30 w-[80px] text-center">
                   Módulos
                 </TableHead>
-                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/30 w-[80px] text-center">
+                <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/30 w-[80px] text-center">
                   Aulas
                 </TableHead>
-                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/30 w-[60px] text-right">
+                <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/30 w-[60px] text-right">
                   Ações
                 </TableHead>
               </TableRow>
@@ -227,7 +227,7 @@ function AdminCoursesPage() {
 
                   {/* Title */}
                   <TableCell>
-                    <p className="text-sm font-medium text-foreground/80 truncate max-w-[260px]">
+                    <p className="text-sm font-medium text-foreground/95 truncate max-w-[260px]">
                       {course.title}
                     </p>
                     {course.categories?.name && (

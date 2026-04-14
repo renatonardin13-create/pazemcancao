@@ -180,7 +180,7 @@ export function StudentSidebar() {
                     isActive("/musicas") && !(location.search as any)?.categoria
                   )}
                 >
-                   <span className="text-[12px]">⭐</span>
+                   <span className="text-sm">⭐</span>
                    Destaques (Top 10)
                  </Link>
                  {visibleCategories
@@ -201,7 +201,7 @@ export function StudentSidebar() {
                       onClick={() => setMobileOpen(false)}
                       className={subItemClass(isActiveCat)}
                     >
-                     <span className="text-[12px]">{cat.icon || "🎵"}</span>
+                     <span className="text-sm">{cat.icon || "🎵"}</span>
                      {cat.name.replace(/^[^\w\s]+\s*/u, "")}
                    </Link>
                   );

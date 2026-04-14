@@ -129,11 +129,11 @@ function VitrinePage() {
                     transition={{ duration: 0.6, delay: shelfIdx * 0.1 }}
                   >
                     <div className="flex items-center gap-3 mb-5">
-                      <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
+                      <h2 className="font-display text-lg font-bold text-foreground/95 tracking-tight">
                         {shelf.name}
                       </h2>
                       <div className="flex-1 h-px bg-gradient-to-r from-border/15 to-transparent" />
-                      <span className="text-[10px] text-muted-foreground/25">
+                      <span className="text-xs text-muted-foreground/25">
                         {shelf.courses.length} curso{shelf.courses.length !== 1 ? "s" : ""}
                       </span>
                     </div>
@@ -229,14 +229,14 @@ function CourseCard({ course }: { course: any }) {
               <div className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-md border border-gold/20 flex items-center justify-center mb-3">
                 <Lock className="h-6 w-6 text-gold/70" />
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold/50">
+              <span className="text-xs font-bold uppercase tracking-[0.2em] text-gold/50">
                 {isBlocked ? "Acesso Bloqueado" : isExpired ? "Acesso Expirado" : "Conteúdo Premium"}
               </span>
             </div>
             {isLocked && (
               <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-gold/15 backdrop-blur-sm px-3 py-1.5 border border-gold/25">
                 <ShoppingCart className="h-3 w-3 text-gold/70" />
-                <span className="text-[9px] font-bold uppercase tracking-wider text-gold/70">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-gold/70">
                   Adquirir
                 </span>
               </div>
@@ -248,7 +248,7 @@ function CourseCard({ course }: { course: any }) {
         {hasPreview && !isLocked && (
           <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-emerald-500/20 backdrop-blur-sm px-3 py-1.5 border border-emerald-500/20">
             <Play className="h-3 w-3 text-emerald-400/70" />
-            <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-400/70">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-400/70">
               Preview
             </span>
           </div>
@@ -260,7 +260,7 @@ function CourseCard({ course }: { course: any }) {
             {course.title}
           </h3>
           {course.short_description && (
-            <p className="text-[10px] text-muted-foreground/40 mt-1 line-clamp-1">
+            <p className="text-xs text-muted-foreground/40 mt-1 line-clamp-1">
               {course.short_description}
             </p>
           )}
@@ -271,7 +271,7 @@ function CourseCard({ course }: { course: any }) {
                 <div className="w-full h-1 rounded-full bg-emerald-500/20 mb-2">
                   <div className="h-full rounded-full bg-emerald-500/70" style={{ width: '100%' }} />
                 </div>
-                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-400/70">
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-400/70">
                   ✓ Concluído
                 </span>
               </>
@@ -280,32 +280,32 @@ function CourseCard({ course }: { course: any }) {
                 <div className="w-full h-1 rounded-full bg-gold/20 mb-2">
                   <div className="h-full rounded-full bg-gold/70" style={{ width: `${course.progress_pct}%` }} />
                 </div>
-                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gold/70">
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold/70">
                   {course.progress_pct}% concluído <ArrowRight className="h-3 w-3" />
                 </span>
               </>
             ) : isEnrolled ? (
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gold/70">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold/70">
                 Acessar <ArrowRight className="h-3 w-3" />
               </span>
             ) : isLocked ? (
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gold/50">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold/50">
                 <ShoppingCart className="h-3 w-3" /> Comprar Agora
               </span>
             ) : isBlocked ? (
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-red-400/50">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-red-400/50">
                 <Lock className="h-3 w-3" /> Bloqueado
               </span>
             ) : isExpired ? (
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-orange-400/50">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-orange-400/50">
                 <Lock className="h-3 w-3" /> Expirado
               </span>
             ) : hasPreview ? (
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-400/60">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-400/60">
                 <Play className="h-3 w-3" /> Pré-visualizar
               </span>
             ) : isAvailable ? (
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gold/70">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold/70">
                 Ver Detalhes <ArrowRight className="h-3 w-3" />
               </span>
             ) : null}
@@ -344,7 +344,7 @@ function CourseActionButton({ course }: { course: any }) {
       <Link
         to="/cursos/$courseId"
         params={{ courseId: course.id }}
-        className="inline-flex items-center gap-2 rounded-xl bg-gold/90 text-gold-foreground px-6 py-3 text-[12px] font-bold uppercase tracking-wider hover:bg-gold transition-colors"
+        className="inline-flex items-center gap-2 rounded-xl bg-gold/90 text-gold-foreground px-6 py-3 text-sm font-bold uppercase tracking-wider hover:bg-gold transition-colors"
       >
         Acessar Curso <ArrowRight className="h-3.5 w-3.5" />
       </Link>
@@ -357,7 +357,7 @@ function CourseActionButton({ course }: { course: any }) {
         href={course.checkout_url}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 rounded-xl bg-gold/15 text-gold/70 border border-gold/20 px-6 py-3 text-[12px] font-bold uppercase tracking-wider hover:bg-gold/25 hover:text-gold/90 transition-all"
+        className="inline-flex items-center gap-2 rounded-xl bg-gold/15 text-gold/70 border border-gold/20 px-6 py-3 text-sm font-bold uppercase tracking-wider hover:bg-gold/25 hover:text-gold/90 transition-all"
       >
         <ShoppingCart className="h-3.5 w-3.5" /> Adquirir Agora
       </a>

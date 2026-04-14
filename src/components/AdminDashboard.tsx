@@ -161,7 +161,7 @@ export function AdminDashboard() {
                   <ArrowUpRight className="h-3.5 w-3.5 text-emerald-400" />
                   <span className="text-[11px] font-bold text-emerald-400">Receita total</span>
                 </div>
-                <span className="text-[10px] text-muted-foreground/40">vendas confirmadas</span>
+                <span className="text-xs text-muted-foreground/40">vendas confirmadas</span>
               </>
             ) : (
               <span className="text-[11px] text-muted-foreground/35">Nenhuma venda registrada ainda</span>
@@ -200,7 +200,7 @@ export function AdminDashboard() {
                   <Users className="h-3.5 w-3.5 text-gold" />
                   <span className="text-[11px] font-bold text-gold">Compradores</span>
                 </div>
-                <span className="text-[10px] text-muted-foreground/40">com acesso ativo</span>
+                <span className="text-xs text-muted-foreground/40">com acesso ativo</span>
               </>
             ) : (
               <span className="text-[11px] text-muted-foreground/35">Libere acesso para seus primeiros alunos</span>
@@ -239,7 +239,7 @@ export function AdminDashboard() {
                   <BookOpen className="h-3.5 w-3.5 text-blue-400" />
                   <span className="text-[11px] font-bold text-blue-400">Publicados</span>
                 </div>
-                <span className="text-[10px] text-muted-foreground/40">de {isLoading ? "—" : data?.totalCourses ?? 0} total</span>
+                <span className="text-xs text-muted-foreground/40">de {isLoading ? "—" : data?.totalCourses ?? 0} total</span>
               </>
             ) : (
               <Link to="/admin/courses/new" className="text-[11px] text-gold/60 hover:text-gold transition-colors">
@@ -280,7 +280,7 @@ export function AdminDashboard() {
                 {(data?.pendingEnrollments ?? 0) > 0 ? 'Ação necessária' : 'Tudo em dia'}
               </span>
             </div>
-            <span className="text-[10px] text-muted-foreground/40">aguardando aprovação</span>
+            <span className="text-xs text-muted-foreground/40">aguardando aprovação</span>
           </div>
         </motion.div>
       </div>
@@ -302,7 +302,7 @@ export function AdminDashboard() {
               <s.icon className={`h-4.5 w-4.5 ${s.color}`} />
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/50 font-bold truncate">{s.label}</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground/50 font-bold truncate">{s.label}</p>
               <p className="text-xl font-black text-foreground/90">
                 {isLoading ? <span className="inline-block h-6 w-10 animate-pulse rounded bg-muted/20" /> : s.value}
               </p>
@@ -352,21 +352,21 @@ export function AdminDashboard() {
             <div className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-gold" />
               <span className="text-xs text-muted-foreground/50">Plays</span>
-              <span className="text-sm font-bold text-foreground/80">
+              <span className="text-sm font-bold text-foreground/95">
                 {analyticsLoading ? "—" : analytics?.totalPlays ?? 0}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
               <span className="text-xs text-muted-foreground/50">Downloads</span>
-              <span className="text-sm font-bold text-foreground/80">
+              <span className="text-sm font-bold text-foreground/95">
                 {analyticsLoading ? "—" : analytics?.totalDownloads ?? 0}
               </span>
             </div>
             <div className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-blue-400" />
               <span className="text-xs text-muted-foreground/50">Receita</span>
-              <span className="text-sm font-bold text-foreground/80">
+              <span className="text-sm font-bold text-foreground/95">
                 {isLoading ? "—" : formatCurrency(data?.totalRevenue ?? 0)}
               </span>
             </div>
@@ -569,7 +569,7 @@ export function AdminDashboard() {
                         ) : (
                           <div className="h-9 w-9 rounded-lg bg-muted/15 flex items-center justify-center border border-border/10"><Music className="h-4 w-4 text-muted-foreground/20" /></div>
                         )}
-                        <span className="flex-1 text-sm text-foreground/75 truncate font-medium">{t.title}</span>
+                        <span className="flex-1 text-sm text-foreground/90 truncate font-medium">{t.title}</span>
                         <span className="text-xs font-bold text-gold/70 bg-gold/8 px-2 py-1 rounded-lg">{t.plays} plays</span>
                       </div>
                     ))}
@@ -601,7 +601,7 @@ export function AdminDashboard() {
                       ) : (
                         <div className="h-9 w-9 rounded-lg bg-muted/15 flex items-center justify-center border border-border/10"><Music className="h-4 w-4 text-muted-foreground/20" /></div>
                       )}
-                      <span className="flex-1 text-sm text-foreground/75 truncate font-medium">{t.title}</span>
+                      <span className="flex-1 text-sm text-foreground/90 truncate font-medium">{t.title}</span>
                       <span className="text-xs font-bold text-emerald-400/70 bg-emerald-400/8 px-2 py-1 rounded-lg">{t.downloads} downloads</span>
                     </div>
                   ))}
@@ -613,7 +613,7 @@ export function AdminDashboard() {
                           <div key={i} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-card/15 transition-colors">
                             <span className="text-xs text-foreground/55 truncate flex-1">{d.email}</span>
                             <span className="text-[11px] text-muted-foreground/35 shrink-0 ml-3">{d.trackTitle}</span>
-                            <span className="text-[10px] text-muted-foreground/25 ml-3 shrink-0">
+                            <span className="text-xs text-muted-foreground/25 ml-3 shrink-0">
                               {new Date(d.downloadedAt).toLocaleDateString('pt-BR')}
                             </span>
                           </div>
@@ -641,9 +641,9 @@ export function AdminDashboard() {
               ) : (
                 <>
                   <div className="grid grid-cols-[1fr_80px_80px] gap-2 px-5 py-3.5 border-b border-border/15 bg-card/5">
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/30 font-medium">Usuário</span>
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/30 text-right font-medium">Plays</span>
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/30 text-right font-medium">Downloads</span>
+                    <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground/30 font-medium">Usuário</span>
+                    <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground/30 text-right font-medium">Plays</span>
+                    <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground/30 text-right font-medium">Downloads</span>
                   </div>
                   {analytics.userActivity.map((u: any) => (
                     <div key={u.email} className="grid grid-cols-[1fr_80px_80px] gap-2 px-5 py-3 border-b border-border/5 hover:bg-card/15 transition-colors">

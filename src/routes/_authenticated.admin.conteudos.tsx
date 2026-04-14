@@ -294,7 +294,7 @@ function AdminContentPage() {
       <Dialog open={formOpen} onOpenChange={(v) => { if (!v) resetForm(); setFormOpen(v); }}>
         <DialogContent className="sm:max-w-lg bg-card border-border/20 max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-foreground/85 font-display font-black text-lg">
+            <DialogTitle className="text-foreground font-display font-black text-lg">
               {editItem ? "Editar Conteúdo" : "Novo Conteúdo"}
             </DialogTitle>
           </DialogHeader>
@@ -354,7 +354,7 @@ function AdminContentPage() {
                   <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx,.xlsx,.pptx,.zip" className="hidden" onChange={(e) => setContentFile(e.target.files?.[0] || null)} disabled={isSubmitting} />
                 </label>
                 {editItem?.file_url && !contentFile && (
-                  <p className="text-[9px] text-muted-foreground/30">Arquivo atual já cadastrado</p>
+                  <p className="text-[11px] text-muted-foreground/30">Arquivo atual já cadastrado</p>
                 )}
               </div>
             )}
@@ -371,7 +371,7 @@ function AdminContentPage() {
             <div className="space-y-2">
               <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Página de Vendas (opcional)</Label>
               <Input value={salesPageUrl} onChange={(e) => setSalesPageUrl(e.target.value)} placeholder="https://kiwify.com.br/..." className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
-              <p className="text-[9px] text-muted-foreground/25">Se preenchido, aparecerá um botão de compra para não-compradores</p>
+              <p className="text-[11px] text-muted-foreground/25">Se preenchido, aparecerá um botão de compra para não-compradores</p>
             </div>
 
             {/* Access Mode */}
@@ -405,7 +405,7 @@ function AdminContentPage() {
                   className="bg-card/15 border-border/15 text-sm"
                   disabled={isSubmitting}
                 />
-                <p className="text-[9px] text-muted-foreground/25">
+                <p className="text-[11px] text-muted-foreground/25">
                   O conteúdo será liberado X dias após a data de compra aprovada do cliente.
                 </p>
               </div>
@@ -441,8 +441,8 @@ function AdminContentPage() {
             {/* Featured toggle */}
             <div className="flex items-center justify-between rounded-xl border border-border/10 bg-card/5 p-4">
               <div>
-                <p className="text-[12px] font-semibold text-foreground/70">⭐ Conteúdo em Destaque</p>
-                <p className="text-[10px] text-muted-foreground/40">Aparece na faixa principal da home</p>
+                <p className="text-sm font-semibold text-foreground/90">⭐ Conteúdo em Destaque</p>
+                <p className="text-xs text-muted-foreground/40">Aparece na faixa principal da home</p>
               </div>
               <Switch checked={isFeatured} onCheckedChange={setIsFeatured} disabled={isSubmitting} />
             </div>
@@ -506,7 +506,7 @@ function AdminContentPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-[9px] text-muted-foreground/25">
+                <p className="text-[11px] text-muted-foreground/25">
                   O usuário precisará consumir este conteúdo antes de desbloquear o atual.
                 </p>
               </div>
@@ -514,8 +514,8 @@ function AdminContentPage() {
 
             <div className="flex items-center justify-between rounded-xl border border-border/10 bg-card/5 p-4">
               <div>
-                <p className="text-[12px] font-semibold text-foreground/70">Exibir como Card</p>
-                <p className="text-[10px] text-muted-foreground/40">Se desativado, o conteúdo não aparece na grade</p>
+                <p className="text-sm font-semibold text-foreground/90">Exibir como Card</p>
+                <p className="text-xs text-muted-foreground/40">Se desativado, o conteúdo não aparece na grade</p>
               </div>
               <Switch checked={showAsCard} onCheckedChange={setShowAsCard} disabled={isSubmitting} />
             </div>
@@ -541,9 +541,9 @@ function AdminContentPage() {
       <AlertDialog open={!!deleteTarget} onOpenChange={(v) => { if (!v) setDeleteTarget(null); }}>
         <AlertDialogContent className="bg-card border-border/20">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-foreground/85">Excluir conteúdo</AlertDialogTitle>
+            <AlertDialogTitle className="text-foreground">Excluir conteúdo</AlertDialogTitle>
             <AlertDialogDescription className="text-muted-foreground/50">
-              Tem certeza que deseja excluir <span className="font-semibold text-foreground/70">{deleteTarget?.title}</span>? Esta ação não pode ser desfeita.
+              Tem certeza que deseja excluir <span className="font-semibold text-foreground/90">{deleteTarget?.title}</span>? Esta ação não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -593,12 +593,12 @@ function AdminContentPage() {
                     </div>
                   )}
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground/75 truncate">{item.title}</p>
+                    <p className="text-sm font-medium text-foreground/90 truncate">{item.title}</p>
                     <div className="flex items-center gap-2 mt-1 flex-wrap">
-                      <Badge variant="outline" className={`text-[9px] px-1.5 py-0 ${typeInfo.color}`}>
+                      <Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${typeInfo.color}`}>
                         {typeInfo.label}
                       </Badge>
-                      <Badge variant="outline" className={`text-[9px] px-1.5 py-0 ${
+                      <Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${
                         effectiveAccess === "gratuito"
                           ? "text-emerald-400/60 border-emerald-500/15 bg-emerald-500/8"
                           : effectiveAccess === "liberar_em_dias"
@@ -608,26 +608,26 @@ function AdminContentPage() {
                         {effectiveAccess === "gratuito" ? "Gratuito" : effectiveAccess === "liberar_em_dias" ? `Libera em ${item.release_days || "?"}d` : "Pago"}
                       </Badge>
                       {item.is_featured && (
-                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 text-yellow-400/70 border-yellow-500/20 bg-yellow-500/10">
+                        <Badge variant="outline" className="text-[11px] px-1.5 py-0 text-yellow-400/70 border-yellow-500/20 bg-yellow-500/10">
                           ⭐ Destaque
                         </Badge>
                       )}
                       {item.display_category && (
-                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 text-muted-foreground/40 border-border/15">
+                        <Badge variant="outline" className="text-[11px] px-1.5 py-0 text-muted-foreground/40 border-border/15">
                           {item.display_category.replace(/_/g, " ")}
                         </Badge>
                       )}
                       {item.badge_text && (
-                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 text-gold/50 border-gold/15 bg-gold/5">
+                        <Badge variant="outline" className="text-[11px] px-1.5 py-0 text-gold/50 border-gold/15 bg-gold/5">
                           {item.badge_text}
                         </Badge>
                       )}
                       {item.journey_group && (
-                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 text-purple-400/50 border-purple-500/15 bg-purple-500/5">
+                        <Badge variant="outline" className="text-[11px] px-1.5 py-0 text-purple-400/50 border-purple-500/15 bg-purple-500/5">
                           trilha: {item.journey_group.replace(/_/g, " ")}
                         </Badge>
                       )}
-                      <span className="text-[9px] text-muted-foreground/20">#{item.sort_order}</span>
+                      <span className="text-[11px] text-muted-foreground/20">#{item.sort_order}</span>
                     </div>
                   </div>
                 </div>

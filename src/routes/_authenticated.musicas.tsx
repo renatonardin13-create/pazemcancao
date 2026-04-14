@@ -219,7 +219,7 @@ function MusicLibraryPage() {
           >
             <div className="flex items-center justify-center gap-2 mb-2">
               <Lock className="h-5 w-5 text-gold/60" />
-              <h3 className="font-display text-lg font-bold text-foreground/80">
+              <h3 className="font-display text-lg font-bold text-foreground/95">
                 {isBlocked ? "Acesso bloqueado" : "Período de teste encerrado"}
               </h3>
             </div>
@@ -232,7 +232,7 @@ function MusicLibraryPage() {
               href="https://pazemcancao-oficial.lovable.app"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-gold/15 text-gold/70 border border-gold/20 px-6 py-2.5 text-[12px] font-semibold tracking-wider uppercase hover:bg-gold/25 hover:text-gold/90 transition-all duration-500"
+              className="inline-flex items-center gap-2 rounded-full bg-gold/15 text-gold/70 border border-gold/20 px-6 py-2.5 text-sm font-semibold tracking-wider uppercase hover:bg-gold/25 hover:text-gold/90 transition-all duration-500"
             >
               Adquira aqui
             </a>
@@ -283,7 +283,7 @@ function MusicLibraryPage() {
                       <Gift className="h-4.5 w-4.5 text-amber-400/70" />
                     </div>
                     <div>
-                      <h2 className="font-display text-lg font-bold text-foreground/85 tracking-tight">
+                      <h2 className="font-display text-lg font-bold text-foreground tracking-tight">
                         Bônus Exclusivos
                       </h2>
                       <p className="text-[11px] text-amber-400/40 mt-0.5">
@@ -334,11 +334,11 @@ function MusicLibraryPage() {
                 >
                   <div className="flex items-center gap-3 mb-4">
                     <span className="text-lg">{icon}</span>
-                    <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
+                    <h2 className="font-display text-lg font-bold text-foreground/95 tracking-tight">
                       {displayName}
                     </h2>
                     <div className="flex-1 h-px bg-gradient-to-r from-border/15 to-transparent" />
-                    <span className="text-[10px] text-muted-foreground/25">
+                    <span className="text-xs text-muted-foreground/25">
                       {catTracks.length} música{catTracks.length !== 1 ? "s" : ""}
                     </span>
                     {catTracks.length > 1 && (
@@ -518,7 +518,7 @@ function TrackCard({
                 </div>
                 {isBonusLocked && bonusCountdown && (
                   <div className="rounded-full bg-black/50 backdrop-blur-sm border border-amber-400/20 px-3 py-1">
-                    <p className="text-[9px] font-semibold text-amber-300/80 tracking-wider uppercase text-center">
+                    <p className="text-[11px] font-semibold text-amber-300/80 tracking-wider uppercase text-center">
                       ⏳ {bonusCountdown}
                     </p>
                   </div>
@@ -577,7 +577,7 @@ function TrackCard({
 
             {/* Category badge */}
             {isCarousel && (
-              <span className="absolute top-3 right-3 text-[9px] font-medium tracking-[0.15em] uppercase rounded-full bg-black/30 backdrop-blur-sm border border-white/[0.08] px-2.5 py-0.5 text-white/40">
+              <span className="absolute top-3 right-3 text-[11px] font-medium tracking-[0.15em] uppercase rounded-full bg-black/30 backdrop-blur-sm border border-white/[0.08] px-2.5 py-0.5 text-white/40">
                 {icon} {track.category.replace(/^[^\w\s]+\s*/, '')}
               </span>
             )}
@@ -606,19 +606,19 @@ function TrackCard({
           {/* Info section */}
           <div className={`${isCarousel ? "p-4" : "p-3"}`}>
             <h3 className={`font-display ${isCarousel ? "text-[14px]" : "text-[13px]"} font-bold tracking-tight leading-snug truncate transition-colors duration-500 ${
-              effectiveLocked ? "text-muted-foreground/40" : isPlaying ? "text-gold" : isThis ? "text-gold/70" : "text-foreground/85 group-hover:text-foreground"
+              effectiveLocked ? "text-muted-foreground/40" : isPlaying ? "text-gold" : isThis ? "text-gold/70" : "text-foreground group-hover:text-foreground"
             }`}>
               {track.title}
             </h3>
             <div className="flex items-center justify-between mt-2">
               <div className="flex items-center gap-2">
-                <p className={`text-[10px] tracking-[0.1em] font-medium transition-colors duration-500 ${
+                <p className={`text-xs tracking-[0.1em] font-medium transition-colors duration-500 ${
                   isPlaying ? "text-gold/50" : "text-muted-foreground/25"
                 }`}>
                   {track.duration}
                 </p>
                 {effectiveLocked && (
-                  <span className={`text-[9px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded-full ${
+                  <span className={`text-[11px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded-full ${
                     isBonusLocked ? "text-amber-400/60 bg-amber-400/10" : "text-destructive/40 bg-destructive/8"
                   }`}>
                     {isBonusLocked ? "🎁 Bônus" : "Bloqueado"}
@@ -628,7 +628,7 @@ function TrackCard({
                   <motion.span
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="text-[9px] font-semibold tracking-wider uppercase text-gold/50 bg-gold/8 px-1.5 py-0.5 rounded-full"
+                    className="text-[11px] font-semibold tracking-wider uppercase text-gold/50 bg-gold/8 px-1.5 py-0.5 rounded-full"
                   >
                     Tocando
                   </motion.span>

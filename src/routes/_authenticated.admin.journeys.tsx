@@ -130,7 +130,7 @@ function AdminJourneysPage() {
       {/* Create form */}
       {showForm && (
         <div className="rounded-2xl border border-border/15 bg-card/10 p-6 space-y-4">
-          <h3 className="text-sm font-semibold text-foreground/70">Nova Trilha</h3>
+          <h3 className="text-sm font-semibold text-foreground/90">Nova Trilha</h3>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
               <label className="text-[11px] text-muted-foreground/40 uppercase tracking-wider mb-1.5 block">Nome</label>
@@ -213,14 +213,14 @@ function AdminJourneysPage() {
                 <button
                   onClick={() => moveItem(index, "up")}
                   disabled={index === 0}
-                  className="text-muted-foreground/20 hover:text-gold/50 disabled:opacity-20 disabled:cursor-not-allowed transition-colors text-[10px]"
+                  className="text-muted-foreground/20 hover:text-gold/50 disabled:opacity-20 disabled:cursor-not-allowed transition-colors text-xs"
                 >
                   ▲
                 </button>
                 <button
                   onClick={() => moveItem(index, "down")}
                   disabled={index === journeys.length - 1}
-                  className="text-muted-foreground/20 hover:text-gold/50 disabled:opacity-20 disabled:cursor-not-allowed transition-colors text-[10px]"
+                  className="text-muted-foreground/20 hover:text-gold/50 disabled:opacity-20 disabled:cursor-not-allowed transition-colors text-xs"
                 >
                   ▼
                 </button>
@@ -241,7 +241,7 @@ function AdminJourneysPage() {
                 </div>
               ) : (
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-foreground/75 truncate">{item.name}</p>
+                  <p className="text-sm font-semibold text-foreground/90 truncate">{item.name}</p>
                   <p className="text-[11px] text-muted-foreground/30">
                     {item.slug}
                     {item.description && ` · ${item.description}`}
@@ -249,7 +249,7 @@ function AdminJourneysPage() {
                 </div>
               )}
 
-              <span className="text-[9px] text-muted-foreground/20 tabular-nums shrink-0">#{item.sort_order}</span>
+              <span className="text-[11px] text-muted-foreground/20 tabular-nums shrink-0">#{item.sort_order}</span>
 
               {/* Actions */}
               <div className="flex items-center gap-1 shrink-0">

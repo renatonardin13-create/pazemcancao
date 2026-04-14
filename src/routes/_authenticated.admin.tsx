@@ -27,7 +27,7 @@ function AdminLayout() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_40%,var(--color-gold)/0.02,transparent_70%)]" />
         <div className="relative text-center max-w-sm px-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
           <ShieldAlert className="h-8 w-8 text-destructive/50 mx-auto mb-6" />
-          <h1 className="font-display text-2xl font-bold text-foreground/85 tracking-tight">
+          <h1 className="font-display text-2xl font-bold text-foreground tracking-tight">
             Acesso restrito
           </h1>
           <div className="mx-auto mt-4 h-px w-10 bg-gradient-to-r from-transparent via-destructive/20 to-transparent" />
@@ -65,16 +65,16 @@ function AdminLayout() {
           <header className="sticky top-0 z-40 h-14 flex items-center gap-3 border-b border-border/15 bg-background/80 backdrop-blur-xl px-4">
             <SidebarTrigger className="text-muted-foreground/40 hover:text-muted-foreground/70" />
             <div className="h-4 w-px bg-border/20" />
-            <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground/30">
+            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground/30">
               Painel Administrativo
             </span>
             <div className="ml-auto flex items-center gap-3">
-              <span className="text-[10px] text-muted-foreground/25 hidden sm:inline">
+              <span className="text-xs text-muted-foreground/25 hidden sm:inline">
                 {user?.email}
               </span>
               <button
                 onClick={() => logout()}
-                className="flex items-center gap-1.5 text-[10px] text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors"
+                className="flex items-center gap-1.5 text-xs text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors"
               >
                 <LogOut className="h-3 w-3" />
               </button>

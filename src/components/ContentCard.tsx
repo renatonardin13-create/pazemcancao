@@ -92,7 +92,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
         )}
 
         {/* Content type badge */}
-        <span className="absolute top-4 right-4 text-[9px] font-medium tracking-[0.2em] uppercase rounded-full bg-black/20 backdrop-blur-sm border border-white/[0.06] px-3 py-1 text-white/30">
+        <span className="absolute top-4 right-4 text-[11px] font-medium tracking-[0.2em] uppercase rounded-full bg-black/20 backdrop-blur-sm border border-white/[0.06] px-3 py-1 text-white/30">
           {item.content_type === "ebook" ? "📚 E-book" :
            item.content_type === "video" ? "🎬 Vídeo" :
            item.content_type === "free_lesson" ? "🎓 Aula" :
@@ -101,11 +101,11 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
 
         {/* Badge text (custom or free) */}
         {item.badge_text ? (
-          <span className="absolute top-4 left-4 text-[9px] font-bold uppercase tracking-widest text-gold/80 bg-gold/15 backdrop-blur-sm border border-gold/20 rounded-full px-3 py-1">
+          <span className="absolute top-4 left-4 text-[11px] font-bold uppercase tracking-widest text-gold/80 bg-gold/15 backdrop-blur-sm border border-gold/20 rounded-full px-3 py-1">
             {item.badge_text}
           </span>
         ) : item.is_free ? (
-          <span className="absolute top-4 left-4 text-[9px] font-bold uppercase tracking-widest text-emerald-300/80 bg-emerald-500/15 backdrop-blur-sm border border-emerald-500/20 rounded-full px-3 py-1">
+          <span className="absolute top-4 left-4 text-[11px] font-bold uppercase tracking-widest text-emerald-300/80 bg-emerald-500/15 backdrop-blur-sm border border-emerald-500/20 rounded-full px-3 py-1">
             Gratuito
           </span>
         ) : null}
@@ -116,7 +116,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gold/15 border border-gold/25">
               <Lock className="h-6 w-6 text-gold/70" />
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold/50 bg-black/30 rounded-full px-4 py-1.5 border border-gold/15">
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-gold/50 bg-black/30 rounded-full px-4 py-1.5 border border-gold/15">
               🔒 Conteúdo Exclusivo
             </span>
           </div>
@@ -128,13 +128,13 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500/15 border border-blue-500/25">
               <Clock className="h-6 w-6 text-blue-400/70" />
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-blue-300/50 bg-black/30 rounded-full px-4 py-1.5 border border-blue-500/15">
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-blue-300/50 bg-black/30 rounded-full px-4 py-1.5 border border-blue-500/15">
               {daysLeft !== null && daysLeft > 0
                 ? `⏳ Libera em ${daysLeft} dia${daysLeft > 1 ? 's' : ''}`
                 : '⏳ Liberação em breve'}
             </span>
             {item.unlockDate && (
-              <span className="text-[9px] text-blue-300/40">
+              <span className="text-[11px] text-blue-300/40">
                 Disponível em {new Date(item.unlockDate).toLocaleDateString('pt-BR')}
               </span>
             )}
@@ -147,14 +147,14 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500/15 border border-amber-500/25">
               <Lock className="h-6 w-6 text-amber-400/70" />
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-amber-300/50 bg-black/30 rounded-full px-4 py-1.5 border border-amber-500/15 text-center max-w-[85%]">
+            <span className="text-xs font-bold uppercase tracking-[0.25em] text-amber-300/50 bg-black/30 rounded-full px-4 py-1.5 border border-amber-500/15 text-center max-w-[85%]">
               🔗 {item.unlockRuleMessage}
             </span>
             {item.unlockRuleContentTitle && (
               <Link
                 to="/conteudo"
                 onClick={(e: React.MouseEvent) => e.stopPropagation()}
-                className="flex items-center gap-1.5 text-[9px] font-medium text-amber-300/60 hover:text-amber-200/80 bg-black/20 rounded-full px-3 py-1 border border-amber-500/10 hover:border-amber-500/25 transition-all duration-300"
+                className="flex items-center gap-1.5 text-[11px] font-medium text-amber-300/60 hover:text-amber-200/80 bg-black/20 rounded-full px-3 py-1 border border-amber-500/10 hover:border-amber-500/25 transition-all duration-300"
               >
                 <ArrowRight className="h-2.5 w-2.5" />
                 Ir para: {item.unlockRuleContentTitle}
@@ -167,13 +167,13 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
       {/* Content info */}
       <div className="relative p-5 sm:p-6 flex flex-col flex-1">
         <h3 className={`font-display text-[16px] sm:text-[17px] font-bold tracking-tight leading-snug transition-colors duration-500 ${
-          isLocked ? "text-foreground/50" : "text-foreground/85 group-hover:text-foreground"
+          isLocked ? "text-foreground/50" : "text-foreground group-hover:text-foreground"
         }`}>
           {item.title}
         </h3>
 
         {item.description && (
-          <p className={`mt-2.5 text-[12px] leading-[1.9] line-clamp-2 transition-colors duration-500 flex-1 ${
+          <p className={`mt-2.5 text-sm leading-[1.9] line-clamp-2 transition-colors duration-500 flex-1 ${
             isLocked ? "text-muted-foreground/25" : "text-muted-foreground/35 group-hover:text-muted-foreground/45"
           }`}>
             {item.description}
@@ -190,7 +190,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/55 hover:text-gold/80 transition-colors duration-500"
+                  className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-gold/55 hover:text-gold/80 transition-colors duration-500"
                 >
                   <Download className="h-3 w-3" />
                   Baixar
@@ -202,20 +202,20 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/55 hover:text-gold/80 transition-colors duration-500"
+                  className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-gold/55 hover:text-gold/80 transition-colors duration-500"
                 >
                   <Play className="h-3 w-3" />
                   Assistir
                 </a>
               )}
               {!item.file_url && !item.video_url && (
-                <span className="text-[10px] text-muted-foreground/25 tracking-wider uppercase">
+                <span className="text-xs text-muted-foreground/25 tracking-wider uppercase">
                   Disponível
                 </span>
               )}
             </>
           ) : isPendingRelease ? (
-            <span className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase text-blue-400/45">
+            <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-blue-400/45">
               <Clock className="h-3 w-3" />
               Em breve
             </span>
@@ -223,13 +223,13 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
             <Link
               to="/conteudo"
               onClick={(e: React.MouseEvent) => e.stopPropagation()}
-              className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.15em] uppercase text-amber-400/55 hover:text-amber-300/80 transition-colors duration-300"
+              className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.15em] uppercase text-amber-400/55 hover:text-amber-300/80 transition-colors duration-300"
             >
               <ArrowRight className="h-3 w-3" />
               {item.unlockRuleContentTitle ? `Assistir "${item.unlockRuleContentTitle}"` : "Pré-requisito pendente"}
             </Link>
           ) : (
-            <span className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase text-gold/45">
+            <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-gold/45">
               <ShoppingCart className="h-3 w-3" />
               {item.sales_page_url ? "Adquirir Acesso" : "Conteúdo Exclusivo"}
             </span>

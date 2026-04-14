@@ -58,7 +58,7 @@ export function NotificationBell() {
             {unreadCount > 0 && (
               <button
                 onClick={() => markAllMutation.mutate()}
-                className="text-[10px] text-gold/50 hover:text-gold/80 transition-colors"
+                className="text-xs text-gold/50 hover:text-gold/80 transition-colors"
               >
                 Marcar todas como lidas
               </button>
@@ -83,11 +83,11 @@ export function NotificationBell() {
                     <Gift className="h-3.5 w-3.5 text-amber-400/70" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[11px] font-semibold text-foreground/70">{n.title}</p>
-                    <p className="text-[10px] text-muted-foreground/40 mt-0.5 leading-relaxed">
+                    <p className="text-[11px] font-semibold text-foreground/90">{n.title}</p>
+                    <p className="text-xs text-muted-foreground/40 mt-0.5 leading-relaxed">
                       {n.message}
                     </p>
-                    <p className="text-[9px] text-muted-foreground/20 mt-1">
+                    <p className="text-[11px] text-muted-foreground/20 mt-1">
                       {new Date(n.created_at).toLocaleDateString("pt-BR", {
                         day: "2-digit",
                         month: "short",

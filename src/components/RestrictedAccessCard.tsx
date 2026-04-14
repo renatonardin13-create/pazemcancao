@@ -14,7 +14,7 @@ export function RestrictedAccessCard() {
 
         <Heart className="h-5 w-5 text-gold/35 mx-auto mb-6" />
 
-        <h1 className="font-display text-2xl font-bold text-foreground/85">
+        <h1 className="font-display text-2xl font-bold text-foreground">
           Área exclusiva
         </h1>
         <p className="mt-4 text-sm text-muted-foreground/50 leading-[1.9]">
@@ -27,7 +27,7 @@ export function RestrictedAccessCard() {
             href="https://pazemcancao-oficial.lovable.app"
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-gold/15 text-gold/65 border border-gold/12 px-8 py-3 text-[12px] font-semibold tracking-wider uppercase hover:bg-gold/22 hover:text-gold/80 transition-all duration-500"
+            className="inline-flex items-center gap-2 rounded-full bg-gold/15 text-gold/65 border border-gold/12 px-8 py-3 text-sm font-semibold tracking-wider uppercase hover:bg-gold/22 hover:text-gold/80 transition-all duration-500"
           >
             <ExternalLink className="h-3.5 w-3.5" />
             Adquira aqui
@@ -37,7 +37,7 @@ export function RestrictedAccessCard() {
         <div className="mt-4">
           <Link
             to="/login"
-            className="inline-flex items-center gap-2 text-[12px] text-gold/45 hover:text-gold/70 transition-colors duration-500 underline underline-offset-4 decoration-gold/15 hover:decoration-gold/30"
+            className="inline-flex items-center gap-2 text-sm text-gold/45 hover:text-gold/70 transition-colors duration-500 underline underline-offset-4 decoration-gold/15 hover:decoration-gold/30"
           >
             Tentar com outro e-mail
           </Link>
