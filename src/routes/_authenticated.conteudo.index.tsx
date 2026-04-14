@@ -341,6 +341,8 @@ function ContentPage() {
                   hasAccess={hasAccess}
                   progressMap={progressMap}
                   lastAccessedId={lastAccessedId}
+                  onTrackView={handleTrackView}
+                  onTrackDownload={handleTrackDownload}
                 />
               )}
 
