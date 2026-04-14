@@ -68,9 +68,21 @@ function MeusCoursosPage() {
       .slice(0, 5);
   }, [courses]);
 
+  // Hero course — priority: in-progress > recommended > trending > first course
+  const heroCourse = useMemo(() => {
+    const inProgressCourse = continueItems[0];
+    if (inProgressCourse) return { ...inProgressCourse, _heroType: 'continue' as const };
+    const rec = recommendations[0];
+    if (rec) return { ...rec, _heroType: 'recommended' as const };
+    const trend = trending[0];
+    if (trend) return { ...trend, _heroType: 'trending' as const };
+    const first = courses[0];
+    if (first) return { ...first, _heroType: 'enrolled' as const };
+    return null;
+  }, [continueItems, recommendations, trending, courses]);
+
   const continueIds = new Set(continueItems.map((c: any) => c.id));
-  const recommendations = (recData?.recommendations || []).filter((c: any) => !continueIds.has(c.id));
-  const trending = trendData?.ranked || [];
+  const recommendationsFiltered = (recData?.recommendations || []).filter((c: any) => !continueIds.has(c.id));
 
   const filtered = courses.filter((c: any) => {
     const matchSearch = !search || c.title?.toLowerCase().includes(search.toLowerCase());
