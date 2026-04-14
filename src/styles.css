@@ -48,6 +48,14 @@
   --color-gold-foreground: var(--gold-foreground);
   --color-gold-soft: var(--gold-soft);
   --color-warm: var(--warm);
+  --color-player-progress-track: var(--player-progress-track);
+  --color-player-progress-fill: var(--player-progress-fill);
+  --color-player-sidebar-bg: var(--player-sidebar-bg);
+  --color-player-sidebar-border: var(--player-sidebar-border);
+  --color-player-sidebar-active: var(--player-sidebar-active);
+  --color-player-sidebar-active-border: var(--player-sidebar-active-border);
+  --color-player-sidebar-hover: var(--player-sidebar-hover);
+  --color-player-completed: var(--player-completed);
   --font-display: var(--font-display);
   --font-body: var(--font-body);
 }
@@ -99,6 +107,16 @@
   --sidebar-accent-foreground: oklch(0.88 0.012 70);
   --sidebar-border: oklch(0.18 0.008 265);
   --sidebar-ring: oklch(0.76 0.13 65);
+
+  /* Player / Playlist sidebar */
+  --player-progress-track: oklch(0.14 0.01 65);
+  --player-progress-fill: oklch(0.76 0.13 65);
+  --player-sidebar-bg: oklch(0.08 0.006 268);
+  --player-sidebar-border: oklch(0.16 0.008 265);
+  --player-sidebar-active: oklch(0.76 0.13 65 / 0.10);
+  --player-sidebar-active-border: oklch(0.76 0.13 65 / 0.55);
+  --player-sidebar-hover: oklch(0.12 0.008 265);
+  --player-completed: oklch(0.65 0.17 160);
 }
 
 @layer base {

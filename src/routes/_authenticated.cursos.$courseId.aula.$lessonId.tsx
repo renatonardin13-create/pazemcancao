@@ -605,9 +605,9 @@ function LessonDetailPage() {
         </main>
 
         {/* Right Sidebar - Playlist */}
-        <aside className="w-full lg:w-[340px] xl:w-[380px] shrink-0 border-t lg:border-t-0 lg:border-l border-border/20 bg-card/[0.04] lg:overflow-y-auto lg:max-h-[calc(100vh-56px)] lg:sticky lg:top-14">
+        <aside className="w-full lg:w-[340px] xl:w-[380px] shrink-0 border-t lg:border-t-0 lg:border-l border-player-sidebar-border bg-player-sidebar-bg lg:overflow-y-auto lg:max-h-[calc(100vh-56px)] lg:sticky lg:top-14">
           {/* Sidebar header */}
-          <div className="p-4 border-b border-border/15">
+          <div className="p-4 border-b border-player-sidebar-border">
             <div className="flex items-center justify-between mb-1">
               <h3 className="text-sm font-bold text-foreground/80">Aulas</h3>
               <span className="text-sm font-bold text-gold">
@@ -623,10 +623,10 @@ function LessonDetailPage() {
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="flex items-center justify-center gap-2 rounded-lg bg-emerald-500/10 border border-emerald-500/15 py-2 px-3 mb-3"
+                className="flex items-center justify-center gap-2 rounded-lg bg-player-completed/10 border border-player-completed/15 py-2 px-3 mb-3"
               >
-                <Award className="h-4 w-4 text-emerald-400/70" />
-                <span className="text-xs font-semibold text-emerald-400/70">
+                <Award className="h-4 w-4 text-player-completed/70" />
+                <span className="text-xs font-semibold text-player-completed/70">
                   Curso concluído!
                 </span>
               </motion.div>
@@ -794,14 +794,14 @@ function LessonSidebarItem({
       params={{ courseId, lessonId: lesson.id }}
       className={`flex items-center gap-3 px-4 py-2.5 transition-all ${
         isActive
-          ? "bg-gold/[0.08] border-l-2 border-l-gold/50"
-          : "hover:bg-card/8 border-l-2 border-l-transparent"
+          ? "bg-player-sidebar-active border-l-2 border-l-player-sidebar-active-border"
+          : "hover:bg-player-sidebar-hover border-l-2 border-l-transparent"
       }`}
     >
       {/* Status icon */}
       <div className="shrink-0">
         {isCompleted ? (
-          <CheckCircle2 className="h-4 w-4 text-emerald-400/60" />
+          <CheckCircle2 className="h-4 w-4 text-player-completed/60" />
         ) : isActive ? (
           <Play className="h-4 w-4 text-gold/70 fill-gold/30" />
         ) : (
