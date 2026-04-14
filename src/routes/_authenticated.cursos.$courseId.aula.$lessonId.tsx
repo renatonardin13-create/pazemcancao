@@ -283,12 +283,11 @@ function LessonDetailPage() {
       <header className="sticky top-0 z-30 border-b border-border/10 bg-background/90 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-[1800px] items-center gap-4 px-5 py-3.5 sm:px-8">
           <Link
-            to="/cursos/$courseId"
-            params={{ courseId }}
+            to="/cursos"
             className="flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-muted-foreground/40 transition-all hover:text-foreground/65 hover:bg-card/10"
           >
             <ChevronLeft className="h-4 w-4" />
-            <span className="text-[11px] font-medium hidden sm:inline">Voltar</span>
+            <span className="text-[11px] font-medium hidden sm:inline">Voltar à vitrine</span>
           </Link>
 
           <div className="hidden h-6 w-px bg-border/10 sm:block" />
@@ -565,7 +564,116 @@ function LessonDetailPage() {
             </motion.div>
           )}
 
-          {/* ─── Lesson info — refined ─── */}
+          {/* ═══ NAVIGATION BAR — below player ═══ */}
+          {!accessRestricted && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.15 }}
+              className="border-t border-b border-border/10 bg-gradient-to-b from-card/5 to-transparent px-4 sm:px-8 py-5"
+            >
+              <div className="max-w-3xl mx-auto space-y-4">
+                {/* Lesson name + progress */}
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-gold/40 mb-1">
+                      Aula {currentLessonIndex >= 0 ? currentLessonIndex + 1 : "–"} de {totalLessons}
+                    </p>
+                    <h3 className="text-sm sm:text-[15px] font-bold text-foreground/80 truncate leading-tight">
+                      {lesson.title}
+                    </h3>
+                  </div>
+                  <div className="flex items-center gap-2.5 shrink-0">
+                    <div className="w-24 sm:w-32 h-1.5 rounded-full bg-player-progress-track overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${progressPercent}%` }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                        className="h-full rounded-full bg-player-progress-fill"
+                      />
+                    </div>
+                    <span className="text-[11px] font-bold text-gold tabular-nums">{progressPercent}%</span>
+                  </div>
+                </div>
+
+                {/* Action buttons — stacked on mobile, inline on desktop */}
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-2.5 sm:gap-3">
+                  {/* Previous */}
+                  {prevLesson ? (
+                    <Link
+                      to="/cursos/$courseId/aula/$lessonId"
+                      params={{ courseId, lessonId: prevLesson.id }}
+                      className="flex items-center justify-center gap-2 rounded-xl border border-border/12 bg-card/5 px-5 py-3 text-[11px] font-medium text-muted-foreground/50 hover:bg-card/12 hover:text-foreground/65 transition-all group order-2 sm:order-1"
+                    >
+                      <ChevronLeft className="h-3.5 w-3.5 group-hover:-translate-x-0.5 transition-transform" />
+                      <span className="truncate max-w-[160px]">Anterior</span>
+                    </Link>
+                  ) : (
+                    <div className="flex items-center justify-center gap-2 rounded-xl border border-border/8 bg-card/3 px-5 py-3 text-[11px] font-medium text-muted-foreground/20 cursor-not-allowed order-2 sm:order-1">
+                      <ChevronLeft className="h-3.5 w-3.5" />
+                      <span>Anterior</span>
+                    </div>
+                  )}
+
+                  {/* Mark complete — primary CTA */}
+                  {enrollment && (
+                    <Button
+                      onClick={() => {
+                        if (!isCompleted) {
+                          progressMutation.mutate({
+                            lessonId,
+                            watchedSeconds: 0,
+                            completed: true,
+                          });
+                        }
+                      }}
+                      disabled={progressMutation.isPending || isCompleted}
+                      className={`gap-2.5 px-8 py-3.5 text-[12px] font-bold uppercase tracking-[0.12em] transition-all rounded-xl order-1 sm:order-2 ${
+                        isCompleted
+                          ? "bg-player-completed/10 text-player-completed border border-player-completed/15 hover:bg-player-completed/15 shadow-none"
+                          : "bg-gold text-gold-foreground hover:brightness-110 shadow-lg shadow-gold/25 hover:shadow-xl hover:shadow-gold/35 hover:scale-[1.02] active:scale-[0.98]"
+                      }`}
+                      variant={isCompleted ? "outline" : "default"}
+                    >
+                      <CheckCircle2 className="h-4 w-4" />
+                      {isCompleted
+                        ? "Aula concluída ✓"
+                        : progressMutation.isPending
+                          ? "Salvando..."
+                          : "Concluir aula"}
+                    </Button>
+                  )}
+
+                  {/* Next */}
+                  {nextLesson ? (
+                    <Link
+                      to="/cursos/$courseId/aula/$lessonId"
+                      params={{ courseId, lessonId: nextLesson.id }}
+                      className="flex items-center justify-center gap-2 rounded-xl bg-gold/10 border border-gold/15 px-5 py-3 text-[11px] font-semibold text-gold/70 hover:bg-gold/20 hover:text-gold transition-all group order-3"
+                    >
+                      <span className="truncate max-w-[160px]">Próxima aula</span>
+                      <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+                    </Link>
+                  ) : isCourseCompleted ? (
+                    <Link
+                      to="/cursos/$courseId"
+                      params={{ courseId }}
+                      className="flex items-center justify-center gap-2 rounded-xl bg-player-completed/8 border border-player-completed/12 px-5 py-3 text-[11px] font-semibold text-player-completed/70 hover:bg-player-completed/15 transition-all order-3"
+                    >
+                      <Award className="h-3.5 w-3.5" />
+                      <span>Curso concluído!</span>
+                    </Link>
+                  ) : (
+                    <div className="flex items-center justify-center gap-2 rounded-xl border border-border/8 bg-card/3 px-5 py-3 text-[11px] font-medium text-muted-foreground/20 cursor-not-allowed order-3">
+                      <span>Próxima aula</span>
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           {!accessRestricted && (
             <div className="border-t border-border/8 px-5 sm:px-8 py-6">
               <div className="max-w-3xl">
