@@ -144,7 +144,7 @@ function MeusCoursosPage() {
                     initial={{ opacity: 0, x: 30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
-                    className="flex-shrink-0 snap-start w-[260px] sm:w-[300px] md:w-[320px]"
+                    className="flex-shrink-0 snap-start w-[280px] sm:w-[340px] md:w-[400px] lg:w-[440px]"
                   >
                     <CourseShelfCard course={course} showProgress />
                   </motion.div>
@@ -245,7 +245,7 @@ function MyCoursesShelf({ courses }: { courses: any[] }) {
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
-            className="flex-shrink-0 snap-start w-[260px] sm:w-[300px] md:w-[320px]"
+            className="flex-shrink-0 snap-start w-[280px] sm:w-[340px] md:w-[400px] lg:w-[440px]"
           >
             <MyCoursesCard course={course} />
           </motion.div>
@@ -360,7 +360,7 @@ function ContinueWatchingShelf({ courses }: { courses: any[] }) {
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
-            className="flex-shrink-0 snap-start w-[260px] sm:w-[300px] md:w-[320px]"
+            className="flex-shrink-0 snap-start w-[280px] sm:w-[340px] md:w-[400px] lg:w-[440px]"
           >
             <ContinueWatchingCard course={course} />
           </motion.div>
@@ -469,7 +469,7 @@ function ShelfSection({ shelf, delay, promoBanners, shelfIndex }: {
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
-              className="flex-shrink-0 snap-start w-[260px] sm:w-[300px] md:w-[320px]"
+              className="flex-shrink-0 snap-start w-[280px] sm:w-[340px] md:w-[400px] lg:w-[440px]"
             >
               <CourseShelfCard
                 course={course}
