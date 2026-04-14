@@ -244,9 +244,28 @@ function AdminUsersPage() {
 
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const trimmedName = addName.trim();
+    const trimmedEmail = addEmail.trim().toLowerCase();
+
+    if (!trimmedName) {
+      toast.error("Nome é obrigatório.");
+      return;
+    }
+    if (!trimmedEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmedEmail)) {
+      toast.error("E-mail inválido.");
+      return;
+    }
+
+    // Check for duplicate email in already-loaded buyers list
+    const emailExists = buyers.some((b: any) => b.email?.toLowerCase() === trimmedEmail);
+    if (emailExists) {
+      toast.error("Já existe um aluno com este e-mail.");
+      return;
+    }
+
     addStudentMut.mutate({
-      nome: addName,
-      email: addEmail,
+      nome: trimmedName,
+      email: trimmedEmail,
       access_enabled: addEnabled,
       courseIds: addCourseIds,
     });

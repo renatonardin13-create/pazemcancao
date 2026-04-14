@@ -54,41 +54,33 @@ export const addStudent = createServerFn({ method: 'POST' })
 
     const email = data.email.toLowerCase().trim();
 
-    // Upsert approved_buyer
+    // Check if buyer already exists — block duplicate
     const { data: existing } = await supabaseAdmin
       .from('approved_buyers')
       .select('id')
       .eq('email', email)
       .maybeSingle();
 
-    let buyerId: string;
-
     if (existing) {
-      await supabaseAdmin
-        .from('approved_buyers')
-        .update({
-          nome: data.nome,
-          access_enabled: data.access_enabled,
-        })
-        .eq('id', existing.id);
-      buyerId = existing.id;
-    } else {
-      const { data: inserted, error } = await supabaseAdmin
-        .from('approved_buyers')
-        .insert({
-          email,
-          nome: data.nome,
-          access_enabled: data.access_enabled,
-          status: 'approved',
-          is_trial: false,
-          can_download: true,
-        })
-        .select('id')
-        .single();
-
-      if (error) throw new Error(error.message);
-      buyerId = inserted.id;
+      throw new Error('Já existe um aluno cadastrado com este e-mail.');
     }
+
+    // Create approved_buyer
+    const { data: inserted, error } = await supabaseAdmin
+      .from('approved_buyers')
+      .insert({
+        email,
+        nome: data.nome,
+        access_enabled: data.access_enabled,
+        status: 'approved',
+        is_trial: false,
+        can_download: true,
+      })
+      .select('id')
+      .single();
+
+    if (error) throw new Error(error.message);
+    const buyerId = inserted.id;
 
     // Create auth user if needed
     const generatedPassword = 'Paz' + Math.random().toString(36).slice(2, 8) + '!';
@@ -116,19 +108,37 @@ export const addStudent = createServerFn({ method: 'POST' })
     // Create enrollments for selected courses
     if (data.courseIds && data.courseIds.length > 0) {
       for (const courseId of data.courseIds) {
-        await supabaseAdmin
+        // Check if enrollment already exists
+        const { data: existingEnrollment } = await supabaseAdmin
           .from('enrollments')
-          .upsert(
-            {
+          .select('id')
+          .eq('user_id', authUserId)
+          .eq('course_id', courseId)
+          .maybeSingle();
+
+        if (existingEnrollment) {
+          // Reactivate if exists
+          await supabaseAdmin
+            .from('enrollments')
+            .update({
+              status: 'active',
+              access_origin: 'manual',
+              email,
+              granted_at: new Date().toISOString(),
+            })
+            .eq('id', existingEnrollment.id);
+        } else {
+          await supabaseAdmin
+            .from('enrollments')
+            .insert({
               user_id: authUserId,
               course_id: courseId,
               status: 'active',
               access_origin: 'manual',
               email,
               granted_at: new Date().toISOString(),
-            },
-            { onConflict: 'user_id,course_id' }
-          );
+            });
+        }
       }
     }
 
