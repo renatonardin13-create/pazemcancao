@@ -610,12 +610,14 @@ export function AdminDashboard() {
                       <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70 mb-4 font-medium">Downloads Recentes</h4>
                       <div className="space-y-2">
                         {analytics.recentDownloads.slice(0, 10).map((d: any, i: number) => (
-                          <div key={i} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-card/15 transition-colors">
+                          <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between py-2 px-3 rounded-lg hover:bg-card/15 transition-colors gap-1">
                             <span className="text-xs text-foreground/55 truncate flex-1">{d.email}</span>
-                            <span className="text-xs text-muted-foreground/70 shrink-0 ml-3">{d.trackTitle}</span>
-                            <span className="text-xs text-muted-foreground/60 ml-3 shrink-0">
-                              {new Date(d.downloadedAt).toLocaleDateString('pt-BR')}
-                            </span>
+                            <div className="flex items-center gap-3">
+                              <span className="text-xs text-muted-foreground/70 shrink-0">{d.trackTitle}</span>
+                              <span className="text-xs text-muted-foreground/60 shrink-0">
+                                {new Date(d.downloadedAt).toLocaleDateString('pt-BR')}
+                              </span>
+                            </div>
                           </div>
                         ))}
                       </div>
