@@ -274,6 +274,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       payload: rawBody,
       responseStatus: 400,
       responseMessage: 'Missing customer email',
+      ...audit, isSuccess: false, errorDetails: 'No customer email in payload',
     });
     return jsonResponse({ error: 'Missing customer email' }, 400);
   }
