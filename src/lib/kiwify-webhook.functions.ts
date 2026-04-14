@@ -492,6 +492,6 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
   }
 
   // ─── Status não reconhecido ───
-  await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Unrecognized status — no action: ${status}` });
+  await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Unrecognized status — no action: ${status}`, ...audit, isSuccess: true });
   return jsonResponse({ success: true, message: `Unrecognized status — no action: ${status}` });
 }
