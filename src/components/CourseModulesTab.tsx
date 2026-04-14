@@ -368,6 +368,19 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
       toast.error("Envie o arquivo antes de salvar a aula");
       return;
     }
+    if (lesContentType === "video" && !lesVideoUrl.trim()) {
+      toast.error("Informe a URL ou código embed do vídeo");
+      return;
+    }
+    if (lesContentType === "link" && !lesContentUrl.trim()) {
+      toast.error("Informe a URL externa");
+      return;
+    }
+    if (lesContentType === "link" && lesContentUrl.trim() && !/^https?:\/\/.+/i.test(lesContentUrl.trim())) {
+      toast.error("A URL deve começar com http:// ou https://");
+      return;
+    }
+    if (!lessonDialog.moduleId) return;
     setLesTitleError("");
     const payload: any = {
       title: lesTitle.trim(),
