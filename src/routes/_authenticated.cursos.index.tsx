@@ -229,15 +229,21 @@ function MyCoursesShelf({ courses }: { courses: any[] }) {
       transition={{ duration: 0.6, delay: 0.1 }}
       className="mb-16"
     >
-      <div className="flex items-end justify-between mb-7">
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.08] border border-gold/10">
-            <GraduationCap className="h-4 w-4 text-gold" />
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-3.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold/[0.08] border border-gold/10">
+            <GraduationCap className="h-4.5 w-4.5 text-gold" />
           </div>
-          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground/90 tracking-tight">
-            Meus cursos
-          </h2>
+          <div>
+            <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+              Meus cursos
+            </h2>
+            <p className="text-[11px] text-muted-foreground/40 mt-0.5 tracking-wide">Seus cursos matriculados</p>
+          </div>
         </div>
+        <Link to="/cursos" className="text-[11px] font-bold text-gold/50 uppercase tracking-widest hover:text-gold/80 transition-colors duration-300 flex items-center gap-1">
+          Ver todos <ArrowRight className="h-3 w-3" />
+        </Link>
       </div>
 
       <div ref={dragRef} className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth cursor-grab select-none">
@@ -345,14 +351,17 @@ function ContinueWatchingShelf({ courses }: { courses: any[] }) {
       transition={{ duration: 0.6, delay: 0.05 }}
       className="mb-16"
     >
-      <div className="flex items-end justify-between mb-7">
-        <div className="flex items-center gap-3">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.08] border border-gold/10">
-            <PlayCircle className="h-4 w-4 text-gold" />
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-3.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold/[0.08] border border-gold/10">
+            <PlayCircle className="h-4.5 w-4.5 text-gold" />
           </div>
-          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground/90 tracking-tight">
-            Continue assistindo
-          </h2>
+          <div>
+            <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+              Continue assistindo
+            </h2>
+            <p className="text-[11px] text-muted-foreground/40 mt-0.5 tracking-wide">Retome de onde parou</p>
+          </div>
         </div>
       </div>
 
@@ -453,12 +462,11 @@ function ShelfSection({ shelf, delay, promoBanners, shelfIndex }: {
         transition={{ duration: 0.6, delay }}
         className="mb-16"
       >
-        {/* Shelf header */}
-        <div className="flex items-end justify-between mb-7">
-          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground/90 tracking-tight">
+        <div className="flex items-center justify-between mb-8">
+          <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
             {shelf.name}
           </h2>
-          {(shelf.courses?.length ?? 0) > 5 && (
+          {(shelf.courses?.length ?? 0) > 3 && (
             <span className="text-[11px] font-bold text-gold/50 uppercase tracking-widest hover:text-gold/80 transition-colors duration-300 cursor-pointer flex items-center gap-1">
               Ver todos <ArrowRight className="h-3 w-3" />
             </span>
