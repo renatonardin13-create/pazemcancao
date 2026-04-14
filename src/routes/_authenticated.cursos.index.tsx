@@ -94,7 +94,7 @@ function MeusCoursosPage() {
       <div className="min-h-screen bg-background">
 
         {/* ═══ TOP BAR — greeting + search ═══ */}
-        <div className="w-full max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-16 pt-6 sm:pt-8">
+        <div className="w-full max-w-[1600px] mx-auto px-8 sm:px-12 lg:px-20 pt-7 sm:pt-10">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -123,7 +123,7 @@ function MeusCoursosPage() {
         )}
 
         {/* ═══ SHELVES CONTENT ═══ */}
-        <div className="w-full max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-16">
+        <div className="w-full max-w-[1600px] mx-auto px-8 sm:px-12 lg:px-20">
 
           {/* ═══ SEARCH RESULTS ═══ */}
           {searchResults !== null ? (
@@ -142,7 +142,7 @@ function MeusCoursosPage() {
               )}
             </div>
           ) : (
-            <div className="pt-6 sm:pt-10 pb-24">
+            <div className="pt-10 sm:pt-14 pb-28">
               {isLoading ? (
                 <CardGridSkeleton count={6} />
               ) : (
@@ -257,7 +257,7 @@ function ShelfSection({ children, delay = 0 }: { children: React.ReactNode; dela
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay }}
-      className="mb-16 sm:mb-20"
+      className="mb-20 sm:mb-24"
     >
       {children}
     </motion.section>
@@ -306,7 +306,7 @@ function ShelfRow({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="group/shelf relative -mx-6 sm:-mx-10 lg:-mx-16">
+    <div className="group/shelf relative -mx-8 sm:-mx-12 lg:-mx-20">
       {/* Fade edges */}
       <div className={`absolute left-0 top-0 bottom-4 w-10 sm:w-14 lg:w-20 z-10 pointer-events-none bg-gradient-to-r from-background to-transparent transition-opacity duration-500 ${canScrollLeft ? 'opacity-100' : 'opacity-0'}`} />
       <div className={`absolute right-0 top-0 bottom-4 w-10 sm:w-14 lg:w-20 z-10 pointer-events-none bg-gradient-to-l from-background to-transparent transition-opacity duration-500 ${canScrollRight ? 'opacity-100' : 'opacity-0'}`} />
@@ -334,7 +334,7 @@ function ShelfRow({ children }: { children: React.ReactNode }) {
         }}
         onScroll={updateScrollState}
         onMouseEnter={updateScrollState}
-        className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-3 scrollbar-hide px-6 sm:px-10 lg:px-16 snap-x snap-mandatory scroll-smooth cursor-grab select-none will-change-scroll"
+        className="flex gap-5 sm:gap-6 lg:gap-7 overflow-x-auto pb-3 scrollbar-hide px-8 sm:px-12 lg:px-20 snap-x snap-mandatory scroll-smooth cursor-grab select-none will-change-scroll"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {children}
@@ -365,7 +365,7 @@ function HeroBanner({ course }: { course: any }) {
   const isCustomBanner = course.id === '__custom_banner__';
 
   return (
-    <div className="px-4 sm:px-8 lg:px-12 xl:px-16 pt-2 sm:pt-4 mb-14 sm:mb-20">
+    <div className="px-5 sm:px-10 lg:px-14 xl:px-20 pt-2 sm:pt-4 mb-16 sm:mb-24">
       <motion.div
         initial={{ opacity: 0, scale: 0.97 }}
         animate={{ opacity: 1, scale: 1 }}
