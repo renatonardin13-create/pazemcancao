@@ -50,7 +50,7 @@ const stateConfig: Record<ContentState, { label: string; color: string }> = {
   pending: { label: 'Em breve', color: 'text-primary/50' },
 };
 
-export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progress, isLastAccessed }: ContentCardProps) {
+export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progress, isLastAccessed, onTrackView, onTrackDownload }: ContentCardProps) {
   const embedUrl = item.video_url ? getYouTubeEmbedUrl(item.video_url) : null;
   
   const accessMode = item.effectiveAccessMode || (item.is_free ? 'gratuito' : 'pago');
