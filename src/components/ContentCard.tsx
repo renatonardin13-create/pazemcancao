@@ -12,6 +12,8 @@ interface ContentCardProps {
   TypeIcon: LucideIcon;
   progress?: { viewed_at?: string | null; completed_at?: string | null; last_position_seconds?: number; downloaded_at?: string | null } | null;
   isLastAccessed?: boolean;
+  onTrackView?: (contentId: string) => void;
+  onTrackDownload?: (contentId: string) => void;
 }
 
 function getYouTubeEmbedUrl(url: string): string | null {
