@@ -40,11 +40,12 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
     const uniqueEnrollments = Array.from(enrollmentByCourse.values());
     const courseIds = uniqueEnrollments.map((e) => e.course_id);
 
-    // Get only courses that the user really has active access to
+    // Get only published courses that the user has active access to
     const { data: courses } = await supabase
       .from('courses')
       .select('id, title, cover_image_url, short_description, total_lessons, total_duration, status')
-      .in('id', courseIds);
+      .in('id', courseIds)
+      .eq('status', 'published');
 
     // Get modules count per course
     const { data: modules } = await supabase
