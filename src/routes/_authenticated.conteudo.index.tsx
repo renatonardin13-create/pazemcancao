@@ -1,7 +1,8 @@
 import { EmptyState } from "@/components/EmptyState";
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMemo, useCallback } from "react";
+import { trackContentView, trackContentDownload } from "@/lib/progress.functions";
 import { listContentItems } from "@/lib/content.functions";
 import { getMyProfile } from "@/lib/profile.functions";
 import { useAuth } from "@/hooks/use-auth";
@@ -62,6 +63,19 @@ function getGreeting(): string {
 
 function ContentPage() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
+
+  const handleTrackView = useCallback((contentId: string) => {
+    trackContentView({ data: { contentId } }).then(() => {
+      queryClient.invalidateQueries({ queryKey: ["content-items"] });
+    });
+  }, [queryClient]);
+
+  const handleTrackDownload = useCallback((contentId: string) => {
+    trackContentDownload({ data: { contentId } }).then(() => {
+      queryClient.invalidateQueries({ queryKey: ["content-items"] });
+    });
+  }, [queryClient]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["content-items"],
@@ -174,7 +188,7 @@ function ContentPage() {
         const bTime = progressMap[b.id]?.viewed_at ? new Date(progressMap[b.id].viewed_at).getTime() : 0;
         return bTime - aTime;
       })
-      .slice(0, 4);
+      .slice(0, 5);
     result.forEach((i: any) => shownIds.add(i.id));
     return result;
   }, [items, progressMap, shownIds]);
@@ -327,6 +341,8 @@ function ContentPage() {
                   hasAccess={hasAccess}
                   progressMap={progressMap}
                   lastAccessedId={lastAccessedId}
+                  onTrackView={handleTrackView}
+                  onTrackDownload={handleTrackDownload}
                 />
               )}
 
@@ -340,6 +356,8 @@ function ContentPage() {
                   hasAccess={hasAccess}
                   progressMap={progressMap}
                   lastAccessedId={lastAccessedId}
+                  onTrackView={handleTrackView}
+                  onTrackDownload={handleTrackDownload}
                 />
               )}
 
@@ -353,6 +371,8 @@ function ContentPage() {
                   hasAccess={hasAccess}
                   progressMap={progressMap}
                   lastAccessedId={lastAccessedId}
+                  onTrackView={handleTrackView}
+                  onTrackDownload={handleTrackDownload}
                 />
               )}
 
@@ -372,6 +392,8 @@ function ContentPage() {
                       config={config}
                       progressMap={progressMap}
                       lastAccessedId={lastAccessedId}
+                      onTrackView={handleTrackView}
+                      onTrackDownload={handleTrackDownload}
                     />
                   </section>
                 );
@@ -435,6 +457,8 @@ function ContentPage() {
                       config={config}
                       progressMap={progressMap}
                       lastAccessedId={lastAccessedId}
+                      onTrackView={handleTrackView}
+                      onTrackDownload={handleTrackDownload}
                     />
                   </section>
                 );
@@ -465,6 +489,8 @@ function ContentPage() {
                       config={config}
                       progressMap={progressMap}
                       lastAccessedId={lastAccessedId}
+                      onTrackView={handleTrackView}
+                      onTrackDownload={handleTrackDownload}
                     />
                   </section>
                 );
@@ -512,6 +538,8 @@ function ContentShelf({
   hasAccess,
   progressMap,
   lastAccessedId,
+  onTrackView,
+  onTrackDownload,
 }: {
   icon: React.ReactNode;
   title: string;
@@ -520,6 +548,8 @@ function ContentShelf({
   hasAccess: boolean;
   progressMap: Record<string, any>;
   lastAccessedId: string | null;
+  onTrackView?: (contentId: string) => void;
+  onTrackDownload?: (contentId: string) => void;
 }) {
   return (
     <section className="space-y-5">
@@ -547,6 +577,8 @@ function ContentShelf({
               TypeIcon={config.icon}
               progress={progressMap[item.id]}
               isLastAccessed={item.id === lastAccessedId}
+              onTrackView={onTrackView}
+              onTrackDownload={onTrackDownload}
             />
           );
         })}
@@ -561,12 +593,16 @@ function ContentGrid({
   config,
   progressMap,
   lastAccessedId,
+  onTrackView,
+  onTrackDownload,
 }: {
   items: any[];
   hasAccess: boolean;
   config: { gradient: string; icon: any };
   progressMap: Record<string, any>;
   lastAccessedId: string | null;
+  onTrackView?: (contentId: string) => void;
+  onTrackDownload?: (contentId: string) => void;
 }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
@@ -580,6 +616,8 @@ function ContentGrid({
           TypeIcon={config.icon}
           progress={progressMap[item.id]}
           isLastAccessed={item.id === lastAccessedId}
+          onTrackView={onTrackView}
+          onTrackDownload={onTrackDownload}
         />
       ))}
     </div>
