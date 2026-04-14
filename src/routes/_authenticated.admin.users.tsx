@@ -328,7 +328,12 @@ function AdminUsersPage() {
       (statusFilter === "trial" && buyer.is_trial) ||
       (statusFilter === "blocked" && !buyer.access_enabled);
 
-    return matchesSearch && matchesStatus;
+    const matchesCourse =
+      courseFilter === "all" ||
+      (courseFilter === "with_courses" && (buyer.course_count ?? 0) > 0) ||
+      (courseFilter === "no_courses" && (buyer.course_count ?? 0) === 0);
+
+    return matchesSearch && matchesStatus && matchesCourse;
   });
 
   const totalPages = Math.max(1, Math.ceil(filteredBuyers.length / ITEMS_PER_PAGE));
@@ -456,24 +461,31 @@ function AdminUsersPage() {
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: "Ativos", value: enabledUsers, color: "text-gold" },
-          { label: "Inativos", value: inactiveUsers, color: "text-muted-foreground/60" },
-          { label: "Bloqueados", value: blockedUsers, color: "text-destructive/70" },
-          { label: "Progresso Médio", value: "0%", color: "text-gold", isProgress: true },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            className="rounded-xl border border-border/15 bg-card/8 p-5"
-          >
-            <p className="text-[11px] text-muted-foreground/45 mb-1">{stat.label}</p>
-            <p className={`font-display text-2xl font-bold ${stat.color}`}>
-              {isLoading ? "—" : stat.value}
-            </p>
+      {(() => {
+        const avgProgress = buyers.length > 0
+          ? Math.round(buyers.reduce((sum: number, b: any) => sum + (b.progress_pct || 0), 0) / buyers.length)
+          : 0;
+        return (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { label: "Ativos", value: enabledUsers, color: "text-gold" },
+              { label: "Inativos", value: inactiveUsers, color: "text-muted-foreground/60" },
+              { label: "Bloqueados", value: blockedUsers, color: "text-destructive/70" },
+              { label: "Progresso Médio", value: `${avgProgress}%`, color: "text-gold" },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="rounded-xl border border-border/15 bg-card/8 p-5"
+              >
+                <p className="text-[11px] text-muted-foreground/45 mb-1">{stat.label}</p>
+                <p className={`font-display text-2xl font-bold ${stat.color}`}>
+                  {isLoading ? "—" : stat.value}
+                </p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        );
+      })()}
 
       {/* Search & Filters */}
       <div className="flex items-center gap-3">
@@ -498,13 +510,15 @@ function AdminUsersPage() {
           </SelectContent>
         </Select>
         <Select value={courseFilter} onValueChange={(v) => { setCourseFilter(v); setCurrentPage(1); }}>
-          <SelectTrigger className="w-[180px] bg-card/10 border-border/15">
-            <SelectValue placeholder="Todos os cursos" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos os cursos</SelectItem>
-          </SelectContent>
-        </Select>
+           <SelectTrigger className="w-[180px] bg-card/10 border-border/15">
+              <SelectValue placeholder="Todos os cursos" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os alunos</SelectItem>
+              <SelectItem value="with_courses">Com cursos</SelectItem>
+              <SelectItem value="no_courses">Sem cursos</SelectItem>
+            </SelectContent>
+          </Select>
       </div>
 
       {/* Table */}
@@ -577,12 +591,12 @@ function AdminUsersPage() {
                 </div>
 
                 {/* Cursos */}
-                <span className="text-sm text-foreground/60 text-center font-medium">0</span>
+                <span className="text-sm text-foreground/60 text-center font-medium">{buyer.course_count ?? 0}</span>
 
                 {/* Progresso */}
                 <div className="flex items-center gap-2">
-                  <Progress value={0} className="h-1.5 flex-1 bg-muted/20" />
-                  <span className="text-[11px] text-muted-foreground/40 tabular-nums w-8 text-right">0%</span>
+                  <Progress value={buyer.progress_pct ?? 0} className="h-1.5 flex-1 bg-muted/20" />
+                  <span className="text-[11px] text-muted-foreground/40 tabular-nums w-8 text-right">{buyer.progress_pct ?? 0}%</span>
                 </div>
 
                 {/* Último Acesso */}
