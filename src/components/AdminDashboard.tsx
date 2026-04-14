@@ -44,16 +44,16 @@ export function AdminDashboard() {
     val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
       {/* Header bar */}
-      <div className="relative rounded-2xl border border-gold/10 bg-gradient-to-r from-card via-card/80 to-card backdrop-blur-sm p-6 overflow-hidden shadow-xl shadow-black/10">
+      <div className="relative rounded-2xl border border-gold/10 bg-gradient-to-r from-card via-card/80 to-card backdrop-blur-sm p-4 sm:p-6 overflow-hidden shadow-xl shadow-black/10">
         {/* Decorative glow */}
         <div className="pointer-events-none absolute -top-20 -right-20 h-56 w-56 rounded-full bg-gold/[0.06] blur-[80px]" />
         <div className="pointer-events-none absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-gold/[0.04] blur-[60px]" />
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative z-10">
           <div>
-            <h1 className="font-display text-3xl font-black text-foreground tracking-tight">
+            <h1 className="font-display text-2xl sm:text-3xl font-black text-foreground tracking-tight">
               Dashboard
             </h1>
             <p className="text-sm text-muted-foreground/70 mt-1.5">
@@ -61,7 +61,7 @@ export function AdminDashboard() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
             {/* Search */}
             <div className="relative hidden md:block">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/70" />
@@ -108,14 +108,14 @@ export function AdminDashboard() {
         </div>
 
         {/* Period selector row */}
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/25 relative z-10">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-4 pt-4 border-t border-border/25 relative z-10 gap-3">
           <span className="text-xs text-muted-foreground/70 font-medium">Período de análise</span>
-          <div className="flex gap-1 rounded-xl bg-background/30 border border-border/30 p-1">
+          <div className="flex gap-1 rounded-xl bg-background/30 border border-border/30 p-1 w-full sm:w-auto">
             {PERIOD_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
                 onClick={() => setDays(opt.value)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                className={`flex-1 sm:flex-none px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 text-center ${
                   days === opt.value
                     ? "bg-gold/15 text-gold border border-gold/25 shadow-sm shadow-gold/10"
                     : "text-muted-foreground/70 hover:text-muted-foreground/70 border border-transparent"
@@ -135,7 +135,7 @@ export function AdminDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.05 }}
-          className="relative rounded-2xl border border-emerald-400/25 bg-gradient-to-br from-emerald-400/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-400/10 hover:border-emerald-400/35 group overflow-hidden shadow-lg shadow-black/10">
+          className="relative rounded-2xl border border-emerald-400/25 bg-gradient-to-br from-emerald-400/[0.08] via-card to-card p-4 sm:p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-400/10 hover:border-emerald-400/35 group overflow-hidden shadow-lg shadow-black/10">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-emerald-400/[0.07] blur-[50px] group-hover:bg-emerald-400/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -145,7 +145,7 @@ export function AdminDashboard() {
               <DollarSign className="h-7 w-7 text-emerald-400" />
             </div>
           </div>
-          <p className="font-display text-4xl font-black text-foreground tracking-tight leading-none">
+          <p className="font-display text-2xl sm:text-4xl font-black text-foreground tracking-tight leading-none">
             {isLoading ? (
               <span className="inline-block h-11 w-36 animate-pulse rounded-xl bg-muted/20" />
             ) : (data?.totalRevenue ?? 0) > 0 ? (
@@ -174,7 +174,7 @@ export function AdminDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="relative rounded-2xl border border-gold/25 bg-gradient-to-br from-gold/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-gold/10 hover:border-gold/35 group overflow-hidden shadow-lg shadow-black/10">
+          className="relative rounded-2xl border border-gold/25 bg-gradient-to-br from-gold/[0.08] via-card to-card p-4 sm:p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-gold/10 hover:border-gold/35 group overflow-hidden shadow-lg shadow-black/10">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-gold/[0.07] blur-[50px] group-hover:bg-gold/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -184,7 +184,7 @@ export function AdminDashboard() {
               <GraduationCap className="h-7 w-7 text-gold" />
             </div>
           </div>
-          <p className="font-display text-4xl font-black text-foreground tracking-tight leading-none">
+          <p className="font-display text-2xl sm:text-4xl font-black text-foreground tracking-tight leading-none">
             {isLoading ? (
               <span className="inline-block h-11 w-24 animate-pulse rounded-xl bg-muted/20" />
             ) : (data?.totalStudents ?? 0) > 0 ? (
@@ -213,7 +213,7 @@ export function AdminDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.15 }}
-          className="relative rounded-2xl border border-blue-400/25 bg-gradient-to-br from-blue-400/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-400/10 hover:border-blue-400/35 group overflow-hidden shadow-lg shadow-black/10">
+          className="relative rounded-2xl border border-blue-400/25 bg-gradient-to-br from-blue-400/[0.08] via-card to-card p-4 sm:p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-400/10 hover:border-blue-400/35 group overflow-hidden shadow-lg shadow-black/10">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-blue-400/[0.07] blur-[50px] group-hover:bg-blue-400/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -223,7 +223,7 @@ export function AdminDashboard() {
               <BookOpen className="h-7 w-7 text-blue-400" />
             </div>
           </div>
-          <p className="font-display text-4xl font-black text-foreground tracking-tight leading-none">
+          <p className="font-display text-2xl sm:text-4xl font-black text-foreground tracking-tight leading-none">
             {isLoading ? (
               <span className="inline-block h-11 w-16 animate-pulse rounded-xl bg-muted/20" />
             ) : (data?.activeCourses ?? 0) > 0 ? (
@@ -254,7 +254,7 @@ export function AdminDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
-          className="relative rounded-2xl border border-amber-400/25 bg-gradient-to-br from-amber-400/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-400/10 hover:border-amber-400/35 group overflow-hidden shadow-lg shadow-black/10">
+          className="relative rounded-2xl border border-amber-400/25 bg-gradient-to-br from-amber-400/[0.08] via-card to-card p-4 sm:p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-400/10 hover:border-amber-400/35 group overflow-hidden shadow-lg shadow-black/10">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-amber-400/[0.07] blur-[50px] group-hover:bg-amber-400/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -264,7 +264,7 @@ export function AdminDashboard() {
               <Clock className="h-7 w-7 text-amber-400" />
             </div>
           </div>
-          <p className="font-display text-4xl font-black text-foreground tracking-tight leading-none">
+          <p className="font-display text-2xl sm:text-4xl font-black text-foreground tracking-tight leading-none">
             {isLoading ? (
               <span className="inline-block h-11 w-16 animate-pulse rounded-xl bg-muted/20" />
             ) : data?.pendingEnrollments ?? 0}
@@ -290,14 +290,14 @@ export function AdminDashboard() {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.25 }}
-        className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
         {[
           { label: "Categorias", value: data?.totalCategories ?? 0, icon: BarChart3, color: "text-purple-400", bg: "bg-purple-400/10", border: "border-purple-400/20" },
           { label: "Músicas Ativas", value: data?.activeTracks ?? 0, icon: Music, color: "text-pink-400", bg: "bg-pink-400/10", border: "border-pink-400/20" },
           { label: "Sessões Ativas", value: data?.activeSessions ?? 0, icon: Activity, color: "text-cyan-400", bg: "bg-cyan-400/10", border: "border-cyan-400/20" },
           { label: "Total de Músicas", value: data?.totalTracks ?? 0, icon: Headphones, color: "text-indigo-400", bg: "bg-indigo-400/10", border: "border-indigo-400/20" },
         ].map((s) => (
-          <div key={s.label} className={`flex items-center gap-3.5 rounded-xl border ${s.border} ${s.bg} px-4 py-3.5 transition-all hover:shadow-md bg-card shadow-md shadow-black/5`}>
+          <div key={s.label} className={`flex items-center gap-2.5 sm:gap-3.5 rounded-xl border ${s.border} ${s.bg} px-3 sm:px-4 py-3 sm:py-3.5 transition-all hover:shadow-md bg-card shadow-md shadow-black/5`}>
             <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${s.bg} border ${s.border} shrink-0`}>
               <s.icon className={`h-4.5 w-4.5 ${s.color}`} />
             </div>
@@ -311,13 +311,13 @@ export function AdminDashboard() {
         ))}
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-5">
         {/* Sales Chart — large, prominent */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="lg:col-span-2 relative rounded-2xl border border-gold/20 bg-gradient-to-br from-gold/[0.04] via-card to-card p-6 sm:p-7 overflow-hidden shadow-xl shadow-black/10">
+          className="lg:col-span-2 relative rounded-2xl border border-gold/20 bg-gradient-to-br from-gold/[0.04] via-card to-card p-4 sm:p-7 overflow-hidden shadow-xl shadow-black/10">
           <div className="pointer-events-none absolute -top-32 -right-32 h-72 w-72 rounded-full bg-gold/[0.08] blur-[100px]" />
 
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-5 relative">
@@ -326,7 +326,7 @@ export function AdminDashboard() {
                 <TrendingUp className="h-7 w-7 text-gold" />
               </div>
               <div>
-                <h3 className="text-xl font-black text-foreground tracking-tight">Visão Geral de Vendas</h3>
+                <h3 className="text-base sm:text-xl font-black text-foreground tracking-tight">Visão Geral de Vendas</h3>
                 <p className="text-xs text-muted-foreground/50 mt-0.5">Desempenho de receita mensal</p>
               </div>
             </div>
@@ -384,7 +384,7 @@ export function AdminDashboard() {
                  <p className="text-xs text-muted-foreground/60 mt-1.5 max-w-xs">O gráfico será exibido automaticamente quando houver atividade de plays ou vendas na plataforma.</p>
                </div>
             ) : (
-              <ResponsiveContainer width="100%" height={280}>
+              <ResponsiveContainer width="100%" height={220}>
                 <AreaChart data={analytics.dailyPlayData} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
                   <defs>
                     <linearGradient id="salesGrad" x1="0" y1="0" x2="0" y2="1">
@@ -524,14 +524,14 @@ export function AdminDashboard() {
         </div>
 
         <Tabs defaultValue="top-played" className="space-y-4">
-          <TabsList className="bg-card/20 border border-border/30 p-1 rounded-xl">
-            <TabsTrigger value="top-played" className="text-xs rounded-lg data-[state=active]:bg-gold/10 data-[state=active]:text-gold data-[state=active]:border-gold/15 data-[state=active]:border">
+          <TabsList className="bg-card/20 border border-border/30 p-1 rounded-xl w-full sm:w-auto flex-wrap">
+            <TabsTrigger value="top-played" className="text-xs rounded-lg data-[state=active]:bg-gold/10 data-[state=active]:text-gold data-[state=active]:border-gold/15 data-[state=active]:border flex-1 sm:flex-none">
               <Headphones className="h-4 w-4 mr-2" /> Mais Ouvidas
             </TabsTrigger>
-            <TabsTrigger value="top-downloaded" className="text-xs rounded-lg data-[state=active]:bg-emerald-400/10 data-[state=active]:text-emerald-400 data-[state=active]:border-emerald-400/15 data-[state=active]:border">
+            <TabsTrigger value="top-downloaded" className="text-xs rounded-lg data-[state=active]:bg-emerald-400/10 data-[state=active]:text-emerald-400 data-[state=active]:border-emerald-400/15 data-[state=active]:border flex-1 sm:flex-none">
               <Download className="h-4 w-4 mr-2" /> Mais Baixadas
             </TabsTrigger>
-            <TabsTrigger value="users" className="text-xs rounded-lg data-[state=active]:bg-blue-400/10 data-[state=active]:text-blue-400 data-[state=active]:border-blue-400/15 data-[state=active]:border">
+            <TabsTrigger value="users" className="text-xs rounded-lg data-[state=active]:bg-blue-400/10 data-[state=active]:text-blue-400 data-[state=active]:border-blue-400/15 data-[state=active]:border flex-1 sm:flex-none">
               <Users className="h-4 w-4 mr-2" /> Atividade
             </TabsTrigger>
           </TabsList>
@@ -551,10 +551,10 @@ export function AdminDashboard() {
               ) : (
                 <>
                   <div className="p-5">
-                    <ResponsiveContainer width="100%" height={240}>
-                      <BarChart data={analytics.topPlayed.slice(0, 8)} layout="vertical">
+                     <ResponsiveContainer width="100%" height={200}>
+                      <BarChart data={analytics.topPlayed.slice(0, 6)} layout="vertical">
                         <XAxis type="number" tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground) / 0.3)' }} axisLine={false} tickLine={false} />
-                        <YAxis type="category" dataKey="title" width={160} tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground) / 0.5)' }} axisLine={false} tickLine={false} />
+                        <YAxis type="category" dataKey="title" width={120} tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground) / 0.5)' }} axisLine={false} tickLine={false} />
                         <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border) / 0.2)', borderRadius: '12px', fontSize: '12px' }} />
                         <Bar dataKey="plays" fill="hsl(var(--gold) / 0.5)" radius={[0, 8, 8, 0]} />
                       </BarChart>
@@ -610,12 +610,14 @@ export function AdminDashboard() {
                       <h4 className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70 mb-4 font-medium">Downloads Recentes</h4>
                       <div className="space-y-2">
                         {analytics.recentDownloads.slice(0, 10).map((d: any, i: number) => (
-                          <div key={i} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-card/15 transition-colors">
+                          <div key={i} className="flex flex-col sm:flex-row sm:items-center justify-between py-2 px-3 rounded-lg hover:bg-card/15 transition-colors gap-1">
                             <span className="text-xs text-foreground/55 truncate flex-1">{d.email}</span>
-                            <span className="text-xs text-muted-foreground/70 shrink-0 ml-3">{d.trackTitle}</span>
-                            <span className="text-xs text-muted-foreground/60 ml-3 shrink-0">
-                              {new Date(d.downloadedAt).toLocaleDateString('pt-BR')}
-                            </span>
+                            <div className="flex items-center gap-3">
+                              <span className="text-xs text-muted-foreground/70 shrink-0">{d.trackTitle}</span>
+                              <span className="text-xs text-muted-foreground/60 shrink-0">
+                                {new Date(d.downloadedAt).toLocaleDateString('pt-BR')}
+                              </span>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -640,16 +642,16 @@ export function AdminDashboard() {
                 </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-[1fr_80px_80px] gap-2 px-5 py-3.5 border-b border-border/30 bg-card/15">
-                    <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground/60 font-medium">Usuário</span>
-                    <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground/60 text-right font-medium">Plays</span>
-                    <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground/60 text-right font-medium">Downloads</span>
+                  <div className="grid grid-cols-[1fr_60px_60px] sm:grid-cols-[1fr_80px_80px] gap-2 px-4 sm:px-5 py-3.5 border-b border-border/30 bg-card/15">
+                    <span className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-muted-foreground/60 font-medium">Usuário</span>
+                    <span className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-muted-foreground/60 text-right font-medium">Plays</span>
+                    <span className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-muted-foreground/60 text-right font-medium">Downloads</span>
                   </div>
                   {analytics.userActivity.map((u: any) => (
-                    <div key={u.email} className="grid grid-cols-[1fr_80px_80px] gap-2 px-5 py-3 border-b border-border/5 hover:bg-card/15 transition-colors">
-                      <span className="text-sm text-foreground/65 truncate">{u.email}</span>
-                      <span className="text-sm font-bold text-gold/60 text-right">{u.plays}</span>
-                      <span className="text-sm font-bold text-emerald-400/60 text-right">{u.downloads}</span>
+                    <div key={u.email} className="grid grid-cols-[1fr_60px_60px] sm:grid-cols-[1fr_80px_80px] gap-2 px-4 sm:px-5 py-3 border-b border-border/5 hover:bg-card/15 transition-colors">
+                      <span className="text-xs sm:text-sm text-foreground/65 truncate">{u.email}</span>
+                      <span className="text-xs sm:text-sm font-bold text-gold/60 text-right">{u.plays}</span>
+                      <span className="text-xs sm:text-sm font-bold text-emerald-400/60 text-right">{u.downloads}</span>
                     </div>
                   ))}
                 </>
