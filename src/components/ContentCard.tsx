@@ -67,8 +67,12 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progre
   const contentState = getContentState(item, hasAccess, progress);
   const stateInfo = stateConfig[contentState];
 
+  // Progress: completed=100%, in_progress uses position-based estimate
+  // For videos we estimate based on position; for other content we show a fixed "started" state
   const progressPercent = contentState === 'completed' ? 100 
-    : contentState === 'in_progress' && progress?.last_position_seconds ? Math.min(95, Math.max(5, (progress.last_position_seconds / 600) * 100))
+    : contentState === 'in_progress' && progress?.last_position_seconds 
+      ? Math.min(90, Math.max(10, Math.round((progress.last_position_seconds / Math.max(progress.last_position_seconds + 120, 300)) * 100)))
+    : contentState === 'in_progress' ? 15
     : 0;
 
   const handleLockedClick = () => {
