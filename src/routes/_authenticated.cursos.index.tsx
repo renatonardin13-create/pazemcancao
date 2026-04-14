@@ -288,30 +288,43 @@ function ShelfHeader({ title, subtitle, icon, linkTo, linkLabel }: {
 function ShelfRow({ children }: { children: React.ReactNode }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const dragRef = useDragScroll();
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const updateScrollState = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+  }, []);
 
   const scroll = useCallback((direction: 'left' | 'right') => {
     const el = scrollRef.current;
     if (!el) return;
-    const amount = el.clientWidth * 0.75;
+    const amount = el.clientWidth * 0.7;
     el.scrollBy({ left: direction === 'left' ? -amount : amount, behavior: 'smooth' });
   }, []);
 
   return (
     <div className="group/shelf relative -mx-6 sm:-mx-10 lg:-mx-16">
+      {/* Fade edges */}
+      <div className={`absolute left-0 top-0 bottom-4 w-10 sm:w-14 lg:w-20 z-10 pointer-events-none bg-gradient-to-r from-background to-transparent transition-opacity duration-500 ${canScrollLeft ? 'opacity-100' : 'opacity-0'}`} />
+      <div className={`absolute right-0 top-0 bottom-4 w-10 sm:w-14 lg:w-20 z-10 pointer-events-none bg-gradient-to-l from-background to-transparent transition-opacity duration-500 ${canScrollRight ? 'opacity-100' : 'opacity-0'}`} />
+
       {/* Left arrow */}
       <button
         onClick={() => scroll('left')}
-        className="absolute left-1 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-background/80 border border-border/15 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover/shelf:opacity-100 transition-opacity duration-300 hover:bg-card/30 shadow-xl"
+        className={`absolute left-2 top-1/2 -translate-y-1/2 z-20 h-11 w-11 rounded-full bg-background/90 border border-border/20 backdrop-blur-md flex items-center justify-center transition-all duration-300 hover:bg-card/50 hover:scale-105 shadow-xl ${canScrollLeft ? 'opacity-0 group-hover/shelf:opacity-100' : 'opacity-0 pointer-events-none'}`}
       >
-        <ChevronLeft className="h-5 w-5 text-foreground/60" />
+        <ChevronLeft className="h-5 w-5 text-foreground/70" />
       </button>
 
       {/* Right arrow */}
       <button
         onClick={() => scroll('right')}
-        className="absolute right-1 top-1/2 -translate-y-1/2 z-20 h-10 w-10 rounded-full bg-background/80 border border-border/15 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover/shelf:opacity-100 transition-opacity duration-300 hover:bg-card/30 shadow-xl"
+        className={`absolute right-2 top-1/2 -translate-y-1/2 z-20 h-11 w-11 rounded-full bg-background/90 border border-border/20 backdrop-blur-md flex items-center justify-center transition-all duration-300 hover:bg-card/50 hover:scale-105 shadow-xl ${canScrollRight ? 'opacity-0 group-hover/shelf:opacity-100' : 'opacity-0 pointer-events-none'}`}
       >
-        <ChevronRight className="h-5 w-5 text-foreground/60" />
+        <ChevronRight className="h-5 w-5 text-foreground/70" />
       </button>
 
       <div
@@ -319,7 +332,10 @@ function ShelfRow({ children }: { children: React.ReactNode }) {
           (scrollRef as any).current = el;
           (dragRef as any).current = el;
         }}
-        className="flex gap-4 sm:gap-5 overflow-x-auto pb-4 scrollbar-hide px-6 sm:px-10 lg:px-16 snap-x snap-mandatory scroll-smooth cursor-grab select-none"
+        onScroll={updateScrollState}
+        onMouseEnter={updateScrollState}
+        className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-3 scrollbar-hide px-6 sm:px-10 lg:px-16 snap-x snap-mandatory scroll-smooth cursor-grab select-none will-change-scroll"
+        style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {children}
       </div>
@@ -330,10 +346,10 @@ function ShelfRow({ children }: { children: React.ReactNode }) {
 function ShelfItem({ children, index }: { children: React.ReactNode; index: number }) {
   return (
     <motion.div
-      initial={{ opacity: 0, x: 24 }}
+      initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.45, delay: 0.03 * Math.min(index, 12) }}
-      className="flex-shrink-0 snap-start w-[160px] sm:w-[180px] md:w-[200px] lg:w-[220px]"
+      transition={{ duration: 0.5, delay: 0.04 * Math.min(index, 10), ease: [0.22, 1, 0.36, 1] }}
+      className="flex-shrink-0 snap-start w-[155px] sm:w-[175px] md:w-[200px] lg:w-[220px] xl:w-[230px]"
     >
       {children}
     </motion.div>
