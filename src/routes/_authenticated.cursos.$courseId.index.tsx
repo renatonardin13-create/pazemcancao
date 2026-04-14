@@ -131,12 +131,19 @@ function CourseDetailPage() {
   const isLessonCompleted = (lessonId: string) =>
     progress.some((p: any) => p.lesson_id === lessonId && p.completed);
 
+  const hasValidContent = (lesson: any) => {
+    const ct = lesson.content_type || "video";
+    if (ct === "video") return !!lesson.video_url;
+    return !!lesson.content_url;
+  };
+
   const accessibleLessons = canAccessCourse
     ? lessons
     : lessons.filter((lesson: any) => lesson.is_free_preview);
+  const validLessons = accessibleLessons.filter(hasValidContent);
   const primaryLesson =
-    accessibleLessons.find((lesson: any) => !isLessonCompleted(lesson.id)) ||
-    accessibleLessons[0] ||
+    validLessons.find((lesson: any) => !isLessonCompleted(lesson.id)) ||
+    validLessons[0] ||
     null;
   const previewLessonsCount = lessons.filter(
     (lesson: any) => lesson.is_free_preview
