@@ -3,11 +3,12 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getLessonDetail } from "@/lib/lesson-detail.functions";
 import { updateLessonProgress } from "@/lib/courses.functions";
 import { useState, useRef, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   Collapsible,
   CollapsibleContent,
@@ -32,6 +33,8 @@ import {
   Clock,
   Award,
   Sparkles,
+  Search,
+  Share2,
 } from "lucide-react";
 
 export const Route = createFileRoute(
@@ -48,6 +51,7 @@ export const Route = createFileRoute(
 function LessonDetailPage() {
   const { courseId, lessonId } = Route.useParams();
   const queryClient = useQueryClient();
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["lesson-detail", courseId, lessonId],
@@ -121,7 +125,6 @@ function LessonDetailPage() {
     enrollment,
     prevLesson,
     nextLesson,
-    currentIndex,
     completedCount,
     totalLessons,
     materials,
@@ -199,36 +202,49 @@ function LessonDetailPage() {
     ? [legacySupplementaryMaterial, ...(materials || [])]
     : materials || [];
 
+  // Build flat list for sidebar search
+  const allSidebarLessons: any[] = [];
+  if (modules.length > 0) {
+    for (const mod of modules) {
+      const modLessons = (moduleMap[mod.id] || []) as any[];
+      modLessons.forEach((l: any) => allSidebarLessons.push({ ...l, moduleName: mod.title }));
+    }
+  }
+  unmoduled.forEach((l: any) => allSidebarLessons.push(l));
+
+  const filteredBySearch = searchQuery.trim()
+    ? allSidebarLessons.filter((l) =>
+        l.title.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : null;
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Top bar */}
-      <header className="sticky top-0 z-30 border-b border-border/20 bg-background/90 backdrop-blur-xl">
-        <div className="mx-auto max-w-[1600px] flex items-center gap-4 px-4 sm:px-6 h-14">
+      {/* Course header */}
+      <header className="sticky top-0 z-30 border-b border-border/20 bg-background/95 backdrop-blur-xl">
+        <div className="mx-auto max-w-[1800px] flex items-center gap-4 px-4 sm:px-6 h-14">
           <Link
             to="/cursos/$courseId"
             params={{ courseId }}
-            className="flex items-center gap-2 text-xs font-semibold text-muted-foreground/70 hover:text-gold/60 transition-colors"
+            className="flex items-center gap-2 text-muted-foreground/60 hover:text-gold/70 transition-colors shrink-0"
           >
             <ChevronLeft className="h-4 w-4" />
-            <span className="hidden sm:inline">Voltar à Vitrine</span>
           </Link>
-          <div className="flex-1" />
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-muted-foreground/60 hidden sm:inline">
-              {completedCount}/{totalLessons} aulas
-            </span>
-            <Progress value={progressPercent} className="h-1.5 w-20 sm:w-28" />
-            <span className="text-[12px] font-bold text-gold/60 tabular-nums">
-              {progressPercent}%
-            </span>
+          <div className="flex items-center gap-3 min-w-0 flex-1">
+            <Play className="h-5 w-5 text-gold/70 shrink-0" />
+            <div className="min-w-0">
+              <h2 className="text-sm font-bold text-foreground/80 truncate">
+                {course.title}
+              </h2>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* Main content */}
+      {/* Main layout */}
       <div className="flex-1 flex flex-col lg:flex-row">
         {/* Left: Content area */}
-        <main className="flex-1 min-w-0">
+        <main className="flex-1 min-w-0 flex flex-col">
           {/* Access restricted */}
           {accessRestricted && (
             <motion.div
@@ -276,10 +292,10 @@ function LessonDetailPage() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.4 }}
             >
               {isYouTube || isVimeo ? (
-                <div className="w-full aspect-video bg-black border-b border-border/20">
+                <div className="w-full aspect-video bg-black">
                   <iframe
                     src={
                       isYouTube
@@ -293,7 +309,7 @@ function LessonDetailPage() {
                   />
                 </div>
               ) : (
-                <div className="w-full bg-black border-b border-border/20">
+                <div className="w-full bg-black">
                   <video
                     ref={videoRef}
                     src={videoUrl}
@@ -321,12 +337,12 @@ function LessonDetailPage() {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="w-full border-b border-border/20"
+              className="w-full"
             >
               <div className="bg-card/15">
                 <iframe
                   src={contentUrl}
-                  className="w-full h-[80vh]"
+                  className="w-full h-[75vh]"
                   title={lesson.title}
                 />
                 <div className="flex items-center justify-center gap-3 p-3 border-t border-border/20 bg-card/8">
@@ -421,255 +437,295 @@ function LessonDetailPage() {
             </motion.div>
           )}
 
-          {/* Lesson info + materials + nav */}
+          {/* Lesson info below content */}
           {!accessRestricted && (
-            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6">
-              {/* Title and description */}
-              <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
-              >
-                <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground/90 tracking-tight uppercase">
-                  {lesson.title}
-                </h1>
+            <div className="border-t border-border/15 px-4 sm:px-6 py-4">
+              <div className="max-w-4xl">
+                {/* Title row */}
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <h1 className="font-display text-lg sm:text-xl font-bold text-gold/90 tracking-tight">
+                      {lesson.title}
+                    </h1>
+                    <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+                      {lesson.duration && lesson.duration !== "0:00" && (
+                        <span className="text-xs text-muted-foreground/60 flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {lesson.duration}
+                        </span>
+                      )}
+                      {lesson.is_free_preview && (
+                        <Badge
+                          variant="outline"
+                          className="text-[10px] text-gold/60 border-gold/15"
+                        >
+                          Preview gratuito
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    <button className="p-2 rounded-lg text-muted-foreground/50 hover:text-gold/60 hover:bg-gold/5 transition-colors">
+                      <Share2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Description */}
                 {lesson.description && (
-                  <p className="mt-3 text-[14px] leading-[1.8] text-muted-foreground/50 whitespace-pre-line">
+                  <p className="mt-3 text-[13px] leading-[1.8] text-muted-foreground/45 whitespace-pre-line">
                     {lesson.description}
                   </p>
                 )}
-                <div className="flex items-center gap-3 mt-3 flex-wrap">
-                  {lesson.duration && lesson.duration !== "0:00" && (
-                    <span className="text-xs text-muted-foreground/70 flex items-center gap-1">
-                      <Clock className="h-3 w-3" />
-                      {lesson.duration}
-                    </span>
-                  )}
-                  {lesson.is_free_preview && (
-                    <Badge
-                      variant="outline"
-                      className="text-[11px] text-gold/70 border-gold/15"
-                    >
-                      Preview gratuito
-                    </Badge>
-                  )}
-                </div>
-              </motion.div>
 
-              {/* Supplementary materials */}
-              {displayedMaterials.length > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.15 }}
-                  className="rounded-xl border border-border/25 bg-card/15 p-4"
-                >
-                  <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70 mb-3">
-                    Materiais Complementares
-                  </h3>
-                  <div className="space-y-2">
-                    {displayedMaterials.map((mat: any) => (
-                      <div
-                        key={mat.id}
-                        className="flex items-center gap-3 rounded-lg bg-muted/5 border border-border/20 px-4 py-3"
-                      >
-                        {mat.material_type === "pdf" ? (
-                          <FileText className="h-4 w-4 text-gold/40 shrink-0" />
-                        ) : mat.material_type === "link" ? (
-                          <ExternalLink className="h-4 w-4 text-gold/40 shrink-0" />
-                        ) : (
-                          <File className="h-4 w-4 text-gold/40 shrink-0" />
-                        )}
-                        <span className="flex-1 text-sm text-foreground/60 truncate">
-                          {mat.title}
-                        </span>
-                        {mat.material_type === "link" ? (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 gap-1.5 text-xs text-gold/70 hover:text-gold/80"
-                            onClick={() => window.open(mat.url, "_blank")}
-                          >
-                            <ExternalLink className="h-3 w-3" />
-                            Acessar
-                          </Button>
-                        ) : (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 gap-1.5 text-xs text-gold/70 hover:text-gold/80"
-                            onClick={() => handleDownload(mat.url, mat.title)}
-                          >
-                            <Download className="h-3 w-3" />
-                            Baixar
-                          </Button>
-                        )}
-                      </div>
-                    ))}
+                {/* Supplementary materials */}
+                {displayedMaterials.length > 0 && (
+                  <div className="mt-5 rounded-xl border border-border/20 bg-card/10 p-4">
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/60 mb-3">
+                      Materiais Complementares
+                    </h3>
+                    <div className="space-y-2">
+                      {displayedMaterials.map((mat: any) => (
+                        <div
+                          key={mat.id}
+                          className="flex items-center gap-3 rounded-lg bg-muted/5 border border-border/15 px-4 py-3"
+                        >
+                          {mat.material_type === "pdf" ? (
+                            <FileText className="h-4 w-4 text-gold/40 shrink-0" />
+                          ) : mat.material_type === "link" ? (
+                            <ExternalLink className="h-4 w-4 text-gold/40 shrink-0" />
+                          ) : (
+                            <File className="h-4 w-4 text-gold/40 shrink-0" />
+                          )}
+                          <span className="flex-1 text-sm text-foreground/60 truncate">
+                            {mat.title}
+                          </span>
+                          {mat.material_type === "link" ? (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 gap-1.5 text-xs text-gold/70 hover:text-gold/80"
+                              onClick={() => window.open(mat.url, "_blank")}
+                            >
+                              <ExternalLink className="h-3 w-3" />
+                              Acessar
+                            </Button>
+                          ) : (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 gap-1.5 text-xs text-gold/70 hover:text-gold/80"
+                              onClick={() => handleDownload(mat.url, mat.title)}
+                            >
+                              <Download className="h-3 w-3" />
+                              Baixar
+                            </Button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </motion.div>
-              )}
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Bottom navigation */}
+          {!accessRestricted && (
+            <div className="border-t border-border/20 bg-background/95 backdrop-blur-xl mt-auto">
+              <div className="flex items-center justify-center gap-3 px-4 sm:px-6 py-3">
+                {prevLesson ? (
+                  <Link
+                    to="/cursos/$courseId/aula/$lessonId"
+                    params={{ courseId, lessonId: prevLesson.id }}
+                    className="flex items-center gap-2 rounded-xl border border-border/25 bg-card/10 px-5 py-2.5 text-[12px] font-medium text-muted-foreground/60 hover:bg-card/20 hover:text-foreground/70 transition-all"
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5" />
+                    Anterior
+                  </Link>
+                ) : (
+                  <button
+                    disabled
+                    className="flex items-center gap-2 rounded-xl border border-border/10 bg-card/5 px-5 py-2.5 text-[12px] font-medium text-muted-foreground/25 cursor-not-allowed"
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5" />
+                    Anterior
+                  </button>
+                )}
+
+                {enrollment && (
+                  <Button
+                    onClick={() => {
+                      if (!isCompleted) {
+                        progressMutation.mutate({
+                          lessonId,
+                          watchedSeconds: 0,
+                          completed: true,
+                        });
+                      }
+                    }}
+                    disabled={progressMutation.isPending || isCompleted}
+                    className={`gap-2 px-6 text-[12px] font-bold uppercase tracking-wider ${
+                      isCompleted
+                        ? "bg-emerald-500/15 text-emerald-400/70 border border-emerald-500/15 hover:bg-emerald-500/20"
+                        : "bg-gold/90 text-gold-foreground hover:bg-gold"
+                    }`}
+                    variant={isCompleted ? "outline" : "default"}
+                  >
+                    <CheckCircle2 className="h-4 w-4" />
+                    {isCompleted
+                      ? "Concluída"
+                      : progressMutation.isPending
+                        ? "Salvando..."
+                        : "Concluir"}
+                  </Button>
+                )}
+
+                {nextLesson ? (
+                  <Link
+                    to="/cursos/$courseId/aula/$lessonId"
+                    params={{ courseId, lessonId: nextLesson.id }}
+                    className="flex items-center gap-2 rounded-xl border border-gold/25 bg-gold/[0.08] px-5 py-2.5 text-[12px] font-medium text-gold/70 hover:bg-gold/15 hover:text-gold transition-all"
+                  >
+                    Próximo
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                ) : (
+                  <button
+                    disabled
+                    className="flex items-center gap-2 rounded-xl border border-border/10 bg-card/5 px-5 py-2.5 text-[12px] font-medium text-muted-foreground/25 cursor-not-allowed"
+                  >
+                    Próximo
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </button>
+                )}
+              </div>
             </div>
           )}
         </main>
 
-        {/* Right Sidebar */}
-        <aside className="w-full lg:w-[360px] shrink-0 border-l border-border/20 bg-card/[0.03] lg:overflow-y-auto lg:max-h-[calc(100vh-56px)] lg:sticky lg:top-14">
-          {/* Progress card */}
-          <div className="p-5 border-b border-border/20">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[12px] font-semibold text-muted-foreground/50">
-                Seu Progresso
-              </span>
-              <span className="font-display text-2xl font-bold text-gold">
+        {/* Right Sidebar - Playlist */}
+        <aside className="w-full lg:w-[340px] xl:w-[380px] shrink-0 border-t lg:border-t-0 lg:border-l border-border/20 bg-card/[0.04] lg:overflow-y-auto lg:max-h-[calc(100vh-56px)] lg:sticky lg:top-14">
+          {/* Sidebar header */}
+          <div className="p-4 border-b border-border/15">
+            <div className="flex items-center justify-between mb-1">
+              <h3 className="text-sm font-bold text-foreground/80">Aulas</h3>
+              <span className="text-sm font-bold text-gold">
                 {progressPercent}%
               </span>
             </div>
-            <Progress value={progressPercent} className="h-2 mb-3" />
-            <div className="flex items-center justify-between text-xs text-muted-foreground/70">
-              <span className="flex items-center gap-1">
-                <CheckCircle2 className="h-3 w-3 text-emerald-400/60" />
-                {completedCount}/{totalLessons} aulas
-              </span>
-              <span className="flex items-center gap-1">
-                <Clock className="h-3 w-3" />
-                {isCourseCompleted ? "Concluído!" : "Em andamento"}
-              </span>
-            </div>
+            <p className="text-xs text-muted-foreground/50 mb-3">
+              {completedCount}/{totalLessons} assistidas
+            </p>
+            <Progress value={progressPercent} className="h-1.5 mb-3" />
+
             {isCourseCompleted && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
-                className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-emerald-500/10 border border-emerald-500/15 py-2 px-3"
+                className="flex items-center justify-center gap-2 rounded-lg bg-emerald-500/10 border border-emerald-500/15 py-2 px-3 mb-3"
               >
                 <Award className="h-4 w-4 text-emerald-400/70" />
                 <span className="text-xs font-semibold text-emerald-400/70">
-                  Parabéns! Curso concluído!
+                  Curso concluído!
                 </span>
               </motion.div>
             )}
+
+            {/* Search */}
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/40" />
+              <Input
+                placeholder="Buscar nesta playlist..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-9 h-9 text-xs bg-card/10 border-border/20 placeholder:text-muted-foreground/30"
+              />
+            </div>
           </div>
 
-          {/* Module/lesson list */}
+          {/* Lesson list */}
           <div className="divide-y divide-border/6">
-            {modules.length > 0 &&
-              modules.map((mod: any) => {
-                const modLessons = (moduleMap[mod.id] || []) as any[];
-                if (modLessons.length === 0) return null;
-                const modCompleted = modLessons.filter((l: any) =>
-                  isLessonCompleted(l.id)
-                ).length;
-                const hasActiveLesson = modLessons.some(
-                  (l: any) => l.id === lessonId
-                );
-
-                return (
-                  <ModuleSection
-                    key={mod.id}
-                    title={mod.title}
-                    completedCount={modCompleted}
-                    totalCount={modLessons.length}
-                    defaultOpen={hasActiveLesson}
-                  >
-                    {modLessons.map((l: any) => (
-                      <LessonSidebarItem
-                        key={l.id}
-                        lesson={l}
-                        courseId={courseId}
-                        isActive={l.id === lessonId}
-                        isCompleted={isLessonCompleted(l.id)}
-                      />
-                    ))}
-                  </ModuleSection>
-                );
-              })}
-
-            {unmoduled.length > 0 && (
-              <ModuleSection
-                title="Aulas"
-                completedCount={
-                  unmoduled.filter((l: any) => isLessonCompleted(l.id)).length
-                }
-                totalCount={unmoduled.length}
-                defaultOpen
-              >
-                {unmoduled.map((l: any) => (
+            {filteredBySearch ? (
+              filteredBySearch.length > 0 ? (
+                filteredBySearch.map((l: any) => (
                   <LessonSidebarItem
                     key={l.id}
                     lesson={l}
                     courseId={courseId}
                     isActive={l.id === lessonId}
                     isCompleted={isLessonCompleted(l.id)}
+                    courseCoverUrl={course.cover_image_url}
                   />
-                ))}
-              </ModuleSection>
+                ))
+              ) : (
+                <div className="p-6 text-center">
+                  <p className="text-xs text-muted-foreground/40">
+                    Nenhuma aula encontrada
+                  </p>
+                </div>
+              )
+            ) : (
+              <>
+                {modules.length > 0 &&
+                  modules.map((mod: any) => {
+                    const modLessons = (moduleMap[mod.id] || []) as any[];
+                    if (modLessons.length === 0) return null;
+                    const modCompleted = modLessons.filter((l: any) =>
+                      isLessonCompleted(l.id)
+                    ).length;
+                    const hasActiveLesson = modLessons.some(
+                      (l: any) => l.id === lessonId
+                    );
+
+                    return (
+                      <ModuleSection
+                        key={mod.id}
+                        title={mod.title}
+                        completedCount={modCompleted}
+                        totalCount={modLessons.length}
+                        defaultOpen={hasActiveLesson}
+                      >
+                        {modLessons.map((l: any) => (
+                          <LessonSidebarItem
+                            key={l.id}
+                            lesson={l}
+                            courseId={courseId}
+                            isActive={l.id === lessonId}
+                            isCompleted={isLessonCompleted(l.id)}
+                            courseCoverUrl={course.cover_image_url}
+                          />
+                        ))}
+                      </ModuleSection>
+                    );
+                  })}
+
+                {unmoduled.length > 0 && (
+                  <ModuleSection
+                    title="Aulas"
+                    completedCount={
+                      unmoduled.filter((l: any) => isLessonCompleted(l.id)).length
+                    }
+                    totalCount={unmoduled.length}
+                    defaultOpen
+                  >
+                    {unmoduled.map((l: any) => (
+                      <LessonSidebarItem
+                        key={l.id}
+                        lesson={l}
+                        courseId={courseId}
+                        isActive={l.id === lessonId}
+                        isCompleted={isLessonCompleted(l.id)}
+                        courseCoverUrl={course.cover_image_url}
+                      />
+                    ))}
+                  </ModuleSection>
+                )}
+              </>
             )}
           </div>
         </aside>
       </div>
-
-      {/* Bottom navigation bar */}
-      {!accessRestricted && (
-        <div className="sticky bottom-0 z-30 border-t border-border/25 bg-background/95 backdrop-blur-xl">
-          <div className="mx-auto max-w-[1600px] flex items-center justify-center gap-3 px-4 sm:px-6 py-3">
-            {prevLesson ? (
-              <Link
-                to="/cursos/$courseId/aula/$lessonId"
-                params={{ courseId, lessonId: prevLesson.id }}
-                className="flex items-center gap-2 rounded-xl border border-border/30 bg-card/8 px-4 py-2.5 text-[12px] font-medium text-muted-foreground/50 hover:bg-card/20 hover:text-foreground/70 transition-all"
-              >
-                <ArrowLeft className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline truncate max-w-[120px]">Aula Anterior</span>
-                <span className="sm:hidden">Anterior</span>
-              </Link>
-            ) : (
-              <div className="w-[120px]" />
-            )}
-
-            {enrollment && (
-              <Button
-                onClick={() => {
-                  if (!isCompleted) {
-                    progressMutation.mutate({
-                      lessonId,
-                      watchedSeconds: 0,
-                      completed: true,
-                    });
-                  }
-                }}
-                disabled={progressMutation.isPending || isCompleted}
-                className={`gap-2 px-6 text-[12px] font-bold uppercase tracking-wider ${
-                  isCompleted
-                    ? "bg-emerald-500/15 text-emerald-400/70 border border-emerald-500/15 hover:bg-emerald-500/20"
-                    : "bg-gold/90 text-gold-foreground hover:bg-gold"
-                }`}
-                variant={isCompleted ? "outline" : "default"}
-              >
-                <CheckCircle2 className="h-4 w-4" />
-                {isCompleted
-                  ? "Concluída"
-                  : progressMutation.isPending
-                    ? "Salvando..."
-                    : "Concluída"}
-              </Button>
-            )}
-
-            {nextLesson ? (
-              <Link
-                to="/cursos/$courseId/aula/$lessonId"
-                params={{ courseId, lessonId: nextLesson.id }}
-                className="flex items-center gap-2 rounded-xl border border-gold/20 bg-gold/[0.08] px-4 py-2.5 text-[12px] font-medium text-gold/70 hover:bg-gold/15 hover:text-gold transition-all"
-              >
-                <span className="hidden sm:inline truncate max-w-[120px]">Próxima Aula</span>
-                <span className="sm:hidden">Próxima</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
-            ) : (
-              <div className="w-[120px]" />
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
@@ -694,24 +750,24 @@ function ModuleSection({
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
       <CollapsibleTrigger asChild>
-        <button className="flex items-center gap-3 w-full px-5 py-3.5 text-left hover:bg-card/8 transition-colors group">
+        <button className="flex items-center gap-3 w-full px-4 py-3 text-left hover:bg-card/8 transition-colors group">
           <div className="flex-1 min-w-0">
             <p className="text-[12px] font-semibold text-foreground/70 truncate">
               {title}
             </p>
-            <p className="text-xs text-muted-foreground/70 mt-0.5">
+            <p className="text-[11px] text-muted-foreground/50 mt-0.5">
               {completedCount}/{totalCount} concluídas
             </p>
           </div>
           {open ? (
-            <ChevronUp className="h-4 w-4 text-muted-foreground/60 shrink-0" />
+            <ChevronUp className="h-4 w-4 text-muted-foreground/50 shrink-0" />
           ) : (
-            <ChevronDown className="h-4 w-4 text-muted-foreground/60 shrink-0" />
+            <ChevronDown className="h-4 w-4 text-muted-foreground/50 shrink-0" />
           )}
         </button>
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <div className="bg-card/[0.03]">{children}</div>
+        <div>{children}</div>
       </CollapsibleContent>
     </Collapsible>
   );
@@ -724,45 +780,61 @@ function LessonSidebarItem({
   courseId,
   isActive,
   isCompleted,
+  courseCoverUrl,
 }: {
   lesson: any;
   courseId: string;
   isActive: boolean;
   isCompleted: boolean;
+  courseCoverUrl?: string | null;
 }) {
   return (
     <Link
       to="/cursos/$courseId/aula/$lessonId"
       params={{ courseId, lessonId: lesson.id }}
-      className={`flex items-center gap-3 px-5 py-3 transition-all text-left ${
+      className={`flex items-center gap-3 px-4 py-2.5 transition-all ${
         isActive
-          ? "bg-gold/[0.08] border-l-2 border-l-gold/40"
+          ? "bg-gold/[0.08] border-l-2 border-l-gold/50"
           : "hover:bg-card/8 border-l-2 border-l-transparent"
       }`}
     >
+      {/* Status icon */}
       <div className="shrink-0">
         {isCompleted ? (
           <CheckCircle2 className="h-4 w-4 text-emerald-400/60" />
         ) : isActive ? (
           <Play className="h-4 w-4 text-gold/70 fill-gold/30" />
         ) : (
-          <Circle className="h-4 w-4 text-muted-foreground/50" />
+          <Circle className="h-4 w-4 text-muted-foreground/30" />
         )}
       </div>
+
+      {/* Thumbnail */}
+      {courseCoverUrl && (
+        <div className="shrink-0 w-12 h-8 rounded overflow-hidden bg-card/20 border border-border/15">
+          <img
+            src={courseCoverUrl}
+            alt=""
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+
+      {/* Lesson info */}
       <div className="flex-1 min-w-0">
         <p
-          className={`text-[12px] font-medium truncate ${
+          className={`text-[11px] font-medium truncate ${
             isActive
               ? "text-gold/80"
               : isCompleted
-                ? "text-muted-foreground/70"
+                ? "text-muted-foreground/60"
                 : "text-foreground/60"
           }`}
         >
           {lesson.title}
         </p>
         {lesson.duration && lesson.duration !== "0:00" && (
-          <span className="text-xs text-muted-foreground/60">
+          <span className="text-[10px] text-muted-foreground/50">
             {lesson.duration}
           </span>
         )}
