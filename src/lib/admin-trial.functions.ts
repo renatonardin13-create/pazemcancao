@@ -105,39 +105,25 @@ export const addStudent = createServerFn({ method: 'POST' })
       authUserId = existingUser.id;
     }
 
-    // Create enrollments for selected courses
+    // Create enrollments for selected courses using upsert (unique on user_id + course_id)
     if (data.courseIds && data.courseIds.length > 0) {
       for (const courseId of data.courseIds) {
-        // Check if enrollment already exists
-        const { data: existingEnrollment } = await supabaseAdmin
+        const { error: enrollError } = await supabaseAdmin
           .from('enrollments')
-          .select('id')
-          .eq('user_id', authUserId)
-          .eq('course_id', courseId)
-          .maybeSingle();
-
-        if (existingEnrollment) {
-          // Reactivate if exists
-          await supabaseAdmin
-            .from('enrollments')
-            .update({
-              status: 'active',
-              access_origin: 'manual',
-              email,
-              granted_at: new Date().toISOString(),
-            })
-            .eq('id', existingEnrollment.id);
-        } else {
-          await supabaseAdmin
-            .from('enrollments')
-            .insert({
+          .upsert(
+            {
               user_id: authUserId,
               course_id: courseId,
               status: 'active',
               access_origin: 'manual',
               email,
               granted_at: new Date().toISOString(),
-            });
+            },
+            { onConflict: 'user_id,course_id' }
+          );
+
+        if (enrollError) {
+          console.error(`Enrollment error for course ${courseId}:`, enrollError.message);
         }
       }
     }
