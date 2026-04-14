@@ -9,7 +9,6 @@ import {
   Store,
   GraduationCap,
   Music2,
-  BookOpen,
   UserCircle,
   Settings,
   LogOut,
@@ -58,8 +57,6 @@ export function StudentSidebar() {
   const hasCourses = (myCoursesData?.courses || []).length > 0;
   const hasTracks = allTracks.length > 0;
 
-  // Build set of categories that have at least one active track
-  // Normalize: strip emoji prefix, lowercase, trim for robust matching
   const normalizeStr = (s: string) =>
     s.replace(/^[^\p{L}\p{N}]+/u, "").trim().toLowerCase();
 
@@ -81,7 +78,6 @@ export function StudentSidebar() {
       const name = cat.name.toLowerCase();
       const plainName = normalizeStr(cat.name);
 
-      // Match by slug, full name, or plain name (without emoji)
       const hasTrack =
         categoriesWithTracks.has(slug) ||
         categoriesWithTracks.has(name) ||
@@ -89,7 +85,6 @@ export function StudentSidebar() {
 
       if (!hasTrack) return false;
 
-      // Deduplicate by slug first, then by plain name
       const dedupeKey = slug || plainName;
       if (seen.has(dedupeKey)) return false;
       seen.add(dedupeKey);
@@ -102,29 +97,29 @@ export function StudentSidebar() {
 
   const navItemClass = (active: boolean) =>
     cn(
-      "flex items-center gap-3 rounded-xl px-4 py-3 text-[14px] font-semibold uppercase tracking-[0.08em] transition-all duration-300",
+      "flex items-center gap-3 rounded-xl px-4 py-2.5 text-[13px] font-semibold transition-all duration-200",
       active
-        ? "text-gold bg-gold/[0.08] border border-gold/15"
-        : "text-muted-foreground/45 hover:text-gold/60 hover:bg-muted/10 border border-transparent"
+        ? "text-gold bg-gold/10 border border-gold/20 shadow-sm shadow-gold/5"
+        : "text-foreground/60 hover:text-foreground/80 hover:bg-muted/10 border border-transparent"
     );
 
   const subItemClass = (active: boolean) =>
     cn(
-      "flex items-center gap-2.5 rounded-lg px-4 py-2.5 ml-4 text-[13px] font-medium transition-all duration-300",
+      "flex items-center gap-2.5 rounded-lg px-3.5 py-2 ml-5 text-[12px] font-medium transition-all duration-200",
       active
-        ? "text-gold/80 bg-gold/[0.06]"
-        : "text-muted-foreground/70 hover:text-gold/70 hover:bg-muted/8"
+        ? "text-gold bg-gold/[0.07] border-l-2 border-gold/40"
+        : "text-muted-foreground/60 hover:text-foreground/70 hover:bg-muted/8 border-l-2 border-transparent"
     );
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-border/25">
+      <div className="px-5 py-5 border-b border-border/20">
         <LogoBrand size="md" showSubtitle />
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1.5">
+      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
         {/* Vitrine */}
         {hasVitrine && (
           <Link
@@ -132,7 +127,7 @@ export function StudentSidebar() {
             onClick={() => setMobileOpen(false)}
             className={navItemClass(isActive("/vitrine"))}
           >
-            <Store className="h-4 w-4" />
+            <Store className="h-4 w-4 shrink-0" />
             Vitrine
           </Link>
         )}
@@ -144,7 +139,7 @@ export function StudentSidebar() {
             onClick={() => setMobileOpen(false)}
             className={navItemClass(isActive("/cursos") || isActivePrefix("/cursos/"))}
           >
-            <GraduationCap className="h-4 w-4" />
+            <GraduationCap className="h-4 w-4 shrink-0" />
             Meus Cursos
           </Link>
         )}
@@ -160,18 +155,18 @@ export function StudentSidebar() {
               )}
             >
               <span className="flex items-center gap-3">
-                <Music2 className="h-4.5 w-4.5" />
+                <Music2 className="h-4 w-4 shrink-0" />
                 Louvores
               </span>
               {louvoresOpen ? (
-                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/60" />
+                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/50 transition-transform" />
               ) : (
-                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60" />
+                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/50 transition-transform" />
               )}
             </button>
 
             {louvoresOpen && (
-              <div className="mt-1 space-y-0.5">
+              <div className="mt-1.5 space-y-0.5">
                 <Link
                   to="/musicas"
                   search={{}}
@@ -180,36 +175,39 @@ export function StudentSidebar() {
                     isActive("/musicas") && !(location.search as any)?.categoria
                   )}
                 >
-                   <span className="text-[12px]">⭐</span>
-                   Destaques (Top 10)
-                 </Link>
-                 {visibleCategories
-                   .filter((cat: any) => {
-                     const slug = (cat.slug || cat.name.toLowerCase()).toLowerCase();
-                     const plainName = cat.name.toLowerCase().replace(/^[^\p{L}\p{N}]+/u, "").trim();
-                     return slug !== "destaques" && slug !== "top-10-mais-fortes"
-                       && !plainName.startsWith("destaques");
-                   })
-                   .map((cat: any) => {
-                  const catSlug = cat.slug || cat.name.toLowerCase();
-                  const isActiveCat = (location.search as any)?.categoria === catSlug;
-                  return (
-                    <Link
-                      key={cat.id}
-                      to="/musicas"
-                      search={{ categoria: catSlug }}
-                      onClick={() => setMobileOpen(false)}
-                      className={subItemClass(isActiveCat)}
-                    >
-                     <span className="text-[12px]">{cat.icon || "🎵"}</span>
-                     {cat.name.replace(/^[^\w\s]+\s*/u, "")}
-                   </Link>
-                  );
-                })}
+                  <span className="text-[11px]">⭐</span>
+                  Destaques (Top 10)
+                </Link>
+                {visibleCategories
+                  .filter((cat: any) => {
+                    const slug = (cat.slug || cat.name.toLowerCase()).toLowerCase();
+                    const plainName = cat.name.toLowerCase().replace(/^[^\p{L}\p{N}]+/u, "").trim();
+                    return slug !== "destaques" && slug !== "top-10-mais-fortes"
+                      && !plainName.startsWith("destaques");
+                  })
+                  .map((cat: any) => {
+                    const catSlug = cat.slug || cat.name.toLowerCase();
+                    const isActiveCat = (location.search as any)?.categoria === catSlug;
+                    return (
+                      <Link
+                        key={cat.id}
+                        to="/musicas"
+                        search={{ categoria: catSlug }}
+                        onClick={() => setMobileOpen(false)}
+                        className={subItemClass(isActiveCat)}
+                      >
+                        <span className="text-[11px]">{cat.icon || "🎵"}</span>
+                        {cat.name.replace(/^[^\w\s]+\s*/u, "")}
+                      </Link>
+                    );
+                  })}
               </div>
             )}
           </div>
         )}
+
+        {/* Separator */}
+        <div className="my-2 h-px bg-gradient-to-r from-transparent via-border/20 to-transparent" />
 
         {/* Perfil */}
         <Link
@@ -217,20 +215,20 @@ export function StudentSidebar() {
           onClick={() => setMobileOpen(false)}
           className={navItemClass(isActive("/perfil"))}
         >
-          <UserCircle className="h-4 w-4" />
+          <UserCircle className="h-4 w-4 shrink-0" />
           Perfil
         </Link>
 
         {/* Admin */}
         {!adminLoading && isAdmin && (
           <>
-            <div className="my-3 h-px bg-gradient-to-r from-transparent via-border/15 to-transparent" />
+            <div className="my-2 h-px bg-gradient-to-r from-transparent via-border/20 to-transparent" />
             <Link
               to="/admin"
               onClick={() => setMobileOpen(false)}
               className={navItemClass(isActivePrefix("/admin"))}
             >
-              <Settings className="h-4 w-4" />
+              <Settings className="h-4 w-4 shrink-0" />
               Admin
             </Link>
           </>
@@ -238,12 +236,12 @@ export function StudentSidebar() {
       </nav>
 
       {/* Logout */}
-      <div className="px-3 py-4 border-t border-border/25">
+      <div className="px-3 py-4 border-t border-border/20">
         <button
           onClick={() => { logout(); setMobileOpen(false); }}
-          className="flex items-center gap-3 rounded-xl px-4 py-2.5 w-full text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground/60 hover:text-muted-foreground/55 hover:bg-muted/10 transition-all duration-300"
+          className="flex items-center gap-3 rounded-xl px-4 py-2.5 w-full text-[12px] font-semibold text-muted-foreground/50 hover:text-foreground/60 hover:bg-muted/10 transition-all duration-200"
         >
-          <LogOut className="h-4 w-4" />
+          <LogOut className="h-4 w-4 shrink-0" />
           Sair
         </button>
       </div>
@@ -253,11 +251,11 @@ export function StudentSidebar() {
   return (
     <>
       {/* Mobile trigger */}
-      <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-background/80 backdrop-blur-2xl border-b border-border/25 md:hidden">
+      <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-background/90 backdrop-blur-2xl border-b border-border/20 md:hidden">
         <LogoBrand size="sm" />
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground/70 hover:text-foreground/60 hover:bg-muted/15 transition-colors"
+          className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground/60 hover:text-foreground hover:bg-muted/15 transition-colors"
         >
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
