@@ -37,6 +37,8 @@ export function ImageUploadField({
   aspectRatio,
   aspectClass = "aspect-video",
   uploadLabel = "Clique para fazer upload",
+  expectedRatio,
+  recommendedSize,
 }: ImageUploadFieldProps) {
   const [uploadState, setUploadState] = useState<UploadState>("idle");
   const [progress, setProgress] = useState(0);
