@@ -428,15 +428,15 @@ function AdminUsersPage() {
                       {courses.map((course: any) => {
                         const isSelected = addCourseIds.includes(course.id);
                         return (
-                          <label key={course.id} className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-muted/10 ${isSelected ? "bg-gold/5" : ""}`}>
-                            <Checkbox checked={isSelected} onCheckedChange={() => toggleCourseSelection(course.id)} />
+                          <div key={course.id} role="button" tabIndex={0} onClick={() => toggleCourseSelection(course.id)} onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleCourseSelection(course.id); }}} className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-muted/10 ${isSelected ? "bg-gold/5" : ""}`}>
+                            <Checkbox checked={isSelected} onCheckedChange={() => toggleCourseSelection(course.id)} onClick={(e) => e.stopPropagation()} />
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium text-foreground/70 truncate">{course.title}</p>
                             </div>
                             <Badge variant="outline" className={`text-[9px] shrink-0 ${course.status === "published" ? "text-emerald-400/70 border-emerald-500/20" : "text-muted-foreground/40 border-border/15"}`}>
                               {course.status === "published" ? "Publicado" : "Rascunho"}
                             </Badge>
-                          </label>
+                          </div>
                         );
                       })}
                     </div>
