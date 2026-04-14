@@ -4,6 +4,7 @@ import { CardGridSkeleton } from "@/components/LoadingSkeletons";
 import { useQuery } from "@tanstack/react-query";
 import { getMyCoursesData, getRecommendedCourses, getMostAccessedCourses, getFeaturedContent } from "@/lib/my-courses.functions";
 import { getNewCourses } from "@/lib/new-content.functions";
+import { getUserFavoritesCount } from "@/lib/user-library.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { motion } from "framer-motion";
