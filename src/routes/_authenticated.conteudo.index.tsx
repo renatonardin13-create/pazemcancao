@@ -360,8 +360,31 @@ function ContentPage() {
                   lastAccessedId={lastAccessedId}
                   onTrackView={handleTrackView}
                   onTrackDownload={handleTrackDownload}
+                  favoriteIds={favoriteIds}
+                  onToggleFavorite={handleToggleFavorite}
                 />
               )}
+
+              {/* Seus favoritos */}
+              {(() => {
+                const favItems = items.filter((i: any) => favoriteIds.has(i.id));
+                if (favItems.length === 0) return null;
+                return (
+                  <ContentShelf
+                    icon={<Heart className="h-4 w-4 text-red-400/70" />}
+                    title="Seus favoritos"
+                    subtitle="Conteúdos salvos por você"
+                    items={favItems}
+                    hasAccess={hasAccess}
+                    progressMap={progressMap}
+                    lastAccessedId={lastAccessedId}
+                    onTrackView={handleTrackView}
+                    onTrackDownload={handleTrackDownload}
+                    favoriteIds={favoriteIds}
+                    onToggleFavorite={handleToggleFavorite}
+                  />
+                );
+              })()}
 
               {/* Conteúdos em destaque */}
               {featuredItems.length > 0 && (
@@ -375,6 +398,8 @@ function ContentPage() {
                   lastAccessedId={lastAccessedId}
                   onTrackView={handleTrackView}
                   onTrackDownload={handleTrackDownload}
+                  favoriteIds={favoriteIds}
+                  onToggleFavorite={handleToggleFavorite}
                 />
               )}
 
@@ -390,6 +415,8 @@ function ContentPage() {
                   lastAccessedId={lastAccessedId}
                   onTrackView={handleTrackView}
                   onTrackDownload={handleTrackDownload}
+                  favoriteIds={favoriteIds}
+                  onToggleFavorite={handleToggleFavorite}
                 />
               )}
 
