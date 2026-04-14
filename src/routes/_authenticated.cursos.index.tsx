@@ -72,12 +72,16 @@ function MeusCoursosPage() {
   const recommendations = (recData?.recommendations || []).filter((c: any) => !continueIds.has(c.id));
   const trending = trendData?.ranked || [];
 
-  // Hero banner: first in-progress course, or first recommended, or first trending
+  // Hero course — priority: in-progress > recommended > trending > first course
   const heroCourse = useMemo(() => {
-    if (continueItems.length > 0) return { ...continueItems[0], _heroType: "continue" as const };
-    if (recommendations.length > 0) return { ...recommendations[0], _heroType: "recommended" as const };
-    if (trending.length > 0) return { ...trending[0], _heroType: "trending" as const };
-    if (courses.length > 0) return { ...courses[0], _heroType: "course" as const };
+    const inProgressCourse = continueItems[0];
+    if (inProgressCourse) return { ...inProgressCourse, _heroType: 'continue' as const };
+    const rec = recommendations[0];
+    if (rec) return { ...rec, _heroType: 'recommended' as const };
+    const trend = trending[0];
+    if (trend) return { ...trend, _heroType: 'trending' as const };
+    const first = courses[0];
+    if (first) return { ...first, _heroType: 'enrolled' as const };
     return null;
   }, [continueItems, recommendations, trending, courses]);
 
@@ -96,7 +100,111 @@ function MeusCoursosPage() {
     <div className="min-h-screen bg-background flex flex-col">
 
       <main className="flex-1 w-full pb-28">
-        <div className="mx-auto w-full max-w-[1100px] px-4 sm:px-8 lg:px-12 pt-8 sm:pt-12">
+        {/* Hero Banner */}
+        {!isLoading && heroCourse && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            className="relative w-full h-[260px] sm:h-[340px] md:h-[380px] overflow-hidden"
+          >
+            {/* Background image */}
+            {(heroCourse.banner_image_url || heroCourse.cover_image_url) ? (
+              <img
+                src={heroCourse.banner_image_url || heroCourse.cover_image_url}
+                alt={heroCourse.title}
+                className="w-full h-full object-cover scale-105"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-card/30 via-background to-background" />
+            )}
+
+            {/* Cinematic gradient overlays */}
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-transparent" />
+
+            {/* Content */}
+            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 md:px-12 lg:px-16">
+              <div className="max-w-[1100px] mx-auto">
+                {/* Badge */}
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.3 }}
+                  className="mb-3"
+                >
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-gold/10 backdrop-blur-sm px-3 py-1 border border-gold/15 text-[10px] font-bold uppercase tracking-widest text-gold/80">
+                    {heroCourse._heroType === 'continue' && (
+                      <><PlayCircle className="h-3 w-3" /> Continue de onde parou</>
+                    )}
+                    {heroCourse._heroType === 'recommended' && (
+                      <><Sparkles className="h-3 w-3" /> Recomendado para você</>
+                    )}
+                    {heroCourse._heroType === 'trending' && (
+                      <><TrendingUp className="h-3 w-3" /> Em destaque</>
+                    )}
+                    {heroCourse._heroType === 'enrolled' && (
+                      <><Heart className="h-3 w-3" /> Seu curso</>
+                    )}
+                  </span>
+                </motion.div>
+
+                {/* Title */}
+                <motion.h2
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.7, delay: 0.4 }}
+                  className="font-display text-xl sm:text-3xl md:text-4xl font-bold text-foreground/95 tracking-tight mb-2 max-w-lg leading-tight drop-shadow-lg"
+                >
+                  {heroCourse.title}
+                </motion.h2>
+
+                {/* Description */}
+                {heroCourse.short_description && (
+                  <motion.p
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.6, delay: 0.5 }}
+                    className="text-[13px] text-muted-foreground/60 mb-5 max-w-md line-clamp-2 leading-relaxed"
+                  >
+                    {heroCourse.short_description}
+                  </motion.p>
+                )}
+
+                {/* Progress bar for continue */}
+                {heroCourse._heroType === 'continue' && heroCourse.progress_pct > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.5, delay: 0.55 }}
+                    className="flex items-center gap-3 mb-4 max-w-xs"
+                  >
+                    <Progress value={heroCourse.progress_pct} className="h-1.5 flex-1 bg-muted/15" />
+                    <span className="text-[11px] font-bold text-gold/80 tabular-nums">{heroCourse.progress_pct}%</span>
+                  </motion.div>
+                )}
+
+                {/* CTA Button */}
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: 0.6 }}
+                >
+                  <Link
+                    to="/cursos/$courseId"
+                    params={{ courseId: heroCourse.id }}
+                    className="inline-flex items-center gap-2 rounded-xl bg-gold/90 text-background px-6 py-3 text-[12px] font-bold uppercase tracking-wider hover:bg-gold transition-all duration-300 hover:shadow-lg hover:shadow-gold/20"
+                  >
+                    {heroCourse._heroType === 'continue' ? 'Continuar agora' : 'Ver detalhes'}
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </motion.div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        <div className="mx-auto w-full max-w-[1100px] px-4 sm:px-8 lg:px-12 pt-8 sm:pt-10">
           {/* Personalized Greeting */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -106,107 +214,20 @@ function MeusCoursosPage() {
           >
             <div className="flex items-start gap-1.5 mb-1">
               <Heart className="h-4 w-4 text-gold/50 mt-1 flex-shrink-0" />
-              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
+              <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground/90 tracking-tight">
                 Olá, {firstName}.
               </h1>
             </div>
-            <p className="text-[13px] sm:text-sm text-muted-foreground/50 mt-1 ml-[22px] italic leading-relaxed max-w-md">
+            <p className="text-[12px] sm:text-[13px] text-muted-foreground/50 mt-0.5 ml-[22px] italic leading-relaxed max-w-md">
               Que sua jornada hoje seja leve, profunda e cheia de paz.
             </p>
           </motion.div>
-
-          {/* Hero Banner */}
-          {!isLoading && heroCourse && (heroCourse.banner_image_url || heroCourse.cover_image_url) && (
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.08 }}
-              className="mb-8"
-            >
-              <Link
-                to="/cursos/$courseId"
-                params={{ courseId: heroCourse.id }}
-                className="group relative block rounded-2xl overflow-hidden"
-              >
-                {/* Background image */}
-                <div className="relative aspect-[21/9] sm:aspect-[3/1] overflow-hidden">
-                  <img
-                    src={heroCourse.banner_image_url || heroCourse.cover_image_url}
-                    alt={heroCourse.title}
-                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
-                  />
-                  {/* Cinematic gradient */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-
-                  {/* Subtle glow border */}
-                  <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/[0.06] group-hover:ring-gold/15 transition-all duration-500" />
-                </div>
-
-                {/* Content overlay */}
-                <div className="absolute inset-0 flex flex-col justify-end p-5 sm:p-8">
-                  {/* Badge */}
-                  <div className="mb-2 sm:mb-3">
-                    {heroCourse._heroType === "continue" ? (
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-gold/15 backdrop-blur-sm px-3 py-1 border border-gold/15 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-gold/80">
-                        <PlayCircle className="h-3 w-3" />
-                        Continue de onde parou
-                      </span>
-                    ) : heroCourse._heroType === "recommended" ? (
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 backdrop-blur-sm px-3 py-1 border border-primary/15 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-primary/80">
-                        <Sparkles className="h-3 w-3" />
-                        Recomendado para você
-                      </span>
-                    ) : heroCourse._heroType === "trending" ? (
-                      <span className="inline-flex items-center gap-1.5 rounded-full bg-gold/15 backdrop-blur-sm px-3 py-1 border border-gold/15 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-gold/80">
-                        <TrendingUp className="h-3 w-3" />
-                        Em destaque
-                      </span>
-                    ) : null}
-                  </div>
-
-                  {/* Title */}
-                  <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-foreground/95 leading-tight max-w-lg drop-shadow-lg group-hover:text-gold transition-colors duration-500">
-                    {heroCourse.title}
-                  </h2>
-
-                  {/* Description */}
-                  {heroCourse.short_description && (
-                    <p className="mt-1.5 sm:mt-2 text-[12px] sm:text-sm text-muted-foreground/60 max-w-md line-clamp-2 leading-relaxed">
-                      {heroCourse.short_description}
-                    </p>
-                  )}
-
-                  {/* Progress or CTA */}
-                  <div className="mt-3 sm:mt-4 flex items-center gap-4">
-                    {heroCourse._heroType === "continue" && heroCourse.progress_pct > 0 ? (
-                      <>
-                        <div className="flex items-center gap-3 flex-1 max-w-[200px]">
-                          <Progress value={heroCourse.progress_pct} className="h-1.5 flex-1 bg-white/[0.08]" />
-                          <span className="text-[11px] font-bold text-gold/70 tabular-nums">{heroCourse.progress_pct}%</span>
-                        </div>
-                        <span className="inline-flex items-center gap-1.5 rounded-xl bg-gold/20 backdrop-blur-sm px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-gold/90 border border-gold/15 group-hover:bg-gold/30 transition-all duration-300">
-                          <Play className="h-3 w-3 fill-current" />
-                          Continuar
-                        </span>
-                      </>
-                    ) : (
-                      <span className="inline-flex items-center gap-1.5 rounded-xl bg-gold/20 backdrop-blur-sm px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-gold/90 border border-gold/15 group-hover:bg-gold/30 transition-all duration-300">
-                        Ver detalhes
-                        <ArrowRight className="h-3 w-3" />
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </Link>
-            </motion.div>
-          )}
 
           {/* Search bar */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
             className="mb-8"
           >
             <div className="relative max-w-md">
@@ -224,7 +245,7 @@ function MeusCoursosPage() {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
             className="grid grid-cols-3 gap-3 sm:gap-4 mb-10"
           >
             <div className="rounded-xl border border-border/20 bg-card/8 p-4 sm:p-5 text-center">
