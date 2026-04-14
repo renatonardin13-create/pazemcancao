@@ -255,14 +255,14 @@ function ContentPage() {
   return (
     <StudentLayout>
       <div className="min-h-screen bg-background text-foreground">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 py-6 sm:py-10 space-y-10 sm:space-y-14">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8 py-8 sm:py-12 space-y-12 sm:space-y-16">
           {/* Greeting */}
           <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/85 tracking-tight">
               {getGreeting()}
-              {firstName ? `, ${firstName}` : ""} 👋
+              {firstName ? `, ${firstName}` : ""}
             </h1>
-            <p className="mt-1.5 text-sm text-muted-foreground/60">
+            <p className="mt-2 text-[13px] text-muted-foreground/45 font-light leading-relaxed">
               Sua jornada espiritual continua aqui
             </p>
           </div>
@@ -456,11 +456,12 @@ function ContentPage() {
 
 function SectionHeader({ title, count }: { title: string; count: number }) {
   return (
-    <div className="flex items-baseline gap-3">
-      <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
+    <div className="flex items-center gap-3">
+      <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
         {title}
       </h2>
-      <span className="text-xs text-muted-foreground/50">
+      <div className="flex-1 h-px bg-gradient-to-r from-border/10 to-transparent" />
+      <span className="text-[11px] text-muted-foreground/35 tracking-wider">
         {count} conteúdo{count > 1 ? "s" : ""}
       </span>
     </div>
