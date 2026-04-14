@@ -584,12 +584,12 @@ function AdminUsersPage() {
                 </div>
 
                 {/* Cursos */}
-                <span className="text-sm text-foreground/60 text-center font-medium">0</span>
+                <span className="text-sm text-foreground/60 text-center font-medium">{buyer.course_count ?? 0}</span>
 
                 {/* Progresso */}
                 <div className="flex items-center gap-2">
-                  <Progress value={0} className="h-1.5 flex-1 bg-muted/20" />
-                  <span className="text-[11px] text-muted-foreground/40 tabular-nums w-8 text-right">0%</span>
+                  <Progress value={buyer.progress_pct ?? 0} className="h-1.5 flex-1 bg-muted/20" />
+                  <span className="text-[11px] text-muted-foreground/40 tabular-nums w-8 text-right">{buyer.progress_pct ?? 0}%</span>
                 </div>
 
                 {/* Último Acesso */}
