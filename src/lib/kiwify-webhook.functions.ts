@@ -430,7 +430,6 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
           }
         }
         linkedCourseId = resolvedCourseId;
-        }
       } else if (externalProductId) {
         // Product ID was in payload but no matching integration found
         console.warn(`[webhook] PRODUCT_NOT_FOUND: product_id="${externalProductId}", platform="${payloadPlatform}", email="${customerEmail}"`);
