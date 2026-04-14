@@ -182,7 +182,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md bg-card border-border/20">
         <DialogHeader>
-          <DialogTitle className="text-foreground/85">Editar Música</DialogTitle>
+          <DialogTitle className="text-foreground">Editar Música</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4 pt-2">
@@ -197,7 +197,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
           {/* Cover */}
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+            <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
               Capa
             </Label>
             <ImageFieldHint ratio="1:1" recommendedSize="500x500" file={coverFile} previewUrl={coverPreview} />
@@ -236,7 +236,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
                     disabled={isSubmitting}
                   />
                 </label>
-                <p className="text-[9px] text-muted-foreground/25 mt-1">
+                <p className="text-[11px] text-muted-foreground/25 mt-1">
                   Formato quadrado 1:1
                 </p>
               </div>
@@ -245,7 +245,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
           {/* Title */}
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+            <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
               Título
             </Label>
             <Input
@@ -258,7 +258,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
           {/* Category */}
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+            <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
               Categoria
             </Label>
             <Select value={category} onValueChange={setCategory} disabled={isSubmitting}>
@@ -275,7 +275,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
           {/* Description */}
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+            <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
               Descrição
             </Label>
             <Textarea
@@ -291,7 +291,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Gift className="h-4 w-4 text-amber-400/60" />
-                <Label className="text-[12px] font-semibold text-foreground/70">
+                <Label className="text-sm font-semibold text-foreground/90">
                   Música Bônus
                 </Label>
               </div>
@@ -303,7 +303,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
             </div>
             {isBonus && (
               <div className="space-y-2">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+                <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
                   Liberar em quantos dias?
                 </Label>
                 <div className="flex items-center gap-2">
@@ -320,11 +320,11 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
                   <span className="text-xs text-muted-foreground/40">dias</span>
                 </div>
                 {bonusDays && parseInt(bonusDays) > 0 && (
-                  <p className="text-[10px] text-amber-400/50">
+                  <p className="text-xs text-amber-400/50">
                     📅 Será liberada em {new Date(Date.now() + parseInt(bonusDays) * 86400000).toLocaleDateString("pt-BR")}
                   </p>
                 )}
-                <p className="text-[9px] text-muted-foreground/30">
+                <p className="text-[11px] text-muted-foreground/30">
                   A música ficará bloqueada por esse período. Se não definir, ficará bloqueada indefinidamente.
                 </p>
               </div>

@@ -375,8 +375,8 @@ function AdminUsersPage() {
               <div className="space-y-4 mt-4">
                 <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-center">
                   <KeyRound className="h-8 w-8 text-emerald-400/60 mx-auto mb-3" />
-                  <p className="text-sm font-semibold text-foreground/80 mb-1">Aluno cadastrado!</p>
-                  <p className="text-[12px] text-muted-foreground/50 mb-4">Envie a senha abaixo para o aluno acessar:</p>
+                  <p className="text-sm font-semibold text-foreground/95 mb-1">Aluno cadastrado!</p>
+                  <p className="text-sm text-muted-foreground/50 mb-4">Envie a senha abaixo para o aluno acessar:</p>
                   <div className="flex items-center gap-2 justify-center">
                     <code className="rounded-lg bg-card/20 border border-border/20 px-4 py-2 text-lg font-mono font-bold text-gold tracking-wider">
                       {addPassword}
@@ -414,7 +414,7 @@ function AdminUsersPage() {
                 </div>
                 <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
                   <div>
-                    <p className="text-sm font-medium text-foreground/70">Status</p>
+                    <p className="text-sm font-medium text-foreground/90">Status</p>
                     <p className="text-[11px] text-muted-foreground/40">
                       {addEnabled ? "Ativo — aluno pode acessar a plataforma" : "Inativo — acesso bloqueado"}
                     </p>
@@ -428,7 +428,7 @@ function AdminUsersPage() {
                   </Label>
                   {courses.length === 0 ? (
                     <div className="rounded-xl border border-border/10 bg-muted/5 p-4 text-center">
-                      <p className="text-[12px] text-muted-foreground/40">Nenhum curso cadastrado ainda.</p>
+                      <p className="text-sm text-muted-foreground/40">Nenhum curso cadastrado ainda.</p>
                     </div>
                   ) : (
                     <div className="rounded-xl border border-border/10 bg-muted/5 max-h-48 overflow-y-auto divide-y divide-border/5">
@@ -438,9 +438,9 @@ function AdminUsersPage() {
                           <div key={course.id} role="button" tabIndex={0} onClick={() => toggleCourseSelection(course.id)} onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); toggleCourseSelection(course.id); }}} className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors hover:bg-muted/10 ${isSelected ? "bg-gold/5" : ""}`}>
                             <Checkbox checked={isSelected} onCheckedChange={() => toggleCourseSelection(course.id)} onClick={(e) => e.stopPropagation()} />
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-foreground/70 truncate">{course.title}</p>
+                              <p className="text-sm font-medium text-foreground/90 truncate">{course.title}</p>
                             </div>
-                            <Badge variant="outline" className={`text-[9px] shrink-0 ${course.status === "published" ? "text-emerald-400/70 border-emerald-500/20" : "text-muted-foreground/40 border-border/15"}`}>
+                            <Badge variant="outline" className={`text-[11px] shrink-0 ${course.status === "published" ? "text-emerald-400/70 border-emerald-500/20" : "text-muted-foreground/40 border-border/15"}`}>
                               {course.status === "published" ? "Publicado" : "Rascunho"}
                             </Badge>
                           </div>
@@ -452,7 +452,7 @@ function AdminUsersPage() {
                     <p className="text-[11px] text-gold/60">{addCourseIds.length} curso(s) selecionado(s)</p>
                   )}
                 </div>
-                <Button type="submit" className="w-full bg-gold/90 text-gold-foreground hover:bg-gold" disabled={addStudentMut.isPending}>
+                <Button type="submit" className="w-full bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10" disabled={addStudentMut.isPending}>
                   {addStudentMut.isPending ? "Salvando..." : "Adicionar Aluno"}
                 </Button>
               </form>
@@ -561,7 +561,7 @@ function AdminUsersPage() {
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gold/15 text-sm font-bold text-gold shrink-0">
                     {(buyer.nome || buyer.email).slice(0, 1).toUpperCase()}
                   </div>
-                  <span className="text-sm font-semibold text-foreground/85 truncate">
+                  <span className="text-sm font-semibold text-foreground truncate">
                     {buyer.nome || "Sem nome"}
                   </span>
                 </div>
@@ -574,15 +574,15 @@ function AdminUsersPage() {
                 {/* Status */}
                 <div>
                   {!isEnabledBuyer ? (
-                    <Badge className="bg-destructive/15 text-destructive/80 border-0 text-[10px] font-semibold">
+                    <Badge className="bg-destructive/15 text-destructive/80 border-0 text-xs font-semibold">
                       Bloqueado
                     </Badge>
                   ) : isTrial && expired ? (
-                    <Badge className="bg-amber-500/15 text-amber-400/80 border-0 text-[10px] font-semibold">
+                    <Badge className="bg-amber-500/15 text-amber-400/80 border-0 text-xs font-semibold">
                       Expirado
                     </Badge>
                   ) : (
-                    <Badge className="bg-emerald-500/15 text-emerald-400/80 border-0 text-[10px] font-semibold">
+                    <Badge className="bg-emerald-500/15 text-emerald-400/80 border-0 text-xs font-semibold">
                       Ativo
                     </Badge>
                   )}
@@ -598,7 +598,7 @@ function AdminUsersPage() {
                 </div>
 
                 {/* Último Acesso */}
-                <span className="text-[12px] text-muted-foreground/40">
+                <span className="text-sm text-muted-foreground/40">
                   {buyer.last_login_at ? formatDate(buyer.last_login_at) : "Nunca"}
                 </span>
 
@@ -653,7 +653,7 @@ function AdminUsersPage() {
           <button
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
             disabled={currentPage === 1}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/40 hover:text-foreground/70 hover:bg-muted/15 disabled:opacity-25 transition-all"
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/40 hover:text-foreground/90 hover:bg-muted/15 disabled:opacity-25 transition-all"
           >
             <ChevronLeft className="h-4 w-4" />
           </button>
@@ -664,7 +664,7 @@ function AdminUsersPage() {
               className={`flex h-9 w-9 items-center justify-center rounded-lg text-sm font-medium transition-all ${
                 page === currentPage
                   ? "bg-gold/90 text-gold-foreground"
-                  : "text-muted-foreground/50 hover:text-foreground/70 hover:bg-muted/15"
+                  : "text-muted-foreground/50 hover:text-foreground/90 hover:bg-muted/15"
               }`}
             >
               {page}
@@ -673,7 +673,7 @@ function AdminUsersPage() {
           <button
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
             disabled={currentPage === totalPages}
-            className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/40 hover:text-foreground/70 hover:bg-muted/15 disabled:opacity-25 transition-all"
+            className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground/40 hover:text-foreground/90 hover:bg-muted/15 disabled:opacity-25 transition-all"
           >
             <ChevronRight className="h-4 w-4" />
           </button>
@@ -716,7 +716,7 @@ function AdminUsersPage() {
               <div className="space-y-2">
                 <Label>Cursos Liberados</Label>
                 {courses.length === 0 ? (
-                  <p className="text-[12px] text-muted-foreground/40 py-2">Nenhum curso cadastrado.</p>
+                  <p className="text-sm text-muted-foreground/40 py-2">Nenhum curso cadastrado.</p>
                 ) : (
                   <div className="rounded-xl border border-border/10 bg-muted/5 max-h-48 overflow-y-auto divide-y divide-border/5">
                     {courses.map((course: any) => {
@@ -749,7 +749,7 @@ function AdminUsersPage() {
                               }
                             }}
                           />
-                          <span className="text-sm text-foreground/70 truncate">{course.title}</span>
+                          <span className="text-sm text-foreground/90 truncate">{course.title}</span>
                         </label>
                       );
                     })}
@@ -763,7 +763,7 @@ function AdminUsersPage() {
                 <Button type="button" variant="outline" className="flex-1" onClick={() => setEditOpen(false)}>
                   Cancelar
                 </Button>
-                <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" disabled={update.isPending}>
+                <Button type="submit" className="flex-1 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10" disabled={update.isPending}>
                   {update.isPending ? "Salvando..." : "Salvar Alterações"}
                 </Button>
               </div>
@@ -785,8 +785,8 @@ function AdminUsersPage() {
             <div className="space-y-4 mt-4">
               <div className="rounded-xl bg-emerald-500/10 border border-emerald-500/20 p-4 text-center">
                 <KeyRound className="h-8 w-8 text-emerald-400/60 mx-auto mb-3" />
-                <p className="text-sm font-semibold text-foreground/80 mb-1">Cliente cadastrado!</p>
-                <p className="text-[12px] text-muted-foreground/50 mb-4">Envie a senha abaixo para o cliente acessar:</p>
+                <p className="text-sm font-semibold text-foreground/95 mb-1">Cliente cadastrado!</p>
+                <p className="text-sm text-muted-foreground/50 mb-4">Envie a senha abaixo para o cliente acessar:</p>
                 <div className="flex items-center gap-2 justify-center">
                   <code className="rounded-lg bg-card/20 border border-border/20 px-4 py-2 text-lg font-mono font-bold text-gold tracking-wider">
                     {generatedPassword}
@@ -852,9 +852,9 @@ function AdminUsersPage() {
                     </p>
                     <div className="mt-1">
                       {!detailBuyer.access_enabled ? (
-                        <Badge className="bg-destructive/15 text-destructive/80 border-0 text-[10px]">Bloqueado</Badge>
+                        <Badge className="bg-destructive/15 text-destructive/80 border-0 text-xs">Bloqueado</Badge>
                       ) : (
-                        <Badge className="bg-emerald-500/15 text-emerald-400/80 border-0 text-[10px]">Ativo</Badge>
+                        <Badge className="bg-emerald-500/15 text-emerald-400/80 border-0 text-xs">Ativo</Badge>
                       )}
                     </div>
                   </div>
@@ -866,7 +866,7 @@ function AdminUsersPage() {
                       <Calendar className="h-3 w-3" />
                       Cadastrado em
                     </p>
-                    <p className="text-sm font-semibold text-foreground/80">
+                    <p className="text-sm font-semibold text-foreground/95">
                       {detailBuyer.created_at
                         ? new Date(detailBuyer.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })
                         : "—"}
@@ -877,7 +877,7 @@ function AdminUsersPage() {
                       <Clock className="h-3 w-3" />
                       Último acesso
                     </p>
-                    <p className="text-sm font-semibold text-foreground/80">
+                    <p className="text-sm font-semibold text-foreground/95">
                       {detailBuyer.last_login_at ? formatDate(detailBuyer.last_login_at) : "Nunca"}
                     </p>
                   </div>
@@ -886,7 +886,7 @@ function AdminUsersPage() {
                       <BookOpen className="h-3 w-3" />
                       Cursos liberados
                     </p>
-                    <p className="text-sm font-semibold text-foreground/80">
+                    <p className="text-sm font-semibold text-foreground/95">
                       {detailLoading ? "..." : studentDetail?.enrolledCount ?? 0}
                     </p>
                   </div>
@@ -895,7 +895,7 @@ function AdminUsersPage() {
                       <TrendingUp className="h-3 w-3" />
                       Progresso geral
                     </p>
-                    <p className="text-sm font-semibold text-foreground/80">
+                    <p className="text-sm font-semibold text-foreground/95">
                       {detailLoading ? "..." : `${studentDetail?.overallProgress ?? 0}%`}
                     </p>
                   </div>
@@ -926,7 +926,7 @@ function AdminUsersPage() {
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-foreground/80 truncate">{course.title}</p>
+                          <p className="text-sm font-medium text-foreground/95 truncate">{course.title}</p>
                           <p className="text-[11px] text-muted-foreground/40">
                             {course.hasAccess ? "Com acesso" : "Sem acesso"}
                           </p>
@@ -952,8 +952,8 @@ function AdminUsersPage() {
               <TabsContent value="progress" className="mt-4 space-y-4">
                 <div className="rounded-xl border border-border/15 bg-card/8 p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <p className="text-sm font-semibold text-foreground/80">Progresso Geral</p>
-                    <span className="text-sm font-bold text-foreground/70">
+                    <p className="text-sm font-semibold text-foreground/95">Progresso Geral</p>
+                    <span className="text-sm font-bold text-foreground/90">
                       {detailLoading ? "..." : `${studentDetail?.overallProgress ?? 0}%`}
                     </span>
                   </div>
@@ -978,8 +978,8 @@ function AdminUsersPage() {
                       {enrolled.map((course: any) => (
                         <div key={course.id} className="rounded-xl border border-border/15 bg-card/8 p-4">
                           <div className="flex items-center justify-between mb-2">
-                            <p className="text-sm font-medium text-foreground/80 truncate">{course.title}</p>
-                            <span className="text-[12px] text-muted-foreground/50 shrink-0 ml-2">{course.progressPct}%</span>
+                            <p className="text-sm font-medium text-foreground/95 truncate">{course.title}</p>
+                            <span className="text-sm text-muted-foreground/50 shrink-0 ml-2">{course.progressPct}%</span>
                           </div>
                           <Progress value={course.progressPct} className="h-1.5 bg-muted/20" />
                           <p className="text-[11px] text-muted-foreground/40 mt-1.5">
@@ -1014,7 +1014,7 @@ function AdminUsersPage() {
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-semibold text-foreground/90 truncate">{accessBuyer.nome || "Sem nome"}</p>
-                  <p className="text-[12px] text-muted-foreground/50">{accessBuyer.email}</p>
+                  <p className="text-sm text-muted-foreground/50">{accessBuyer.email}</p>
                 </div>
               </div>
 
@@ -1076,9 +1076,9 @@ function AdminUsersPage() {
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground/80 truncate">{course.title}</p>
+                        <p className="text-sm font-medium text-foreground/95 truncate">{course.title}</p>
                         <Badge
-                          className={`text-[9px] mt-0.5 border-0 ${
+                          className={`text-[11px] mt-0.5 border-0 ${
                             course.hasAccess
                               ? "bg-emerald-500/15 text-emerald-400/80"
                               : "bg-muted/20 text-muted-foreground/50"
@@ -1106,7 +1106,7 @@ function AdminUsersPage() {
 
               {/* Footer */}
               <div className="flex items-center justify-between pt-2 border-t border-border/10">
-                <p className="text-[12px] text-gold/60">
+                <p className="text-sm text-gold/60">
                   <span className="font-semibold">{accessDetail?.enrolledCount ?? 0}</span> de{" "}
                   {accessDetail?.courses?.length ?? 0} cursos liberados
                 </p>
@@ -1123,10 +1123,10 @@ function AdminUsersPage() {
       <AlertDialog open={!!deleteTarget} onOpenChange={(v) => { if (!v) setDeleteTarget(null); }}>
         <AlertDialogContent className="bg-card border-border/20">
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-foreground/85">Excluir aluno</AlertDialogTitle>
+            <AlertDialogTitle className="text-foreground">Excluir aluno</AlertDialogTitle>
             <AlertDialogDescription className="text-muted-foreground/50">
               Tem certeza que deseja excluir{" "}
-              <span className="font-semibold text-foreground/70">{deleteTarget?.nome || deleteTarget?.email}</span>?
+              <span className="font-semibold text-foreground/90">{deleteTarget?.nome || deleteTarget?.email}</span>?
               Esta ação não pode ser desfeita.
             </AlertDialogDescription>
           </AlertDialogHeader>

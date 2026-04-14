@@ -116,6 +116,20 @@
 
   h1, h2, h3 {
     text-wrap: balance;
+    font-family: var(--font-display);
+  }
+
+  h1 {
+    font-weight: 900;
+    letter-spacing: -0.02em;
+  }
+
+  h2 {
+    font-weight: 700;
+  }
+
+  h3 {
+    font-weight: 600;
   }
 
   /* Scrollbar — quase invisível */

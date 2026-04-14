@@ -71,15 +71,15 @@ export function GlobalPlayer() {
           </div>
 
           <div className="min-w-0">
-            <p className="text-[12px] sm:text-[13px] font-semibold text-foreground/80 truncate leading-tight">
+            <p className="text-sm sm:text-[13px] font-semibold text-foreground/95 truncate leading-tight">
               {currentTrack.title}
             </p>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-[9px] sm:text-[10px] text-muted-foreground/30">{currentTrack.category}</span>
+              <span className="text-[11px] sm:text-xs text-muted-foreground/30">{currentTrack.category}</span>
               {hasQueue && (
                 <>
-                  <span className="text-[9px] sm:text-[10px] text-border/20">·</span>
-                  <span className="text-[9px] sm:text-[10px] text-gold/40 tabular-nums">{queueIndex + 1}/{queue.length}</span>
+                  <span className="text-[11px] sm:text-xs text-border/20">·</span>
+                  <span className="text-[11px] sm:text-xs text-gold/40 tabular-nums">{queueIndex + 1}/{queue.length}</span>
                 </>
               )}
             </div>
@@ -87,7 +87,7 @@ export function GlobalPlayer() {
         </div>
 
         {/* Time */}
-        <div className="hidden sm:flex items-center gap-1 text-[10px] text-muted-foreground/30 tabular-nums shrink-0">
+        <div className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground/30 tabular-nums shrink-0">
           <span>{formatSecs(currentTime)}</span>
           <span className="text-border/15">/</span>
           <span>{duration > 0 ? formatSecs(duration) : currentTrack.duration}</span>

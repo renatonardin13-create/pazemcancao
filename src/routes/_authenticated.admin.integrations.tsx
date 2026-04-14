@@ -111,7 +111,7 @@ function IntegrationsPage() {
                         {format(new Date(log.created_at), "dd/MM HH:mm")}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="text-[10px]">
+                        <Badge variant="outline" className="text-xs">
                           {log.event_type || "—"}
                         </Badge>
                       </TableCell>
@@ -119,7 +119,7 @@ function IntegrationsPage() {
                       <TableCell>
                         <Badge
                           variant="outline"
-                          className={`text-[10px] ${
+                          className={`text-xs ${
                             log.response_status === 200
                               ? "border-emerald-500/30 text-emerald-400"
                               : "border-red-500/30 text-red-400"
@@ -209,7 +209,7 @@ function IntegrationsPage() {
                       <TableRow key={integ.id} className="border-border/10">
                         <TableCell className="font-medium">{integ.courseTitle}</TableCell>
                         <TableCell>
-                          <Badge variant="outline" className={`text-[10px] ${pc.bg}`}>
+                          <Badge variant="outline" className={`text-xs ${pc.bg}`}>
                             {integ.platform.charAt(0).toUpperCase() + integ.platform.slice(1)}
                           </Badge>
                         </TableCell>
@@ -220,7 +220,7 @@ function IntegrationsPage() {
                         <TableCell>
                           <Badge
                             variant="outline"
-                            className={`text-[10px] ${
+                            className={`text-xs ${
                               integ.webhookActive && integ.isEnabled
                                 ? "border-emerald-500/30 text-emerald-400"
                                 : "border-red-500/30 text-red-400"
@@ -259,7 +259,7 @@ function IntegrationsPage() {
           <div className="mt-4 flex items-center gap-2 rounded-lg bg-muted/10 border border-border/15 px-4 py-3">
             <Lightbulb className="h-4 w-4 text-amber-400 shrink-0" />
             <p className="text-xs text-muted-foreground">
-              Configure webhooks na aba <span className="font-semibold text-foreground/70">Configurações</span> de cada curso
+              Configure webhooks na aba <span className="font-semibold text-foreground/90">Configurações</span> de cada curso
             </p>
           </div>
         </CardContent>
@@ -292,7 +292,7 @@ function IntegrationsPage() {
                 </ol>
                 <div className="mt-4 rounded-lg bg-muted/10 border border-border/15 px-4 py-2.5">
                   <p className="text-xs text-muted-foreground">
-                    <span className="font-semibold text-foreground/70">Dica:</span> O email do comprador virá no campo <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">buyer.email</code>
+                    <span className="font-semibold text-foreground/90">Dica:</span> O email do comprador virá no campo <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">buyer.email</code>
                   </p>
                 </div>
               </AccordionContent>
@@ -316,7 +316,7 @@ function IntegrationsPage() {
                 </ol>
                 <div className="mt-4 rounded-lg bg-muted/10 border border-border/15 px-4 py-2.5">
                   <p className="text-xs text-muted-foreground">
-                    <span className="font-semibold text-foreground/70">Dica:</span> O email virá em <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">Customer.email</code>
+                    <span className="font-semibold text-foreground/90">Dica:</span> O email virá em <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">Customer.email</code>
                   </p>
                 </div>
               </AccordionContent>
@@ -340,7 +340,7 @@ function IntegrationsPage() {
                 </ol>
                 <div className="mt-4 rounded-lg bg-muted/10 border border-border/15 px-4 py-2.5">
                   <p className="text-xs text-muted-foreground">
-                    <span className="font-semibold text-foreground/70">Dica:</span> O email do comprador virá no campo de dados do cliente
+                    <span className="font-semibold text-foreground/90">Dica:</span> O email do comprador virá no campo de dados do cliente
                   </p>
                 </div>
               </AccordionContent>

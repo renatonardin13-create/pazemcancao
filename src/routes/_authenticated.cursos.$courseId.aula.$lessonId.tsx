@@ -83,7 +83,7 @@ function LessonDetailPage() {
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
           <div className="w-px h-12 mx-auto bg-gradient-to-b from-transparent via-gold/20 to-transparent animate-pulse mb-4" />
-          <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+          <p className="text-[11px] uppercase tracking-widest text-muted-foreground/25 animate-pulse">
             Carregando aula...
           </p>
         </div>
@@ -218,7 +218,7 @@ function LessonDetailPage() {
               {completedCount}/{totalLessons} aulas
             </span>
             <Progress value={progressPercent} className="h-1.5 w-20 sm:w-28" />
-            <span className="text-[12px] font-bold text-gold/60 tabular-nums">
+            <span className="text-sm font-bold text-gold/60 tabular-nums">
               {progressPercent}%
             </span>
           </div>
@@ -240,7 +240,7 @@ function LessonDetailPage() {
                 <div className="mx-auto mb-6 h-20 w-20 rounded-2xl bg-gold/10 border border-gold/15 flex items-center justify-center">
                   <BookOpen className="h-8 w-8 text-gold/40" />
                 </div>
-                <h1 className="font-display text-2xl font-bold tracking-tight text-foreground/85 mb-3">
+                <h1 className="font-display text-2xl font-bold tracking-tight text-foreground mb-3">
                   Aula bloqueada
                 </h1>
                 <p className="text-[14px] leading-relaxed text-muted-foreground/45 mb-6">
@@ -252,7 +252,7 @@ function LessonDetailPage() {
                       href={checkoutUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 rounded-xl bg-gold/90 text-gold-foreground px-6 py-3 text-[12px] font-bold uppercase tracking-wider hover:bg-gold transition-colors"
+                      className="inline-flex items-center gap-2 rounded-xl bg-gold/90 text-gold-foreground px-6 py-3 text-sm font-bold uppercase tracking-wider hover:bg-gold transition-colors"
                     >
                       <Sparkles className="h-4 w-4" />
                       Desbloquear curso
@@ -261,7 +261,7 @@ function LessonDetailPage() {
                   <Link
                     to="/cursos/$courseId"
                     params={{ courseId }}
-                    className="inline-flex items-center gap-2 rounded-xl border border-border/15 bg-card/10 px-5 py-3 text-[12px] font-semibold text-muted-foreground/50 hover:text-foreground/70 transition-colors"
+                    className="inline-flex items-center gap-2 rounded-xl border border-border/15 bg-card/10 px-5 py-3 text-sm font-semibold text-muted-foreground/50 hover:text-foreground/90 transition-colors"
                   >
                     <ChevronLeft className="h-4 w-4" />
                     Voltar ao curso
@@ -370,7 +370,7 @@ function LessonDetailPage() {
                   Esta aula contém um link externo
                 </p>
                 <Button
-                  className="gap-2 bg-gold/90 text-gold-foreground hover:bg-gold"
+                  className="gap-2 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10"
                   onClick={() => window.open(contentUrl, "_blank")}
                 >
                   <ExternalLink className="h-4 w-4" />
@@ -395,7 +395,7 @@ function LessonDetailPage() {
                   Material disponível para download
                 </p>
                 <Button
-                  className="gap-2 bg-gold/90 text-gold-foreground hover:bg-gold"
+                  className="gap-2 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10"
                   onClick={() => handleDownload(contentUrl, lesson.title)}
                 >
                   <Download className="h-4 w-4" />
@@ -448,7 +448,7 @@ function LessonDetailPage() {
                   {lesson.is_free_preview && (
                     <Badge
                       variant="outline"
-                      className="text-[9px] text-gold/50 border-gold/15"
+                      className="text-[11px] text-gold/50 border-gold/15"
                     >
                       Preview gratuito
                     </Badge>
@@ -487,7 +487,7 @@ function LessonDetailPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 gap-1.5 text-[10px] text-gold/50 hover:text-gold/80"
+                            className="h-8 gap-1.5 text-xs text-gold/50 hover:text-gold/80"
                             onClick={() => window.open(mat.url, "_blank")}
                           >
                             <ExternalLink className="h-3 w-3" />
@@ -497,7 +497,7 @@ function LessonDetailPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 gap-1.5 text-[10px] text-gold/50 hover:text-gold/80"
+                            className="h-8 gap-1.5 text-xs text-gold/50 hover:text-gold/80"
                             onClick={() => handleDownload(mat.url, mat.title)}
                           >
                             <Download className="h-3 w-3" />
@@ -518,7 +518,7 @@ function LessonDetailPage() {
           {/* Progress card */}
           <div className="p-5 border-b border-border/8">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[12px] font-semibold text-muted-foreground/50">
+              <span className="text-sm font-semibold text-muted-foreground/50">
                 Seu Progresso
               </span>
               <span className="font-display text-2xl font-bold text-gold">
@@ -616,7 +616,7 @@ function LessonDetailPage() {
               <Link
                 to="/cursos/$courseId/aula/$lessonId"
                 params={{ courseId, lessonId: prevLesson.id }}
-                className="flex items-center gap-2 rounded-xl border border-border/15 bg-card/8 px-4 py-2.5 text-[12px] font-medium text-muted-foreground/50 hover:bg-card/20 hover:text-foreground/70 transition-all"
+                className="flex items-center gap-2 rounded-xl border border-border/15 bg-card/8 px-4 py-2.5 text-sm font-medium text-muted-foreground/50 hover:bg-card/20 hover:text-foreground/90 transition-all"
               >
                 <ArrowLeft className="h-3.5 w-3.5" />
                 <span className="hidden sm:inline truncate max-w-[120px]">Aula Anterior</span>
@@ -638,10 +638,10 @@ function LessonDetailPage() {
                   }
                 }}
                 disabled={progressMutation.isPending || isCompleted}
-                className={`gap-2 px-6 text-[12px] font-bold uppercase tracking-wider ${
+                className={`gap-2 px-6 text-sm font-bold uppercase tracking-wider ${
                   isCompleted
                     ? "bg-emerald-500/15 text-emerald-400/70 border border-emerald-500/15 hover:bg-emerald-500/20"
-                    : "bg-gold/90 text-gold-foreground hover:bg-gold"
+                    : "bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10"
                 }`}
                 variant={isCompleted ? "outline" : "default"}
               >
@@ -658,7 +658,7 @@ function LessonDetailPage() {
               <Link
                 to="/cursos/$courseId/aula/$lessonId"
                 params={{ courseId, lessonId: nextLesson.id }}
-                className="flex items-center gap-2 rounded-xl border border-gold/20 bg-gold/[0.08] px-4 py-2.5 text-[12px] font-medium text-gold/70 hover:bg-gold/15 hover:text-gold transition-all"
+                className="flex items-center gap-2 rounded-xl border border-gold/20 bg-gold/[0.08] px-4 py-2.5 text-sm font-medium text-gold/70 hover:bg-gold/15 hover:text-gold transition-all"
               >
                 <span className="hidden sm:inline truncate max-w-[120px]">Próxima Aula</span>
                 <span className="sm:hidden">Próxima</span>
@@ -696,10 +696,10 @@ function ModuleSection({
       <CollapsibleTrigger asChild>
         <button className="flex items-center gap-3 w-full px-5 py-3.5 text-left hover:bg-card/8 transition-colors group">
           <div className="flex-1 min-w-0">
-            <p className="text-[12px] font-semibold text-foreground/70 truncate">
+            <p className="text-sm font-semibold text-foreground/90 truncate">
               {title}
             </p>
-            <p className="text-[10px] text-muted-foreground/35 mt-0.5">
+            <p className="text-xs text-muted-foreground/35 mt-0.5">
               {completedCount}/{totalCount} concluídas
             </p>
           </div>
@@ -751,7 +751,7 @@ function LessonSidebarItem({
       </div>
       <div className="flex-1 min-w-0">
         <p
-          className={`text-[12px] font-medium truncate ${
+          className={`text-sm font-medium truncate ${
             isActive
               ? "text-gold/80"
               : isCompleted
@@ -762,7 +762,7 @@ function LessonSidebarItem({
           {lesson.title}
         </p>
         {lesson.duration && lesson.duration !== "0:00" && (
-          <span className="text-[10px] text-muted-foreground/25">
+          <span className="text-xs text-muted-foreground/25">
             {lesson.duration}
           </span>
         )}

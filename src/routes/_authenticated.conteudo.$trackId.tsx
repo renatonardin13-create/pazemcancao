@@ -83,7 +83,7 @@ function TrackDetailPage() {
       >
         <Link
           to="/downloads"
-          className="group flex items-center gap-2.5 text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/30 hover:text-gold/50 transition-colors duration-500"
+          className="group flex items-center gap-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground/30 hover:text-gold/50 transition-colors duration-500"
         >
           <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-x-1" />
           Biblioteca
@@ -108,7 +108,7 @@ function TrackDetailPage() {
               <Music className={`h-12 w-12 sm:h-16 sm:w-16 transition-colors duration-700 ${
                 isPlaying ? "text-gold/50" : "text-muted-foreground/15"
               }`} />
-              <span className={`absolute bottom-3 right-4 text-[10px] font-bold tracking-[0.2em] transition-colors duration-500 ${
+              <span className={`absolute bottom-3 right-4 text-xs font-bold tracking-wide transition-colors duration-500 ${
                 isPlaying ? "text-gold/30" : "text-muted-foreground/10"
               }`}>
                 {String(track.id).padStart(2, "0")}
@@ -117,7 +117,7 @@ function TrackDetailPage() {
           </motion.div>
 
           <motion.div variants={fadeUp} custom={0.15}>
-            <span className="inline-block rounded-full bg-gold/[0.06] border border-gold/10 px-4 py-1.5 text-[9px] font-semibold uppercase tracking-[0.4em] text-gold/45 mb-6">
+            <span className="inline-block rounded-full bg-gold/[0.06] border border-gold/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-gold/45 mb-6">
               {track.category}
             </span>
           </motion.div>
@@ -130,7 +130,7 @@ function TrackDetailPage() {
             {track.title}
           </motion.h1>
 
-          <motion.p variants={fadeUp} custom={0.35} className="mt-4 text-[11px] tracking-[0.3em] text-muted-foreground/25 font-medium">
+          <motion.p variants={fadeUp} custom={0.35} className="mt-4 text-[11px] tracking-wider text-muted-foreground/25 font-medium">
             {track.duration}
           </motion.p>
 
@@ -149,7 +149,7 @@ function TrackDetailPage() {
           <motion.div variants={fadeUp} custom={0.65} className="mt-12 w-full max-w-sm">
             <button
               onClick={() => toggle(track)}
-              className={`group w-full flex items-center justify-center gap-3 rounded-full py-5 text-[12px] font-bold tracking-[0.25em] uppercase transition-all duration-700 active:scale-[0.97] ${
+              className={`group w-full flex items-center justify-center gap-3 rounded-full py-5 text-sm font-bold tracking-[0.25em] uppercase transition-all duration-700 active:scale-[0.97] ${
                 isPlaying
                   ? "bg-gold/25 text-gold border border-gold/30 shadow-[0_0_50px_-12px] shadow-gold/20"
                   : "bg-gold/15 text-gold/70 border border-gold/20 hover:bg-gold/25 hover:text-gold hover:shadow-[0_0_50px_-12px] hover:shadow-gold/15"
@@ -183,7 +183,7 @@ function TrackDetailPage() {
 
             <button
               onClick={handleDownload}
-              className="mt-5 w-full flex items-center justify-center gap-2.5 rounded-full py-4 text-[11px] font-semibold tracking-[0.2em] uppercase text-muted-foreground/30 border border-border/8 hover:text-gold/50 hover:border-gold/15 hover:bg-gold/[0.03] transition-all duration-500"
+              className="mt-5 w-full flex items-center justify-center gap-2.5 rounded-full py-4 text-[11px] font-semibold tracking-wide uppercase text-muted-foreground/30 border border-border/8 hover:text-gold/50 hover:border-gold/15 hover:bg-gold/[0.03] transition-all duration-500"
             >
               <Download className="h-3.5 w-3.5" />
               Baixar Louvor
@@ -207,10 +207,10 @@ function TrackDetailPage() {
                   params={{ trackId: String(prevTrack.id) }}
                   className="group flex flex-col items-start gap-1 max-w-[45%]"
                 >
-                  <span className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground/20 group-hover:text-gold/30 transition-colors">
+                  <span className="text-[11px] uppercase tracking-wider text-muted-foreground/20 group-hover:text-gold/30 transition-colors">
                     ← Anterior
                   </span>
-                  <span className="text-[12px] font-medium text-muted-foreground/35 group-hover:text-foreground/60 transition-colors truncate w-full">
+                  <span className="text-sm font-medium text-muted-foreground/35 group-hover:text-foreground/60 transition-colors truncate w-full">
                     {prevTrack.title}
                   </span>
                 </Link>
@@ -223,10 +223,10 @@ function TrackDetailPage() {
                   params={{ trackId: String(nextTrack.id) }}
                   className="group flex flex-col items-end gap-1 max-w-[45%]"
                 >
-                  <span className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground/20 group-hover:text-gold/30 transition-colors">
+                  <span className="text-[11px] uppercase tracking-wider text-muted-foreground/20 group-hover:text-gold/30 transition-colors">
                     Próximo →
                   </span>
-                  <span className="text-[12px] font-medium text-muted-foreground/35 group-hover:text-foreground/60 transition-colors truncate w-full text-right">
+                  <span className="text-sm font-medium text-muted-foreground/35 group-hover:text-foreground/60 transition-colors truncate w-full text-right">
                     {nextTrack.title}
                   </span>
                 </Link>

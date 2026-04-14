@@ -229,13 +229,13 @@ function AdminCategoriesPage() {
         {/* Categories Panel */}
         <div className="rounded-2xl border border-border/15 bg-card p-5 shadow-lg shadow-black/10">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display text-base font-semibold text-foreground/85 flex items-center gap-2">
+            <h2 className="font-display text-base font-semibold text-foreground flex items-center gap-2">
               <FolderOpen className="h-4 w-4 text-gold/60" />
               Categorias
             </h2>
             <Button
               onClick={() => { setShowCatForm(true); setNewCat({ name: "", slug: "", description: "", icon: "", color: PICKER_COLORS[0] }); }}
-              className="gap-1.5 h-9 bg-gold/90 text-gold-foreground hover:bg-gold font-semibold text-[12px]"
+              className="gap-1.5 h-9 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10 font-semibold text-sm"
               size="sm"
             >
               <Plus className="h-3.5 w-3.5" />
@@ -257,7 +257,7 @@ function AdminCategoriesPage() {
                   <GripVertical className="h-4 w-4 text-muted-foreground/15 shrink-0 cursor-grab" />
                   <div className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: cat.color || PICKER_COLORS[index % PICKER_COLORS.length] }} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground/85 truncate">{cat.name}</p>
+                    <p className="text-sm font-semibold text-foreground truncate">{cat.name}</p>
                     {cat.description && <p className="text-[11px] text-muted-foreground/40 truncate">{cat.description}</p>}
                   </div>
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
@@ -277,13 +277,13 @@ function AdminCategoriesPage() {
         {/* ─── Tags Panel ─── */}
         <div className="rounded-2xl border border-border/15 bg-card/5 p-5">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="font-display text-base font-semibold text-foreground/85 flex items-center gap-2">
+            <h2 className="font-display text-base font-semibold text-foreground flex items-center gap-2">
               <Tag className="h-4 w-4 text-gold/60" />
               Tags
             </h2>
             <Button
               onClick={() => { setShowTagForm(true); setNewTag({ name: "", slug: "", description: "", color: PICKER_COLORS[0] }); }}
-              className="gap-1.5 h-9 bg-gold/90 text-gold-foreground hover:bg-gold font-semibold text-[12px]"
+              className="gap-1.5 h-9 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10 font-semibold text-sm"
               size="sm"
             >
               <Plus className="h-3.5 w-3.5" />
@@ -304,7 +304,7 @@ function AdminCategoriesPage() {
                 <div key={tag.id} className="flex items-center gap-3 rounded-xl border border-border/10 bg-card/8 px-4 py-3 hover:bg-card/15 transition-colors group">
                   <div className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: tag.color || PICKER_COLORS[index % PICKER_COLORS.length] }} />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground/85 truncate">{tag.name}</p>
+                    <p className="text-sm font-semibold text-foreground truncate">{tag.name}</p>
                     {tag.description && <p className="text-[11px] text-muted-foreground/40 truncate">{tag.description}</p>}
                   </div>
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
@@ -351,7 +351,7 @@ function AdminCategoriesPage() {
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setShowCatForm(false)}>Cancelar</Button>
-              <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" disabled={createCatMutation.isPending}>
+              <Button type="submit" className="flex-1 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10" disabled={createCatMutation.isPending}>
                 {createCatMutation.isPending ? "Salvando..." : "Salvar"}
               </Button>
             </div>
@@ -388,7 +388,7 @@ function AdminCategoriesPage() {
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setEditingCat(null)}>Cancelar</Button>
-              <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" disabled={updateCatMutation.isPending}>
+              <Button type="submit" className="flex-1 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10" disabled={updateCatMutation.isPending}>
                 {updateCatMutation.isPending ? "Salvando..." : "Salvar"}
               </Button>
             </div>
@@ -425,7 +425,7 @@ function AdminCategoriesPage() {
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setShowTagForm(false)}>Cancelar</Button>
-              <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" disabled={createTagMutation.isPending}>
+              <Button type="submit" className="flex-1 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10" disabled={createTagMutation.isPending}>
                 {createTagMutation.isPending ? "Salvando..." : "Salvar"}
               </Button>
             </div>
@@ -462,7 +462,7 @@ function AdminCategoriesPage() {
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setEditingTag(null)}>Cancelar</Button>
-              <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" disabled={updateTagMutation.isPending}>
+              <Button type="submit" className="flex-1 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10" disabled={updateTagMutation.isPending}>
                 {updateTagMutation.isPending ? "Salvando..." : "Salvar"}
               </Button>
             </div>

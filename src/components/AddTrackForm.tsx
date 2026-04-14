@@ -173,14 +173,14 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
           <Music className="h-4 w-4 text-gold/60" />
         </div>
         <div>
-          <h3 className="text-sm font-bold text-foreground/80">Adicionar Louvor</h3>
-          <p className="text-[10px] text-muted-foreground/35">Preencha os campos e envie o arquivo MP3</p>
+          <h3 className="text-sm font-bold text-foreground/95">Adicionar Louvor</h3>
+          <p className="text-xs text-muted-foreground/35">Preencha os campos e envie o arquivo MP3</p>
         </div>
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+          <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
             Título da Música *
           </Label>
           <Input
@@ -193,7 +193,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+          <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
             Categoria
           </Label>
           <Select value={category} onValueChange={setCategory} disabled={isSubmitting}>
@@ -210,7 +210,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+        <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
           Descrição (opcional)
         </Label>
         <Textarea
@@ -224,16 +224,16 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
 
       {/* MP3 Upload */}
       <div className="space-y-2">
-        <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+        <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
           Arquivo MP3 *
         </Label>
         {mp3File ? (
           <div className="flex items-center gap-3 rounded-xl border border-border/15 bg-card/15 p-3">
             <Music className="h-4 w-4 text-gold/50 shrink-0" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm text-foreground/70 truncate">{mp3File.name}</p>
+              <p className="text-sm text-foreground/90 truncate">{mp3File.name}</p>
               {duration && (
-                <p className="text-[10px] text-muted-foreground/30">{duration}</p>
+                <p className="text-xs text-muted-foreground/30">{duration}</p>
               )}
             </div>
             <button
@@ -263,7 +263,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
 
       {/* Cover Upload */}
       <div className="space-y-2">
-        <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+        <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
           Capa da música (opcional)
         </Label>
         <ImageFieldHint ratio="1:1" recommendedSize="500x500" file={coverFile} />
@@ -304,7 +304,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Gift className="h-4 w-4 text-amber-400/60" />
-            <Label className="text-[12px] font-semibold text-foreground/70">
+            <Label className="text-sm font-semibold text-foreground/90">
               Música Bônus
             </Label>
           </div>
@@ -316,7 +316,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
         </div>
         {isBonus && (
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+            <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
               Data de Liberação
             </Label>
             <Input
@@ -326,7 +326,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
               className="bg-card/15 border-border/15 text-sm"
               disabled={isSubmitting}
             />
-            <p className="text-[9px] text-muted-foreground/30">
+            <p className="text-[11px] text-muted-foreground/30">
               A música ficará bloqueada até esta data.
             </p>
           </div>

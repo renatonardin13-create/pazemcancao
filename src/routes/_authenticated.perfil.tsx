@@ -101,7 +101,7 @@ function ProfilePage() {
       <main className="flex-1 mx-auto w-full max-w-[800px] px-4 sm:px-6 py-8 space-y-6">
         {isLoading ? (
           <div className="text-center py-24">
-            <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+            <p className="text-[11px] uppercase tracking-widest text-muted-foreground/25 animate-pulse">
               Carregando perfil...
             </p>
           </div>
@@ -160,7 +160,7 @@ function ProfilePage() {
               transition={{ duration: 0.6, delay: 0.1 }}
               className="rounded-xl border border-border/15 bg-card/8 p-5"
             >
-              <h3 className="text-[12px] font-semibold text-muted-foreground/50 flex items-center gap-1.5 mb-4">
+              <h3 className="text-sm font-semibold text-muted-foreground/50 flex items-center gap-1.5 mb-4">
                 <Award className="h-4 w-4 text-gold/60" />
                 Estatísticas
               </h3>
@@ -170,10 +170,10 @@ function ProfilePage() {
                     <BookOpen className="h-5 w-5 text-gold/60" />
                   </div>
                   <div>
-                    <p className="font-display text-xl font-bold text-foreground/85">
+                    <p className="font-display text-xl font-bold text-foreground">
                       {totalCourses}
                     </p>
-                    <p className="text-[10px] text-muted-foreground/40">Cursos</p>
+                    <p className="text-xs text-muted-foreground/40">Cursos</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -181,10 +181,10 @@ function ProfilePage() {
                     <CheckCircle2 className="h-5 w-5 text-emerald-400/60" />
                   </div>
                   <div>
-                    <p className="font-display text-xl font-bold text-foreground/85">
+                    <p className="font-display text-xl font-bold text-foreground">
                       {totalLessonsCompleted}
                     </p>
-                    <p className="text-[10px] text-muted-foreground/40">Aulas concluídas</p>
+                    <p className="text-xs text-muted-foreground/40">Aulas concluídas</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -192,10 +192,10 @@ function ProfilePage() {
                     <Clock className="h-5 w-5 text-blue-400/60" />
                   </div>
                   <div>
-                    <p className="font-display text-xl font-bold text-foreground/85">
+                    <p className="font-display text-xl font-bold text-foreground">
                       0h
                     </p>
-                    <p className="text-[10px] text-muted-foreground/40">Tempo assistido</p>
+                    <p className="text-xs text-muted-foreground/40">Tempo assistido</p>
                   </div>
                 </div>
               </div>
@@ -208,12 +208,12 @@ function ProfilePage() {
               transition={{ duration: 0.6, delay: 0.15 }}
               className="rounded-xl border border-border/15 bg-card/8 p-6 space-y-5"
             >
-              <h3 className="text-base font-bold text-foreground/85">
+              <h3 className="text-base font-bold text-foreground">
                 Informações Pessoais
               </h3>
 
               <div className="space-y-2">
-                <Label htmlFor="fullName" className="text-[13px] font-semibold text-foreground/70">
+                <Label htmlFor="fullName" className="text-[13px] font-semibold text-foreground/90">
                   Nome completo
                 </Label>
                 <Input
@@ -226,7 +226,7 @@ function ProfilePage() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[13px] font-semibold text-foreground/70">
+                <Label className="text-[13px] font-semibold text-foreground/90">
                   Email
                 </Label>
                 <Input
@@ -234,7 +234,7 @@ function ProfilePage() {
                   disabled
                   className="bg-muted/10 border-border/10 text-muted-foreground/40"
                 />
-                <p className="text-[10px] text-muted-foreground/30">
+                <p className="text-xs text-muted-foreground/30">
                   O email não pode ser alterado
                 </p>
               </div>
@@ -242,7 +242,7 @@ function ProfilePage() {
               <Button
                 onClick={() => profileMutation.mutate()}
                 disabled={profileMutation.isPending}
-                className="bg-gold/90 text-gold-foreground hover:bg-gold text-[12px] font-bold"
+                className="bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10 text-sm font-bold"
               >
                 {profileMutation.isPending ? (
                   <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
@@ -258,13 +258,13 @@ function ProfilePage() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="rounded-xl border border-border/15 bg-card/8 p-6 space-y-5"
             >
-              <h3 className="text-base font-bold text-foreground/85 flex items-center gap-2">
+              <h3 className="text-base font-bold text-foreground flex items-center gap-2">
                 <Lock className="h-4 w-4 text-muted-foreground/50" />
                 Alterar Senha
               </h3>
 
               <div className="space-y-2">
-                <Label htmlFor="currentPwd" className="text-[13px] font-semibold text-foreground/70">
+                <Label htmlFor="currentPwd" className="text-[13px] font-semibold text-foreground/90">
                   Senha atual
                 </Label>
                 <Input
@@ -277,7 +277,7 @@ function ProfilePage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="newPwd" className="text-[13px] font-semibold text-foreground/70">
+                <Label htmlFor="newPwd" className="text-[13px] font-semibold text-foreground/90">
                   Nova senha
                 </Label>
                 <Input
@@ -291,7 +291,7 @@ function ProfilePage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPwd" className="text-[13px] font-semibold text-foreground/70">
+                <Label htmlFor="confirmPwd" className="text-[13px] font-semibold text-foreground/90">
                   Confirmar nova senha
                 </Label>
                 <Input
@@ -312,7 +312,7 @@ function ProfilePage() {
                   !confirmPassword
                 }
                 variant="outline"
-                className="border-gold/20 text-gold/70 hover:bg-gold/10 text-[12px] font-bold"
+                className="border-gold/20 text-gold/70 hover:bg-gold/10 text-sm font-bold"
               >
                 {passwordMutation.isPending ? (
                   <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />

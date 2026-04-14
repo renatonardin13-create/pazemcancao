@@ -75,10 +75,10 @@ export function RecommendedSection({ items, hasAccess, viewedIds, downloadedIds,
           <Sparkles className="h-4 w-4 text-primary/60" />
         </div>
         <div>
-          <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
+          <h2 className="font-display text-lg font-bold text-foreground/90 tracking-tight">
             ✨ Recomendado para você
           </h2>
-          <p className="text-[10px] text-muted-foreground/30">
+          <p className="text-xs text-muted-foreground/30">
             Continue sua caminhada espiritual
           </p>
         </div>

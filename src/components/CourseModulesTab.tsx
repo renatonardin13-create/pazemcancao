@@ -421,7 +421,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   if (isLoading) {
     return (
       <div className="text-center py-16">
-        <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+        <p className="text-[11px] uppercase tracking-widest text-muted-foreground/25 animate-pulse">
           Carregando módulos...
         </p>
       </div>
@@ -462,12 +462,12 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             <p className="text-sm font-medium text-foreground/50 mb-1">
               Nenhum módulo criado ainda
             </p>
-            <p className="text-[12px] text-muted-foreground/30 max-w-xs mx-auto">
+            <p className="text-sm text-muted-foreground/30 max-w-xs mx-auto">
               Crie o primeiro módulo para organizar seu curso.
             </p>
             <Button
               size="sm"
-              className="mt-6 bg-gold/90 text-gold-foreground hover:bg-gold shadow-lg shadow-gold/20"
+              className="mt-6 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10 shadow-lg shadow-gold/20"
               onClick={openCreateModule}
             >
               <Plus className="h-3.5 w-3.5 mr-1.5" />
@@ -528,7 +528,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                       {mod.title}
                     </p>
                     {mod.description && (
-                      <p className="text-[10px] text-muted-foreground/30 truncate mt-0.5">
+                      <p className="text-xs text-muted-foreground/30 truncate mt-0.5">
                         {mod.description}
                       </p>
                     )}
@@ -538,7 +538,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   <StatusBadge status={mod.status} />
 
                   {/* Lesson count */}
-                  <span className="text-[10px] font-medium text-muted-foreground/40 shrink-0 tabular-nums px-2.5 py-1 rounded-lg bg-card/15 border border-border/10">
+                  <span className="text-xs font-medium text-muted-foreground/40 shrink-0 tabular-nums px-2.5 py-1 rounded-lg bg-card/15 border border-border/10">
                     {lessons.length} aula{lessons.length !== 1 ? "s" : ""}
                   </span>
 
@@ -546,7 +546,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-7 px-3.5 text-[10px] font-semibold border-gold/20 text-gold/70 hover:text-gold hover:border-gold/30 hover:bg-gold/8 shrink-0"
+                    className="h-7 px-3.5 text-xs font-semibold border-gold/20 text-gold/70 hover:text-gold hover:border-gold/30 hover:bg-gold/8 shrink-0"
                     onClick={() => openCreateLesson(mod.id)}
                   >
                     <Plus className="h-3 w-3 mr-1" />
@@ -598,7 +598,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                         <div className="w-10 h-10 rounded-xl bg-gold/5 border border-gold/10 flex items-center justify-center mx-auto mb-3">
                           <FileText className="h-5 w-5 text-gold/30" />
                         </div>
-                        <p className="text-[12px] font-medium text-foreground/45 mb-0.5">
+                        <p className="text-sm font-medium text-foreground/45 mb-0.5">
                           Este módulo ainda não possui aulas.
                         </p>
                         <p className="text-[11px] text-muted-foreground/25 max-w-[220px] mx-auto">
@@ -639,7 +639,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
 
                             {/* Lesson title + type */}
                             <div className="flex-1 min-w-0">
-                              <p className="text-[13px] text-foreground/85 truncate font-semibold">
+                              <p className="text-[13px] text-foreground truncate font-semibold">
                                 {lesson.title}
                               </p>
                               <p className="text-[11px] text-muted-foreground/40 mt-0.5">
@@ -651,7 +651,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                             {lesson.is_free_preview && (
                               <Badge
                                 variant="outline"
-                                className="text-[9px] rounded-full px-2 py-0 border text-blue-400/70 border-blue-500/20 bg-blue-500/8 font-medium shrink-0"
+                                className="text-[11px] rounded-full px-2 py-0 border text-blue-400/70 border-blue-500/20 bg-blue-500/8 font-medium shrink-0"
                               >
                                 Preview
                               </Badge>
@@ -719,7 +719,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                         <button
                           type="button"
                           onClick={() => openCreateLesson(mod.id)}
-                          className="w-full py-3 rounded-xl border border-dashed border-gold/15 bg-gold/3 text-gold/50 hover:text-gold/80 hover:bg-gold/8 hover:border-gold/25 transition-all text-[12px] font-medium flex items-center justify-center gap-1.5"
+                          className="w-full py-3 rounded-xl border border-dashed border-gold/15 bg-gold/3 text-gold/50 hover:text-gold/80 hover:bg-gold/8 hover:border-gold/25 transition-all text-sm font-medium flex items-center justify-center gap-1.5"
                         >
                           <Plus className="h-3.5 w-3.5" />
                           Adicionar Aula
@@ -806,7 +806,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             <Button
               onClick={handleSaveModule}
               disabled={!modTitle.trim() || createModM.isPending || updateModM.isPending}
-              className="bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
+              className="bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10 font-semibold"
             >
               {(createModM.isPending || updateModM.isPending) && (
                 <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
@@ -918,7 +918,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 <Label className="text-sm font-semibold">Upload de Arquivo</Label>
                 <div className="border-2 border-dashed border-border/20 rounded-xl p-8 flex flex-col items-center gap-2 cursor-pointer hover:border-gold/30 hover:bg-gold/3 transition-all">
                   <Download className="h-5 w-5 text-muted-foreground/30" />
-                  <span className="text-[12px] text-muted-foreground/40">Clique para upload</span>
+                  <span className="text-sm text-muted-foreground/40">Clique para upload</span>
                 </div>
               </div>
             )}
@@ -940,7 +940,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             <div className="space-y-3">
               <div>
                 <Label className="text-sm font-semibold">Materiais Complementares</Label>
-                <p className="text-[12px] text-muted-foreground/40 mt-0.5">
+                <p className="text-sm text-muted-foreground/40 mt-0.5">
                   Adicione PDFs, documentos ou links externos
                 </p>
               </div>
@@ -956,8 +956,8 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                       ) : (
                         <File className="h-3.5 w-3.5 text-gold/40 shrink-0" />
                       )}
-                      <span className="text-[12px] text-foreground/60 flex-1 truncate">{mat.title}</span>
-                      <span className="text-[10px] text-muted-foreground/30 uppercase">{mat.material_type}</span>
+                      <span className="text-sm text-foreground/60 flex-1 truncate">{mat.title}</span>
+                      <span className="text-xs text-muted-foreground/30 uppercase">{mat.material_type}</span>
                       <button
                         type="button"
                         onClick={() => deleteMatM.mutate(mat.id)}
@@ -974,7 +974,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 <Button
                   type="button"
                   variant="outline"
-                  className="gap-2 border-border/20 text-muted-foreground/60 hover:text-foreground/80"
+                  className="gap-2 border-border/20 text-muted-foreground/60 hover:text-foreground/95"
                   onClick={() => {
                     if (!lessonDialog.editId) {
                       toast.info("Salve a aula primeiro para adicionar materiais");
@@ -992,7 +992,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 <Button
                   type="button"
                   variant="outline"
-                  className="gap-2 border-border/20 text-muted-foreground/60 hover:text-foreground/80"
+                  className="gap-2 border-border/20 text-muted-foreground/60 hover:text-foreground/95"
                   onClick={() => {
                     if (!lessonDialog.editId) {
                       toast.info("Salve a aula primeiro para adicionar materiais");
@@ -1015,7 +1015,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             <div className="flex items-center justify-between py-2">
               <div>
                 <Label className="text-sm font-semibold">Publicar aula</Label>
-                <p className="text-[12px] text-muted-foreground/40 mt-0.5">
+                <p className="text-sm text-muted-foreground/40 mt-0.5">
                   Aulas publicadas ficam visíveis para os alunos
                 </p>
               </div>
@@ -1034,7 +1034,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             <Button
               onClick={handleSaveLesson}
               disabled={!lesTitle.trim() || createLesM.isPending || updateLesM.isPending}
-              className="bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
+              className="bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10 font-semibold"
             >
               {(createLesM.isPending || updateLesM.isPending) && (
                 <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />

@@ -119,7 +119,7 @@ function ContentPage() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8 space-y-12">
         {/* 1. Banner / Destaque */}
         <div className="text-center">
-          <h1 className="font-display text-3xl font-bold text-foreground/85 tracking-tight">
+          <h1 className="font-display text-3xl font-bold text-foreground tracking-tight">
             Conteúdos Exclusivos
           </h1>
           <p className="mt-2 text-sm text-muted-foreground/40">
@@ -129,7 +129,7 @@ function ContentPage() {
 
         {isLoading ? (
           <div className="text-center py-16">
-            <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+            <p className="text-[11px] uppercase tracking-widest text-muted-foreground/25 animate-pulse">
               Carregando conteúdos...
             </p>
           </div>
@@ -148,10 +148,10 @@ function ContentPage() {
                     <PlayCircle className="h-4 w-4 text-primary/60" />
                   </div>
                   <div>
-                    <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
+                    <h2 className="font-display text-lg font-bold text-foreground/90 tracking-tight">
                       ▶️ Continue sua caminhada
                     </h2>
-                    <p className="text-[10px] text-muted-foreground/30">
+                    <p className="text-xs text-muted-foreground/30">
                       Retome de onde parou
                     </p>
                   </div>
@@ -181,10 +181,10 @@ function ContentPage() {
               return (
                 <section key={`cat-${cat}`} className="space-y-5">
                   <div className="flex items-center gap-3">
-                    <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
+                    <h2 className="font-display text-lg font-bold text-foreground/90 tracking-tight">
                       {label}
                     </h2>
-                    <span className="text-[10px] text-muted-foreground/25">{catItems.length} item(ns)</span>
+                    <span className="text-xs text-muted-foreground/25">{catItems.length} item(ns)</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                     {catItems.map((item: any, idx: number) => (
@@ -206,7 +206,7 @@ function ContentPage() {
             {Object.keys(journeyGroups).length > 0 && (
               <section className="space-y-6">
                 <div className="text-center">
-                  <h2 className="font-display text-xl font-bold text-foreground/80 tracking-tight">
+                  <h2 className="font-display text-xl font-bold text-foreground/95 tracking-tight">
                     ✨ Sua Jornada
                   </h2>
                   <p className="mt-1 text-[11px] text-muted-foreground/35">
@@ -218,10 +218,10 @@ function ContentPage() {
                   return (
                     <div key={`journey-${jg}`} className="space-y-4">
                       <div className="flex items-center gap-3">
-                        <h3 className="font-display text-[15px] font-bold text-foreground/70 tracking-tight">
+                        <h3 className="font-display text-[15px] font-bold text-foreground/90 tracking-tight">
                           {label}
                         </h3>
-                        <span className="text-[10px] text-muted-foreground/25">{jgItems.length} item(ns)</span>
+                        <span className="text-xs text-muted-foreground/25">{jgItems.length} item(ns)</span>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                         {jgItems.map((item: any, idx: number) => {
@@ -251,10 +251,10 @@ function ContentPage() {
               return (
                 <section key={`cat-${cat}`} className="space-y-5">
                   <div className="flex items-center gap-3">
-                    <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
+                    <h2 className="font-display text-lg font-bold text-foreground/90 tracking-tight">
                       {label}
                     </h2>
-                    <span className="text-[10px] text-muted-foreground/25">{catItems.length} item(ns)</span>
+                    <span className="text-xs text-muted-foreground/25">{catItems.length} item(ns)</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                     {catItems.map((item: any, idx: number) => (
@@ -282,10 +282,10 @@ function ContentPage() {
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/15">
                       <TypeIcon className="h-4 w-4 text-gold/50" />
                     </div>
-                    <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
+                    <h2 className="font-display text-lg font-bold text-foreground/90 tracking-tight">
                       {config.label}
                     </h2>
-                    <span className="text-[10px] text-muted-foreground/25">{typeItems.length} item(ns)</span>
+                    <span className="text-xs text-muted-foreground/25">{typeItems.length} item(ns)</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                     {typeItems.map((item: any, idx: number) => (

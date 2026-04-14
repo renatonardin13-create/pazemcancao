@@ -23,7 +23,7 @@ interface CourseFormProps {
 }
 
 const inputClass = "h-11 bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm";
-const labelClass = "text-sm font-semibold text-foreground/80";
+const labelClass = "text-sm font-semibold text-foreground/95";
 
 const COURSE_TYPE_OPTIONS = [
   { value: "video", label: "Vídeo", icon: Video },
@@ -267,7 +267,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
         <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2">
           <div className="rounded-xl border border-border/12 bg-card lg:sticky lg:top-6 shadow-md shadow-black/5 overflow-hidden">
             <div className="px-4 py-3 border-b border-border/8 bg-card/90">
-              <h3 className="text-xs font-bold text-foreground/80">Preview</h3>
+              <h3 className="text-xs font-bold text-foreground/95">Preview</h3>
             </div>
             <div className="p-3">
               <div className="rounded-lg overflow-hidden border border-border/8 bg-background/20">
@@ -300,7 +300,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                           </span>
                         </>
                       ) : parseFloat(price) > 0 ? (
-                        <span className="text-sm font-bold text-foreground/70">
+                        <span className="text-sm font-bold text-foreground/90">
                           R$ {parseFloat(price).toFixed(2)}
                         </span>
                       ) : null}
