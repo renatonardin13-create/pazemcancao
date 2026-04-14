@@ -10,6 +10,7 @@ import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { ContentCard } from "@/components/ContentCard";
 import { RecommendedSection } from "@/components/RecommendedSection";
+import { TopRankingSection } from "@/components/TopRankingSection";
 import { motion } from "framer-motion";
 import {
   BookOpen,
