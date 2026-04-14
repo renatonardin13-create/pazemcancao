@@ -267,18 +267,38 @@ function LessonDetailPage() {
             </p>
           </div>
 
-          <div className="flex shrink-0 items-center gap-3 rounded-2xl border border-border/15 bg-card/10 px-3 py-2">
-            <div className="hidden sm:block text-right">
-              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/35">
-                Progresso
-              </p>
-              <p className="text-xs font-bold text-gold/65 tabular-nums">
-                {progressPercent}%
-              </p>
-            </div>
-            <div className="w-20 sm:w-24">
-              <Progress value={progressPercent} className="h-1" />
-            </div>
+          {/* Progress indicator — prominent */}
+          <div className="flex shrink-0 items-center gap-3 rounded-2xl border border-border/15 bg-card/10 px-4 py-2.5">
+            {isCourseCompleted ? (
+              <div className="flex items-center gap-2 text-player-completed">
+                <Award className="h-4 w-4" />
+                <span className="text-[11px] font-bold uppercase tracking-wider">Concluído!</span>
+              </div>
+            ) : (
+              <>
+                <div className="hidden sm:block text-right">
+                  <p className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground/30 mb-0.5">
+                    Progresso
+                  </p>
+                  <p className="text-[10px] text-muted-foreground/45">
+                    <span className="font-bold text-foreground/65">{completedCount}</span>/{totalLessons} aulas
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-20 sm:w-28 h-2.5 rounded-full bg-player-progress-track overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${progressPercent}%` }}
+                      transition={{ duration: 0.8, ease: "easeOut" }}
+                      className={`h-full rounded-full ${isCourseCompleted ? "bg-player-completed" : "bg-player-progress-fill"}`}
+                    />
+                  </div>
+                  <span className="text-sm font-black text-gold tabular-nums min-w-[2.5rem] text-right">
+                    {progressPercent}%
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </header>
