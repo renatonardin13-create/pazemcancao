@@ -389,7 +389,7 @@ function HeroBanner({ course }: { course: any }) {
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full h-[240px] sm:h-[320px] md:h-[400px] lg:h-[460px] rounded-2xl sm:rounded-3xl overflow-hidden"
+        className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[560px] xl:h-[600px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl shadow-black/40"
       >
         {/* Background image */}
         {bannerImg ? (
