@@ -10,7 +10,6 @@ import { BookOpen, Search, ArrowRight, Layers, Clock, PlayCircle, Sparkles, Tren
 import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
-import { useQuery as useProfileQuery } from "@tanstack/react-query";
 import { getMyProfile } from "@/lib/profile.functions";
 import { Progress } from "@/components/ui/progress";
 import {
