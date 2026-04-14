@@ -302,6 +302,13 @@ function ContentPage() {
               </motion.div>
             )}
           </div>
+
+          {isLoading ? (
+            <div className="text-center py-16">
+              <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
+                Carregando conteúdos...
+              </p>
+            </div>
           ) : !items.length ? (
             <EmptyState
               icon={BookOpen}
