@@ -162,30 +162,45 @@ function CourseDetailPage() {
   const renderPlaylistLesson = (lesson: any, index: number) => {
     const completed = isLessonCompleted(lesson.id);
     const canOpen = canAccessCourse || lesson.is_free_preview;
+    const hasContent = hasValidContent(lesson);
     const isNext = primaryLesson?.id === lesson.id;
+    const isDisabled = !canOpen || !hasContent;
+
+    const disabledReason = !canOpen
+      ? "Acesso restrito"
+      : !hasContent
+        ? "Conteúdo indisponível"
+        : null;
 
     const row = (
       <div
-        className={`group/lesson flex items-center gap-3 px-4 py-3 transition-all duration-200 cursor-pointer ${
+        className={`group/lesson flex items-center gap-3 px-4 py-3 transition-all duration-200 relative ${
           isNext
-            ? "bg-player-sidebar-active border-l-2 border-l-player-sidebar-active-border"
-            : "border-l-2 border-l-transparent hover:bg-player-sidebar-hover"
-        } ${!canOpen ? "opacity-50" : ""}`}
+            ? "bg-player-sidebar-active border-l-[3px] border-l-gold"
+            : isDisabled
+              ? "border-l-[3px] border-l-transparent opacity-45 cursor-not-allowed"
+              : "border-l-[3px] border-l-transparent cursor-pointer hover:bg-player-sidebar-hover hover:border-l-gold/25"
+        }`}
+        title={disabledReason || undefined}
       >
         {/* Number / status */}
         <div
-          className={`shrink-0 flex h-8 w-8 items-center justify-center rounded-lg text-[11px] font-bold tabular-nums ${
+          className={`shrink-0 flex h-8 w-8 items-center justify-center rounded-lg text-[11px] font-bold tabular-nums transition-colors ${
             completed
               ? "bg-player-completed/15 text-player-completed"
               : isNext
-                ? "bg-gold/15 text-gold"
-                : "text-muted-foreground/40"
+                ? "bg-gold/15 text-gold ring-1 ring-gold/20"
+                : isDisabled
+                  ? "text-muted-foreground/25"
+                  : "text-muted-foreground/40 group-hover/lesson:text-foreground/50"
           }`}
         >
           {completed ? (
             <CheckCircle2 className="h-4 w-4" />
           ) : isNext ? (
             <Play className="h-3.5 w-3.5 fill-current" />
+          ) : isDisabled ? (
+            !canOpen ? <Lock className="h-3.5 w-3.5" /> : <BookOpen className="h-3.5 w-3.5" />
           ) : (
             String(index + 1).padStart(2, "0")
           )}
@@ -194,12 +209,14 @@ function CourseDetailPage() {
         {/* Info */}
         <div className="flex-1 min-w-0">
           <span
-            className={`text-[13px] font-medium block truncate ${
+            className={`text-[13px] font-medium block truncate transition-colors ${
               completed
                 ? "text-muted-foreground/35 line-through"
                 : isNext
                   ? "text-gold font-semibold"
-                  : "text-foreground/70"
+                  : isDisabled
+                    ? "text-muted-foreground/30"
+                    : "text-foreground/70 group-hover/lesson:text-foreground/85"
             }`}
           >
             {lesson.title}
@@ -213,12 +230,21 @@ function CourseDetailPage() {
                 {lesson.duration}
               </span>
             )}
-            {!canOpen && <Lock className="h-3 w-3 text-muted-foreground/20" />}
+            {disabledReason && (
+              <span className="text-[9px] text-muted-foreground/25 font-medium">
+                {disabledReason}
+              </span>
+            )}
+            {isNext && (
+              <span className="text-[8px] font-bold uppercase tracking-[0.12em] text-gold/60 bg-gold/[0.06] px-1.5 py-0.5 rounded-full ring-1 ring-gold/10">
+                Continuar
+              </span>
+            )}
           </div>
         </div>
 
         {/* Mark complete */}
-        {!completed && enrollment && canOpen && (
+        {!completed && enrollment && canOpen && hasContent && (
           <button
             onClick={(e) => {
               e.preventDefault();
@@ -230,26 +256,37 @@ function CourseDetailPage() {
               });
             }}
             className="shrink-0 opacity-0 group-hover/lesson:opacity-100 text-[9px] uppercase tracking-wider text-muted-foreground/30 hover:text-player-completed font-bold px-2 py-1 rounded-md hover:bg-player-completed/10 transition-all"
+            aria-label={`Marcar ${lesson.title} como concluída`}
           >
             ✓
           </button>
         )}
+
+        {/* Hover arrow for clickable items */}
+        {!isDisabled && !isNext && !completed && (
+          <ChevronRight className="shrink-0 h-3.5 w-3.5 text-muted-foreground/15 opacity-0 group-hover/lesson:opacity-100 transition-opacity" />
+        )}
       </div>
     );
 
-    if (canOpen) {
+    if (!isDisabled) {
       return (
         <Link
           key={lesson.id}
           to="/cursos/$courseId/aula/$lessonId"
           params={{ courseId, lessonId: lesson.id }}
-          className="block"
+          className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold/30 focus-visible:ring-offset-1 rounded-sm"
+          aria-label={`Abrir aula: ${lesson.title}`}
         >
           {row}
         </Link>
       );
     }
-    return <div key={lesson.id}>{row}</div>;
+    return (
+      <div key={lesson.id} aria-disabled="true" role="listitem">
+        {row}
+      </div>
+    );
   };
 
   return (
