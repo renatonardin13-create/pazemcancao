@@ -58,13 +58,12 @@ export function StudentSidebar() {
   const hasTracks = allTracks.length > 0;
 
   const normalizeStr = (s: string) =>
-    s.replace(/^[^\p{L}\p{N}]+/u, "").trim().toLowerCase();
+    s.replace(/^[^\p{L}\p{N}]+/u, "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
   const categoriesWithTracks = useMemo(() => {
     const catSet = new Set<string>();
     for (const t of allTracks) {
       if (t.category) {
-        catSet.add(t.category.toLowerCase());
         catSet.add(normalizeStr(t.category));
       }
     }
@@ -75,17 +74,17 @@ export function StudentSidebar() {
     const seen = new Set<string>();
     return categories.filter((cat: any) => {
       const slug = (cat.slug || "").toLowerCase();
-      const name = cat.name.toLowerCase();
-      const plainName = normalizeStr(cat.name);
+      const normalizedName = normalizeStr(cat.name);
+      const normalizedSlug = normalizeStr(slug);
 
       const hasTrack =
-        categoriesWithTracks.has(slug) ||
-        categoriesWithTracks.has(name) ||
-        categoriesWithTracks.has(plainName);
+        categoriesWithTracks.has(normalizedSlug) ||
+        categoriesWithTracks.has(normalizedName);
 
       if (!hasTrack) return false;
 
-      const dedupeKey = slug || plainName;
+      // Deduplicate by normalized name to avoid similar categories
+      const dedupeKey = normalizedName || normalizedSlug;
       if (seen.has(dedupeKey)) return false;
       seen.add(dedupeKey);
       return true;
