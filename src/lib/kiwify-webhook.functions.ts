@@ -353,7 +353,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       const unlocksCreated = await calculateContentUnlocks(customerEmail, orderId);
 
       let linkedCourseId: string | null = null;
-      if (courseIdFromQuery) {
+      if (resolvedCourseId) {
         const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
         const authUser = authUsers.users.find((user) => user.email?.toLowerCase() === customerEmail);
 
@@ -363,7 +363,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
             .upsert(
               {
                 user_id: authUser.id,
-                course_id: courseIdFromQuery,
+                course_id: resolvedCourseId,
                 email: customerEmail,
                 access_origin: 'webhook',
                 status: 'active',
@@ -373,7 +373,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
             );
 
           if (!enrollmentError) {
-            linkedCourseId = courseIdFromQuery;
+            linkedCourseId = resolvedCourseId;
           }
         }
       }
@@ -401,7 +401,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       .update({ access_enabled: false, status })
       .eq('email', customerEmail);
 
-    if (courseIdFromQuery) {
+    if (resolvedCourseId) {
       const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
       const authUser = authUsers.users.find((user) => user.email?.toLowerCase() === customerEmail);
       if (authUser) {
@@ -409,7 +409,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
           .from('enrollments')
           .update({ status })
           .eq('user_id', authUser.id)
-          .eq('course_id', courseIdFromQuery)
+          .eq('course_id', resolvedCourseId)
           .eq('status', 'active');
       }
     }
