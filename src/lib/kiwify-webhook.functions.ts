@@ -379,7 +379,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
             nome: customerName,
             email: customerEmail,
             order_id: orderId,
-            product_name: 'Paz em Canção',
+            product_name: resolvedProductName,
             status: 'approved',
             access_enabled: true,
           },
