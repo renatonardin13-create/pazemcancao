@@ -49,6 +49,13 @@ function MeusCoursosPage() {
     staleTime: 30_000,
   });
 
+  const { data: continueData } = useQuery({
+    queryKey: ["continue-watching"],
+    queryFn: () => getContinueWatching(),
+    staleTime: 5_000,
+    refetchOnWindowFocus: true,
+  });
+
   const [search, setSearch] = useState("");
 
   const displayName = profileData?.profile?.display_name || user?.email?.split("@")[0] || "aluno";
