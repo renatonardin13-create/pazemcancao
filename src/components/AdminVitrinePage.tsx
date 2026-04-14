@@ -288,11 +288,14 @@ export default function AdminVitrinePage() {
 
   // ── Mutations ──
 
+  const invalidatePreview = () => queryClient.invalidateQueries({ queryKey: ["student-shelves-preview"] });
+
   const createMut = useMutation({
     mutationFn: (input: any) => createShelf({ data: input }),
     onSuccess: () => {
       toast.success("Prateleira criada!");
       queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
+      invalidatePreview();
       closeDialog();
     },
     onError: (err: any) => toast.error(err.message),
@@ -303,6 +306,7 @@ export default function AdminVitrinePage() {
     onSuccess: () => {
       toast.success("Prateleira atualizada!");
       queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
+      invalidatePreview();
       closeDialog();
     },
     onError: (err: any) => toast.error(err.message),
@@ -313,6 +317,7 @@ export default function AdminVitrinePage() {
     onSuccess: () => {
       toast.success("Prateleira excluída!");
       queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
+      invalidatePreview();
     },
     onError: (err: any) => toast.error(err.message),
   });
@@ -323,6 +328,7 @@ export default function AdminVitrinePage() {
     onSuccess: () => {
       toast.success("Cursos atualizados!");
       queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
+      invalidatePreview();
       setCoursesDialogShelf(null);
     },
     onError: (err: any) => toast.error(err.message),
@@ -334,6 +340,7 @@ export default function AdminVitrinePage() {
     onSuccess: () => {
       toast.success("Ordem atualizada!");
       queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
+      invalidatePreview();
     },
     onError: (err: any) => toast.error(err.message),
   });
@@ -344,6 +351,7 @@ export default function AdminVitrinePage() {
     onSuccess: () => {
       toast.success("Ordem dos cursos atualizada!");
       queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
+      invalidatePreview();
     },
     onError: (err: any) => toast.error(err.message),
   });
