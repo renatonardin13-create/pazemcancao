@@ -103,7 +103,7 @@ function MeusCoursosPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-8"
+            className="mb-6"
           >
             <div className="flex items-start gap-1.5 mb-1">
               <Heart className="h-4 w-4 text-gold/50 mt-1 flex-shrink-0" />
@@ -116,11 +116,98 @@ function MeusCoursosPage() {
             </p>
           </motion.div>
 
+          {/* Hero Banner */}
+          {!isLoading && heroCourse && (heroCourse.banner_image_url || heroCourse.cover_image_url) && (
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.08 }}
+              className="mb-8"
+            >
+              <Link
+                to="/cursos/$courseId"
+                params={{ courseId: heroCourse.id }}
+                className="group relative block rounded-2xl overflow-hidden"
+              >
+                {/* Background image */}
+                <div className="relative aspect-[21/9] sm:aspect-[3/1] overflow-hidden">
+                  <img
+                    src={heroCourse.banner_image_url || heroCourse.cover_image_url}
+                    alt={heroCourse.title}
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105"
+                  />
+                  {/* Cinematic gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+
+                  {/* Subtle glow border */}
+                  <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/[0.06] group-hover:ring-gold/15 transition-all duration-500" />
+                </div>
+
+                {/* Content overlay */}
+                <div className="absolute inset-0 flex flex-col justify-end p-5 sm:p-8">
+                  {/* Badge */}
+                  <div className="mb-2 sm:mb-3">
+                    {heroCourse._heroType === "continue" ? (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-gold/15 backdrop-blur-sm px-3 py-1 border border-gold/15 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-gold/80">
+                        <PlayCircle className="h-3 w-3" />
+                        Continue de onde parou
+                      </span>
+                    ) : heroCourse._heroType === "recommended" ? (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/15 backdrop-blur-sm px-3 py-1 border border-primary/15 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-primary/80">
+                        <Sparkles className="h-3 w-3" />
+                        Recomendado para você
+                      </span>
+                    ) : heroCourse._heroType === "trending" ? (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-gold/15 backdrop-blur-sm px-3 py-1 border border-gold/15 text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.2em] text-gold/80">
+                        <TrendingUp className="h-3 w-3" />
+                        Em destaque
+                      </span>
+                    ) : null}
+                  </div>
+
+                  {/* Title */}
+                  <h2 className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-foreground/95 leading-tight max-w-lg drop-shadow-lg group-hover:text-gold transition-colors duration-500">
+                    {heroCourse.title}
+                  </h2>
+
+                  {/* Description */}
+                  {heroCourse.short_description && (
+                    <p className="mt-1.5 sm:mt-2 text-[12px] sm:text-sm text-muted-foreground/60 max-w-md line-clamp-2 leading-relaxed">
+                      {heroCourse.short_description}
+                    </p>
+                  )}
+
+                  {/* Progress or CTA */}
+                  <div className="mt-3 sm:mt-4 flex items-center gap-4">
+                    {heroCourse._heroType === "continue" && heroCourse.progress_pct > 0 ? (
+                      <>
+                        <div className="flex items-center gap-3 flex-1 max-w-[200px]">
+                          <Progress value={heroCourse.progress_pct} className="h-1.5 flex-1 bg-white/[0.08]" />
+                          <span className="text-[11px] font-bold text-gold/70 tabular-nums">{heroCourse.progress_pct}%</span>
+                        </div>
+                        <span className="inline-flex items-center gap-1.5 rounded-xl bg-gold/20 backdrop-blur-sm px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-gold/90 border border-gold/15 group-hover:bg-gold/30 transition-all duration-300">
+                          <Play className="h-3 w-3 fill-current" />
+                          Continuar
+                        </span>
+                      </>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 rounded-xl bg-gold/20 backdrop-blur-sm px-4 py-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider text-gold/90 border border-gold/15 group-hover:bg-gold/30 transition-all duration-300">
+                        Ver detalhes
+                        <ArrowRight className="h-3 w-3" />
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          )}
+
           {/* Search bar */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
             className="mb-8"
           >
             <div className="relative max-w-md">
@@ -138,7 +225,7 @@ function MeusCoursosPage() {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
             className="grid grid-cols-3 gap-3 sm:gap-4 mb-10"
           >
             <div className="rounded-xl border border-border/20 bg-card/8 p-4 sm:p-5 text-center">
