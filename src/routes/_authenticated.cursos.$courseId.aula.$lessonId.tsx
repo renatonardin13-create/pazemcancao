@@ -1,8 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getLessonDetail } from "@/lib/lesson-detail.functions";
 import { updateLessonProgress } from "@/lib/courses.functions";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -54,6 +54,9 @@ function LessonDetailPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showNextUp, setShowNextUp] = useState(false);
+  const [countdown, setCountdown] = useState<number | null>(null);
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const navigate = useNavigate();
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["lesson-detail", courseId, lessonId],
@@ -73,6 +76,7 @@ function LessonDetailPage() {
       queryClient.invalidateQueries({ queryKey: ["course-detail", courseId] });
       toast.success("Aula concluída! ✓");
       setShowNextUp(true);
+      setCountdown(5);
     },
   });
 
@@ -84,6 +88,48 @@ function LessonDetailPage() {
       videoRef.current = null;
     };
   }, [lessonId]);
+
+  // Reset countdown on lesson change
+  useEffect(() => {
+    setCountdown(null);
+    setShowNextUp(false);
+    if (countdownRef.current) {
+      clearInterval(countdownRef.current);
+      countdownRef.current = null;
+    }
+  }, [lessonId]);
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (countdown === null || countdown <= 0) return;
+
+    countdownRef.current = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev === null || prev <= 1) {
+          if (countdownRef.current) clearInterval(countdownRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      if (countdownRef.current) {
+        clearInterval(countdownRef.current);
+        countdownRef.current = null;
+      }
+    };
+  }, [countdown !== null && countdown > 0]);
+
+  // Navigate when countdown reaches 0
+  useEffect(() => {
+    if (countdown === 0 && data?.nextLesson) {
+      navigate({
+        to: "/cursos/$courseId/aula/$lessonId",
+        params: { courseId, lessonId: data.nextLesson.id },
+      });
+    }
+  }, [countdown, data?.nextLesson, courseId, navigate]);
 
   if (isLoading) {
     return (
@@ -591,7 +637,7 @@ function LessonDetailPage() {
             </div>
           )}
 
-          {/* ═══ NEXT UP CARD — streaming continuity ═══ */}
+          {/* ═══ NEXT UP CARD — Netflix-style with countdown ═══ */}
           <AnimatePresence>
             {(isCompleted || showNextUp) && nextLesson && !accessRestricted && (
               <motion.div
@@ -602,10 +648,39 @@ function LessonDetailPage() {
                 className="border-t border-gold/8 bg-gradient-to-r from-gold/[0.03] via-transparent to-gold/[0.03] px-5 sm:px-8 py-6"
               >
                 <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-start sm:items-center gap-5">
+                  {/* Countdown circle */}
+                  {countdown !== null && countdown > 0 && (
+                    <div className="relative shrink-0 h-14 w-14 flex items-center justify-center">
+                      <svg className="absolute inset-0 h-14 w-14 -rotate-90" viewBox="0 0 56 56">
+                        <circle
+                          cx="28" cy="28" r="24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          className="text-border/10"
+                        />
+                        <circle
+                          cx="28" cy="28" r="24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          className="text-gold"
+                          strokeDasharray={2 * Math.PI * 24}
+                          strokeDashoffset={2 * Math.PI * 24 * (1 - countdown / 5)}
+                          style={{ transition: "stroke-dashoffset 1s linear" }}
+                        />
+                      </svg>
+                      <span className="text-lg font-black text-gold tabular-nums">{countdown}</span>
+                    </div>
+                  )}
+
                   <div className="flex-1 min-w-0">
                     <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-gold/40 mb-1.5 flex items-center gap-2">
                       <Sparkles className="h-3 w-3" />
-                      Continue sua jornada
+                      {countdown !== null && countdown > 0
+                        ? `Próxima aula em ${countdown}s`
+                        : "Continue sua jornada"}
                     </p>
                     <p className="text-sm font-bold text-foreground/80 truncate">
                       {nextLesson.title}
@@ -627,10 +702,17 @@ function LessonDetailPage() {
                       Próxima aula
                     </Link>
                     <button
-                      onClick={() => setShowNextUp(false)}
+                      onClick={() => {
+                        setShowNextUp(false);
+                        setCountdown(null);
+                        if (countdownRef.current) {
+                          clearInterval(countdownRef.current);
+                          countdownRef.current = null;
+                        }
+                      }}
                       className="text-[10px] text-muted-foreground/25 hover:text-muted-foreground/45 transition-colors px-2"
                     >
-                      ✕
+                      Cancelar
                     </button>
                   </div>
                 </div>
