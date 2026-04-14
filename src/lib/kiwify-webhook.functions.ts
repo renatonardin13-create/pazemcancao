@@ -84,11 +84,11 @@ async function markEventFailed(uniqueEventId: string, errorMessage: string) {
 
 // ─── User provisioning ───
 
-async function provisionUserAccess(email: string): Promise<{ userCreated: boolean; userFound: boolean; userId: string | null }> {
+async function provisionUserAccess(email: string): Promise<{ userCreated: boolean; userFound: boolean }> {
   const url = process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const publicKey = process.env.SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !serviceKey) return { userCreated: false, userFound: false, userId: null };
+  if (!url || !serviceKey) return { userCreated: false, userFound: false };
 
   const admin = createClient(url, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
@@ -100,21 +100,19 @@ async function provisionUserAccess(email: string): Promise<{ userCreated: boolea
   );
 
   let userCreated = false;
-  let userId: string | null = existingUser?.id || null;
 
   if (!existingUser) {
     const tempPassword = crypto.randomUUID() + crypto.randomUUID();
-    const { data: newUser, error: createError } = await admin.auth.admin.createUser({
+    const { error: createError } = await admin.auth.admin.createUser({
       email,
       password: tempPassword,
       email_confirm: true,
     });
     if (createError) {
       console.error('Error creating user:', createError);
-      return { userCreated: false, userFound: false, userId: null };
+      return { userCreated: false, userFound: false };
     }
     userCreated = true;
-    userId = newUser?.user?.id || null;
   }
 
   if (publicKey) {
@@ -126,7 +124,7 @@ async function provisionUserAccess(email: string): Promise<{ userCreated: boolea
     });
   }
 
-  return { userCreated, userFound: !!existingUser, userId };
+  return { userCreated, userFound: !!existingUser };
 }
 
 // ─── Content unlock calculation ───
@@ -202,7 +200,7 @@ function extractFields(rawBody: any) {
   const orderId = payload.order_id || rawBody.order_id || '';
   const uniqueEventId = extractEventId(payload, rawBody);
 
-  // Extract external product ID (Kiwify, Hotmart, Cakto formats)
+  // Extract external product ID from payload (Kiwify, Hotmart, Cakto formats)
   const externalProductId = (
     payload.product?.id ||
     payload.Product?.id ||
@@ -213,63 +211,22 @@ function extractFields(rawBody: any) {
     ''
   ).toString().trim();
 
-  // Extract product name for logging
-  const externalProductName = (
-    payload.product?.name ||
-    payload.Product?.name ||
-    rawBody.product?.name ||
-    rawBody.Product?.name ||
-    payload.product_name ||
-    rawBody.product_name ||
-    ''
-  ).toString().trim();
-
-  // Detect platform from payload structure or explicit field
-  const platform = (
-    payload.platform ||
-    rawBody.platform ||
-    rawBody.provider ||
-    payload.provider ||
-    ''
-  ).toString().toLowerCase().trim();
-
-  return { payload, status, customerEmail, customerName, orderId, uniqueEventId, externalProductId, externalProductName, platform };
+  return { payload, status, customerEmail, customerName, orderId, uniqueEventId, externalProductId };
 }
 
 // ─── Resolve course from external product ID via course_integrations ───
-async function resolveCourseByProductId(
-  externalProductId: string,
-  platform: string
-): Promise<{ courseId: string | null; productName: string | null }> {
-  if (!externalProductId) return { courseId: null, productName: null };
+async function resolveCourseByProductId(externalProductId: string): Promise<string | null> {
+  if (!externalProductId) return null;
 
-  // First try matching by product ID + platform (most precise)
-  if (platform) {
-    const { data } = await supabaseAdmin
-      .from('course_integrations')
-      .select('course_id, external_product_name')
-      .eq('external_product_id', externalProductId)
-      .eq('platform', platform)
-      .eq('is_enabled', true)
-      .eq('webhook_active', true)
-      .maybeSingle();
-
-    if (data) return { courseId: data.course_id, productName: data.external_product_name };
-  }
-
-  // Fallback: match by product ID only (platform might not be in payload)
   const { data } = await supabaseAdmin
     .from('course_integrations')
-    .select('course_id, external_product_name')
+    .select('course_id')
     .eq('external_product_id', externalProductId)
     .eq('is_enabled', true)
     .eq('webhook_active', true)
     .maybeSingle();
 
-  if (data) return { courseId: data.course_id, productName: data.external_product_name };
-
-  console.warn(`[webhook] Integration not found for product_id="${externalProductId}", platform="${platform}"`);
-  return { courseId: null, productName: null };
+  return data?.course_id || null;
 }
 
 // ─── Main handler ───
@@ -290,12 +247,10 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
 
   const requestUrl = new URL(request.url);
   const courseIdFromQuery = requestUrl.searchParams.get('course')?.trim() || null;
-  const { status, customerEmail, customerName, orderId, uniqueEventId, externalProductId, externalProductName, platform: payloadPlatform } = extractFields(rawBody);
+  const { status, customerEmail, customerName, orderId, uniqueEventId, externalProductId } = extractFields(rawBody);
 
   // Resolve course: prefer query param, fallback to product ID lookup via course_integrations
-  const productLookup = !courseIdFromQuery ? await resolveCourseByProductId(externalProductId, payloadPlatform) : { courseId: null, productName: null };
-  const resolvedCourseId = courseIdFromQuery || productLookup.courseId;
-  const resolvedProductName = externalProductName || productLookup.productName || 'Paz em Canção';
+  const resolvedCourseId = courseIdFromQuery || await resolveCourseByProductId(externalProductId);
 
   if (!customerEmail) {
     await logWebhookEvent({
@@ -307,8 +262,26 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
     return jsonResponse({ error: 'Missing customer email' }, 400);
   }
 
-  const approvedStatuses = ['paid', 'approved', 'completed'];
-  const cancelledStatuses = ['refunded', 'chargedback', 'chargeback', 'cancelled'];
+  // ─── Status mapping documentation ───
+  // Each webhook provider (Kiwify, Hotmart, Cakto) sends different status strings.
+  // We normalize all of them into one of four internal actions:
+  //
+  // ACTION: approve  → libera acesso (approved_buyers + enrollment + user provisioning)
+  //   Statuses: paid, approved, completed, compra_aprovada
+  //
+  // ACTION: pending  → NÃO libera acesso, apenas registra log
+  //   Statuses: pending, waiting_payment, pagamento_pendente, waiting, billet_printed
+  //
+  // ACTION: revoke   → bloqueia acesso (access_enabled=false, enrollment cancelled/refunded)
+  //   Statuses: refunded, chargedback, chargeback, cancelled, compra_cancelada, reembolso, dispute
+  //
+  // ACTION: expire   → marca acesso como expirado (enrollment expired, access_enabled=false)
+  //   Statuses: expired, expirado, expiracao, subscription_expired
+
+  const approvedStatuses = ['paid', 'approved', 'completed', 'compra_aprovada'];
+  const pendingStatuses = ['pending', 'waiting_payment', 'pagamento_pendente', 'waiting', 'billet_printed'];
+  const revokeStatuses = ['refunded', 'chargedback', 'chargeback', 'cancelled', 'compra_cancelada', 'reembolso', 'dispute'];
+  const expiredStatuses = ['expired', 'expirado', 'expiracao', 'subscription_expired'];
 
   if (!status) {
     await logWebhookEvent({
@@ -358,6 +331,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
     console.error('Auth validation error:', authErr);
   }
 
+  // ─── ACTION: approve (compra_aprovada) ───
   if (approvedStatuses.includes(status)) {
     const eventKey = uniqueEventId || orderId;
     const claimedId = await claimEvent(eventKey, rawBody, customerEmail, status);
@@ -381,7 +355,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
             nome: customerName,
             email: customerEmail,
             order_id: orderId,
-            product_name: resolvedProductName,
+            product_name: 'Paz em Canção',
             status: 'approved',
             access_enabled: true,
           },
@@ -398,49 +372,29 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       const unlocksCreated = await calculateContentUnlocks(customerEmail, orderId);
 
       let linkedCourseId: string | null = null;
-      if (resolvedCourseId && userResult.userId) {
-        const authUserId = userResult.userId;
+      if (resolvedCourseId) {
+        const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
+        const authUser = authUsers.users.find((user) => user.email?.toLowerCase() === customerEmail);
 
-        // Check if enrollment already exists
-        const { data: existingEnrollment } = await supabaseAdmin
-          .from('enrollments')
-          .select('id')
-          .eq('user_id', authUserId)
-          .eq('course_id', resolvedCourseId)
-          .maybeSingle();
-
-        if (existingEnrollment) {
-          await supabaseAdmin
-            .from('enrollments')
-            .update({ status: 'active', access_origin: 'webhook', granted_at: new Date().toISOString() })
-            .eq('id', existingEnrollment.id);
-        } else {
+        if (authUser) {
           const { error: enrollmentError } = await supabaseAdmin
             .from('enrollments')
-            .insert({
-              user_id: authUserId,
-              course_id: resolvedCourseId,
-              email: customerEmail,
-              access_origin: 'webhook',
-              status: 'active',
-              granted_at: new Date().toISOString(),
-            });
-          if (enrollmentError) {
-            console.error('[webhook] Enrollment insert error:', enrollmentError.message);
+            .upsert(
+              {
+                user_id: authUser.id,
+                course_id: resolvedCourseId,
+                email: customerEmail,
+                access_origin: 'webhook',
+                status: 'active',
+                granted_at: new Date().toISOString(),
+              },
+              { onConflict: 'user_id,course_id' }
+            );
+
+          if (!enrollmentError) {
+            linkedCourseId = resolvedCourseId;
           }
         }
-        linkedCourseId = resolvedCourseId;
-      } else if (externalProductId) {
-        // Product ID was in payload but no matching integration found
-        console.warn(`[webhook] PRODUCT_NOT_FOUND: product_id="${externalProductId}", platform="${payloadPlatform}", email="${customerEmail}"`);
-        await logWebhookEvent({
-          eventType: 'product_not_found',
-          email: customerEmail,
-          orderId,
-          payload: rawBody,
-          responseStatus: 200,
-          responseMessage: `Product not found: ${externalProductId}`,
-        });
       }
 
       await markEventCompleted(eventKey, {
@@ -449,8 +403,6 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
         purchase_linked: orderId,
         content_unlocks_created: unlocksCreated,
         course_id: linkedCourseId,
-        external_product_id: externalProductId || null,
-        platform: payloadPlatform || null,
       });
 
       await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: linkedCourseId ? 'Buyer approved and enrolled' : 'Buyer approved' });
@@ -462,26 +414,70 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
     }
   }
 
-  if (cancelledStatuses.includes(status)) {
+  // ─── ACTION: pending (pagamento_pendente) ───
+  // Regra: NÃO libera acesso. Apenas registra o evento no log.
+  if (pendingStatuses.includes(status)) {
+    await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: 'Payment pending — no access granted' });
+    return jsonResponse({ success: true, message: 'Payment pending — no access granted' });
+  }
+
+  // ─── ACTION: revoke (compra_cancelada / reembolso) ───
+  // Regra: Bloqueia acesso no approved_buyers e altera enrollment para o status recebido.
+  if (revokeStatuses.includes(status)) {
     await supabaseAdmin
       .from('approved_buyers')
       .update({ access_enabled: false, status })
       .eq('email', customerEmail);
 
+    // Revoke all active enrollments for this email (or specific course if resolved)
     if (resolvedCourseId) {
-      // Update all active enrollments for this email + course (by email since user may not be resolved)
       await supabaseAdmin
         .from('enrollments')
-        .update({ status })
+        .update({ status: 'cancelled' })
+        .eq('email', customerEmail)
         .eq('course_id', resolvedCourseId)
+        .eq('status', 'active');
+    } else {
+      // No specific course — revoke all active enrollments for this email
+      await supabaseAdmin
+        .from('enrollments')
+        .update({ status: 'cancelled' })
         .eq('email', customerEmail)
         .eq('status', 'active');
     }
 
     await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Access revoked: ${status}` });
-    return jsonResponse({ success: true });
+    return jsonResponse({ success: true, message: `Access revoked: ${status}` });
   }
 
-  await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: 'No action required' });
-  return jsonResponse({ success: true, message: 'No action required' });
+  // ─── ACTION: expire (expiração) ───
+  // Regra: Marca acesso como expirado. access_enabled=false, enrollment status='expired'.
+  if (expiredStatuses.includes(status)) {
+    await supabaseAdmin
+      .from('approved_buyers')
+      .update({ access_enabled: false, status: 'expired' })
+      .eq('email', customerEmail);
+
+    if (resolvedCourseId) {
+      await supabaseAdmin
+        .from('enrollments')
+        .update({ status: 'expired', expires_at: new Date().toISOString() })
+        .eq('email', customerEmail)
+        .eq('course_id', resolvedCourseId)
+        .eq('status', 'active');
+    } else {
+      await supabaseAdmin
+        .from('enrollments')
+        .update({ status: 'expired', expires_at: new Date().toISOString() })
+        .eq('email', customerEmail)
+        .eq('status', 'active');
+    }
+
+    await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Access expired: ${status}` });
+    return jsonResponse({ success: true, message: `Access expired: ${status}` });
+  }
+
+  // ─── Status não reconhecido ───
+  await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Unrecognized status — no action: ${status}` });
+  return jsonResponse({ success: true, message: `Unrecognized status — no action: ${status}` });
 }
