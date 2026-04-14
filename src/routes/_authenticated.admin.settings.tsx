@@ -140,7 +140,7 @@ function BrandingTab({ settings, onSave, saving }: { settings: any; onSave: (v: 
         if (type === "logo") setLogoUrl(res.url);
         else setFaviconUrl(res.url);
         toast.success(`${type === "logo" ? "Logo" : "Favicon"} enviado com sucesso!`);
-      } catch (err: any) { toast.error(err.message || "Erro ao enviar arquivo"); }
+      } catch (err: any) { toastError(err); }
       finally { setUploading(null); }
     };
     reader.onerror = () => {

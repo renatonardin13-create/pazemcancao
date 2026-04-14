@@ -95,7 +95,7 @@ export function ImageUploadField({
         setErrorMsg(err.message || "Erro ao enviar imagem");
         setPreviewUrl(null);
         URL.revokeObjectURL(localUrl);
-        toast.error(err.message || "Erro ao enviar imagem");
+        toastError(err, "Erro ao enviar imagem");
       }
     },
     [bucket, folder, onChange]

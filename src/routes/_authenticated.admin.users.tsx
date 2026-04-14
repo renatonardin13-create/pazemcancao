@@ -132,7 +132,7 @@ function AdminUsersPage() {
       setTrialDays(7);
     },
     onError: (err: any) => {
-      toast.error(err.message || "Erro ao cadastrar cliente de teste");
+      toastError(err, "Erro ao cadastrar cliente");
     },
   });
 
@@ -145,7 +145,7 @@ function AdminUsersPage() {
       setAddPassword(result.generatedPassword || null);
     },
     onError: (err: any) => {
-      toast.error(err.message || "Erro ao adicionar aluno");
+      toastError(err, "Erro ao adicionar aluno");
     },
   });
 
@@ -159,7 +159,7 @@ function AdminUsersPage() {
       setEditBuyer(null);
     },
     onError: (err: any) => {
-      toast.error(err.message || "Erro ao atualizar");
+      toastError(err, "Erro ao atualizar");
     },
   });
 
@@ -171,7 +171,7 @@ function AdminUsersPage() {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     },
     onError: (err: any) => {
-      toast.error(err.message || "Erro ao alterar acesso");
+      toastError(err, "Erro ao alterar acesso");
     },
   });
 
@@ -182,7 +182,7 @@ function AdminUsersPage() {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     },
     onError: (err: any) => {
-      toast.error(err.message || "Erro ao excluir");
+      toastError(err, "Erro ao excluir");
     },
   });
 
