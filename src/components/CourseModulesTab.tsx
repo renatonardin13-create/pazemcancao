@@ -296,7 +296,8 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   };
 
   const inferContentType = (lesson: any): "video" | "pdf" | "file" | "link" => {
-    if (lesson.content_type && lesson.content_type !== 'video') return lesson.content_type;
+    const ct = lesson.content_type;
+    if (ct === "video" || ct === "pdf" || ct === "file" || ct === "link") return ct;
     if (lesson.video_url) return "video";
     if (lesson.content_url?.endsWith(".pdf")) return "pdf";
     if (lesson.content_url) return "file";
@@ -876,7 +877,13 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   <button
                     key={type.value}
                     type="button"
-                    onClick={() => setLesContentType(type.value)}
+                    onClick={() => {
+                      if (type.value !== lesContentType) {
+                        if (type.value === "video") { setLesContentUrl(""); }
+                        else { setLesVideoUrl(""); }
+                      }
+                      setLesContentType(type.value);
+                    }}
                     className={`flex flex-col items-center gap-1.5 px-3 py-3.5 rounded-xl border-2 transition-all duration-200 ${
                       lesContentType === type.value
                         ? "border-gold bg-gold/15 text-gold"
