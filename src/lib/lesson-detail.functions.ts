@@ -39,11 +39,17 @@ export const getLessonDetail = createServerFn({ method: 'POST' })
       .maybeSingle();
 
     // All lessons ordered
-    const { data: allLessons } = await supabase
+    const lessonsQuery = supabase
       .from('lessons')
-      .select('id, title, description, sort_order, duration, module_id, video_url, content_url, content_type, is_free_preview')
+      .select('id, title, description, sort_order, duration, module_id, video_url, content_url, content_type, is_free_preview, status')
       .eq('course_id', data.courseId)
       .order('sort_order', { ascending: true });
+
+    if (!isAdmin) {
+      lessonsQuery.eq('status', 'published');
+    }
+
+    const { data: allLessons } = await lessonsQuery;
 
     const lessons = allLessons || [];
 
@@ -66,11 +72,17 @@ export const getLessonDetail = createServerFn({ method: 'POST' })
       : currentLesson;
 
     // Modules for this course
-    const { data: modules } = await supabase
+    const modulesQuery = supabase
       .from('modules')
       .select('id, title, sort_order, status')
       .eq('course_id', data.courseId)
       .order('sort_order', { ascending: true });
+
+    if (!isAdmin) {
+      modulesQuery.eq('status', 'published');
+    }
+
+    const { data: modules } = await modulesQuery;
 
     // All progress for this course
     const { data: progress } = await supabase
