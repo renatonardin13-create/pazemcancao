@@ -283,12 +283,11 @@ function LessonDetailPage() {
       <header className="sticky top-0 z-30 border-b border-border/10 bg-background/90 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-[1800px] items-center gap-4 px-5 py-3.5 sm:px-8">
           <Link
-            to="/cursos/$courseId"
-            params={{ courseId }}
+            to="/cursos"
             className="flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-muted-foreground/40 transition-all hover:text-foreground/65 hover:bg-card/10"
           >
             <ChevronLeft className="h-4 w-4" />
-            <span className="text-[11px] font-medium hidden sm:inline">Voltar</span>
+            <span className="text-[11px] font-medium hidden sm:inline">Voltar aos cursos</span>
           </Link>
 
           <div className="hidden h-6 w-px bg-border/10 sm:block" />
