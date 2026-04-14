@@ -267,18 +267,38 @@ function LessonDetailPage() {
             </p>
           </div>
 
-          <div className="flex shrink-0 items-center gap-3 rounded-2xl border border-border/15 bg-card/10 px-3 py-2">
-            <div className="hidden sm:block text-right">
-              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/35">
-                Progresso
-              </p>
-              <p className="text-xs font-bold text-gold/65 tabular-nums">
-                {progressPercent}%
-              </p>
-            </div>
-            <div className="w-20 sm:w-24">
-              <Progress value={progressPercent} className="h-1" />
-            </div>
+          {/* Progress indicator — prominent */}
+          <div className="flex shrink-0 items-center gap-3 rounded-2xl border border-border/15 bg-card/10 px-4 py-2.5">
+            {isCourseCompleted ? (
+              <div className="flex items-center gap-2 text-player-completed">
+                <Award className="h-4 w-4" />
+                <span className="text-[11px] font-bold uppercase tracking-wider">Concluído!</span>
+              </div>
+            ) : (
+              <>
+                <div className="hidden sm:block text-right">
+                  <p className="text-[9px] uppercase tracking-[0.2em] text-muted-foreground/30 mb-0.5">
+                    Progresso
+                  </p>
+                  <p className="text-[10px] text-muted-foreground/45">
+                    <span className="font-bold text-foreground/65">{completedCount}</span>/{totalLessons} aulas
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-20 sm:w-28 h-2.5 rounded-full bg-player-progress-track overflow-hidden">
+                    <motion.div
+                      initial={{ width: 0 }}
+                      animate={{ width: `${progressPercent}%` }}
+                      transition={{ duration: 0.8, ease: "easeOut" }}
+                      className={`h-full rounded-full ${isCourseCompleted ? "bg-player-completed" : "bg-player-progress-fill"}`}
+                    />
+                  </div>
+                  <span className="text-sm font-black text-gold tabular-nums min-w-[2.5rem] text-right">
+                    {progressPercent}%
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </header>
@@ -704,23 +724,49 @@ function LessonDetailPage() {
                   </p>
                 </div>
 
-                <span className="text-xs font-bold text-gold/70 tabular-nums">
+                <span className="text-lg font-black text-gold tabular-nums">
                   {progressPercent}%
                 </span>
               </div>
 
-              <Progress value={progressPercent} className="mb-3 h-1" />
+              {/* Enhanced progress bar */}
+              <div className="mb-3">
+                <div className="h-2.5 w-full rounded-full bg-player-progress-track overflow-hidden">
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progressPercent}%` }}
+                    transition={{ duration: 1, ease: "easeOut" }}
+                    className={`h-full rounded-full transition-colors ${isCourseCompleted ? "bg-player-completed" : "bg-player-progress-fill"}`}
+                  />
+                </div>
+                <div className="flex items-center justify-between mt-1.5">
+                  <span className="text-[10px] text-muted-foreground/40">
+                    <span className="font-bold text-foreground/60">{completedCount}</span> de {totalLessons} aulas concluídas
+                  </span>
+                  {!isCourseCompleted && totalLessons - completedCount > 0 && (
+                    <span className="text-[10px] text-gold/40 font-medium">
+                      Faltam {totalLessons - completedCount}
+                    </span>
+                  )}
+                </div>
+              </div>
 
               {isCourseCompleted && (
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="mb-3 flex items-center justify-center gap-2 rounded-lg border border-player-completed/12 bg-player-completed/8 px-3 py-2"
+                  initial={{ opacity: 0, scale: 0.9, y: 5 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  transition={{ duration: 0.5, type: "spring" }}
+                  className="mb-3 flex items-center justify-center gap-2.5 rounded-xl border border-player-completed/15 bg-player-completed/10 px-4 py-3"
                 >
-                  <Award className="h-3.5 w-3.5 text-player-completed/60" />
-                  <span className="text-[11px] font-semibold text-player-completed/60">
-                    Curso concluído!
-                  </span>
+                  <Award className="h-5 w-5 text-player-completed" />
+                  <div className="text-center">
+                    <span className="block text-[12px] font-bold text-player-completed">
+                      🎉 Curso concluído!
+                    </span>
+                    <span className="block text-[10px] text-player-completed/60 mt-0.5">
+                      Parabéns por completar todas as aulas
+                    </span>
+                  </div>
                 </motion.div>
               )}
 
