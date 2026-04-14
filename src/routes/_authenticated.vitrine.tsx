@@ -159,6 +159,9 @@ function CourseCard({ course }: { course: any }) {
   const isEnrolled = course.access_state === "enrolled";
   const isLocked = course.access_state === "locked";
   const hasPreview = course.access_state === "preview";
+  const isAvailable = course.access_state === "available";
+  const isBlocked = course.access_state === "blocked";
+  const isExpired = course.access_state === "expired";
 
   const handleLockedClick = () => {
     if (course.checkout_url) {
@@ -173,7 +176,7 @@ function CourseCard({ course }: { course: any }) {
           <img
             src={course.cover_image_url}
             alt={course.title}
-            className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${isLocked ? "brightness-[0.35] saturate-[0.3]" : ""}`}
+            className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${(isLocked || isBlocked || isExpired) ? "brightness-[0.35] saturate-[0.3]" : ""}`}
           />
         ) : (
           <div className="w-full h-full bg-muted/20 flex items-center justify-center">
@@ -181,26 +184,28 @@ function CourseCard({ course }: { course: any }) {
           </div>
         )}
 
-        {/* Dark overlay for locked */}
-        <div className={`absolute inset-0 ${isLocked ? "bg-gradient-to-t from-black/95 via-black/60 to-black/30" : "bg-gradient-to-t from-background/90 via-background/30 to-transparent"}`} />
+        {/* Dark overlay for locked/blocked/expired */}
+        <div className={`absolute inset-0 ${(isLocked || isBlocked || isExpired) ? "bg-gradient-to-t from-black/95 via-black/60 to-black/30" : "bg-gradient-to-t from-background/90 via-background/30 to-transparent"}`} />
 
-        {/* Lock icon centered for locked courses */}
-        {isLocked && (
+        {/* Lock icon centered for locked/blocked courses */}
+        {(isLocked || isBlocked || isExpired) && (
           <>
             <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
               <div className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-md border border-gold/20 flex items-center justify-center mb-3">
                 <Lock className="h-6 w-6 text-gold/70" />
               </div>
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold/50">
-                Conteúdo Premium
+                {isBlocked ? "Acesso Bloqueado" : isExpired ? "Acesso Expirado" : "Conteúdo Premium"}
               </span>
             </div>
-            <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-gold/15 backdrop-blur-sm px-3 py-1.5 border border-gold/25">
-              <ShoppingCart className="h-3 w-3 text-gold/70" />
-              <span className="text-[9px] font-bold uppercase tracking-wider text-gold/70">
-                Adquirir
-              </span>
-            </div>
+            {isLocked && (
+              <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-gold/15 backdrop-blur-sm px-3 py-1.5 border border-gold/25">
+                <ShoppingCart className="h-3 w-3 text-gold/70" />
+                <span className="text-[9px] font-bold uppercase tracking-wider text-gold/70">
+                  Adquirir
+                </span>
+              </div>
+            )}
           </>
         )}
 
@@ -216,7 +221,7 @@ function CourseCard({ course }: { course: any }) {
 
         {/* Bottom info */}
         <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
-          <h3 className={`font-display text-sm font-bold leading-tight line-clamp-2 transition-colors ${isLocked ? "text-foreground/60" : "text-foreground/90 group-hover:text-gold"}`}>
+          <h3 className={`font-display text-sm font-bold leading-tight line-clamp-2 transition-colors ${(isLocked || isBlocked || isExpired) ? "text-foreground/60" : "text-foreground/90 group-hover:text-gold"}`}>
             {course.title}
           </h3>
           {course.short_description && (
@@ -234,9 +239,21 @@ function CourseCard({ course }: { course: any }) {
               <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gold/50">
                 <ShoppingCart className="h-3 w-3" /> Comprar Agora
               </span>
+            ) : isBlocked ? (
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-red-400/50">
+                <Lock className="h-3 w-3" /> Bloqueado
+              </span>
+            ) : isExpired ? (
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-orange-400/50">
+                <Lock className="h-3 w-3" /> Expirado
+              </span>
             ) : hasPreview ? (
               <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-emerald-400/60">
                 <Play className="h-3 w-3" /> Pré-visualizar
+              </span>
+            ) : isAvailable ? (
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gold/70">
+                Ver Detalhes <ArrowRight className="h-3 w-3" />
               </span>
             ) : null}
           </div>
@@ -245,7 +262,7 @@ function CourseCard({ course }: { course: any }) {
     </div>
   );
 
-  if (isEnrolled || hasPreview) {
+  if (isEnrolled || hasPreview || isAvailable) {
     return (
       <Link to="/cursos/$courseId" params={{ courseId: course.id }}>
         {cardContent}
@@ -261,6 +278,7 @@ function CourseCard({ course }: { course: any }) {
     );
   }
 
+  // Blocked/expired — show card but no action
   return cardContent;
 }
 

@@ -38,16 +38,29 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       .eq('is_active', true)
       .order('sort_order', { ascending: true });
 
-    // Get user enrollments
+    // Get user enrollments with status and expiration info
     const { data: enrollments } = await supabase
       .from('enrollments')
-      .select('course_id')
-      .eq('user_id', userId)
-      .eq('status', 'active');
+      .select('course_id, status, expires_at')
+      .eq('user_id', userId);
 
-    const enrolledCourseIds = new Set(
-      (enrollments || []).map((e: any) => e.course_id)
-    );
+    // Active enrollments: status = active AND not expired
+    const activeEnrollmentIds = new Set<string>();
+    const blockedEnrollmentIds = new Set<string>();
+    const expiredEnrollmentIds = new Set<string>();
+
+    for (const e of enrollments || []) {
+      const isExpired = e.expires_at && new Date(e.expires_at) < new Date();
+      if (e.status === 'active' && !isExpired) {
+        activeEnrollmentIds.add(e.course_id);
+      } else if (e.status === 'blocked') {
+        blockedEnrollmentIds.add(e.course_id);
+      } else if (isExpired || e.status === 'expired') {
+        expiredEnrollmentIds.add(e.course_id);
+      }
+    }
+
+    const enrolledCourseIds = activeEnrollmentIds;
 
     // Get all published courses
     const { data: allCourses } = await supabase
@@ -56,7 +69,18 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       .eq('status', 'published')
       .order('sort_order', { ascending: true });
 
-    const publishedCourses = allCourses || [];
+    const publishedCourseIds = (allCourses || []).map((c: any) => c.id);
+
+    // Check which published courses have at least 1 lesson (eligible for consumption)
+    const { data: lessonCounts } = await supabaseAdmin
+      .from('lessons')
+      .select('course_id')
+      .in('course_id', publishedCourseIds.length > 0 ? publishedCourseIds : ['__none__']);
+
+    const coursesWithLessons = new Set((lessonCounts || []).map((l: any) => l.course_id));
+
+    // Only show courses that have at least 1 lesson
+    const publishedCourses = (allCourses || []).filter((c: any) => coursesWithLessons.has(c.id));
 
     // Courses with free preview lessons
     const { data: previewLessons } = await supabase
@@ -92,12 +116,28 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
 
     const enrichCourse = (course: any) => {
       const isEnrolled = enrolledCourseIds.has(course.id) || isAdmin;
+      const isBlocked = blockedEnrollmentIds.has(course.id);
+      const isExpired = expiredEnrollmentIds.has(course.id);
       const hasPreview = previewCourseIds.has(course.id);
       const checkoutUrl = integrationMap.get(course.id) || null;
       const hasCheckout = !!checkoutUrl;
 
-      // For vitrine: non-enrolled without checkout URL are hidden
-      const accessState = isEnrolled ? 'enrolled' : hasPreview ? 'preview' : hasCheckout ? 'locked' : 'hidden';
+      // Determine access state — NEVER hide published courses
+      let accessState: string;
+      if (isEnrolled) {
+        accessState = 'enrolled';
+      } else if (isBlocked) {
+        accessState = 'blocked';
+      } else if (isExpired) {
+        accessState = 'expired';
+      } else if (hasPreview) {
+        accessState = 'preview';
+      } else if (hasCheckout) {
+        accessState = 'locked';
+      } else {
+        // Course is published but user has no enrollment and no checkout — show as available
+        accessState = 'available';
+      }
 
       return {
         ...course,
@@ -155,7 +195,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
         }
       }
 
-      courses = courses.map(enrichCourse).filter((c: any) => c.access_state !== 'hidden');
+      courses = courses.map(enrichCourse);
 
       if (courses.length > 0) {
         result.push({

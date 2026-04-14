@@ -376,6 +376,7 @@ export type Database = {
           created_at: string
           email: string | null
           enrolled_at: string
+          expires_at: string | null
           granted_at: string
           id: string
           notes: string | null
@@ -391,6 +392,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           enrolled_at?: string
+          expires_at?: string | null
           granted_at?: string
           id?: string
           notes?: string | null
@@ -406,6 +408,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           enrolled_at?: string
+          expires_at?: string | null
           granted_at?: string
           id?: string
           notes?: string | null

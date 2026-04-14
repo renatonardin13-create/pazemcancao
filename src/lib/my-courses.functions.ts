@@ -6,12 +6,11 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
 
-    // Get only active enrollments for the authenticated user
+    // Get all enrollments for the authenticated user (not just active — we filter below)
     const { data: enrollments } = await supabase
       .from('enrollments')
-      .select('course_id, progress_percentage, status, enrolled_at, access_origin, granted_at')
+      .select('course_id, progress_percentage, status, enrolled_at, access_origin, granted_at, expires_at')
       .eq('user_id', userId)
-      .eq('status', 'active')
       .order('granted_at', { ascending: false })
       .order('enrolled_at', { ascending: false });
 
@@ -19,9 +18,20 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
       return { courses: [], stats: { total: 0, inProgress: 0, completed: 0 } };
     }
 
+    // Filter: only active enrollments that haven't expired
+    const activeEnrollments = enrollments.filter((e: any) => {
+      if (e.status !== 'active') return false;
+      if (e.expires_at && new Date(e.expires_at) < new Date()) return false;
+      return true;
+    });
+
+    if (activeEnrollments.length === 0) {
+      return { courses: [], stats: { total: 0, inProgress: 0, completed: 0 } };
+    }
+
     // Keep a single active access record per course
-    const enrollmentByCourse = new Map<string, (typeof enrollments)[number]>();
-    for (const enrollment of enrollments) {
+    const enrollmentByCourse = new Map<string, (typeof activeEnrollments)[number]>();
+    for (const enrollment of activeEnrollments) {
       if (!enrollmentByCourse.has(enrollment.course_id)) {
         enrollmentByCourse.set(enrollment.course_id, enrollment);
       }
@@ -30,11 +40,12 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
     const uniqueEnrollments = Array.from(enrollmentByCourse.values());
     const courseIds = uniqueEnrollments.map((e) => e.course_id);
 
-    // Get only courses that the user really has active access to
+    // Get only published courses that the user has active access to
     const { data: courses } = await supabase
       .from('courses')
       .select('id, title, cover_image_url, short_description, total_lessons, total_duration, status')
-      .in('id', courseIds);
+      .in('id', courseIds)
+      .eq('status', 'published');
 
     // Get modules count per course
     const { data: modules } = await supabase
@@ -89,7 +100,10 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
         granted_at: enrollment?.granted_at,
         access_origin: enrollment?.access_origin,
       };
-    }).sort((a, b) => {
+    })
+    // Only show courses that have at least 1 lesson (eligible for consumption)
+    .filter((c) => c.lesson_count > 0)
+    .sort((a, b) => {
       const aDate = new Date(a.granted_at || a.enrolled_at || 0).getTime();
       const bDate = new Date(b.granted_at || b.enrolled_at || 0).getTime();
       return bDate - aDate;
