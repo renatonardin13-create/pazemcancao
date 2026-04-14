@@ -262,8 +262,26 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
     return jsonResponse({ error: 'Missing customer email' }, 400);
   }
 
-  const approvedStatuses = ['paid', 'approved', 'completed'];
-  const cancelledStatuses = ['refunded', 'chargedback', 'chargeback', 'cancelled'];
+  // ─── Status mapping documentation ───
+  // Each webhook provider (Kiwify, Hotmart, Cakto) sends different status strings.
+  // We normalize all of them into one of four internal actions:
+  //
+  // ACTION: approve  → libera acesso (approved_buyers + enrollment + user provisioning)
+  //   Statuses: paid, approved, completed, compra_aprovada
+  //
+  // ACTION: pending  → NÃO libera acesso, apenas registra log
+  //   Statuses: pending, waiting_payment, pagamento_pendente, waiting, billet_printed
+  //
+  // ACTION: revoke   → bloqueia acesso (access_enabled=false, enrollment cancelled/refunded)
+  //   Statuses: refunded, chargedback, chargeback, cancelled, compra_cancelada, reembolso, dispute
+  //
+  // ACTION: expire   → marca acesso como expirado (enrollment expired, access_enabled=false)
+  //   Statuses: expired, expirado, expiracao, subscription_expired
+
+  const approvedStatuses = ['paid', 'approved', 'completed', 'compra_aprovada'];
+  const pendingStatuses = ['pending', 'waiting_payment', 'pagamento_pendente', 'waiting', 'billet_printed'];
+  const revokeStatuses = ['refunded', 'chargedback', 'chargeback', 'cancelled', 'compra_cancelada', 'reembolso', 'dispute'];
+  const expiredStatuses = ['expired', 'expirado', 'expiracao', 'subscription_expired'];
 
   if (!status) {
     await logWebhookEvent({
@@ -313,6 +331,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
     console.error('Auth validation error:', authErr);
   }
 
+  // ─── ACTION: approve (compra_aprovada) ───
   if (approvedStatuses.includes(status)) {
     const eventKey = uniqueEventId || orderId;
     const claimedId = await claimEvent(eventKey, rawBody, customerEmail, status);
@@ -395,29 +414,70 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
     }
   }
 
-  if (cancelledStatuses.includes(status)) {
+  // ─── ACTION: pending (pagamento_pendente) ───
+  // Regra: NÃO libera acesso. Apenas registra o evento no log.
+  if (pendingStatuses.includes(status)) {
+    await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: 'Payment pending — no access granted' });
+    return jsonResponse({ success: true, message: 'Payment pending — no access granted' });
+  }
+
+  // ─── ACTION: revoke (compra_cancelada / reembolso) ───
+  // Regra: Bloqueia acesso no approved_buyers e altera enrollment para o status recebido.
+  if (revokeStatuses.includes(status)) {
     await supabaseAdmin
       .from('approved_buyers')
       .update({ access_enabled: false, status })
       .eq('email', customerEmail);
 
+    // Revoke all active enrollments for this email (or specific course if resolved)
     if (resolvedCourseId) {
-      const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
-      const authUser = authUsers.users.find((user) => user.email?.toLowerCase() === customerEmail);
-      if (authUser) {
-        await supabaseAdmin
-          .from('enrollments')
-          .update({ status })
-          .eq('user_id', authUser.id)
-          .eq('course_id', resolvedCourseId)
-          .eq('status', 'active');
-      }
+      await supabaseAdmin
+        .from('enrollments')
+        .update({ status: 'cancelled' })
+        .eq('email', customerEmail)
+        .eq('course_id', resolvedCourseId)
+        .eq('status', 'active');
+    } else {
+      // No specific course — revoke all active enrollments for this email
+      await supabaseAdmin
+        .from('enrollments')
+        .update({ status: 'cancelled' })
+        .eq('email', customerEmail)
+        .eq('status', 'active');
     }
 
     await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Access revoked: ${status}` });
-    return jsonResponse({ success: true });
+    return jsonResponse({ success: true, message: `Access revoked: ${status}` });
   }
 
-  await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: 'No action required' });
-  return jsonResponse({ success: true, message: 'No action required' });
+  // ─── ACTION: expire (expiração) ───
+  // Regra: Marca acesso como expirado. access_enabled=false, enrollment status='expired'.
+  if (expiredStatuses.includes(status)) {
+    await supabaseAdmin
+      .from('approved_buyers')
+      .update({ access_enabled: false, status: 'expired' })
+      .eq('email', customerEmail);
+
+    if (resolvedCourseId) {
+      await supabaseAdmin
+        .from('enrollments')
+        .update({ status: 'expired', expires_at: new Date().toISOString() })
+        .eq('email', customerEmail)
+        .eq('course_id', resolvedCourseId)
+        .eq('status', 'active');
+    } else {
+      await supabaseAdmin
+        .from('enrollments')
+        .update({ status: 'expired', expires_at: new Date().toISOString() })
+        .eq('email', customerEmail)
+        .eq('status', 'active');
+    }
+
+    await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Access expired: ${status}` });
+    return jsonResponse({ success: true, message: `Access expired: ${status}` });
+  }
+
+  // ─── Status não reconhecido ───
+  await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Unrecognized status — no action: ${status}` });
+  return jsonResponse({ success: true, message: `Unrecognized status — no action: ${status}` });
 }
