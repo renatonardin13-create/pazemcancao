@@ -534,14 +534,14 @@ function AdminUsersPage() {
       ) : (
         <div className="rounded-xl border border-border/30 overflow-hidden">
           {/* Table header */}
-          <div className="grid grid-cols-[1fr_1fr_100px_80px_140px_120px_50px] gap-4 px-5 py-3 border-b border-border/25 bg-card/15">
-            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider">Aluno</span>
-            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider">Email</span>
-            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider">Status</span>
-            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider text-center">Cursos</span>
-            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider">Progresso</span>
-            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider">Último Acesso</span>
-            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider text-center">Ações</span>
+           <div className="grid grid-cols-[1fr_1fr_100px_80px_140px_120px_50px] gap-4 px-5 py-3 border-b border-border/25 bg-muted/8">
+            <span className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">Aluno</span>
+            <span className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">Email</span>
+            <span className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">Status</span>
+            <span className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider text-center">Cursos</span>
+            <span className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">Progresso</span>
+            <span className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">Último Acesso</span>
+            <span className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider text-center">Ações</span>
           </div>
 
           {/* Table rows */}
@@ -554,7 +554,7 @@ function AdminUsersPage() {
             return (
               <div
                 key={buyer.id}
-                className="grid grid-cols-[1fr_1fr_100px_80px_140px_120px_50px] gap-4 items-center px-5 py-3.5 border-b border-border/6 hover:bg-card/8 transition-colors last:border-0"
+                className="grid grid-cols-[1fr_1fr_100px_80px_140px_120px_50px] gap-4 items-center px-5 py-4 border-b border-border/15 hover:bg-muted/15 transition-colors last:border-0"
               >
                 {/* Aluno */}
                 <div className="flex items-center gap-3 min-w-0">
