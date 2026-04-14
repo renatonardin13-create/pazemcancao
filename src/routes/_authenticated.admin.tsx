@@ -12,6 +12,14 @@ export const Route = createFileRoute("/_authenticated/admin")({
 
 function AdminLayout() {
   const { isAdmin, adminLoading, logout, user } = useAuth();
+  const queryClient = useQueryClient();
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await queryClient.invalidateQueries();
+    setTimeout(() => setRefreshing(false), 600);
+  };
 
   if (adminLoading) {
     return (
