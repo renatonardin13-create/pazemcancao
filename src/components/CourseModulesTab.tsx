@@ -1002,6 +1002,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                           if (uploadError) throw uploadError;
                           const { data: urlData } = supabase.storage.from("content-files").getPublicUrl(path);
                           setLesContentUrl(`${urlData.publicUrl}?t=${Date.now()}`);
+                          if (lesContentError) setLesContentError("");
                           toast.success("Arquivo enviado com sucesso");
                         } catch (err: any) {
                           toast.error("Erro no upload: " + (err.message || "Tente novamente"));
