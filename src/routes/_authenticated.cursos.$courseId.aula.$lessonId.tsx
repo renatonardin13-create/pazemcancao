@@ -853,6 +853,7 @@ function LessonDetailPage() {
             )}
           </AnimatePresence>
 
+        </main>
 
         {/* ═══ SIDEBAR — premium playlist ═══ */}
         <aside className="w-full lg:w-[340px] xl:w-[380px] shrink-0 border-t lg:border-t-0 lg:border-l border-border/8 bg-player-sidebar-bg lg:overflow-y-auto lg:max-h-[calc(100vh-52px)] lg:sticky lg:top-[52px]">
