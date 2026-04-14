@@ -188,7 +188,7 @@ function ContentPage() {
         const bTime = progressMap[b.id]?.viewed_at ? new Date(progressMap[b.id].viewed_at).getTime() : 0;
         return bTime - aTime;
       })
-      .slice(0, 4);
+      .slice(0, 5);
     result.forEach((i: any) => shownIds.add(i.id));
     return result;
   }, [items, progressMap, shownIds]);
