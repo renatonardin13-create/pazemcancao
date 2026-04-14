@@ -200,7 +200,7 @@ function extractFields(rawBody: any) {
   const orderId = payload.order_id || rawBody.order_id || '';
   const uniqueEventId = extractEventId(payload, rawBody);
 
-  // Extract external product ID from payload (Kiwify, Hotmart, Cakto formats)
+  // Extract external product ID (Kiwify, Hotmart, Cakto formats)
   const externalProductId = (
     payload.product?.id ||
     payload.Product?.id ||
@@ -211,22 +211,63 @@ function extractFields(rawBody: any) {
     ''
   ).toString().trim();
 
-  return { payload, status, customerEmail, customerName, orderId, uniqueEventId, externalProductId };
+  // Extract product name for logging
+  const externalProductName = (
+    payload.product?.name ||
+    payload.Product?.name ||
+    rawBody.product?.name ||
+    rawBody.Product?.name ||
+    payload.product_name ||
+    rawBody.product_name ||
+    ''
+  ).toString().trim();
+
+  // Detect platform from payload structure or explicit field
+  const platform = (
+    payload.platform ||
+    rawBody.platform ||
+    rawBody.provider ||
+    payload.provider ||
+    ''
+  ).toString().toLowerCase().trim();
+
+  return { payload, status, customerEmail, customerName, orderId, uniqueEventId, externalProductId, externalProductName, platform };
 }
 
 // ─── Resolve course from external product ID via course_integrations ───
-async function resolveCourseByProductId(externalProductId: string): Promise<string | null> {
-  if (!externalProductId) return null;
+async function resolveCourseByProductId(
+  externalProductId: string,
+  platform: string
+): Promise<{ courseId: string | null; productName: string | null }> {
+  if (!externalProductId) return { courseId: null, productName: null };
 
+  // First try matching by product ID + platform (most precise)
+  if (platform) {
+    const { data } = await supabaseAdmin
+      .from('course_integrations')
+      .select('course_id, external_product_name')
+      .eq('external_product_id', externalProductId)
+      .eq('platform', platform)
+      .eq('is_enabled', true)
+      .eq('webhook_active', true)
+      .maybeSingle();
+
+    if (data) return { courseId: data.course_id, productName: data.external_product_name };
+  }
+
+  // Fallback: match by product ID only (platform might not be in payload)
   const { data } = await supabaseAdmin
     .from('course_integrations')
-    .select('course_id')
+    .select('course_id, external_product_name')
     .eq('external_product_id', externalProductId)
     .eq('is_enabled', true)
     .eq('webhook_active', true)
     .maybeSingle();
 
-  return data?.course_id || null;
+  if (data) return { courseId: data.course_id, productName: data.external_product_name };
+
+  console.warn(`[webhook] Integration not found for product_id="${externalProductId}", platform="${platform}"`);
+  return { courseId: null, productName: null };
 }
 
 // ─── Main handler ───
@@ -247,10 +288,12 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
 
   const requestUrl = new URL(request.url);
   const courseIdFromQuery = requestUrl.searchParams.get('course')?.trim() || null;
-  const { status, customerEmail, customerName, orderId, uniqueEventId, externalProductId } = extractFields(rawBody);
+  const { status, customerEmail, customerName, orderId, uniqueEventId, externalProductId, externalProductName, platform: payloadPlatform } = extractFields(rawBody);
 
   // Resolve course: prefer query param, fallback to product ID lookup via course_integrations
-  const resolvedCourseId = courseIdFromQuery || await resolveCourseByProductId(externalProductId);
+  const productLookup = !courseIdFromQuery ? await resolveCourseByProductId(externalProductId, payloadPlatform) : { courseId: null, productName: null };
+  const resolvedCourseId = courseIdFromQuery || productLookup.courseId;
+  const resolvedProductName = externalProductName || productLookup.productName || 'Paz em Canção';
 
   if (!customerEmail) {
     await logWebhookEvent({
@@ -336,7 +379,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
             nome: customerName,
             email: customerEmail,
             order_id: orderId,
-            product_name: 'Paz em Canção',
+            product_name: resolvedProductName,
             status: 'approved',
             access_enabled: true,
           },
@@ -358,24 +401,47 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
         const authUser = authUsers.users.find((user) => user.email?.toLowerCase() === customerEmail);
 
         if (authUser) {
-          const { error: enrollmentError } = await supabaseAdmin
+          // Check if enrollment already exists
+          const { data: existingEnrollment } = await supabaseAdmin
             .from('enrollments')
-            .upsert(
-              {
+            .select('id')
+            .eq('user_id', authUser.id)
+            .eq('course_id', resolvedCourseId)
+            .maybeSingle();
+
+          if (existingEnrollment) {
+            await supabaseAdmin
+              .from('enrollments')
+              .update({ status: 'active', access_origin: 'webhook', granted_at: new Date().toISOString() })
+              .eq('id', existingEnrollment.id);
+          } else {
+            const { error: enrollmentError } = await supabaseAdmin
+              .from('enrollments')
+              .insert({
                 user_id: authUser.id,
                 course_id: resolvedCourseId,
                 email: customerEmail,
                 access_origin: 'webhook',
                 status: 'active',
                 granted_at: new Date().toISOString(),
-              },
-              { onConflict: 'user_id,course_id' }
-            );
-
-          if (!enrollmentError) {
-            linkedCourseId = resolvedCourseId;
+              });
+            if (enrollmentError) {
+              console.error('[webhook] Enrollment insert error:', enrollmentError.message);
+            }
           }
+          linkedCourseId = resolvedCourseId;
         }
+      } else if (externalProductId) {
+        // Product ID was in payload but no matching integration found
+        console.warn(`[webhook] PRODUCT_NOT_FOUND: product_id="${externalProductId}", platform="${payloadPlatform}", email="${customerEmail}"`);
+        await logWebhookEvent({
+          eventType: 'product_not_found',
+          email: customerEmail,
+          orderId,
+          payload: rawBody,
+          responseStatus: 200,
+          responseMessage: `Product not found: ${externalProductId}`,
+        });
       }
 
       await markEventCompleted(eventKey, {
@@ -384,6 +450,8 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
         purchase_linked: orderId,
         content_unlocks_created: unlocksCreated,
         course_id: linkedCourseId,
+        external_product_id: externalProductId || null,
+        platform: payloadPlatform || null,
       });
 
       await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: linkedCourseId ? 'Buyer approved and enrolled' : 'Buyer approved' });
