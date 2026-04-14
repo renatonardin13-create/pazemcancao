@@ -585,3 +585,15 @@ function ContentGrid({
     </div>
   );
 }
+
+function StatPill({ icon: Icon, label, value, color }: { icon: any; label: string; value: number; color: string }) {
+  return (
+    <div className="flex items-center gap-2.5 rounded-xl bg-card/20 border border-border/8 px-4 py-2.5">
+      <Icon className={`h-3.5 w-3.5 ${color}`} />
+      <div className="flex items-baseline gap-1.5">
+        <span className="text-sm font-bold text-foreground/75 tabular-nums">{value}</span>
+        <span className="text-[11px] text-muted-foreground/40 tracking-wide">{label}</span>
+      </div>
+    </div>
+  );
+}
