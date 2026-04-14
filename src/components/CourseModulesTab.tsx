@@ -1014,6 +1014,9 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   </label>
                 )}
               </div>
+              {lesContentError && (lesContentType === "pdf" || lesContentType === "file") && (
+                <p className="text-[0.8rem] font-medium text-destructive">{lesContentError}</p>
+              )}
             )}
 
             {lesContentType === "link" && (
@@ -1024,8 +1027,11 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   onChange={(e) => setLesContentUrl(e.target.value)}
                   placeholder="Cole a URL externa"
                   rows={3}
-                  className="bg-card/20 border-border/30"
+                  className={`bg-card/20 border-border/30 ${lesContentError && lesContentType === "link" ? "border-destructive" : ""}`}
                 />
+                {lesContentError && lesContentType === "link" && (
+                  <p className="text-[0.8rem] font-medium text-destructive">{lesContentError}</p>
+                )}
               </div>
             )}
 
