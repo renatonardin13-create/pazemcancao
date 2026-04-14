@@ -10,6 +10,7 @@ import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { ContentCard } from "@/components/ContentCard";
 import { RecommendedSection } from "@/components/RecommendedSection";
+import { TopRankingSection } from "@/components/TopRankingSection";
 import { motion } from "framer-motion";
 import {
   BookOpen,
@@ -375,6 +376,26 @@ function ContentPage() {
                   onTrackDownload={handleTrackDownload}
                 />
               )}
+
+              {/* Top da semana */}
+              <TopRankingSection
+                items={items}
+                hasAccess={hasAccess}
+                popularityMap={data?.weeklyPopularityMap || {}}
+                progressMap={progressMap}
+                lastAccessedId={lastAccessedId}
+                mode="weekly"
+              />
+
+              {/* Mais acessados (all time) */}
+              <TopRankingSection
+                items={items}
+                hasAccess={hasAccess}
+                popularityMap={data?.popularityMap || {}}
+                progressMap={progressMap}
+                lastAccessedId={lastAccessedId}
+                mode="all_time"
+              />
 
               {/* Categorias em Destaque */}
               {featuredCategories.map(([cat, catItems]: [string, any[]]) => {
