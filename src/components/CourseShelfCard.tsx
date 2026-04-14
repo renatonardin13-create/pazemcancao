@@ -21,6 +21,7 @@ export function CourseShelfCard({
   const progress = course.progress_pct ?? 0;
   const hasProgress = showProgress && progress > 0;
   const isLocked = course.access_state === 'locked' || course.access_state === 'blocked' || course.access_state === 'expired';
+  const hasFreePreview = course.access_state === 'preview';
 
   const Wrapper = isLocked && course.checkout_url ? 'a' : Link;
   const wrapperProps = isLocked && course.checkout_url
