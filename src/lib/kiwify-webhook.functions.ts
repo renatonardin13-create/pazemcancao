@@ -333,7 +333,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       .maybeSingle();
 
     if (config && !config.is_active) {
-      await logWebhookEvent({ eventType: 'disabled', payload: rawBody, responseStatus: 200, responseMessage: 'Webhook is disabled' });
+      await logWebhookEvent({ eventType: 'disabled', payload: rawBody, responseStatus: 200, responseMessage: 'Webhook is disabled', ...audit, isSuccess: true });
       return jsonResponse({ status: 'success', message: 'Webhook is disabled' });
     }
 
