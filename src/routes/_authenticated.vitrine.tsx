@@ -4,7 +4,9 @@ import { getStudentShelves } from "@/lib/shelves.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { motion } from "framer-motion";
-import { Store, Lock, Play, ArrowRight, ShoppingCart } from "lucide-react";
+import { Store, Lock, Play, ArrowRight, ShoppingCart, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { useState, useMemo } from "react";
 
 export const Route = createFileRoute("/_authenticated/vitrine")({
   component: VitrinePage,
@@ -17,9 +19,26 @@ function VitrinePage() {
     staleTime: 60_000,
   });
 
+  const [searchTerm, setSearchTerm] = useState("");
+
   const shelves = data?.shelves || [];
   const promoBanners = data?.promoBanners || [];
   const featuredCourse = data?.featuredCourse;
+
+  // Filter shelves by search term — filter courses within each shelf
+  const filteredShelves = useMemo(() => {
+    if (!searchTerm.trim()) return shelves;
+    const term = searchTerm.toLowerCase();
+    return shelves
+      .map((shelf: any) => ({
+        ...shelf,
+        courses: shelf.courses.filter((c: any) =>
+          c.title?.toLowerCase().includes(term) ||
+          c.short_description?.toLowerCase().includes(term)
+        ),
+      }))
+      .filter((shelf: any) => shelf.courses.length > 0);
+  }, [shelves, searchTerm]);
 
   return (
     <StudentLayout>
@@ -75,22 +94,33 @@ function VitrinePage() {
               </motion.div>
             )}
 
+            {/* Search bar */}
+            <div className="relative max-w-sm mb-8">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/25" />
+              <Input
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Buscar cursos..."
+                className="pl-9 bg-card/10 border-border/15 text-sm h-10"
+              />
+            </div>
+
             {isLoading ? (
               <div className="text-center py-24">
                 <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
                   Carregando vitrine...
                 </p>
               </div>
-            ) : shelves.length === 0 ? (
+            ) : filteredShelves.length === 0 ? (
               <div className="text-center py-24">
                 <Store className="h-10 w-10 text-muted-foreground/15 mx-auto mb-5" />
                 <p className="text-sm text-muted-foreground/40">
-                  Nenhum conteúdo disponível na vitrine no momento.
+                  {searchTerm ? "Nenhum curso encontrado para esta busca." : "Nenhum conteúdo disponível na vitrine no momento."}
                 </p>
               </div>
             ) : (
               <div className="space-y-10">
-                {shelves.map((shelf: any, shelfIdx: number) => (
+                {filteredShelves.map((shelf: any, shelfIdx: number) => (
                   <motion.section
                     key={shelf.id}
                     initial={{ opacity: 0, y: 20 }}
