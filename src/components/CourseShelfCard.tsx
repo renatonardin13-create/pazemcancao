@@ -41,8 +41,8 @@ export function CourseShelfCard({
         {/* Main card body */}
         <div className="relative rounded-2xl overflow-hidden bg-card/5 shadow-lg shadow-black/20 md:group-hover/card:shadow-2xl md:group-hover/card:shadow-black/40 md:transition-shadow md:duration-500">
           
-          {/* Image — 16:9 */}
-          <div className="relative aspect-video overflow-hidden">
+          {/* Image — poster 2:3 */}
+          <div className="relative aspect-[2/3] overflow-hidden">
             {course.cover_image_url ? (
               <img
                 src={course.cover_image_url}
