@@ -58,6 +58,7 @@ function MeusCoursosPage() {
 
   const continueIds = new Set(continueItems.map((c: any) => c.id));
   const recommendations = (recData?.recommendations || []).filter((c: any) => !continueIds.has(c.id));
+  const trending = trendData?.ranked || [];
 
   const filtered = courses.filter((c: any) => {
     const matchSearch = !search || c.title?.toLowerCase().includes(search.toLowerCase());
