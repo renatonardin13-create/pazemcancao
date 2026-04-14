@@ -58,11 +58,17 @@ function AdminCategoriesPage() {
     queryFn: () => listAdminCategories(),
   });
 
+  const invalidateStudentCaches = () => {
+    queryClient.invalidateQueries({ queryKey: ["categories"] });
+    queryClient.invalidateQueries({ queryKey: ["student-shelves"] });
+  };
+
   const createCatMutation = useMutation({
     mutationFn: (input: { name: string; slug: string; description?: string; icon?: string; color?: string }) =>
       createCategory({ data: input }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+      invalidateStudentCaches();
       toast.success("Categoria criada");
       setShowCatForm(false);
       setNewCat({ name: "", slug: "", description: "", icon: "", color: PICKER_COLORS[0] });
@@ -75,6 +81,7 @@ function AdminCategoriesPage() {
       updateCategory({ data: input }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+      invalidateStudentCaches();
       toast.success("Categoria atualizada");
       setEditingCat(null);
     },
@@ -85,6 +92,7 @@ function AdminCategoriesPage() {
     mutationFn: (id: string) => deleteCategory({ data: { id } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+      invalidateStudentCaches();
       toast.success("Categoria removida");
     },
     onError: (err: any) => toast.error(err.message),
@@ -92,7 +100,10 @@ function AdminCategoriesPage() {
 
   const reorderMutation = useMutation({
     mutationFn: (orderedIds: string[]) => reorderCategories({ data: { orderedIds } }),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin-categories"] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+      invalidateStudentCaches();
+    },
     onError: (err: any) => toast.error(err.message),
   });
 

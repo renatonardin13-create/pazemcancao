@@ -34,6 +34,8 @@ function EditCoursePage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
       queryClient.invalidateQueries({ queryKey: ["admin-course", courseId] });
+      queryClient.invalidateQueries({ queryKey: ["student-shelves"] });
+      queryClient.invalidateQueries({ queryKey: ["my-courses"] });
       toast.success("Curso atualizado com sucesso!");
       navigate({ to: "/admin/courses" });
     },
