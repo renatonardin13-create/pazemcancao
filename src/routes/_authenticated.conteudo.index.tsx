@@ -3,32 +3,79 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { listContentItems } from "@/lib/content.functions";
+import { getMyProfile } from "@/lib/profile.functions";
+import { useAuth } from "@/hooks/use-auth";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { ContentCard } from "@/components/ContentCard";
 import { RecommendedSection } from "@/components/RecommendedSection";
-import { BookOpen, Video, GraduationCap, FileText, PlayCircle } from "lucide-react";
+import {
+  BookOpen,
+  Video,
+  GraduationCap,
+  FileText,
+  PlayCircle,
+  Sparkles,
+  Clock,
+} from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/conteudo/")({
   component: ContentPage,
 });
 
-const typeConfig: Record<string, { label: string; icon: any; gradient: string }> = {
-  ebook: { label: "E-books", icon: BookOpen, gradient: "from-blue-900/40 via-blue-950/30 to-slate-950/50" },
-  video: { label: "Videoaulas", icon: Video, gradient: "from-purple-900/40 via-purple-950/30 to-slate-950/50" },
-  free_lesson: { label: "Aulas Gratuitas", icon: GraduationCap, gradient: "from-emerald-900/40 via-emerald-950/30 to-slate-950/50" },
-  material: { label: "Materiais", icon: FileText, gradient: "from-amber-900/40 via-amber-950/30 to-slate-950/50" },
+const typeConfig: Record<
+  string,
+  { label: string; icon: any; gradient: string }
+> = {
+  ebook: {
+    label: "E-books",
+    icon: BookOpen,
+    gradient: "from-blue-900/40 via-blue-950/30 to-slate-950/50",
+  },
+  video: {
+    label: "Videoaulas",
+    icon: Video,
+    gradient: "from-purple-900/40 via-purple-950/30 to-slate-950/50",
+  },
+  free_lesson: {
+    label: "Aulas Gratuitas",
+    icon: GraduationCap,
+    gradient: "from-emerald-900/40 via-emerald-950/30 to-slate-950/50",
+  },
+  material: {
+    label: "Materiais",
+    icon: FileText,
+    gradient: "from-amber-900/40 via-amber-950/30 to-slate-950/50",
+  },
 };
 
-// Journey labels now come from DB
-
-// Category order comes from DB now
+function getGreeting(): string {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Bom dia";
+  if (hour < 18) return "Boa tarde";
+  return "Boa noite";
+}
 
 function ContentPage() {
+  const { user } = useAuth();
+
   const { data, isLoading } = useQuery({
     queryKey: ["content-items"],
     queryFn: () => listContentItems(),
   });
+
+  const { data: profileData } = useQuery({
+    queryKey: ["my-profile"],
+    queryFn: () => getMyProfile(),
+    staleTime: 60_000,
+  });
+
+  const displayName =
+    profileData?.profile?.display_name ||
+    user?.user_metadata?.full_name ||
+    user?.email?.split("@")[0] ||
+    "";
+  const firstName = displayName.split(" ")[0];
 
   const hasAccess = data?.hasFullAccess ?? false;
   const items = data?.items || [];
@@ -38,9 +85,19 @@ function ContentPage() {
 
   // Build category lookup from DB
   const categoryLookup = useMemo(() => {
-    const map: Record<string, { name: string; icon: string; sortOrder: number; isFeatured: boolean }> = {};
+    const map: Record<
+      string,
+      { name: string; icon: string; sortOrder: number; isFeatured: boolean }
+    > = {};
     for (const c of dbCategories) {
-      map[c.slug] = { name: c.icon ? `${c.icon} ${c.name.replace(/^[\p{Emoji}\s]+/u, '')}` : c.name, icon: c.icon || '', sortOrder: c.sortOrder, isFeatured: c.isFeatured };
+      map[c.slug] = {
+        name: c.icon
+          ? `${c.icon} ${c.name.replace(/^[\p{Emoji}\s]+/u, "")}`
+          : c.name,
+        icon: c.icon || "",
+        sortOrder: c.sortOrder,
+        isFeatured: c.isFeatured,
+      };
     }
     return map;
   }, [dbCategories]);
@@ -54,7 +111,59 @@ function ContentPage() {
     return map;
   }, [dbJourneys]);
 
-  // Group items
+  // Track which items have already been shown to avoid duplication
+  const shownIds = useMemo(() => new Set<string>(), [items]);
+
+  // "Continuar de onde parou"
+  const continueItems = useMemo(() => {
+    const result = items
+      .filter((item: any) => {
+        const p = progressMap[item.id];
+        return p?.viewed_at && !p?.completed_at && item.unlocked;
+      })
+      .slice(0, 4);
+    result.forEach((i: any) => shownIds.add(i.id));
+    return result;
+  }, [items, progressMap, shownIds]);
+
+  // "Conteúdos em destaque" — featured items not yet shown
+  const featuredItems = useMemo(() => {
+    const result = items
+      .filter(
+        (item: any) =>
+          item.is_featured &&
+          item.show_as_card !== false &&
+          !shownIds.has(item.id)
+      )
+      .sort(
+        (a: any, b: any) =>
+          (b.featured_priority || 0) - (a.featured_priority || 0)
+      )
+      .slice(0, 4);
+    result.forEach((i: any) => shownIds.add(i.id));
+    return result;
+  }, [items, shownIds]);
+
+  // "Novos conteúdos" — recently created, not yet shown
+  const newItems = useMemo(() => {
+    const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    const result = items
+      .filter(
+        (item: any) =>
+          item.show_as_card !== false &&
+          !shownIds.has(item.id) &&
+          new Date(item.created_at).getTime() > thirtyDaysAgo
+      )
+      .sort(
+        (a: any, b: any) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      )
+      .slice(0, 4);
+    result.forEach((i: any) => shownIds.add(i.id));
+    return result;
+  }, [items, shownIds]);
+
+  // Group remaining items
   const categoryGroups: Record<string, any[]> = {};
   const typeGroups: Record<string, any[]> = {};
   const journeyGroups: Record<string, any[]> = {};
@@ -69,7 +178,7 @@ function ContentPage() {
       const cat = item.display_category;
       if (!categoryGroups[cat]) categoryGroups[cat] = [];
       categoryGroups[cat].push(item);
-    } else {
+    } else if (item.show_as_card !== false && !shownIds.has(item.id)) {
       const type = item.content_type || "material";
       if (!typeGroups[type]) typeGroups[type] = [];
       typeGroups[type].push(item);
@@ -78,26 +187,24 @@ function ContentPage() {
 
   const sortItems = (a: any, b: any) => {
     if (a.sort_order !== b.sort_order) return a.sort_order - b.sort_order;
-    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    return (
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    );
   };
   const sortJourneyItems = (a: any, b: any) => {
-    if ((a.journey_order || 0) !== (b.journey_order || 0)) return (a.journey_order || 0) - (b.journey_order || 0);
+    if ((a.journey_order || 0) !== (b.journey_order || 0))
+      return (a.journey_order || 0) - (b.journey_order || 0);
     return a.sort_order - b.sort_order;
   };
-  for (const arr of [...Object.values(categoryGroups), ...Object.values(typeGroups)]) {
+  for (const arr of [
+    ...Object.values(categoryGroups),
+    ...Object.values(typeGroups),
+  ]) {
     arr.sort(sortItems);
   }
   for (const arr of Object.values(journeyGroups)) {
     arr.sort(sortJourneyItems);
   }
-
-  // "Continue sua caminhada"
-  const continueItems = useMemo(() => {
-    return items.filter((item: any) => {
-      const p = progressMap[item.id];
-      return p?.viewed_at && !p?.completed_at && item.unlocked;
-    }).slice(0, 4);
-  }, [items, progressMap]);
 
   // Sort categories by DB sort_order
   const sortedCategories = useMemo(() => {
@@ -109,216 +216,295 @@ function ContentPage() {
     });
   }, [categoryGroups, categoryLookup]);
 
-  // Featured categories first, then others
-  const featuredCategories = sortedCategories.filter(([cat]) => categoryLookup[cat]?.isFeatured);
-  const otherCategories = sortedCategories.filter(([cat]) => !categoryLookup[cat]?.isFeatured);
+  const featuredCategories = sortedCategories.filter(
+    ([cat]) => categoryLookup[cat]?.isFeatured
+  );
+  const otherCategories = sortedCategories.filter(
+    ([cat]) => !categoryLookup[cat]?.isFeatured
+  );
 
   return (
     <StudentLayout>
-    <div className="min-h-screen bg-background text-foreground">
-
-      <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8 space-y-12">
-        {/* 1. Banner / Destaque */}
-        <div className="text-center">
-          <h1 className="font-display text-3xl font-bold text-foreground/85 tracking-tight">
-            Conteúdos Exclusivos
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground/70">
-            E-books, videoaulas e materiais para sua jornada espiritual
-          </p>
-        </div>
-
-        {isLoading ? (
-          <div className="text-center py-16">
-            <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
-              Carregando conteúdos...
+      <div className="min-h-screen bg-background text-foreground">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 py-6 sm:py-10 space-y-10 sm:space-y-14">
+          {/* Greeting */}
+          <div>
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
+              {getGreeting()}
+              {firstName ? `, ${firstName}` : ""} 👋
+            </h1>
+            <p className="mt-1.5 text-sm text-muted-foreground/60">
+              Sua jornada espiritual continua aqui
             </p>
           </div>
-        ) : !items.length ? (
-          <EmptyState
-            icon={BookOpen}
-            title="Nenhum conteúdo disponível"
-            description="Novos conteúdos serão adicionados em breve. Volte mais tarde!"
-          />
-        ) : (
-          <>
-            {/* 2. Continue sua caminhada */}
-            {continueItems.length > 0 && (
-              <section className="space-y-5">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
-                    <PlayCircle className="h-4 w-4 text-primary/60" />
-                  </div>
+
+          {isLoading ? (
+            <div className="text-center py-16">
+              <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
+                Carregando conteúdos...
+              </p>
+            </div>
+          ) : !items.length ? (
+            <EmptyState
+              icon={BookOpen}
+              title="Nenhum conteúdo disponível"
+              description="Novos conteúdos serão adicionados em breve. Volte mais tarde!"
+            />
+          ) : (
+            <>
+              {/* Continue de onde parou */}
+              {continueItems.length > 0 && (
+                <ContentShelf
+                  icon={<PlayCircle className="h-4 w-4 text-primary/70" />}
+                  title="Continuar de onde parou"
+                  subtitle="Retome seus conteúdos em andamento"
+                  items={continueItems}
+                  hasAccess={hasAccess}
+                />
+              )}
+
+              {/* Conteúdos em destaque */}
+              {featuredItems.length > 0 && (
+                <ContentShelf
+                  icon={<Sparkles className="h-4 w-4 text-gold/70" />}
+                  title="Conteúdos em destaque"
+                  subtitle="Selecionados especialmente para você"
+                  items={featuredItems}
+                  hasAccess={hasAccess}
+                />
+              )}
+
+              {/* Novos conteúdos */}
+              {newItems.length > 0 && (
+                <ContentShelf
+                  icon={<Clock className="h-4 w-4 text-emerald-400/70" />}
+                  title="Novos conteúdos"
+                  subtitle="Adicionados recentemente"
+                  items={newItems}
+                  hasAccess={hasAccess}
+                />
+              )}
+
+              {/* Categorias em Destaque */}
+              {featuredCategories.map(([cat, catItems]: [string, any[]]) => {
+                const label =
+                  categoryLookup[cat]?.name ||
+                  cat
+                    .replace(/_/g, " ")
+                    .replace(/\b\w/g, (c: string) => c.toUpperCase());
+                const config =
+                  typeConfig[catItems[0]?.content_type] || typeConfig.material;
+                return (
+                  <section key={`cat-${cat}`} className="space-y-4">
+                    <SectionHeader title={label} count={catItems.length} />
+                    <ContentGrid
+                      items={catItems}
+                      hasAccess={hasAccess}
+                      config={config}
+                    />
+                  </section>
+                );
+              })}
+
+              {/* Jornadas */}
+              {Object.keys(journeyGroups).length > 0 && (
+                <section className="space-y-8">
                   <div>
-                    <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
-                      ▶️ Continue sua caminhada
+                    <h2 className="font-display text-xl font-bold text-foreground/85 tracking-tight">
+                      ✨ Sua Jornada
                     </h2>
-                    <p className="text-xs text-muted-foreground/60">
-                      Retome de onde parou
+                    <p className="mt-1 text-xs text-muted-foreground/60">
+                      Trilhas guiadas para acompanhar seu momento
                     </p>
                   </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                  {continueItems.map((item: any, idx: number) => {
-                    const config = typeConfig[item.content_type] || typeConfig.material;
+                  {Object.entries(journeyGroups).map(([jg, jgItems]) => {
+                    const label =
+                      journeyLabels[jg] ||
+                      jg
+                        .replace(/_/g, " ")
+                        .replace(/\b\w/g, (c) => c.toUpperCase());
                     return (
-                      <ContentCard
-                        key={`cont-${item.id}`}
-                        item={item}
-                        index={idx}
-                        hasAccess={item.is_free || hasAccess}
-                        gradient={config.gradient}
-                        TypeIcon={config.icon}
-                      />
+                      <div key={`journey-${jg}`} className="space-y-4">
+                        <SectionHeader title={label} count={jgItems.length} />
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                          {jgItems.map((item: any, idx: number) => {
+                            const itemConfig =
+                              typeConfig[item.content_type] ||
+                              typeConfig.material;
+                            return (
+                              <ContentCard
+                                key={`j-${item.id}`}
+                                item={item}
+                                index={idx}
+                                hasAccess={item.is_free || hasAccess}
+                                gradient={itemConfig.gradient}
+                                TypeIcon={itemConfig.icon}
+                              />
+                            );
+                          })}
+                        </div>
+                      </div>
                     );
                   })}
-                </div>
-              </section>
-            )}
-
-            {/* 3. Categorias em Destaque */}
-            {featuredCategories.map(([cat, catItems]: [string, any[]]) => {
-              const label = categoryLookup[cat]?.name || cat.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
-              const config = typeConfig[catItems[0]?.content_type] || typeConfig.material;
-              return (
-                <section key={`cat-${cat}`} className="space-y-5">
-                  <div className="flex items-center gap-3">
-                    <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
-                      {label}
-                    </h2>
-                    <span className="text-xs text-muted-foreground/60">{catItems.length} item(ns)</span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                    {catItems.map((item: any, idx: number) => (
-                      <ContentCard
-                        key={item.id}
-                        item={item}
-                        index={idx}
-                        hasAccess={item.is_free || hasAccess}
-                        gradient={config.gradient}
-                        TypeIcon={config.icon}
-                      />
-                    ))}
-                  </div>
                 </section>
-              );
-            })}
+              )}
 
-            {/* 4. Sua Jornada */}
-            {Object.keys(journeyGroups).length > 0 && (
-              <section className="space-y-6">
-                <div className="text-center">
-                  <h2 className="font-display text-xl font-bold text-foreground/80 tracking-tight">
-                    ✨ Sua Jornada
-                  </h2>
-                  <p className="mt-1 text-xs text-muted-foreground/70">
-                    Trilhas guiadas para acompanhar seu momento
-                  </p>
-                </div>
-                {Object.entries(journeyGroups).map(([jg, jgItems]) => {
-                  const label = journeyLabels[jg] || jg.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-                  return (
-                    <div key={`journey-${jg}`} className="space-y-4">
-                      <div className="flex items-center gap-3">
-                        <h3 className="font-display text-[15px] font-bold text-foreground/70 tracking-tight">
-                          {label}
-                        </h3>
-                        <span className="text-xs text-muted-foreground/60">{jgItems.length} item(ns)</span>
+              {/* Demais Categorias */}
+              {otherCategories.map(([cat, catItems]: [string, any[]]) => {
+                const label =
+                  categoryLookup[cat]?.name ||
+                  cat
+                    .replace(/_/g, " ")
+                    .replace(/\b\w/g, (c: string) => c.toUpperCase());
+                const config =
+                  typeConfig[catItems[0]?.content_type] || typeConfig.material;
+                return (
+                  <section key={`cat-${cat}`} className="space-y-4">
+                    <SectionHeader title={label} count={catItems.length} />
+                    <ContentGrid
+                      items={catItems}
+                      hasAccess={hasAccess}
+                      config={config}
+                    />
+                  </section>
+                );
+              })}
+
+              {/* Seções por tipo (sem categoria) */}
+              {Object.entries(typeGroups).map(([type, typeItems]) => {
+                const config = typeConfig[type] || typeConfig.material;
+                const TypeIcon = config.icon;
+                return (
+                  <section key={type} className="space-y-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/10">
+                        <TypeIcon className="h-4 w-4 text-gold/60" />
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                        {jgItems.map((item: any, idx: number) => {
-                          const itemConfig = typeConfig[item.content_type] || typeConfig.material;
-                          return (
-                            <ContentCard
-                              key={`j-${item.id}`}
-                              item={item}
-                              index={idx}
-                              hasAccess={item.is_free || hasAccess}
-                              gradient={itemConfig.gradient}
-                              TypeIcon={itemConfig.icon}
-                            />
-                          );
-                        })}
+                      <div>
+                        <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
+                          {config.label}
+                        </h2>
+                        <p className="text-xs text-muted-foreground/50">
+                          {typeItems.length} conteúdo
+                          {typeItems.length > 1 ? "s" : ""}
+                        </p>
                       </div>
                     </div>
-                  );
-                })}
-              </section>
-            )}
+                    <ContentGrid
+                      items={typeItems}
+                      hasAccess={hasAccess}
+                      config={config}
+                    />
+                  </section>
+                );
+              })}
 
-            {/* 5. Demais Categorias */}
-            {otherCategories.map(([cat, catItems]: [string, any[]]) => {
-              const label = categoryLookup[cat]?.name || cat.replace(/_/g, ' ').replace(/\b\w/g, (c: string) => c.toUpperCase());
-              const config = typeConfig[catItems[0]?.content_type] || typeConfig.material;
-              return (
-                <section key={`cat-${cat}`} className="space-y-5">
-                  <div className="flex items-center gap-3">
-                    <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
-                      {label}
-                    </h2>
-                    <span className="text-xs text-muted-foreground/60">{catItems.length} item(ns)</span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                    {catItems.map((item: any, idx: number) => (
-                      <ContentCard
-                        key={item.id}
-                        item={item}
-                        index={idx}
-                        hasAccess={item.is_free || hasAccess}
-                        gradient={config.gradient}
-                        TypeIcon={config.icon}
-                      />
-                    ))}
-                  </div>
-                </section>
-              );
-            })}
+              {/* Recomendado */}
+              <RecommendedSection
+                items={items}
+                hasAccess={hasAccess}
+                viewedIds={data?.viewedIds || []}
+                downloadedIds={data?.downloadedIds || []}
+                progressMap={progressMap}
+              />
+            </>
+          )}
+        </div>
 
-            {/* Type-based sections (legacy) */}
-            {Object.entries(typeGroups).map(([type, typeItems]) => {
-              const config = typeConfig[type] || typeConfig.material;
-              const TypeIcon = config.icon;
-              return (
-                <section key={type} className="space-y-5">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/15">
-                      <TypeIcon className="h-4 w-4 text-gold/70" />
-                    </div>
-                    <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
-                      {config.label}
-                    </h2>
-                    <span className="text-xs text-muted-foreground/60">{typeItems.length} item(ns)</span>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                    {typeItems.map((item: any, idx: number) => (
-                      <ContentCard
-                        key={item.id}
-                        item={item}
-                        index={idx}
-                        hasAccess={item.is_free || hasAccess}
-                        gradient={config.gradient}
-                        TypeIcon={config.icon}
-                      />
-                    ))}
-                  </div>
-                </section>
-              );
-            })}
-
-            {/* 6. Recomendado para você (último) */}
-            <RecommendedSection
-              items={items}
-              hasAccess={hasAccess}
-              viewedIds={data?.viewedIds || []}
-              downloadedIds={data?.downloadedIds || []}
-              progressMap={progressMap}
-            />
-          </>
-        )}
+        <FooterLinks />
       </div>
-
-      <FooterLinks />
-    </div>
     </StudentLayout>
+  );
+}
+
+/* ── Reusable sub-components ── */
+
+function SectionHeader({
+  title,
+  count,
+}: {
+  title: string;
+  count: number;
+}) {
+  return (
+    <div className="flex items-baseline gap-3">
+      <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
+        {title}
+      </h2>
+      <span className="text-xs text-muted-foreground/50">
+        {count} conteúdo{count > 1 ? "s" : ""}
+      </span>
+    </div>
+  );
+}
+
+function ContentShelf({
+  icon,
+  title,
+  subtitle,
+  items,
+  hasAccess,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  subtitle: string;
+  items: any[];
+  hasAccess: boolean;
+}) {
+  return (
+    <section className="space-y-4">
+      <div className="flex items-center gap-3">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/8">
+          {icon}
+        </div>
+        <div>
+          <h2 className="font-display text-lg font-bold text-foreground/85 tracking-tight">
+            {title}
+          </h2>
+          <p className="text-xs text-muted-foreground/55">{subtitle}</p>
+        </div>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        {items.map((item: any, idx: number) => {
+          const config =
+            typeConfig[item.content_type] || typeConfig.material;
+          return (
+            <ContentCard
+              key={`shelf-${item.id}`}
+              item={item}
+              index={idx}
+              hasAccess={item.is_free || hasAccess}
+              gradient={config.gradient}
+              TypeIcon={config.icon}
+            />
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
+function ContentGrid({
+  items,
+  hasAccess,
+  config,
+}: {
+  items: any[];
+  hasAccess: boolean;
+  config: { gradient: string; icon: any };
+}) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      {items.map((item: any, idx: number) => (
+        <ContentCard
+          key={item.id}
+          item={item}
+          index={idx}
+          hasAccess={item.is_free || hasAccess}
+          gradient={config.gradient}
+          TypeIcon={config.icon}
+        />
+      ))}
+    </div>
   );
 }
