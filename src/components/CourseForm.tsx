@@ -330,13 +330,15 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
             <ImageUploadField
               label="Banner Principal"
-              hint="Banner grande exibido na vitrine Netflix (recomendado: 1920×600)"
+              hint="Banner grande exibido na vitrine"
               value={bannerUrl}
               onChange={setBannerUrl}
               folder="courses/banners"
               aspectRatio="1920/600"
               aspectClass=""
               uploadLabel="Clique para fazer upload do banner"
+              expectedRatio="3:1"
+              recommendedSize="1920x600"
             />
           </CardSection>
         </div>
