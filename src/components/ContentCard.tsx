@@ -108,6 +108,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progre
             className="absolute inset-0 w-full h-full"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
+            onLoad={() => onTrackView?.(item.id)}
           />
         ) : (
           <>
