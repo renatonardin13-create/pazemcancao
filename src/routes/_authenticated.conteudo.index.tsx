@@ -58,11 +58,24 @@ const typeConfig: Record<
   },
 };
 
+const spiritualGreetings: string[] = [
+  "Que este momento traga paz ao seu coração",
+  "Um novo dia para alimentar sua alma",
+  "Respire fundo… este é o seu momento de paz",
+  "A música cura o que as palavras não alcançam",
+  "Deus preparou algo especial para você hoje",
+];
+
 function getGreeting(): string {
   const hour = new Date().getHours();
   if (hour < 12) return "Bom dia";
   if (hour < 18) return "Boa tarde";
   return "Boa noite";
+}
+
+function getInspirationPhrase(): string {
+  const day = new Date().getDay();
+  return spiritualGreetings[day % spiritualGreetings.length];
 }
 
 function ContentPage() {
@@ -315,9 +328,9 @@ function ContentPage() {
                 {getGreeting()}
                 {firstName ? `, ${firstName}` : ""}
               </h1>
-              <p className="mt-2 text-[13px] text-muted-foreground/45 font-light leading-relaxed">
-                Sua jornada espiritual continua aqui
-              </p>
+               <p className="mt-2 text-[13px] text-muted-foreground/45 font-light leading-relaxed italic">
+                 {getInspirationPhrase()}
+               </p>
             </div>
 
             {/* Stats bar with progress */}
@@ -329,9 +342,9 @@ function ContentPage() {
                 className="space-y-3"
               >
                 <div className="flex flex-wrap gap-4 sm:gap-6">
-                  <StatPill icon={Library} label="Disponíveis" value={stats.unlocked} color="text-gold/60" />
-                  <StatPill icon={TrendingUp} label="Em andamento" value={stats.inProgress} color="text-primary/60" />
-                  <StatPill icon={CheckCircle2} label="Concluídos" value={stats.completed} color="text-player-completed/60" />
+                  <StatPill icon={Library} label="Para você" value={stats.unlocked} color="text-gold/60" />
+                  <StatPill icon={TrendingUp} label="Caminhando" value={stats.inProgress} color="text-primary/60" />
+                  <StatPill icon={CheckCircle2} label="Vivenciados" value={stats.completed} color="text-player-completed/60" />
                 </div>
                 {/* Overall progress bar */}
                 {(stats.completed > 0 || stats.inProgress > 0) && (
@@ -352,14 +365,14 @@ function ContentPage() {
           {isLoading ? (
             <div className="text-center py-16">
               <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
-                Carregando conteúdos...
+                Preparando seu momento de paz...
               </p>
             </div>
           ) : !items.length ? (
             <EmptyState
               icon={BookOpen}
-              title="Nenhum conteúdo disponível"
-              description="Novos conteúdos serão adicionados em breve. Volte mais tarde!"
+              title="Seu espaço está sendo preparado"
+              description="Em breve novos conteúdos chegarão para abençoar sua jornada. Volte com o coração aberto!"
             />
           ) : (
             <>
@@ -367,8 +380,8 @@ function ContentPage() {
               {continueItems.length > 0 && (
                 <ContentShelf
                   icon={<PlayCircle className="h-4 w-4 text-primary/70" />}
-                  title="Continuar de onde parou"
-                  subtitle="Retome seus conteúdos em andamento"
+                  title="Continue sua caminhada"
+                  subtitle="Retome de onde você parou com calma"
                   items={continueItems}
                   hasAccess={hasAccess}
                   progressMap={progressMap}
@@ -387,8 +400,8 @@ function ContentPage() {
                 return (
                   <ContentShelf
                     icon={<Heart className="h-4 w-4 text-red-400/70" />}
-                    title="Seus favoritos"
-                    subtitle="Conteúdos salvos por você"
+                    title="Guardados no coração"
+                    subtitle="Conteúdos que tocaram você"
                     items={favItems}
                     hasAccess={hasAccess}
                     progressMap={progressMap}
@@ -405,8 +418,8 @@ function ContentPage() {
               {featuredItems.length > 0 && (
                 <ContentShelf
                   icon={<Sparkles className="h-4 w-4 text-gold/70" />}
-                  title="Conteúdos em destaque"
-                  subtitle="Selecionados especialmente para você"
+                  title="Escolhidos para você"
+                  subtitle="Preparados com carinho para este momento"
                   items={featuredItems}
                   hasAccess={hasAccess}
                   progressMap={progressMap}
@@ -422,8 +435,8 @@ function ContentPage() {
               {newItems.length > 0 && (
                 <ContentShelf
                   icon={<Clock className="h-4 w-4 text-emerald-400/70" />}
-                  title="Novos conteúdos"
-                  subtitle="Adicionados recentemente"
+                  title="Chegou para abençoar"
+                  subtitle="Conteúdos fresquinhos para sua alma"
                   items={newItems}
                   hasAccess={hasAccess}
                   progressMap={progressMap}
@@ -485,10 +498,10 @@ function ContentPage() {
                 <section className="space-y-8">
                   <div>
                     <h2 className="font-display text-xl font-bold text-foreground/85 tracking-tight">
-                      ✨ Sua Jornada
+                      ✨ Sua Jornada Espiritual
                     </h2>
-                    <p className="mt-1 text-xs text-muted-foreground/60">
-                      Trilhas guiadas para acompanhar seu momento
+                    <p className="mt-1 text-xs text-muted-foreground/60 italic">
+                      Trilhas guiadas para nutrir sua alma, no seu ritmo
                     </p>
                   </div>
                   {Object.entries(journeyGroups).map(([jg, jgItems]) => {

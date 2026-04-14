@@ -125,8 +125,8 @@ function ProfilePage() {
                 <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
                   Meu Perfil
                 </h1>
-                <p className="text-[13px] text-muted-foreground/50 mt-0.5">
-                  Gerencie suas informações pessoais e configurações de conta
+                <p className="text-[13px] text-muted-foreground/50 mt-0.5 italic">
+                  Sua história na caminhada espiritual
                 </p>
               </div>
             </motion.div>
@@ -168,19 +168,19 @@ function ProfilePage() {
             >
               <h3 className="text-[12px] font-semibold text-muted-foreground/50 flex items-center gap-1.5">
                 <Award className="h-4 w-4 text-gold/60" />
-                Estatísticas
+                Sua Caminhada
               </h3>
 
               {/* Overall progress */}
               {contentStats.totalItems > 0 && (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground/60">Progresso geral</span>
+                    <span className="text-xs text-muted-foreground/60">Sua evolução espiritual</span>
                     <span className="text-xs font-bold text-foreground/70">{overallProgressPct}%</span>
                   </div>
                   <Progress value={overallProgressPct} className="h-2 bg-muted/15" />
                   <p className="text-[10px] text-muted-foreground/40">
-                    {contentStats.completed} de {contentStats.totalItems} conteúdos concluídos
+                    {contentStats.completed} de {contentStats.totalItems} conteúdos vivenciados
                   </p>
                 </div>
               )}

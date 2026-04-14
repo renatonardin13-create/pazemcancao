@@ -45,8 +45,8 @@ function getContentState(item: any, hasAccess: boolean, progress: ContentCardPro
 }
 
 const stateConfig: Record<ContentState, { label: string; color: string }> = {
-  completed: { label: 'Concluído', color: 'text-player-completed/70' },
-  in_progress: { label: 'Em andamento', color: 'text-primary/60' },
+  completed: { label: 'Vivenciado', color: 'text-player-completed/70' },
+  in_progress: { label: 'Caminhando', color: 'text-primary/60' },
   not_started: { label: '', color: '' },
   locked: { label: 'Exclusivo', color: 'text-gold/50' },
   pending: { label: 'Em breve', color: 'text-primary/50' },
@@ -100,7 +100,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progre
         <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-center">
           <span className="text-[9px] font-semibold uppercase tracking-[0.3em] text-gold/60 bg-background/80 backdrop-blur-md px-3 py-1 rounded-b-lg border-x border-b border-gold/10">
             <Eye className="inline h-2.5 w-2.5 mr-1 -mt-0.5" />
-            Último acessado
+            Continue aqui
           </span>
         </div>
       )}
@@ -163,7 +163,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progre
         {contentState === 'completed' && (
           <div className="absolute bottom-3 left-3 z-20 flex items-center gap-1 text-[9px] font-semibold uppercase tracking-[0.2em] text-player-completed/80 bg-background/60 backdrop-blur-md border border-player-completed/15 rounded-full px-2.5 py-1">
             <CheckCircle2 className="h-2.5 w-2.5" />
-            Concluído
+            Vivenciado ✨
           </div>
         )}
 
@@ -174,7 +174,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progre
               <Lock className="h-5 w-5 text-gold/60" />
             </div>
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-gold/55">
-              Conteúdo Exclusivo
+              Conteúdo Especial
             </span>
           </div>
         )}
@@ -262,7 +262,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progre
           <div className="mt-3.5 space-y-1.5">
             <Progress value={progressPercent} className="h-1 bg-muted/15" />
             <p className="text-[10px] text-primary/50 font-medium tracking-wide">
-              {Math.round(progressPercent)}% concluído
+              {Math.round(progressPercent)}% da jornada
             </p>
           </div>
         )}
@@ -304,7 +304,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progre
                 )}
                 {!item.file_url && !item.video_url && (
                   <span className="text-[11px] text-muted-foreground/35 tracking-wider uppercase">
-                    Disponível
+                    Pronto para você
                   </span>
                 )}
               </>
@@ -325,7 +325,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progre
             ) : (
               <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.1em] uppercase text-gold/35">
                 <ShoppingCart className="h-3 w-3" />
-                {item.sales_page_url ? "Adquirir" : "Exclusivo"}
+                {item.sales_page_url ? "Quero esse conteúdo" : "Especial"}
               </span>
             )}
           </div>
