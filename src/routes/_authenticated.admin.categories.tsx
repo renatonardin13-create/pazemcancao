@@ -261,7 +261,7 @@ function AdminCategoriesPage() {
                     {cat.description && <p className="text-xs text-muted-foreground/70 truncate">{cat.description}</p>}
                   </div>
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                    <button onClick={() => startEditCat(cat)} className="p-1.5 text-muted-foreground/60 hover:text-gold/60 transition-colors rounded-lg hover:bg-muted/10" title="Editar">
+                    <button onClick={() => startEditCat(cat)} className="p-1.5 text-muted-foreground hover:text-gold transition-colors rounded-lg hover:bg-muted/10" title="Editar">
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
                     <button onClick={() => { if (confirm("Remover esta categoria?")) deleteCatMutation.mutate(cat.id); }} className="p-1.5 text-muted-foreground/60 hover:text-destructive/60 transition-colors rounded-lg hover:bg-muted/10" title="Remover">
@@ -308,7 +308,7 @@ function AdminCategoriesPage() {
                     {tag.description && <p className="text-xs text-muted-foreground/70 truncate">{tag.description}</p>}
                   </div>
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                    <button onClick={() => startEditTag(tag)} className="p-1.5 text-muted-foreground/60 hover:text-gold/60 transition-colors rounded-lg hover:bg-muted/10" title="Editar">
+                    <button onClick={() => startEditTag(tag)} className="p-1.5 text-muted-foreground hover:text-gold transition-colors rounded-lg hover:bg-muted/10" title="Editar">
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
                     <button onClick={() => { if (confirm("Remover esta tag?")) deleteTagMutation.mutate(tag.id); }} className="p-1.5 text-muted-foreground/60 hover:text-destructive/60 transition-colors rounded-lg hover:bg-muted/10" title="Remover">

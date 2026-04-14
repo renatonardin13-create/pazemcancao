@@ -175,25 +175,25 @@ function AdminCoursesPage() {
           <Table>
             <TableHeader>
               <TableRow className="border-border/25 hover:bg-transparent">
-                <TableHead className="w-[72px] text-[10px] uppercase tracking-widest text-muted-foreground/60">
+                <TableHead className="w-[72px] text-xs uppercase tracking-widest text-muted-foreground/60">
                   Capa
                 </TableHead>
-                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/60">
+                <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/60">
                   Nome do Curso
                 </TableHead>
-                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/60 w-[90px]">
+                <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/60 w-[90px]">
                   Tipo
                 </TableHead>
-                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/60 w-[100px]">
+                <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/60 w-[100px]">
                   Status
                 </TableHead>
-                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/60 w-[80px] text-center">
+                <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/60 w-[80px] text-center">
                   Módulos
                 </TableHead>
-                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/60 w-[80px] text-center">
+                <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/60 w-[80px] text-center">
                   Aulas
                 </TableHead>
-                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/60 w-[60px] text-right">
+                <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/60 w-[60px] text-right">
                   Ações
                 </TableHead>
               </TableRow>

@@ -78,7 +78,7 @@ export function RecommendedSection({ items, hasAccess, viewedIds, downloadedIds,
           <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
             ✨ Recomendado para você
           </h2>
-          <p className="text-[10px] text-muted-foreground/60">
+          <p className="text-xs text-muted-foreground/60">
             Continue sua caminhada espiritual
           </p>
         </div>

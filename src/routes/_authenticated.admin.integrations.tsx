@@ -111,7 +111,7 @@ function IntegrationsPage() {
                         {format(new Date(log.created_at), "dd/MM HH:mm")}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="text-[10px]">
+                        <Badge variant="outline" className="text-xs">
                           {log.event_type || "—"}
                         </Badge>
                       </TableCell>
@@ -119,7 +119,7 @@ function IntegrationsPage() {
                       <TableCell>
                         <Badge
                           variant="outline"
-                          className={`text-[10px] ${
+                          className={`text-xs ${
                             log.response_status === 200
                               ? "border-emerald-500/30 text-emerald-400"
                               : "border-red-500/30 text-red-400"
@@ -209,7 +209,7 @@ function IntegrationsPage() {
                       <TableRow key={integ.id} className="border-border/25">
                         <TableCell className="font-medium">{integ.courseTitle}</TableCell>
                         <TableCell>
-                          <Badge variant="outline" className={`text-[10px] ${pc.bg}`}>
+                          <Badge variant="outline" className={`text-xs ${pc.bg}`}>
                             {integ.platform.charAt(0).toUpperCase() + integ.platform.slice(1)}
                           </Badge>
                         </TableCell>
@@ -220,7 +220,7 @@ function IntegrationsPage() {
                         <TableCell>
                           <Badge
                             variant="outline"
-                            className={`text-[10px] ${
+                            className={`text-xs ${
                               integ.webhookActive && integ.isEnabled
                                 ? "border-emerald-500/30 text-emerald-400"
                                 : "border-red-500/30 text-red-400"

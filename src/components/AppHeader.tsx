@@ -45,7 +45,7 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
               }`}
             >
               <Icon className="h-4 w-4" />
-              <span className="hidden md:inline text-[10px] font-semibold uppercase tracking-[0.15em]">
+              <span className="hidden md:inline text-xs font-semibold uppercase tracking-[0.15em]">
                 {label}
               </span>
             </Link>
@@ -61,7 +61,7 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
               }`}
             >
               <Settings className="h-4 w-4" />
-              <span className="hidden md:inline text-[10px] font-semibold uppercase tracking-[0.15em]">
+              <span className="hidden md:inline text-xs font-semibold uppercase tracking-[0.15em]">
                 Admin
               </span>
             </Link>
@@ -73,7 +73,7 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
               className="group flex items-center gap-2 rounded-xl px-3.5 py-2 text-muted-foreground/70 hover:text-muted-foreground/60 hover:bg-muted/15 transition-all duration-500 active:scale-95"
             >
               <LogOut className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-0.5" />
-              <span className="hidden md:inline text-[10px] font-semibold uppercase tracking-[0.15em]">
+              <span className="hidden md:inline text-xs font-semibold uppercase tracking-[0.15em]">
                 Sair
               </span>
             </button>

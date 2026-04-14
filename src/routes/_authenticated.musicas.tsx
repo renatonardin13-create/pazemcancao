@@ -338,7 +338,7 @@ function MusicLibraryPage() {
                       {displayName}
                     </h2>
                     <div className="flex-1 h-px bg-gradient-to-r from-border/15 to-transparent" />
-                    <span className="text-[10px] text-muted-foreground/60">
+                    <span className="text-xs text-muted-foreground/60">
                       {catTracks.length} música{catTracks.length !== 1 ? "s" : ""}
                     </span>
                     {catTracks.length > 1 && (
@@ -518,7 +518,7 @@ function TrackCard({
                 </div>
                 {isBonusLocked && bonusCountdown && (
                   <div className="rounded-full bg-black/50 backdrop-blur-sm border border-amber-400/20 px-3 py-1">
-                    <p className="text-[9px] font-semibold text-amber-300/80 tracking-wider uppercase text-center">
+                    <p className="text-[11px] font-semibold text-amber-300/80 tracking-wider uppercase text-center">
                       ⏳ {bonusCountdown}
                     </p>
                   </div>
@@ -577,7 +577,7 @@ function TrackCard({
 
             {/* Category badge */}
             {isCarousel && (
-              <span className="absolute top-3 right-3 text-[9px] font-medium tracking-[0.15em] uppercase rounded-full bg-black/30 backdrop-blur-sm border border-white/[0.08] px-2.5 py-0.5 text-white/40">
+              <span className="absolute top-3 right-3 text-[11px] font-medium tracking-[0.15em] uppercase rounded-full bg-black/30 backdrop-blur-sm border border-white/[0.08] px-2.5 py-0.5 text-white/40">
                 {icon} {track.category.replace(/^[^\w\s]+\s*/, '')}
               </span>
             )}
@@ -612,13 +612,13 @@ function TrackCard({
             </h3>
             <div className="flex items-center justify-between mt-2">
               <div className="flex items-center gap-2">
-                <p className={`text-[10px] tracking-[0.1em] font-medium transition-colors duration-500 ${
+                <p className={`text-xs tracking-[0.1em] font-medium transition-colors duration-500 ${
                   isPlaying ? "text-gold/70" : "text-muted-foreground/60"
                 }`}>
                   {track.duration}
                 </p>
                 {effectiveLocked && (
-                  <span className={`text-[9px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded-full ${
+                  <span className={`text-[11px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded-full ${
                     isBonusLocked ? "text-amber-400/60 bg-amber-400/10" : "text-destructive/40 bg-destructive/8"
                   }`}>
                     {isBonusLocked ? "🎁 Bônus" : "Bloqueado"}
@@ -628,7 +628,7 @@ function TrackCard({
                   <motion.span
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="text-[9px] font-semibold tracking-wider uppercase text-gold/70 bg-gold/8 px-1.5 py-0.5 rounded-full"
+                    className="text-[11px] font-semibold tracking-wider uppercase text-gold/70 bg-gold/8 px-1.5 py-0.5 rounded-full"
                   >
                     Tocando
                   </motion.span>

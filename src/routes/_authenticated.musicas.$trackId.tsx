@@ -128,7 +128,7 @@ function MusicDetailPage() {
       >
         <Link
           to="/musicas" search={{}}
-          className="group flex items-center gap-2.5 text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 hover:text-gold/70 transition-colors duration-500"
+          className="group flex items-center gap-2.5 text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 hover:text-gold/70 transition-colors duration-500"
         >
           <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-x-1" />
           Músicas
@@ -165,7 +165,7 @@ function MusicDetailPage() {
 
           {/* Category */}
           <motion.div variants={fadeUp} custom={0.15}>
-            <span className="inline-block rounded-full bg-gold/[0.06] border border-gold/10 px-4 py-1.5 text-[9px] font-semibold uppercase tracking-[0.4em] text-gold/45 mb-6">
+            <span className="inline-block rounded-full bg-gold/[0.06] border border-gold/10 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.4em] text-gold/45 mb-6">
               {track.category}
             </span>
           </motion.div>
@@ -259,7 +259,7 @@ function MusicDetailPage() {
                     params={{ trackId: prevTrack.id }}
                     className="group flex flex-col items-start gap-1 max-w-[45%]"
                   >
-                    <span className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground/50 group-hover:text-gold/55 transition-colors">
+                    <span className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground/50 group-hover:text-gold/55 transition-colors">
                       ← Anterior
                     </span>
                     <span className="text-[12px] font-medium text-muted-foreground/70 group-hover:text-foreground/60 transition-colors truncate w-full">
@@ -275,7 +275,7 @@ function MusicDetailPage() {
                     params={{ trackId: nextTrack.id }}
                     className="group flex flex-col items-end gap-1 max-w-[45%]"
                   >
-                    <span className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground/50 group-hover:text-gold/55 transition-colors">
+                    <span className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground/50 group-hover:text-gold/55 transition-colors">
                       Próximo →
                     </span>
                     <span className="text-[12px] font-medium text-muted-foreground/70 group-hover:text-foreground/60 transition-colors truncate w-full text-right">

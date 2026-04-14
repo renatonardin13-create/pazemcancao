@@ -354,7 +354,7 @@ function AdminContentPage() {
                   <input ref={fileInputRef} type="file" accept=".pdf,.doc,.docx,.xlsx,.pptx,.zip" className="hidden" onChange={(e) => setContentFile(e.target.files?.[0] || null)} disabled={isSubmitting} />
                 </label>
                 {editItem?.file_url && !contentFile && (
-                  <p className="text-[9px] text-muted-foreground/60">Arquivo atual já cadastrado</p>
+                  <p className="text-[11px] text-muted-foreground/60">Arquivo atual já cadastrado</p>
                 )}
               </div>
             )}
@@ -371,7 +371,7 @@ function AdminContentPage() {
             <div className="space-y-2">
               <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">Página de Vendas (opcional)</Label>
               <Input value={salesPageUrl} onChange={(e) => setSalesPageUrl(e.target.value)} placeholder="https://kiwify.com.br/..." className="bg-card/15 border-border/30 text-sm" disabled={isSubmitting} />
-              <p className="text-[9px] text-muted-foreground/60">Se preenchido, aparecerá um botão de compra para não-compradores</p>
+              <p className="text-[11px] text-muted-foreground/60">Se preenchido, aparecerá um botão de compra para não-compradores</p>
             </div>
 
             {/* Access Mode */}
@@ -405,7 +405,7 @@ function AdminContentPage() {
                   className="bg-card/15 border-border/30 text-sm"
                   disabled={isSubmitting}
                 />
-                <p className="text-[9px] text-muted-foreground/60">
+                <p className="text-[11px] text-muted-foreground/60">
                   O conteúdo será liberado X dias após a data de compra aprovada do cliente.
                 </p>
               </div>
@@ -442,7 +442,7 @@ function AdminContentPage() {
             <div className="flex items-center justify-between rounded-xl border border-border/25 bg-card/15 p-4">
               <div>
                 <p className="text-[12px] font-semibold text-foreground/70">⭐ Conteúdo em Destaque</p>
-                <p className="text-[10px] text-muted-foreground/70">Aparece na faixa principal da home</p>
+                <p className="text-xs text-muted-foreground/70">Aparece na faixa principal da home</p>
               </div>
               <Switch checked={isFeatured} onCheckedChange={setIsFeatured} disabled={isSubmitting} />
             </div>
@@ -506,7 +506,7 @@ function AdminContentPage() {
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-[9px] text-muted-foreground/60">
+                <p className="text-[11px] text-muted-foreground/60">
                   O usuário precisará consumir este conteúdo antes de desbloquear o atual.
                 </p>
               </div>
@@ -515,7 +515,7 @@ function AdminContentPage() {
             <div className="flex items-center justify-between rounded-xl border border-border/25 bg-card/15 p-4">
               <div>
                 <p className="text-[12px] font-semibold text-foreground/70">Exibir como Card</p>
-                <p className="text-[10px] text-muted-foreground/70">Se desativado, o conteúdo não aparece na grade</p>
+                <p className="text-xs text-muted-foreground/70">Se desativado, o conteúdo não aparece na grade</p>
               </div>
               <Switch checked={showAsCard} onCheckedChange={setShowAsCard} disabled={isSubmitting} />
             </div>
@@ -595,10 +595,10 @@ function AdminContentPage() {
                   <div className="min-w-0">
                     <p className="text-sm font-bold text-foreground truncate">{item.title}</p>
                     <div className="flex items-center gap-2 mt-1 flex-wrap">
-                      <Badge variant="outline" className={`text-[9px] px-1.5 py-0 ${typeInfo.color}`}>
+                      <Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${typeInfo.color}`}>
                         {typeInfo.label}
                       </Badge>
-                      <Badge variant="outline" className={`text-[9px] px-1.5 py-0 ${
+                      <Badge variant="outline" className={`text-[11px] px-1.5 py-0 ${
                         effectiveAccess === "gratuito"
                           ? "text-emerald-400/60 border-emerald-500/15 bg-emerald-500/8"
                           : effectiveAccess === "liberar_em_dias"
@@ -608,42 +608,42 @@ function AdminContentPage() {
                         {effectiveAccess === "gratuito" ? "Gratuito" : effectiveAccess === "liberar_em_dias" ? `Libera em ${item.release_days || "?"}d` : "Pago"}
                       </Badge>
                       {item.is_featured && (
-                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 text-yellow-400/70 border-yellow-500/20 bg-yellow-500/10">
+                        <Badge variant="outline" className="text-[11px] px-1.5 py-0 text-yellow-400/70 border-yellow-500/20 bg-yellow-500/10">
                           ⭐ Destaque
                         </Badge>
                       )}
                       {item.display_category && (
-                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 text-muted-foreground/70 border-border/30">
+                        <Badge variant="outline" className="text-[11px] px-1.5 py-0 text-muted-foreground/70 border-border/30">
                           {item.display_category.replace(/_/g, " ")}
                         </Badge>
                       )}
                       {item.badge_text && (
-                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 text-gold/70 border-gold/15 bg-gold/5">
+                        <Badge variant="outline" className="text-[11px] px-1.5 py-0 text-gold/70 border-gold/15 bg-gold/5">
                           {item.badge_text}
                         </Badge>
                       )}
                       {item.journey_group && (
-                        <Badge variant="outline" className="text-[9px] px-1.5 py-0 text-purple-400/50 border-purple-500/15 bg-purple-500/5">
+                        <Badge variant="outline" className="text-[11px] px-1.5 py-0 text-purple-400/50 border-purple-500/15 bg-purple-500/5">
                           trilha: {item.journey_group.replace(/_/g, " ")}
                         </Badge>
                       )}
-                      <span className="text-[9px] text-muted-foreground/50">#{item.sort_order}</span>
+                      <span className="text-[11px] text-muted-foreground/50">#{item.sort_order}</span>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-1">
-                  <button onClick={() => openEdit(item)} className="p-2 text-muted-foreground/60 hover:text-gold/60 transition-colors" title="Editar">
+                  <button onClick={() => openEdit(item)} className="p-2 text-muted-foreground hover:text-gold transition-colors" title="Editar">
                     <Pencil className="h-3.5 w-3.5" />
                   </button>
                   {item.sales_page_url && (
-                    <a href={item.sales_page_url} target="_blank" rel="noopener noreferrer" className="p-2 text-muted-foreground/60 hover:text-gold/60 transition-colors" title="Página de vendas">
+                    <a href={item.sales_page_url} target="_blank" rel="noopener noreferrer" className="p-2 text-muted-foreground hover:text-gold transition-colors" title="Página de vendas">
                       <ExternalLink className="h-3.5 w-3.5" />
                     </a>
                   )}
                   <button
                     onClick={() => toggleMutation.mutate({ id: item.id, is_active: !item.is_active })}
-                    className="p-2 text-muted-foreground/60 hover:text-gold/60 transition-colors"
+                    className="p-2 text-muted-foreground hover:text-gold transition-colors"
                     title={item.is_active ? "Desativar" : "Ativar"}
                   >
                     {item.is_active ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}

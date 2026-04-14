@@ -65,16 +65,16 @@ function AdminLayout() {
           <header className="sticky top-0 z-40 h-14 flex items-center gap-3 border-b border-border/30 bg-background/80 backdrop-blur-xl px-4">
             <SidebarTrigger className="text-muted-foreground/70 hover:text-muted-foreground/70" />
             <div className="h-4 w-px bg-border/20" />
-            <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground/60">
+            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground/60">
               Painel Administrativo
             </span>
             <div className="ml-auto flex items-center gap-3">
-              <span className="text-[10px] text-muted-foreground/60 hidden sm:inline">
+              <span className="text-xs text-muted-foreground/60 hidden sm:inline">
                 {user?.email}
               </span>
               <button
                 onClick={() => logout()}
-                className="flex items-center gap-1.5 text-[10px] text-muted-foreground/60 hover:text-muted-foreground/60 transition-colors"
+                className="flex items-center gap-1.5 text-xs text-muted-foreground/60 hover:text-muted-foreground/60 transition-colors"
               >
                 <LogOut className="h-3 w-3" />
               </button>

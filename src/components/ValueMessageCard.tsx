@@ -12,7 +12,7 @@ export function ValueMessageCard({ message }: ValueMessageCardProps) {
       <div className="relative max-w-lg mx-auto text-center">
         <Heart className="h-4 w-4 text-gold/55 mx-auto mb-6" />
 
-        <p className="text-[10px] font-medium uppercase tracking-[0.4em] text-gold/55 mb-6">
+        <p className="text-xs font-medium uppercase tracking-[0.4em] text-gold/55 mb-6">
           Seu Espaço de Presença
         </p>
 

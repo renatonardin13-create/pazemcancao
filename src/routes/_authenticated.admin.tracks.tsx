@@ -150,7 +150,7 @@ function AdminTracksPage() {
           <option value="active">Ativos</option>
           <option value="inactive">Inativos</option>
         </select>
-        <span className="text-[10px] text-muted-foreground/60 self-center">
+        <span className="text-xs text-muted-foreground/60 self-center">
           {total} música{total !== 1 ? 's' : ''}
         </span>
       </div>
@@ -210,7 +210,7 @@ function AdminTracksPage() {
                 <div className="flex items-center gap-1.5">
                   <Badge
                     variant="outline"
-                    className={`text-[9px] rounded-full px-2 border ${
+                    className={`text-[11px] rounded-full px-2 border ${
                       track.is_active
                         ? "text-emerald-400/60 border-emerald-500/15 bg-emerald-500/8"
                         : "text-muted-foreground/60 border-border/20"
@@ -221,7 +221,7 @@ function AdminTracksPage() {
                   {track.is_bonus && (
                     <Badge
                       variant="outline"
-                      className="text-[9px] rounded-full px-2 border text-amber-400/60 border-amber-500/15 bg-amber-500/8"
+                      className="text-[11px] rounded-full px-2 border text-amber-400/60 border-amber-500/15 bg-amber-500/8"
                     >
                       <Gift className="h-2.5 w-2.5 mr-1" />
                       Bônus{track.bonus_release_date ? ` · ${new Date(track.bonus_release_date + 'T00:00:00').toLocaleDateString('pt-BR')}` : ''}
@@ -232,7 +232,7 @@ function AdminTracksPage() {
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => setEditingTrack(track)}
-                    className="p-2 text-muted-foreground/60 hover:text-gold/60 transition-colors"
+                    className="p-2 text-muted-foreground hover:text-gold transition-colors"
                     title="Editar"
                   >
                     <Pencil className="h-3.5 w-3.5" />
@@ -264,7 +264,7 @@ function AdminTracksPage() {
                         coverMutation.mutate({ trackId: track.id, title: track.title })
                       }
                       disabled={coverMutation.isPending}
-                      className="p-2 text-muted-foreground/60 hover:text-gold/60 transition-colors"
+                      className="p-2 text-muted-foreground hover:text-gold transition-colors"
                       title="Gerar capa com IA"
                     >
                       {coverMutation.isPending && coverMutation.variables?.trackId === track.id ? (
@@ -279,7 +279,7 @@ function AdminTracksPage() {
                       href={track.download_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="p-2 text-muted-foreground/60 hover:text-gold/60 transition-colors"
+                      className="p-2 text-muted-foreground hover:text-gold transition-colors"
                       title="Abrir link de download"
                     >
                       <ExternalLink className="h-3.5 w-3.5" />
@@ -292,7 +292,7 @@ function AdminTracksPage() {
                         is_active: !track.is_active,
                       })
                     }
-                    className="p-2 text-muted-foreground/60 hover:text-gold/60 transition-colors"
+                    className="p-2 text-muted-foreground hover:text-gold transition-colors"
                     title={track.is_active ? "Desativar" : "Ativar"}
                   >
                     {track.is_active ? (

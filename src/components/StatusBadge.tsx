@@ -25,7 +25,7 @@ export function StatusBadge({ status, className = "" }: StatusBadgeProps) {
   return (
     <Badge
       variant="outline"
-      className={`text-[9px] rounded-full px-2 border font-medium ${config.classes} ${className}`}
+      className={`text-[11px] rounded-full px-2 border font-medium ${config.classes} ${className}`}
     >
       {config.label}
     </Badge>

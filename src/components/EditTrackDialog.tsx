@@ -236,7 +236,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
                     disabled={isSubmitting}
                   />
                 </label>
-                <p className="text-[9px] text-muted-foreground/60 mt-1">
+                <p className="text-[11px] text-muted-foreground/60 mt-1">
                   Formato quadrado 1:1
                 </p>
               </div>
@@ -320,11 +320,11 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
                   <span className="text-xs text-muted-foreground/70">dias</span>
                 </div>
                 {bonusDays && parseInt(bonusDays) > 0 && (
-                  <p className="text-[10px] text-amber-400/50">
+                  <p className="text-xs text-amber-400/50">
                     📅 Será liberada em {new Date(Date.now() + parseInt(bonusDays) * 86400000).toLocaleDateString("pt-BR")}
                   </p>
                 )}
-                <p className="text-[9px] text-muted-foreground/60">
+                <p className="text-[11px] text-muted-foreground/60">
                   A música ficará bloqueada por esse período. Se não definir, ficará bloqueada indefinidamente.
                 </p>
               </div>

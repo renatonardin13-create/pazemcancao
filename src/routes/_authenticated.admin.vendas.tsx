@@ -225,7 +225,7 @@ function AdminSalesPage() {
                           {formatCurrency(Number(txn.amount))}
                         </TableCell>
                         <TableCell>
-                          <Badge variant={cfg.variant} className="text-[10px]">
+                          <Badge variant={cfg.variant} className="text-xs">
                             {cfg.label}
                           </Badge>
                         </TableCell>
