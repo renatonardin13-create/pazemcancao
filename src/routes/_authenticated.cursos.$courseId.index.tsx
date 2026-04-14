@@ -131,12 +131,19 @@ function CourseDetailPage() {
   const isLessonCompleted = (lessonId: string) =>
     progress.some((p: any) => p.lesson_id === lessonId && p.completed);
 
+  const hasValidContent = (lesson: any) => {
+    const ct = lesson.content_type || "video";
+    if (ct === "video") return !!lesson.video_url;
+    return !!lesson.content_url;
+  };
+
   const accessibleLessons = canAccessCourse
     ? lessons
     : lessons.filter((lesson: any) => lesson.is_free_preview);
+  const validLessons = accessibleLessons.filter(hasValidContent);
   const primaryLesson =
-    accessibleLessons.find((lesson: any) => !isLessonCompleted(lesson.id)) ||
-    accessibleLessons[0] ||
+    validLessons.find((lesson: any) => !isLessonCompleted(lesson.id)) ||
+    validLessons[0] ||
     null;
   const previewLessonsCount = lessons.filter(
     (lesson: any) => lesson.is_free_preview
@@ -435,6 +442,24 @@ function CourseDetailPage() {
                       </Link>
                     )}
                   </div>
+                </motion.div>
+              )}
+
+              {/* No valid lessons message */}
+              {canAccessCourse && !primaryLesson && totalLessons > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.2 }}
+                  className="rounded-2xl border border-border/12 bg-card/8 p-5 text-center"
+                >
+                  <BookOpen className="mx-auto h-8 w-8 text-muted-foreground/20 mb-3" />
+                  <p className="text-sm font-semibold text-foreground/60">
+                    Nenhuma aula com conteúdo disponível
+                  </p>
+                  <p className="text-[12px] text-muted-foreground/35 mt-1">
+                    As aulas deste curso estão sendo preparadas. Volte em breve.
+                  </p>
                 </motion.div>
               )}
 
