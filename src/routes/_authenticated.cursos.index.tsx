@@ -172,9 +172,14 @@ function MeusCoursosPage() {
                     <ContinueWatchingShelf courses={continueWatchingCourses} />
                   )}
 
+                  {/* ═══ MEUS CURSOS ═══ */}
+                  {myCourses.length > 0 && (
+                    <MyCoursesShelf courses={myCourses} />
+                  )}
+
                   {/* ═══ PRATELEIRAS DO ADMIN ═══ */}
                   {shelves.map((shelf: any, shelfIdx: number) => (
-                    <ShelfSection key={shelf.id} shelf={shelf} delay={0.15 + shelfIdx * 0.05} promoBanners={promoBanners} shelfIndex={shelfIdx} />
+                    <ShelfSection key={shelf.id} shelf={shelf} delay={0.2 + shelfIdx * 0.05} promoBanners={promoBanners} shelfIndex={shelfIdx} />
                   ))}
 
                   {/* ═══ BIBLIOTECA RESUMO ═══ */}
