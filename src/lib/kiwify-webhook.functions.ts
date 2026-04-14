@@ -252,6 +252,8 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       eventType: 'error',
       responseStatus: 400,
       responseMessage: 'Invalid JSON body',
+      isSuccess: false,
+      errorDetails: 'Request body is not valid JSON',
     });
     return jsonResponse({ error: 'Invalid JSON body' }, 400);
   }
