@@ -219,3 +219,46 @@ export const getMostAccessedCourses = createServerFn({ method: 'POST' })
 
     return { ranked };
   });
+
+export const getFeaturedContent = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase } = context;
+
+    // Try featured content_items first
+    const { data: featured } = await supabase
+      .from('content_items')
+      .select('id, title, cover_url, card_cover_url, description, content_type, badge_text, is_free, sales_page_url')
+      .eq('is_active', true)
+      .eq('is_featured', true)
+      .order('featured_priority', { ascending: false })
+      .order('sort_order', { ascending: true })
+      .limit(8);
+
+    if (featured && featured.length > 0) {
+      return { items: featured, source: 'content_items' as const };
+    }
+
+    // Fallback: recently published courses
+    const { data: courses } = await supabase
+      .from('courses')
+      .select('id, title, cover_image_url, short_description, total_lessons, status')
+      .eq('status', 'published')
+      .order('created_at', { ascending: false })
+      .limit(6);
+
+    const items = (courses || []).map((c: any) => ({
+      id: c.id,
+      title: c.title,
+      cover_url: c.cover_image_url,
+      card_cover_url: null,
+      description: c.short_description,
+      content_type: 'course',
+      badge_text: null,
+      is_free: false,
+      sales_page_url: null,
+      total_lessons: c.total_lessons,
+    }));
+
+    return { items, source: 'courses' as const };
+  });

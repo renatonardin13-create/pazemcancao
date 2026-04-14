@@ -2,11 +2,11 @@ import { EmptyState } from "@/components/EmptyState";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CardGridSkeleton } from "@/components/LoadingSkeletons";
 import { useQuery } from "@tanstack/react-query";
-import { getMyCoursesData, getRecommendedCourses, getMostAccessedCourses } from "@/lib/my-courses.functions";
+import { getMyCoursesData, getRecommendedCourses, getMostAccessedCourses, getFeaturedContent } from "@/lib/my-courses.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { motion } from "framer-motion";
-import { BookOpen, Search, ArrowRight, Layers, Clock, PlayCircle, Sparkles, TrendingUp, CheckCircle2, Play, Heart } from "lucide-react";
+import { BookOpen, Search, ArrowRight, Layers, Clock, PlayCircle, Sparkles, TrendingUp, CheckCircle2, Play, Heart, Star } from "lucide-react";
 import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
@@ -49,6 +49,12 @@ function MeusCoursosPage() {
   const { data: trendData } = useQuery({
     queryKey: ["most-accessed-courses"],
     queryFn: () => getMostAccessedCourses(),
+    staleTime: 60_000,
+  });
+
+  const { data: featuredData } = useQuery({
+    queryKey: ["featured-content"],
+    queryFn: () => getFeaturedContent(),
     staleTime: 60_000,
   });
 
@@ -502,6 +508,65 @@ function MeusCoursosPage() {
             </motion.div>
           )}
 
+          {/* Conteúdos em destaque */}
+          {!isLoading && (featuredData?.items?.length ?? 0) > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.26 }}
+              className="mb-10"
+            >
+              <div className="flex items-center gap-3 mb-5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
+                  <Star className="h-4 w-4 text-primary/70" />
+                </div>
+                <div>
+                  <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
+                    Conteúdos em destaque
+                  </h2>
+                  <p className="text-[11px] text-muted-foreground/40 mt-0.5 italic">
+                    Selecionados especialmente para sua jornada
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
+                {(featuredData?.items || []).map((item: any, idx: number) => {
+                  const isCourse = featuredData?.source === 'courses' || item.content_type === 'course';
+                  const coverImg = item.card_cover_url || item.cover_url;
+
+                  return (
+                    <motion.div
+                      key={`feat-${item.id}`}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.5, delay: 0.06 * idx }}
+                      className="flex-shrink-0 w-[220px] sm:w-[240px]"
+                    >
+                      {isCourse ? (
+                        <Link
+                          to="/cursos/$courseId"
+                          params={{ courseId: item.id }}
+                          className="group block rounded-xl border border-border/20 bg-card/10 overflow-hidden transition-all duration-500 hover:border-gold/25 hover:bg-card/20 hover:shadow-lg hover:shadow-gold/5"
+                        >
+                          <FeaturedCardInner item={item} coverImg={coverImg} />
+                        </Link>
+                      ) : (
+                        <Link
+                          to="/conteudo/$trackId"
+                          params={{ trackId: item.id }}
+                          className="group block rounded-xl border border-border/20 bg-card/10 overflow-hidden transition-all duration-500 hover:border-gold/25 hover:bg-card/20 hover:shadow-lg hover:shadow-gold/5"
+                        >
+                          <FeaturedCardInner item={item} coverImg={coverImg} />
+                        </Link>
+                      )}
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+
           {/* Section: Todos os cursos */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5 mt-2">
             <div className="flex items-center gap-3">
@@ -662,5 +727,47 @@ function MeusCoursosPage() {
       <FooterLinks />
     </div>
     </StudentLayout>
+  );
+}
+
+function FeaturedCardInner({ item, coverImg }: { item: any; coverImg: string | null }) {
+  return (
+    <>
+      <div className="relative aspect-video overflow-hidden">
+        {coverImg ? (
+          <img
+            src={coverImg}
+            alt={item.title}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+          />
+        ) : (
+          <div className="w-full h-full bg-muted/15 flex items-center justify-center">
+            <Star className="h-6 w-6 text-muted-foreground/30" />
+          </div>
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-60" />
+        {item.badge_text && (
+          <div className="absolute top-2 right-2 rounded-full bg-gold/20 backdrop-blur-sm px-2 py-0.5 border border-gold/20">
+            <span className="text-[9px] font-bold text-gold uppercase tracking-wider">{item.badge_text}</span>
+          </div>
+        )}
+        {item.is_free && (
+          <div className="absolute top-2 left-2 rounded-full bg-emerald-500/25 backdrop-blur-sm px-2 py-0.5 border border-emerald-500/20">
+            <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-wider">Gratuito</span>
+          </div>
+        )}
+      </div>
+      <div className="p-3">
+        <h3 className="text-sm font-bold text-foreground/80 line-clamp-2 leading-snug group-hover:text-gold transition-colors duration-300">
+          {item.title}
+        </h3>
+        {item.description && (
+          <p className="text-[10px] text-muted-foreground/40 mt-1 line-clamp-1">{item.description}</p>
+        )}
+        <div className="mt-2 flex items-center text-[10px] font-bold text-gold/60 uppercase tracking-wider">
+          Explorar <ArrowRight className="h-3 w-3 ml-1" />
+        </div>
+      </div>
+    </>
   );
 }
