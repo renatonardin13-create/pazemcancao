@@ -93,6 +93,9 @@ export const getCourseDetail = createServerFn({ method: 'POST' })
         .eq('id', enrollment.id);
     }
 
+    // Increment access_count on the course (uses admin to bypass RLS)
+    await supabaseAdmin.rpc('increment_course_access' as any, { p_course_id: data.courseId });
+
     const { data: integration } = await supabaseAdmin
       .from('course_integrations')
       .select('is_enabled, checkout_url, external_product_name')
