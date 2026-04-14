@@ -10,7 +10,7 @@ import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { CourseShelfCard } from "@/components/CourseShelfCard";
 import { motion } from "framer-motion";
-import { BookOpen, Search, ArrowRight, PlayCircle, Heart, Play, Layers } from "lucide-react";
+import { BookOpen, Search, ArrowRight, PlayCircle, Heart, Play, Layers, CheckCircle2, GraduationCap } from "lucide-react";
 import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
@@ -66,6 +66,7 @@ function MeusCoursosPage() {
   const promoBanners = shelvesData?.promoBanners || [];
   const stats = myData?.stats || { total: 0, inProgress: 0, completed: 0 };
   const continueWatchingCourses = continueData?.courses || [];
+  const myCourses = myData?.courses || [];
 
   // Collect all courses from shelves for search
   const allShelfCourses = useMemo(() => {
@@ -171,9 +172,14 @@ function MeusCoursosPage() {
                     <ContinueWatchingShelf courses={continueWatchingCourses} />
                   )}
 
+                  {/* ═══ MEUS CURSOS ═══ */}
+                  {myCourses.length > 0 && (
+                    <MyCoursesShelf courses={myCourses} />
+                  )}
+
                   {/* ═══ PRATELEIRAS DO ADMIN ═══ */}
                   {shelves.map((shelf: any, shelfIdx: number) => (
-                    <ShelfSection key={shelf.id} shelf={shelf} delay={0.15 + shelfIdx * 0.05} promoBanners={promoBanners} shelfIndex={shelfIdx} />
+                    <ShelfSection key={shelf.id} shelf={shelf} delay={0.2 + shelfIdx * 0.05} promoBanners={promoBanners} shelfIndex={shelfIdx} />
                   ))}
 
                   {/* ═══ BIBLIOTECA RESUMO ═══ */}
@@ -212,6 +218,121 @@ function MeusCoursosPage() {
 /* ══════════════════════════════════════════════════════════════
    SHELF COMPONENTS
    ══════════════════════════════════════════════════════════════ */
+
+function MyCoursesShelf({ courses }: { courses: any[] }) {
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.1 }}
+      className="mb-12"
+    >
+      <div className="flex items-end justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.08] border border-gold/10">
+            <GraduationCap className="h-4 w-4 text-gold" />
+          </div>
+          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground/90 tracking-tight">
+            Meus cursos
+          </h2>
+        </div>
+      </div>
+
+      <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
+        {courses.map((course: any, idx: number) => (
+          <motion.div
+            key={`mc-${course.id}`}
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
+            className="flex-shrink-0 snap-start w-[260px] sm:w-[300px] md:w-[320px]"
+          >
+            <MyCoursesCard course={course} />
+          </motion.div>
+        ))}
+      </div>
+    </motion.section>
+  );
+}
+
+function MyCoursesCard({ course }: { course: any }) {
+  const progress = course.progress_pct ?? 0;
+  const isCompleted = progress >= 100;
+  const isInProgress = progress > 0 && progress < 100;
+
+  return (
+    <Link
+      to="/cursos/$courseId"
+      params={{ courseId: course.id }}
+      className="group relative block rounded-xl overflow-hidden cursor-pointer"
+    >
+      <div className="relative aspect-video overflow-hidden bg-card/10">
+        {course.cover_image_url ? (
+          <img
+            src={course.cover_image_url}
+            alt={course.title}
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-card/30 via-muted/10 to-background flex items-center justify-center">
+            <BookOpen className="h-8 w-8 text-muted-foreground/15" />
+          </div>
+        )}
+
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-500" />
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent" />
+
+        {/* Status badge — top left */}
+        <div className="absolute top-2.5 left-2.5 z-10">
+          {isCompleted ? (
+            <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-500/90 px-2.5 py-1 text-[10px] font-bold text-white uppercase tracking-wider backdrop-blur-sm">
+              <CheckCircle2 className="h-3 w-3" /> Concluído
+            </span>
+          ) : isInProgress ? (
+            <span className="inline-flex items-center gap-1 rounded-lg bg-gold/90 px-2.5 py-1 text-[10px] font-bold text-background uppercase tracking-wider backdrop-blur-sm">
+              <Play className="h-3 w-3 fill-current" /> Em andamento
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2.5 py-1 text-[10px] font-bold text-white uppercase tracking-wider backdrop-blur-sm">
+              Novo
+            </span>
+          )}
+        </div>
+
+        {/* Play / Continue button on hover */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-400 z-10">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/90 shadow-2xl shadow-gold/40 backdrop-blur-sm scale-75 group-hover:scale-100 transition-transform duration-500 ease-out">
+            <Play className="h-6 w-6 text-gold-foreground fill-gold-foreground ml-0.5" />
+          </div>
+        </div>
+
+        {/* Title + progress */}
+        <div className="absolute inset-x-0 bottom-0 p-4 z-10 translate-y-2 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+          <h3 className="text-sm font-bold text-white line-clamp-2 leading-snug drop-shadow-lg">
+            {course.title}
+          </h3>
+          <p className="text-[11px] text-white/50 mt-1">
+            {course.completed_lessons}/{course.lesson_count || course.total_lessons} aulas
+            {isInProgress && ` • ${progress}%`}
+          </p>
+        </div>
+
+        {/* Progress bar */}
+        {(isInProgress || isCompleted) && (
+          <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/10 z-20">
+            <div
+              className={`h-full rounded-r-full transition-all duration-700 ${isCompleted ? "bg-emerald-400" : "bg-gold"}`}
+              style={{ width: `${Math.min(progress, 100)}%` }}
+            />
+          </div>
+        )}
+      </div>
+
+      <div className="absolute inset-0 rounded-xl border border-transparent group-hover:border-gold/30 transition-colors duration-500 pointer-events-none z-20" />
+    </Link>
+  );
+}
 
 function ContinueWatchingShelf({ courses }: { courses: any[] }) {
   return (
