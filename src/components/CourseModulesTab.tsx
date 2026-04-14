@@ -761,6 +761,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 className={`h-11 bg-card/10 border-gold/20 focus:border-gold/40 ${modTitleError ? "border-destructive" : ""}`}
               />
               {modTitleError && <p className="text-[0.8rem] font-medium text-destructive">{modTitleError}</p>}
+            </div>
             <div className="space-y-2">
               <Label className="text-sm font-bold">Descrição</Label>
               <Textarea
@@ -846,6 +847,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 className={`bg-card/10 border-gold/20 focus:border-gold/40 ${lesTitleError ? "border-destructive" : ""}`}
               />
               {lesTitleError && <p className="text-[0.8rem] font-medium text-destructive">{lesTitleError}</p>}
+            </div>
 
             {/* Descrição */}
             <div className="space-y-2">
