@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useCallback } from "react";
 import { trackContentView, trackContentDownload } from "@/lib/progress.functions";
 import { listContentItems } from "@/lib/content.functions";
+import { listFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { getMyProfile } from "@/lib/profile.functions";
 import { useAuth } from "@/hooks/use-auth";
 import { StudentLayout } from "@/components/StudentLayout";
@@ -23,6 +24,7 @@ import {
   CheckCircle2,
   Library,
   TrendingUp,
+  Heart,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/conteudo/")({
@@ -91,6 +93,20 @@ function ContentPage() {
     queryFn: () => getMyProfile(),
     staleTime: 60_000,
   });
+
+  const { data: favData } = useQuery({
+    queryKey: ["user-favorites"],
+    queryFn: () => listFavorites(),
+    staleTime: 30_000,
+  });
+
+  const favoriteIds = useMemo(() => new Set(favData?.favoriteIds || []), [favData]);
+
+  const handleToggleFavorite = useCallback((contentId: string, currentlyFav: boolean) => {
+    toggleFavorite({ data: { contentId, isFavorite: currentlyFav } }).then(() => {
+      queryClient.invalidateQueries({ queryKey: ["user-favorites"] });
+    });
+  }, [queryClient]);
 
   const displayName =
     profileData?.profile?.display_name ||
@@ -344,8 +360,31 @@ function ContentPage() {
                   lastAccessedId={lastAccessedId}
                   onTrackView={handleTrackView}
                   onTrackDownload={handleTrackDownload}
+                  favoriteIds={favoriteIds}
+                  onToggleFavorite={handleToggleFavorite}
                 />
               )}
+
+              {/* Seus favoritos */}
+              {(() => {
+                const favItems = items.filter((i: any) => favoriteIds.has(i.id));
+                if (favItems.length === 0) return null;
+                return (
+                  <ContentShelf
+                    icon={<Heart className="h-4 w-4 text-red-400/70" />}
+                    title="Seus favoritos"
+                    subtitle="Conteúdos salvos por você"
+                    items={favItems}
+                    hasAccess={hasAccess}
+                    progressMap={progressMap}
+                    lastAccessedId={lastAccessedId}
+                    onTrackView={handleTrackView}
+                    onTrackDownload={handleTrackDownload}
+                    favoriteIds={favoriteIds}
+                    onToggleFavorite={handleToggleFavorite}
+                  />
+                );
+              })()}
 
               {/* Conteúdos em destaque */}
               {featuredItems.length > 0 && (
@@ -359,6 +398,8 @@ function ContentPage() {
                   lastAccessedId={lastAccessedId}
                   onTrackView={handleTrackView}
                   onTrackDownload={handleTrackDownload}
+                  favoriteIds={favoriteIds}
+                  onToggleFavorite={handleToggleFavorite}
                 />
               )}
 
@@ -374,6 +415,8 @@ function ContentPage() {
                   lastAccessedId={lastAccessedId}
                   onTrackView={handleTrackView}
                   onTrackDownload={handleTrackDownload}
+                  favoriteIds={favoriteIds}
+                  onToggleFavorite={handleToggleFavorite}
                 />
               )}
 
@@ -415,6 +458,8 @@ function ContentPage() {
                       lastAccessedId={lastAccessedId}
                       onTrackView={handleTrackView}
                       onTrackDownload={handleTrackDownload}
+                      favoriteIds={favoriteIds}
+                      onToggleFavorite={handleToggleFavorite}
                     />
                   </section>
                 );
@@ -452,6 +497,8 @@ function ContentPage() {
                                 TypeIcon={itemConfig.icon}
                                 progress={progressMap[item.id]}
                                 isLastAccessed={item.id === lastAccessedId}
+                                isFavorite={favoriteIds.has(item.id)}
+                                onToggleFavorite={handleToggleFavorite}
                               />
                             );
                           })}
@@ -480,6 +527,8 @@ function ContentPage() {
                       lastAccessedId={lastAccessedId}
                       onTrackView={handleTrackView}
                       onTrackDownload={handleTrackDownload}
+                      favoriteIds={favoriteIds}
+                      onToggleFavorite={handleToggleFavorite}
                     />
                   </section>
                 );
@@ -512,6 +561,8 @@ function ContentPage() {
                       lastAccessedId={lastAccessedId}
                       onTrackView={handleTrackView}
                       onTrackDownload={handleTrackDownload}
+                      favoriteIds={favoriteIds}
+                      onToggleFavorite={handleToggleFavorite}
                     />
                   </section>
                 );
@@ -562,6 +613,8 @@ function ContentShelf({
   lastAccessedId,
   onTrackView,
   onTrackDownload,
+  favoriteIds,
+  onToggleFavorite,
 }: {
   icon: React.ReactNode;
   title: string;
@@ -572,6 +625,8 @@ function ContentShelf({
   lastAccessedId: string | null;
   onTrackView?: (contentId: string) => void;
   onTrackDownload?: (contentId: string) => void;
+  favoriteIds?: Set<string>;
+  onToggleFavorite?: (contentId: string, isFav: boolean) => void;
 }) {
   return (
     <section className="space-y-5">
@@ -601,6 +656,8 @@ function ContentShelf({
               isLastAccessed={item.id === lastAccessedId}
               onTrackView={onTrackView}
               onTrackDownload={onTrackDownload}
+              isFavorite={favoriteIds?.has(item.id)}
+              onToggleFavorite={onToggleFavorite}
             />
           );
         })}
@@ -617,6 +674,8 @@ function ContentGrid({
   lastAccessedId,
   onTrackView,
   onTrackDownload,
+  favoriteIds,
+  onToggleFavorite,
 }: {
   items: any[];
   hasAccess: boolean;
@@ -625,6 +684,8 @@ function ContentGrid({
   lastAccessedId: string | null;
   onTrackView?: (contentId: string) => void;
   onTrackDownload?: (contentId: string) => void;
+  favoriteIds?: Set<string>;
+  onToggleFavorite?: (contentId: string, isFav: boolean) => void;
 }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
@@ -640,6 +701,8 @@ function ContentGrid({
           isLastAccessed={item.id === lastAccessedId}
           onTrackView={onTrackView}
           onTrackDownload={onTrackDownload}
+          isFavorite={favoriteIds?.has(item.id)}
+          onToggleFavorite={onToggleFavorite}
         />
       ))}
     </div>

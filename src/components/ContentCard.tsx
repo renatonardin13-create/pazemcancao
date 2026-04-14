@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Lock, Download, Play, ShoppingCart, Clock, ArrowRight, CheckCircle2, Eye } from "lucide-react";
+import { Lock, Download, Play, ShoppingCart, Clock, ArrowRight, CheckCircle2, Eye, Heart } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
@@ -14,6 +14,8 @@ interface ContentCardProps {
   isLastAccessed?: boolean;
   onTrackView?: (contentId: string) => void;
   onTrackDownload?: (contentId: string) => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: (contentId: string, currentlyFavorite: boolean) => void;
 }
 
 function getYouTubeEmbedUrl(url: string): string | null {
@@ -50,7 +52,7 @@ const stateConfig: Record<ContentState, { label: string; color: string }> = {
   pending: { label: 'Em breve', color: 'text-primary/50' },
 };
 
-export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progress, isLastAccessed, onTrackView, onTrackDownload }: ContentCardProps) {
+export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progress, isLastAccessed, onTrackView, onTrackDownload, isFavorite, onToggleFavorite }: ContentCardProps) {
   const embedUrl = item.video_url ? getYouTubeEmbedUrl(item.video_url) : null;
   
   const accessMode = item.effectiveAccessMode || (item.is_free ? 'gratuito' : 'pago');
@@ -212,6 +214,26 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progre
               </Link>
             )}
           </div>
+        )}
+
+        {/* Favorite button */}
+        {onToggleFavorite && !isLocked && (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              onToggleFavorite(item.id, !!isFavorite);
+            }}
+            className={`absolute bottom-3 right-3 z-20 flex h-8 w-8 items-center justify-center rounded-full backdrop-blur-md transition-all duration-300 ${
+              isFavorite
+                ? "bg-red-500/20 border border-red-400/30 text-red-400 hover:bg-red-500/30"
+                : "bg-black/25 border border-white/10 text-white/35 hover:text-white/60 hover:bg-black/40"
+            }`}
+            title={isFavorite ? "Remover dos favoritos" : "Adicionar aos favoritos"}
+          >
+            <Heart className={`h-3.5 w-3.5 ${isFavorite ? "fill-current" : ""}`} />
+          </button>
         )}
       </div>
 
