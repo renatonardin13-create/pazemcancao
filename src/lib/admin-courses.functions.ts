@@ -112,12 +112,13 @@ export const updateCourse = createServerFn({ method: 'POST' })
   .inputValidator((input: {
     id: string;
     title?: string;
-    short_description?: string;
-    full_description?: string;
-    cover_image_url?: string;
-    banner_image_url?: string;
+    short_description?: string | null;
+    full_description?: string | null;
+    cover_image_url?: string | null;
+    banner_image_url?: string | null;
     category_id?: string | null;
     price?: number;
+    promotional_price?: number | null;
     status?: string;
     course_type?: string;
     launch_date?: string | null;

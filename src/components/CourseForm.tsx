@@ -110,16 +110,16 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
     onSubmit({
       title: title.trim(),
-      short_description: shortDesc.trim() || undefined,
-      full_description: fullDesc.trim() || undefined,
-      cover_image_url: coverUrl.trim() || undefined,
-      banner_image_url: bannerUrl.trim() || undefined,
-      category_id: categoryId || undefined,
+      short_description: shortDesc.trim() || null,
+      full_description: fullDesc.trim() || null,
+      cover_image_url: coverUrl.trim() || null,
+      banner_image_url: bannerUrl.trim() || null,
+      category_id: categoryId || null,
       price: parseFloat(price) || 0,
       promotional_price: promotionalPrice.trim() ? parseFloat(promotionalPrice) : null,
       status,
       course_type: normalizeCourseType(courseType),
-      launch_date: launchDate || undefined,
+      launch_date: launchDate || null,
     });
   };
 
