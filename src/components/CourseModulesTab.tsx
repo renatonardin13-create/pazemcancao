@@ -276,6 +276,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   };
 
   const openCreateModule = () => {
+    console.log("[DEBUG] openCreateModule called");
     setModTitle("");
     setModDesc("");
     setModThumbnailUrl("");
