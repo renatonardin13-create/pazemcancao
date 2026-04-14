@@ -94,7 +94,7 @@ function MeusCoursosPage() {
       <div className="min-h-screen bg-background">
 
         {/* ═══ TOP BAR — greeting + search ═══ */}
-        <div className="w-full max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-16 pt-6 sm:pt-8">
+        <div className="w-full max-w-[1600px] mx-auto px-8 sm:px-12 lg:px-20 pt-7 sm:pt-10">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -123,7 +123,7 @@ function MeusCoursosPage() {
         )}
 
         {/* ═══ SHELVES CONTENT ═══ */}
-        <div className="w-full max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-16">
+        <div className="w-full max-w-[1600px] mx-auto px-8 sm:px-12 lg:px-20">
 
           {/* ═══ SEARCH RESULTS ═══ */}
           {searchResults !== null ? (
@@ -142,7 +142,7 @@ function MeusCoursosPage() {
               )}
             </div>
           ) : (
-            <div className="pt-6 sm:pt-10 pb-24">
+            <div className="pt-10 sm:pt-14 pb-28">
               {isLoading ? (
                 <CardGridSkeleton count={6} />
               ) : (
@@ -257,7 +257,7 @@ function ShelfSection({ children, delay = 0 }: { children: React.ReactNode; dela
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay }}
-      className="mb-16 sm:mb-20"
+      className="mb-20 sm:mb-24"
     >
       {children}
     </motion.section>
