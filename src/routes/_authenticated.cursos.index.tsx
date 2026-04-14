@@ -68,6 +68,10 @@ function MeusCoursosPage() {
       .slice(0, 5);
   }, [courses]);
 
+  const continueIds = new Set(continueItems.map((c: any) => c.id));
+  const recommendations = (recData?.recommendations || []).filter((c: any) => !continueIds.has(c.id));
+  const trending = trendData?.ranked || [];
+
   // Hero course — priority: in-progress > recommended > trending > first course
   const heroCourse = useMemo(() => {
     const inProgressCourse = continueItems[0];
@@ -80,9 +84,6 @@ function MeusCoursosPage() {
     if (first) return { ...first, _heroType: 'enrolled' as const };
     return null;
   }, [continueItems, recommendations, trending, courses]);
-
-  const continueIds = new Set(continueItems.map((c: any) => c.id));
-  const recommendationsFiltered = (recData?.recommendations || []).filter((c: any) => !continueIds.has(c.id));
 
   const filtered = courses.filter((c: any) => {
     const matchSearch = !search || c.title?.toLowerCase().includes(search.toLowerCase());
