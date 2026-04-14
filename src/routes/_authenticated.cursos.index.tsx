@@ -99,7 +99,7 @@ function MeusCoursosPage() {
         )}
 
         {/* ═══ MAIN CONTENT AREA ═══ */}
-        <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-8 lg:px-12">
+        <div className="w-full max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-16">
 
           {/* ═══ SAUDAÇÃO + BUSCA ═══ */}
           <div className="pt-8 sm:pt-10 pb-2">
@@ -280,7 +280,7 @@ function ShelfSection({ children, delay = 0 }: { children: React.ReactNode; dela
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay }}
-      className="mb-14 sm:mb-16"
+      className="mb-16 sm:mb-20"
     >
       {children}
     </motion.section>
@@ -295,7 +295,7 @@ function ShelfHeader({ title, subtitle, icon, linkTo, linkLabel }: {
   linkLabel?: string;
 }) {
   return (
-    <div className="flex items-center justify-between mb-5 sm:mb-6">
+    <div className="flex items-center justify-between mb-6 sm:mb-8">
       <div className="flex items-center gap-3">
         {icon && (
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gold/[0.06] border border-gold/8">
@@ -332,7 +332,7 @@ function ShelfRow({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="group/shelf relative -mx-4 sm:-mx-8 lg:-mx-12">
+    <div className="group/shelf relative -mx-6 sm:-mx-10 lg:-mx-16">
       {/* Left arrow */}
       <button
         onClick={() => scroll('left')}
@@ -354,7 +354,7 @@ function ShelfRow({ children }: { children: React.ReactNode }) {
           (scrollRef as any).current = el;
           (dragRef as any).current = el;
         }}
-        className="flex gap-4 sm:gap-5 overflow-x-auto pb-4 scrollbar-hide px-4 sm:px-8 lg:px-12 snap-x snap-mandatory scroll-smooth cursor-grab select-none"
+        className="flex gap-4 sm:gap-5 overflow-x-auto pb-4 scrollbar-hide px-6 sm:px-10 lg:px-16 snap-x snap-mandatory scroll-smooth cursor-grab select-none"
       >
         {children}
       </div>
