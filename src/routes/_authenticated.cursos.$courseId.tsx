@@ -240,7 +240,7 @@ function CourseDetailPage() {
           className="mb-12"
         >
           {course.banner_image_url && (
-            <div className="mb-8 rounded-2xl overflow-hidden aspect-[21/9] border border-border/25">
+            <div className="mb-6 rounded-2xl overflow-hidden aspect-[3/1] border border-border/20">
               <img
                 src={course.banner_image_url}
                 alt={course.title}
