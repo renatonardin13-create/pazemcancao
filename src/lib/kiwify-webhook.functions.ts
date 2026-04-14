@@ -308,6 +308,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       payload: rawBody,
       responseStatus: 400,
       responseMessage: 'Missing order status',
+      ...audit, isSuccess: false, errorDetails: 'No status field in payload',
     });
     return jsonResponse({ error: 'Missing order status' }, 400);
   }
