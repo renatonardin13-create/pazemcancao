@@ -1331,6 +1331,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_course_access: {
+        Args: { p_course_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
