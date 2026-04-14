@@ -752,91 +752,11 @@ export default function AdminVitrinePage() {
               </div>
             </TabsContent>
             <TabsContent value="cards" className="mt-6 space-y-6">
-              <div className="space-y-5">
-                {/* Header */}
-                <div>
-                  <h3 className="text-base font-bold text-foreground/85">
-                    Configuração dos Cards{" "}
-                    <span className="font-normal text-muted-foreground/50">(Netflix Style)</span>
-                  </h3>
-                  <p className="text-[11px] text-muted-foreground/40 mt-0.5">
-                    Personalize a aparência dos cards de cursos nas prateleiras
-                  </p>
-                </div>
-
-                {/* Toggle rows */}
-                {[
-                  { label: "Exibir título no card", key: "showTitle" },
-                  { label: "Exibir descrição curta", key: "showDesc" },
-                  { label: "Exibir categoria", key: "showCategory" },
-                  { label: "Mostrar barra de progresso", key: "showProgress" },
-                  { label: "Mostrar cadeado em cursos bloqueados", key: "showLock" },
-                  { label: "Aplicar efeito hover dourado", key: "hoverGold" },
-                  { label: "Mostrar borda nos cards", key: "showBorder" },
-                ].map((item) => (
-                  <div
-                    key={item.key}
-                    className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3"
-                  >
-                    <p className="text-sm font-medium text-foreground/60">{item.label}</p>
-                    <Switch defaultChecked={true} />
-                  </div>
-                ))}
-
-                {/* Gradient intensity slider - cards */}
-                <div className="rounded-xl bg-card/5 border border-border/10 px-4 py-3 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-foreground/60">Intensidade do gradiente nos cards</p>
-                    <span className="text-sm font-semibold text-gold/70">20%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    defaultValue="20"
-                    className="w-full h-1.5 rounded-full appearance-none bg-muted/20 accent-gold cursor-pointer"
-                  />
-                  <p className="text-[10px] text-muted-foreground/30">
-                    0% = sem escurecimento | 100% = escurecimento total
-                  </p>
-                </div>
-
-                {/* Gradient intensity slider - banner */}
-                <div className="rounded-xl bg-card/5 border border-border/10 px-4 py-3 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium text-foreground/60">Intensidade do gradiente no banner principal</p>
-                    <span className="text-sm font-semibold text-gold/70">20%</span>
-                  </div>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    defaultValue="20"
-                    className="w-full h-1.5 rounded-full appearance-none bg-muted/20 accent-gold cursor-pointer"
-                  />
-                  <p className="text-[10px] text-muted-foreground/30">
-                    Controla a opacidade do gradiente sobre o banner hero
-                  </p>
-                </div>
-
-                {/* Cards per shelf limit */}
-                <div className="space-y-2">
-                  <Label className="text-sm text-foreground/60 font-medium">
-                    Limite global de cards por prateleira
-                  </Label>
-                  <Input
-                    type="number"
-                    defaultValue={20}
-                    className="bg-card/10 border-border/15 max-w-[200px]"
-                  />
-                </div>
-
-                {/* Save button */}
-                <Button className="w-full gap-2 bg-gold/90 text-gold-foreground hover:bg-gold shadow-lg shadow-gold/20 font-semibold">
-                  <BookOpen className="h-4 w-4" />
-                  Salvar Configurações
-                </Button>
-              </div>
+              <CardsConfigTab
+                settings={settingsData?.settings?.cards_config || {}}
+                onSave={(v) => saveCardsMut.mutate(v)}
+                saving={saveCardsMut.isPending}
+              />
             </TabsContent>
 
             {/* ── Banners Promo ── */}
