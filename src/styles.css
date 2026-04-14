@@ -65,58 +65,58 @@
   --font-display: "Playfair Display", Georgia, serif;
   --font-body: "DM Sans", system-ui, sans-serif;
 
-  /* Abismo — preto profundo com leve calor */
-  --background: oklch(0.07 0.008 270);
-  --foreground: oklch(0.95 0.008 70);
-  --card: oklch(0.11 0.01 265);
-  --card-foreground: oklch(0.95 0.008 70);
-  --popover: oklch(0.11 0.01 265);
-  --popover-foreground: oklch(0.95 0.008 70);
+  /* Abismo — preto quente com toque acolhedor */
+  --background: oklch(0.075 0.01 50);
+  --foreground: oklch(0.94 0.01 65);
+  --card: oklch(0.105 0.012 50);
+  --card-foreground: oklch(0.94 0.01 65);
+  --popover: oklch(0.105 0.012 50);
+  --popover-foreground: oklch(0.94 0.01 65);
 
-  /* Ouro envelhecido — tom mais quente e suave */
-  --primary: oklch(0.76 0.13 65);
-  --primary-foreground: oklch(0.06 0.008 265);
-  --secondary: oklch(0.14 0.01 265);
-  --secondary-foreground: oklch(0.92 0.008 70);
-  --muted: oklch(0.16 0.008 265);
-  --muted-foreground: oklch(0.68 0.012 265);
-  --accent: oklch(0.16 0.01 265);
-  --accent-foreground: oklch(0.92 0.008 70);
-  --destructive: oklch(0.60 0.18 25);
+  /* Ouro envelhecido — tom mais quente, acolhedor e suave */
+  --primary: oklch(0.78 0.11 68);
+  --primary-foreground: oklch(0.06 0.01 50);
+  --secondary: oklch(0.135 0.012 50);
+  --secondary-foreground: oklch(0.91 0.01 65);
+  --muted: oklch(0.155 0.01 50);
+  --muted-foreground: oklch(0.62 0.015 55);
+  --accent: oklch(0.155 0.012 50);
+  --accent-foreground: oklch(0.91 0.01 65);
+  --destructive: oklch(0.58 0.16 25);
   --destructive-foreground: oklch(0.95 0.01 80);
-  --border: oklch(0.22 0.008 265);
-  --input: oklch(0.16 0.008 265);
-  --ring: oklch(0.76 0.13 65);
+  --border: oklch(0.20 0.012 50);
+  --input: oklch(0.155 0.01 50);
+  --ring: oklch(0.78 0.11 68);
 
-  /* Ouro espiritual — luz íntima */
-  --gold: oklch(0.76 0.13 65);
-  --gold-foreground: oklch(0.06 0.008 265);
-  --gold-soft: oklch(0.76 0.13 65 / 0.12);
-  --warm: oklch(0.15 0.014 55);
+  /* Ouro espiritual — luz íntima e envolvente */
+  --gold: oklch(0.78 0.11 68);
+  --gold-foreground: oklch(0.06 0.01 50);
+  --gold-soft: oklch(0.78 0.11 68 / 0.10);
+  --warm: oklch(0.14 0.016 50);
 
-  --chart-1: oklch(0.76 0.13 65);
+  --chart-1: oklch(0.78 0.11 68);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.065 0.008 268);
-  --sidebar-foreground: oklch(0.90 0.012 70);
-  --sidebar-primary: oklch(0.76 0.13 65);
-  --sidebar-primary-foreground: oklch(0.06 0.008 265);
-  --sidebar-accent: oklch(0.14 0.01 265);
-  --sidebar-accent-foreground: oklch(0.88 0.012 70);
-  --sidebar-border: oklch(0.18 0.008 265);
-  --sidebar-ring: oklch(0.76 0.13 65);
+  --sidebar: oklch(0.065 0.01 50);
+  --sidebar-foreground: oklch(0.88 0.015 65);
+  --sidebar-primary: oklch(0.78 0.11 68);
+  --sidebar-primary-foreground: oklch(0.06 0.01 50);
+  --sidebar-accent: oklch(0.13 0.012 50);
+  --sidebar-accent-foreground: oklch(0.86 0.014 65);
+  --sidebar-border: oklch(0.17 0.01 50);
+  --sidebar-ring: oklch(0.78 0.11 68);
 
   /* Player / Playlist sidebar */
-  --player-progress-track: oklch(0.14 0.01 65);
-  --player-progress-fill: oklch(0.76 0.13 65);
-  --player-sidebar-bg: oklch(0.08 0.006 268);
-  --player-sidebar-border: oklch(0.16 0.008 265);
-  --player-sidebar-active: oklch(0.76 0.13 65 / 0.10);
-  --player-sidebar-active-border: oklch(0.76 0.13 65 / 0.55);
-  --player-sidebar-hover: oklch(0.12 0.008 265);
-  --player-completed: oklch(0.65 0.17 160);
+  --player-progress-track: oklch(0.14 0.012 55);
+  --player-progress-fill: oklch(0.78 0.11 68);
+  --player-sidebar-bg: oklch(0.08 0.008 50);
+  --player-sidebar-border: oklch(0.16 0.01 50);
+  --player-sidebar-active: oklch(0.78 0.11 68 / 0.08);
+  --player-sidebar-active-border: oklch(0.78 0.11 68 / 0.45);
+  --player-sidebar-hover: oklch(0.115 0.01 50);
+  --player-completed: oklch(0.62 0.15 160);
 }
 
 @layer base {
