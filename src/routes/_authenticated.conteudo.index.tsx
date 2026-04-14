@@ -9,6 +9,7 @@ import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { ContentCard } from "@/components/ContentCard";
 import { RecommendedSection } from "@/components/RecommendedSection";
+import { motion } from "framer-motion";
 import {
   BookOpen,
   Video,
@@ -17,6 +18,9 @@ import {
   PlayCircle,
   Sparkles,
   Clock,
+  CheckCircle2,
+  Library,
+  TrendingUp,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/conteudo/")({
@@ -95,6 +99,22 @@ function ContentPage() {
       return true; // Server already handles access logic via `unlocked` field
     });
   }, [allItems]);
+
+  // Compute stats for the library
+  const stats = useMemo(() => {
+    let unlocked = 0;
+    let inProgress = 0;
+    let completed = 0;
+
+    for (const item of items) {
+      if (!item.unlocked) continue;
+      unlocked++;
+      const p = progressMap[item.id];
+      if (p?.completed_at) completed++;
+      else if (p?.viewed_at) inProgress++;
+    }
+    return { unlocked, inProgress, completed };
+  }, [items, progressMap]);
 
   // Find last accessed content
   const lastAccessedId = useMemo(() => {
@@ -256,15 +276,31 @@ function ContentPage() {
     <StudentLayout>
       <div className="min-h-screen bg-background text-foreground">
         <div className="mx-auto max-w-6xl px-5 sm:px-8 py-8 sm:py-12 space-y-12 sm:space-y-16">
-          {/* Greeting */}
-          <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/85 tracking-tight">
-              {getGreeting()}
-              {firstName ? `, ${firstName}` : ""}
-            </h1>
-            <p className="mt-2 text-[13px] text-muted-foreground/45 font-light leading-relaxed">
-              Sua jornada espiritual continua aqui
-            </p>
+          {/* Greeting + Stats */}
+          <div className="space-y-6">
+            <div>
+              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/85 tracking-tight">
+                {getGreeting()}
+                {firstName ? `, ${firstName}` : ""}
+              </h1>
+              <p className="mt-2 text-[13px] text-muted-foreground/45 font-light leading-relaxed">
+                Sua jornada espiritual continua aqui
+              </p>
+            </div>
+
+            {/* Stats bar */}
+            {stats.unlocked > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="flex flex-wrap gap-4 sm:gap-6"
+              >
+                <StatPill icon={Library} label="Disponíveis" value={stats.unlocked} color="text-gold/60" />
+                <StatPill icon={TrendingUp} label="Em andamento" value={stats.inProgress} color="text-primary/60" />
+                <StatPill icon={CheckCircle2} label="Concluídos" value={stats.completed} color="text-player-completed/60" />
+              </motion.div>
+            )}
           </div>
 
           {isLoading ? (
@@ -546,6 +582,18 @@ function ContentGrid({
           isLastAccessed={item.id === lastAccessedId}
         />
       ))}
+    </div>
+  );
+}
+
+function StatPill({ icon: Icon, label, value, color }: { icon: any; label: string; value: number; color: string }) {
+  return (
+    <div className="flex items-center gap-2.5 rounded-xl bg-card/20 border border-border/8 px-4 py-2.5">
+      <Icon className={`h-3.5 w-3.5 ${color}`} />
+      <div className="flex items-baseline gap-1.5">
+        <span className="text-sm font-bold text-foreground/75 tabular-nums">{value}</span>
+        <span className="text-[11px] text-muted-foreground/40 tracking-wide">{label}</span>
+      </div>
     </div>
   );
 }
