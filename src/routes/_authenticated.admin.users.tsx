@@ -328,7 +328,12 @@ function AdminUsersPage() {
       (statusFilter === "trial" && buyer.is_trial) ||
       (statusFilter === "blocked" && !buyer.access_enabled);
 
-    return matchesSearch && matchesStatus;
+    const matchesCourse =
+      courseFilter === "all" ||
+      (courseFilter === "with_courses" && (buyer.course_count ?? 0) > 0) ||
+      (courseFilter === "no_courses" && (buyer.course_count ?? 0) === 0);
+
+    return matchesSearch && matchesStatus && matchesCourse;
   });
 
   const totalPages = Math.max(1, Math.ceil(filteredBuyers.length / ITEMS_PER_PAGE));
