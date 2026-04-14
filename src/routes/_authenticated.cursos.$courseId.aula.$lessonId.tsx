@@ -55,6 +55,7 @@ function LessonDetailPage() {
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showNextUp, setShowNextUp] = useState(false);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["lesson-detail", courseId, lessonId],
