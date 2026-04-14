@@ -460,7 +460,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
         .eq('status', 'active');
     }
 
-    await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Access revoked: ${status}` });
+    await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Access revoked: ${status}`, ...audit, isSuccess: true });
     return jsonResponse({ success: true, message: `Access revoked: ${status}` });
   }
 
