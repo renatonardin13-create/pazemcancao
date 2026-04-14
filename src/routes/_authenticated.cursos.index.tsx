@@ -52,6 +52,12 @@ function MeusCoursosPage() {
     staleTime: 60_000,
   });
 
+  const { data: featuredData } = useQuery({
+    queryKey: ["featured-content"],
+    queryFn: () => getFeaturedContent(),
+    staleTime: 60_000,
+  });
+
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
