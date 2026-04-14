@@ -1213,7 +1213,7 @@ export default function AdminVitrinePage() {
               </Button>
               <Button
                 type="submit"
-                className="gap-1.5 bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
+                className="gap-1.5 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10 font-semibold"
                 disabled={createMut.isPending || updateMut.isPending}
               >
                 {(createMut.isPending || updateMut.isPending) && (
@@ -1380,7 +1380,7 @@ export default function AdminVitrinePage() {
               </Button>
               <Button
                 type="submit"
-                className="gap-1.5 bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
+                className="gap-1.5 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10 font-semibold"
                 disabled={createPromoMut.isPending || updatePromoMut.isPending}
               >
                 {(createPromoMut.isPending || updatePromoMut.isPending) && (
@@ -1538,7 +1538,7 @@ function CardsConfigTab({ settings, onSave, saving }: { settings: any; onSave: (
       <Button
         onClick={() => onSave(config)}
         disabled={saving}
-        className="w-full gap-2 bg-gold/90 text-gold-foreground hover:bg-gold shadow-lg shadow-gold/20 font-semibold"
+        className="w-full gap-2 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10 shadow-lg shadow-gold/20 font-semibold"
       >
         {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <BookOpen className="h-4 w-4" />}
         Salvar Configurações

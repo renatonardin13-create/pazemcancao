@@ -452,7 +452,7 @@ function AdminUsersPage() {
                     <p className="text-[11px] text-gold/60">{addCourseIds.length} curso(s) selecionado(s)</p>
                   )}
                 </div>
-                <Button type="submit" className="w-full bg-gold/90 text-gold-foreground hover:bg-gold" disabled={addStudentMut.isPending}>
+                <Button type="submit" className="w-full bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10" disabled={addStudentMut.isPending}>
                   {addStudentMut.isPending ? "Salvando..." : "Adicionar Aluno"}
                 </Button>
               </form>
@@ -763,7 +763,7 @@ function AdminUsersPage() {
                 <Button type="button" variant="outline" className="flex-1" onClick={() => setEditOpen(false)}>
                   Cancelar
                 </Button>
-                <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" disabled={update.isPending}>
+                <Button type="submit" className="flex-1 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10" disabled={update.isPending}>
                   {update.isPending ? "Salvando..." : "Salvar Alterações"}
                 </Button>
               </div>

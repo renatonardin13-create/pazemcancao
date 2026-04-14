@@ -370,7 +370,7 @@ function LessonDetailPage() {
                   Esta aula contém um link externo
                 </p>
                 <Button
-                  className="gap-2 bg-gold/90 text-gold-foreground hover:bg-gold"
+                  className="gap-2 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10"
                   onClick={() => window.open(contentUrl, "_blank")}
                 >
                   <ExternalLink className="h-4 w-4" />
@@ -395,7 +395,7 @@ function LessonDetailPage() {
                   Material disponível para download
                 </p>
                 <Button
-                  className="gap-2 bg-gold/90 text-gold-foreground hover:bg-gold"
+                  className="gap-2 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10"
                   onClick={() => handleDownload(contentUrl, lesson.title)}
                 >
                   <Download className="h-4 w-4" />
@@ -641,7 +641,7 @@ function LessonDetailPage() {
                 className={`gap-2 px-6 text-sm font-bold uppercase tracking-wider ${
                   isCompleted
                     ? "bg-emerald-500/15 text-emerald-400/70 border border-emerald-500/15 hover:bg-emerald-500/20"
-                    : "bg-gold/90 text-gold-foreground hover:bg-gold"
+                    : "bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10"
                 }`}
                 variant={isCompleted ? "outline" : "default"}
               >

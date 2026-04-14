@@ -235,7 +235,7 @@ function AdminCategoriesPage() {
             </h2>
             <Button
               onClick={() => { setShowCatForm(true); setNewCat({ name: "", slug: "", description: "", icon: "", color: PICKER_COLORS[0] }); }}
-              className="gap-1.5 h-9 bg-gold/90 text-gold-foreground hover:bg-gold font-semibold text-sm"
+              className="gap-1.5 h-9 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10 font-semibold text-sm"
               size="sm"
             >
               <Plus className="h-3.5 w-3.5" />
@@ -283,7 +283,7 @@ function AdminCategoriesPage() {
             </h2>
             <Button
               onClick={() => { setShowTagForm(true); setNewTag({ name: "", slug: "", description: "", color: PICKER_COLORS[0] }); }}
-              className="gap-1.5 h-9 bg-gold/90 text-gold-foreground hover:bg-gold font-semibold text-sm"
+              className="gap-1.5 h-9 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10 font-semibold text-sm"
               size="sm"
             >
               <Plus className="h-3.5 w-3.5" />
@@ -351,7 +351,7 @@ function AdminCategoriesPage() {
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setShowCatForm(false)}>Cancelar</Button>
-              <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" disabled={createCatMutation.isPending}>
+              <Button type="submit" className="flex-1 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10" disabled={createCatMutation.isPending}>
                 {createCatMutation.isPending ? "Salvando..." : "Salvar"}
               </Button>
             </div>
@@ -388,7 +388,7 @@ function AdminCategoriesPage() {
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setEditingCat(null)}>Cancelar</Button>
-              <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" disabled={updateCatMutation.isPending}>
+              <Button type="submit" className="flex-1 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10" disabled={updateCatMutation.isPending}>
                 {updateCatMutation.isPending ? "Salvando..." : "Salvar"}
               </Button>
             </div>
@@ -425,7 +425,7 @@ function AdminCategoriesPage() {
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setShowTagForm(false)}>Cancelar</Button>
-              <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" disabled={createTagMutation.isPending}>
+              <Button type="submit" className="flex-1 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10" disabled={createTagMutation.isPending}>
                 {createTagMutation.isPending ? "Salvando..." : "Salvar"}
               </Button>
             </div>
@@ -462,7 +462,7 @@ function AdminCategoriesPage() {
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setEditingTag(null)}>Cancelar</Button>
-              <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" disabled={updateTagMutation.isPending}>
+              <Button type="submit" className="flex-1 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10" disabled={updateTagMutation.isPending}>
                 {updateTagMutation.isPending ? "Salvando..." : "Salvar"}
               </Button>
             </div>

@@ -467,7 +467,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             </p>
             <Button
               size="sm"
-              className="mt-6 bg-gold/90 text-gold-foreground hover:bg-gold shadow-lg shadow-gold/20"
+              className="mt-6 bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10 shadow-lg shadow-gold/20"
               onClick={openCreateModule}
             >
               <Plus className="h-3.5 w-3.5 mr-1.5" />
@@ -806,7 +806,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             <Button
               onClick={handleSaveModule}
               disabled={!modTitle.trim() || createModM.isPending || updateModM.isPending}
-              className="bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
+              className="bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10 font-semibold"
             >
               {(createModM.isPending || updateModM.isPending) && (
                 <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
@@ -1034,7 +1034,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             <Button
               onClick={handleSaveLesson}
               disabled={!lesTitle.trim() || createLesM.isPending || updateLesM.isPending}
-              className="bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
+              className="bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10 font-semibold"
             >
               {(createLesM.isPending || updateLesM.isPending) && (
                 <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />

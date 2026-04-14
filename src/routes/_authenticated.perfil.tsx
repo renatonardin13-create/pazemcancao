@@ -242,7 +242,7 @@ function ProfilePage() {
               <Button
                 onClick={() => profileMutation.mutate()}
                 disabled={profileMutation.isPending}
-                className="bg-gold/90 text-gold-foreground hover:bg-gold text-sm font-bold"
+                className="bg-gold text-gold-foreground hover:bg-gold/90 shadow-sm shadow-gold/10 text-sm font-bold"
               >
                 {profileMutation.isPending ? (
                   <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
