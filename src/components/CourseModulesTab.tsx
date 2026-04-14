@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { StatusBadge } from "@/components/StatusBadge";
+import { ImageUploadField } from "@/components/ImageUploadField";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   listModules,
@@ -750,37 +751,14 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             </div>
 
             {/* Thumbnail */}
-            <div className="space-y-2">
-              <Label className="text-sm font-bold">Thumbnail do Módulo</Label>
-              <p className="text-xs text-muted-foreground/50">
-                Imagem exibida na vitrine do curso (recomendado: 16:10 ou 16:9)
-              </p>
-              <div className="rounded-lg border border-dashed border-border/20 bg-background/20 overflow-hidden">
-                {modThumbnailUrl ? (
-                  <div className="relative group">
-                    <img src={modThumbnailUrl} alt="Thumbnail" className="w-full aspect-video object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => setModThumbnailUrl("")}
-                      className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-500/90 text-white hover:bg-red-500 transition-colors"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="aspect-video flex flex-col items-center justify-center gap-2 text-muted-foreground/30 cursor-pointer hover:text-muted-foreground/50 transition-colors">
-                    <Upload className="h-7 w-7" />
-                    <span className="text-xs">Clique para fazer upload</span>
-                  </div>
-                )}
-              </div>
-              <Input
-                value={modThumbnailUrl}
-                onChange={(e) => setModThumbnailUrl(e.target.value)}
-                placeholder="URL da thumbnail..."
-                className="h-9 bg-background/50 border-border/15 rounded-lg text-xs"
-              />
-            </div>
+            <ImageUploadField
+              label="Thumbnail do Módulo"
+              hint="Imagem exibida na vitrine do curso (recomendado: 16:9)"
+              value={modThumbnailUrl}
+              onChange={setModThumbnailUrl}
+              folder="modules/thumbnails"
+              aspectClass="aspect-video"
+            />
 
             {/* Publish toggle */}
             <div className="flex items-center justify-between rounded-lg border border-border/15 p-4">
@@ -900,13 +878,14 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label className="text-sm font-semibold">Miniatura (Opcional)</Label>
-                  <div className="border-2 border-dashed border-border/20 rounded-xl p-6 flex flex-col items-center gap-2 cursor-pointer hover:border-gold/30 hover:bg-gold/3 transition-all">
-                    <Download className="h-5 w-5 text-muted-foreground/30" />
-                    <span className="text-[12px] text-muted-foreground/40">Upload miniatura</span>
-                  </div>
-                </div>
+                <ImageUploadField
+                  label="Miniatura (Opcional)"
+                  hint="Imagem da aula (recomendado: 16:9, 1280×720)"
+                  value={lesThumbnailUrl}
+                  onChange={setLesThumbnailUrl}
+                  folder="lessons/thumbnails"
+                  aspectClass="aspect-video"
+                />
               </>
             )}
 
