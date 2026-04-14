@@ -6,9 +6,12 @@ import { getMyCoursesData, getRecommendedCourses, getMostAccessedCourses } from 
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { motion } from "framer-motion";
-import { BookOpen, Search, ArrowRight, Layers, Clock, PlayCircle, Sparkles, TrendingUp, CheckCircle2, Play } from "lucide-react";
+import { BookOpen, Search, ArrowRight, Layers, Clock, PlayCircle, Sparkles, TrendingUp, CheckCircle2, Play, Heart } from "lucide-react";
 import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/use-auth";
+import { useQuery as useProfileQuery } from "@tanstack/react-query";
+import { getMyProfile } from "@/lib/profile.functions";
 import { Progress } from "@/components/ui/progress";
 import {
   Select,
