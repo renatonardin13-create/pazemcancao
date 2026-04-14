@@ -486,19 +486,19 @@ function ContentShelf({
   lastAccessedId: string | null;
 }) {
   return (
-    <section className="space-y-4">
+    <section className="space-y-5">
       <div className="flex items-center gap-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
           {icon}
         </div>
-        <div>
-          <h2 className="font-display text-lg font-bold text-foreground/85 tracking-tight">
+        <div className="flex-1">
+          <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
             {title}
           </h2>
-          <p className="text-xs text-muted-foreground/55">{subtitle}</p>
+          <p className="text-[11px] text-muted-foreground/40 mt-0.5">{subtitle}</p>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
         {items.map((item: any, idx: number) => {
           const config = typeConfig[item.content_type] || typeConfig.material;
           return (
@@ -533,7 +533,7 @@ function ContentGrid({
   lastAccessedId: string | null;
 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
       {items.map((item: any, idx: number) => (
         <ContentCard
           key={item.id}
