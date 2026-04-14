@@ -526,6 +526,8 @@ function ContentShelf({
   hasAccess,
   progressMap,
   lastAccessedId,
+  onTrackView,
+  onTrackDownload,
 }: {
   icon: React.ReactNode;
   title: string;
@@ -534,6 +536,8 @@ function ContentShelf({
   hasAccess: boolean;
   progressMap: Record<string, any>;
   lastAccessedId: string | null;
+  onTrackView?: (contentId: string) => void;
+  onTrackDownload?: (contentId: string) => void;
 }) {
   return (
     <section className="space-y-5">
@@ -561,6 +565,8 @@ function ContentShelf({
               TypeIcon={config.icon}
               progress={progressMap[item.id]}
               isLastAccessed={item.id === lastAccessedId}
+              onTrackView={onTrackView}
+              onTrackDownload={onTrackDownload}
             />
           );
         })}
