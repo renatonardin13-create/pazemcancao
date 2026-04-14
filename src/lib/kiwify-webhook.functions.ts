@@ -200,7 +200,33 @@ function extractFields(rawBody: any) {
   const orderId = payload.order_id || rawBody.order_id || '';
   const uniqueEventId = extractEventId(payload, rawBody);
 
-  return { payload, status, customerEmail, customerName, orderId, uniqueEventId };
+  // Extract external product ID from payload (Kiwify, Hotmart, Cakto formats)
+  const externalProductId = (
+    payload.product?.id ||
+    payload.Product?.id ||
+    rawBody.product?.id ||
+    rawBody.Product?.id ||
+    payload.product_id ||
+    rawBody.product_id ||
+    ''
+  ).toString().trim();
+
+  return { payload, status, customerEmail, customerName, orderId, uniqueEventId, externalProductId };
+}
+
+// ─── Resolve course from external product ID via course_integrations ───
+async function resolveCourseByProductId(externalProductId: string): Promise<string | null> {
+  if (!externalProductId) return null;
+
+  const { data } = await supabaseAdmin
+    .from('course_integrations')
+    .select('course_id')
+    .eq('external_product_id', externalProductId)
+    .eq('is_enabled', true)
+    .eq('webhook_active', true)
+    .maybeSingle();
+
+  return data?.course_id || null;
 }
 
 // ─── Main handler ───
