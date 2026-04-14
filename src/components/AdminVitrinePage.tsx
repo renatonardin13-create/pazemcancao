@@ -67,6 +67,7 @@ import {
   updatePromoBanner,
   deletePromoBanner,
 } from "@/lib/admin-promo-banners.functions";
+import { getPlatformSettings, updatePlatformSetting } from "@/lib/platform-settings.functions";
 
 /* ── Generic drag-and-drop hook ── */
 
