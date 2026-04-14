@@ -374,28 +374,23 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       const unlocksCreated = await calculateContentUnlocks(customerEmail, orderId);
 
       let linkedCourseId: string | null = null;
-      if (resolvedCourseId) {
-        const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
-        const authUser = authUsers.users.find((user) => user.email?.toLowerCase() === customerEmail);
+      if (resolvedCourseId && userResult.userId) {
+        const { error: enrollmentError } = await supabaseAdmin
+          .from('enrollments')
+          .upsert(
+            {
+              user_id: userResult.userId,
+              course_id: resolvedCourseId,
+              email: customerEmail,
+              access_origin: 'webhook',
+              status: 'active',
+              granted_at: new Date().toISOString(),
+            },
+            { onConflict: 'user_id,course_id' }
+          );
 
-        if (authUser) {
-          const { error: enrollmentError } = await supabaseAdmin
-            .from('enrollments')
-            .upsert(
-              {
-                user_id: authUser.id,
-                course_id: resolvedCourseId,
-                email: customerEmail,
-                access_origin: 'webhook',
-                status: 'active',
-                granted_at: new Date().toISOString(),
-              },
-              { onConflict: 'user_id,course_id' }
-            );
-
-          if (!enrollmentError) {
-            linkedCourseId = resolvedCourseId;
-          }
+        if (!enrollmentError) {
+          linkedCourseId = resolvedCourseId;
         }
       }
 
