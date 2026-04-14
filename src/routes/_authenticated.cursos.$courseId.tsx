@@ -465,7 +465,11 @@ function CourseDetailPage() {
             </div>
           )}
         </motion.div>
-      </div>
+        </div>
+      </main>
+
+      <FooterLinks />
     </div>
+    </StudentLayout>
   );
 }
