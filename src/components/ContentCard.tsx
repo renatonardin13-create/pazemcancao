@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Lock, Download, Play, ShoppingCart, Clock, ArrowRight, CheckCircle2, Eye } from "lucide-react";
+import { Lock, Download, Play, ShoppingCart, Clock, ArrowRight, CheckCircle2, Eye, Heart } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
@@ -14,6 +14,8 @@ interface ContentCardProps {
   isLastAccessed?: boolean;
   onTrackView?: (contentId: string) => void;
   onTrackDownload?: (contentId: string) => void;
+  isFavorite?: boolean;
+  onToggleFavorite?: (contentId: string, currentlyFavorite: boolean) => void;
 }
 
 function getYouTubeEmbedUrl(url: string): string | null {
