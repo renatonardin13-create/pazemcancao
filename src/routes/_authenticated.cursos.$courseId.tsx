@@ -281,6 +281,7 @@ function CourseDetailPage() {
 
   return (
     <StudentLayout>
+      {DEBUG_BANNER}
       <div className="min-h-screen bg-background flex flex-col">
         {/* ─── CINEMATIC HERO BANNER ─── */}
         <motion.section
