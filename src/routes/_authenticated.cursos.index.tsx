@@ -349,12 +349,12 @@ function HeroBanner({ course }: { course: any }) {
   const isCustomBanner = course.id === '__custom_banner__';
 
   return (
-    <div className="px-2 sm:px-4 lg:px-6 pt-2 sm:pt-4 mb-10 sm:mb-14">
+    <div className="px-4 sm:px-8 lg:px-12 xl:px-16 pt-2 sm:pt-4 mb-14 sm:mb-20">
       <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
+        initial={{ opacity: 0, scale: 0.97 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[560px] xl:h-[600px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl shadow-black/40"
+        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+        className="relative w-full h-[280px] sm:h-[380px] md:h-[460px] lg:h-[520px] xl:h-[560px] rounded-3xl sm:rounded-[28px] overflow-hidden shadow-[0_8px_60px_-12px_rgba(0,0,0,0.7)] ring-1 ring-white/[0.04]"
       >
         {/* Background image */}
         {bannerImg ? (
