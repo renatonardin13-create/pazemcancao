@@ -183,24 +183,34 @@ export const listContentItems = createServerFn({ method: 'POST' })
     }
 
     // Fetch popularity data for recommendations (play + download counts per content)
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
     const { data: playCountsRaw } = await supabaseAdmin
       .from('play_logs')
-      .select('track_id');
+      .select('track_id, played_at');
     const { data: dlCountsRaw } = await supabaseAdmin
       .from('download_logs')
-      .select('track_id');
+      .select('track_id, downloaded_at');
 
     const popularityMap: Record<string, { plays: number; downloads: number }> = {};
+    const weeklyPopularityMap: Record<string, { plays: number; downloads: number }> = {};
     if (playCountsRaw) {
       for (const r of playCountsRaw) {
         if (!popularityMap[r.track_id]) popularityMap[r.track_id] = { plays: 0, downloads: 0 };
         popularityMap[r.track_id].plays++;
+        if (r.played_at >= sevenDaysAgo) {
+          if (!weeklyPopularityMap[r.track_id]) weeklyPopularityMap[r.track_id] = { plays: 0, downloads: 0 };
+          weeklyPopularityMap[r.track_id].plays++;
+        }
       }
     }
     if (dlCountsRaw) {
       for (const r of dlCountsRaw) {
         if (!popularityMap[r.track_id]) popularityMap[r.track_id] = { plays: 0, downloads: 0 };
         popularityMap[r.track_id].downloads++;
+        if (r.downloaded_at >= sevenDaysAgo) {
+          if (!weeklyPopularityMap[r.track_id]) weeklyPopularityMap[r.track_id] = { plays: 0, downloads: 0 };
+          weeklyPopularityMap[r.track_id].downloads++;
+        }
       }
     }
 
@@ -240,6 +250,7 @@ export const listContentItems = createServerFn({ method: 'POST' })
       downloadedIds: Array.from(downloadedContentIds),
       progressMap,
       popularityMap,
+      weeklyPopularityMap,
       categories,
       journeys,
     };
