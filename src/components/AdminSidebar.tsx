@@ -52,7 +52,7 @@ export function AdminSidebar() {
               </div>
               <div className="overflow-hidden">
                 <p className="text-xs font-bold text-sidebar-foreground/80 tracking-tight truncate">Admin</p>
-                <p className="text-[9px] text-sidebar-foreground/30 truncate">Plataforma de Louvores</p>
+                <p className="text-[11px] text-sidebar-foreground/30 truncate">Plataforma de Louvores</p>
               </div>
             </div>
           ) : (
@@ -81,7 +81,7 @@ export function AdminSidebar() {
         {/* Conteúdo */}
         <SidebarGroup>
           {!collapsed && (
-            <SidebarGroupLabel className="text-[9px] uppercase tracking-[0.3em] text-sidebar-foreground/25 px-4">
+            <SidebarGroupLabel className="text-[11px] uppercase tracking-[0.3em] text-sidebar-foreground/25 px-4">
               Conteúdo
             </SidebarGroupLabel>
           )}
@@ -104,7 +104,7 @@ export function AdminSidebar() {
         {/* Ferramentas */}
         <SidebarGroup>
           {!collapsed && (
-            <SidebarGroupLabel className="text-[9px] uppercase tracking-[0.3em] text-sidebar-foreground/25 px-4">
+            <SidebarGroupLabel className="text-[11px] uppercase tracking-[0.3em] text-sidebar-foreground/25 px-4">
               Ferramentas
             </SidebarGroupLabel>
           )}
@@ -127,7 +127,7 @@ export function AdminSidebar() {
         {/* Sistema */}
         <SidebarGroup>
           {!collapsed && (
-            <SidebarGroupLabel className="text-[9px] uppercase tracking-[0.3em] text-sidebar-foreground/25 px-4">
+            <SidebarGroupLabel className="text-[11px] uppercase tracking-[0.3em] text-sidebar-foreground/25 px-4">
               Sistema
             </SidebarGroupLabel>
           )}

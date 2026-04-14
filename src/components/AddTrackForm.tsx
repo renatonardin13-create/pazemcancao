@@ -174,7 +174,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
         </div>
         <div>
           <h3 className="text-sm font-bold text-foreground/80">Adicionar Louvor</h3>
-          <p className="text-[10px] text-muted-foreground/70">Preencha os campos e envie o arquivo MP3</p>
+          <p className="text-xs text-muted-foreground/70">Preencha os campos e envie o arquivo MP3</p>
         </div>
       </div>
 
@@ -233,7 +233,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
             <div className="flex-1 min-w-0">
               <p className="text-sm text-foreground/70 truncate">{mp3File.name}</p>
               {duration && (
-                <p className="text-[10px] text-muted-foreground/60">{duration}</p>
+                <p className="text-xs text-muted-foreground/60">{duration}</p>
               )}
             </div>
             <button
@@ -326,7 +326,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
               className="bg-card/15 border-border/30 text-sm"
               disabled={isSubmitting}
             />
-            <p className="text-[9px] text-muted-foreground/60">
+            <p className="text-[11px] text-muted-foreground/60">
               A música ficará bloqueada até esta data.
             </p>
           </div>

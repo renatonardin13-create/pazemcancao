@@ -173,7 +173,7 @@ function ProfilePage() {
                     <p className="font-display text-xl font-bold text-foreground/85">
                       {totalCourses}
                     </p>
-                    <p className="text-[10px] text-muted-foreground/70">Cursos</p>
+                    <p className="text-xs text-muted-foreground/70">Cursos</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -184,7 +184,7 @@ function ProfilePage() {
                     <p className="font-display text-xl font-bold text-foreground/85">
                       {totalLessonsCompleted}
                     </p>
-                    <p className="text-[10px] text-muted-foreground/70">Aulas concluídas</p>
+                    <p className="text-xs text-muted-foreground/70">Aulas concluídas</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -195,7 +195,7 @@ function ProfilePage() {
                     <p className="font-display text-xl font-bold text-foreground/85">
                       0h
                     </p>
-                    <p className="text-[10px] text-muted-foreground/70">Tempo assistido</p>
+                    <p className="text-xs text-muted-foreground/70">Tempo assistido</p>
                   </div>
                 </div>
               </div>
@@ -234,7 +234,7 @@ function ProfilePage() {
                   disabled
                   className="bg-muted/10 border-border/25 text-muted-foreground/70"
                 />
-                <p className="text-[10px] text-muted-foreground/60">
+                <p className="text-xs text-muted-foreground/60">
                   O email não pode ser alterado
                 </p>
               </div>

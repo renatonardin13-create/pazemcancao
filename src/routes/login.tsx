@@ -219,7 +219,7 @@ function LoginPage() {
   const divider = (
     <div className="flex items-center gap-3 my-6">
       <div className="flex-1 h-px bg-border/20" />
-      <span className="text-[10px] text-muted-foreground/70 uppercase tracking-widest">ou</span>
+      <span className="text-xs text-muted-foreground/70 uppercase tracking-widest">ou</span>
       <div className="flex-1 h-px bg-border/20" />
     </div>
   );
@@ -279,7 +279,7 @@ function LoginPage() {
             </div>
           </div>
           
-          <p className="mt-6 text-center text-[10px] text-muted-foreground/50">
+          <p className="mt-6 text-center text-xs text-muted-foreground/50">
             Suporte: (17) 98830-8037
           </p>
         </motion.div>
@@ -376,7 +376,7 @@ function LoginPage() {
                 Paz em Canção
               </h1>
               <div className="mx-auto mt-3 h-px w-10 bg-gradient-to-r from-transparent via-gold/12 to-transparent" />
-              <p className="mt-3 text-[10px] text-muted-foreground/60 tracking-[0.3em] uppercase">
+              <p className="mt-3 text-xs text-muted-foreground/60 tracking-[0.3em] uppercase">
                 Sua biblioteca espiritual
               </p>
             </div>
@@ -535,7 +535,7 @@ function LoginPage() {
 
                           <form onSubmit={handleSignup} className="space-y-4">
                             <div className="space-y-2">
-                              <Label htmlFor="signup-name" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                              <Label htmlFor="signup-name" className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
                                 Nome completo
                               </Label>
                               <div className="relative">
@@ -553,7 +553,7 @@ function LoginPage() {
                             </div>
 
                             <div className="space-y-2">
-                              <Label htmlFor="signup-email" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                              <Label htmlFor="signup-email" className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
                                 E-mail
                               </Label>
                               <div className="relative">
@@ -571,7 +571,7 @@ function LoginPage() {
                             </div>
 
                             <div className="space-y-2">
-                              <Label htmlFor="signup-password" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                              <Label htmlFor="signup-password" className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
                                 Senha
                               </Label>
                               <div className="relative">
@@ -590,7 +590,7 @@ function LoginPage() {
                             </div>
 
                             <div className="space-y-2">
-                              <Label htmlFor="signup-confirm" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                              <Label htmlFor="signup-confirm" className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
                                 Confirmar senha
                               </Label>
                               <div className="relative">
@@ -690,7 +690,7 @@ function LoginPage() {
 
                       <form onSubmit={handleResetRequest} className="space-y-6">
                         <div className="space-y-2.5">
-                          <Label htmlFor="reset-email" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                          <Label htmlFor="reset-email" className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
                             E-mail
                           </Label>
                           <div className="relative">
@@ -812,7 +812,7 @@ function LoginPage() {
 
                       <form onSubmit={handleNewPassword} className="space-y-6">
                         <div className="space-y-2.5">
-                          <Label htmlFor="new-password" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                          <Label htmlFor="new-password" className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
                             Nova Senha
                           </Label>
                           <div className="relative">
@@ -831,7 +831,7 @@ function LoginPage() {
                         </div>
 
                         <div className="space-y-2.5">
-                          <Label htmlFor="confirm-password" className="text-[10px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                          <Label htmlFor="confirm-password" className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
                             Confirmar Senha
                           </Label>
                           <div className="relative">
@@ -870,7 +870,7 @@ function LoginPage() {
               </div>
             </div>
 
-            <p className="mt-8 text-center text-[10px] text-muted-foreground/50">
+            <p className="mt-8 text-center text-xs text-muted-foreground/50">
               Precisa de ajuda?{" "}
               <a href="mailto:suporte@pazemcancao.com" className="text-gold/35 hover:text-gold/55 transition-colors duration-500 underline underline-offset-2">
                 Fale conosco
@@ -881,7 +881,7 @@ function LoginPage() {
       </div>
 
       <footer className="relative z-10 py-4 text-center">
-        <div className="flex items-center justify-center gap-4 text-[10px] text-muted-foreground/50">
+        <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground/50">
           <Link to="/termos" className="hover:text-muted-foreground/70 transition-colors duration-500">Termos</Link>
           <span className="text-border/30">·</span>
           <Link to="/privacidade" className="hover:text-muted-foreground/70 transition-colors duration-500">Privacidade</Link>

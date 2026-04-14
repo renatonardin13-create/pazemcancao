@@ -150,7 +150,7 @@ function SummaryCard({
         <Icon className="h-5 w-5" />
       </div>
       <div className="min-w-0">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
+        <p className="text-xs uppercase tracking-wider text-muted-foreground/70 font-medium">
           {label}
         </p>
         <p className="text-lg font-bold text-foreground/80 tabular-nums mt-0.5">
@@ -815,7 +815,7 @@ export default function AdminVitrinePage() {
                             </p>
                             <Badge
                               variant="outline"
-                              className={`text-[9px] rounded-full px-2 border font-medium ${
+                              className={`text-[11px] rounded-full px-2 border font-medium ${
                                 banner.is_active
                                   ? "text-emerald-400/80 border-emerald-500/25 bg-emerald-500/10"
                                   : "text-muted-foreground/70 border-border/30"
@@ -825,12 +825,12 @@ export default function AdminVitrinePage() {
                             </Badge>
                             <Badge
                               variant="outline"
-                              className="text-[9px] rounded-full px-2 border text-muted-foreground/50 border-border/30"
+                              className="text-[11px] rounded-full px-2 border text-muted-foreground/50 border-border/30"
                             >
                               Após prateleira {banner.position_after_shelf}
                             </Badge>
                           </div>
-                          <p className="text-[10px] text-muted-foreground/60 mt-0.5 truncate">
+                          <p className="text-xs text-muted-foreground/60 mt-0.5 truncate">
                             {banner.link_url ? `Link: ${banner.link_url}` : "Sem link"}
                           </p>
                         </div>
@@ -838,7 +838,7 @@ export default function AdminVitrinePage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-muted-foreground/60 hover:text-foreground/60"
+                            className="h-7 w-7 text-muted-foreground hover:text-foreground"
                             onClick={() => openEditPromo(banner)}
                             title="Editar"
                           >
@@ -972,7 +972,7 @@ export default function AdminVitrinePage() {
                   <span className="text-[12px] font-semibold text-foreground/60">
                     Pré-visualização
                   </span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[9px] font-bold uppercase tracking-wider text-emerald-400/80">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-bold uppercase tracking-wider text-emerald-400/80">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400/80 animate-pulse" />
                     Ao vivo
                   </span>
@@ -980,7 +980,7 @@ export default function AdminVitrinePage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-7 px-2 text-[10px] text-muted-foreground/60 hover:text-foreground/60"
+                  className="h-7 px-2 text-xs text-muted-foreground hover:text-foreground"
                   onClick={() => setShowPreview(false)}
                 >
                   <EyeOff className="h-3 w-3 mr-1" />
@@ -1010,7 +1010,7 @@ export default function AdminVitrinePage() {
                         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
                         <div className="absolute bottom-2 left-3">
                           <p className="text-[7px] font-bold uppercase tracking-[0.3em] text-gold/40">Em destaque</p>
-                          <p className="text-[10px] font-bold text-foreground/80 leading-tight mt-0.5 line-clamp-1">
+                          <p className="text-xs font-bold text-foreground/80 leading-tight mt-0.5 line-clamp-1">
                             {previewFeatured.display_title || previewFeatured.title || "Banner Principal"}
                           </p>
                         </div>
@@ -1020,13 +1020,13 @@ export default function AdminVitrinePage() {
                     {/* Mini shelves — from student data */}
                     <div className="p-3 space-y-3">
                       {previewShelves.length === 0 ? (
-                        <p className="text-[9px] text-muted-foreground/60 text-center py-4">
+                        <p className="text-[11px] text-muted-foreground/60 text-center py-4">
                           Nenhuma prateleira ativa
                         </p>
                       ) : (
                         previewShelves.slice(0, 3).map((shelf: any) => (
                           <div key={shelf.id}>
-                            <p className="text-[9px] font-bold text-foreground/50 mb-1.5 truncate">
+                            <p className="text-[11px] font-bold text-foreground/50 mb-1.5 truncate">
                               {shelf.name}
                             </p>
                             <div className="flex gap-1.5 overflow-hidden">
@@ -1046,7 +1046,7 @@ export default function AdminVitrinePage() {
                         ))
                       )}
                       {previewShelves.length > 3 && (
-                        <p className="text-[9px] text-muted-foreground/50 text-center">
+                        <p className="text-[11px] text-muted-foreground/50 text-center">
                           +{previewShelves.length - 3} prateleira(s)
                         </p>
                       )}
@@ -1356,7 +1356,7 @@ export default function AdminVitrinePage() {
                 <div className="flex items-center justify-between rounded-xl bg-card/15 border border-border/25 px-4 py-3">
                   <div>
                     <p className="text-sm font-medium text-foreground/60">Agendamento Automático</p>
-                    <p className="text-[10px] text-muted-foreground/60">Ativar/desativar banner em datas específicas</p>
+                    <p className="text-xs text-muted-foreground/60">Ativar/desativar banner em datas específicas</p>
                   </div>
                   <Switch checked={promoSchedule} onCheckedChange={setPromoSchedule} />
                 </div>
@@ -1497,7 +1497,7 @@ function CardsConfigTab({ settings, onSave, saving }: { settings: any; onSave: (
           onChange={(e) => setConfig((prev) => ({ ...prev, cardGradient: Number(e.target.value) }))}
           className="w-full h-1.5 rounded-full appearance-none bg-muted/20 accent-gold cursor-pointer"
         />
-        <p className="text-[10px] text-muted-foreground/60">
+        <p className="text-xs text-muted-foreground/60">
           0% = sem escurecimento | 100% = escurecimento total
         </p>
       </div>
@@ -1516,7 +1516,7 @@ function CardsConfigTab({ settings, onSave, saving }: { settings: any; onSave: (
           onChange={(e) => setConfig((prev) => ({ ...prev, bannerGradient: Number(e.target.value) }))}
           className="w-full h-1.5 rounded-full appearance-none bg-muted/20 accent-gold cursor-pointer"
         />
-        <p className="text-[10px] text-muted-foreground/60">
+        <p className="text-xs text-muted-foreground/60">
           Controla a opacidade do gradiente sobre o banner hero
         </p>
       </div>

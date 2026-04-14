@@ -528,7 +528,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                       {mod.title}
                     </p>
                     {mod.description && (
-                      <p className="text-[10px] text-muted-foreground/60 truncate mt-0.5">
+                      <p className="text-xs text-muted-foreground/60 truncate mt-0.5">
                         {mod.description}
                       </p>
                     )}
@@ -538,7 +538,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   <StatusBadge status={mod.status} />
 
                   {/* Lesson count */}
-                  <span className="text-[10px] font-medium text-muted-foreground/70 shrink-0 tabular-nums px-2.5 py-1 rounded-lg bg-card/15 border border-border/25">
+                  <span className="text-xs font-medium text-muted-foreground/70 shrink-0 tabular-nums px-2.5 py-1 rounded-lg bg-card/15 border border-border/25">
                     {lessons.length} aula{lessons.length !== 1 ? "s" : ""}
                   </span>
 
@@ -546,7 +546,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   <Button
                     variant="outline"
                     size="sm"
-                    className="h-7 px-3.5 text-[10px] font-semibold border-gold/20 text-gold/70 hover:text-gold hover:border-gold/30 hover:bg-gold/8 shrink-0"
+                    className="h-7 px-3.5 text-xs font-semibold border-gold/20 text-gold/70 hover:text-gold hover:border-gold/30 hover:bg-gold/8 shrink-0"
                     onClick={() => openCreateLesson(mod.id)}
                   >
                     <Plus className="h-3 w-3 mr-1" />
@@ -556,7 +556,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   {/* Module actions */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/60 hover:text-foreground/60 shrink-0">
+                      <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground shrink-0">
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
@@ -651,7 +651,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                             {lesson.is_free_preview && (
                               <Badge
                                 variant="outline"
-                                className="text-[9px] rounded-full px-2 py-0 border text-blue-400/70 border-blue-500/20 bg-blue-500/8 font-medium shrink-0"
+                                className="text-[11px] rounded-full px-2 py-0 border text-blue-400/70 border-blue-500/20 bg-blue-500/8 font-medium shrink-0"
                               >
                                 Preview
                               </Badge>
@@ -663,7 +663,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                             {/* Lesson actions */}
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/60 hover:text-foreground/60 shrink-0">
+                                <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground shrink-0">
                                   <MoreHorizontal className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
@@ -957,7 +957,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                         <File className="h-3.5 w-3.5 text-gold/40 shrink-0" />
                       )}
                       <span className="text-[12px] text-foreground/60 flex-1 truncate">{mat.title}</span>
-                      <span className="text-[10px] text-muted-foreground/60 uppercase">{mat.material_type}</span>
+                      <span className="text-xs text-muted-foreground/60 uppercase">{mat.material_type}</span>
                       <button
                         type="button"
                         onClick={() => deleteMatM.mutate(mat.id)}

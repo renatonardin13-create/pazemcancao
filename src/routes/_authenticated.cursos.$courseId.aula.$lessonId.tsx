@@ -448,7 +448,7 @@ function LessonDetailPage() {
                   {lesson.is_free_preview && (
                     <Badge
                       variant="outline"
-                      className="text-[9px] text-gold/70 border-gold/15"
+                      className="text-[11px] text-gold/70 border-gold/15"
                     >
                       Preview gratuito
                     </Badge>
@@ -487,7 +487,7 @@ function LessonDetailPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 gap-1.5 text-[10px] text-gold/70 hover:text-gold/80"
+                            className="h-8 gap-1.5 text-xs text-gold/70 hover:text-gold/80"
                             onClick={() => window.open(mat.url, "_blank")}
                           >
                             <ExternalLink className="h-3 w-3" />
@@ -497,7 +497,7 @@ function LessonDetailPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 gap-1.5 text-[10px] text-gold/70 hover:text-gold/80"
+                            className="h-8 gap-1.5 text-xs text-gold/70 hover:text-gold/80"
                             onClick={() => handleDownload(mat.url, mat.title)}
                           >
                             <Download className="h-3 w-3" />
@@ -699,7 +699,7 @@ function ModuleSection({
             <p className="text-[12px] font-semibold text-foreground/70 truncate">
               {title}
             </p>
-            <p className="text-[10px] text-muted-foreground/70 mt-0.5">
+            <p className="text-xs text-muted-foreground/70 mt-0.5">
               {completedCount}/{totalCount} concluídas
             </p>
           </div>
@@ -762,7 +762,7 @@ function LessonSidebarItem({
           {lesson.title}
         </p>
         {lesson.duration && lesson.duration !== "0:00" && (
-          <span className="text-[10px] text-muted-foreground/60">
+          <span className="text-xs text-muted-foreground/60">
             {lesson.duration}
           </span>
         )}

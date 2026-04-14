@@ -213,14 +213,14 @@ function AdminJourneysPage() {
                 <button
                   onClick={() => moveItem(index, "up")}
                   disabled={index === 0}
-                  className="text-muted-foreground/50 hover:text-gold/70 disabled:opacity-20 disabled:cursor-not-allowed transition-colors text-[10px]"
+                  className="text-muted-foreground/50 hover:text-gold/70 disabled:opacity-20 disabled:cursor-not-allowed transition-colors text-xs"
                 >
                   ▲
                 </button>
                 <button
                   onClick={() => moveItem(index, "down")}
                   disabled={index === journeys.length - 1}
-                  className="text-muted-foreground/50 hover:text-gold/70 disabled:opacity-20 disabled:cursor-not-allowed transition-colors text-[10px]"
+                  className="text-muted-foreground/50 hover:text-gold/70 disabled:opacity-20 disabled:cursor-not-allowed transition-colors text-xs"
                 >
                   ▼
                 </button>
@@ -249,7 +249,7 @@ function AdminJourneysPage() {
                 </div>
               )}
 
-              <span className="text-[9px] text-muted-foreground/50 tabular-nums shrink-0">#{item.sort_order}</span>
+              <span className="text-[11px] text-muted-foreground/50 tabular-nums shrink-0">#{item.sort_order}</span>
 
               {/* Actions */}
               <div className="flex items-center gap-1 shrink-0">
@@ -264,7 +264,7 @@ function AdminJourneysPage() {
                   </>
                 ) : (
                   <>
-                    <button onClick={() => startEdit(item)} className="p-2 text-muted-foreground/60 hover:text-gold/60 transition-colors" title="Editar">
+                    <button onClick={() => startEdit(item)} className="p-2 text-muted-foreground hover:text-gold transition-colors" title="Editar">
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
                     <button

@@ -151,7 +151,7 @@ function ContentPage() {
                     <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
                       ▶️ Continue sua caminhada
                     </h2>
-                    <p className="text-[10px] text-muted-foreground/60">
+                    <p className="text-xs text-muted-foreground/60">
                       Retome de onde parou
                     </p>
                   </div>
@@ -184,7 +184,7 @@ function ContentPage() {
                     <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
                       {label}
                     </h2>
-                    <span className="text-[10px] text-muted-foreground/60">{catItems.length} item(ns)</span>
+                    <span className="text-xs text-muted-foreground/60">{catItems.length} item(ns)</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                     {catItems.map((item: any, idx: number) => (
@@ -221,7 +221,7 @@ function ContentPage() {
                         <h3 className="font-display text-[15px] font-bold text-foreground/70 tracking-tight">
                           {label}
                         </h3>
-                        <span className="text-[10px] text-muted-foreground/60">{jgItems.length} item(ns)</span>
+                        <span className="text-xs text-muted-foreground/60">{jgItems.length} item(ns)</span>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                         {jgItems.map((item: any, idx: number) => {
@@ -254,7 +254,7 @@ function ContentPage() {
                     <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
                       {label}
                     </h2>
-                    <span className="text-[10px] text-muted-foreground/60">{catItems.length} item(ns)</span>
+                    <span className="text-xs text-muted-foreground/60">{catItems.length} item(ns)</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                     {catItems.map((item: any, idx: number) => (
@@ -285,7 +285,7 @@ function ContentPage() {
                     <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
                       {config.label}
                     </h2>
-                    <span className="text-[10px] text-muted-foreground/60">{typeItems.length} item(ns)</span>
+                    <span className="text-xs text-muted-foreground/60">{typeItems.length} item(ns)</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                     {typeItems.map((item: any, idx: number) => (

@@ -75,11 +75,11 @@ export function GlobalPlayer() {
               {currentTrack.title}
             </p>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-[9px] sm:text-[10px] text-muted-foreground/60">{currentTrack.category}</span>
+              <span className="text-[11px] sm:text-xs text-muted-foreground/60">{currentTrack.category}</span>
               {hasQueue && (
                 <>
-                  <span className="text-[9px] sm:text-[10px] text-border/20">·</span>
-                  <span className="text-[9px] sm:text-[10px] text-gold/40 tabular-nums">{queueIndex + 1}/{queue.length}</span>
+                  <span className="text-[11px] sm:text-xs text-border/20">·</span>
+                  <span className="text-[11px] sm:text-xs text-gold/40 tabular-nums">{queueIndex + 1}/{queue.length}</span>
                 </>
               )}
             </div>
@@ -87,7 +87,7 @@ export function GlobalPlayer() {
         </div>
 
         {/* Time */}
-        <div className="hidden sm:flex items-center gap-1 text-[10px] text-muted-foreground/60 tabular-nums shrink-0">
+        <div className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground/60 tabular-nums shrink-0">
           <span>{formatSecs(currentTime)}</span>
           <span className="text-border/15">/</span>
           <span>{duration > 0 ? formatSecs(duration) : currentTrack.duration}</span>
@@ -98,7 +98,7 @@ export function GlobalPlayer() {
           {hasQueue && (
             <button
               onClick={previous}
-              className="flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-lg text-muted-foreground/60 hover:text-foreground/60 transition-colors duration-300 active:scale-90"
+              className="flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground transition-colors duration-300 active:scale-90"
             >
               <SkipBack className="h-3.5 w-3.5" />
             </button>
@@ -118,7 +118,7 @@ export function GlobalPlayer() {
           {hasQueue && (
             <button
               onClick={next}
-              className="flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-lg text-muted-foreground/60 hover:text-foreground/60 transition-colors duration-300 active:scale-90"
+              className="flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground transition-colors duration-300 active:scale-90"
             >
               <SkipForward className="h-3.5 w-3.5" />
             </button>

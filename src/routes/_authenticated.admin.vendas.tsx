@@ -219,13 +219,13 @@ function AdminSalesPage() {
                         <TableCell className="font-mono text-xs text-muted-foreground">
                           {txn.transaction_code}
                         </TableCell>
-                        <TableCell>{txn.buyer_name}</TableCell>
+                        <TableCell className="font-semibold text-foreground">{txn.buyer_name}</TableCell>
                         <TableCell>{txn.course_title}</TableCell>
                         <TableCell className="text-gold font-medium">
                           {formatCurrency(Number(txn.amount))}
                         </TableCell>
                         <TableCell>
-                          <Badge variant={cfg.variant} className="text-[10px]">
+                          <Badge variant={cfg.variant} className="text-xs">
                             {cfg.label}
                           </Badge>
                         </TableCell>

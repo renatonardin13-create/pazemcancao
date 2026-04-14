@@ -440,7 +440,7 @@ function AdminUsersPage() {
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium text-foreground/70 truncate">{course.title}</p>
                             </div>
-                            <Badge variant="outline" className={`text-[9px] shrink-0 ${course.status === "published" ? "text-emerald-400/70 border-emerald-500/20" : "text-muted-foreground/70 border-border/30"}`}>
+                            <Badge variant="outline" className={`text-[11px] shrink-0 ${course.status === "published" ? "text-emerald-400/70 border-emerald-500/20" : "text-muted-foreground/70 border-border/30"}`}>
                               {course.status === "published" ? "Publicado" : "Rascunho"}
                             </Badge>
                           </div>
@@ -534,14 +534,14 @@ function AdminUsersPage() {
       ) : (
         <div className="rounded-xl border border-border/30 overflow-hidden">
           {/* Table header */}
-          <div className="grid grid-cols-[1fr_1fr_100px_80px_140px_120px_50px] gap-4 px-5 py-3 border-b border-border/25 bg-card/15">
-            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider">Aluno</span>
-            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider">Email</span>
-            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider">Status</span>
-            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider text-center">Cursos</span>
-            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider">Progresso</span>
-            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider">Último Acesso</span>
-            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider text-center">Ações</span>
+           <div className="grid grid-cols-[1fr_1fr_100px_80px_140px_120px_50px] gap-4 px-5 py-3 border-b border-border/25 bg-muted/8">
+            <span className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">Aluno</span>
+            <span className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">Email</span>
+            <span className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">Status</span>
+            <span className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider text-center">Cursos</span>
+            <span className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">Progresso</span>
+            <span className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">Último Acesso</span>
+            <span className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider text-center">Ações</span>
           </div>
 
           {/* Table rows */}
@@ -554,35 +554,35 @@ function AdminUsersPage() {
             return (
               <div
                 key={buyer.id}
-                className="grid grid-cols-[1fr_1fr_100px_80px_140px_120px_50px] gap-4 items-center px-5 py-3.5 border-b border-border/6 hover:bg-card/8 transition-colors last:border-0"
+                className="grid grid-cols-[1fr_1fr_100px_80px_140px_120px_50px] gap-4 items-center px-5 py-4 border-b border-border/15 hover:bg-muted/15 transition-colors last:border-0"
               >
                 {/* Aluno */}
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gold/15 text-sm font-bold text-gold shrink-0">
                     {(buyer.nome || buyer.email).slice(0, 1).toUpperCase()}
                   </div>
-                  <span className="text-sm font-semibold text-foreground/85 truncate">
+                  <span className="text-sm font-bold text-foreground truncate">
                     {buyer.nome || "Sem nome"}
                   </span>
                 </div>
 
                 {/* Email */}
-                <span className="text-[13px] text-muted-foreground/50 truncate">
+                <span className="text-sm text-muted-foreground truncate">
                   {buyer.email}
                 </span>
 
                 {/* Status */}
                 <div>
                   {!isEnabledBuyer ? (
-                    <Badge className="bg-destructive/15 text-destructive/80 border-0 text-[10px] font-semibold">
+                    <Badge className="bg-destructive/15 text-destructive/80 border-0 text-xs font-semibold">
                       Bloqueado
                     </Badge>
                   ) : isTrial && expired ? (
-                    <Badge className="bg-amber-500/15 text-amber-400/80 border-0 text-[10px] font-semibold">
+                    <Badge className="bg-amber-500/15 text-amber-400/80 border-0 text-xs font-semibold">
                       Expirado
                     </Badge>
                   ) : (
-                    <Badge className="bg-emerald-500/15 text-emerald-400/80 border-0 text-[10px] font-semibold">
+                    <Badge className="bg-emerald-500/15 text-emerald-400/80 border-0 text-xs font-semibold">
                       Ativo
                     </Badge>
                   )}
@@ -606,7 +606,7 @@ function AdminUsersPage() {
                 <div className="flex justify-center">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <button className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/60 hover:text-foreground/60 hover:bg-muted/20 transition-all">
+                      <button className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-all">
                         <MoreHorizontal className="h-4 w-4" />
                       </button>
                     </DropdownMenuTrigger>
@@ -852,9 +852,9 @@ function AdminUsersPage() {
                     </p>
                     <div className="mt-1">
                       {!detailBuyer.access_enabled ? (
-                        <Badge className="bg-destructive/15 text-destructive/80 border-0 text-[10px]">Bloqueado</Badge>
+                        <Badge className="bg-destructive/15 text-destructive/80 border-0 text-xs">Bloqueado</Badge>
                       ) : (
-                        <Badge className="bg-emerald-500/15 text-emerald-400/80 border-0 text-[10px]">Ativo</Badge>
+                        <Badge className="bg-emerald-500/15 text-emerald-400/80 border-0 text-xs">Ativo</Badge>
                       )}
                     </div>
                   </div>
@@ -1078,7 +1078,7 @@ function AdminUsersPage() {
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium text-foreground/80 truncate">{course.title}</p>
                         <Badge
-                          className={`text-[9px] mt-0.5 border-0 ${
+                          className={`text-[11px] mt-0.5 border-0 ${
                             course.hasAccess
                               ? "bg-emerald-500/15 text-emerald-400/80"
                               : "bg-muted/20 text-muted-foreground/50"

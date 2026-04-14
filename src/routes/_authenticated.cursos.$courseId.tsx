@@ -154,7 +154,7 @@ function CourseDetailPage() {
           )}
         </div>
 
-        <span className="text-[10px] font-bold text-muted-foreground/50 tabular-nums shrink-0 w-6 text-center">
+        <span className="text-xs font-bold text-muted-foreground/50 tabular-nums shrink-0 w-6 text-center">
           {String(index + 1).padStart(2, "0")}
         </span>
 
@@ -173,17 +173,17 @@ function CourseDetailPage() {
           <div className="flex items-center gap-3 mt-1">
             {getLessonIcon(lesson)}
             {lesson.duration && lesson.duration !== "0:00" && (
-              <span className="text-[10px] text-muted-foreground/60">
+              <span className="text-xs text-muted-foreground/60">
                 {lesson.duration}
               </span>
             )}
             {lesson.is_free_preview && (
-              <span className="text-[9px] uppercase tracking-wider text-gold/40 font-semibold">
+              <span className="text-[11px] uppercase tracking-wider text-gold/40 font-semibold">
                 Preview
               </span>
             )}
             {!canOpenLesson && (
-              <span className="inline-flex items-center gap-1 text-[9px] uppercase tracking-wider text-muted-foreground/60 font-semibold">
+              <span className="inline-flex items-center gap-1 text-[11px] uppercase tracking-wider text-muted-foreground/60 font-semibold">
                 <Lock className="h-3 w-3" />
                 Bloqueada
               </span>
@@ -200,7 +200,7 @@ function CourseDetailPage() {
                 completed: true,
               })
             }
-            className="shrink-0 text-[9px] uppercase tracking-wider text-muted-foreground/50 hover:text-emerald-400/50 transition-colors font-semibold"
+            className="shrink-0 text-[11px] uppercase tracking-wider text-muted-foreground/50 hover:text-emerald-400/50 transition-colors font-semibold"
           >
             Concluir
           </button>
@@ -222,7 +222,7 @@ function CourseDetailPage() {
       >
         <Link
           to="/cursos"
-          className="group flex items-center gap-2.5 text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 hover:text-gold/70 transition-colors duration-500"
+          className="group flex items-center gap-2.5 text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 hover:text-gold/70 transition-colors duration-500"
         >
           <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-x-1" />
           Cursos
@@ -264,7 +264,7 @@ function CourseDetailPage() {
 
             <div className="flex-1 min-w-0">
               {(course as any).categories?.name && (
-                <span className="inline-block rounded-full bg-gold/[0.06] border border-gold/10 px-3 py-1 text-[9px] font-semibold uppercase tracking-[0.4em] text-gold/45 mb-3">
+                <span className="inline-block rounded-full bg-gold/[0.06] border border-gold/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.4em] text-gold/45 mb-3">
                   {(course as any).categories.icon}{" "}
                   {(course as any).categories.name}
                 </span>
@@ -307,7 +307,7 @@ function CourseDetailPage() {
             <div className="rounded-2xl border border-border/25 bg-card/15 p-5">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <span className="inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-gold/45">
+                  <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-gold/45">
                     <Lock className="h-3.5 w-3.5" />
                     Curso bloqueado
                   </span>
@@ -427,7 +427,7 @@ function CourseDetailPage() {
                             </p>
                           )}
                         </div>
-                        <span className="text-[10px] text-muted-foreground/60 shrink-0">
+                        <span className="text-xs text-muted-foreground/60 shrink-0">
                           {modCompleted}/{modLessons.length}
                         </span>
                       </button>
