@@ -296,21 +296,9 @@ function ShelfHeader({ title, subtitle, icon, linkTo, linkLabel }: {
 }) {
   return (
     <div className="flex items-center justify-between mb-6 sm:mb-8">
-      <div className="flex items-center gap-3">
-        {icon && (
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gold/[0.06] border border-gold/8">
-            {icon}
-          </div>
-        )}
-        <div>
-          <h2 className="font-display text-lg sm:text-xl font-bold text-foreground/90 tracking-tight leading-none">
-            {title}
-          </h2>
-          {subtitle && (
-            <p className="text-[10px] text-muted-foreground/30 mt-0.5 tracking-wide">{subtitle}</p>
-          )}
-        </div>
-      </div>
+      <h2 className="font-display text-xl sm:text-2xl md:text-[26px] font-extrabold text-foreground tracking-tight leading-none uppercase">
+        {title}
+      </h2>
       {linkTo && linkLabel && (
         <Link to={linkTo as any} className="text-[10px] font-bold text-gold/35 uppercase tracking-[0.15em] hover:text-gold/65 transition-colors duration-300 flex items-center gap-1">
           {linkLabel} <ArrowRight className="h-3 w-3" />
