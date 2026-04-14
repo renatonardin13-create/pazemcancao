@@ -515,8 +515,8 @@ function FeaturedCardInner({ item, coverImg }: { item: any; coverImg: string | n
           </div>
         )}
         {item.is_free && (
-          <div className="absolute top-2 left-2 rounded-full bg-emerald-500/25 backdrop-blur-sm px-2 py-0.5 border border-emerald-500/20">
-            <span className="text-[9px] font-bold text-emerald-400 uppercase tracking-wider">Gratuito</span>
+          <div className="absolute top-2 left-2 rounded-full bg-player-completed/20 backdrop-blur-sm px-2 py-0.5 border border-player-completed/15">
+            <span className="text-[9px] font-bold text-player-completed uppercase tracking-wider">Gratuito</span>
           </div>
         )}
       </div>
