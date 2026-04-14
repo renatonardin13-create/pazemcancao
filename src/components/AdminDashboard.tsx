@@ -640,16 +640,16 @@ export function AdminDashboard() {
                 </div>
               ) : (
                 <>
-                  <div className="grid grid-cols-[1fr_80px_80px] gap-2 px-5 py-3.5 border-b border-border/30 bg-card/15">
-                    <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground/60 font-medium">Usuário</span>
-                    <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground/60 text-right font-medium">Plays</span>
-                    <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground/60 text-right font-medium">Downloads</span>
+                  <div className="grid grid-cols-[1fr_60px_60px] sm:grid-cols-[1fr_80px_80px] gap-2 px-4 sm:px-5 py-3.5 border-b border-border/30 bg-card/15">
+                    <span className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-muted-foreground/60 font-medium">Usuário</span>
+                    <span className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-muted-foreground/60 text-right font-medium">Plays</span>
+                    <span className="text-[10px] sm:text-xs uppercase tracking-[0.3em] text-muted-foreground/60 text-right font-medium">Downloads</span>
                   </div>
                   {analytics.userActivity.map((u: any) => (
-                    <div key={u.email} className="grid grid-cols-[1fr_80px_80px] gap-2 px-5 py-3 border-b border-border/5 hover:bg-card/15 transition-colors">
-                      <span className="text-sm text-foreground/65 truncate">{u.email}</span>
-                      <span className="text-sm font-bold text-gold/60 text-right">{u.plays}</span>
-                      <span className="text-sm font-bold text-emerald-400/60 text-right">{u.downloads}</span>
+                    <div key={u.email} className="grid grid-cols-[1fr_60px_60px] sm:grid-cols-[1fr_80px_80px] gap-2 px-4 sm:px-5 py-3 border-b border-border/5 hover:bg-card/15 transition-colors">
+                      <span className="text-xs sm:text-sm text-foreground/65 truncate">{u.email}</span>
+                      <span className="text-xs sm:text-sm font-bold text-gold/60 text-right">{u.plays}</span>
+                      <span className="text-xs sm:text-sm font-bold text-emerald-400/60 text-right">{u.downloads}</span>
                     </div>
                   ))}
                 </>
