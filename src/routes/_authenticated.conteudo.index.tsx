@@ -62,6 +62,9 @@ function ContentPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["content-items"],
     queryFn: () => listContentItems(),
+    refetchOnWindowFocus: true,
+    staleTime: 30_000,        // refetch after 30s when revisiting
+    refetchInterval: 120_000, // auto-refresh every 2 min
   });
 
   const { data: profileData } = useQuery({
@@ -78,10 +81,34 @@ function ContentPage() {
   const firstName = displayName.split(" ")[0];
 
   const hasAccess = data?.hasFullAccess ?? false;
-  const items = data?.items || [];
-  const progressMap = data?.progressMap || {};
+  const allItems = data?.items || [];
+  const progressMap: Record<string, any> = data?.progressMap || {};
   const dbCategories = data?.categories || [];
   const dbJourneys = data?.journeys || [];
+
+  // CRITICAL: Only show items that are active AND (unlocked OR free OR user has full access)
+  // This ensures "published ≠ released" — only truly accessible content appears
+  const items = useMemo(() => {
+    return allItems.filter((item: any) => {
+      if (!item.is_active) return false;
+      if (item.show_as_card === false) return false;
+      return true; // Server already handles access logic via `unlocked` field
+    });
+  }, [allItems]);
+
+  // Find last accessed content
+  const lastAccessedId = useMemo(() => {
+    let latest: { id: string; time: number } | null = null;
+    for (const [contentId, p] of Object.entries(progressMap)) {
+      if (!p) continue;
+      const times = [p.viewed_at, p.completed_at, p.downloaded_at].filter(Boolean).map((t: string) => new Date(t).getTime());
+      const maxTime = Math.max(0, ...times);
+      if (maxTime > 0 && (!latest || maxTime > latest.time)) {
+        latest = { id: contentId, time: maxTime };
+      }
+    }
+    return latest?.id || null;
+  }, [progressMap]);
 
   // Build category lookup from DB
   const categoryLookup = useMemo(() => {
@@ -111,7 +138,7 @@ function ContentPage() {
     return map;
   }, [dbJourneys]);
 
-  // Track which items have already been shown to avoid duplication
+  // Track shown items to avoid duplication
   const shownIds = useMemo(() => new Set<string>(), [items]);
 
   // "Continuar de onde parou"
@@ -121,18 +148,23 @@ function ContentPage() {
         const p = progressMap[item.id];
         return p?.viewed_at && !p?.completed_at && item.unlocked;
       })
+      .sort((a: any, b: any) => {
+        // Sort by most recently accessed first
+        const aTime = progressMap[a.id]?.viewed_at ? new Date(progressMap[a.id].viewed_at).getTime() : 0;
+        const bTime = progressMap[b.id]?.viewed_at ? new Date(progressMap[b.id].viewed_at).getTime() : 0;
+        return bTime - aTime;
+      })
       .slice(0, 4);
     result.forEach((i: any) => shownIds.add(i.id));
     return result;
   }, [items, progressMap, shownIds]);
 
-  // "Conteúdos em destaque" — featured items not yet shown
+  // "Conteúdos em destaque"
   const featuredItems = useMemo(() => {
     const result = items
       .filter(
         (item: any) =>
           item.is_featured &&
-          item.show_as_card !== false &&
           !shownIds.has(item.id)
       )
       .sort(
@@ -144,13 +176,12 @@ function ContentPage() {
     return result;
   }, [items, shownIds]);
 
-  // "Novos conteúdos" — recently created, not yet shown
+  // "Novos conteúdos"
   const newItems = useMemo(() => {
     const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
     const result = items
       .filter(
         (item: any) =>
-          item.show_as_card !== false &&
           !shownIds.has(item.id) &&
           new Date(item.created_at).getTime() > thirtyDaysAgo
       )
@@ -169,16 +200,16 @@ function ContentPage() {
   const journeyGroups: Record<string, any[]> = {};
 
   for (const item of items) {
-    if (item.journey_group && item.show_as_card !== false) {
+    if (item.journey_group) {
       const jg = item.journey_group;
       if (!journeyGroups[jg]) journeyGroups[jg] = [];
       journeyGroups[jg].push(item);
     }
-    if (item.display_category && item.show_as_card !== false) {
+    if (item.display_category) {
       const cat = item.display_category;
       if (!categoryGroups[cat]) categoryGroups[cat] = [];
       categoryGroups[cat].push(item);
-    } else if (item.show_as_card !== false && !shownIds.has(item.id)) {
+    } else if (!shownIds.has(item.id)) {
       const type = item.content_type || "material";
       if (!typeGroups[type]) typeGroups[type] = [];
       typeGroups[type].push(item);
@@ -187,9 +218,7 @@ function ContentPage() {
 
   const sortItems = (a: any, b: any) => {
     if (a.sort_order !== b.sort_order) return a.sort_order - b.sort_order;
-    return (
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
+    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   };
   const sortJourneyItems = (a: any, b: any) => {
     if ((a.journey_order || 0) !== (b.journey_order || 0))
@@ -260,6 +289,8 @@ function ContentPage() {
                   subtitle="Retome seus conteúdos em andamento"
                   items={continueItems}
                   hasAccess={hasAccess}
+                  progressMap={progressMap}
+                  lastAccessedId={lastAccessedId}
                 />
               )}
 
@@ -271,6 +302,8 @@ function ContentPage() {
                   subtitle="Selecionados especialmente para você"
                   items={featuredItems}
                   hasAccess={hasAccess}
+                  progressMap={progressMap}
+                  lastAccessedId={lastAccessedId}
                 />
               )}
 
@@ -282,6 +315,8 @@ function ContentPage() {
                   subtitle="Adicionados recentemente"
                   items={newItems}
                   hasAccess={hasAccess}
+                  progressMap={progressMap}
+                  lastAccessedId={lastAccessedId}
                 />
               )}
 
@@ -289,9 +324,7 @@ function ContentPage() {
               {featuredCategories.map(([cat, catItems]: [string, any[]]) => {
                 const label =
                   categoryLookup[cat]?.name ||
-                  cat
-                    .replace(/_/g, " ")
-                    .replace(/\b\w/g, (c: string) => c.toUpperCase());
+                  cat.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
                 const config =
                   typeConfig[catItems[0]?.content_type] || typeConfig.material;
                 return (
@@ -301,6 +334,8 @@ function ContentPage() {
                       items={catItems}
                       hasAccess={hasAccess}
                       config={config}
+                      progressMap={progressMap}
+                      lastAccessedId={lastAccessedId}
                     />
                   </section>
                 );
@@ -320,17 +355,14 @@ function ContentPage() {
                   {Object.entries(journeyGroups).map(([jg, jgItems]) => {
                     const label =
                       journeyLabels[jg] ||
-                      jg
-                        .replace(/_/g, " ")
-                        .replace(/\b\w/g, (c) => c.toUpperCase());
+                      jg.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
                     return (
                       <div key={`journey-${jg}`} className="space-y-4">
                         <SectionHeader title={label} count={jgItems.length} />
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                           {jgItems.map((item: any, idx: number) => {
                             const itemConfig =
-                              typeConfig[item.content_type] ||
-                              typeConfig.material;
+                              typeConfig[item.content_type] || typeConfig.material;
                             return (
                               <ContentCard
                                 key={`j-${item.id}`}
@@ -339,6 +371,8 @@ function ContentPage() {
                                 hasAccess={item.is_free || hasAccess}
                                 gradient={itemConfig.gradient}
                                 TypeIcon={itemConfig.icon}
+                                progress={progressMap[item.id]}
+                                isLastAccessed={item.id === lastAccessedId}
                               />
                             );
                           })}
@@ -353,9 +387,7 @@ function ContentPage() {
               {otherCategories.map(([cat, catItems]: [string, any[]]) => {
                 const label =
                   categoryLookup[cat]?.name ||
-                  cat
-                    .replace(/_/g, " ")
-                    .replace(/\b\w/g, (c: string) => c.toUpperCase());
+                  cat.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
                 const config =
                   typeConfig[catItems[0]?.content_type] || typeConfig.material;
                 return (
@@ -365,6 +397,8 @@ function ContentPage() {
                       items={catItems}
                       hasAccess={hasAccess}
                       config={config}
+                      progressMap={progressMap}
+                      lastAccessedId={lastAccessedId}
                     />
                   </section>
                 );
@@ -385,8 +419,7 @@ function ContentPage() {
                           {config.label}
                         </h2>
                         <p className="text-xs text-muted-foreground/50">
-                          {typeItems.length} conteúdo
-                          {typeItems.length > 1 ? "s" : ""}
+                          {typeItems.length} conteúdo{typeItems.length > 1 ? "s" : ""}
                         </p>
                       </div>
                     </div>
@@ -394,6 +427,8 @@ function ContentPage() {
                       items={typeItems}
                       hasAccess={hasAccess}
                       config={config}
+                      progressMap={progressMap}
+                      lastAccessedId={lastAccessedId}
                     />
                   </section>
                 );
@@ -419,13 +454,7 @@ function ContentPage() {
 
 /* ── Reusable sub-components ── */
 
-function SectionHeader({
-  title,
-  count,
-}: {
-  title: string;
-  count: number;
-}) {
+function SectionHeader({ title, count }: { title: string; count: number }) {
   return (
     <div className="flex items-baseline gap-3">
       <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
@@ -444,17 +473,21 @@ function ContentShelf({
   subtitle,
   items,
   hasAccess,
+  progressMap,
+  lastAccessedId,
 }: {
   icon: React.ReactNode;
   title: string;
   subtitle: string;
   items: any[];
   hasAccess: boolean;
+  progressMap: Record<string, any>;
+  lastAccessedId: string | null;
 }) {
   return (
     <section className="space-y-4">
       <div className="flex items-center gap-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/8">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
           {icon}
         </div>
         <div>
@@ -466,8 +499,7 @@ function ContentShelf({
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {items.map((item: any, idx: number) => {
-          const config =
-            typeConfig[item.content_type] || typeConfig.material;
+          const config = typeConfig[item.content_type] || typeConfig.material;
           return (
             <ContentCard
               key={`shelf-${item.id}`}
@@ -476,6 +508,8 @@ function ContentShelf({
               hasAccess={item.is_free || hasAccess}
               gradient={config.gradient}
               TypeIcon={config.icon}
+              progress={progressMap[item.id]}
+              isLastAccessed={item.id === lastAccessedId}
             />
           );
         })}
@@ -488,10 +522,14 @@ function ContentGrid({
   items,
   hasAccess,
   config,
+  progressMap,
+  lastAccessedId,
 }: {
   items: any[];
   hasAccess: boolean;
   config: { gradient: string; icon: any };
+  progressMap: Record<string, any>;
+  lastAccessedId: string | null;
 }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -503,6 +541,8 @@ function ContentGrid({
           hasAccess={item.is_free || hasAccess}
           gradient={config.gradient}
           TypeIcon={config.icon}
+          progress={progressMap[item.id]}
+          isLastAccessed={item.id === lastAccessedId}
         />
       ))}
     </div>

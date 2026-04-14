@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
-import { Lock, Download, Play, ShoppingCart, Clock, ArrowRight } from "lucide-react";
+import { Lock, Download, Play, ShoppingCart, Clock, ArrowRight, CheckCircle2, Eye } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
 
 interface ContentCardProps {
   item: any;
@@ -9,6 +10,8 @@ interface ContentCardProps {
   hasAccess: boolean;
   gradient: string;
   TypeIcon: LucideIcon;
+  progress?: { viewed_at?: string | null; completed_at?: string | null; last_position_seconds?: number; downloaded_at?: string | null } | null;
+  isLastAccessed?: boolean;
 }
 
 function getYouTubeEmbedUrl(url: string): string | null {
@@ -23,10 +26,31 @@ function getYouTubeEmbedUrl(url: string): string | null {
   }
 }
 
-export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: ContentCardProps) {
+type ContentState = 'completed' | 'in_progress' | 'not_started' | 'locked' | 'pending';
+
+function getContentState(item: any, hasAccess: boolean, progress: ContentCardProps['progress']): ContentState {
+  const isUnlocked = item.unlocked !== undefined ? item.unlocked : (item.is_free || hasAccess);
+  if (!isUnlocked) {
+    const accessMode = item.effectiveAccessMode || (item.is_free ? 'gratuito' : 'pago');
+    if (accessMode === 'liberar_em_dias' && hasAccess) return 'pending';
+    return 'locked';
+  }
+  if (progress?.completed_at) return 'completed';
+  if (progress?.viewed_at) return 'in_progress';
+  return 'not_started';
+}
+
+const stateConfig: Record<ContentState, { label: string; color: string; badgeBg: string; borderColor: string }> = {
+  completed: { label: '✅ Concluído', color: 'text-emerald-400/80', badgeBg: 'bg-emerald-500/15 border-emerald-500/25', borderColor: 'border-emerald-500/20' },
+  in_progress: { label: '▶️ Em andamento', color: 'text-blue-400/80', badgeBg: 'bg-blue-500/15 border-blue-500/25', borderColor: 'border-blue-500/20' },
+  not_started: { label: '', color: '', badgeBg: '', borderColor: '' },
+  locked: { label: '🔒 Bloqueado', color: 'text-gold/60', badgeBg: 'bg-gold/10 border-gold/20', borderColor: 'border-gold/15' },
+  pending: { label: '⏳ Em breve', color: 'text-blue-400/60', badgeBg: 'bg-blue-500/10 border-blue-500/20', borderColor: 'border-blue-500/15' },
+};
+
+export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progress, isLastAccessed }: ContentCardProps) {
   const embedUrl = item.video_url ? getYouTubeEmbedUrl(item.video_url) : null;
   
-  // unlocked field comes from server: true if free, admin, or release_days passed
   const accessMode = item.effectiveAccessMode || (item.is_free ? 'gratuito' : 'pago');
   const isUnlocked = item.unlocked !== undefined ? item.unlocked : (item.is_free || hasAccess);
   const isLocked = !isUnlocked;
@@ -35,6 +59,14 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
   const daysLeft = item.unlockDate
     ? Math.max(0, Math.ceil((new Date(item.unlockDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : item.release_days || null;
+
+  const contentState = getContentState(item, hasAccess, progress);
+  const stateInfo = stateConfig[contentState];
+
+  // Estimate progress percentage for videos (rough)
+  const progressPercent = contentState === 'completed' ? 100 
+    : contentState === 'in_progress' && progress?.last_position_seconds ? Math.min(95, Math.max(5, (progress.last_position_seconds / 600) * 100))
+    : 0;
 
   const handleLockedClick = () => {
     if (isLocked && item.sales_page_url) {
@@ -51,14 +83,25 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
       whileTap={{ scale: 0.98 }}
       onClick={isLocked ? handleLockedClick : undefined}
       className={`group relative rounded-3xl border overflow-hidden h-full flex flex-col transition-all duration-700 ${
-        isLocked
-          ? "border-border/20 bg-card/15 cursor-pointer"
-          : "border-border/20 bg-card/20 hover:border-gold/15 hover:shadow-[0_8px_40px_-10px] hover:shadow-gold/8"
+        isLastAccessed
+          ? "border-gold/30 bg-card/25 ring-1 ring-gold/15 shadow-[0_4px_40px_-10px] shadow-gold/12"
+          : isLocked
+            ? "border-border/20 bg-card/15 cursor-pointer"
+            : "border-border/20 bg-card/20 hover:border-gold/15 hover:shadow-[0_8px_40px_-10px] hover:shadow-gold/8"
       } shadow-[0_4px_30px_-10px] shadow-black/20`}
     >
+      {/* Last accessed indicator */}
+      {isLastAccessed && (
+        <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-center">
+          <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gold bg-background/90 backdrop-blur-sm px-3 py-1 rounded-b-lg border border-t-0 border-gold/20">
+            <Eye className="inline h-3 w-3 mr-1 -mt-0.5" />
+            Último acessado
+          </span>
+        </div>
+      )}
+
       {/* Cover image area */}
       <div className={`relative h-40 sm:h-44 w-full bg-gradient-to-br ${gradient} overflow-hidden`}>
-        {/* Show embedded video only if unlocked */}
         {embedUrl && !isLocked ? (
           <iframe
             src={embedUrl}
@@ -80,8 +123,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
             <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,transparent_30%,rgba(0,0,0,0.4))]" />
             <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/[0.03] to-white/[0.06] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
-            {/* Floating icon when no cover */}
-            {!item.cover_url && (
+            {!item.cover_url && !item.card_cover_url && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl backdrop-blur-sm bg-white/[0.04] border border-white/[0.06] group-hover:scale-105 group-hover:bg-white/[0.07] transition-all duration-700">
                   <TypeIcon className="h-7 w-7 text-white/25 group-hover:text-white/40 transition-colors duration-500" />
@@ -110,8 +152,16 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
           </span>
         ) : null}
 
+        {/* State badge (completed/in-progress) */}
+        {contentState === 'completed' && (
+          <div className="absolute bottom-3 left-3 z-20 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-300/90 bg-emerald-900/60 backdrop-blur-sm border border-emerald-500/30 rounded-full px-2.5 py-1">
+            <CheckCircle2 className="h-3 w-3" />
+            Concluído
+          </div>
+        )}
+
         {/* Lock overlay for paid content */}
-        {isLocked && !isPendingRelease && (
+        {isLocked && !isPendingRelease && !isRuleLocked && (
           <div className="absolute inset-0 bg-black/55 backdrop-blur-[2px] flex flex-col items-center justify-center gap-3 transition-all duration-500">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gold/15 border border-gold/25">
               <Lock className="h-6 w-6 text-gold/70" />
@@ -166,72 +216,91 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
 
       {/* Content info */}
       <div className="relative p-5 sm:p-6 flex flex-col flex-1">
-        <h3 className={`font-display text-[16px] sm:text-[17px] font-bold tracking-tight leading-snug transition-colors duration-500 ${
+        <h3 className={`font-display text-[15px] sm:text-[16px] font-bold tracking-tight leading-snug transition-colors duration-500 ${
           isLocked ? "text-foreground/50" : "text-foreground/85 group-hover:text-foreground"
         }`}>
           {item.title}
         </h3>
 
         {item.description && (
-          <p className={`mt-2.5 text-[12px] leading-[1.9] line-clamp-2 transition-colors duration-500 flex-1 ${
-            isLocked ? "text-muted-foreground/60" : "text-muted-foreground/70 group-hover:text-muted-foreground/45"
+          <p className={`mt-2 text-[12px] leading-[1.8] line-clamp-2 transition-colors duration-500 flex-1 ${
+            isLocked ? "text-muted-foreground/50" : "text-muted-foreground/65 group-hover:text-muted-foreground/80"
           }`}>
             {item.description}
           </p>
         )}
 
+        {/* Progress bar for in-progress items */}
+        {contentState === 'in_progress' && progressPercent > 0 && (
+          <div className="mt-3 space-y-1">
+            <Progress value={progressPercent} className="h-1.5 bg-muted/20" />
+            <p className="text-[10px] text-blue-400/60 font-medium">
+              {Math.round(progressPercent)}% concluído
+            </p>
+          </div>
+        )}
+
         {/* Actions */}
-        <div className="mt-4 pt-3.5 border-t border-border/6 flex items-center gap-3">
-          {isUnlocked ? (
-            <>
-              {item.file_url && (
-                <a
-                  href={item.file_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-gold/55 hover:text-gold/80 transition-colors duration-500"
-                >
-                  <Download className="h-3 w-3" />
-                  Baixar
-                </a>
-              )}
-              {item.video_url && !embedUrl && (
-                <a
-                  href={item.video_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-gold/55 hover:text-gold/80 transition-colors duration-500"
-                >
-                  <Play className="h-3 w-3" />
-                  Assistir
-                </a>
-              )}
-              {!item.file_url && !item.video_url && (
-                <span className="text-xs text-muted-foreground/60 tracking-wider uppercase">
-                  Disponível
-                </span>
-              )}
-            </>
-          ) : isPendingRelease ? (
-            <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-blue-400/45">
-              <Clock className="h-3 w-3" />
-              Em breve
-            </span>
-          ) : isRuleLocked ? (
-            <Link
-              to="/conteudo"
-              onClick={(e: React.MouseEvent) => e.stopPropagation()}
-              className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.15em] uppercase text-amber-400/55 hover:text-amber-300/80 transition-colors duration-300"
-            >
-              <ArrowRight className="h-3 w-3" />
-              {item.unlockRuleContentTitle ? `Assistir "${item.unlockRuleContentTitle}"` : "Pré-requisito pendente"}
-            </Link>
-          ) : (
-            <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-gold/45">
-              <ShoppingCart className="h-3 w-3" />
-              {item.sales_page_url ? "Adquirir Acesso" : "Conteúdo Exclusivo"}
+        <div className="mt-4 pt-3 border-t border-border/8 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            {isUnlocked ? (
+              <>
+                {item.file_url && (
+                  <a
+                    href={item.file_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.15em] uppercase text-gold/55 hover:text-gold/80 transition-colors duration-500"
+                  >
+                    <Download className="h-3 w-3" />
+                    Baixar
+                  </a>
+                )}
+                {item.video_url && !embedUrl && (
+                  <a
+                    href={item.video_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.15em] uppercase text-gold/55 hover:text-gold/80 transition-colors duration-500"
+                  >
+                    <Play className="h-3 w-3" />
+                    Assistir
+                  </a>
+                )}
+                {!item.file_url && !item.video_url && (
+                  <span className="text-xs text-muted-foreground/50 tracking-wider uppercase">
+                    Disponível
+                  </span>
+                )}
+              </>
+            ) : isPendingRelease ? (
+              <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.15em] uppercase text-blue-400/45">
+                <Clock className="h-3 w-3" />
+                Em breve
+              </span>
+            ) : isRuleLocked ? (
+              <Link
+                to="/conteudo"
+                onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.12em] uppercase text-amber-400/55 hover:text-amber-300/80 transition-colors duration-300"
+              >
+                <ArrowRight className="h-3 w-3" />
+                {item.unlockRuleContentTitle ? `Assistir "${item.unlockRuleContentTitle}"` : "Pré-requisito pendente"}
+              </Link>
+            ) : (
+              <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.15em] uppercase text-gold/45">
+                <ShoppingCart className="h-3 w-3" />
+                {item.sales_page_url ? "Adquirir Acesso" : "Conteúdo Exclusivo"}
+              </span>
+            )}
+          </div>
+
+          {/* State indicator on the right */}
+          {stateInfo.label && !isLocked && (
+            <span className={`text-[10px] font-semibold ${stateInfo.color}`}>
+              {stateInfo.label}
             </span>
           )}
         </div>
