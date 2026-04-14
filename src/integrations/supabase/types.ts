@@ -567,6 +567,8 @@ export type Database = {
           is_free_preview: boolean
           module_id: string | null
           sort_order: number
+          status: string
+          thumbnail_url: string | null
           title: string
           updated_at: string
           video_url: string | null
@@ -582,6 +584,8 @@ export type Database = {
           is_free_preview?: boolean
           module_id?: string | null
           sort_order?: number
+          status?: string
+          thumbnail_url?: string | null
           title: string
           updated_at?: string
           video_url?: string | null
@@ -597,6 +601,8 @@ export type Database = {
           is_free_preview?: boolean
           module_id?: string | null
           sort_order?: number
+          status?: string
+          thumbnail_url?: string | null
           title?: string
           updated_at?: string
           video_url?: string | null
