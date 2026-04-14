@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { TableSkeleton } from "@/components/LoadingSkeletons";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getSalesData } from "@/lib/admin-sales.functions";
