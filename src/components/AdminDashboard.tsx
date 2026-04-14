@@ -326,7 +326,7 @@ export function AdminDashboard() {
                 <TrendingUp className="h-7 w-7 text-gold" />
               </div>
               <div>
-                <h3 className="text-xl font-black text-foreground tracking-tight">Visão Geral de Vendas</h3>
+                <h3 className="text-base sm:text-xl font-black text-foreground tracking-tight">Visão Geral de Vendas</h3>
                 <p className="text-xs text-muted-foreground/50 mt-0.5">Desempenho de receita mensal</p>
               </div>
             </div>
@@ -384,7 +384,7 @@ export function AdminDashboard() {
                  <p className="text-xs text-muted-foreground/60 mt-1.5 max-w-xs">O gráfico será exibido automaticamente quando houver atividade de plays ou vendas na plataforma.</p>
                </div>
             ) : (
-              <ResponsiveContainer width="100%" height={280}>
+              <ResponsiveContainer width="100%" height={220}>
                 <AreaChart data={analytics.dailyPlayData} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
                   <defs>
                     <linearGradient id="salesGrad" x1="0" y1="0" x2="0" y2="1">
