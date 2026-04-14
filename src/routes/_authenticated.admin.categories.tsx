@@ -246,10 +246,12 @@ function AdminCategoriesPage() {
           {catLoading ? (
             <ListSkeleton rows={3} />
           ) : !categories.length ? (
-            <div className="text-center py-12">
-              <FolderOpen className="h-8 w-8 text-muted-foreground/50 mx-auto mb-3" />
-              <p className="text-sm text-muted-foreground/70">Nenhuma categoria cadastrada</p>
-            </div>
+            <EmptyState
+              icon={FolderOpen}
+              title="Nenhuma categoria cadastrada"
+              description="Crie categorias para organizar seus conteúdos e músicas."
+              compact
+            />
           ) : (
             <div className="space-y-2">
               {categories.map((cat: any, index: number) => (
@@ -294,10 +296,12 @@ function AdminCategoriesPage() {
           {tagLoading ? (
             <ListSkeleton rows={3} />
           ) : !tags.length ? (
-            <div className="text-center py-12">
-              <Tag className="h-8 w-8 text-muted-foreground/50 mx-auto mb-3" />
-              <p className="text-sm text-muted-foreground/70">Nenhuma tag cadastrada</p>
-            </div>
+            <EmptyState
+              icon={Tag}
+              title="Nenhuma tag cadastrada"
+              description="Tags ajudam a filtrar e encontrar conteúdos mais rapidamente."
+              compact
+            />
           ) : (
             <div className="space-y-2">
               {tags.map((tag: any, index: number) => (

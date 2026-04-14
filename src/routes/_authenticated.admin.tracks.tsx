@@ -174,10 +174,14 @@ function AdminTracksPage() {
           </p>
         </div>
       ) : !tracks.length ? (
-        <div className="text-center py-16 rounded-2xl border border-border/30 bg-card/15">
-          <Music className="h-8 w-8 text-muted-foreground/50 mx-auto mb-4" />
-          <p className="text-sm text-muted-foreground/70">Nenhuma música encontrada.</p>
-        </div>
+        <EmptyState
+          icon={Music}
+          title="Nenhuma música cadastrada"
+          description="Adicione sua primeira música para começar a montar seu acervo de louvores."
+          actionLabel="Adicionar Música"
+          onAction={() => setShowForm(true)}
+          actionIcon={Plus}
+        />
       ) : (
         <>
           <div className="rounded-2xl border border-border/30 overflow-hidden">
