@@ -71,6 +71,16 @@ export function CourseShelfCard({
               <div className="absolute top-2.5 left-2.5 z-10">{badge}</div>
             )}
 
+            {/* Free preview badge */}
+            {!badge && hasFreePreview && !isLocked && (
+              <div className="absolute top-2.5 left-2.5 z-10">
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold/90 text-[9px] sm:text-[10px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm">
+                  <Play className="h-2.5 w-2.5 fill-current" />
+                  Aula grátis
+                </span>
+              </div>
+            )}
+
             {/* Lock icon — discrete top-right */}
             {isLocked && (
               <div className="absolute top-2.5 right-2.5 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm border border-white/[0.08]">
