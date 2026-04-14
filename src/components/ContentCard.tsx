@@ -100,7 +100,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progre
         <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-center">
           <span className="text-[9px] font-semibold uppercase tracking-[0.3em] text-gold/60 bg-background/80 backdrop-blur-md px-3 py-1 rounded-b-lg border-x border-b border-gold/10">
             <Eye className="inline h-2.5 w-2.5 mr-1 -mt-0.5" />
-            Último acessado
+            Continue aqui
           </span>
         </div>
       )}
