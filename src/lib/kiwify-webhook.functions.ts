@@ -84,11 +84,11 @@ async function markEventFailed(uniqueEventId: string, errorMessage: string) {
 
 // ─── User provisioning ───
 
-async function provisionUserAccess(email: string): Promise<{ userCreated: boolean; userFound: boolean }> {
+async function provisionUserAccess(email: string): Promise<{ userCreated: boolean; userFound: boolean; userId: string | null }> {
   const url = process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const publicKey = process.env.SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !serviceKey) return { userCreated: false, userFound: false };
+  if (!url || !serviceKey) return { userCreated: false, userFound: false, userId: null };
 
   const admin = createClient(url, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
@@ -100,19 +100,21 @@ async function provisionUserAccess(email: string): Promise<{ userCreated: boolea
   );
 
   let userCreated = false;
+  let userId: string | null = existingUser?.id || null;
 
   if (!existingUser) {
     const tempPassword = crypto.randomUUID() + crypto.randomUUID();
-    const { error: createError } = await admin.auth.admin.createUser({
+    const { data: newUser, error: createError } = await admin.auth.admin.createUser({
       email,
       password: tempPassword,
       email_confirm: true,
     });
     if (createError) {
       console.error('Error creating user:', createError);
-      return { userCreated: false, userFound: false };
+      return { userCreated: false, userFound: false, userId: null };
     }
     userCreated = true;
+    userId = newUser?.user?.id || null;
   }
 
   if (publicKey) {
@@ -124,7 +126,7 @@ async function provisionUserAccess(email: string): Promise<{ userCreated: boolea
     });
   }
 
-  return { userCreated, userFound: !!existingUser };
+  return { userCreated, userFound: !!existingUser, userId };
 }
 
 // ─── Content unlock calculation ───
