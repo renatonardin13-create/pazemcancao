@@ -369,11 +369,12 @@ function HeroBanner({ course }: { course: any }) {
         )}
 
         {/* Cinematic overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/5" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-transparent to-transparent" />
 
-        {/* Subtle vignette */}
-        <div className="absolute inset-0 shadow-[inset_0_0_120px_rgba(0,0,0,0.35)]" />
+        {/* Premium vignette + glow */}
+        <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.4)]" />
+        <div className="absolute inset-0 rounded-3xl sm:rounded-[28px] ring-1 ring-inset ring-white/[0.06]" />
 
         {/* Content — bottom left */}
         <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 md:p-12 lg:p-14">
