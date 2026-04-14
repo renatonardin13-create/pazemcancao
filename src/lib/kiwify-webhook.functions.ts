@@ -288,10 +288,12 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
 
   const requestUrl = new URL(request.url);
   const courseIdFromQuery = requestUrl.searchParams.get('course')?.trim() || null;
-  const { status, customerEmail, customerName, orderId, uniqueEventId, externalProductId } = extractFields(rawBody);
+  const { status, customerEmail, customerName, orderId, uniqueEventId, externalProductId, externalProductName, platform: payloadPlatform } = extractFields(rawBody);
 
   // Resolve course: prefer query param, fallback to product ID lookup via course_integrations
-  const resolvedCourseId = courseIdFromQuery || await resolveCourseByProductId(externalProductId);
+  const productLookup = !courseIdFromQuery ? await resolveCourseByProductId(externalProductId, payloadPlatform) : { courseId: null, productName: null };
+  const resolvedCourseId = courseIdFromQuery || productLookup.courseId;
+  const resolvedProductName = externalProductName || productLookup.productName || 'Paz em Canção';
 
   if (!customerEmail) {
     await logWebhookEvent({
