@@ -62,6 +62,8 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   const [status, setStatus] = useState("draft");
   const [courseType, setCourseType] = useState("video");
   const [launchDate, setLaunchDate] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const { data: categoriesData } = useQuery({
     queryKey: ["admin-categories"],
@@ -86,9 +88,25 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
     }
   }, [initialValues]);
 
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (!title.trim()) newErrors.title = "O título do curso é obrigatório";
+    else if (title.trim().length < 3) newErrors.title = "O título deve ter pelo menos 3 caracteres";
+    if (promotionalPrice.trim() && parseFloat(promotionalPrice) >= parseFloat(price))
+      newErrors.promotionalPrice = "Preço promocional deve ser menor que o preço normal";
+    return newErrors;
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!title.trim()) return;
+    setTouched({ title: true });
+    const newErrors = validate();
+    setErrors(newErrors);
+    if (Object.keys(newErrors).length > 0) {
+      const firstErrorField = document.getElementById(Object.keys(newErrors)[0] === "promotionalPrice" ? "promotionalPrice" : "title");
+      firstErrorField?.focus();
+      return;
+    }
 
     onSubmit({
       title: title.trim(),
@@ -119,11 +137,12 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
               <Input
                 id="title"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
+                onChange={(e) => { setTitle(e.target.value); if (touched.title) setErrors((prev) => { const n = { ...prev }; delete n.title; return n; }); }}
+                onBlur={() => { setTouched((p) => ({ ...p, title: true })); if (!title.trim()) setErrors((p) => ({ ...p, title: "O título do curso é obrigatório" })); }}
                 placeholder="Ex: Curso Completo de Marketing Digital"
-                required
-                className={inputClass}
+                className={`${inputClass} ${errors.title ? "border-destructive" : ""}`}
               />
+              {errors.title && <p className="text-[0.8rem] font-medium text-destructive">{errors.title}</p>}
             </div>
 
             <div className="space-y-1.5">
@@ -224,10 +243,11 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   step="0.01"
                   min="0"
                   value={promotionalPrice}
-                  onChange={(e) => setPromotionalPrice(e.target.value)}
+                  onChange={(e) => { setPromotionalPrice(e.target.value); if (errors.promotionalPrice) setErrors((p) => { const n = { ...p }; delete n.promotionalPrice; return n; }); }}
                   placeholder="Opcional"
-                  className={inputClass}
+                  className={`${inputClass} ${errors.promotionalPrice ? "border-destructive" : ""}`}
                 />
+                {errors.promotionalPrice && <p className="text-[0.8rem] font-medium text-destructive">{errors.promotionalPrice}</p>}
               </div>
               <div className="space-y-1">
                 <Label htmlFor="launchDate" className={labelClass}>Lançamento</Label>

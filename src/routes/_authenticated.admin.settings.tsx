@@ -309,7 +309,13 @@ function GeneralTab({ settings, onSave, saving }: { settings: any; onSave: (v: a
             <Input value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1.5" type="email" />
           </div>
         </div>
-        <Button onClick={() => onSave({ welcome_message: welcome, footer_text: footer, support_email: email })} disabled={saving} className="w-full gap-2">
+        <Button onClick={() => {
+          if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+            toast.error("E-mail de suporte inválido");
+            return;
+          }
+          onSave({ welcome_message: welcome, footer_text: footer, support_email: email });
+        }} disabled={saving} className="w-full gap-2">
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Salvar Configurações
         </Button>
       </CardContent>
