@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Play } from "lucide-react";
+import { BookOpen, Play, Lock } from "lucide-react";
 
 interface CourseShelfCardProps {
   course: any;
@@ -20,11 +20,16 @@ export function CourseShelfCard({
 }: CourseShelfCardProps) {
   const progress = course.progress_pct ?? 0;
   const hasProgress = showProgress && progress > 0;
+  const isLocked = course.access_state === 'locked' || course.access_state === 'blocked' || course.access_state === 'expired';
+
+  const Wrapper = isLocked && course.checkout_url ? 'a' : Link;
+  const wrapperProps = isLocked && course.checkout_url
+    ? { href: course.checkout_url, target: '_blank', rel: 'noopener noreferrer' }
+    : { to: '/cursos/$courseId' as const, params: { courseId: course.id } };
 
   return (
-    <Link
-      to="/cursos/$courseId"
-      params={{ courseId: course.id }}
+    <Wrapper
+      {...(wrapperProps as any)}
       className="group relative block rounded-xl overflow-hidden cursor-pointer"
     >
       {/* Image container — 16:9 */}
@@ -33,7 +38,7 @@ export function CourseShelfCard({
           <img
             src={course.cover_image_url}
             alt={course.title}
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+            className={`w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${isLocked ? 'saturate-[0.3]' : ''}`}
             loading="lazy"
           />
         ) : (
@@ -42,8 +47,8 @@ export function CourseShelfCard({
           </div>
         )}
 
-        {/* Dark overlay on hover */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-500" />
+        {/* Dark overlay on hover (stronger for locked) */}
+        <div className={`absolute inset-0 transition-all duration-500 ${isLocked ? 'bg-black/40 group-hover:bg-black/60' : 'bg-black/0 group-hover:bg-black/60'}`} />
 
         {/* Always-visible subtle bottom gradient for readability */}
         <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent" />
@@ -55,27 +60,37 @@ export function CourseShelfCard({
           </div>
         )}
 
-        {/* Play button — center, visible on hover */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-400 z-10">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/90 shadow-2xl shadow-gold/40 backdrop-blur-sm scale-75 group-hover:scale-100 transition-transform duration-500 ease-out">
-            <Play className="h-6 w-6 text-gold-foreground fill-gold-foreground ml-0.5" />
-          </div>
+        {/* Center icon — Play or Lock */}
+        <div className="absolute inset-0 flex items-center justify-center z-10">
+          {isLocked ? (
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/10 opacity-80 group-hover:opacity-100 transition-opacity duration-300">
+              <Lock className="h-4.5 w-4.5 text-white/70" />
+            </div>
+          ) : (
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/90 shadow-2xl shadow-gold/40 backdrop-blur-sm scale-75 opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500 ease-out">
+              <Play className="h-6 w-6 text-gold-foreground fill-gold-foreground ml-0.5" />
+            </div>
+          )}
         </div>
 
-        {/* Title + info — appears on hover over the overlay */}
+        {/* Title + info */}
         <div className="absolute inset-x-0 bottom-0 p-4 z-10 translate-y-2 group-hover:translate-y-0 transition-transform duration-500 ease-out">
           <h3 className="text-sm font-bold text-white line-clamp-2 leading-snug drop-shadow-lg">
             {course.title}
           </h3>
-          {course.short_description && (
+          {isLocked ? (
+            <p className="text-[10px] text-white/40 mt-1 uppercase tracking-wider font-medium">
+              Acesso bloqueado
+            </p>
+          ) : course.short_description ? (
             <p className="text-[11px] text-white/60 mt-1 line-clamp-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
               {course.short_description}
             </p>
-          )}
+          ) : null}
         </div>
 
         {/* Progress bar */}
-        {hasProgress && (
+        {hasProgress && !isLocked && (
           <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/10 z-20">
             <div
               className={`h-full rounded-r-full transition-all duration-700 ${progress >= 100 ? "bg-player-completed" : "bg-gold"}`}
@@ -86,7 +101,7 @@ export function CourseShelfCard({
       </div>
 
       {/* Border glow on hover */}
-      <div className="absolute inset-0 rounded-xl border border-transparent group-hover:border-gold/30 transition-colors duration-500 pointer-events-none z-20" />
-    </Link>
+      <div className={`absolute inset-0 rounded-xl border border-transparent transition-colors duration-500 pointer-events-none z-20 ${isLocked ? 'group-hover:border-white/10' : 'group-hover:border-gold/30'}`} />
+    </Wrapper>
   );
 }
