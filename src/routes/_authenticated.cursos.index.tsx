@@ -59,6 +59,12 @@ function MeusCoursosPage() {
     staleTime: 60_000,
   });
 
+  const { data: newData } = useQuery({
+    queryKey: ["new-courses"],
+    queryFn: () => getNewCourses(),
+    staleTime: 60_000,
+  });
+
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
