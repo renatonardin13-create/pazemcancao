@@ -213,6 +213,105 @@ function MeusCoursosPage() {
    SHELF COMPONENTS
    ══════════════════════════════════════════════════════════════ */
 
+function ContinueWatchingShelf({ courses }: { courses: any[] }) {
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: 0.05 }}
+      className="mb-12"
+    >
+      <div className="flex items-end justify-between mb-5">
+        <div className="flex items-center gap-3">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.08] border border-gold/10">
+            <PlayCircle className="h-4 w-4 text-gold" />
+          </div>
+          <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground/90 tracking-tight">
+            Continue assistindo
+          </h2>
+        </div>
+      </div>
+
+      <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
+        {courses.map((course: any, idx: number) => (
+          <motion.div
+            key={`cw-${course.id}`}
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
+            className="flex-shrink-0 snap-start w-[260px] sm:w-[300px] md:w-[320px]"
+          >
+            <ContinueWatchingCard course={course} />
+          </motion.div>
+        ))}
+      </div>
+    </motion.section>
+  );
+}
+
+function ContinueWatchingCard({ course }: { course: any }) {
+  const progress = course.progress_pct ?? 0;
+  const linkTo = course.resume_lesson_id
+    ? "/cursos/$courseId/aula/$lessonId"
+    : "/cursos/$courseId";
+  const linkParams = course.resume_lesson_id
+    ? { courseId: course.id, lessonId: course.resume_lesson_id }
+    : { courseId: course.id };
+
+  return (
+    <Link
+      to={linkTo as any}
+      params={linkParams as any}
+      className="group relative block rounded-xl overflow-hidden cursor-pointer"
+    >
+      <div className="relative aspect-video overflow-hidden bg-card/10">
+        {course.cover_image_url ? (
+          <img
+            src={course.cover_image_url}
+            alt={course.title}
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-card/30 via-muted/10 to-background flex items-center justify-center">
+            <BookOpen className="h-8 w-8 text-muted-foreground/15" />
+          </div>
+        )}
+
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-500" />
+        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent" />
+
+        {/* Play button */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-400 z-10">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/90 shadow-2xl shadow-gold/40 backdrop-blur-sm scale-75 group-hover:scale-100 transition-transform duration-500 ease-out">
+            <Play className="h-6 w-6 text-gold-foreground fill-gold-foreground ml-0.5" />
+          </div>
+        </div>
+
+        {/* Title + progress info */}
+        <div className="absolute inset-x-0 bottom-0 p-4 z-10 translate-y-2 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+          <h3 className="text-sm font-bold text-white line-clamp-2 leading-snug drop-shadow-lg">
+            {course.title}
+          </h3>
+          <p className="text-[11px] text-white/50 mt-1">
+            {course.completed_lessons}/{course.total_lessons} aulas • {progress}%
+          </p>
+        </div>
+
+        {/* Progress bar */}
+        <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/10 z-20">
+          <div
+            className="h-full rounded-r-full bg-gold transition-all duration-700"
+            style={{ width: `${Math.min(progress, 100)}%` }}
+          />
+        </div>
+      </div>
+
+      <div className="absolute inset-0 rounded-xl border border-transparent group-hover:border-gold/30 transition-colors duration-500 pointer-events-none z-20" />
+    </Link>
+  );
+}
+
 function ShelfSection({ shelf, delay, promoBanners, shelfIndex }: {
   shelf: any;
   delay: number;
