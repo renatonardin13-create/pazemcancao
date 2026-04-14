@@ -660,7 +660,7 @@ function MeusCoursosPage() {
                   <Link
                     to="/cursos/$courseId"
                     params={{ courseId: course.id }}
-                    className="group relative block rounded-2xl overflow-hidden transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl hover:shadow-gold/8"
+                    className="group relative block rounded-2xl overflow-hidden border border-border/10 transition-all duration-500 hover:scale-[1.02] hover:border-gold/15 hover:shadow-2xl hover:shadow-gold/[0.07] hover:-translate-y-1"
                   >
                     {/* Full-bleed cover */}
                     <div className="relative aspect-[16/10] overflow-hidden">
