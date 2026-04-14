@@ -255,14 +255,14 @@ function ContentPage() {
   return (
     <StudentLayout>
       <div className="min-h-screen bg-background text-foreground">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6 py-6 sm:py-10 space-y-10 sm:space-y-14">
+        <div className="mx-auto max-w-6xl px-5 sm:px-8 py-8 sm:py-12 space-y-12 sm:space-y-16">
           {/* Greeting */}
           <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/85 tracking-tight">
               {getGreeting()}
-              {firstName ? `, ${firstName}` : ""} 👋
+              {firstName ? `, ${firstName}` : ""}
             </h1>
-            <p className="mt-1.5 text-sm text-muted-foreground/60">
+            <p className="mt-2 text-[13px] text-muted-foreground/45 font-light leading-relaxed">
               Sua jornada espiritual continua aqui
             </p>
           </div>
@@ -456,11 +456,12 @@ function ContentPage() {
 
 function SectionHeader({ title, count }: { title: string; count: number }) {
   return (
-    <div className="flex items-baseline gap-3">
-      <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
+    <div className="flex items-center gap-3">
+      <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
         {title}
       </h2>
-      <span className="text-xs text-muted-foreground/50">
+      <div className="flex-1 h-px bg-gradient-to-r from-border/10 to-transparent" />
+      <span className="text-[11px] text-muted-foreground/35 tracking-wider">
         {count} conteúdo{count > 1 ? "s" : ""}
       </span>
     </div>
@@ -485,19 +486,19 @@ function ContentShelf({
   lastAccessedId: string | null;
 }) {
   return (
-    <section className="space-y-4">
+    <section className="space-y-5">
       <div className="flex items-center gap-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
           {icon}
         </div>
-        <div>
-          <h2 className="font-display text-lg font-bold text-foreground/85 tracking-tight">
+        <div className="flex-1">
+          <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
             {title}
           </h2>
-          <p className="text-xs text-muted-foreground/55">{subtitle}</p>
+          <p className="text-[11px] text-muted-foreground/40 mt-0.5">{subtitle}</p>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
         {items.map((item: any, idx: number) => {
           const config = typeConfig[item.content_type] || typeConfig.material;
           return (
@@ -532,7 +533,7 @@ function ContentGrid({
   lastAccessedId: string | null;
 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
       {items.map((item: any, idx: number) => (
         <ContentCard
           key={item.id}

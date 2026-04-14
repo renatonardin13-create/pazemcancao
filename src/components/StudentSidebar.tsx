@@ -96,18 +96,18 @@ export function StudentSidebar() {
 
   const navItemClass = (active: boolean) =>
     cn(
-      "flex items-center gap-3 rounded-xl px-4 py-2.5 text-[13px] font-semibold transition-all duration-200",
+      "flex items-center gap-3 rounded-xl px-4 py-2.5 text-[13px] font-medium transition-all duration-500",
       active
-        ? "text-gold bg-gold/10 border border-gold/20 shadow-sm shadow-gold/5"
-        : "text-foreground/60 hover:text-foreground/80 hover:bg-muted/10 border border-transparent"
+        ? "text-gold bg-gold/[0.06] border border-gold/12"
+        : "text-foreground/45 hover:text-foreground/65 hover:bg-muted/6 border border-transparent"
     );
 
   const subItemClass = (active: boolean) =>
     cn(
-      "flex items-center gap-2.5 rounded-lg px-3.5 py-2 ml-5 text-[12px] font-medium transition-all duration-200",
+      "flex items-center gap-2.5 rounded-lg px-3.5 py-2 ml-5 text-[12px] font-medium transition-all duration-500",
       active
-        ? "text-gold bg-gold/[0.07] border-l-2 border-gold/40"
-        : "text-muted-foreground/60 hover:text-foreground/70 hover:bg-muted/8 border-l-2 border-transparent"
+        ? "text-gold/80 bg-gold/[0.04] border-l-2 border-gold/30"
+        : "text-muted-foreground/45 hover:text-foreground/55 hover:bg-muted/5 border-l-2 border-transparent"
     );
 
   const sidebarContent = (
