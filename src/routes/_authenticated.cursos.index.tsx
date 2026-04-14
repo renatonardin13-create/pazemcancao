@@ -153,7 +153,7 @@ function MeusCoursosPage() {
               )}
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((course: any, idx: number) => (
                 <motion.div
                   key={course.id}
@@ -164,32 +164,53 @@ function MeusCoursosPage() {
                   <Link
                     to="/cursos/$courseId"
                     params={{ courseId: course.id }}
-                    className="group flex items-center gap-5 rounded-xl border border-border/30 bg-card/8 p-4 sm:p-5 hover:border-gold/20 hover:bg-card/15 transition-all duration-300"
+                    className="group block rounded-2xl overflow-hidden border border-border/25 bg-card/10 transition-all duration-500 hover:border-gold/30 hover:shadow-xl hover:shadow-gold/5 hover:scale-[1.02]"
                   >
                     {/* Cover */}
-                    {course.cover_image_url ? (
-                      <img
-                        src={course.cover_image_url}
-                        alt={course.title}
-                        className="h-24 w-24 sm:h-28 sm:w-28 rounded-lg object-cover shrink-0"
-                      />
-                    ) : (
-                      <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-lg bg-muted/20 flex items-center justify-center shrink-0">
-                        <BookOpen className="h-8 w-8 text-muted-foreground/50" />
-                      </div>
-                    )}
+                    <div className="relative aspect-video overflow-hidden">
+                      {course.cover_image_url ? (
+                        <img
+                          src={course.cover_image_url}
+                          alt={course.title}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-muted/15 flex items-center justify-center">
+                          <BookOpen className="h-10 w-10 text-muted-foreground/40" />
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-60" />
+
+                      {/* Progress bar at top */}
+                      {course.progress_pct > 0 && (
+                        <div className="absolute top-0 left-0 right-0 h-1 bg-black/30">
+                          <div
+                            className={`h-full rounded-r-full transition-all ${course.progress_pct >= 100 ? "bg-emerald-500" : "bg-gold"}`}
+                            style={{ width: `${course.progress_pct}%` }}
+                          />
+                        </div>
+                      )}
+
+                      {/* Status badge */}
+                      {course.progress_pct >= 100 && (
+                        <div className="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-emerald-500/25 backdrop-blur-md px-2.5 py-1 border border-emerald-500/30">
+                          <span className="text-[11px] font-bold text-emerald-400">✓ Concluído</span>
+                        </div>
+                      )}
+                    </div>
 
                     {/* Info */}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-display text-base sm:text-lg font-bold text-foreground/90 uppercase tracking-wide truncate group-hover:text-gold transition-colors">
+                    <div className="p-5">
+                      <h3 className="font-display text-base font-bold text-foreground leading-snug line-clamp-2 group-hover:text-gold transition-colors duration-300">
                         {course.title}
                       </h3>
                       {course.short_description && (
-                        <p className="text-[12px] text-muted-foreground/70 mt-1 line-clamp-1">
+                        <p className="text-xs text-muted-foreground mt-1.5 line-clamp-1">
                           {course.short_description}
                         </p>
                       )}
-                      <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground/45">
+
+                      <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Layers className="h-3 w-3" />
                           {course.module_count} mód.
@@ -199,21 +220,21 @@ function MeusCoursosPage() {
                           {course.lesson_count} aulas
                         </span>
                       </div>
-                      <div className="flex items-center gap-3 mt-3">
-                        <span className="text-xs text-muted-foreground/70">Progresso</span>
-                        <Progress value={course.progress_pct} className="h-1.5 flex-1 bg-muted/20" />
-                        <span className="text-[12px] font-bold text-gold tabular-nums w-10 text-right">
+
+                      {/* Progress section */}
+                      <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border/15">
+                        <Progress value={course.progress_pct} className="h-1.5 flex-1 bg-muted/15" />
+                        <span className="text-sm font-bold text-gold tabular-nums">
                           {course.progress_pct}%
                         </span>
                       </div>
-                    </div>
 
-                    {/* CTA */}
-                    <div className="shrink-0 hidden sm:block">
-                      <span className="inline-flex items-center gap-2 rounded-xl bg-gold/90 text-gold-foreground px-5 py-2.5 text-[12px] font-bold uppercase tracking-wider group-hover:bg-gold transition-colors">
-                        {course.progress_pct > 0 ? "Continuar" : "Iniciar"}
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </span>
+                      {/* CTA */}
+                      <div className="mt-4 flex items-center justify-between">
+                        <span className="text-xs font-bold uppercase tracking-wider text-gold group-hover:gap-2.5 inline-flex items-center gap-1.5 transition-all">
+                          {course.progress_pct > 0 ? "Continuar" : "Iniciar"} <ArrowRight className="h-3 w-3" />
+                        </span>
+                      </div>
                     </div>
                   </Link>
                 </motion.div>
