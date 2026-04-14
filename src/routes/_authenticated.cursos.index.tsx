@@ -479,7 +479,7 @@ function ContinueWatchingCard({ course }: { course: any }) {
 
   return (
     <Link to={linkTo as any} params={linkParams as any} className="group relative block rounded-2xl overflow-hidden cursor-pointer">
-      <div className="relative aspect-video overflow-hidden bg-card/5 shadow-lg shadow-black/20 md:group-hover:shadow-2xl md:group-hover:shadow-black/40 transition-shadow duration-500 rounded-2xl">
+      <div className="relative aspect-[2/3] overflow-hidden bg-card/5 shadow-lg shadow-black/20 md:group-hover:shadow-2xl md:group-hover:shadow-black/40 transition-shadow duration-500 rounded-2xl">
         {course.cover_image_url ? (
           <img src={course.cover_image_url} alt={course.title} className="w-full h-full object-cover md:transition-transform md:duration-[800ms] md:ease-out md:group-hover:scale-[1.08]" loading="lazy" />
         ) : (
@@ -527,7 +527,7 @@ function MyCoursesCard({ course }: { course: any }) {
 
   return (
     <Link to="/cursos/$courseId" params={{ courseId: course.id }} className="group relative block rounded-2xl overflow-hidden cursor-pointer">
-      <div className="relative aspect-video overflow-hidden bg-card/5 shadow-lg shadow-black/20 md:group-hover:shadow-2xl md:group-hover:shadow-black/40 transition-shadow duration-500 rounded-2xl">
+      <div className="relative aspect-[2/3] overflow-hidden bg-card/5 shadow-lg shadow-black/20 md:group-hover:shadow-2xl md:group-hover:shadow-black/40 transition-shadow duration-500 rounded-2xl">
         {course.cover_image_url ? (
           <img src={course.cover_image_url} alt={course.title} className="w-full h-full object-cover md:transition-transform md:duration-[800ms] md:ease-out md:group-hover:scale-[1.08]" loading="lazy" />
         ) : (
