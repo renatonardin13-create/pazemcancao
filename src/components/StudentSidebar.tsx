@@ -57,10 +57,17 @@ export function StudentSidebar() {
   const hasTracks = allTracks.length > 0;
 
   // Build set of categories that have at least one active track
+  // Normalize: strip emoji prefix, lowercase, trim for robust matching
+  const normalizeStr = (s: string) =>
+    s.replace(/^[^\p{L}\p{N}]+/u, "").trim().toLowerCase();
+
   const categoriesWithTracks = useMemo(() => {
     const catSet = new Set<string>();
     for (const t of allTracks) {
-      if (t.category) catSet.add(t.category.toLowerCase());
+      if (t.category) {
+        catSet.add(t.category.toLowerCase());
+        catSet.add(normalizeStr(t.category));
+      }
     }
     return catSet;
   }, [allTracks]);
@@ -68,15 +75,22 @@ export function StudentSidebar() {
   const visibleCategories = useMemo(() => {
     const seen = new Set<string>();
     return categories.filter((cat: any) => {
-      const slug = (cat.slug || cat.name.toLowerCase()).toLowerCase();
+      const slug = (cat.slug || "").toLowerCase();
       const name = cat.name.toLowerCase();
-      // Strip emoji prefix for matching
-      const plainName = name.replace(/^[^\p{L}\p{N}]+/u, "").trim();
-      const hasTrack = categoriesWithTracks.has(slug) || categoriesWithTracks.has(name);
+      const plainName = normalizeStr(cat.name);
+
+      // Match by slug, full name, or plain name (without emoji)
+      const hasTrack =
+        categoriesWithTracks.has(slug) ||
+        categoriesWithTracks.has(name) ||
+        categoriesWithTracks.has(plainName);
+
       if (!hasTrack) return false;
-      // Deduplicate by slug
-      if (seen.has(slug)) return false;
-      seen.add(slug);
+
+      // Deduplicate by slug first, then by plain name
+      const dedupeKey = slug || plainName;
+      if (seen.has(dedupeKey)) return false;
+      seen.add(dedupeKey);
       return true;
     });
   }, [categories, categoriesWithTracks]);
