@@ -6,7 +6,7 @@ import { getMyCoursesData, getRecommendedCourses, getMostAccessedCourses } from 
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { motion } from "framer-motion";
-import { BookOpen, Search, ArrowRight, Layers, Clock, PlayCircle, Sparkles, TrendingUp } from "lucide-react";
+import { BookOpen, Search, ArrowRight, Layers, Clock, PlayCircle, Sparkles, TrendingUp, CheckCircle2, Play } from "lucide-react";
 import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
@@ -383,6 +383,16 @@ function MeusCoursosPage() {
             </Select>
           </motion.div>
 
+          {/* Section header */}
+          <div className="flex items-center gap-3 mb-5 mt-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
+              <BookOpen className="h-4 w-4 text-primary/70" />
+            </div>
+            <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
+              Todos os cursos
+            </h2>
+          </div>
+
           {/* Course List */}
           {isLoading ? (
             <CardGridSkeleton count={6} />
@@ -405,17 +415,28 @@ function MeusCoursosPage() {
             )
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filtered.map((course: any, idx: number) => (
+              {filtered.map((course: any, idx: number) => {
+                const isCompleted = course.progress_pct >= 100;
+                const isInProgress = course.progress_pct > 0 && course.progress_pct < 100;
+                const isNotStarted = course.progress_pct === 0;
+
+                return (
                 <motion.div
                   key={course.id}
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.05 * idx }}
+                  transition={{ duration: 0.5, delay: 0.05 * Math.min(idx, 8) }}
                 >
                   <Link
                     to="/cursos/$courseId"
                     params={{ courseId: course.id }}
-                    className="group block rounded-2xl overflow-hidden border border-border/25 bg-card/10 transition-all duration-500 hover:border-gold/30 hover:shadow-xl hover:shadow-gold/5 hover:scale-[1.02]"
+                    className={`group block rounded-2xl overflow-hidden border transition-all duration-500 hover:scale-[1.02] ${
+                      isCompleted
+                        ? "border-emerald-500/20 bg-emerald-500/[0.03] hover:border-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/5"
+                        : isInProgress
+                          ? "border-gold/20 bg-gold/[0.02] hover:border-gold/30 hover:shadow-xl hover:shadow-gold/5"
+                          : "border-border/25 bg-card/10 hover:border-gold/30 hover:shadow-xl hover:shadow-gold/5"
+                    }`}
                   >
                     {/* Cover */}
                     <div className="relative aspect-video overflow-hidden">
@@ -434,20 +455,32 @@ function MeusCoursosPage() {
 
                       {/* Progress bar at top */}
                       {course.progress_pct > 0 && (
-                        <div className="absolute top-0 left-0 right-0 h-1 bg-black/30">
+                        <div className="absolute top-0 left-0 right-0 h-1.5 bg-background/30 backdrop-blur-sm">
                           <div
-                            className={`h-full rounded-r-full transition-all ${course.progress_pct >= 100 ? "bg-emerald-500" : "bg-gold"}`}
+                            className={`h-full rounded-r-full transition-all ${isCompleted ? "bg-emerald-500" : "bg-gold"}`}
                             style={{ width: `${course.progress_pct}%` }}
                           />
                         </div>
                       )}
 
                       {/* Status badge */}
-                      {course.progress_pct >= 100 && (
-                        <div className="absolute top-3 right-3 flex items-center gap-1 rounded-full bg-emerald-500/25 backdrop-blur-md px-2.5 py-1 border border-emerald-500/30">
-                          <span className="text-[11px] font-bold text-emerald-400">✓ Concluído</span>
-                        </div>
-                      )}
+                      <div className="absolute top-3 right-3">
+                        {isCompleted ? (
+                          <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/20 backdrop-blur-md px-2.5 py-1 border border-emerald-500/30">
+                            <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+                            <span className="text-[11px] font-bold text-emerald-400">Concluído</span>
+                          </div>
+                        ) : isInProgress ? (
+                          <div className="flex items-center gap-1.5 rounded-full bg-gold/20 backdrop-blur-md px-2.5 py-1 border border-gold/30">
+                            <Play className="h-3 w-3 text-gold fill-gold" />
+                            <span className="text-[11px] font-bold text-gold">Em andamento</span>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-1.5 rounded-full bg-background/50 backdrop-blur-md px-2.5 py-1 border border-border/30">
+                            <span className="text-[11px] font-medium text-muted-foreground/60">Disponível</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
 
                     {/* Info */}
@@ -456,12 +489,12 @@ function MeusCoursosPage() {
                         {course.title}
                       </h3>
                       {course.short_description && (
-                        <p className="text-xs text-muted-foreground mt-1.5 line-clamp-1">
+                        <p className="text-xs text-muted-foreground/50 mt-1.5 line-clamp-1">
                           {course.short_description}
                         </p>
                       )}
 
-                      <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground/50">
                         <span className="flex items-center gap-1">
                           <Layers className="h-3 w-3" />
                           {course.module_count} mód.
@@ -470,26 +503,41 @@ function MeusCoursosPage() {
                           <Clock className="h-3 w-3" />
                           {course.lesson_count} aulas
                         </span>
+                        {isInProgress && (
+                          <span className="flex items-center gap-1 text-gold/70">
+                            <CheckCircle2 className="h-3 w-3" />
+                            {course.completed_lessons}/{course.lesson_count}
+                          </span>
+                        )}
                       </div>
 
                       {/* Progress section */}
-                      <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border/15">
-                        <Progress value={course.progress_pct} className="h-1.5 flex-1 bg-muted/15" />
-                        <span className="text-sm font-bold text-gold tabular-nums">
+                      <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border/10">
+                        <Progress
+                          value={course.progress_pct}
+                          className={`h-1.5 flex-1 ${isCompleted ? "bg-emerald-500/10" : "bg-muted/15"}`}
+                        />
+                        <span className={`text-sm font-bold tabular-nums ${
+                          isCompleted ? "text-emerald-500" : "text-gold"
+                        }`}>
                           {course.progress_pct}%
                         </span>
                       </div>
 
                       {/* CTA */}
                       <div className="mt-4 flex items-center justify-between">
-                        <span className="text-xs font-bold uppercase tracking-wider text-gold group-hover:gap-2.5 inline-flex items-center gap-1.5 transition-all">
-                          {course.progress_pct > 0 ? "Continuar" : "Iniciar"} <ArrowRight className="h-3 w-3" />
+                        <span className={`text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 transition-all group-hover:gap-2.5 ${
+                          isCompleted ? "text-emerald-500/70" : "text-gold"
+                        }`}>
+                          {isCompleted ? "Revisar" : isInProgress ? "Continuar" : "Iniciar"}
+                          <ArrowRight className="h-3 w-3" />
                         </span>
                       </div>
                     </div>
                   </Link>
                 </motion.div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
