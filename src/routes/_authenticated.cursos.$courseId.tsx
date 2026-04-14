@@ -212,26 +212,26 @@ function CourseDetailPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background pb-32 relative">
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_30%,var(--color-gold)/0.03,transparent_70%)]" />
+    <StudentLayout>
+    <div className="min-h-screen bg-background flex flex-col">
 
-      {/* Back button */}
-      <motion.div
-        initial={{ opacity: 0, x: -12 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.8, delay: 0.2 }}
-        className="fixed top-6 left-6 z-30"
-      >
-        <Link
-          to="/cursos"
-          className="group flex items-center gap-2.5 text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 hover:text-gold/70 transition-colors duration-500"
-        >
-          <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-x-1" />
-          Cursos
-        </Link>
-      </motion.div>
-
-      <div className="mx-auto max-w-4xl px-6 pt-24 sm:pt-32">
+      <main className="flex-1 w-full pb-28">
+        <div className="mx-auto w-full max-w-[1000px] px-4 sm:px-8 lg:px-12 pt-8 sm:pt-12">
+          {/* Back link */}
+          <motion.div
+            initial={{ opacity: 0, x: -12 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-6"
+          >
+            <Link
+              to="/cursos"
+              className="group inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground/50 hover:text-gold/70 transition-colors duration-300"
+            >
+              <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-x-1" />
+              Voltar aos cursos
+            </Link>
+          </motion.div>
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
