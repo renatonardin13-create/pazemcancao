@@ -47,7 +47,7 @@ export function CourseShelfCard({
               <img
                 src={course.cover_image_url}
                 alt={course.title}
-                className={`w-full h-full object-cover md:transition-transform md:duration-[800ms] md:ease-out md:group-hover/card:scale-[1.12] ${isLocked ? 'saturate-[0.25] brightness-75' : ''}`}
+                className={`w-full h-full object-cover md:transition-transform md:duration-[800ms] md:ease-out md:group-hover/card:scale-[1.12] ${isLocked ? 'saturate-[0.5] brightness-90' : ''}`}
                 loading="lazy"
               />
             ) : (
