@@ -561,13 +561,13 @@ function AdminUsersPage() {
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gold/15 text-sm font-bold text-gold shrink-0">
                     {(buyer.nome || buyer.email).slice(0, 1).toUpperCase()}
                   </div>
-                  <span className="text-sm font-semibold text-foreground/85 truncate">
+                  <span className="text-sm font-bold text-foreground truncate">
                     {buyer.nome || "Sem nome"}
                   </span>
                 </div>
 
                 {/* Email */}
-                <span className="text-[13px] text-muted-foreground/50 truncate">
+                <span className="text-sm text-muted-foreground truncate">
                   {buyer.email}
                 </span>
 
