@@ -276,23 +276,32 @@ function ContentPage() {
     <StudentLayout>
       <div className="min-h-screen bg-background text-foreground">
         <div className="mx-auto max-w-6xl px-5 sm:px-8 py-8 sm:py-12 space-y-12 sm:space-y-16">
-          {/* Greeting */}
-          <div>
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/85 tracking-tight">
-              {getGreeting()}
-              {firstName ? `, ${firstName}` : ""}
-            </h1>
-            <p className="mt-2 text-[13px] text-muted-foreground/45 font-light leading-relaxed">
-              Sua jornada espiritual continua aqui
-            </p>
-          </div>
-
-          {isLoading ? (
-            <div className="text-center py-16">
-              <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
-                Carregando conteúdos...
+          {/* Greeting + Stats */}
+          <div className="space-y-6">
+            <div>
+              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/85 tracking-tight">
+                {getGreeting()}
+                {firstName ? `, ${firstName}` : ""}
+              </h1>
+              <p className="mt-2 text-[13px] text-muted-foreground/45 font-light leading-relaxed">
+                Sua jornada espiritual continua aqui
               </p>
             </div>
+
+            {/* Stats bar */}
+            {stats.unlocked > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="flex flex-wrap gap-4 sm:gap-6"
+              >
+                <StatPill icon={Library} label="Disponíveis" value={stats.unlocked} color="text-gold/60" />
+                <StatPill icon={TrendingUp} label="Em andamento" value={stats.inProgress} color="text-primary/60" />
+                <StatPill icon={CheckCircle2} label="Concluídos" value={stats.completed} color="text-player-completed/60" />
+              </motion.div>
+            )}
+          </div>
           ) : !items.length ? (
             <EmptyState
               icon={BookOpen}
