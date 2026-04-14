@@ -121,6 +121,39 @@ function LessonDetailPage() {
     };
   }, [countdown !== null && countdown > 0]);
 
+  // Keyboard shortcuts: ← previous, → next, Enter complete
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Skip if user is typing in an input/textarea
+      const tag = (e.target as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+
+      if (e.key === "ArrowLeft" && data?.prevLesson) {
+        e.preventDefault();
+        navigate({
+          to: "/cursos/$courseId/aula/$lessonId",
+          params: { courseId, lessonId: data.prevLesson.id },
+        });
+      } else if (e.key === "ArrowRight" && data?.nextLesson) {
+        e.preventDefault();
+        navigate({
+          to: "/cursos/$courseId/aula/$lessonId",
+          params: { courseId, lessonId: data.nextLesson.id },
+        });
+      } else if (e.key === "Enter" && data && !progressMutation.isPending) {
+        const completed = data.progress?.some(
+          (p: any) => p.lesson_id === lessonId && p.completed
+        );
+        if (!completed && data.enrollment) {
+          e.preventDefault();
+          progressMutation.mutate({ lessonId, watchedSeconds: 0, completed: true });
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [data, courseId, lessonId, navigate, progressMutation]);
+
   // Navigate when countdown reaches 0
   useEffect(() => {
     if (countdown === 0 && data?.nextLesson) {
