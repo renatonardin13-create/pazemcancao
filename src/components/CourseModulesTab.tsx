@@ -943,7 +943,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   <Label className="text-sm font-semibold">URL ou Código Embed</Label>
                   <Textarea
                     value={lesVideoUrl}
-                    onChange={(e) => setLesVideoUrl(e.target.value)}
+                    onChange={(e) => { setLesVideoUrl(e.target.value); if (lesContentError) setLesContentError(""); }}
                     placeholder="Cole a URL (YouTube, Vimeo) ou código embed (Panda Video, Host VSL)"
                     rows={3}
                     className={`bg-card/20 border-border/30 ${lesContentError && lesContentType === "video" ? "border-destructive" : ""}`}
@@ -1024,7 +1024,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 <Label className="text-sm font-semibold">URL Externa</Label>
                 <Textarea
                   value={lesContentUrl}
-                  onChange={(e) => setLesContentUrl(e.target.value)}
+                  onChange={(e) => { setLesContentUrl(e.target.value); if (lesContentError) setLesContentError(""); }}
                   placeholder="Cole a URL externa"
                   rows={3}
                   className={`bg-card/20 border-border/30 ${lesContentError && lesContentType === "link" ? "border-destructive" : ""}`}
