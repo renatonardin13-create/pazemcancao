@@ -64,6 +64,7 @@ function AdminCoursesPage() {
     mutationFn: (id: string) => deleteCourse({ data: { id } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
+      queryClient.invalidateQueries({ queryKey: ["student-shelves"] });
       toast.success("Curso excluído com sucesso");
     },
     onError: (e: Error) => toast.error(e.message),
@@ -74,6 +75,8 @@ function AdminCoursesPage() {
       updateCourse({ data: { id, status: currentStatus === "published" ? "draft" : "published" } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
+      queryClient.invalidateQueries({ queryKey: ["student-shelves"] });
+      queryClient.invalidateQueries({ queryKey: ["my-courses"] });
       toast.success("Status atualizado");
     },
     onError: (e: Error) => toast.error(e.message),
