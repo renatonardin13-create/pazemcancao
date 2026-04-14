@@ -53,7 +53,7 @@ export function AdminDashboard() {
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative z-10">
           <div>
-            <h1 className="font-display text-3xl font-black text-foreground tracking-tight">
+            <h1 className="font-display text-2xl sm:text-3xl font-black text-foreground tracking-tight">
               Dashboard
             </h1>
             <p className="text-sm text-muted-foreground/70 mt-1.5">
@@ -61,7 +61,7 @@ export function AdminDashboard() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
             {/* Search */}
             <div className="relative hidden md:block">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/70" />
