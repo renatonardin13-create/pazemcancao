@@ -419,7 +419,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
         course_id: linkedCourseId,
       });
 
-      await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: linkedCourseId ? 'Buyer approved and enrolled' : 'Buyer approved' });
+      await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: linkedCourseId ? 'Buyer approved and enrolled' : 'Buyer approved', ...audit, internalCourseId: linkedCourseId || resolvedCourseId, isSuccess: true });
       return jsonResponse({ success: true, course_id: linkedCourseId });
     } catch (processErr: any) {
       await markEventFailed(eventKey, processErr.message || 'Unknown processing error');
