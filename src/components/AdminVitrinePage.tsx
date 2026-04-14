@@ -281,6 +281,7 @@ export default function AdminVitrinePage() {
     onSuccess: () => {
       toast.success("Banner salvo com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["platform-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["student-shelves-preview"] });
     },
     onError: (err: any) => toast.error(err.message),
   });
