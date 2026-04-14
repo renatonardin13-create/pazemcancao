@@ -595,6 +595,80 @@ function LessonDetailPage() {
             </div>
           )}
 
+          {/* ─── NEXT UP CARD — streaming continuity ─── */}
+          <AnimatePresence>
+            {(isCompleted || showNextUp) && nextLesson && !accessRestricted && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                className="border-t border-gold/10 bg-gradient-to-r from-gold/[0.04] via-background to-gold/[0.04] px-4 sm:px-6 py-5"
+              >
+                <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold/50 mb-1 flex items-center gap-1.5">
+                      <Sparkles className="h-3 w-3" />
+                      Continue sua jornada
+                    </p>
+                    <p className="text-sm font-semibold text-foreground/75 truncate">
+                      Próxima: {nextLesson.title}
+                    </p>
+                    {nextLesson.duration && nextLesson.duration !== "0:00" && (
+                      <p className="text-[10px] text-muted-foreground/35 mt-0.5 flex items-center gap-1">
+                        <Clock className="h-2.5 w-2.5" />
+                        {nextLesson.duration}
+                      </p>
+                    )}
+                  </div>
+                  <Link
+                    to="/cursos/$courseId/aula/$lessonId"
+                    params={{ courseId, lessonId: nextLesson.id }}
+                    className="inline-flex items-center gap-2 rounded-xl bg-gold px-6 py-3 text-[11px] font-bold uppercase tracking-[0.18em] text-gold-foreground shadow-lg shadow-gold/15 hover:shadow-gold/30 hover:brightness-110 transition-all active:scale-[0.97]"
+                  >
+                    <Play className="h-3.5 w-3.5 fill-current" />
+                    Próxima aula
+                  </Link>
+                  <button
+                    onClick={() => setShowNextUp(false)}
+                    className="text-[10px] text-muted-foreground/30 hover:text-muted-foreground/50 transition-colors sm:ml-1"
+                  >
+                    Fechar
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* ─── COURSE COMPLETED CARD ─── */}
+          <AnimatePresence>
+            {isCompleted && !nextLesson && !accessRestricted && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, type: "spring" }}
+                className="border-t border-player-completed/10 bg-gradient-to-r from-player-completed/[0.04] via-background to-player-completed/[0.04] px-4 sm:px-6 py-6"
+              >
+                <div className="max-w-md mx-auto text-center">
+                  <Award className="h-10 w-10 text-player-completed mx-auto mb-3" />
+                  <h3 className="font-display text-lg font-bold text-foreground/80">
+                    🎉 Parabéns!
+                  </h3>
+                  <p className="text-sm text-muted-foreground/50 mt-1">
+                    Você concluiu todas as aulas deste curso.
+                  </p>
+                  <Link
+                    to="/cursos/$courseId"
+                    params={{ courseId }}
+                    className="inline-flex items-center gap-2 mt-4 rounded-xl bg-player-completed/10 border border-player-completed/15 px-5 py-2.5 text-[11px] font-semibold text-player-completed/70 hover:bg-player-completed/15 transition-all"
+                  >
+                    Ver resumo do curso
+                  </Link>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           {/* Bottom navigation — premium */}
           {!accessRestricted && (
             <div className="border-t border-border/12 bg-background/95 backdrop-blur-xl mt-auto">
