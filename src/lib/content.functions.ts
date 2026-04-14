@@ -182,6 +182,28 @@ export const listContentItems = createServerFn({ method: 'POST' })
       }
     }
 
+    // Fetch popularity data for recommendations (play + download counts per content)
+    const { data: playCountsRaw } = await supabaseAdmin
+      .from('play_logs')
+      .select('track_id');
+    const { data: dlCountsRaw } = await supabaseAdmin
+      .from('download_logs')
+      .select('track_id');
+
+    const popularityMap: Record<string, { plays: number; downloads: number }> = {};
+    if (playCountsRaw) {
+      for (const r of playCountsRaw) {
+        if (!popularityMap[r.track_id]) popularityMap[r.track_id] = { plays: 0, downloads: 0 };
+        popularityMap[r.track_id].plays++;
+      }
+    }
+    if (dlCountsRaw) {
+      for (const r of dlCountsRaw) {
+        if (!popularityMap[r.track_id]) popularityMap[r.track_id] = { plays: 0, downloads: 0 };
+        popularityMap[r.track_id].downloads++;
+      }
+    }
+
     // Fetch active categories for dynamic rendering
     const { data: categoriesData } = await supabaseAdmin
       .from('categories')
@@ -217,6 +239,7 @@ export const listContentItems = createServerFn({ method: 'POST' })
       viewedIds: Array.from(playedContentIds),
       downloadedIds: Array.from(downloadedContentIds),
       progressMap,
+      popularityMap,
       categories,
       journeys,
     };
