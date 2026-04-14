@@ -203,11 +203,7 @@ function AdminSalesPage() {
               </TableHeader>
               <TableBody>
                 {isLoading ? (
-                  <TableRow>
-                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                      Carregando...
-                    </TableCell>
-                  </TableRow>
+                  <TableSkeleton rows={5} cols={8} />
                 ) : (data?.transactions || []).length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
