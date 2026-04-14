@@ -44,9 +44,9 @@ export function AdminDashboard() {
     val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">
       {/* Header bar */}
-      <div className="relative rounded-2xl border border-gold/10 bg-gradient-to-r from-card via-card/80 to-card backdrop-blur-sm p-6 overflow-hidden shadow-xl shadow-black/10">
+      <div className="relative rounded-2xl border border-gold/10 bg-gradient-to-r from-card via-card/80 to-card backdrop-blur-sm p-4 sm:p-6 overflow-hidden shadow-xl shadow-black/10">
         {/* Decorative glow */}
         <div className="pointer-events-none absolute -top-20 -right-20 h-56 w-56 rounded-full bg-gold/[0.06] blur-[80px]" />
         <div className="pointer-events-none absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-gold/[0.04] blur-[60px]" />
