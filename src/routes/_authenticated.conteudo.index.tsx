@@ -100,6 +100,22 @@ function ContentPage() {
     });
   }, [allItems]);
 
+  // Compute stats for the library
+  const stats = useMemo(() => {
+    let unlocked = 0;
+    let inProgress = 0;
+    let completed = 0;
+
+    for (const item of items) {
+      if (!item.unlocked) continue;
+      unlocked++;
+      const p = progressMap[item.id];
+      if (p?.completed_at) completed++;
+      else if (p?.viewed_at) inProgress++;
+    }
+    return { unlocked, inProgress, completed };
+  }, [items, progressMap]);
+
   // Find last accessed content
   const lastAccessedId = useMemo(() => {
     let latest: { id: string; time: number } | null = null;
