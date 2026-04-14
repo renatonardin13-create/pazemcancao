@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import {
   Layout,
@@ -68,6 +68,7 @@ import {
   deletePromoBanner,
 } from "@/lib/admin-promo-banners.functions";
 import { getPlatformSettings, updatePlatformSetting } from "@/lib/platform-settings.functions";
+import { getStudentShelves } from "@/lib/shelves.functions";
 
 /* ── Generic drag-and-drop hook ── */
 
@@ -227,13 +228,19 @@ export default function AdminVitrinePage() {
     queryFn: () => getPlatformSettings(),
   });
 
+  // Load student-facing shelves for accurate preview
+  const { data: studentShelvesData } = useQuery({
+    queryKey: ["student-shelves-preview"],
+    queryFn: () => getStudentShelves(),
+    staleTime: 30_000,
+  });
+
   // Hydrate banner state from saved settings
   const bannerSettingsLoaded = useRef(false);
-  if (settingsData?.settings?.hero_banner && !bannerSettingsLoaded.current) {
-    const saved = settingsData.settings.hero_banner;
-    bannerSettingsLoaded.current = true;
-    // Use setTimeout to avoid setting state during render
-    setTimeout(() => {
+  useEffect(() => {
+    if (settingsData?.settings?.hero_banner && !bannerSettingsLoaded.current) {
+      const saved = settingsData.settings.hero_banner;
+      bannerSettingsLoaded.current = true;
       if (saved.enabled !== undefined) setBannerEnabled(saved.enabled);
       if (saved.title) setBannerTitle(saved.title);
       if (saved.subtitle) setBannerSubtitle(saved.subtitle);
@@ -241,8 +248,8 @@ export default function AdminVitrinePage() {
       if (saved.course_id) setBannerCourseId(saved.course_id);
       if (saved.fit) setBannerFit(saved.fit);
       if (saved.aspect) setBannerAspect(saved.aspect);
-    }, 0);
-  }
+    }
+  }, [settingsData]);
 
   const shelves = data?.shelves ?? [];
   const courses = coursesData?.courses ?? [];
@@ -274,17 +281,21 @@ export default function AdminVitrinePage() {
     onSuccess: () => {
       toast.success("Banner salvo com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["platform-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["student-shelves-preview"] });
     },
     onError: (err: any) => toast.error(err.message),
   });
 
   // ── Mutations ──
 
+  const invalidatePreview = () => queryClient.invalidateQueries({ queryKey: ["student-shelves-preview"] });
+
   const createMut = useMutation({
     mutationFn: (input: any) => createShelf({ data: input }),
     onSuccess: () => {
       toast.success("Prateleira criada!");
       queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
+      invalidatePreview();
       closeDialog();
     },
     onError: (err: any) => toast.error(err.message),
@@ -295,6 +306,7 @@ export default function AdminVitrinePage() {
     onSuccess: () => {
       toast.success("Prateleira atualizada!");
       queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
+      invalidatePreview();
       closeDialog();
     },
     onError: (err: any) => toast.error(err.message),
@@ -305,6 +317,7 @@ export default function AdminVitrinePage() {
     onSuccess: () => {
       toast.success("Prateleira excluída!");
       queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
+      invalidatePreview();
     },
     onError: (err: any) => toast.error(err.message),
   });
@@ -315,6 +328,7 @@ export default function AdminVitrinePage() {
     onSuccess: () => {
       toast.success("Cursos atualizados!");
       queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
+      invalidatePreview();
       setCoursesDialogShelf(null);
     },
     onError: (err: any) => toast.error(err.message),
@@ -326,6 +340,7 @@ export default function AdminVitrinePage() {
     onSuccess: () => {
       toast.success("Ordem atualizada!");
       queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
+      invalidatePreview();
     },
     onError: (err: any) => toast.error(err.message),
   });
@@ -336,6 +351,7 @@ export default function AdminVitrinePage() {
     onSuccess: () => {
       toast.success("Ordem dos cursos atualizada!");
       queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
+      invalidatePreview();
     },
     onError: (err: any) => toast.error(err.message),
   });
@@ -1050,51 +1066,49 @@ export default function AdminVitrinePage() {
                 </Button>
               </div>
 
-              {/* Mini preview */}
-              <div className="rounded-xl border border-border/15 bg-background/50 overflow-hidden">
-                {/* Mini banner */}
-                {bannerEnabled && (
-                <div className={`relative w-full ${bannerAspect === "21:9" ? "aspect-[21/9]" : bannerAspect === "16:9" ? "aspect-[16/9]" : "aspect-[1920/500]"} bg-card/10`}>
-                  {featuredCourse && (bannerImageUrl || featuredCourse.banner_image_url || featuredCourse.cover_image_url) ? (
-                    <img
-                      src={bannerImageUrl || featuredCourse.banner_image_url || featuredCourse.cover_image_url || undefined}
-                      alt=""
-                      className={`w-full h-full ${bannerFit === "cover" ? "object-cover" : bannerFit === "contain" ? "object-contain" : "object-fill"}`}
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-gradient-to-br from-card/20 to-card/5" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-                  <div className="absolute bottom-2 left-3">
-                    <p className="text-[7px] font-bold uppercase tracking-[0.3em] text-gold/40">Em destaque</p>
-                    <p className="text-[10px] font-bold text-foreground/80 leading-tight mt-0.5 line-clamp-1">
-                      {bannerTitle || featuredCourse?.title || "Banner Principal"}
-                    </p>
-                  </div>
-                </div>
-                )}
-
-                {/* Mini shelves */}
-                <div className="p-3 space-y-3">
-                  {activeShelves.length === 0 ? (
-                    <p className="text-[9px] text-muted-foreground/25 text-center py-4">
-                      Nenhuma prateleira ativa
-                    </p>
-                  ) : (
-                    activeShelves.slice(0, 3).map((shelf: any) => {
-                      const shelfCourses = (shelf.shelf_courses || [])
-                        .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
-                        .map((sc: any) => sc.courses)
-                        .filter(Boolean);
-                      return (
-                        <div key={shelf.id}>
-                          <p className="text-[9px] font-bold text-foreground/50 mb-1.5 truncate">
-                            {shelf.name}
+              {/* Mini preview — uses same data as student vitrine */}
+              {(() => {
+                const previewShelves = studentShelvesData?.shelves || [];
+                const previewFeatured = studentShelvesData?.featuredCourse;
+                return (
+                  <div className="rounded-xl border border-border/15 bg-background/50 overflow-hidden">
+                    {/* Mini banner */}
+                    {previewFeatured && (
+                      <div className={`relative w-full ${(previewFeatured.banner_aspect || bannerAspect) === "21:9" ? "aspect-[21/9]" : (previewFeatured.banner_aspect || bannerAspect) === "16:9" ? "aspect-[16/9]" : "aspect-[1920/500]"} bg-card/10`}>
+                        {(previewFeatured.banner_image_url || previewFeatured.cover_image_url) ? (
+                          <img
+                            src={previewFeatured.banner_image_url || previewFeatured.cover_image_url}
+                            alt=""
+                            className={`w-full h-full ${(previewFeatured.banner_fit || "cover") === "cover" ? "object-cover" : (previewFeatured.banner_fit || "cover") === "contain" ? "object-contain" : "object-fill"}`}
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-card/20 to-card/5" />
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
+                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                        <div className="absolute bottom-2 left-3">
+                          <p className="text-[7px] font-bold uppercase tracking-[0.3em] text-gold/40">Em destaque</p>
+                          <p className="text-[10px] font-bold text-foreground/80 leading-tight mt-0.5 line-clamp-1">
+                            {previewFeatured.display_title || previewFeatured.title || "Banner Principal"}
                           </p>
-                          <div className="flex gap-1.5 overflow-hidden">
-                            {shelfCourses.length > 0 ? (
-                              shelfCourses.slice(0, 4).map((c: any) => (
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Mini shelves — from student data */}
+                    <div className="p-3 space-y-3">
+                      {previewShelves.length === 0 ? (
+                        <p className="text-[9px] text-muted-foreground/25 text-center py-4">
+                          Nenhuma prateleira ativa
+                        </p>
+                      ) : (
+                        previewShelves.slice(0, 3).map((shelf: any) => (
+                          <div key={shelf.id}>
+                            <p className="text-[9px] font-bold text-foreground/50 mb-1.5 truncate">
+                              {shelf.name}
+                            </p>
+                            <div className="flex gap-1.5 overflow-hidden">
+                              {shelf.courses.slice(0, 4).map((c: any) => (
                                 <div key={c.id} className="shrink-0 w-[48px]">
                                   <div className="aspect-[2/3] rounded-md overflow-hidden border border-border/8 bg-card/10">
                                     {c.cover_image_url ? (
@@ -1104,28 +1118,20 @@ export default function AdminVitrinePage() {
                                     )}
                                   </div>
                                 </div>
-                              ))
-                            ) : (
-                              <>
-                                {[1, 2, 3, 4].map((i) => (
-                                  <div key={i} className="shrink-0 w-[48px]">
-                                    <div className="aspect-[2/3] rounded-md border border-border/6 bg-card/5" />
-                                  </div>
-                                ))}
-                              </>
-                            )}
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      );
-                    })
-                  )}
-                  {activeShelves.length > 3 && (
-                    <p className="text-[9px] text-muted-foreground/20 text-center">
-                      +{activeShelves.length - 3} prateleira(s)
-                    </p>
-                  )}
-                </div>
-              </div>
+                        ))
+                      )}
+                      {previewShelves.length > 3 && (
+                        <p className="text-[9px] text-muted-foreground/20 text-center">
+                          +{previewShelves.length - 3} prateleira(s)
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                );
+              })()}
 
               {/* Link to student area */}
               <a
