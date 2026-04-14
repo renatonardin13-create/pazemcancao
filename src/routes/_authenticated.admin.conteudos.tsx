@@ -593,7 +593,7 @@ function AdminContentPage() {
                     </div>
                   )}
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground/75 truncate">{item.title}</p>
+                    <p className="text-sm font-bold text-foreground truncate">{item.title}</p>
                     <div className="flex items-center gap-2 mt-1 flex-wrap">
                       <Badge variant="outline" className={`text-[9px] px-1.5 py-0 ${typeInfo.color}`}>
                         {typeInfo.label}
