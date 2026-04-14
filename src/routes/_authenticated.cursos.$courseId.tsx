@@ -9,8 +9,8 @@ import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import {
   ArrowLeft,
+  ArrowRight,
   CheckCircle2,
-  Circle,
   Clock,
   BookOpen,
   Video,
@@ -23,6 +23,7 @@ import {
   Lock,
   Play,
   Layers,
+  Sparkles,
 } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -103,7 +104,8 @@ function CourseDetailPage() {
 
   const { course, lessons, progress, enrollment, integration, access } = data;
   const canAccessCourse = access?.canAccessCourse;
-  const hasCheckout = access?.hasCheckout && integration?.checkout_url;
+  const checkoutUrl = integration?.checkout_url ?? undefined;
+  const hasCheckout = access?.hasCheckout && !!checkoutUrl;
 
   // Group lessons by module
   const modules = data.modules || [];
@@ -125,6 +127,22 @@ function CourseDetailPage() {
 
   const isLessonCompleted = (lessonId: string) =>
     progress.some((p: any) => p.lesson_id === lessonId && p.completed);
+
+  const accessibleLessons = canAccessCourse
+    ? lessons
+    : lessons.filter((lesson: any) => lesson.is_free_preview);
+  const primaryLesson =
+    accessibleLessons.find((lesson: any) => !isLessonCompleted(lesson.id)) ||
+    accessibleLessons[0] ||
+    null;
+  const previewLessonsCount = lessons.filter(
+    (lesson: any) => lesson.is_free_preview
+  ).length;
+  const courseStateLabel = canAccessCourse
+    ? "Acesso liberado"
+    : previewLessonsCount > 0
+      ? "Prévia disponível"
+      : "Acesso restrito";
 
   const getLessonIcon = (lesson: any) => {
     const ct = lesson.content_type || "video";
@@ -255,100 +273,194 @@ function CourseDetailPage() {
               Voltar aos cursos
             </Link>
           </motion.div>
-        {/* Header */}
-        <motion.div
+        {/* Hero */}
+        <motion.section
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="mb-12"
+          className="relative mb-10 overflow-hidden rounded-[2rem] border border-border/15"
         >
-          {course.banner_image_url && (
-            <div className="mb-6 rounded-2xl overflow-hidden aspect-[3/1] border border-border/20">
+          {course.banner_image_url || course.cover_image_url ? (
+            <>
               <img
-                src={course.banner_image_url}
+                src={course.banner_image_url ?? course.cover_image_url ?? undefined}
                 alt={course.title}
-                className="w-full h-full object-cover"
+                className="absolute inset-0 h-full w-full object-cover"
               />
-            </div>
+              <div className="absolute inset-0 bg-gradient-to-br from-background/15 via-background/80 to-background" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,theme(colors.gold/20),transparent_32%)]" />
+            </>
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-card via-background to-background" />
           )}
 
-          <div className="flex items-start gap-6">
-            {course.cover_image_url ? (
-              <div className="hidden sm:block shrink-0 h-28 w-28 rounded-xl overflow-hidden border border-border/25">
-                <img
-                  src={course.cover_image_url}
-                  alt={course.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            ) : (
-              <div className="hidden sm:flex shrink-0 h-28 w-28 items-center justify-center rounded-xl border border-border/25 bg-card/15">
-                <BookOpen className="h-8 w-8 text-muted-foreground/50" />
-              </div>
-            )}
-
-            <div className="flex-1 min-w-0">
-              {(course as any).categories?.name && (
-                <span className="inline-block rounded-full bg-gold/[0.06] border border-gold/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.4em] text-gold/45 mb-3">
-                  {(course as any).categories.icon}{" "}
-                  {(course as any).categories.name}
+          <div className="relative grid gap-8 p-6 sm:p-8 lg:grid-cols-[minmax(0,1.35fr)_320px] lg:p-10">
+            <div className="max-w-3xl">
+              <div className="flex flex-wrap items-center gap-2.5">
+                {(course as any).categories?.name && (
+                  <span className="inline-flex items-center gap-2 rounded-full border border-gold/12 bg-gold/[0.07] px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.32em] text-gold/55">
+                    {(course as any).categories.icon}
+                    {(course as any).categories.name}
+                  </span>
+                )}
+                <span className="inline-flex items-center gap-2 rounded-full border border-border/15 bg-background/50 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-foreground/55 backdrop-blur">
+                  <Sparkles className="h-3 w-3 text-gold/55" />
+                  {courseStateLabel}
                 </span>
-              )}
+              </div>
 
-              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/85 tracking-tight leading-tight">
+              <h1 className="mt-5 font-display text-3xl font-bold leading-tight tracking-tight text-foreground sm:text-4xl lg:text-[2.8rem]">
                 {course.title}
               </h1>
 
-              {course.short_description && (
-                <p className="mt-3 text-[14px] leading-[1.8] text-muted-foreground/45 font-light max-w-2xl">
-                  {course.short_description}
-                </p>
-              )}
+              <p className="mt-4 max-w-2xl text-sm leading-[1.9] text-muted-foreground/75 sm:text-[15px]">
+                {course.short_description || "Explore o curso, acompanhe seu progresso e avance pelas aulas no seu ritmo."}
+              </p>
 
-              <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-muted-foreground/60">
-                <span className="flex items-center gap-1.5">
-                  <Video className="h-3.5 w-3.5" />
+              <div className="mt-6 flex flex-wrap items-center gap-3 text-xs text-muted-foreground/70">
+                <span className="inline-flex items-center gap-2 rounded-full border border-border/15 bg-background/45 px-3.5 py-2 backdrop-blur">
+                  <Video className="h-3.5 w-3.5 text-gold/55" />
                   {totalLessons} aula{totalLessons !== 1 ? "s" : ""}
                 </span>
+                <span className="inline-flex items-center gap-2 rounded-full border border-border/15 bg-background/45 px-3.5 py-2 backdrop-blur">
+                  <Layers className="h-3.5 w-3.5 text-gold/55" />
+                  {modules.length} módulo{modules.length !== 1 ? "s" : ""}
+                </span>
                 {course.total_duration && (
-                  <span className="flex items-center gap-1.5">
-                    <Clock className="h-3.5 w-3.5" />
+                  <span className="inline-flex items-center gap-2 rounded-full border border-border/15 bg-background/45 px-3.5 py-2 backdrop-blur">
+                    <Clock className="h-3.5 w-3.5 text-gold/55" />
                     {course.total_duration}
                   </span>
                 )}
               </div>
+
+              <div className="mt-8 flex flex-wrap gap-3">
+                {primaryLesson && (
+                  <Link
+                    to="/cursos/$courseId/aula/$lessonId"
+                    params={{ courseId, lessonId: primaryLesson.id }}
+                    className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-gold/90 px-6 text-xs font-bold uppercase tracking-[0.22em] text-gold-foreground shadow-lg shadow-gold/10 transition-all duration-300 hover:bg-gold"
+                  >
+                    {completedLessons > 0
+                      ? "Continuar curso"
+                      : canAccessCourse
+                        ? "Começar curso"
+                        : "Assistir prévia"}
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                )}
+
+                {!canAccessCourse && hasCheckout && (
+                  <a
+                    href={checkoutUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-border/15 bg-background/55 px-6 text-xs font-semibold uppercase tracking-[0.18em] text-foreground/70 backdrop-blur transition-all duration-300 hover:border-gold/20 hover:text-gold/80"
+                  >
+                    Desbloquear curso
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-[1.75rem] border border-border/15 bg-background/70 p-5 backdrop-blur-xl">
+              <div className="flex items-start gap-4">
+                {course.cover_image_url ? (
+                  <div className="h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-border/15">
+                    <img
+                      src={course.cover_image_url}
+                      alt={course.title}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-2xl border border-border/15 bg-card/20">
+                    <BookOpen className="h-8 w-8 text-muted-foreground/40" />
+                  </div>
+                )}
+
+                <div className="min-w-0 flex-1">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.28em] text-gold/55">
+                    Panorama do curso
+                  </p>
+                  <p className="mt-2 text-sm font-semibold leading-snug text-foreground/80">
+                    {course.title}
+                  </p>
+                  <p className="mt-1 text-[12px] leading-relaxed text-muted-foreground/55">
+                    {canAccessCourse
+                      ? `${completedLessons} de ${totalLessons} aulas já concluídas.`
+                      : previewLessonsCount > 0
+                        ? `${previewLessonsCount} aulas estão liberadas como prévia.`
+                        : "Acesso completo disponível após liberação ou compra."}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6 space-y-4">
+                <div>
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/50">
+                      Progresso geral
+                    </span>
+                    <span className="text-sm font-bold text-gold/70 tabular-nums">
+                      {progressPercent}%
+                    </span>
+                  </div>
+                  <Progress value={progressPercent} className="h-1.5" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-2xl border border-border/12 bg-card/10 px-4 py-3">
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/35">
+                      Aulas concluídas
+                    </p>
+                    <p className="mt-2 text-lg font-bold text-foreground/80 tabular-nums">
+                      {completedLessons}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-border/12 bg-card/10 px-4 py-3">
+                    <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground/35">
+                      Matrícula
+                    </p>
+                    <p className="mt-2 text-sm font-bold text-foreground/80">
+                      {enrollment ? "Ativa" : canAccessCourse ? "Liberado" : "Pendente"}
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </motion.div>
+        </motion.section>
 
         {/* Progress & Enrollment */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.15 }}
-          className="mb-10"
+          className="mb-10 grid gap-4 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)]"
         >
           {!canAccessCourse ? (
-            <div className="rounded-2xl border border-border/25 bg-card/15 p-5">
+            <div className="rounded-[1.75rem] border border-border/20 bg-card/15 p-5 sm:p-6">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-gold/45">
+                  <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-gold/50">
                     <Lock className="h-3.5 w-3.5" />
                     Curso bloqueado
                   </span>
-                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground/45">
+                  <p className="mt-3 max-w-xl text-sm leading-relaxed text-muted-foreground/55">
                     {access?.hasFreePreview
-                      ? "Este curso possui aulas de prévia liberadas para o aluno."
-                      : "Este curso só aparece para o aluno quando houver liberação ou estratégia de venda configurada."}
+                      ? "As aulas marcadas como prévia podem ser assistidas agora. O restante segue respeitando as regras reais de acesso da plataforma."
+                      : "Este curso permanece protegido até existir uma liberação válida para o aluno."}
                   </p>
                 </div>
 
                 {hasCheckout ? (
                   <a
-                    href={integration.checkout_url}
+                    href={checkoutUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-gold/12 bg-gold/15 px-6 text-xs font-semibold uppercase tracking-wider text-gold/70 transition-all duration-500 hover:bg-gold/22"
+                    className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-gold/12 bg-gold/15 px-6 text-xs font-semibold uppercase tracking-[0.18em] text-gold/75 transition-all duration-300 hover:bg-gold/22"
                   >
                     Desbloquear curso
                     <ExternalLink className="h-3.5 w-3.5" />
@@ -357,23 +469,65 @@ function CourseDetailPage() {
               </div>
             </div>
           ) : (
-            <div className="rounded-2xl border border-border/25 bg-card/15 p-5">
-              <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
-                  Seu progresso
-                </span>
-                <span className="text-[13px] font-bold text-gold/60 tabular-nums">
-                  {progressPercent}%
-                </span>
+            <div className="rounded-[1.75rem] border border-border/20 bg-card/15 p-5 sm:p-6">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground/55">
+                    Seu progresso
+                  </p>
+                  <p className="mt-2 text-sm text-foreground/70">
+                    {completedLessons} de {totalLessons} aula{totalLessons !== 1 ? "s" : ""} concluída{completedLessons !== 1 ? "s" : ""}
+                  </p>
+                </div>
+                {primaryLesson && (
+                  <Link
+                    to="/cursos/$courseId/aula/$lessonId"
+                    params={{ courseId, lessonId: primaryLesson.id }}
+                    className="inline-flex items-center gap-2 rounded-xl border border-border/15 bg-background/55 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-foreground/70 transition-colors hover:border-gold/20 hover:text-gold/80"
+                  >
+                    Ir para a próxima aula
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                )}
               </div>
-              <Progress value={progressPercent} className="h-1.5" />
-              <p className="mt-2.5 text-xs text-muted-foreground/60">
-                {completedLessons} de {totalLessons} aula
-                {totalLessons !== 1 ? "s" : ""} concluída
-                {completedLessons !== 1 ? "s" : ""}
-              </p>
+              <Progress value={progressPercent} className="mt-4 h-1.5" />
             </div>
           )}
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="rounded-[1.5rem] border border-border/15 bg-card/10 px-5 py-4">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/35">
+                Módulos
+              </p>
+              <p className="mt-2 text-2xl font-bold text-foreground/80 tabular-nums">
+                {modules.length}
+              </p>
+            </div>
+            <div className="rounded-[1.5rem] border border-border/15 bg-card/10 px-5 py-4">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/35">
+                Aulas liberadas
+              </p>
+              <p className="mt-2 text-2xl font-bold text-foreground/80 tabular-nums">
+                {accessibleLessons.length}
+              </p>
+            </div>
+            <div className="rounded-[1.5rem] border border-border/15 bg-card/10 px-5 py-4">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/35">
+                Conclusão
+              </p>
+              <p className="mt-2 text-2xl font-bold text-foreground/80 tabular-nums">
+                {progressPercent}%
+              </p>
+            </div>
+            <div className="rounded-[1.5rem] border border-border/15 bg-card/10 px-5 py-4">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground/35">
+                Status
+              </p>
+              <p className="mt-2 text-sm font-bold text-foreground/80">
+                {courseStateLabel}
+              </p>
+            </div>
+          </div>
         </motion.div>
 
         {/* Full description */}
@@ -431,7 +585,10 @@ function CourseDetailPage() {
                   );
                   if (modLessons.length === 0) return null;
 
-                  const isExpanded = expandedModules.has(mod.id);
+                  const isExpanded =
+                    expandedModules.size === 0
+                      ? modIdx === 0
+                      : expandedModules.has(mod.id);
                   const modCompleted = modLessons.filter((l: any) =>
                     isLessonCompleted(l.id)
                   ).length;
