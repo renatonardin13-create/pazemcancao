@@ -361,6 +361,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
         payload: rawBody,
         responseStatus: 200,
         responseMessage: 'Already processed (idempotent)',
+        ...audit, isSuccess: true,
       });
       return jsonResponse({ success: true, message: 'Already processed' });
     }
