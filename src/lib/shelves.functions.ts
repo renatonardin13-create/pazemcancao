@@ -251,15 +251,51 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       }
     }
 
-    // Find the best featured course for the banner — only from shelf courses
-    const shelfCourseIds = new Set(
-      result.flatMap((s: any) => s.courses.map((c: any) => c.id))
-    );
-    const featuredCourse = result.length > 0
-      ? result[0].courses.find(
-          (c: any) => c.banner_image_url || c.cover_image_url
-        ) || null
-      : null;
+    // Load hero banner config from platform_settings
+    const { data: bannerSetting } = await supabaseAdmin
+      .from('platform_settings')
+      .select('value')
+      .eq('key', 'hero_banner')
+      .maybeSingle();
+
+    const bannerConfig = bannerSetting?.value as any;
+    let featuredCourse: any = null;
+
+    if (bannerConfig?.enabled !== false) {
+      if (bannerConfig?.course_id) {
+        // Use the configured course
+        const configured = courseMap.get(bannerConfig.course_id);
+        if (configured) {
+          featuredCourse = {
+            ...configured,
+            // Override with admin-configured values if present
+            ...(bannerConfig.title ? { display_title: bannerConfig.title } : {}),
+            ...(bannerConfig.subtitle ? { display_subtitle: bannerConfig.subtitle } : {}),
+            ...(bannerConfig.image_url ? { banner_image_url: bannerConfig.image_url } : {}),
+            banner_fit: bannerConfig.fit || 'cover',
+            banner_aspect: bannerConfig.aspect || 'auto',
+          };
+        }
+      } else if (bannerConfig?.image_url) {
+        // Custom image without course link
+        featuredCourse = {
+          id: '__custom_banner__',
+          title: bannerConfig.title || '',
+          short_description: bannerConfig.subtitle || '',
+          banner_image_url: bannerConfig.image_url,
+          banner_fit: bannerConfig.fit || 'cover',
+          banner_aspect: bannerConfig.aspect || 'auto',
+          access_state: 'available',
+        };
+      } else {
+        // Fallback: first shelf course with an image
+        featuredCourse = result.length > 0
+          ? result[0].courses.find(
+              (c: any) => c.banner_image_url || c.cover_image_url
+            ) || null
+          : null;
+      }
+    }
 
     return {
       shelves: result,
