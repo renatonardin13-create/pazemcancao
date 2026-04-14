@@ -180,7 +180,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
 
       <div className="grid sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+          <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
             Título da Música *
           </Label>
           <Input
@@ -193,7 +193,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+          <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
             Categoria
           </Label>
           <Select value={category} onValueChange={setCategory} disabled={isSubmitting}>
@@ -210,7 +210,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+        <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
           Descrição (opcional)
         </Label>
         <Textarea
@@ -224,7 +224,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
 
       {/* MP3 Upload */}
       <div className="space-y-2">
-        <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+        <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
           Arquivo MP3 *
         </Label>
         {mp3File ? (
@@ -263,7 +263,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
 
       {/* Cover Upload */}
       <div className="space-y-2">
-        <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+        <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
           Capa da música (opcional)
         </Label>
         <ImageFieldHint ratio="1:1" recommendedSize="500x500" file={coverFile} />
@@ -316,7 +316,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
         </div>
         {isBonus && (
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+            <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
               Data de Liberação
             </Label>
             <Input

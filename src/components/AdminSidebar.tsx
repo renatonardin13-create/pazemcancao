@@ -81,7 +81,7 @@ export function AdminSidebar() {
         {/* Conteúdo */}
         <SidebarGroup>
           {!collapsed && (
-            <SidebarGroupLabel className="text-[11px] uppercase tracking-[0.3em] text-sidebar-foreground/25 px-4">
+            <SidebarGroupLabel className="text-[11px] uppercase tracking-wider text-sidebar-foreground/25 px-4">
               Conteúdo
             </SidebarGroupLabel>
           )}
@@ -104,7 +104,7 @@ export function AdminSidebar() {
         {/* Ferramentas */}
         <SidebarGroup>
           {!collapsed && (
-            <SidebarGroupLabel className="text-[11px] uppercase tracking-[0.3em] text-sidebar-foreground/25 px-4">
+            <SidebarGroupLabel className="text-[11px] uppercase tracking-wider text-sidebar-foreground/25 px-4">
               Ferramentas
             </SidebarGroupLabel>
           )}
@@ -127,7 +127,7 @@ export function AdminSidebar() {
         {/* Sistema */}
         <SidebarGroup>
           {!collapsed && (
-            <SidebarGroupLabel className="text-[11px] uppercase tracking-[0.3em] text-sidebar-foreground/25 px-4">
+            <SidebarGroupLabel className="text-[11px] uppercase tracking-wider text-sidebar-foreground/25 px-4">
               Sistema
             </SidebarGroupLabel>
           )}

@@ -197,7 +197,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
           {/* Cover */}
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+            <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
               Capa
             </Label>
             <ImageFieldHint ratio="1:1" recommendedSize="500x500" file={coverFile} previewUrl={coverPreview} />
@@ -245,7 +245,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
           {/* Title */}
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+            <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
               Título
             </Label>
             <Input
@@ -258,7 +258,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
           {/* Category */}
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+            <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
               Categoria
             </Label>
             <Select value={category} onValueChange={setCategory} disabled={isSubmitting}>
@@ -275,7 +275,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
           {/* Description */}
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+            <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
               Descrição
             </Label>
             <Textarea
@@ -303,7 +303,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
             </div>
             {isBonus && (
               <div className="space-y-2">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+                <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
                   Liberar em quantos dias?
                 </Label>
                 <div className="flex items-center gap-2">

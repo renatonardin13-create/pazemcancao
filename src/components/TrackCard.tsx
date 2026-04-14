@@ -111,12 +111,12 @@ export function TrackCard({ track, index }: TrackCardProps) {
           )}
 
           {/* Track number */}
-          <span className="absolute top-4 left-5 text-xs font-bold tracking-[0.3em] text-white/15">
+          <span className="absolute top-4 left-5 text-xs font-bold tracking-wider text-white/15">
             {String(track.id).padStart(2, "0")}
           </span>
 
           {/* Category badge */}
-          <span className="absolute top-4 right-4 text-[11px] font-medium tracking-[0.2em] uppercase rounded-full bg-black/20 backdrop-blur-sm border border-white/[0.06] px-3 py-1 text-white/30">
+          <span className="absolute top-4 right-4 text-[11px] font-medium tracking-wide uppercase rounded-full bg-black/20 backdrop-blur-sm border border-white/[0.06] px-3 py-1 text-white/30">
             {categoryEmojis[track.category] || ""} {track.category}
           </span>
 
@@ -177,7 +177,7 @@ export function TrackCard({ track, index }: TrackCardProps) {
           >
             <button
               onClick={handlePlay}
-              className={`inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase transition-colors duration-500 ${
+              className={`inline-flex items-center gap-2 text-xs font-semibold tracking-wide uppercase transition-colors duration-500 ${
                 isPlaying ? "text-gold/55" : "text-muted-foreground/30"
               }`}
             >
@@ -198,7 +198,7 @@ export function TrackCard({ track, index }: TrackCardProps) {
 
             <button
               onClick={handleDownload}
-              className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground/20 hover:text-gold/45 transition-colors duration-500"
+              className="inline-flex items-center gap-2 text-xs font-semibold tracking-wide uppercase text-muted-foreground/20 hover:text-gold/45 transition-colors duration-500"
             >
               <Download className="h-3 w-3" />
               Baixar Louvor

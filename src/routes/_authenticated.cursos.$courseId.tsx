@@ -222,7 +222,7 @@ function CourseDetailPage() {
       >
         <Link
           to="/cursos"
-          className="group flex items-center gap-2.5 text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground/30 hover:text-gold/50 transition-colors duration-500"
+          className="group flex items-center gap-2.5 text-xs font-semibold uppercase tracking-wider text-muted-foreground/30 hover:text-gold/50 transition-colors duration-500"
         >
           <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-x-1" />
           Cursos
@@ -264,7 +264,7 @@ function CourseDetailPage() {
 
             <div className="flex-1 min-w-0">
               {(course as any).categories?.name && (
-                <span className="inline-block rounded-full bg-gold/[0.06] border border-gold/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.4em] text-gold/45 mb-3">
+                <span className="inline-block rounded-full bg-gold/[0.06] border border-gold/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-widest text-gold/45 mb-3">
                   {(course as any).categories.icon}{" "}
                   {(course as any).categories.name}
                 </span>
@@ -307,7 +307,7 @@ function CourseDetailPage() {
             <div className="rounded-2xl border border-border/10 bg-card/5 p-5">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-gold/45">
+                  <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gold/45">
                     <Lock className="h-3.5 w-3.5" />
                     Curso bloqueado
                   </span>

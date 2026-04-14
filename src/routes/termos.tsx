@@ -15,7 +15,7 @@ function TermsPage() {
         <div className="mx-auto flex max-w-3xl items-center gap-3 px-6 py-6">
           <Link to="/" className="flex items-center gap-2 text-muted-foreground/30 hover:text-muted-foreground/50 transition-colors duration-500">
             <ArrowLeft className="h-3.5 w-3.5" />
-            <span className="text-xs font-medium uppercase tracking-[0.3em]">Voltar</span>
+            <span className="text-xs font-medium uppercase tracking-wider">Voltar</span>
           </Link>
         </div>
       </header>

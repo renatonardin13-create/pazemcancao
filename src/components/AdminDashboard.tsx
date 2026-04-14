@@ -607,7 +607,7 @@ export function AdminDashboard() {
                   ))}
                   {analytics.recentDownloads?.length > 0 && (
                     <div className="border-t border-border/15 p-5">
-                      <h4 className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/35 mb-4 font-medium">Downloads Recentes</h4>
+                      <h4 className="text-[11px] uppercase tracking-wide text-muted-foreground/35 mb-4 font-medium">Downloads Recentes</h4>
                       <div className="space-y-2">
                         {analytics.recentDownloads.slice(0, 10).map((d: any, i: number) => (
                           <div key={i} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-card/15 transition-colors">
@@ -641,9 +641,9 @@ export function AdminDashboard() {
               ) : (
                 <>
                   <div className="grid grid-cols-[1fr_80px_80px] gap-2 px-5 py-3.5 border-b border-border/15 bg-card/5">
-                    <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground/30 font-medium">Usuário</span>
-                    <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground/30 text-right font-medium">Plays</span>
-                    <span className="text-xs uppercase tracking-[0.3em] text-muted-foreground/30 text-right font-medium">Downloads</span>
+                    <span className="text-xs uppercase tracking-wider text-muted-foreground/30 font-medium">Usuário</span>
+                    <span className="text-xs uppercase tracking-wider text-muted-foreground/30 text-right font-medium">Plays</span>
+                    <span className="text-xs uppercase tracking-wider text-muted-foreground/30 text-right font-medium">Downloads</span>
                   </div>
                   {analytics.userActivity.map((u: any) => (
                     <div key={u.email} className="grid grid-cols-[1fr_80px_80px] gap-2 px-5 py-3 border-b border-border/5 hover:bg-card/15 transition-colors">

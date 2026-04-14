@@ -92,7 +92,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
         )}
 
         {/* Content type badge */}
-        <span className="absolute top-4 right-4 text-[11px] font-medium tracking-[0.2em] uppercase rounded-full bg-black/20 backdrop-blur-sm border border-white/[0.06] px-3 py-1 text-white/30">
+        <span className="absolute top-4 right-4 text-[11px] font-medium tracking-wide uppercase rounded-full bg-black/20 backdrop-blur-sm border border-white/[0.06] px-3 py-1 text-white/30">
           {item.content_type === "ebook" ? "📚 E-book" :
            item.content_type === "video" ? "🎬 Vídeo" :
            item.content_type === "free_lesson" ? "🎓 Aula" :
@@ -190,7 +190,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-gold/55 hover:text-gold/80 transition-colors duration-500"
+                  className="inline-flex items-center gap-2 text-xs font-semibold tracking-wide uppercase text-gold/55 hover:text-gold/80 transition-colors duration-500"
                 >
                   <Download className="h-3 w-3" />
                   Baixar
@@ -202,7 +202,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-gold/55 hover:text-gold/80 transition-colors duration-500"
+                  className="inline-flex items-center gap-2 text-xs font-semibold tracking-wide uppercase text-gold/55 hover:text-gold/80 transition-colors duration-500"
                 >
                   <Play className="h-3 w-3" />
                   Assistir
@@ -215,7 +215,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
               )}
             </>
           ) : isPendingRelease ? (
-            <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-blue-400/45">
+            <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-wide uppercase text-blue-400/45">
               <Clock className="h-3 w-3" />
               Em breve
             </span>
@@ -229,7 +229,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
               {item.unlockRuleContentTitle ? `Assistir "${item.unlockRuleContentTitle}"` : "Pré-requisito pendente"}
             </Link>
           ) : (
-            <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-gold/45">
+            <span className="inline-flex items-center gap-2 text-xs font-semibold tracking-wide uppercase text-gold/45">
               <ShoppingCart className="h-3 w-3" />
               {item.sales_page_url ? "Adquirir Acesso" : "Conteúdo Exclusivo"}
             </span>

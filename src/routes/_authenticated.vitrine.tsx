@@ -108,7 +108,7 @@ function VitrinePage() {
 
             {isLoading ? (
               <div className="text-center py-24">
-                <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+                <p className="text-[11px] uppercase tracking-widest text-muted-foreground/25 animate-pulse">
                   Carregando vitrine...
                 </p>
               </div>
@@ -229,7 +229,7 @@ function CourseCard({ course }: { course: any }) {
               <div className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-md border border-gold/20 flex items-center justify-center mb-3">
                 <Lock className="h-6 w-6 text-gold/70" />
               </div>
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-gold/50">
+              <span className="text-xs font-bold uppercase tracking-wide text-gold/50">
                 {isBlocked ? "Acesso Bloqueado" : isExpired ? "Acesso Expirado" : "Conteúdo Premium"}
               </span>
             </div>

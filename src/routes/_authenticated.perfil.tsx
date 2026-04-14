@@ -101,7 +101,7 @@ function ProfilePage() {
       <main className="flex-1 mx-auto w-full max-w-[800px] px-4 sm:px-6 py-8 space-y-6">
         {isLoading ? (
           <div className="text-center py-24">
-            <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+            <p className="text-[11px] uppercase tracking-widest text-muted-foreground/25 animate-pulse">
               Carregando perfil...
             </p>
           </div>

@@ -376,7 +376,7 @@ function LoginPage() {
                 Paz em Canção
               </h1>
               <div className="mx-auto mt-3 h-px w-10 bg-gradient-to-r from-transparent via-gold/12 to-transparent" />
-              <p className="mt-3 text-xs text-muted-foreground/60 tracking-[0.3em] uppercase">
+              <p className="mt-3 text-xs text-muted-foreground/60 tracking-wider uppercase">
                 Sua biblioteca espiritual
               </p>
             </div>
@@ -428,7 +428,7 @@ function LoginPage() {
 
                       <form onSubmit={handleLogin} className="space-y-6">
                         <div className="space-y-3">
-                          <Label htmlFor="email" className="text-sm font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                          <Label htmlFor="email" className="text-sm font-medium uppercase tracking-wider text-muted-foreground/60">
                             E-mail
                           </Label>
                           <div className="relative">
@@ -446,7 +446,7 @@ function LoginPage() {
                         </div>
 
                         <div className="space-y-3">
-                          <Label htmlFor="password" className="text-sm font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                          <Label htmlFor="password" className="text-sm font-medium uppercase tracking-wider text-muted-foreground/60">
                             Senha
                           </Label>
                           <div className="relative">
@@ -535,7 +535,7 @@ function LoginPage() {
 
                           <form onSubmit={handleSignup} className="space-y-4">
                             <div className="space-y-2">
-                              <Label htmlFor="signup-name" className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                              <Label htmlFor="signup-name" className="text-xs font-medium uppercase tracking-wider text-muted-foreground/60">
                                 Nome completo
                               </Label>
                               <div className="relative">
@@ -553,7 +553,7 @@ function LoginPage() {
                             </div>
 
                             <div className="space-y-2">
-                              <Label htmlFor="signup-email" className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                              <Label htmlFor="signup-email" className="text-xs font-medium uppercase tracking-wider text-muted-foreground/60">
                                 E-mail
                               </Label>
                               <div className="relative">
@@ -571,7 +571,7 @@ function LoginPage() {
                             </div>
 
                             <div className="space-y-2">
-                              <Label htmlFor="signup-password" className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                              <Label htmlFor="signup-password" className="text-xs font-medium uppercase tracking-wider text-muted-foreground/60">
                                 Senha
                               </Label>
                               <div className="relative">
@@ -590,7 +590,7 @@ function LoginPage() {
                             </div>
 
                             <div className="space-y-2">
-                              <Label htmlFor="signup-confirm" className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                              <Label htmlFor="signup-confirm" className="text-xs font-medium uppercase tracking-wider text-muted-foreground/60">
                                 Confirmar senha
                               </Label>
                               <div className="relative">
@@ -690,7 +690,7 @@ function LoginPage() {
 
                       <form onSubmit={handleResetRequest} className="space-y-6">
                         <div className="space-y-2.5">
-                          <Label htmlFor="reset-email" className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                          <Label htmlFor="reset-email" className="text-xs font-medium uppercase tracking-wider text-muted-foreground/60">
                             E-mail
                           </Label>
                           <div className="relative">
@@ -812,7 +812,7 @@ function LoginPage() {
 
                       <form onSubmit={handleNewPassword} className="space-y-6">
                         <div className="space-y-2.5">
-                          <Label htmlFor="new-password" className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                          <Label htmlFor="new-password" className="text-xs font-medium uppercase tracking-wider text-muted-foreground/60">
                             Nova Senha
                           </Label>
                           <div className="relative">
@@ -831,7 +831,7 @@ function LoginPage() {
                         </div>
 
                         <div className="space-y-2.5">
-                          <Label htmlFor="confirm-password" className="text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/60">
+                          <Label htmlFor="confirm-password" className="text-xs font-medium uppercase tracking-wider text-muted-foreground/60">
                             Confirmar Senha
                           </Label>
                           <div className="relative">

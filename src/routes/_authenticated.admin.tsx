@@ -14,7 +14,7 @@ function AdminLayout() {
   if (adminLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <p className="text-[11px] uppercase tracking-[0.4em] text-gold/25 animate-pulse">
+        <p className="text-[11px] uppercase tracking-widest text-gold/25 animate-pulse">
           Verificando acesso...
         </p>
       </div>
@@ -37,14 +37,14 @@ function AdminLayout() {
           <div className="mt-8 flex flex-col items-center gap-3">
             <Link
               to="/downloads"
-              className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.3em] text-gold/45 hover:text-gold/65 transition-colors duration-500"
+              className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-wider text-gold/45 hover:text-gold/65 transition-colors duration-500"
             >
               <ArrowLeft className="h-3 w-3" />
               Voltar
             </Link>
             <button
               onClick={() => logout()}
-              className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.3em] text-muted-foreground/30 hover:text-muted-foreground/50 transition-colors duration-500"
+              className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-wider text-muted-foreground/30 hover:text-muted-foreground/50 transition-colors duration-500"
             >
               <LogOut className="h-3 w-3" />
               Sair

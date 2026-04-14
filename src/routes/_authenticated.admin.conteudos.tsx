@@ -300,7 +300,7 @@ function AdminContentPage() {
           </DialogHeader>
           <div className="space-y-4 pt-2">
             <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Tipo</Label>
+              <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">Tipo</Label>
               <Select value={contentType} onValueChange={setContentType} disabled={isSubmitting}>
                 <SelectTrigger className="bg-card/15 border-border/15 text-sm">
                   <SelectValue />
@@ -315,18 +315,18 @@ function AdminContentPage() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Título</Label>
+              <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">Título</Label>
               <Input value={title} onChange={(e) => setTitle(e.target.value)} className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Descrição</Label>
+              <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">Descrição</Label>
               <Textarea value={description} onChange={(e) => setDescription(e.target.value)} className="bg-card/15 border-border/15 text-sm min-h-[60px]" disabled={isSubmitting} />
             </div>
 
             {/* Cover upload */}
             <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Capa</Label>
+              <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">Capa</Label>
               <ImageFieldHint ratio="16:9" recommendedSize="1280x720" autoCrop file={coverFile} previewUrl={editItem?.cover_url || null} />
               <div className="flex items-center gap-3">
                 {(editItem?.cover_url || coverFile) && (
@@ -346,7 +346,7 @@ function AdminContentPage() {
             {/* File upload for ebook/material */}
             {(contentType === "ebook" || contentType === "material") && (
               <div className="space-y-2">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+                <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
                   Arquivo ({contentType === "ebook" ? "PDF" : "PDF, DOC, etc."})
                 </Label>
                 <label className="flex items-center gap-2 cursor-pointer rounded-lg border border-border/15 bg-card/15 px-3 py-2 text-[11px] text-muted-foreground/50 hover:border-gold/20 hover:text-gold/60 transition-all">
@@ -362,21 +362,21 @@ function AdminContentPage() {
             {/* Video URL */}
             {(contentType === "video" || contentType === "free_lesson") && (
               <div className="space-y-2">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">URL do Vídeo</Label>
+                <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">URL do Vídeo</Label>
                 <Input value={videoUrl} onChange={(e) => setVideoUrl(e.target.value)} placeholder="https://youtube.com/watch?v=..." className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
               </div>
             )}
 
             {/* Sales page URL */}
             <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Página de Vendas (opcional)</Label>
+              <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">Página de Vendas (opcional)</Label>
               <Input value={salesPageUrl} onChange={(e) => setSalesPageUrl(e.target.value)} placeholder="https://kiwify.com.br/..." className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
               <p className="text-[11px] text-muted-foreground/25">Se preenchido, aparecerá um botão de compra para não-compradores</p>
             </div>
 
             {/* Access Mode */}
             <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Modo de Acesso</Label>
+              <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">Modo de Acesso</Label>
               <Select value={accessMode} onValueChange={setAccessMode} disabled={isSubmitting}>
                 <SelectTrigger className="bg-card/15 border-border/15 text-sm">
                   <SelectValue />
@@ -392,7 +392,7 @@ function AdminContentPage() {
             {/* Release Days - only for liberar_em_dias */}
             {accessMode === "liberar_em_dias" && (
               <div className="space-y-2">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+                <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">
                   Dias para liberar após compra
                 </Label>
                 <Input
@@ -413,7 +413,7 @@ function AdminContentPage() {
 
             {/* Display Category */}
             <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Categoria de Exibição</Label>
+              <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">Categoria de Exibição</Label>
               <Select value={displayCategory || "__none__"} onValueChange={(v) => setDisplayCategory(v === "__none__" ? "" : v)} disabled={isSubmitting}>
                 <SelectTrigger className="bg-card/15 border-border/15 text-sm">
                   <SelectValue placeholder="Selecione..." />
@@ -428,13 +428,13 @@ function AdminContentPage() {
 
             {/* Badge Text */}
             <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Texto do Badge (opcional)</Label>
+              <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">Texto do Badge (opcional)</Label>
               <Input value={badgeText} onChange={(e) => setBadgeText(e.target.value)} placeholder="Ex: NOVO, BÔNUS, EM BREVE" className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
             </div>
 
             {/* Sort Order */}
             <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Ordem de Exibição</Label>
+              <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">Ordem de Exibição</Label>
               <Input type="number" min="0" value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} placeholder="Automático" className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
             </div>
 
@@ -449,14 +449,14 @@ function AdminContentPage() {
 
             {isFeatured && (
               <div className="space-y-2">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Prioridade do Destaque</Label>
+                <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">Prioridade do Destaque</Label>
                 <Input type="number" min="0" value={featuredPriority} onChange={(e) => setFeaturedPriority(e.target.value)} placeholder="0 = maior prioridade" className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
               </div>
             )}
 
             {/* Journey Group */}
             <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Trilha Emocional</Label>
+              <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">Trilha Emocional</Label>
               <Select value={journeyGroup || "__none__"} onValueChange={(v) => setJourneyGroup(v === "__none__" ? "" : v)} disabled={isSubmitting}>
                 <SelectTrigger className="bg-card/15 border-border/15 text-sm">
                   <SelectValue placeholder="Selecione..." />
@@ -472,14 +472,14 @@ function AdminContentPage() {
             {/* Journey Order */}
             {journeyGroup && journeyGroup !== "none" && (
               <div className="space-y-2">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Posição na Trilha</Label>
+                <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">Posição na Trilha</Label>
                 <Input type="number" min="1" value={journeyOrder} onChange={(e) => setJourneyOrder(e.target.value)} placeholder="Ex: 1, 2, 3..." className="bg-card/15 border-border/15 text-sm" disabled={isSubmitting} />
               </div>
             )}
 
             {/* Unlock Rule */}
             <div className="space-y-2">
-              <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Regra de Desbloqueio</Label>
+              <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">Regra de Desbloqueio</Label>
               <Select value={unlockRuleType} onValueChange={setUnlockRuleType} disabled={isSubmitting}>
                 <SelectTrigger className="bg-card/15 border-border/15 text-sm">
                   <SelectValue />
@@ -495,7 +495,7 @@ function AdminContentPage() {
 
             {unlockRuleType !== "none" && (
               <div className="space-y-2">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">Conteúdo Pré-requisito</Label>
+                <Label className="text-[11px] uppercase tracking-wide text-muted-foreground/40">Conteúdo Pré-requisito</Label>
                 <Select value={unlockRuleContentId} onValueChange={setUnlockRuleContentId} disabled={isSubmitting}>
                   <SelectTrigger className="bg-card/15 border-border/15 text-sm">
                     <SelectValue placeholder="Selecione o conteúdo..." />

@@ -421,7 +421,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   if (isLoading) {
     return (
       <div className="text-center py-16">
-        <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+        <p className="text-[11px] uppercase tracking-widest text-muted-foreground/25 animate-pulse">
           Carregando módulos...
         </p>
       </div>

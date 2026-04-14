@@ -887,7 +887,7 @@ export default function AdminVitrinePage() {
 
               {isLoading ? (
                 <div className="py-16 text-center">
-                  <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+                  <p className="text-[11px] uppercase tracking-widest text-muted-foreground/25 animate-pulse">
                     Carregando prateleiras...
                   </p>
                 </div>
@@ -1009,7 +1009,7 @@ export default function AdminVitrinePage() {
                         <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
                         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
                         <div className="absolute bottom-2 left-3">
-                          <p className="text-[7px] font-bold uppercase tracking-[0.3em] text-gold/40">Em destaque</p>
+                          <p className="text-[7px] font-bold uppercase tracking-wider text-gold/40">Em destaque</p>
                           <p className="text-xs font-bold text-foreground/95 leading-tight mt-0.5 line-clamp-1">
                             {previewFeatured.display_title || previewFeatured.title || "Banner Principal"}
                           </p>

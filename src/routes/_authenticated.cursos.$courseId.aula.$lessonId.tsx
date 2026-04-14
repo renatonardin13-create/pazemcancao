@@ -83,7 +83,7 @@ function LessonDetailPage() {
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
           <div className="w-px h-12 mx-auto bg-gradient-to-b from-transparent via-gold/20 to-transparent animate-pulse mb-4" />
-          <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+          <p className="text-[11px] uppercase tracking-widest text-muted-foreground/25 animate-pulse">
             Carregando aula...
           </p>
         </div>
