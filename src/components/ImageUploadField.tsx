@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Label } from "@/components/ui/label";
 import { Upload, X, Loader2, CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
+import { toastError } from "@/lib/toast-utils";
 import { Progress } from "@/components/ui/progress";
 
 interface ImageUploadFieldProps {
