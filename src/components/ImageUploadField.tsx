@@ -1,8 +1,9 @@
 import { useState, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Label } from "@/components/ui/label";
-import { Upload, X, Loader2 } from "lucide-react";
+import { Upload, X, Loader2, CheckCircle, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
+import { Progress } from "@/components/ui/progress";
 
 interface ImageUploadFieldProps {
   label: string;
@@ -18,6 +19,8 @@ interface ImageUploadFieldProps {
 
 const labelClass = "text-sm font-semibold text-foreground/80";
 
+type UploadState = "idle" | "reading" | "uploading" | "success" | "error";
+
 export function ImageUploadField({
   label,
   hint,
@@ -29,7 +32,10 @@ export function ImageUploadField({
   aspectClass = "aspect-video",
   uploadLabel = "Clique para fazer upload",
 }: ImageUploadFieldProps) {
-  const [uploading, setUploading] = useState(false);
+  const [uploadState, setUploadState] = useState<UploadState>("idle");
+  const [progress, setProgress] = useState(0);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = useCallback(
@@ -43,8 +49,17 @@ export function ImageUploadField({
         return;
       }
 
-      setUploading(true);
+      // Show local preview immediately
+      const localUrl = URL.createObjectURL(file);
+      setPreviewUrl(localUrl);
+      setErrorMsg("");
+      setUploadState("reading");
+      setProgress(10);
+
       try {
+        setUploadState("uploading");
+        setProgress(30);
+
         const ext = file.name.split(".").pop() || "jpg";
         const fileName = `${folder}/${crypto.randomUUID()}.${ext}`;
 
@@ -52,19 +67,35 @@ export function ImageUploadField({
           .from(bucket)
           .upload(fileName, file, { upsert: true });
 
+        setProgress(80);
+
         if (uploadError) throw uploadError;
 
         const { data: urlData } = supabase.storage
           .from(bucket)
           .getPublicUrl(fileName);
 
-        onChange(`${urlData.publicUrl}?t=${Date.now()}`);
+        setProgress(100);
+        setUploadState("success");
+
+        const finalUrl = `${urlData.publicUrl}?t=${Date.now()}`;
+        onChange(finalUrl);
+        setPreviewUrl(null); // clear local preview, use final URL
+        URL.revokeObjectURL(localUrl);
         toast.success("Imagem enviada com sucesso!");
+
+        // Reset state after a moment
+        setTimeout(() => {
+          setUploadState("idle");
+          setProgress(0);
+        }, 2000);
       } catch (err: any) {
         console.error("Upload error:", err);
+        setUploadState("error");
+        setErrorMsg(err.message || "Erro ao enviar imagem");
+        setPreviewUrl(null);
+        URL.revokeObjectURL(localUrl);
         toast.error(err.message || "Erro ao enviar imagem");
-      } finally {
-        setUploading(false);
       }
     },
     [bucket, folder, onChange]
@@ -81,6 +112,9 @@ export function ImageUploadField({
     const file = e.dataTransfer.files?.[0];
     if (file) handleUpload(file);
   };
+
+  const isUploading = uploadState === "reading" || uploadState === "uploading";
+  const displaySrc = previewUrl || value;
 
   return (
     <div className="space-y-2.5">
@@ -99,48 +133,87 @@ export function ImageUploadField({
 
       <div
         className={`rounded-lg border-2 border-dashed overflow-hidden transition-colors ${
-          value ? "border-border/20 bg-background/20" : "border-gold/40 bg-gold/[0.03] hover:bg-gold/[0.06]"
+          displaySrc ? "border-border/20 bg-background/20" : "border-gold/40 bg-gold/[0.03] hover:bg-gold/[0.06]"
         }`}
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
       >
-        {value ? (
+        {displaySrc ? (
           <div className="relative group">
             <img
-              src={value}
+              src={displaySrc}
               alt={label}
-              className={`w-full object-cover ${aspectClass}`}
+              className={`w-full object-cover ${aspectClass} ${isUploading ? "opacity-50" : ""}`}
               style={aspectRatio ? { aspectRatio } : undefined}
             />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
-              <button
-                type="button"
-                onClick={() => inputRef.current?.click()}
-                className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 rounded-lg bg-background/80 text-foreground text-xs font-medium mr-2"
-              >
-                Trocar
-              </button>
-              <button
-                type="button"
-                onClick={() => onChange("")}
-                className="absolute top-2 right-2 p-1.5 rounded-lg bg-destructive text-destructive-foreground transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
+            {/* Upload progress overlay */}
+            {isUploading && (
+              <div className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center gap-2">
+                <Loader2 className="h-7 w-7 animate-spin text-gold/80" />
+                <span className="text-xs text-white/80 font-medium">Enviando... {progress}%</span>
+                <div className="w-2/3">
+                  <Progress value={progress} className="h-1.5 bg-white/20" />
+                </div>
+              </div>
+            )}
+            {/* Success overlay */}
+            {uploadState === "success" && (
+              <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                <div className="flex items-center gap-2 bg-green-600/90 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                  <CheckCircle className="h-4 w-4" />
+                  Enviado!
+                </div>
+              </div>
+            )}
+            {/* Hover actions (only when idle) */}
+            {!isUploading && uploadState !== "success" && (
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+                <button
+                  type="button"
+                  onClick={() => inputRef.current?.click()}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 rounded-lg bg-background/80 text-foreground text-xs font-medium mr-2"
+                >
+                  Trocar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { onChange(""); setPreviewUrl(null); }}
+                  className="absolute top-2 right-2 p-1.5 rounded-lg bg-destructive text-destructive-foreground transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <button
             type="button"
-            onClick={() => inputRef.current?.click()}
-            disabled={uploading}
+            onClick={() => {
+              if (uploadState === "error") {
+                setUploadState("idle");
+                setErrorMsg("");
+              }
+              inputRef.current?.click();
+            }}
+            disabled={isUploading}
             className={`w-full flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors ${aspectClass} min-h-[120px]`}
             style={aspectRatio ? { aspectRatio } : undefined}
           >
-            {uploading ? (
+            {isUploading ? (
               <>
                 <Loader2 className="h-7 w-7 animate-spin text-gold/60" />
-                <span className="text-xs text-gold/60 font-medium">Enviando...</span>
+                <span className="text-xs text-gold/60 font-medium">Enviando... {progress}%</span>
+                <div className="w-2/3 max-w-[200px]">
+                  <Progress value={progress} className="h-1.5 bg-muted/20" />
+                </div>
+              </>
+            ) : uploadState === "error" ? (
+              <>
+                <AlertCircle className="h-7 w-7 text-destructive/60" />
+                <span className="text-xs text-destructive/70 font-medium">{errorMsg}</span>
+                <span className="text-[10px] text-muted-foreground/40 flex items-center gap-1">
+                  <RefreshCw className="h-3 w-3" /> Clique para tentar novamente
+                </span>
               </>
             ) : (
               <>
