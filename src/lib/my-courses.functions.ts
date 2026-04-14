@@ -197,3 +197,34 @@ export const getRecommendedCourses = createServerFn({ method: 'POST' })
 
     return { recommendations };
   });
+
+export const getMostAccessedCourses = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase } = context;
+
+    // Count active enrollments per course
+    const { data: allEnrollments } = await supabase
+      .from('enrollments')
+      .select('course_id')
+      .eq('status', 'active');
+
+    const countMap = new Map<string, number>();
+    for (const e of allEnrollments || []) {
+      countMap.set(e.course_id, (countMap.get(e.course_id) || 0) + 1);
+    }
+
+    // Get published courses
+    const { data: courses } = await supabase
+      .from('courses')
+      .select('id, title, cover_image_url, short_description, total_lessons, total_duration, status')
+      .eq('status', 'published');
+
+    const ranked = (courses || [])
+      .map((c: any) => ({ ...c, access_count: countMap.get(c.id) || 0 }))
+      .filter((c: any) => c.access_count > 0)
+      .sort((a: any, b: any) => b.access_count - a.access_count)
+      .slice(0, 10);
+
+    return { ranked };
+  });
