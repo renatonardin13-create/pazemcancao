@@ -26,6 +26,14 @@ export const Route = createFileRoute("/_authenticated/cursos/")({
 });
 
 function MeusCoursosPage() {
+  const { user } = useAuth();
+
+  const { data: profileData } = useProfileQuery({
+    queryKey: ["my-profile"],
+    queryFn: () => getMyProfile(),
+    staleTime: 60_000,
+  });
+
   const { data, isLoading } = useQuery({
     queryKey: ["my-courses"],
     queryFn: () => getMyCoursesData(),
@@ -48,6 +56,8 @@ function MeusCoursosPage() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
+  const displayName = profileData?.profile?.display_name || user?.email?.split("@")[0] || "aluno";
+  const firstName = displayName.split(" ")[0];
   const courses = data?.courses || [];
   const stats = data?.stats || { total: 0, inProgress: 0, completed: 0 };
 
