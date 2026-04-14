@@ -384,7 +384,7 @@ function HeroBanner({ course }: { course: any }) {
   const isCustomBanner = course.id === '__custom_banner__';
 
   return (
-    <div className="px-2 sm:px-4 lg:px-6 pt-2 sm:pt-4 mb-8 sm:mb-12">
+    <div className="px-2 sm:px-4 lg:px-6 pt-2 sm:pt-4 mb-10 sm:mb-14">
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
