@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/EmptyState";
 import { toastError } from "@/lib/toast-utils";
 import { ListSkeleton } from "@/components/LoadingSkeletons";
 import { createFileRoute } from "@tanstack/react-router";
@@ -197,10 +198,14 @@ function AdminJourneysPage() {
       {isLoading ? (
         <ListSkeleton rows={4} />
       ) : !journeys.length ? (
-        <div className="text-center py-16 rounded-2xl border border-border/30 bg-card/15">
-          <Compass className="h-8 w-8 text-muted-foreground/50 mx-auto mb-4" />
-          <p className="text-sm text-muted-foreground/70">Nenhuma trilha cadastrada.</p>
-        </div>
+        <EmptyState
+          icon={Compass}
+          title="Nenhuma trilha cadastrada"
+          description="Crie trilhas para organizar o conteúdo em jornadas de aprendizado."
+          actionLabel="Criar Trilha"
+          onAction={() => setShowForm(true)}
+          actionIcon={Plus}
+        />
       ) : (
         <div className="rounded-2xl border border-border/30 overflow-hidden">
           {journeys.map((item: any, index: number) => (

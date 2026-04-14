@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/EmptyState";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CardGridSkeleton } from "@/components/LoadingSkeletons";
 import { useQuery } from "@tanstack/react-query";
@@ -129,29 +130,22 @@ function MeusCoursosPage() {
           {isLoading ? (
             <CardGridSkeleton count={6} />
           ) : filtered.length === 0 ? (
-            <div className="text-center py-24">
-              <BookOpen className="h-10 w-10 text-muted-foreground/50 mx-auto mb-5" />
-              {courses.length === 0 ? (
-                <>
-                  <p className="text-sm text-muted-foreground/70 mb-2">
-                    Você ainda não possui cursos liberados.
-                  </p>
-                  <p className="text-[12px] text-muted-foreground/60 mb-6">
-                    Adquira um curso na vitrine para começar sua jornada.
-                  </p>
-                  <Link
-                    to="/vitrine"
-                    className="inline-flex items-center gap-2 rounded-xl bg-gold/15 text-gold/70 border border-gold/20 px-6 py-2.5 text-xs font-bold uppercase tracking-wider hover:bg-gold/25 hover:text-gold/90 transition-all"
-                  >
-                    Explorar Vitrine <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </>
-              ) : (
-                <p className="text-sm text-muted-foreground/70">
-                  Nenhum curso encontrado com os filtros aplicados.
-                </p>
-              )}
-            </div>
+            courses.length === 0 ? (
+              <EmptyState
+                icon={BookOpen}
+                title="Você ainda não possui cursos"
+                description="Adquira um curso na vitrine para começar sua jornada de aprendizado."
+                actionLabel="Explorar Vitrine"
+                actionTo="/vitrine"
+                actionIcon={ArrowRight}
+              />
+            ) : (
+              <EmptyState
+                icon={Search}
+                title="Nenhum curso encontrado"
+                description="Tente ajustar os filtros para encontrar o que procura."
+              />
+            )
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {filtered.map((course: any, idx: number) => (

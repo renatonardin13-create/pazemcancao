@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/EmptyState";
 import { toastError } from "@/lib/toast-utils";
 import { ListSkeleton } from "@/components/LoadingSkeletons";
 import { createFileRoute } from "@tanstack/react-router";
@@ -527,10 +528,14 @@ function AdminUsersPage() {
       {isLoading ? (
         <ListSkeleton rows={6} />
       ) : !filteredBuyers.length ? (
-        <div className="rounded-xl border border-border/30 bg-card/15 py-16 text-center">
-          <Users className="mx-auto mb-4 h-8 w-8 text-muted-foreground/50" />
-          <p className="text-sm text-muted-foreground/70">Nenhum aluno encontrado.</p>
-        </div>
+        <EmptyState
+          icon={Users}
+          title="Nenhum aluno encontrado"
+          description="Quando novos alunos se cadastrarem ou forem adicionados, eles aparecerão aqui."
+          actionLabel="Adicionar Aluno"
+          onAction={() => setAddOpen(true)}
+          actionIcon={UserPlus}
+        />
       ) : (
         <div className="rounded-xl border border-border/30 overflow-hidden">
           {/* Table header */}

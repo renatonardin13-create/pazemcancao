@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/EmptyState";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
@@ -134,10 +135,11 @@ function ContentPage() {
             </p>
           </div>
         ) : !items.length ? (
-          <div className="text-center py-16 rounded-2xl border border-border/30 bg-card/15">
-            <BookOpen className="h-8 w-8 text-muted-foreground/50 mx-auto mb-4" />
-            <p className="text-sm text-muted-foreground/70">Nenhum conteúdo disponível ainda.</p>
-          </div>
+          <EmptyState
+            icon={BookOpen}
+            title="Nenhum conteúdo disponível"
+            description="Novos conteúdos serão adicionados em breve. Volte mais tarde!"
+          />
         ) : (
           <>
             {/* 2. Continue sua caminhada */}

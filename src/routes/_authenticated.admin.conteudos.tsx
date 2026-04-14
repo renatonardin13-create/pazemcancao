@@ -1,3 +1,4 @@
+import { EmptyState } from "@/components/EmptyState";
 import { toastError } from "@/lib/toast-utils";
 import { ListSkeleton } from "@/components/LoadingSkeletons";
 import { createFileRoute } from "@tanstack/react-router";
@@ -563,11 +564,14 @@ function AdminContentPage() {
       {isLoading ? (
         <ListSkeleton rows={5} />
       ) : !items.length ? (
-        <div className="text-center py-16 rounded-2xl border border-border/30 bg-card/15">
-          <BookOpen className="h-8 w-8 text-muted-foreground/50 mx-auto mb-4" />
-          <p className="text-sm text-muted-foreground/70">Nenhum conteúdo cadastrado.</p>
-          <p className="text-xs text-muted-foreground/60 mt-1">Clique em "Novo Conteúdo" para adicionar.</p>
-        </div>
+        <EmptyState
+          icon={BookOpen}
+          title="Nenhum conteúdo cadastrado"
+          description="Crie seu primeiro conteúdo para disponibilizá-lo aos alunos."
+          actionLabel="Novo Conteúdo"
+          onAction={() => setFormOpen(true)}
+          actionIcon={Plus}
+        />
       ) : (
         <div className="space-y-2">
           {items.map((item: any) => {
