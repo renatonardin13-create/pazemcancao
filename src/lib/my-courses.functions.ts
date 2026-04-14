@@ -101,8 +101,6 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
         access_origin: enrollment?.access_origin,
       };
     })
-    // Only show courses that have at least 1 lesson (eligible for consumption)
-    .filter((c) => c.lesson_count > 0)
     .sort((a, b) => {
       const aDate = new Date(a.granted_at || a.enrolled_at || 0).getTime();
       const bDate = new Date(b.granted_at || b.enrolled_at || 0).getTime();
