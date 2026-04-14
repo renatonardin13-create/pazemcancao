@@ -99,12 +99,14 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   const [lesContentType, setLesContentType] = useState<"video" | "pdf" | "file" | "link">("video");
   const [lesThumbnailUrl, setLesThumbnailUrl] = useState("");
   const [lesPublished, setLesPublished] = useState(true);
+  const [lesFileUploading, setLesFileUploading] = useState(false);
 
   // Materials state
   const [matTitle, setMatTitle] = useState("");
   const [matUrl, setMatUrl] = useState("");
   const [matFile, setMatFile] = useState<File | null>(null);
   const [matType, setMatType] = useState<"file" | "link" | "pdf">("file");
+  const [matDialogOpen, setMatDialogOpen] = useState(false);
 
   const { data, isLoading } = useQuery({
     queryKey,
@@ -363,11 +365,11 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
     }
     if (!lessonDialog.moduleId) return;
     setLesTitleError("");
-    const payload = {
+    const payload: any = {
       title: lesTitle.trim(),
       description: lesDesc.trim() || undefined,
-      video_url: lesContentType === "video" ? (lesVideoUrl.trim() || undefined) : undefined,
-      content_url: lesContentType !== "video" ? (lesContentUrl.trim() || undefined) : undefined,
+      video_url: lesContentType === "video" ? (lesVideoUrl.trim() || undefined) : (lessonDialog.editId ? "" : undefined),
+      content_url: lesContentType !== "video" ? (lesContentUrl.trim() || undefined) : (lessonDialog.editId ? "" : undefined),
       content_type: lesContentType,
       is_free_preview: lesFreePreview,
       duration: lesDuration || "0:00",
@@ -916,10 +918,52 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             {(lesContentType === "pdf" || lesContentType === "file") && (
               <div className="space-y-2">
                 <Label className="text-sm font-semibold">Upload de Arquivo</Label>
-                <div className="border-2 border-dashed border-border/20 rounded-xl p-8 flex flex-col items-center gap-2 cursor-pointer hover:border-gold/30 hover:bg-gold/3 transition-all">
-                  <Download className="h-5 w-5 text-muted-foreground/60" />
-                  <span className="text-[12px] text-muted-foreground/70">Clique para upload</span>
-                </div>
+                {lesContentUrl ? (
+                  <div className="flex items-center gap-2 rounded-xl bg-card/20 border border-gold/20 px-4 py-3">
+                    <FileText className="h-4 w-4 text-gold/60 shrink-0" />
+                    <span className="text-[12px] text-foreground/70 flex-1 truncate">{lesContentUrl.split("/").pop()?.split("?")[0] || "Arquivo"}</span>
+                    <button type="button" onClick={() => setLesContentUrl("")} className="text-muted-foreground/60 hover:text-destructive transition-colors">
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ) : (
+                  <label className="border-2 border-dashed border-border/20 rounded-xl p-8 flex flex-col items-center gap-2 cursor-pointer hover:border-gold/30 hover:bg-gold/3 transition-all">
+                    {lesFileUploading ? (
+                      <Loader2 className="h-5 w-5 text-gold/60 animate-spin" />
+                    ) : (
+                      <Upload className="h-5 w-5 text-muted-foreground/60" />
+                    )}
+                    <span className="text-[12px] text-muted-foreground/70">
+                      {lesFileUploading ? "Enviando..." : "Clique para upload"}
+                    </span>
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept={lesContentType === "pdf" ? ".pdf" : undefined}
+                      disabled={lesFileUploading}
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (!file) return;
+                        setLesFileUploading(true);
+                        try {
+                          const ext = file.name.split(".").pop() || "bin";
+                          const baseName = file.name.replace(/\.[^/.]+$/, "").toLowerCase().replace(/[^a-z0-9-_]+/g, "-").slice(0, 60) || "file";
+                          const path = `lessons/${courseId}/${Date.now()}-${baseName}.${ext}`;
+                          const { error: uploadError } = await supabase.storage.from("content-files").upload(path, file, { upsert: true });
+                          if (uploadError) throw uploadError;
+                          const { data: urlData } = supabase.storage.from("content-files").getPublicUrl(path);
+                          setLesContentUrl(`${urlData.publicUrl}?t=${Date.now()}`);
+                          toast.success("Arquivo enviado com sucesso");
+                        } catch (err: any) {
+                          toast.error("Erro no upload: " + (err.message || "Tente novamente"));
+                        } finally {
+                          setLesFileUploading(false);
+                          e.target.value = "";
+                        }
+                      }}
+                    />
+                  </label>
+                )}
               </div>
             )}
 
@@ -984,6 +1028,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                     setMatTitle("");
                     setMatUrl("");
                     setMatFile(null);
+                    setMatDialogOpen(true);
                   }}
                 >
                   <Download className="h-4 w-4" />
@@ -1001,6 +1046,8 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                     setMatType("link");
                     setMatTitle("");
                     setMatUrl("");
+                    setMatFile(null);
+                    setMatDialogOpen(true);
                   }}
                 >
                   <LinkIcon className="h-4 w-4" />
@@ -1008,7 +1055,79 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 </Button>
               </div>
 
-              
+              {/* Material add form */}
+              {matDialogOpen && lessonDialog.editId && (
+                <div className="rounded-xl border border-gold/20 bg-card/10 p-4 space-y-3">
+                  <Label className="text-sm font-semibold">
+                    {matType === "link" ? "Novo Link" : "Novo Arquivo"}
+                  </Label>
+                  <Input
+                    value={matTitle}
+                    onChange={(e) => setMatTitle(e.target.value)}
+                    placeholder="Título do material"
+                    className="bg-card/20 border-border/30"
+                  />
+                  {matType === "link" ? (
+                    <Input
+                      value={matUrl}
+                      onChange={(e) => setMatUrl(e.target.value)}
+                      placeholder="https://..."
+                      className="bg-card/20 border-border/30"
+                    />
+                  ) : (
+                    <div className="space-y-2">
+                      {matFile ? (
+                        <div className="flex items-center gap-2 rounded-lg bg-card/20 border border-border/30 px-3 py-2">
+                          <File className="h-3.5 w-3.5 text-gold/60" />
+                          <span className="text-xs text-foreground/70 flex-1 truncate">{matFile.name}</span>
+                          <button type="button" onClick={() => setMatFile(null)} className="text-muted-foreground/60 hover:text-destructive">
+                            <X className="h-3 w-3" />
+                          </button>
+                        </div>
+                      ) : (
+                        <label className="flex items-center gap-2 rounded-lg border border-dashed border-border/30 px-3 py-3 cursor-pointer hover:border-gold/30 transition-colors">
+                          <Upload className="h-4 w-4 text-muted-foreground/60" />
+                          <span className="text-xs text-muted-foreground/70">Selecionar arquivo</span>
+                          <input type="file" className="hidden" onChange={(e) => { setMatFile(e.target.files?.[0] || null); e.target.value = ""; }} />
+                        </label>
+                      )}
+                    </div>
+                  )}
+                  <div className="flex gap-2 justify-end">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setMatDialogOpen(false)}
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      type="button"
+                      size="sm"
+                      disabled={!matTitle.trim() || (matType === "link" ? !matUrl.trim() : !matFile) || createMatM.isPending}
+                      className="bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
+                      onClick={() => {
+                        createMatM.mutate(
+                          {
+                            lessonId: lessonDialog.editId!,
+                            title: matTitle.trim(),
+                            material_type: matType,
+                            url: matUrl.trim(),
+                            file: matFile || undefined,
+                          },
+                          {
+                            onSuccess: () => setMatDialogOpen(false),
+                          }
+                        );
+                      }}
+                    >
+                      {createMatM.isPending && <Loader2 className="h-3 w-3 mr-1 animate-spin" />}
+                      Adicionar
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Publicar aula */}
