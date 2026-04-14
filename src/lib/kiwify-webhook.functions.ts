@@ -200,7 +200,33 @@ function extractFields(rawBody: any) {
   const orderId = payload.order_id || rawBody.order_id || '';
   const uniqueEventId = extractEventId(payload, rawBody);
 
-  return { payload, status, customerEmail, customerName, orderId, uniqueEventId };
+  // Extract external product ID from payload (Kiwify, Hotmart, Cakto formats)
+  const externalProductId = (
+    payload.product?.id ||
+    payload.Product?.id ||
+    rawBody.product?.id ||
+    rawBody.Product?.id ||
+    payload.product_id ||
+    rawBody.product_id ||
+    ''
+  ).toString().trim();
+
+  return { payload, status, customerEmail, customerName, orderId, uniqueEventId, externalProductId };
+}
+
+// ─── Resolve course from external product ID via course_integrations ───
+async function resolveCourseByProductId(externalProductId: string): Promise<string | null> {
+  if (!externalProductId) return null;
+
+  const { data } = await supabaseAdmin
+    .from('course_integrations')
+    .select('course_id')
+    .eq('external_product_id', externalProductId)
+    .eq('is_enabled', true)
+    .eq('webhook_active', true)
+    .maybeSingle();
+
+  return data?.course_id || null;
 }
 
 // ─── Main handler ───
@@ -221,7 +247,10 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
 
   const requestUrl = new URL(request.url);
   const courseIdFromQuery = requestUrl.searchParams.get('course')?.trim() || null;
-  const { status, customerEmail, customerName, orderId, uniqueEventId } = extractFields(rawBody);
+  const { status, customerEmail, customerName, orderId, uniqueEventId, externalProductId } = extractFields(rawBody);
+
+  // Resolve course: prefer query param, fallback to product ID lookup via course_integrations
+  const resolvedCourseId = courseIdFromQuery || await resolveCourseByProductId(externalProductId);
 
   if (!customerEmail) {
     await logWebhookEvent({
@@ -324,7 +353,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       const unlocksCreated = await calculateContentUnlocks(customerEmail, orderId);
 
       let linkedCourseId: string | null = null;
-      if (courseIdFromQuery) {
+      if (resolvedCourseId) {
         const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
         const authUser = authUsers.users.find((user) => user.email?.toLowerCase() === customerEmail);
 
@@ -334,7 +363,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
             .upsert(
               {
                 user_id: authUser.id,
-                course_id: courseIdFromQuery,
+                course_id: resolvedCourseId,
                 email: customerEmail,
                 access_origin: 'webhook',
                 status: 'active',
@@ -344,7 +373,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
             );
 
           if (!enrollmentError) {
-            linkedCourseId = courseIdFromQuery;
+            linkedCourseId = resolvedCourseId;
           }
         }
       }
@@ -372,7 +401,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       .update({ access_enabled: false, status })
       .eq('email', customerEmail);
 
-    if (courseIdFromQuery) {
+    if (resolvedCourseId) {
       const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
       const authUser = authUsers.users.find((user) => user.email?.toLowerCase() === customerEmail);
       if (authUser) {
@@ -380,7 +409,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
           .from('enrollments')
           .update({ status })
           .eq('user_id', authUser.id)
-          .eq('course_id', courseIdFromQuery)
+          .eq('course_id', resolvedCourseId)
           .eq('status', 'active');
       }
     }
