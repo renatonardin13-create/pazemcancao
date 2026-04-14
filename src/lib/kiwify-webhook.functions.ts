@@ -339,7 +339,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
 
     const savedToken = (config?.auth_token || '').trim();
     if (savedToken && explicitToken && explicitToken !== savedToken) {
-      await logWebhookEvent({ eventType: 'auth_failed', payload: rawBody, responseStatus: 401, responseMessage: 'Invalid signature' });
+      await logWebhookEvent({ eventType: 'auth_failed', payload: rawBody, responseStatus: 401, responseMessage: 'Invalid signature', ...audit, isSuccess: false, errorDetails: 'Token mismatch' });
       return jsonResponse({ error: 'Invalid signature' }, 401);
     }
     if (savedToken && !explicitToken && bearerToken && bearerToken !== savedToken) {
