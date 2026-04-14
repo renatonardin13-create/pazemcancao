@@ -5,6 +5,8 @@ import {
   getCourseDetail,
   updateLessonProgress,
 } from "@/lib/courses.functions";
+import { StudentLayout } from "@/components/StudentLayout";
+import { FooterLinks } from "@/components/FooterLinks";
 import {
   ArrowLeft,
   CheckCircle2,
