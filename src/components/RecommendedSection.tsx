@@ -15,56 +15,126 @@ interface RecommendedSectionProps {
   viewedIds: string[];
   downloadedIds: string[];
   progressMap?: Record<string, any>;
+  popularityMap?: Record<string, { plays: number; downloads: number }>;
 }
 
-export function RecommendedSection({ items, hasAccess, viewedIds, downloadedIds, progressMap = {} }: RecommendedSectionProps) {
-  const recommendations = useMemo(() => {
-    const consumed = new Set([...viewedIds, ...downloadedIds]);
-    const completedIds = new Set(
-      Object.entries(progressMap)
-        .filter(([, p]) => p.completed_at)
-        .map(([id]) => id)
-    );
+/**
+ * Intelligent recommendation engine — scores each content item using
+ * multiple signals and returns the top picks.
+ *
+ * Signals used:
+ *  1. Freshness        — unseen content gets a strong boost
+ *  2. Continuity       — started-but-not-completed content ("continue watching")
+ *  3. Category affinity — items in the same category as recently consumed content
+ *  4. Popularity       — globally popular items (play + download count)
+ *  5. Recency          — recently published items
+ *  6. Curation         — admin-featured / journey / badge items
+ *  7. Accessibility    — unlocked / free content preferred
+ *
+ * Structure is ready for future AI-driven scoring (e.g. embedding similarity,
+ * collaborative filtering) — just add new score components below.
+ */
+function computeRecommendations(
+  items: any[],
+  viewedIds: string[],
+  downloadedIds: string[],
+  progressMap: Record<string, any>,
+  popularityMap: Record<string, { plays: number; downloads: number }>,
+): any[] {
+  const consumed = new Set([...viewedIds, ...downloadedIds]);
+  const completedIds = new Set(
+    Object.entries(progressMap)
+      .filter(([, p]) => p.completed_at)
+      .map(([id]) => id),
+  );
 
-    // Score each item
-    const scored = items
-      .filter((item) => item.show_as_card !== false)
-      .map((item) => {
-        let score = 0;
+  // Determine user's preferred categories from consumed content
+  const categoryFreq: Record<string, number> = {};
+  for (const item of items) {
+    if (consumed.has(item.id) || progressMap[item.id]?.viewed_at) {
+      const cat = item.display_category || item.content_type || "other";
+      categoryFreq[cat] = (categoryFreq[cat] || 0) + 1;
+    }
+  }
 
-        // Strongly prefer unseen content
-        if (!consumed.has(item.id) && !progressMap[item.id]?.viewed_at) score += 10;
+  // Compute max popularity for normalization
+  let maxPop = 1;
+  for (const v of Object.values(popularityMap)) {
+    const total = v.plays + v.downloads;
+    if (total > maxPop) maxPop = total;
+  }
 
-        // Started but not completed — "continue" boost
-        if (progressMap[item.id]?.viewed_at && !progressMap[item.id]?.completed_at) score += 8;
+  const now = Date.now();
+  const thirtyDays = 30 * 24 * 60 * 60 * 1000;
 
-        // Penalize already completed
-        if (completedIds.has(item.id)) score -= 5;
+  const scored = items
+    .filter((item) => item.show_as_card !== false)
+    .map((item) => {
+      let score = 0;
 
-        // Prefer unlocked content
-        if (item.unlocked) score += 5;
+      // ── Signal 1: Freshness (unseen content) ──
+      const isConsumed = consumed.has(item.id) || !!progressMap[item.id]?.viewed_at;
+      if (!isConsumed) score += 12;
 
-        // Prefer free content (accessible to everyone)
-        if (item.is_free) score += 2;
+      // ── Signal 2: Continuity (started but not completed) ──
+      if (progressMap[item.id]?.viewed_at && !progressMap[item.id]?.completed_at) score += 10;
 
-        // Prefer content with badge (featured)
-        if (item.badge_text) score += 3;
+      // ── Signal 3: Category affinity ──
+      const cat = item.display_category || item.content_type || "other";
+      if (categoryFreq[cat]) {
+        score += Math.min(categoryFreq[cat] * 2, 8); // cap at 8
+      }
 
-        // Prefer content in journey groups (curated)
-        if (item.journey_group) score += 1;
+      // ── Signal 4: Popularity (normalized 0-6) ──
+      const pop = popularityMap[item.id];
+      if (pop) {
+        const normalized = (pop.plays + pop.downloads) / maxPop;
+        score += normalized * 6;
+      }
 
-        // Slight boost for lower sort_order (admin priority)
-        score += Math.max(0, 10 - (item.sort_order || 0)) * 0.1;
+      // ── Signal 5: Recency (published in last 30 days) ──
+      const age = now - new Date(item.created_at).getTime();
+      if (age < thirtyDays) {
+        score += 4 * (1 - age / thirtyDays); // linear decay
+      }
 
-        return { item, score };
-      })
-      .filter((s) => s.score > 0)
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 4)
-      .map((s) => s.item);
+      // ── Signal 6: Curation ──
+      if (item.badge_text) score += 3;
+      if (item.is_featured) score += 2;
+      if (item.journey_group) score += 1;
 
-    return scored;
-  }, [items, viewedIds, downloadedIds, progressMap]);
+      // ── Signal 7: Accessibility ──
+      if (item.unlocked) score += 5;
+      if (item.is_free) score += 2;
+
+      // ── Penalties ──
+      if (completedIds.has(item.id)) score -= 8;
+
+      // Admin priority (lower sort_order = higher priority)
+      score += Math.max(0, 10 - (item.sort_order || 0)) * 0.1;
+
+      return { item, score };
+    })
+    .filter((s) => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5)
+    .map((s) => s.item);
+
+  return scored;
+}
+
+export function RecommendedSection({
+  items,
+  hasAccess,
+  viewedIds,
+  downloadedIds,
+  progressMap = {},
+  popularityMap = {},
+}: RecommendedSectionProps) {
+  const recommendations = useMemo(
+    () => computeRecommendations(items, viewedIds, downloadedIds, progressMap, popularityMap),
+    [items, viewedIds, downloadedIds, progressMap, popularityMap],
+  );
 
   if (recommendations.length === 0) return null;
 
