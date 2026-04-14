@@ -349,12 +349,12 @@ function HeroBanner({ course }: { course: any }) {
   const isCustomBanner = course.id === '__custom_banner__';
 
   return (
-    <div className="px-2 sm:px-4 lg:px-6 pt-2 sm:pt-4 mb-10 sm:mb-14">
+    <div className="px-4 sm:px-8 lg:px-12 xl:px-16 pt-2 sm:pt-4 mb-14 sm:mb-20">
       <motion.div
-        initial={{ opacity: 0, scale: 0.98 }}
+        initial={{ opacity: 0, scale: 0.97 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full h-[300px] sm:h-[400px] md:h-[500px] lg:h-[560px] xl:h-[600px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-2xl shadow-black/40"
+        transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
+        className="relative w-full h-[280px] sm:h-[380px] md:h-[460px] lg:h-[520px] xl:h-[560px] rounded-3xl sm:rounded-[28px] overflow-hidden shadow-[0_8px_60px_-12px_rgba(0,0,0,0.7)] ring-1 ring-white/[0.04]"
       >
         {/* Background image */}
         {bannerImg ? (
@@ -369,11 +369,12 @@ function HeroBanner({ course }: { course: any }) {
         )}
 
         {/* Cinematic overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/35 to-black/5" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-transparent to-transparent" />
 
-        {/* Subtle vignette */}
-        <div className="absolute inset-0 shadow-[inset_0_0_120px_rgba(0,0,0,0.35)]" />
+        {/* Premium vignette + glow */}
+        <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.4)]" />
+        <div className="absolute inset-0 rounded-3xl sm:rounded-[28px] ring-1 ring-inset ring-white/[0.06]" />
 
         {/* Content — bottom left */}
         <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 md:p-12 lg:p-14">
