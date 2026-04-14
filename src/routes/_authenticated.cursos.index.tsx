@@ -66,6 +66,12 @@ function MeusCoursosPage() {
     staleTime: 60_000,
   });
 
+  const { data: favData } = useQuery({
+    queryKey: ["user-favorites-count"],
+    queryFn: () => getUserFavoritesCount(),
+    staleTime: 30_000,
+  });
+
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
