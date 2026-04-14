@@ -24,6 +24,7 @@ import {
   CheckCircle2,
   Library,
   TrendingUp,
+  Heart,
 } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/conteudo/")({
