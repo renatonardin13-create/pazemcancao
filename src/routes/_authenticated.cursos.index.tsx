@@ -414,124 +414,108 @@ function MeusCoursosPage() {
               />
             )
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {filtered.map((course: any, idx: number) => {
                 const isCompleted = course.progress_pct >= 100;
                 const isInProgress = course.progress_pct > 0 && course.progress_pct < 100;
-                const isNotStarted = course.progress_pct === 0;
 
                 return (
                 <motion.div
                   key={course.id}
                   initial={{ opacity: 0, y: 16 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.05 * Math.min(idx, 8) }}
+                  transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 8) }}
                 >
                   <Link
                     to="/cursos/$courseId"
                     params={{ courseId: course.id }}
-                    className={`group block rounded-2xl overflow-hidden border transition-all duration-500 hover:scale-[1.02] ${
-                      isCompleted
-                        ? "border-emerald-500/20 bg-emerald-500/[0.03] hover:border-emerald-500/30 hover:shadow-xl hover:shadow-emerald-500/5"
-                        : isInProgress
-                          ? "border-gold/20 bg-gold/[0.02] hover:border-gold/30 hover:shadow-xl hover:shadow-gold/5"
-                          : "border-border/25 bg-card/10 hover:border-gold/30 hover:shadow-xl hover:shadow-gold/5"
-                    }`}
+                    className="group relative block rounded-2xl overflow-hidden transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl hover:shadow-gold/8"
                   >
-                    {/* Cover */}
-                    <div className="relative aspect-video overflow-hidden">
+                    {/* Full-bleed cover */}
+                    <div className="relative aspect-[16/10] overflow-hidden">
                       {course.cover_image_url ? (
                         <img
                           src={course.cover_image_url}
                           alt={course.title}
                           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          loading="lazy"
                         />
                       ) : (
-                        <div className="w-full h-full bg-muted/15 flex items-center justify-center">
-                          <BookOpen className="h-10 w-10 text-muted-foreground/40" />
+                        <div className="w-full h-full bg-gradient-to-br from-muted/20 to-muted/5 flex items-center justify-center">
+                          <BookOpen className="h-12 w-12 text-muted-foreground/20" />
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-60" />
 
-                      {/* Progress bar at top */}
+                      {/* Cinematic gradient overlay */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+
+                      {/* Glow ring on hover */}
+                      <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/[0.06] group-hover:ring-gold/20 transition-all duration-500" />
+
+                      {/* Progress bar — bottom of image */}
                       {course.progress_pct > 0 && (
-                        <div className="absolute top-0 left-0 right-0 h-1.5 bg-background/30 backdrop-blur-sm">
+                        <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/[0.08]">
                           <div
-                            className={`h-full rounded-r-full transition-all ${isCompleted ? "bg-emerald-500" : "bg-gold"}`}
+                            className={`h-full transition-all duration-700 ${isCompleted ? "bg-emerald-400" : "bg-gold"}`}
                             style={{ width: `${course.progress_pct}%` }}
                           />
                         </div>
                       )}
 
-                      {/* Status badge */}
+                      {/* Status badge — top right */}
                       <div className="absolute top-3 right-3">
                         {isCompleted ? (
-                          <div className="flex items-center gap-1.5 rounded-full bg-emerald-500/20 backdrop-blur-md px-2.5 py-1 border border-emerald-500/30">
+                          <div className="flex items-center gap-1 rounded-full bg-emerald-500/25 backdrop-blur-xl px-2.5 py-1 border border-emerald-400/20 shadow-lg shadow-emerald-500/10">
                             <CheckCircle2 className="h-3 w-3 text-emerald-400" />
-                            <span className="text-[11px] font-bold text-emerald-400">Concluído</span>
+                            <span className="text-[10px] font-bold text-emerald-300 tracking-wide uppercase">Concluído</span>
                           </div>
                         ) : isInProgress ? (
-                          <div className="flex items-center gap-1.5 rounded-full bg-gold/20 backdrop-blur-md px-2.5 py-1 border border-gold/30">
+                          <div className="flex items-center gap-1 rounded-full bg-gold/20 backdrop-blur-xl px-2.5 py-1 border border-gold/20 shadow-lg shadow-gold/10">
                             <Play className="h-3 w-3 text-gold fill-gold" />
-                            <span className="text-[11px] font-bold text-gold">Em andamento</span>
+                            <span className="text-[10px] font-bold text-gold tracking-wide uppercase">Em andamento</span>
                           </div>
-                        ) : (
-                          <div className="flex items-center gap-1.5 rounded-full bg-background/50 backdrop-blur-md px-2.5 py-1 border border-border/30">
-                            <span className="text-[11px] font-medium text-muted-foreground/60">Disponível</span>
-                          </div>
-                        )}
+                        ) : null}
                       </div>
-                    </div>
 
-                    {/* Info */}
-                    <div className="p-5">
-                      <h3 className="font-display text-base font-bold text-foreground leading-snug line-clamp-2 group-hover:text-gold transition-colors duration-300">
-                        {course.title}
-                      </h3>
-                      {course.short_description && (
-                        <p className="text-xs text-muted-foreground/50 mt-1.5 line-clamp-1">
-                          {course.short_description}
-                        </p>
-                      )}
+                      {/* Content overlay — bottom */}
+                      <div className="absolute bottom-0 left-0 right-0 p-4 pt-10">
+                        <h3 className="font-display text-[15px] font-bold text-foreground leading-tight line-clamp-2 drop-shadow-lg group-hover:text-gold transition-colors duration-300">
+                          {course.title}
+                        </h3>
 
-                      <div className="flex items-center gap-4 mt-3 text-xs text-muted-foreground/50">
-                        <span className="flex items-center gap-1">
-                          <Layers className="h-3 w-3" />
-                          {course.module_count} mód.
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {course.lesson_count} aulas
-                        </span>
-                        {isInProgress && (
-                          <span className="flex items-center gap-1 text-gold/70">
-                            <CheckCircle2 className="h-3 w-3" />
-                            {course.completed_lessons}/{course.lesson_count}
+                        <div className="flex items-center gap-3 mt-2 text-[11px] text-muted-foreground/60">
+                          <span className="flex items-center gap-1">
+                            <Layers className="h-3 w-3" />
+                            {course.module_count} mód.
                           </span>
-                        )}
+                          <span className="flex items-center gap-1">
+                            <Clock className="h-3 w-3" />
+                            {course.lesson_count} aulas
+                          </span>
+                          {isInProgress && (
+                            <>
+                              <span className="text-border/30">·</span>
+                              <span className="text-gold/70 font-bold tabular-nums">
+                                {course.progress_pct}%
+                              </span>
+                            </>
+                          )}
+                          {isCompleted && (
+                            <>
+                              <span className="text-border/30">·</span>
+                              <span className="text-emerald-400/70 font-bold tabular-nums">
+                                100%
+                              </span>
+                            </>
+                          )}
+                        </div>
                       </div>
 
-                      {/* Progress section */}
-                      <div className="flex items-center gap-3 mt-4 pt-4 border-t border-border/10">
-                        <Progress
-                          value={course.progress_pct}
-                          className={`h-1.5 flex-1 ${isCompleted ? "bg-emerald-500/10" : "bg-muted/15"}`}
-                        />
-                        <span className={`text-sm font-bold tabular-nums ${
-                          isCompleted ? "text-emerald-500" : "text-gold"
-                        }`}>
-                          {course.progress_pct}%
-                        </span>
-                      </div>
-
-                      {/* CTA */}
-                      <div className="mt-4 flex items-center justify-between">
-                        <span className={`text-xs font-bold uppercase tracking-wider inline-flex items-center gap-1.5 transition-all group-hover:gap-2.5 ${
-                          isCompleted ? "text-emerald-500/70" : "text-gold"
-                        }`}>
-                          {isCompleted ? "Revisar" : isInProgress ? "Continuar" : "Iniciar"}
-                          <ArrowRight className="h-3 w-3" />
-                        </span>
+                      {/* Hover play icon */}
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gold/90 shadow-xl shadow-gold/30 backdrop-blur-sm">
+                          <Play className="h-5 w-5 text-background fill-background ml-0.5" />
+                        </div>
                       </div>
                     </div>
                   </Link>
