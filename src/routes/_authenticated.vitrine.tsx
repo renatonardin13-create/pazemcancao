@@ -140,7 +140,7 @@ function VitrinePage() {
 
                     {/* Horizontal scroll */}
                     <div className="relative -mx-4 sm:-mx-8 px-4 sm:px-8">
-                      <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+                      <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
                         {shelf.courses.map((course: any) => (
                           <CourseCard key={course.id} course={course} />
                         ))}
