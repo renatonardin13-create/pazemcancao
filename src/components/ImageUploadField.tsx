@@ -5,6 +5,7 @@ import { Upload, X, Loader2, CheckCircle, AlertCircle, RefreshCw } from "lucide-
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-utils";
 import { Progress } from "@/components/ui/progress";
+import { ImageFieldHint } from "@/components/ImageFieldHint";
 
 interface ImageUploadFieldProps {
   label: string;
@@ -16,6 +17,10 @@ interface ImageUploadFieldProps {
   aspectRatio?: string;
   aspectClass?: string;
   uploadLabel?: string;
+  /** Expected ratio e.g. "16:9", "3:1" */
+  expectedRatio?: string;
+  /** Recommended size e.g. "1280x720" */
+  recommendedSize?: string;
 }
 
 const labelClass = "text-sm font-semibold text-foreground/80";
