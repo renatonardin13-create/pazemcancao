@@ -551,10 +551,10 @@ export function AdminDashboard() {
               ) : (
                 <>
                   <div className="p-5">
-                    <ResponsiveContainer width="100%" height={240}>
-                      <BarChart data={analytics.topPlayed.slice(0, 8)} layout="vertical">
+                     <ResponsiveContainer width="100%" height={200}>
+                      <BarChart data={analytics.topPlayed.slice(0, 6)} layout="vertical">
                         <XAxis type="number" tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground) / 0.3)' }} axisLine={false} tickLine={false} />
-                        <YAxis type="category" dataKey="title" width={160} tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground) / 0.5)' }} axisLine={false} tickLine={false} />
+                        <YAxis type="category" dataKey="title" width={120} tick={{ fontSize: 10, fill: 'hsl(var(--muted-foreground) / 0.5)' }} axisLine={false} tickLine={false} />
                         <Tooltip contentStyle={{ background: 'hsl(var(--card))', border: '1px solid hsl(var(--border) / 0.2)', borderRadius: '12px', fontSize: '12px' }} />
                         <Bar dataKey="plays" fill="hsl(var(--gold) / 0.5)" radius={[0, 8, 8, 0]} />
                       </BarChart>
