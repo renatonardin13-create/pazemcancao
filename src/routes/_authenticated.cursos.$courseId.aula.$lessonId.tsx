@@ -564,6 +564,92 @@ function LessonDetailPage() {
             </motion.div>
           )}
 
+          {/* ═══ ACTION BAR — below player ═══ */}
+          {!accessRestricted && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.15 }}
+              className="border-t border-b border-border/8 bg-card/3 px-4 sm:px-8 py-4"
+            >
+              <div className="max-w-3xl mx-auto flex items-center justify-between gap-3">
+                {/* Previous */}
+                {prevLesson ? (
+                  <Link
+                    to="/cursos/$courseId/aula/$lessonId"
+                    params={{ courseId, lessonId: prevLesson.id }}
+                    className="flex items-center gap-2 rounded-xl border border-border/10 bg-card/5 px-4 py-2.5 text-[11px] font-medium text-muted-foreground/50 hover:bg-card/12 hover:text-foreground/65 transition-all group"
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5 group-hover:-translate-x-0.5 transition-transform" />
+                    <span className="hidden sm:inline truncate max-w-[120px]">{prevLesson.title}</span>
+                    <span className="sm:hidden">Anterior</span>
+                  </Link>
+                ) : (
+                  <Button variant="outline" size="sm" disabled className="gap-2 text-[11px] opacity-30 border-border/10">
+                    <ChevronLeft className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Anterior</span>
+                  </Button>
+                )}
+
+                {/* Mark complete — primary CTA */}
+                {enrollment && (
+                  <Button
+                    onClick={() => {
+                      if (!isCompleted) {
+                        progressMutation.mutate({
+                          lessonId,
+                          watchedSeconds: 0,
+                          completed: true,
+                        });
+                      }
+                    }}
+                    disabled={progressMutation.isPending || isCompleted}
+                    className={`gap-2 px-6 sm:px-8 py-3 text-[11px] font-bold uppercase tracking-[0.12em] transition-all rounded-xl ${
+                      isCompleted
+                        ? "bg-player-completed/10 text-player-completed border border-player-completed/15 hover:bg-player-completed/15 shadow-none"
+                        : "bg-gold text-gold-foreground hover:brightness-110 shadow-lg shadow-gold/20 hover:shadow-xl hover:shadow-gold/30 scale-100 hover:scale-[1.02]"
+                    }`}
+                    variant={isCompleted ? "outline" : "default"}
+                  >
+                    <CheckCircle2 className="h-4 w-4" />
+                    {isCompleted
+                      ? "Concluída ✓"
+                      : progressMutation.isPending
+                        ? "Salvando..."
+                        : "Marcar como concluída"}
+                  </Button>
+                )}
+
+                {/* Next */}
+                {nextLesson ? (
+                  <Link
+                    to="/cursos/$courseId/aula/$lessonId"
+                    params={{ courseId, lessonId: nextLesson.id }}
+                    className="flex items-center gap-2 rounded-xl bg-gold/10 border border-gold/15 px-4 py-2.5 text-[11px] font-semibold text-gold/75 hover:bg-gold/18 hover:text-gold transition-all group"
+                  >
+                    <span className="hidden sm:inline truncate max-w-[120px]">{nextLesson.title}</span>
+                    <span className="sm:hidden">Próxima</span>
+                    <ArrowRight className="h-3.5 w-3.5 group-hover:translate-x-0.5 transition-transform" />
+                  </Link>
+                ) : isCourseCompleted ? (
+                  <Link
+                    to="/cursos/$courseId"
+                    params={{ courseId }}
+                    className="flex items-center gap-2 rounded-xl bg-player-completed/8 border border-player-completed/12 px-4 py-2.5 text-[11px] font-semibold text-player-completed/70 hover:bg-player-completed/15 transition-all"
+                  >
+                    <Award className="h-3.5 w-3.5" />
+                    <span>Concluído!</span>
+                  </Link>
+                ) : (
+                  <Button variant="outline" size="sm" disabled className="gap-2 text-[11px] opacity-30 border-border/10">
+                    <span className="hidden sm:inline">Próxima</span>
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Button>
+                )}
+              </div>
+            </motion.div>
+          )
+
           {/* ─── Lesson info — refined ─── */}
           {!accessRestricted && (
             <div className="border-t border-border/8 px-5 sm:px-8 py-6">
