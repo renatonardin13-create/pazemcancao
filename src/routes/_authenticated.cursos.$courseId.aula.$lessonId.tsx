@@ -869,7 +869,7 @@ function LessonDetailPage() {
   );
 }
 
-/* ── Module collapsible section ── */
+/* ── Module collapsible section — premium ── */
 
 function ModuleSection({
   title,
@@ -886,34 +886,91 @@ function ModuleSection({
 }) {
   const [open, setOpen] = useState(defaultOpen);
   const allDone = completedCount === totalCount;
+  const modProgress = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   return (
     <Collapsible open={open} onOpenChange={setOpen}>
       <CollapsibleTrigger asChild>
-        <button className="flex items-center gap-3 w-full px-4 py-2.5 text-left hover:bg-card/5 transition-colors group">
+        <button
+          className={`flex items-center gap-3 w-full px-4 py-3.5 text-left transition-all duration-200 group ${
+            open
+              ? "bg-card/8 border-b border-player-sidebar-border/40"
+              : "hover:bg-player-sidebar-hover"
+          }`}
+        >
+          {/* Module number / status badge */}
+          <div
+            className={`shrink-0 flex h-9 w-9 items-center justify-center rounded-xl text-[11px] font-bold transition-all duration-200 ${
+              allDone
+                ? "bg-player-completed/12 ring-1 ring-player-completed/15 text-player-completed"
+                : open
+                  ? "bg-gold/10 ring-1 ring-gold/15 text-gold/70"
+                  : "bg-card/10 ring-1 ring-border/10 text-muted-foreground/35 group-hover:ring-gold/10 group-hover:text-gold/50"
+            }`}
+          >
+            {allDone ? (
+              <CheckCircle2 className="h-4.5 w-4.5" />
+            ) : (
+              <BookOpen className="h-4 w-4" />
+            )}
+          </div>
+
           <div className="flex-1 min-w-0">
-            <p className="text-[11px] font-semibold text-foreground/65 truncate">
+            <p
+              className={`text-[12px] font-bold truncate transition-colors ${
+                open ? "text-foreground/80" : "text-foreground/60 group-hover:text-foreground/75"
+              }`}
+            >
               {title}
             </p>
-            <p className={`text-[10px] mt-0.5 ${allDone ? "text-emerald-400/50" : "text-muted-foreground/40"}`}>
-              {completedCount}/{totalCount} concluídas
-            </p>
+            {/* Progress bar + count */}
+            <div className="flex items-center gap-2.5 mt-1.5">
+              <div className="h-1 flex-1 max-w-[120px] rounded-full bg-player-progress-track overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-500 ${
+                    allDone ? "bg-player-completed" : "bg-player-progress-fill"
+                  }`}
+                  style={{ width: `${modProgress}%` }}
+                />
+              </div>
+              <span
+                className={`text-[10px] font-bold tabular-nums ${
+                  allDone ? "text-player-completed/60" : "text-muted-foreground/35"
+                }`}
+              >
+                {completedCount}/{totalCount}
+              </span>
+            </div>
           </div>
-          {open ? (
-            <ChevronUp className="h-3.5 w-3.5 text-muted-foreground/35 shrink-0" />
-          ) : (
-            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/35 shrink-0" />
-          )}
+
+          <div
+            className={`shrink-0 flex h-7 w-7 items-center justify-center rounded-lg transition-all duration-200 ${
+              open ? "bg-gold/8 rotate-180" : "bg-card/5 group-hover:bg-card/10"
+            }`}
+          >
+            <ChevronDown
+              className={`h-3.5 w-3.5 transition-colors ${
+                open ? "text-gold/55" : "text-muted-foreground/30"
+              }`}
+            />
+          </div>
         </button>
       </CollapsibleTrigger>
       <CollapsibleContent>
-        <div>{children}</div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.15 }}
+          className="bg-background/30"
+        >
+          {children}
+        </motion.div>
       </CollapsibleContent>
     </Collapsible>
   );
 }
 
-/* ── Sidebar lesson item ── */
+/* ── Sidebar lesson item — premium ── */
 
 function LessonSidebarItem({
   lesson,
@@ -928,79 +985,116 @@ function LessonSidebarItem({
   isCompleted: boolean;
   isNext: boolean;
 }) {
+  const contentType = lesson.content_type || "video";
+
+  const getTypeIcon = () => {
+    if (contentType === "pdf") return <FileText className="h-3 w-3" />;
+    if (contentType === "file") return <File className="h-3 w-3" />;
+    if (contentType === "link") return <Link2 className="h-3 w-3" />;
+    return <Video className="h-3 w-3" />;
+  };
+
   return (
     <Link
       to="/cursos/$courseId/aula/$lessonId"
       params={{ courseId, lessonId: lesson.id }}
-      className={`flex items-center gap-3 px-4 py-3 transition-all ${
+      className={`group/item flex items-center gap-3.5 px-5 py-3.5 transition-all duration-200 relative ${
         isActive
-          ? "bg-player-sidebar-active border-l-[3px] border-l-gold shadow-inner shadow-gold/5"
+          ? "bg-player-sidebar-active"
           : isNext
-            ? "bg-gold/[0.03] border-l-[3px] border-l-gold/30 hover:bg-gold/[0.06]"
-            : "hover:bg-player-sidebar-hover border-l-[3px] border-l-transparent"
+            ? "bg-gold/[0.03] hover:bg-gold/[0.06]"
+            : "hover:bg-player-sidebar-hover"
       }`}
     >
-      {/* Status icon */}
-      <div className={`shrink-0 flex h-7 w-7 items-center justify-center rounded-lg ${
-        isCompleted
-          ? "bg-player-completed/12"
-          : isActive
-            ? "bg-gold/15 ring-1 ring-gold/20"
+      {/* Active indicator bar */}
+      <div
+        className={`absolute left-0 top-1 bottom-1 w-[3px] rounded-r-full transition-all duration-300 ${
+          isActive
+            ? "bg-gold shadow-[0_0_8px_rgba(212,175,55,0.3)]"
             : isNext
-              ? "bg-gold/8"
-              : ""
-      }`}>
+              ? "bg-gold/25"
+              : "bg-transparent group-hover/item:bg-border/20"
+        }`}
+      />
+
+      {/* Status icon */}
+      <div
+        className={`shrink-0 flex h-8 w-8 items-center justify-center rounded-xl transition-all duration-200 ${
+          isCompleted
+            ? "bg-player-completed/12 ring-1 ring-player-completed/15"
+            : isActive
+              ? "bg-gold/15 ring-1 ring-gold/25 shadow-sm shadow-gold/10"
+              : isNext
+                ? "bg-gold/8 ring-1 ring-gold/10"
+                : "bg-card/8 ring-1 ring-border/8 group-hover/item:ring-border/15"
+        }`}
+      >
         {isCompleted ? (
           <CheckCircle2 className="h-4 w-4 text-player-completed" />
         ) : isActive ? (
-          <Play className="h-3.5 w-3.5 text-gold fill-gold/40" />
+          <div className="relative">
+            <Play className="h-3.5 w-3.5 text-gold fill-gold/40" />
+            {/* Pulse animation for active */}
+            <span className="absolute -inset-1 rounded-full bg-gold/10 animate-ping" />
+          </div>
         ) : isNext ? (
           <Play className="h-3 w-3 text-gold/50" />
         ) : (
-          <Circle className="h-3.5 w-3.5 text-muted-foreground/20" />
+          <span className="text-muted-foreground/25">{getTypeIcon()}</span>
         )}
       </div>
 
       {/* Lesson info */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-1.5">
-          <p
-            className={`text-[11px] font-medium truncate leading-snug ${
-              isActive
-                ? "text-gold font-semibold"
-                : isCompleted
-                  ? "text-muted-foreground/40 line-through decoration-muted-foreground/15"
-                  : isNext
-                    ? "text-gold/65 font-medium"
-                    : "text-foreground/55"
-            }`}
-          >
-            {lesson.title}
-          </p>
-        </div>
-        <div className="flex items-center gap-2 mt-0.5">
+        <p
+          className={`text-[12px] font-medium truncate leading-snug transition-colors ${
+            isActive
+              ? "text-gold font-semibold"
+              : isCompleted
+                ? "text-muted-foreground/40"
+                : isNext
+                  ? "text-gold/65 font-medium"
+                  : "text-foreground/55 group-hover/item:text-foreground/70"
+          }`}
+        >
+          {lesson.title}
+        </p>
+        <div className="flex items-center gap-2 mt-1">
+          {/* Type icon for non-active */}
+          {!isActive && !isCompleted && !isNext && (
+            <span className="text-muted-foreground/20">{getTypeIcon()}</span>
+          )}
           {lesson.duration && lesson.duration !== "0:00" && (
-            <span className="text-[10px] text-muted-foreground/30 tabular-nums">
+            <span className="text-[10px] text-muted-foreground/30 tabular-nums flex items-center gap-1">
+              <Clock className="h-2.5 w-2.5" />
               {lesson.duration}
             </span>
           )}
           {isActive && (
-            <span className="text-[8px] font-bold uppercase tracking-[0.15em] text-gold bg-gold/10 px-1.5 py-0.5 rounded-full ring-1 ring-gold/15">
-              Assistindo
+            <span className="text-[8px] font-bold uppercase tracking-[0.15em] text-gold bg-gold/10 px-2 py-0.5 rounded-full ring-1 ring-gold/15">
+              ▶ Assistindo
             </span>
           )}
           {isNext && !isActive && (
-            <span className="text-[8px] font-bold uppercase tracking-[0.15em] text-gold/50 bg-gold/[0.06] px-1.5 py-0.5 rounded-full">
+            <span className="text-[8px] font-bold uppercase tracking-[0.12em] text-gold/50 bg-gold/[0.06] px-2 py-0.5 rounded-full ring-1 ring-gold/8">
               Próxima
             </span>
           )}
           {isCompleted && (
-            <span className="text-[8px] font-medium uppercase tracking-wider text-player-completed/50">
+            <span className="text-[8px] font-semibold uppercase tracking-wider text-player-completed/55 flex items-center gap-1">
+              <CheckCircle2 className="h-2.5 w-2.5" />
               Concluída
             </span>
           )}
         </div>
       </div>
+
+      {/* Right arrow on hover */}
+      {!isCompleted && !isActive && (
+        <div className="shrink-0 opacity-0 group-hover/item:opacity-100 transition-opacity duration-200">
+          <ArrowRight className="h-3 w-3 text-gold/40" />
+        </div>
+      )}
     </Link>
   );
 }
