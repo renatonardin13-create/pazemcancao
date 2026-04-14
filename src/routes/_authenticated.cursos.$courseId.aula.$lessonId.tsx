@@ -603,28 +603,28 @@ function LessonDetailPage() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.15 }}
-              className="border-t border-b border-border/8 bg-card/3 px-4 sm:px-8 py-4"
+              className="border-t border-b border-border/8 bg-card/3 px-4 sm:px-8 py-5"
             >
-              <div className="max-w-3xl mx-auto flex items-center justify-between gap-3">
-                {/* Previous */}
+              <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+                {/* Previous — tertiary / ghost */}
                 {prevLesson ? (
                   <Link
                     to="/cursos/$courseId/aula/$lessonId"
                     params={{ courseId, lessonId: prevLesson.id }}
-                    className="flex items-center gap-2 rounded-xl border border-border/10 bg-card/5 px-4 py-2.5 text-[11px] font-medium text-muted-foreground/50 hover:bg-card/12 hover:text-foreground/65 transition-all group"
+                    className="flex items-center gap-2 rounded-xl border border-border/8 px-4 py-2.5 text-[11px] font-medium text-muted-foreground/40 hover:bg-card/10 hover:text-muted-foreground/65 transition-all group order-1 sm:order-none"
                   >
                     <ChevronLeft className="h-3.5 w-3.5 group-hover:-translate-x-0.5 transition-transform" />
                     <span className="hidden sm:inline truncate max-w-[120px]">{prevLesson.title}</span>
                     <span className="sm:hidden">Anterior</span>
                   </Link>
                 ) : (
-                  <Button variant="outline" size="sm" disabled className="gap-2 text-[11px] opacity-30 border-border/10">
+                  <div className="hidden sm:flex items-center gap-2 rounded-xl border border-border/6 px-4 py-2.5 text-[11px] font-medium text-muted-foreground/20 opacity-40 order-1 sm:order-none">
                     <ChevronLeft className="h-3.5 w-3.5" />
-                    <span className="hidden sm:inline">Anterior</span>
-                  </Button>
+                    <span>Anterior</span>
+                  </div>
                 )}
 
-                {/* Mark complete — primary CTA */}
+                {/* Mark complete — PRIMARY CTA, largest + gold */}
                 {enrollment && (
                   <Button
                     onClick={() => {
@@ -637,28 +637,28 @@ function LessonDetailPage() {
                       }
                     }}
                     disabled={progressMutation.isPending || isCompleted}
-                    className={`gap-2 px-6 sm:px-8 py-3 text-[11px] font-bold uppercase tracking-[0.12em] transition-all rounded-xl ${
+                    className={`gap-2.5 px-8 sm:px-10 py-3.5 text-[12px] font-bold uppercase tracking-[0.14em] transition-all rounded-xl order-0 sm:order-none w-full sm:w-auto ${
                       isCompleted
                         ? "bg-player-completed/10 text-player-completed border border-player-completed/15 hover:bg-player-completed/15 shadow-none"
-                        : "bg-gold text-gold-foreground hover:brightness-110 shadow-lg shadow-gold/20 hover:shadow-xl hover:shadow-gold/30 scale-100 hover:scale-[1.02]"
+                        : "bg-gold text-gold-foreground hover:brightness-110 shadow-lg shadow-gold/25 hover:shadow-xl hover:shadow-gold/35 scale-100 hover:scale-[1.02]"
                     }`}
                     variant={isCompleted ? "outline" : "default"}
                   >
-                    <CheckCircle2 className="h-4 w-4" />
+                    <CheckCircle2 className="h-4.5 w-4.5" />
                     {isCompleted
                       ? "Concluída ✓"
                       : progressMutation.isPending
                         ? "Salvando..."
-                        : "Marcar como concluída"}
+                        : "Concluir aula"}
                   </Button>
                 )}
 
-                {/* Next */}
+                {/* Next — secondary, gold-tinted */}
                 {nextLesson ? (
                   <Link
                     to="/cursos/$courseId/aula/$lessonId"
                     params={{ courseId, lessonId: nextLesson.id }}
-                    className="flex items-center gap-2 rounded-xl bg-gold/10 border border-gold/15 px-4 py-2.5 text-[11px] font-semibold text-gold/75 hover:bg-gold/18 hover:text-gold transition-all group"
+                    className="flex items-center gap-2 rounded-xl bg-gold/8 border border-gold/12 px-5 py-2.5 text-[11px] font-semibold text-gold/65 hover:bg-gold/15 hover:text-gold transition-all group order-2 sm:order-none"
                   >
                     <span className="hidden sm:inline truncate max-w-[120px]">{nextLesson.title}</span>
                     <span className="sm:hidden">Próxima</span>
@@ -668,16 +668,16 @@ function LessonDetailPage() {
                   <Link
                     to="/cursos/$courseId"
                     params={{ courseId }}
-                    className="flex items-center gap-2 rounded-xl bg-player-completed/8 border border-player-completed/12 px-4 py-2.5 text-[11px] font-semibold text-player-completed/70 hover:bg-player-completed/15 transition-all"
+                    className="flex items-center gap-2 rounded-xl bg-player-completed/8 border border-player-completed/12 px-5 py-2.5 text-[11px] font-semibold text-player-completed/70 hover:bg-player-completed/15 transition-all order-2 sm:order-none"
                   >
                     <Award className="h-3.5 w-3.5" />
                     <span>Concluído!</span>
                   </Link>
                 ) : (
-                  <Button variant="outline" size="sm" disabled className="gap-2 text-[11px] opacity-30 border-border/10">
-                    <span className="hidden sm:inline">Próxima</span>
+                  <div className="hidden sm:flex items-center gap-2 rounded-xl border border-border/6 px-5 py-2.5 text-[11px] font-medium text-muted-foreground/20 opacity-40 order-2 sm:order-none">
+                    <span>Próxima</span>
                     <ArrowRight className="h-3.5 w-3.5" />
-                  </Button>
+                  </div>
                 )}
               </div>
             </motion.div>
