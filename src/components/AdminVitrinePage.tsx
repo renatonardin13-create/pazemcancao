@@ -288,7 +288,11 @@ export default function AdminVitrinePage() {
 
   // ── Mutations ──
 
-  const invalidatePreview = () => queryClient.invalidateQueries({ queryKey: ["student-shelves-preview"] });
+  const invalidatePreview = () => {
+    queryClient.invalidateQueries({ queryKey: ["student-shelves-preview"] });
+    queryClient.invalidateQueries({ queryKey: ["student-shelves"] });
+    queryClient.invalidateQueries({ queryKey: ["my-courses"] });
+  };
 
   const createMut = useMutation({
     mutationFn: (input: any) => createShelf({ data: input }),
