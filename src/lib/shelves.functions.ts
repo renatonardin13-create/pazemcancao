@@ -165,15 +165,17 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
           .eq('shelf_id', shelf.id)
           .order('sort_order', { ascending: true });
 
+        // Manual: get enriched courses from courseMap (already enriched), skip missing
         courses = (shelfCourses || [])
           .map((sc: any) => courseMap.get(sc.course_id))
           .filter(Boolean);
       } else {
+        // Auto: enrich raw publishedCourses
         switch (shelf.auto_criteria) {
           case 'recent':
             courses = [...publishedCourses].sort(
               (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-            ).slice(0, 20);
+            ).slice(0, 20).map(enrichCourse);
             break;
           case 'best_selling':
             courses = [...publishedCourses]
@@ -182,20 +184,26 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
                 if (salesDiff !== 0) return salesDiff;
                 return a.sort_order - b.sort_order;
               })
-              .slice(0, 20);
+              .slice(0, 20).map(enrichCourse);
             break;
           case 'featured':
-            courses = publishedCourses.filter((c: any) => c.sort_order <= 5).slice(0, 20);
+            courses = publishedCourses.filter((c: any) => c.sort_order <= 5).slice(0, 20).map(enrichCourse);
             break;
           case 'enrolled':
-            courses = publishedCourses.filter((c: any) => enrolledCourseIds.has(c.id));
+            courses = publishedCourses.filter((c: any) => enrolledCourseIds.has(c.id)).map(enrichCourse);
             break;
           default:
-            courses = publishedCourses.slice(0, 20);
+            courses = publishedCourses.slice(0, 20).map(enrichCourse);
         }
       }
 
-      courses = courses.map(enrichCourse);
+      // Deduplicate by course id (safety)
+      const seen = new Set<string>();
+      courses = courses.filter((c: any) => {
+        if (seen.has(c.id)) return false;
+        seen.add(c.id);
+        return true;
+      });
 
       if (courses.length > 0) {
         result.push({
