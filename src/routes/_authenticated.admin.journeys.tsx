@@ -1,3 +1,4 @@
+import { toastError } from "@/lib/toast-utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -37,7 +38,7 @@ function AdminJourneysPage() {
       setShowForm(false);
       setNewItem({ name: "", slug: "", description: "", icon: "" });
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const updateMutation = useMutation({
@@ -48,7 +49,7 @@ function AdminJourneysPage() {
       toast.success("Trilha atualizada");
       setEditingId(null);
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const deleteMutation = useMutation({
@@ -57,7 +58,7 @@ function AdminJourneysPage() {
       queryClient.invalidateQueries({ queryKey: ["admin-journeys"] });
       toast.success("Trilha removida");
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const reorderMutation = useMutation({
@@ -66,7 +67,7 @@ function AdminJourneysPage() {
       queryClient.invalidateQueries({ queryKey: ["admin-journeys"] });
       toast.success("Ordem atualizada");
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const journeys = data?.journeys || [];

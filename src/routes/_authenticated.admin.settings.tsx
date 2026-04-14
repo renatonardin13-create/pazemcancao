@@ -1,3 +1,4 @@
+import { toastError } from "@/lib/toast-utils";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -35,7 +36,7 @@ function SettingsPage() {
       queryClient.invalidateQueries({ queryKey: ["platform-settings"] });
       toast.success("Configurações salvas!");
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   if (isLoading) {

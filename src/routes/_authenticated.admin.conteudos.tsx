@@ -1,3 +1,4 @@
+import { toastError } from "@/lib/toast-utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -238,7 +239,7 @@ function AdminContentPage() {
     },
     onError: (err: Error) => {
       setUploading(false);
-      toast.error(err.message);
+      toastError(err);
     },
   });
 

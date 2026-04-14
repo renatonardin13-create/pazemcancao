@@ -1,3 +1,4 @@
+import { toastError } from "@/lib/toast-utils";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -103,7 +104,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
     },
     onError: (err: Error) => {
       setUploading(false);
-      toast.error(err.message);
+      toastError(err);
     },
   });
 

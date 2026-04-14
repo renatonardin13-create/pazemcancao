@@ -1,3 +1,4 @@
+import { toastError } from "@/lib/toast-utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Users, ShieldCheck, Ban, Activity, UserPlus, Clock, Pencil, ToggleLeft, ToggleRight, Trash2, Copy, KeyRound, BookOpen, Check, Search, MoreHorizontal, ChevronLeft, ChevronRight, TrendingUp, Eye, Mail, Calendar, ShieldAlert } from "lucide-react";
@@ -116,7 +117,7 @@ function AdminUsersPage() {
       toast.success(vars.grant ? "Acesso liberado!" : "Acesso removido!");
       queryClient.invalidateQueries({ queryKey: ["student-detail"] });
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const createTrial = useMutation({
