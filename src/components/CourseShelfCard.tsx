@@ -57,7 +57,7 @@ export function CourseShelfCard({
             )}
 
             {/* Cinematic gradient overlays */}
-            <div className={`absolute inset-0 md:transition-all md:duration-500 ${isLocked ? 'bg-black/45 md:group-hover/card:bg-black/55' : 'bg-black/0 md:group-hover/card:bg-black/45'}`} />
+            <div className={`absolute inset-0 md:transition-all md:duration-500 ${isLocked ? 'bg-black/25 md:group-hover/card:bg-black/35' : 'bg-black/0 md:group-hover/card:bg-black/45'}`} />
             <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
             <div className="absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-black/20 to-transparent opacity-0 md:group-hover/card:opacity-100 md:transition-opacity md:duration-500" />
 
@@ -66,18 +66,21 @@ export function CourseShelfCard({
               <div className="absolute top-3 left-3 z-10">{badge}</div>
             )}
 
-            {/* Center icon */}
-            <div className="absolute inset-0 flex items-center justify-center z-10">
-              {isLocked ? (
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/[0.08] backdrop-blur-lg border border-white/[0.08] opacity-70 md:group-hover/card:opacity-100 md:transition-all md:duration-400">
-                  <Lock className="h-4.5 w-4.5 text-white/60" />
+            {/* Lock icon — small, top-right corner */}
+            {isLocked && (
+              <div className="absolute top-2.5 right-2.5 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/40 backdrop-blur-sm border border-white/[0.06]">
+                <Lock className="h-3 w-3 text-white/50" />
+              </div>
+            )}
+
+            {/* Play button — center, non-locked only */}
+            {!isLocked && (
+              <div className="absolute inset-0 flex items-center justify-center z-10">
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gold shadow-2xl shadow-gold/30 backdrop-blur-sm scale-[0.6] opacity-0 md:group-hover/card:opacity-100 md:group-hover/card:scale-100 md:transition-all md:duration-500 md:ease-[cubic-bezier(0.22,1,0.36,1)]">
+                  <Play className="h-6 w-6 text-gold-foreground fill-gold-foreground ml-0.5" />
                 </div>
-              ) : (
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gold shadow-2xl shadow-gold/30 backdrop-blur-sm scale-[0.6] opacity-0 md:group-hover/card:opacity-100 md:group-hover/card:scale-100 md:transition-all md:duration-500 md:ease-[cubic-bezier(0.22,1,0.36,1)]">
-                  <Play className="h-7 w-7 text-gold-foreground fill-gold-foreground ml-0.5" />
-                </div>
-              )}
-            </div>
+              </div>
+            )}
 
             {/* Title + meta */}
             <div className="absolute inset-x-0 bottom-0 p-5 z-10 md:translate-y-1 md:group-hover/card:translate-y-0 md:transition-transform md:duration-500 md:ease-out">
