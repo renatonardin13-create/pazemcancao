@@ -94,22 +94,33 @@ function VitrinePage() {
               </motion.div>
             )}
 
+            {/* Search bar */}
+            <div className="relative max-w-sm mb-8">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/25" />
+              <Input
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Buscar cursos..."
+                className="pl-9 bg-card/10 border-border/15 text-sm h-10"
+              />
+            </div>
+
             {isLoading ? (
               <div className="text-center py-24">
                 <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
                   Carregando vitrine...
                 </p>
               </div>
-            ) : shelves.length === 0 ? (
+            ) : filteredShelves.length === 0 ? (
               <div className="text-center py-24">
                 <Store className="h-10 w-10 text-muted-foreground/15 mx-auto mb-5" />
                 <p className="text-sm text-muted-foreground/40">
-                  Nenhum conteúdo disponível na vitrine no momento.
+                  {searchTerm ? "Nenhum curso encontrado para esta busca." : "Nenhum conteúdo disponível na vitrine no momento."}
                 </p>
               </div>
             ) : (
               <div className="space-y-10">
-                {shelves.map((shelf: any, shelfIdx: number) => (
+                {filteredShelves.map((shelf: any, shelfIdx: number) => (
                   <motion.section
                     key={shelf.id}
                     initial={{ opacity: 0, y: 20 }}
