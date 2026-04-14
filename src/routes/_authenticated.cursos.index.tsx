@@ -93,50 +93,42 @@ function MeusCoursosPage() {
     <StudentLayout>
       <div className="min-h-screen bg-background">
 
-        {/* ═══ HERO BANNER — full-bleed, rounded, cinematic ═══ */}
+        {/* ═══ TOP BAR — greeting + search ═══ */}
+        <div className="w-full max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-16 pt-6 sm:pt-8">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="flex items-center justify-between gap-4 mb-6"
+          >
+            <h1 className="font-display text-lg sm:text-xl font-bold text-foreground/80 tracking-tight whitespace-nowrap">
+              Olá, {firstName}
+            </h1>
+
+            <div className="relative w-full max-w-xs">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/25" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Buscar cursos..."
+                className="pl-10 h-9 bg-card/6 border-border/8 rounded-xl text-xs placeholder:text-muted-foreground/20 focus:border-gold/20 focus:ring-gold/8 transition-all duration-300"
+              />
+            </div>
+          </motion.div>
+        </div>
+
+        {/* ═══ HERO BANNER ═══ */}
         {!isLoading && featuredCourse && !searchResults && (
           <HeroBanner course={featuredCourse} />
         )}
 
-        {/* ═══ MAIN CONTENT AREA ═══ */}
+        {/* ═══ SHELVES CONTENT ═══ */}
         <div className="w-full max-w-[1600px] mx-auto px-6 sm:px-10 lg:px-16">
-
-          {/* ═══ SAUDAÇÃO + BUSCA ═══ */}
-          <div className="pt-8 sm:pt-10 pb-2">
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8"
-            >
-              <div>
-                <div className="flex items-center gap-2 mb-0.5">
-                  <Heart className="h-3.5 w-3.5 text-gold/40 flex-shrink-0" />
-                  <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground/90 tracking-tight">
-                    Olá, {firstName}
-                  </h1>
-                </div>
-                <p className="text-[11px] text-muted-foreground/35 ml-[22px] italic">
-                  Que sua jornada hoje seja cheia de paz.
-                </p>
-              </div>
-
-              <div className="relative w-full sm:w-72">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/25" />
-                <Input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Buscar cursos..."
-                  className="pl-10 h-10 bg-card/8 border-border/10 rounded-xl text-xs placeholder:text-muted-foreground/20 focus:border-gold/20 focus:ring-gold/8 transition-all duration-300"
-                />
-              </div>
-            </motion.div>
-          </div>
 
           {/* ═══ SEARCH RESULTS ═══ */}
           {searchResults !== null ? (
-            <div className="pb-20">
-              <ShelfHeader title={`Resultados para "${search}"`} subtitle={`${searchResults.length} curso(s)`} icon={<Search className="h-4 w-4" />} />
+            <div className="pt-8 pb-24">
+              <ShelfHeader title={`Resultados para "${search}"`} />
               {searchResults.length > 0 ? (
                 <ShelfRow>
                   {searchResults.map((course: any, idx: number) => (
@@ -150,7 +142,7 @@ function MeusCoursosPage() {
               )}
             </div>
           ) : (
-            <div className="pb-20">
+            <div className="pt-6 sm:pt-10 pb-24">
               {isLoading ? (
                 <CardGridSkeleton count={6} />
               ) : (
@@ -158,13 +150,7 @@ function MeusCoursosPage() {
                   {/* ═══ CONTINUE ASSISTINDO ═══ */}
                   {continueWatchingCourses.length > 0 && (
                     <ShelfSection delay={0.05}>
-                      <ShelfHeader
-                        title="Continue assistindo"
-                        subtitle="Retome de onde parou"
-                        icon={<PlayCircle className="h-4 w-4 text-gold" />}
-                        linkTo="/cursos"
-                        linkLabel="Ver todos"
-                      />
+                      <ShelfHeader title="Continue assistindo" linkTo="/cursos" linkLabel="Ver todos" />
                       <ShelfRow>
                         {continueWatchingCourses.map((course: any, idx: number) => (
                           <ShelfItem key={`cw-${course.id}`} index={idx}>
@@ -178,13 +164,7 @@ function MeusCoursosPage() {
                   {/* ═══ MEUS CURSOS ═══ */}
                   {myCourses.length > 0 && (
                     <ShelfSection delay={0.1}>
-                      <ShelfHeader
-                        title="Meus cursos"
-                        subtitle="Seus cursos matriculados"
-                        icon={<GraduationCap className="h-4 w-4 text-gold" />}
-                        linkTo="/cursos"
-                        linkLabel="Ver todos"
-                      />
+                      <ShelfHeader title="Meus cursos" linkTo="/cursos" linkLabel="Ver todos" />
                       <ShelfRow>
                         {myCourses.map((course: any, idx: number) => (
                           <ShelfItem key={`mc-${course.id}`} index={idx}>
@@ -224,14 +204,14 @@ function MeusCoursosPage() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
-                            className="mb-14"
+                            className="mb-16"
                           >
                             {banner.link_url ? (
-                              <a href={banner.link_url} target="_blank" rel="noopener noreferrer" className="block rounded-2xl overflow-hidden border border-border/8 hover:border-gold/12 transition-all duration-300">
+                              <a href={banner.link_url} target="_blank" rel="noopener noreferrer" className="block rounded-2xl overflow-hidden border border-border/6 hover:border-gold/10 transition-all duration-300">
                                 <img src={banner.image_url} alt={banner.title} className="w-full h-auto object-cover" />
                               </a>
                             ) : (
-                              <div className="rounded-2xl overflow-hidden border border-border/8">
+                              <div className="rounded-2xl overflow-hidden border border-border/6">
                                 <img src={banner.image_url} alt={banner.title} className="w-full h-auto object-cover" />
                               </div>
                             )}
@@ -243,10 +223,7 @@ function MeusCoursosPage() {
 
                   {/* ═══ BIBLIOTECA RESUMO ═══ */}
                   <ShelfSection delay={0.3}>
-                    <ShelfHeader
-                      title="Minha biblioteca"
-                      icon={<Layers className="h-4 w-4 text-primary/50" />}
-                    />
+                    <ShelfHeader title="Minha biblioteca" />
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                       <StatCard label="Cursos" value={stats.total} />
                       <StatCard label="Em andamento" value={stats.inProgress} />
