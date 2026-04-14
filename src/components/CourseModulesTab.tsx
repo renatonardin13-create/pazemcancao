@@ -364,7 +364,10 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
       toast.error("O nome deve ter pelo menos 2 caracteres");
       return;
     }
-    if (!lessonDialog.moduleId) return;
+    if ((lesContentType === "pdf" || lesContentType === "file") && !lesContentUrl.trim()) {
+      toast.error("Envie o arquivo antes de salvar a aula");
+      return;
+    }
     setLesTitleError("");
     const payload: any = {
       title: lesTitle.trim(),
