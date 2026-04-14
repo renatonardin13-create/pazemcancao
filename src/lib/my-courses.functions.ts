@@ -131,3 +131,69 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
       },
     };
   });
+
+export const getRecommendedCourses = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+
+    // 1. Get user's enrolled course IDs
+    const { data: enrollments } = await supabase
+      .from('enrollments')
+      .select('course_id')
+      .eq('user_id', userId)
+      .eq('status', 'active');
+
+    const enrolledIds = new Set((enrollments || []).map((e: any) => e.course_id));
+
+    // 2. Get categories of enrolled courses
+    const { data: enrolledCourses } = enrolledIds.size > 0
+      ? await supabase
+          .from('courses')
+          .select('category_id')
+          .in('id', Array.from(enrolledIds))
+      : { data: [] };
+
+    const userCategoryIds = new Set(
+      (enrolledCourses || []).map((c: any) => c.category_id).filter(Boolean)
+    );
+
+    // 3. Get all published courses NOT enrolled by the user
+    const { data: allCourses } = await supabase
+      .from('courses')
+      .select('id, title, cover_image_url, short_description, total_lessons, total_duration, category_id, status')
+      .eq('status', 'published')
+      .order('sort_order', { ascending: true });
+
+    const available = (allCourses || []).filter((c: any) => !enrolledIds.has(c.id));
+
+    // 4. Get popularity data (enrollment count per course)
+    const { data: allEnrollments } = await supabase
+      .from('enrollments')
+      .select('course_id')
+      .eq('status', 'active');
+
+    const popularityMap = new Map<string, number>();
+    for (const e of allEnrollments || []) {
+      popularityMap.set(e.course_id, (popularityMap.get(e.course_id) || 0) + 1);
+    }
+
+    // 5. Score and rank
+    const scored = available.map((course: any) => {
+      let score = 0;
+      // Same category as user's courses → +10
+      if (course.category_id && userCategoryIds.has(course.category_id)) {
+        score += 10;
+      }
+      // Popularity bonus
+      score += (popularityMap.get(course.id) || 0);
+      return { ...course, _score: score, enrollment_count: popularityMap.get(course.id) || 0 };
+    });
+
+    scored.sort((a: any, b: any) => b._score - a._score);
+
+    // Return top 10
+    const recommendations = scored.slice(0, 10).map(({ _score, ...rest }: any) => rest);
+
+    return { recommendations };
+  });
