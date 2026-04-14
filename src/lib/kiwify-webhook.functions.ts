@@ -9,7 +9,7 @@ function jsonResponse(data: unknown, status = 200) {
   });
 }
 
-// ─── Legacy log (kept for backward compat with admin dashboard) ───
+// ─── Structured audit log ───
 async function logWebhookEvent(params: {
   eventType: string;
   email?: string;
@@ -17,6 +17,10 @@ async function logWebhookEvent(params: {
   payload?: unknown;
   responseStatus: number;
   responseMessage: string;
+  externalProductId?: string;
+  internalCourseId?: string | null;
+  isSuccess?: boolean;
+  errorDetails?: string | null;
 }) {
   try {
     await supabaseAdmin.from('webhook_logs').insert({
@@ -27,6 +31,11 @@ async function logWebhookEvent(params: {
       payload: params.payload as any,
       response_status: params.responseStatus,
       response_message: params.responseMessage,
+      external_product_id: params.externalProductId || null,
+      internal_course_id: params.internalCourseId || null,
+      processed_at: new Date().toISOString(),
+      is_success: params.isSuccess ?? null,
+      error_details: params.errorDetails || null,
     });
   } catch (e) {
     console.error('Failed to log webhook event:', e);
