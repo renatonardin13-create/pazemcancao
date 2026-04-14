@@ -398,40 +398,38 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       const unlocksCreated = await calculateContentUnlocks(customerEmail, orderId);
 
       let linkedCourseId: string | null = null;
-      if (resolvedCourseId) {
-        const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
-        const authUser = authUsers.users.find((user) => user.email?.toLowerCase() === customerEmail);
+      if (resolvedCourseId && userResult.userId) {
+        const authUserId = userResult.userId;
 
-        if (authUser) {
-          // Check if enrollment already exists
-          const { data: existingEnrollment } = await supabaseAdmin
+        // Check if enrollment already exists
+        const { data: existingEnrollment } = await supabaseAdmin
+          .from('enrollments')
+          .select('id')
+          .eq('user_id', authUserId)
+          .eq('course_id', resolvedCourseId)
+          .maybeSingle();
+
+        if (existingEnrollment) {
+          await supabaseAdmin
             .from('enrollments')
-            .select('id')
-            .eq('user_id', authUser.id)
-            .eq('course_id', resolvedCourseId)
-            .maybeSingle();
-
-          if (existingEnrollment) {
-            await supabaseAdmin
-              .from('enrollments')
-              .update({ status: 'active', access_origin: 'webhook', granted_at: new Date().toISOString() })
-              .eq('id', existingEnrollment.id);
-          } else {
-            const { error: enrollmentError } = await supabaseAdmin
-              .from('enrollments')
-              .insert({
-                user_id: authUser.id,
-                course_id: resolvedCourseId,
-                email: customerEmail,
-                access_origin: 'webhook',
-                status: 'active',
-                granted_at: new Date().toISOString(),
-              });
-            if (enrollmentError) {
-              console.error('[webhook] Enrollment insert error:', enrollmentError.message);
-            }
+            .update({ status: 'active', access_origin: 'webhook', granted_at: new Date().toISOString() })
+            .eq('id', existingEnrollment.id);
+        } else {
+          const { error: enrollmentError } = await supabaseAdmin
+            .from('enrollments')
+            .insert({
+              user_id: authUserId,
+              course_id: resolvedCourseId,
+              email: customerEmail,
+              access_origin: 'webhook',
+              status: 'active',
+              granted_at: new Date().toISOString(),
+            });
+          if (enrollmentError) {
+            console.error('[webhook] Enrollment insert error:', enrollmentError.message);
           }
-          linkedCourseId = resolvedCourseId;
+        }
+        linkedCourseId = resolvedCourseId;
         }
       } else if (externalProductId) {
         // Product ID was in payload but no matching integration found
