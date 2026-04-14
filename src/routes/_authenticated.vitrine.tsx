@@ -16,7 +16,8 @@ function VitrinePage() {
   const { data, isLoading } = useQuery({
     queryKey: ["student-shelves"],
     queryFn: () => getStudentShelves(),
-    staleTime: 60_000,
+    staleTime: 10_000,
+    refetchOnWindowFocus: true,
   });
 
   const [searchTerm, setSearchTerm] = useState("");
