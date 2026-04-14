@@ -281,6 +281,7 @@ export type Database = {
       }
       courses: {
         Row: {
+          access_count: number
           banner_image_url: string | null
           category_id: string | null
           course_type: string
@@ -300,6 +301,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          access_count?: number
           banner_image_url?: string | null
           category_id?: string | null
           course_type?: string
@@ -319,6 +321,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          access_count?: number
           banner_image_url?: string | null
           category_id?: string | null
           course_type?: string
@@ -1327,6 +1330,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      increment_course_access: {
+        Args: { p_course_id: string }
+        Returns: undefined
       }
     }
     Enums: {
