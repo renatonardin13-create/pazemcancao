@@ -12,6 +12,7 @@ import { CourseShelfCard } from "@/components/CourseShelfCard";
 import { motion } from "framer-motion";
 import { BookOpen, Search, ArrowRight, PlayCircle, Heart, Play, Layers, CheckCircle2, GraduationCap } from "lucide-react";
 import { useState, useMemo } from "react";
+import { useDragScroll } from "@/hooks/use-drag-scroll";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
 import { getMyProfile } from "@/lib/profile.functions";
