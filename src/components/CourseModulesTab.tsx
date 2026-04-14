@@ -100,6 +100,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   const [lesThumbnailUrl, setLesThumbnailUrl] = useState("");
   const [lesPublished, setLesPublished] = useState(true);
   const [lesFileUploading, setLesFileUploading] = useState(false);
+  const [lesContentError, setLesContentError] = useState("");
 
   // Materials state
   const [matTitle, setMatTitle] = useState("");
@@ -353,35 +354,47 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
 
   const handleSaveLesson = async () => {
     try {
+      let hasError = false;
+
       if (!lesTitle.trim()) {
         setLesTitleError("O nome da aula é obrigatório");
-        toast.error("O nome da aula é obrigatório");
-        return;
-      }
-      if (lesTitle.trim().length < 2) {
+        hasError = true;
+      } else if (lesTitle.trim().length < 2) {
         setLesTitleError("O nome deve ter pelo menos 2 caracteres");
-        toast.error("O nome deve ter pelo menos 2 caracteres");
-        return;
+        hasError = true;
+      } else {
+        setLesTitleError("");
       }
-      if ((lesContentType === "pdf" || lesContentType === "file") && !lesContentUrl.trim()) {
-        toast.error("Envie o arquivo antes de salvar a aula");
-        return;
-      }
-      if (lesContentType === "video" && !lesVideoUrl.trim()) {
-        toast.error("Informe a URL ou código embed do vídeo");
-        return;
-      }
-      if (lesContentType === "link" && !lesContentUrl.trim()) {
-        toast.error("Informe a URL externa");
-        return;
-      }
-      if (lesContentType === "link" && lesContentUrl.trim() && !/^https?:\/\/.+/i.test(lesContentUrl.trim())) {
-        toast.error("A URL deve começar com http:// ou https://");
-        return;
-      }
-      if (!lessonDialog.moduleId) return;
 
-      setLesTitleError("");
+      let contentErr = "";
+      if ((lesContentType === "pdf" || lesContentType === "file") && !lesContentUrl.trim()) {
+        contentErr = "Envie o arquivo antes de salvar a aula";
+      } else if (lesContentType === "video" && !lesVideoUrl.trim()) {
+        contentErr = "Informe a URL ou código embed do vídeo";
+      } else if (lesContentType === "link" && !lesContentUrl.trim()) {
+        contentErr = "Informe a URL externa";
+      } else if (lesContentType === "link" && lesContentUrl.trim() && !/^https?:\/\/.+/i.test(lesContentUrl.trim())) {
+        contentErr = "A URL deve começar com http:// ou https://";
+      }
+
+      if (contentErr) {
+        setLesContentError(contentErr);
+        hasError = true;
+      } else {
+        setLesContentError("");
+      }
+
+      if (lesPublished && contentErr) {
+        toast.error("Não é possível publicar uma aula sem conteúdo");
+        return;
+      }
+
+      if (hasError) {
+        toast.error("Preencha os campos obrigatórios");
+        return;
+      }
+
+      if (!lessonDialog.moduleId) return;
 
       const payload: any = {
         title: lesTitle.trim(),
@@ -930,11 +943,14 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   <Label className="text-sm font-semibold">URL ou Código Embed</Label>
                   <Textarea
                     value={lesVideoUrl}
-                    onChange={(e) => setLesVideoUrl(e.target.value)}
+                    onChange={(e) => { setLesVideoUrl(e.target.value); if (lesContentError) setLesContentError(""); }}
                     placeholder="Cole a URL (YouTube, Vimeo) ou código embed (Panda Video, Host VSL)"
                     rows={3}
-                    className="bg-card/20 border-border/30"
+                    className={`bg-card/20 border-border/30 ${lesContentError && lesContentType === "video" ? "border-destructive" : ""}`}
                   />
+                  {lesContentError && lesContentType === "video" && (
+                    <p className="text-[0.8rem] font-medium text-destructive">{lesContentError}</p>
+                  )}
                 </div>
 
                 <ImageUploadField
@@ -986,6 +1002,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                           if (uploadError) throw uploadError;
                           const { data: urlData } = supabase.storage.from("content-files").getPublicUrl(path);
                           setLesContentUrl(`${urlData.publicUrl}?t=${Date.now()}`);
+                          if (lesContentError) setLesContentError("");
                           toast.success("Arquivo enviado com sucesso");
                         } catch (err: any) {
                           toast.error("Erro no upload: " + (err.message || "Tente novamente"));
@@ -997,6 +1014,9 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                     />
                   </label>
                 )}
+              {lesContentError && (lesContentType === "pdf" || lesContentType === "file") && (
+                <p className="text-[0.8rem] font-medium text-destructive">{lesContentError}</p>
+              )}
               </div>
             )}
 
@@ -1005,11 +1025,14 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 <Label className="text-sm font-semibold">URL Externa</Label>
                 <Textarea
                   value={lesContentUrl}
-                  onChange={(e) => setLesContentUrl(e.target.value)}
+                  onChange={(e) => { setLesContentUrl(e.target.value); if (lesContentError) setLesContentError(""); }}
                   placeholder="Cole a URL externa"
                   rows={3}
-                  className="bg-card/20 border-border/30"
+                  className={`bg-card/20 border-border/30 ${lesContentError && lesContentType === "link" ? "border-destructive" : ""}`}
                 />
+                {lesContentError && lesContentType === "link" && (
+                  <p className="text-[0.8rem] font-medium text-destructive">{lesContentError}</p>
+                )}
               </div>
             )}
 
