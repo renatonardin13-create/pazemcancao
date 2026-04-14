@@ -19,9 +19,26 @@ function VitrinePage() {
     staleTime: 60_000,
   });
 
+  const [searchTerm, setSearchTerm] = useState("");
+
   const shelves = data?.shelves || [];
   const promoBanners = data?.promoBanners || [];
   const featuredCourse = data?.featuredCourse;
+
+  // Filter shelves by search term — filter courses within each shelf
+  const filteredShelves = useMemo(() => {
+    if (!searchTerm.trim()) return shelves;
+    const term = searchTerm.toLowerCase();
+    return shelves
+      .map((shelf: any) => ({
+        ...shelf,
+        courses: shelf.courses.filter((c: any) =>
+          c.title?.toLowerCase().includes(term) ||
+          c.short_description?.toLowerCase().includes(term)
+        ),
+      }))
+      .filter((shelf: any) => shelf.courses.length > 0);
+  }, [shelves, searchTerm]);
 
   return (
     <StudentLayout>
