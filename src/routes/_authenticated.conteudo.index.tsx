@@ -458,6 +458,8 @@ function ContentPage() {
                       lastAccessedId={lastAccessedId}
                       onTrackView={handleTrackView}
                       onTrackDownload={handleTrackDownload}
+                      favoriteIds={favoriteIds}
+                      onToggleFavorite={handleToggleFavorite}
                     />
                   </section>
                 );
@@ -495,6 +497,8 @@ function ContentPage() {
                                 TypeIcon={itemConfig.icon}
                                 progress={progressMap[item.id]}
                                 isLastAccessed={item.id === lastAccessedId}
+                                isFavorite={favoriteIds.has(item.id)}
+                                onToggleFavorite={handleToggleFavorite}
                               />
                             );
                           })}
@@ -523,6 +527,8 @@ function ContentPage() {
                       lastAccessedId={lastAccessedId}
                       onTrackView={handleTrackView}
                       onTrackDownload={handleTrackDownload}
+                      favoriteIds={favoriteIds}
+                      onToggleFavorite={handleToggleFavorite}
                     />
                   </section>
                 );
@@ -555,6 +561,8 @@ function ContentPage() {
                       lastAccessedId={lastAccessedId}
                       onTrackView={handleTrackView}
                       onTrackDownload={handleTrackDownload}
+                      favoriteIds={favoriteIds}
+                      onToggleFavorite={handleToggleFavorite}
                     />
                   </section>
                 );
