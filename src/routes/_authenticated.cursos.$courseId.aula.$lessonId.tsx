@@ -874,28 +874,42 @@ function LessonSidebarItem({
   courseId,
   isActive,
   isCompleted,
+  isNext,
 }: {
   lesson: any;
   courseId: string;
   isActive: boolean;
   isCompleted: boolean;
+  isNext: boolean;
 }) {
   return (
     <Link
       to="/cursos/$courseId/aula/$lessonId"
       params={{ courseId, lessonId: lesson.id }}
-      className={`flex items-center gap-3 px-4 py-2.5 transition-all ${
+      className={`flex items-center gap-3 px-4 py-3 transition-all ${
         isActive
-          ? "bg-player-sidebar-active border-l-2 border-l-gold/50"
-          : "hover:bg-player-sidebar-hover border-l-2 border-l-transparent"
+          ? "bg-player-sidebar-active border-l-[3px] border-l-gold shadow-inner shadow-gold/5"
+          : isNext
+            ? "bg-gold/[0.03] border-l-[3px] border-l-gold/30 hover:bg-gold/[0.06]"
+            : "hover:bg-player-sidebar-hover border-l-[3px] border-l-transparent"
       }`}
     >
       {/* Status icon */}
-      <div className="shrink-0">
+      <div className={`shrink-0 flex h-7 w-7 items-center justify-center rounded-lg ${
+        isCompleted
+          ? "bg-player-completed/12"
+          : isActive
+            ? "bg-gold/15 ring-1 ring-gold/20"
+            : isNext
+              ? "bg-gold/8"
+              : ""
+      }`}>
         {isCompleted ? (
-          <CheckCircle2 className="h-3.5 w-3.5 text-player-completed/50" />
+          <CheckCircle2 className="h-4 w-4 text-player-completed" />
         ) : isActive ? (
-          <Play className="h-3.5 w-3.5 text-gold/60 fill-gold/25" />
+          <Play className="h-3.5 w-3.5 text-gold fill-gold/40" />
+        ) : isNext ? (
+          <Play className="h-3 w-3 text-gold/50" />
         ) : (
           <Circle className="h-3.5 w-3.5 text-muted-foreground/20" />
         )}
@@ -903,22 +917,43 @@ function LessonSidebarItem({
 
       {/* Lesson info */}
       <div className="flex-1 min-w-0">
-        <p
-          className={`text-[11px] font-medium truncate leading-snug ${
-            isActive
-              ? "text-gold/75"
-              : isCompleted
-                ? "text-muted-foreground/45"
-                : "text-foreground/55"
-          }`}
-        >
-          {lesson.title}
-        </p>
-        {lesson.duration && lesson.duration !== "0:00" && (
-          <span className="text-[10px] text-muted-foreground/35">
-            {lesson.duration}
-          </span>
-        )}
+        <div className="flex items-center gap-1.5">
+          <p
+            className={`text-[11px] font-medium truncate leading-snug ${
+              isActive
+                ? "text-gold font-semibold"
+                : isCompleted
+                  ? "text-muted-foreground/40 line-through decoration-muted-foreground/15"
+                  : isNext
+                    ? "text-gold/65 font-medium"
+                    : "text-foreground/55"
+            }`}
+          >
+            {lesson.title}
+          </p>
+        </div>
+        <div className="flex items-center gap-2 mt-0.5">
+          {lesson.duration && lesson.duration !== "0:00" && (
+            <span className="text-[10px] text-muted-foreground/30 tabular-nums">
+              {lesson.duration}
+            </span>
+          )}
+          {isActive && (
+            <span className="text-[8px] font-bold uppercase tracking-[0.15em] text-gold bg-gold/10 px-1.5 py-0.5 rounded-full ring-1 ring-gold/15">
+              Assistindo
+            </span>
+          )}
+          {isNext && !isActive && (
+            <span className="text-[8px] font-bold uppercase tracking-[0.15em] text-gold/50 bg-gold/[0.06] px-1.5 py-0.5 rounded-full">
+              Próxima
+            </span>
+          )}
+          {isCompleted && (
+            <span className="text-[8px] font-medium uppercase tracking-wider text-player-completed/50">
+              Concluída
+            </span>
+          )}
+        </div>
       </div>
     </Link>
   );
