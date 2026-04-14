@@ -508,6 +508,65 @@ function MeusCoursosPage() {
             </motion.div>
           )}
 
+          {/* Conteúdos em destaque */}
+          {!isLoading && (featuredData?.items?.length ?? 0) > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.26 }}
+              className="mb-10"
+            >
+              <div className="flex items-center gap-3 mb-5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
+                  <Star className="h-4 w-4 text-primary/70" />
+                </div>
+                <div>
+                  <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
+                    Conteúdos em destaque
+                  </h2>
+                  <p className="text-[11px] text-muted-foreground/40 mt-0.5 italic">
+                    Selecionados especialmente para sua jornada
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
+                {(featuredData?.items || []).map((item: any, idx: number) => {
+                  const isCourse = featuredData?.source === 'courses' || item.content_type === 'course';
+                  const coverImg = item.card_cover_url || item.cover_url;
+
+                  return (
+                    <motion.div
+                      key={`feat-${item.id}`}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.5, delay: 0.06 * idx }}
+                      className="flex-shrink-0 w-[220px] sm:w-[240px]"
+                    >
+                      {isCourse ? (
+                        <Link
+                          to="/cursos/$courseId"
+                          params={{ courseId: item.id }}
+                          className="group block rounded-xl border border-border/20 bg-card/10 overflow-hidden transition-all duration-500 hover:border-gold/25 hover:bg-card/20 hover:shadow-lg hover:shadow-gold/5"
+                        >
+                          <FeaturedCardInner item={item} coverImg={coverImg} />
+                        </Link>
+                      ) : (
+                        <Link
+                          to="/conteudo/$trackId"
+                          params={{ trackId: item.id }}
+                          className="group block rounded-xl border border-border/20 bg-card/10 overflow-hidden transition-all duration-500 hover:border-gold/25 hover:bg-card/20 hover:shadow-lg hover:shadow-gold/5"
+                        >
+                          <FeaturedCardInner item={item} coverImg={coverImg} />
+                        </Link>
+                      )}
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </motion.div>
+          )}
+
           {/* Section: Todos os cursos */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5 mt-2">
             <div className="flex items-center gap-3">
