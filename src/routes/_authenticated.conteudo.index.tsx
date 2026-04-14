@@ -1,7 +1,8 @@
 import { EmptyState } from "@/components/EmptyState";
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { useMemo } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMemo, useCallback } from "react";
+import { trackContentView, trackContentDownload } from "@/lib/progress.functions";
 import { listContentItems } from "@/lib/content.functions";
 import { getMyProfile } from "@/lib/profile.functions";
 import { useAuth } from "@/hooks/use-auth";
