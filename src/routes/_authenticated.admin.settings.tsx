@@ -56,7 +56,7 @@ function SettingsPage() {
           <div className="flex items-center gap-3">
             <Link
               to="/admin"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/15 bg-background/30 text-muted-foreground/50 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all duration-200"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/30 bg-background/30 text-muted-foreground/50 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all duration-200"
             >
               <ArrowLeft className="h-4 w-4" />
             </Link>
@@ -64,7 +64,7 @@ function SettingsPage() {
               <h1 className="font-display text-xl font-black text-foreground tracking-tight">
                 Configurações da Plataforma
               </h1>
-              <p className="text-[11px] text-muted-foreground/50 mt-0.5">
+              <p className="text-xs text-muted-foreground/50 mt-0.5">
                 Personalize a aparência e comportamento da sua área de membros
               </p>
             </div>
@@ -74,7 +74,7 @@ function SettingsPage() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="bg-card/60 border border-border/10 p-1 rounded-xl flex-wrap h-auto">
+        <TabsList className="bg-card/60 border border-border/25 p-1 rounded-xl flex-wrap h-auto">
           <TabsTrigger value="branding" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
             <Upload className="h-3.5 w-3.5" /> Identidade Visual
           </TabsTrigger>
@@ -180,7 +180,7 @@ function BrandingTab({ settings, onSave, saving }: { settings: any; onSave: (v: 
               </>
             ) : (
               <>
-                <Upload className="h-8 w-8 text-muted-foreground/40" />
+                <Upload className="h-8 w-8 text-muted-foreground/70" />
                 <p className="text-sm text-muted-foreground">Clique para fazer upload</p>
                 <p className="text-xs text-muted-foreground/60">PNG, JPG ou SVG (max 2MB)</p>
               </>
@@ -225,7 +225,7 @@ function BrandingTab({ settings, onSave, saving }: { settings: any; onSave: (v: 
                   </div>
                 ) : (
                   <div className="h-8 w-8 rounded border border-dashed border-border/30 flex items-center justify-center">
-                    <Upload className="h-4 w-4 text-muted-foreground/40" />
+                    <Upload className="h-4 w-4 text-muted-foreground/70" />
                   </div>
                 )}
                 <div>

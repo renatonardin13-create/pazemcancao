@@ -174,30 +174,30 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
         </div>
         <div>
           <h3 className="text-sm font-bold text-foreground/80">Adicionar Louvor</h3>
-          <p className="text-[10px] text-muted-foreground/35">Preencha os campos e envie o arquivo MP3</p>
+          <p className="text-[10px] text-muted-foreground/70">Preencha os campos e envie o arquivo MP3</p>
         </div>
       </div>
 
       <div className="grid sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+          <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
             Título da Música *
           </Label>
           <Input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Ex: Paz em Meio ao Caos"
-            className="bg-card/15 border-border/15 text-sm"
+            className="bg-card/15 border-border/30 text-sm"
             disabled={isSubmitting}
           />
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+          <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
             Categoria
           </Label>
           <Select value={category} onValueChange={setCategory} disabled={isSubmitting}>
-            <SelectTrigger className="bg-card/15 border-border/15 text-sm">
+            <SelectTrigger className="bg-card/15 border-border/30 text-sm">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -210,44 +210,44 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+        <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
           Descrição (opcional)
         </Label>
         <Textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Uma breve descrição do louvor..."
-          className="bg-card/15 border-border/15 text-sm min-h-[70px]"
+          className="bg-card/15 border-border/30 text-sm min-h-[70px]"
           disabled={isSubmitting}
         />
       </div>
 
       {/* MP3 Upload */}
       <div className="space-y-2">
-        <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+        <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
           Arquivo MP3 *
         </Label>
         {mp3File ? (
-          <div className="flex items-center gap-3 rounded-xl border border-border/15 bg-card/15 p-3">
-            <Music className="h-4 w-4 text-gold/50 shrink-0" />
+          <div className="flex items-center gap-3 rounded-xl border border-border/30 bg-card/15 p-3">
+            <Music className="h-4 w-4 text-gold/70 shrink-0" />
             <div className="flex-1 min-w-0">
               <p className="text-sm text-foreground/70 truncate">{mp3File.name}</p>
               {duration && (
-                <p className="text-[10px] text-muted-foreground/30">{duration}</p>
+                <p className="text-[10px] text-muted-foreground/60">{duration}</p>
               )}
             </div>
             <button
               onClick={() => { setMp3File(null); setDuration(""); }}
-              className="text-muted-foreground/30 hover:text-muted-foreground/60"
+              className="text-muted-foreground/60 hover:text-muted-foreground/60"
               disabled={isSubmitting}
             >
               <X className="h-4 w-4" />
             </button>
           </div>
         ) : (
-          <label className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border/20 bg-card/10 p-6 cursor-pointer hover:border-gold/20 hover:bg-card/15 transition-all duration-300">
-            <Upload className="h-5 w-5 text-muted-foreground/25" />
-            <span className="text-[11px] text-muted-foreground/35">
+          <label className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border/20 bg-card/20 p-6 cursor-pointer hover:border-gold/20 hover:bg-card/15 transition-all duration-300">
+            <Upload className="h-5 w-5 text-muted-foreground/60" />
+            <span className="text-xs text-muted-foreground/70">
               Clique para selecionar um arquivo MP3
             </span>
             <input
@@ -263,7 +263,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
 
       {/* Cover Upload */}
       <div className="space-y-2">
-        <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+        <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
           Capa da música (opcional)
         </Label>
         <ImageFieldHint ratio="1:1" recommendedSize="500x500" file={coverFile} />
@@ -272,20 +272,20 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
             <img
               src={coverPreview}
               alt="Capa selecionada"
-              className="h-20 w-20 rounded-xl object-cover border border-border/15"
+              className="h-20 w-20 rounded-xl object-cover border border-border/30"
             />
             <button
               onClick={() => { setCoverFile(null); setCoverPreview(null); }}
-              className="text-muted-foreground/30 hover:text-muted-foreground/60"
+              className="text-muted-foreground/60 hover:text-muted-foreground/60"
               disabled={isSubmitting}
             >
               <X className="h-4 w-4" />
             </button>
           </div>
         ) : (
-          <label className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border/20 bg-card/10 p-4 cursor-pointer hover:border-gold/20 hover:bg-card/15 transition-all duration-300">
-            <ImageIcon className="h-5 w-5 text-muted-foreground/25" />
-            <span className="text-[11px] text-muted-foreground/35">
+          <label className="flex flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border/20 bg-card/20 p-4 cursor-pointer hover:border-gold/20 hover:bg-card/15 transition-all duration-300">
+            <ImageIcon className="h-5 w-5 text-muted-foreground/60" />
+            <span className="text-xs text-muted-foreground/70">
               Clique para selecionar uma imagem
             </span>
             <input
@@ -316,17 +316,17 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
         </div>
         {isBonus && (
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+            <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
               Data de Liberação
             </Label>
             <Input
               type="date"
               value={bonusReleaseDate}
               onChange={(e) => setBonusReleaseDate(e.target.value)}
-              className="bg-card/15 border-border/15 text-sm"
+              className="bg-card/15 border-border/30 text-sm"
               disabled={isSubmitting}
             />
-            <p className="text-[9px] text-muted-foreground/30">
+            <p className="text-[9px] text-muted-foreground/60">
               A música ficará bloqueada até esta data.
             </p>
           </div>
@@ -336,8 +336,8 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
       {/* Status */}
       {isSubmitting && (
         <div className="flex items-center gap-3 rounded-xl border border-gold/10 bg-gold/[0.04] p-3">
-          <Loader2 className="h-4 w-4 text-gold/50 animate-spin" />
-          <span className="text-[11px] text-gold/50">
+          <Loader2 className="h-4 w-4 text-gold/70 animate-spin" />
+          <span className="text-xs text-gold/70">
             {uploading ? "Enviando arquivos..." : "Salvando..."}
           </span>
         </div>
@@ -347,7 +347,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
         <Button
           onClick={() => addTrackMutation.mutate()}
           disabled={!title.trim() || !mp3File || isSubmitting}
-          className="gap-2 rounded-full bg-gold/15 text-gold/65 border border-gold/12 px-6 h-10 text-[11px] font-bold tracking-[0.15em] uppercase hover:bg-gold/25 hover:text-gold/85 transition-all duration-500"
+          className="gap-2 rounded-full bg-gold/15 text-gold/65 border border-gold/12 px-6 h-10 text-xs font-bold tracking-[0.15em] uppercase hover:bg-gold/25 hover:text-gold/85 transition-all duration-500"
         >
           {isSubmitting ? (
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -361,7 +361,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
           variant="ghost"
           onClick={resetForm}
           disabled={isSubmitting}
-          className="text-[11px] text-muted-foreground/30 hover:text-muted-foreground/50"
+          className="text-xs text-muted-foreground/60 hover:text-muted-foreground/50"
         >
           Limpar
         </Button>

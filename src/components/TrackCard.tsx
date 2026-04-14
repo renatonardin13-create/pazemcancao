@@ -76,8 +76,8 @@ export function TrackCard({ track, index }: TrackCardProps) {
         className={`relative rounded-3xl border transition-all duration-700 overflow-hidden h-full flex flex-col ${
           isPlaying
             ? "border-gold/25 shadow-[0_8px_50px_-12px] shadow-gold/15"
-            : "border-border/8 shadow-[0_4px_30px_-10px] shadow-black/20 hover:border-gold/15 hover:shadow-[0_8px_40px_-10px] hover:shadow-gold/8"
-        } bg-card/10`}
+            : "border-border/20 shadow-[0_4px_30px_-10px] shadow-black/20 hover:border-gold/15 hover:shadow-[0_8px_40px_-10px] hover:shadow-gold/8"
+        } bg-card/20`}
       >
         {/* Cover image area */}
         <div className={`relative h-40 sm:h-44 w-full bg-gradient-to-br ${gradient} overflow-hidden`}>
@@ -144,7 +144,7 @@ export function TrackCard({ track, index }: TrackCardProps) {
             className={`mt-2.5 text-[12px] leading-[1.9] line-clamp-2 transition-colors duration-500 flex-1 ${
               isPlaying
                 ? "text-muted-foreground/50"
-                : "text-muted-foreground/35 group-hover:text-muted-foreground/45"
+                : "text-muted-foreground/70 group-hover:text-muted-foreground/45"
             }`}
           >
             {track.description}
@@ -153,7 +153,7 @@ export function TrackCard({ track, index }: TrackCardProps) {
           {/* Duration */}
           <p
             className={`mt-3 text-[10px] tracking-[0.15em] font-medium transition-colors duration-500 ${
-              isPlaying ? "text-gold/40" : "text-muted-foreground/20"
+              isPlaying ? "text-gold/40" : "text-muted-foreground/50"
             }`}
           >
             {track.duration}
@@ -178,7 +178,7 @@ export function TrackCard({ track, index }: TrackCardProps) {
             <button
               onClick={handlePlay}
               className={`inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase transition-colors duration-500 ${
-                isPlaying ? "text-gold/55" : "text-muted-foreground/30"
+                isPlaying ? "text-gold/55" : "text-muted-foreground/60"
               }`}
             >
               {isPlaying ? (
@@ -198,7 +198,7 @@ export function TrackCard({ track, index }: TrackCardProps) {
 
             <button
               onClick={handleDownload}
-              className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase text-muted-foreground/20 hover:text-gold/45 transition-colors duration-500"
+              className="inline-flex items-center gap-2 text-[10px] font-semibold tracking-[0.2em] uppercase text-muted-foreground/50 hover:text-gold/45 transition-colors duration-500"
             >
               <Download className="h-3 w-3" />
               Baixar Louvor

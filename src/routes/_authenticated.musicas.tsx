@@ -247,12 +247,12 @@ function MusicLibraryPage() {
           className="mb-8"
         >
           <div className="relative max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/25" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/60" />
             <Input
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar músicas..."
-              className="pl-9 bg-card/10 border-border/15 text-sm h-10"
+              className="pl-9 bg-card/20 border-border/30 text-sm h-10"
             />
           </div>
         </motion.div>
@@ -262,8 +262,8 @@ function MusicLibraryPage() {
           <ListSkeleton rows={6} />
         ) : filteredTracks.length === 0 ? (
           <div className="text-center py-24">
-            <Music className="h-10 w-10 text-muted-foreground/15 mx-auto mb-5" />
-            <p className="text-sm text-muted-foreground/40">
+            <Music className="h-10 w-10 text-muted-foreground/50 mx-auto mb-5" />
+            <p className="text-sm text-muted-foreground/70">
               Nenhuma música encontrada.
             </p>
           </div>
@@ -286,7 +286,7 @@ function MusicLibraryPage() {
                       <h2 className="font-display text-lg font-bold text-foreground/85 tracking-tight">
                         Bônus Exclusivos
                       </h2>
-                      <p className="text-[11px] text-amber-400/40 mt-0.5">
+                      <p className="text-xs text-amber-400/40 mt-0.5">
                         {bonusTracks.length} música{bonusTracks.length !== 1 ? "s" : ""} especiai{bonusTracks.length !== 1 ? "s" : "l"}
                       </p>
                     </div>
@@ -338,13 +338,13 @@ function MusicLibraryPage() {
                       {displayName}
                     </h2>
                     <div className="flex-1 h-px bg-gradient-to-r from-border/15 to-transparent" />
-                    <span className="text-[10px] text-muted-foreground/25">
+                    <span className="text-[10px] text-muted-foreground/60">
                       {catTracks.length} música{catTracks.length !== 1 ? "s" : ""}
                     </span>
                     {catTracks.length > 1 && (
                       <button
                         onClick={() => setExpandedCategory(expandedCategory === category ? null : category)}
-                        className="text-[11px] font-medium text-gold/50 hover:text-gold/80 transition-colors duration-300 whitespace-nowrap"
+                        className="text-xs font-medium text-gold/70 hover:text-gold/80 transition-colors duration-300 whitespace-nowrap"
                       >
                         {expandedCategory === category ? "← Voltar" : "Ver todas →"}
                       </button>
@@ -478,13 +478,13 @@ function TrackCard({
             isCarousel ? "h-full flex flex-col" : ""
           } ${
             effectiveLocked
-              ? "border-border/10 shadow-[0_4px_30px_-10px] shadow-black/20 opacity-70 grayscale-[30%]"
+              ? "border-border/25 shadow-[0_4px_30px_-10px] shadow-black/20 opacity-70 grayscale-[30%]"
               : isPlaying
                 ? "border-gold/30 shadow-[0_8px_50px_-12px] shadow-gold/20 ring-1 ring-gold/10"
                 : isThis
                   ? "border-gold/15 shadow-[0_4px_30px_-10px] shadow-gold/10"
-                  : "border-border/8 shadow-[0_4px_30px_-10px] shadow-black/20 hover:border-gold/15"
-          } bg-card/10`}
+                  : "border-border/20 shadow-[0_4px_30px_-10px] shadow-black/20 hover:border-gold/15"
+          } bg-card/20`}
         >
           {/* Cover area */}
           <div className={`relative ${isCarousel ? "aspect-square" : "aspect-square"} w-full bg-gradient-to-br ${gradient} overflow-hidden`}>
@@ -534,7 +534,7 @@ function TrackCard({
                   {isPlaying ? (
                     <NowPlayingBars />
                   ) : (
-                    <Music className={`${isCarousel ? "h-7 w-7" : "h-5 w-5"} transition-colors duration-500 ${isThis ? "text-gold/50" : "text-white/25 group-hover:text-white/40"}`} />
+                    <Music className={`${isCarousel ? "h-7 w-7" : "h-5 w-5"} transition-colors duration-500 ${isThis ? "text-gold/70" : "text-white/25 group-hover:text-white/40"}`} />
                   )}
                 </div>
               </div>
@@ -606,14 +606,14 @@ function TrackCard({
           {/* Info section */}
           <div className={`${isCarousel ? "p-4" : "p-3"}`}>
             <h3 className={`font-display ${isCarousel ? "text-[14px]" : "text-[13px]"} font-bold tracking-tight leading-snug truncate transition-colors duration-500 ${
-              effectiveLocked ? "text-muted-foreground/40" : isPlaying ? "text-gold" : isThis ? "text-gold/70" : "text-foreground/85 group-hover:text-foreground"
+              effectiveLocked ? "text-muted-foreground/70" : isPlaying ? "text-gold" : isThis ? "text-gold/70" : "text-foreground/85 group-hover:text-foreground"
             }`}>
               {track.title}
             </h3>
             <div className="flex items-center justify-between mt-2">
               <div className="flex items-center gap-2">
                 <p className={`text-[10px] tracking-[0.1em] font-medium transition-colors duration-500 ${
-                  isPlaying ? "text-gold/50" : "text-muted-foreground/25"
+                  isPlaying ? "text-gold/70" : "text-muted-foreground/60"
                 }`}>
                   {track.duration}
                 </p>
@@ -628,7 +628,7 @@ function TrackCard({
                   <motion.span
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="text-[9px] font-semibold tracking-wider uppercase text-gold/50 bg-gold/8 px-1.5 py-0.5 rounded-full"
+                    className="text-[9px] font-semibold tracking-wider uppercase text-gold/70 bg-gold/8 px-1.5 py-0.5 rounded-full"
                   >
                     Tocando
                   </motion.span>
@@ -645,7 +645,7 @@ function TrackCard({
                     link.download = `${track.title}.mp3`;
                     link.click();
                   }}
-                  className="text-muted-foreground/20 hover:text-gold/50 transition-colors duration-300"
+                  className="text-muted-foreground/50 hover:text-gold/70 transition-colors duration-300"
                   title="Baixar"
                 >
                   <Download className="h-3.5 w-3.5" />

@@ -37,7 +37,7 @@ const normalizeCourseType = (value?: string) => (value === "video" ? "video" : "
 function CardSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-xl border border-border/12 bg-card shadow-md shadow-black/5 overflow-hidden">
-      <div className="px-6 py-4 border-b border-border/8 bg-card/90">
+      <div className="px-6 py-4 border-b border-border/20 bg-card/90">
         <h3 className="text-sm font-bold text-foreground/90 tracking-wide">{title}</h3>
       </div>
       <div className="px-6 py-5 space-y-5">{children}</div>
@@ -212,7 +212,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                     className={`flex flex-col items-center gap-1.5 px-5 py-3 rounded-xl border text-xs font-semibold transition-all min-w-[72px] ${
                       courseType === type.value
                         ? "border-gold/40 bg-gold text-black shadow-lg shadow-gold/20"
-                        : "border-border/15 bg-background/30 text-muted-foreground/50 hover:border-border/30 hover:text-muted-foreground/70"
+                        : "border-border/30 bg-background/30 text-muted-foreground/50 hover:border-border/30 hover:text-muted-foreground/70"
                     }`}
                   >
                     <type.icon className="h-5 w-5" />
@@ -266,16 +266,16 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
         {/* ===== RIGHT: Preview ===== */}
         <div className="order-2 lg:col-start-2 lg:row-start-1 lg:row-span-2">
           <div className="rounded-xl border border-border/12 bg-card lg:sticky lg:top-6 shadow-md shadow-black/5 overflow-hidden">
-            <div className="px-4 py-3 border-b border-border/8 bg-card/90">
+            <div className="px-4 py-3 border-b border-border/20 bg-card/90">
               <h3 className="text-xs font-bold text-foreground/80">Preview</h3>
             </div>
             <div className="p-3">
-              <div className="rounded-lg overflow-hidden border border-border/8 bg-background/20">
+              <div className="rounded-lg overflow-hidden border border-border/20 bg-background/20">
                 <div className="aspect-[16/9] bg-muted/5 flex items-center justify-center overflow-hidden">
                   {coverUrl ? (
                     <img src={coverUrl} alt="Capa" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground/20">
+                    <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground/50">
                       <ImageIcon className="h-8 w-8" />
                       <span className="text-xs">Sem imagem</span>
                     </div>
@@ -292,7 +292,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                     <div className="flex items-center gap-2 pt-1">
                       {promotionalPrice && parseFloat(promotionalPrice) > 0 ? (
                         <>
-                          <span className="text-xs text-muted-foreground/40 line-through">
+                          <span className="text-xs text-muted-foreground/70 line-through">
                             R$ {parseFloat(price).toFixed(2)}
                           </span>
                           <span className="text-sm font-bold text-gold">
@@ -342,7 +342,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
       {/* Submit */}
       {!hideSubmitButton && (
-        <div className="flex justify-end pt-4 mt-4 border-t border-border/8">
+        <div className="flex justify-end pt-4 mt-4 border-t border-border/20">
           <Button type="submit" size="sm" disabled={isSubmitting || !title.trim()}>
             {isSubmitting ? (
               <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />

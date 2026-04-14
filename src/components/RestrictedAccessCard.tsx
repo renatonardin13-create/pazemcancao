@@ -48,7 +48,7 @@ export function RestrictedAccessCard() {
             href={`https://wa.me/${WHATSAPP_NUMBER}?text=${SUPPORT_MESSAGE}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-[11px] text-muted-foreground/40 hover:text-muted-foreground/60 transition-colors duration-300"
+            className="inline-flex items-center gap-2 text-xs text-muted-foreground/70 hover:text-muted-foreground/60 transition-colors duration-300"
           >
             <MessageCircle className="h-3.5 w-3.5" />
             Suporte: (17) 98830-8037

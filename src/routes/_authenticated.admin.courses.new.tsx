@@ -44,7 +44,7 @@ function NewCoursePage() {
           <div className="flex items-center gap-3">
             <Link
               to="/admin/courses"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/15 bg-background/30 text-muted-foreground/50 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all duration-200"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/30 bg-background/30 text-muted-foreground/50 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all duration-200"
             >
               <ArrowLeft className="h-4 w-4" />
             </Link>
@@ -52,7 +52,7 @@ function NewCoursePage() {
               <h1 className="font-display text-xl font-black text-foreground tracking-tight">
                 Criar Novo Curso
               </h1>
-              <p className="text-[11px] text-muted-foreground/50 mt-0.5">
+              <p className="text-xs text-muted-foreground/50 mt-0.5">
                 Configure seu curso, adicione módulos e aulas
               </p>
             </div>
@@ -85,7 +85,7 @@ function NewCoursePage() {
 
       {/* ===== TABS ===== */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="bg-card/60 border border-border/10 p-1 rounded-xl">
+        <TabsList className="bg-card/60 border border-border/25 p-1 rounded-xl">
           <TabsTrigger
             value="detalhes"
             className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-5"
@@ -116,7 +116,7 @@ function NewCoursePage() {
         </TabsContent>
 
         <TabsContent value="modulos" className="mt-4">
-          <div className="rounded-2xl border border-border/15 bg-card p-6 shadow-lg shadow-black/10 space-y-5">
+          <div className="rounded-2xl border border-border/30 bg-card p-6 shadow-lg shadow-black/10 space-y-5">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-base font-bold text-foreground">Módulos e Aulas</h3>
@@ -137,7 +137,7 @@ function NewCoursePage() {
         </TabsContent>
 
         <TabsContent value="config" className="mt-4">
-          <div className="rounded-2xl border border-border/15 bg-card p-8 shadow-lg shadow-black/10 text-center">
+          <div className="rounded-2xl border border-border/30 bg-card p-8 shadow-lg shadow-black/10 text-center">
             <p className="text-sm text-muted-foreground/50">
               Salve o curso primeiro para acessar as configurações avançadas.
             </p>

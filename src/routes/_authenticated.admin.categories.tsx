@@ -227,7 +227,7 @@ function AdminCategoriesPage() {
       {/* Two-column layout */}
       <div className="grid lg:grid-cols-2 gap-5">
         {/* Categories Panel */}
-        <div className="rounded-2xl border border-border/15 bg-card p-5 shadow-lg shadow-black/10">
+        <div className="rounded-2xl border border-border/30 bg-card p-5 shadow-lg shadow-black/10">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display text-base font-semibold text-foreground/85 flex items-center gap-2">
               <FolderOpen className="h-4 w-4 text-gold/60" />
@@ -247,24 +247,24 @@ function AdminCategoriesPage() {
             <ListSkeleton rows={3} />
           ) : !categories.length ? (
             <div className="text-center py-12">
-              <FolderOpen className="h-8 w-8 text-muted-foreground/15 mx-auto mb-3" />
-              <p className="text-sm text-muted-foreground/35">Nenhuma categoria cadastrada</p>
+              <FolderOpen className="h-8 w-8 text-muted-foreground/50 mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground/70">Nenhuma categoria cadastrada</p>
             </div>
           ) : (
             <div className="space-y-2">
               {categories.map((cat: any, index: number) => (
-                <div key={cat.id} className="flex items-center gap-3 rounded-xl border border-border/10 bg-card/8 px-4 py-3 hover:bg-card/15 transition-colors group">
-                  <GripVertical className="h-4 w-4 text-muted-foreground/15 shrink-0 cursor-grab" />
+                <div key={cat.id} className="flex items-center gap-3 rounded-xl border border-border/25 bg-card/8 px-4 py-3 hover:bg-card/15 transition-colors group">
+                  <GripVertical className="h-4 w-4 text-muted-foreground/50 shrink-0 cursor-grab" />
                   <div className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: cat.color || PICKER_COLORS[index % PICKER_COLORS.length] }} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-foreground/85 truncate">{cat.name}</p>
-                    {cat.description && <p className="text-[11px] text-muted-foreground/40 truncate">{cat.description}</p>}
+                    {cat.description && <p className="text-xs text-muted-foreground/70 truncate">{cat.description}</p>}
                   </div>
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                    <button onClick={() => startEditCat(cat)} className="p-1.5 text-muted-foreground/30 hover:text-gold/60 transition-colors rounded-lg hover:bg-muted/10" title="Editar">
+                    <button onClick={() => startEditCat(cat)} className="p-1.5 text-muted-foreground/60 hover:text-gold/60 transition-colors rounded-lg hover:bg-muted/10" title="Editar">
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
-                    <button onClick={() => { if (confirm("Remover esta categoria?")) deleteCatMutation.mutate(cat.id); }} className="p-1.5 text-muted-foreground/30 hover:text-destructive/60 transition-colors rounded-lg hover:bg-muted/10" title="Remover">
+                    <button onClick={() => { if (confirm("Remover esta categoria?")) deleteCatMutation.mutate(cat.id); }} className="p-1.5 text-muted-foreground/60 hover:text-destructive/60 transition-colors rounded-lg hover:bg-muted/10" title="Remover">
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
@@ -275,7 +275,7 @@ function AdminCategoriesPage() {
         </div>
 
         {/* ─── Tags Panel ─── */}
-        <div className="rounded-2xl border border-border/15 bg-card/5 p-5">
+        <div className="rounded-2xl border border-border/30 bg-card/15 p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display text-base font-semibold text-foreground/85 flex items-center gap-2">
               <Tag className="h-4 w-4 text-gold/60" />
@@ -295,23 +295,23 @@ function AdminCategoriesPage() {
             <ListSkeleton rows={3} />
           ) : !tags.length ? (
             <div className="text-center py-12">
-              <Tag className="h-8 w-8 text-muted-foreground/15 mx-auto mb-3" />
-              <p className="text-sm text-muted-foreground/35">Nenhuma tag cadastrada</p>
+              <Tag className="h-8 w-8 text-muted-foreground/50 mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground/70">Nenhuma tag cadastrada</p>
             </div>
           ) : (
             <div className="space-y-2">
               {tags.map((tag: any, index: number) => (
-                <div key={tag.id} className="flex items-center gap-3 rounded-xl border border-border/10 bg-card/8 px-4 py-3 hover:bg-card/15 transition-colors group">
+                <div key={tag.id} className="flex items-center gap-3 rounded-xl border border-border/25 bg-card/8 px-4 py-3 hover:bg-card/15 transition-colors group">
                   <div className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: tag.color || PICKER_COLORS[index % PICKER_COLORS.length] }} />
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-foreground/85 truncate">{tag.name}</p>
-                    {tag.description && <p className="text-[11px] text-muted-foreground/40 truncate">{tag.description}</p>}
+                    {tag.description && <p className="text-xs text-muted-foreground/70 truncate">{tag.description}</p>}
                   </div>
                   <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                    <button onClick={() => startEditTag(tag)} className="p-1.5 text-muted-foreground/30 hover:text-gold/60 transition-colors rounded-lg hover:bg-muted/10" title="Editar">
+                    <button onClick={() => startEditTag(tag)} className="p-1.5 text-muted-foreground/60 hover:text-gold/60 transition-colors rounded-lg hover:bg-muted/10" title="Editar">
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
-                    <button onClick={() => { if (confirm("Remover esta tag?")) deleteTagMutation.mutate(tag.id); }} className="p-1.5 text-muted-foreground/30 hover:text-destructive/60 transition-colors rounded-lg hover:bg-muted/10" title="Remover">
+                    <button onClick={() => { if (confirm("Remover esta tag?")) deleteTagMutation.mutate(tag.id); }} className="p-1.5 text-muted-foreground/60 hover:text-destructive/60 transition-colors rounded-lg hover:bg-muted/10" title="Remover">
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>

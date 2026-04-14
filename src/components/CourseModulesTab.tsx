@@ -380,10 +380,10 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   };
 
   const getLessonTypeIcon = (lesson: any) => {
-    if (lesson.video_url) return <Video className="h-3.5 w-3.5 text-gold/50" />;
+    if (lesson.video_url) return <Video className="h-3.5 w-3.5 text-gold/70" />;
     if (lesson.content_url?.endsWith(".pdf")) return <FileText className="h-3.5 w-3.5 text-red-400/50" />;
     if (lesson.content_url) return <File className="h-3.5 w-3.5 text-blue-400/50" />;
-    return <LinkIcon className="h-3.5 w-3.5 text-muted-foreground/30" />;
+    return <LinkIcon className="h-3.5 w-3.5 text-muted-foreground/60" />;
   };
 
   const getLessonTypeLabel = (lesson: any) => {
@@ -421,7 +421,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   if (isLoading) {
     return (
       <div className="text-center py-16">
-        <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+        <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
           Carregando módulos...
         </p>
       </div>
@@ -462,7 +462,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             <p className="text-sm font-medium text-foreground/50 mb-1">
               Nenhum módulo criado ainda
             </p>
-            <p className="text-[12px] text-muted-foreground/30 max-w-xs mx-auto">
+            <p className="text-[12px] text-muted-foreground/60 max-w-xs mx-auto">
               Crie o primeiro módulo para organizar seu curso.
             </p>
             <Button
@@ -487,21 +487,21 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 className="rounded-xl border border-gold/15 bg-card/8 overflow-hidden transition-all shadow-sm"
               >
                 {/* Module header */}
-                <div className={`flex items-center gap-3 px-5 py-4 transition-colors ${isExpanded ? "bg-card/12" : "hover:bg-card/10"}`}>
+                <div className={`flex items-center gap-3 px-5 py-4 transition-colors ${isExpanded ? "bg-card/12" : "hover:bg-card/20"}`}>
                   {/* Drag handle — up/down */}
                   <div className="flex flex-col items-center shrink-0 -my-1">
                     <button
                       type="button"
-                      className="p-0.5 text-muted-foreground/15 hover:text-gold/60 disabled:opacity-15 transition-colors"
+                      className="p-0.5 text-muted-foreground/50 hover:text-gold/60 disabled:opacity-15 transition-colors"
                       disabled={modIndex === 0}
                       onClick={() => moveModule(modIndex, "up")}
                     >
                       <ChevronUp className="h-3.5 w-3.5" />
                     </button>
-                    <GripVertical className="h-3.5 w-3.5 text-muted-foreground/15 cursor-grab active:cursor-grabbing" />
+                    <GripVertical className="h-3.5 w-3.5 text-muted-foreground/50 cursor-grab active:cursor-grabbing" />
                     <button
                       type="button"
-                      className="p-0.5 text-muted-foreground/15 hover:text-gold/60 disabled:opacity-15 transition-colors"
+                      className="p-0.5 text-muted-foreground/50 hover:text-gold/60 disabled:opacity-15 transition-colors"
                       disabled={modIndex === modules.length - 1}
                       onClick={() => moveModule(modIndex, "down")}
                     >
@@ -513,7 +513,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   <button
                     type="button"
                     onClick={() => toggleExpand(mod.id)}
-                    className={`w-7 h-7 flex items-center justify-center rounded-lg border transition-all shrink-0 ${isExpanded ? "bg-gold/10 border-gold/20 text-gold/70" : "bg-card/10 border-border/10 text-muted-foreground/35 hover:text-foreground/60 hover:border-border/25"}`}
+                    className={`w-7 h-7 flex items-center justify-center rounded-lg border transition-all shrink-0 ${isExpanded ? "bg-gold/10 border-gold/20 text-gold/70" : "bg-card/20 border-border/25 text-muted-foreground/70 hover:text-foreground/60 hover:border-border/25"}`}
                   >
                     {isExpanded ? (
                       <ChevronDown className="h-3.5 w-3.5" />
@@ -528,7 +528,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                       {mod.title}
                     </p>
                     {mod.description && (
-                      <p className="text-[10px] text-muted-foreground/30 truncate mt-0.5">
+                      <p className="text-[10px] text-muted-foreground/60 truncate mt-0.5">
                         {mod.description}
                       </p>
                     )}
@@ -538,7 +538,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   <StatusBadge status={mod.status} />
 
                   {/* Lesson count */}
-                  <span className="text-[10px] font-medium text-muted-foreground/40 shrink-0 tabular-nums px-2.5 py-1 rounded-lg bg-card/15 border border-border/10">
+                  <span className="text-[10px] font-medium text-muted-foreground/70 shrink-0 tabular-nums px-2.5 py-1 rounded-lg bg-card/15 border border-border/25">
                     {lessons.length} aula{lessons.length !== 1 ? "s" : ""}
                   </span>
 
@@ -556,7 +556,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   {/* Module actions */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/30 hover:text-foreground/60 shrink-0">
+                      <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/60 hover:text-foreground/60 shrink-0">
                         <MoreHorizontal className="h-4 w-4" />
                       </Button>
                     </DropdownMenuTrigger>
@@ -592,22 +592,22 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
 
                 {/* Expanded: lesson list */}
                 {isExpanded && (
-                  <div className="border-t border-border/10 px-5 py-4 space-y-2">
+                  <div className="border-t border-border/25 px-5 py-4 space-y-2">
                     {lessons.length === 0 ? (
-                      <div className="text-center py-8 rounded-lg border border-dashed border-border/10 bg-card/3">
+                      <div className="text-center py-8 rounded-lg border border-dashed border-border/25 bg-card/3">
                         <div className="w-10 h-10 rounded-xl bg-gold/5 border border-gold/10 flex items-center justify-center mx-auto mb-3">
-                          <FileText className="h-5 w-5 text-gold/30" />
+                          <FileText className="h-5 w-5 text-gold/55" />
                         </div>
                         <p className="text-[12px] font-medium text-foreground/45 mb-0.5">
                           Este módulo ainda não possui aulas.
                         </p>
-                        <p className="text-[11px] text-muted-foreground/25 max-w-[220px] mx-auto">
+                        <p className="text-xs text-muted-foreground/60 max-w-[220px] mx-auto">
                           Clique em adicionar aula para começar.
                         </p>
                         <Button
                           variant="outline"
                           size="sm"
-                          className="mt-4 h-7 px-3 text-[11px] border-gold/15 text-gold/60 hover:text-gold hover:border-gold/30 hover:bg-gold/5"
+                          className="mt-4 h-7 px-3 text-xs border-gold/15 text-gold/60 hover:text-gold hover:border-gold/30 hover:bg-gold/5"
                           onClick={() => openCreateLesson(mod.id)}
                         >
                           <Plus className="h-3 w-3 mr-1" />
@@ -619,10 +619,10 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                         {lessons.map((lesson: any, lesIndex: number) => (
                           <div
                             key={lesson.id}
-                            className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border/12 bg-card/5 hover:bg-card/10 hover:border-border/20 transition-all group"
+                            className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border/12 bg-card/15 hover:bg-card/20 hover:border-border/20 transition-all group"
                           >
                             {/* Drag handle */}
-                            <GripVertical className="h-4 w-4 text-muted-foreground/15 cursor-grab active:cursor-grabbing shrink-0" />
+                            <GripVertical className="h-4 w-4 text-muted-foreground/50 cursor-grab active:cursor-grabbing shrink-0" />
 
                             {/* Content type icon */}
                             <div className="w-9 h-9 rounded-lg bg-gold/10 border border-gold/20 flex items-center justify-center shrink-0">
@@ -642,7 +642,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                               <p className="text-[13px] text-foreground/85 truncate font-semibold">
                                 {lesson.title}
                               </p>
-                              <p className="text-[11px] text-muted-foreground/40 mt-0.5">
+                              <p className="text-xs text-muted-foreground/70 mt-0.5">
                                 {getLessonTypeLabel(lesson)}
                               </p>
                             </div>
@@ -663,7 +663,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                             {/* Lesson actions */}
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/30 hover:text-foreground/60 shrink-0">
+                                <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground/60 hover:text-foreground/60 shrink-0">
                                   <MoreHorizontal className="h-4 w-4" />
                                 </Button>
                               </DropdownMenuTrigger>
@@ -719,7 +719,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                         <button
                           type="button"
                           onClick={() => openCreateLesson(mod.id)}
-                          className="w-full py-3 rounded-xl border border-dashed border-gold/15 bg-gold/3 text-gold/50 hover:text-gold/80 hover:bg-gold/8 hover:border-gold/25 transition-all text-[12px] font-medium flex items-center justify-center gap-1.5"
+                          className="w-full py-3 rounded-xl border border-dashed border-gold/15 bg-gold/3 text-gold/70 hover:text-gold/80 hover:bg-gold/8 hover:border-gold/25 transition-all text-[12px] font-medium flex items-center justify-center gap-1.5"
                         >
                           <Plus className="h-3.5 w-3.5" />
                           Adicionar Aula
@@ -758,7 +758,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 value={modTitle}
                 onChange={(e) => { setModTitle(e.target.value); if (modTitleError) setModTitleError(""); }}
                 placeholder="Ex: Módulo 1 - Introdução"
-                className={`h-11 bg-card/10 border-gold/20 focus:border-gold/40 ${modTitleError ? "border-destructive" : ""}`}
+                className={`h-11 bg-card/20 border-gold/20 focus:border-gold/40 ${modTitleError ? "border-destructive" : ""}`}
               />
               {modTitleError && <p className="text-[0.8rem] font-medium text-destructive">{modTitleError}</p>}
             </div>
@@ -769,7 +769,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 onChange={(e) => setModDesc(e.target.value)}
                 placeholder="Breve descrição do módulo..."
                 rows={3}
-                className="bg-card/10 border-border/15"
+                className="bg-card/20 border-border/30"
               />
             </div>
 
@@ -784,7 +784,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             />
 
             {/* Publish toggle */}
-            <div className="flex items-center justify-between rounded-lg border border-border/15 p-4">
+            <div className="flex items-center justify-between rounded-lg border border-border/30 p-4">
               <div>
                 <Label className="text-sm font-bold">Publicar módulo</Label>
                 <p className="text-xs text-muted-foreground/50 mt-0.5">
@@ -844,7 +844,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 value={lesTitle}
                 onChange={(e) => { setLesTitle(e.target.value); if (lesTitleError) setLesTitleError(""); }}
                 placeholder="Ex: Aula 1 - Introdução"
-                className={`bg-card/10 border-gold/20 focus:border-gold/40 ${lesTitleError ? "border-destructive" : ""}`}
+                className={`bg-card/20 border-gold/20 focus:border-gold/40 ${lesTitleError ? "border-destructive" : ""}`}
               />
               {lesTitleError && <p className="text-[0.8rem] font-medium text-destructive">{lesTitleError}</p>}
             </div>
@@ -857,7 +857,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                 onChange={(e) => setLesDesc(e.target.value)}
                 placeholder="Descreva o conteúdo desta aula"
                 rows={3}
-                className="bg-card/10 border-border/15"
+                className="bg-card/20 border-border/30"
               />
             </div>
 
@@ -878,11 +878,11 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                     className={`flex flex-col items-center gap-1.5 px-3 py-3.5 rounded-xl border-2 transition-all duration-200 ${
                       lesContentType === type.value
                         ? "border-gold bg-gold/15 text-gold"
-                        : "border-border/15 bg-card/5 text-muted-foreground/50 hover:border-border/30 hover:text-muted-foreground/70"
+                        : "border-border/30 bg-card/15 text-muted-foreground/50 hover:border-border/30 hover:text-muted-foreground/70"
                     }`}
                   >
                     <type.icon className="h-5 w-5" />
-                    <span className="text-[11px] font-semibold">{type.label}</span>
+                    <span className="text-xs font-semibold">{type.label}</span>
                   </button>
                 ))}
               </div>
@@ -898,7 +898,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                     onChange={(e) => setLesVideoUrl(e.target.value)}
                     placeholder="Cole a URL (YouTube, Vimeo) ou código embed (Panda Video, Host VSL)"
                     rows={3}
-                    className="bg-card/10 border-border/15"
+                    className="bg-card/20 border-border/30"
                   />
                 </div>
 
@@ -917,8 +917,8 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
               <div className="space-y-2">
                 <Label className="text-sm font-semibold">Upload de Arquivo</Label>
                 <div className="border-2 border-dashed border-border/20 rounded-xl p-8 flex flex-col items-center gap-2 cursor-pointer hover:border-gold/30 hover:bg-gold/3 transition-all">
-                  <Download className="h-5 w-5 text-muted-foreground/30" />
-                  <span className="text-[12px] text-muted-foreground/40">Clique para upload</span>
+                  <Download className="h-5 w-5 text-muted-foreground/60" />
+                  <span className="text-[12px] text-muted-foreground/70">Clique para upload</span>
                 </div>
               </div>
             )}
@@ -931,7 +931,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   onChange={(e) => setLesContentUrl(e.target.value)}
                   placeholder="Cole a URL externa"
                   rows={3}
-                  className="bg-card/10 border-border/15"
+                  className="bg-card/20 border-border/30"
                 />
               </div>
             )}
@@ -940,7 +940,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             <div className="space-y-3">
               <div>
                 <Label className="text-sm font-semibold">Materiais Complementares</Label>
-                <p className="text-[12px] text-muted-foreground/40 mt-0.5">
+                <p className="text-[12px] text-muted-foreground/70 mt-0.5">
                   Adicione PDFs, documentos ou links externos
                 </p>
               </div>
@@ -948,7 +948,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
               {materials.length > 0 && (
                 <div className="space-y-2">
                   {materials.map((mat: any) => (
-                    <div key={mat.id} className="flex items-center gap-3 rounded-xl bg-card/5 border border-border/10 px-4 py-2.5">
+                    <div key={mat.id} className="flex items-center gap-3 rounded-xl bg-card/15 border border-border/25 px-4 py-2.5">
                       {mat.material_type === "link" ? (
                         <ExternalLink className="h-3.5 w-3.5 text-gold/40 shrink-0" />
                       ) : mat.material_type === "pdf" ? (
@@ -957,11 +957,11 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                         <File className="h-3.5 w-3.5 text-gold/40 shrink-0" />
                       )}
                       <span className="text-[12px] text-foreground/60 flex-1 truncate">{mat.title}</span>
-                      <span className="text-[10px] text-muted-foreground/30 uppercase">{mat.material_type}</span>
+                      <span className="text-[10px] text-muted-foreground/60 uppercase">{mat.material_type}</span>
                       <button
                         type="button"
                         onClick={() => deleteMatM.mutate(mat.id)}
-                        className="text-muted-foreground/30 hover:text-destructive transition-colors"
+                        className="text-muted-foreground/60 hover:text-destructive transition-colors"
                       >
                         <X className="h-3.5 w-3.5" />
                       </button>
@@ -1015,7 +1015,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             <div className="flex items-center justify-between py-2">
               <div>
                 <Label className="text-sm font-semibold">Publicar aula</Label>
-                <p className="text-[12px] text-muted-foreground/40 mt-0.5">
+                <p className="text-[12px] text-muted-foreground/70 mt-0.5">
                   Aulas publicadas ficam visíveis para os alunos
                 </p>
               </div>

@@ -101,7 +101,7 @@ function ProfilePage() {
       <main className="flex-1 mx-auto w-full max-w-[800px] px-4 sm:px-6 py-8 space-y-6">
         {isLoading ? (
           <div className="text-center py-24">
-            <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+            <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
               Carregando perfil...
             </p>
           </div>
@@ -130,7 +130,7 @@ function ProfilePage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.05 }}
-              className="rounded-xl border border-border/15 bg-card/8 p-6"
+              className="rounded-xl border border-border/30 bg-card/8 p-6"
             >
               <div className="flex items-center gap-4">
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gold/15 text-xl font-bold text-gold shrink-0">
@@ -145,7 +145,7 @@ function ProfilePage() {
                     {email}
                   </p>
                   {memberSince && (
-                    <p className="text-[11px] text-muted-foreground/35 mt-0.5">
+                    <p className="text-xs text-muted-foreground/70 mt-0.5">
                       Membro desde {memberSince}
                     </p>
                   )}
@@ -158,7 +158,7 @@ function ProfilePage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="rounded-xl border border-border/15 bg-card/8 p-5"
+              className="rounded-xl border border-border/30 bg-card/8 p-5"
             >
               <h3 className="text-[12px] font-semibold text-muted-foreground/50 flex items-center gap-1.5 mb-4">
                 <Award className="h-4 w-4 text-gold/60" />
@@ -173,7 +173,7 @@ function ProfilePage() {
                     <p className="font-display text-xl font-bold text-foreground/85">
                       {totalCourses}
                     </p>
-                    <p className="text-[10px] text-muted-foreground/40">Cursos</p>
+                    <p className="text-[10px] text-muted-foreground/70">Cursos</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -184,7 +184,7 @@ function ProfilePage() {
                     <p className="font-display text-xl font-bold text-foreground/85">
                       {totalLessonsCompleted}
                     </p>
-                    <p className="text-[10px] text-muted-foreground/40">Aulas concluídas</p>
+                    <p className="text-[10px] text-muted-foreground/70">Aulas concluídas</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -195,7 +195,7 @@ function ProfilePage() {
                     <p className="font-display text-xl font-bold text-foreground/85">
                       0h
                     </p>
-                    <p className="text-[10px] text-muted-foreground/40">Tempo assistido</p>
+                    <p className="text-[10px] text-muted-foreground/70">Tempo assistido</p>
                   </div>
                 </div>
               </div>
@@ -206,7 +206,7 @@ function ProfilePage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.15 }}
-              className="rounded-xl border border-border/15 bg-card/8 p-6 space-y-5"
+              className="rounded-xl border border-border/30 bg-card/8 p-6 space-y-5"
             >
               <h3 className="text-base font-bold text-foreground/85">
                 Informações Pessoais
@@ -221,7 +221,7 @@ function ProfilePage() {
                   value={displayName}
                   onChange={(e) => setDisplayName(e.target.value)}
                   placeholder="Seu nome completo"
-                  className="bg-card/10 border-border/15"
+                  className="bg-card/20 border-border/30"
                 />
               </div>
 
@@ -232,9 +232,9 @@ function ProfilePage() {
                 <Input
                   value={email}
                   disabled
-                  className="bg-muted/10 border-border/10 text-muted-foreground/40"
+                  className="bg-muted/10 border-border/25 text-muted-foreground/70"
                 />
-                <p className="text-[10px] text-muted-foreground/30">
+                <p className="text-[10px] text-muted-foreground/60">
                   O email não pode ser alterado
                 </p>
               </div>
@@ -256,7 +256,7 @@ function ProfilePage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="rounded-xl border border-border/15 bg-card/8 p-6 space-y-5"
+              className="rounded-xl border border-border/30 bg-card/8 p-6 space-y-5"
             >
               <h3 className="text-base font-bold text-foreground/85 flex items-center gap-2">
                 <Lock className="h-4 w-4 text-muted-foreground/50" />
@@ -272,7 +272,7 @@ function ProfilePage() {
                   type="password"
                   value={currentPassword}
                   onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="bg-card/10 border-border/15"
+                  className="bg-card/20 border-border/30"
                 />
               </div>
 
@@ -286,7 +286,7 @@ function ProfilePage() {
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
                   placeholder="Mínimo 6 caracteres"
-                  className="bg-card/10 border-border/15"
+                  className="bg-card/20 border-border/30"
                 />
               </div>
 
@@ -300,7 +300,7 @@ function ProfilePage() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   placeholder="Digite a senha novamente"
-                  className="bg-card/10 border-border/15"
+                  className="bg-card/20 border-border/30"
                 />
               </div>
 

@@ -145,12 +145,12 @@ function SummaryCard({
   const cls = colorMap[color] || colorMap.gold;
 
   return (
-    <div className="rounded-xl border border-border/15 bg-card/5 px-5 py-4 flex items-center gap-4">
+    <div className="rounded-xl border border-border/30 bg-card/15 px-5 py-4 flex items-center gap-4">
       <div className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 ${cls}`}>
         <Icon className="h-5 w-5" />
       </div>
       <div className="min-w-0">
-        <p className="text-[10px] uppercase tracking-wider text-muted-foreground/35 font-medium">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">
           {label}
         </p>
         <p className="text-lg font-bold text-foreground/80 tabular-nums mt-0.5">
@@ -561,7 +561,7 @@ export default function AdminVitrinePage() {
   return (
     <div className="max-w-[1400px] mx-auto space-y-6">
       {/* ── Header ── */}
-      <div className="pb-5 border-b border-border/10">
+      <div className="pb-5 border-b border-border/25">
         <h1 className="font-display text-2xl font-bold text-foreground/90 tracking-tight">
           Configuração da Vitrine
         </h1>
@@ -597,7 +597,7 @@ export default function AdminVitrinePage() {
         {/* Left: tabs */}
         <div className={showPreview ? "flex-1 min-w-0" : "w-full"}>
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="bg-card/5 border border-border/10 w-full justify-start gap-1 p-1.5 rounded-xl h-auto">
+            <TabsList className="bg-card/15 border border-border/25 w-full justify-start gap-1 p-1.5 rounded-xl h-auto">
               <TabsTrigger
                 value="banner"
                 className="text-xs px-4 py-2 rounded-lg text-muted-foreground/50 data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-sm data-[state=active]:border-gold/20 data-[state=active]:border transition-all"
@@ -633,7 +633,7 @@ export default function AdminVitrinePage() {
                     Banner Principal{" "}
                     <span className="font-normal text-muted-foreground/50">(Hero da Home)</span>
                   </h3>
-                  <p className="text-[11px] text-muted-foreground/40 mt-0.5">
+                  <p className="text-xs text-muted-foreground/70 mt-0.5">
                     Tamanho recomendado: 1920×500px • Formatos: JPG, PNG, WebP
                   </p>
                 </div>
@@ -652,7 +652,7 @@ export default function AdminVitrinePage() {
                   const fitClass = bannerFit === "cover" ? "object-cover" : "object-contain";
                   return (
                     <div className="space-y-3">
-                      <div className={`relative w-full ${aspectClass} rounded-xl overflow-hidden border border-border/10 bg-card/10 ${!aspectClass ? "max-h-[400px]" : ""}`}>
+                      <div className={`relative w-full ${aspectClass} rounded-xl overflow-hidden border border-border/25 bg-card/20 ${!aspectClass ? "max-h-[400px]" : ""}`}>
                         {imgSrc ? (
                           <img
                             src={imgSrc}
@@ -672,7 +672,7 @@ export default function AdminVitrinePage() {
 
                       {/* Dimensions info */}
                       {bannerImgDims && (
-                        <p className="text-center text-[11px] text-muted-foreground/40">
+                        <p className="text-center text-xs text-muted-foreground/70">
                           Dimensões:{" "}
                           <strong className="text-foreground/60">{bannerImgDims.w} × {bannerImgDims.h}px</strong>
                           {"  "}(Proporção: {(bannerImgDims.w / bannerImgDims.h).toFixed(2)}:1)
@@ -683,10 +683,10 @@ export default function AdminVitrinePage() {
                 })()}
 
                 {/* Display mode */}
-                <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
+                <div className="flex items-center justify-between rounded-xl bg-card/15 border border-border/25 px-4 py-3">
                   <Label className="text-sm text-foreground/60 font-medium">Modo de exibição do banner</Label>
                   <Select value={bannerFit} onValueChange={setBannerFit}>
-                    <SelectTrigger className="w-[220px] bg-card/10 border-border/15">
+                    <SelectTrigger className="w-[220px] bg-card/20 border-border/30">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -697,10 +697,10 @@ export default function AdminVitrinePage() {
                 </div>
 
                 {/* Aspect ratio */}
-                <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
+                <div className="flex items-center justify-between rounded-xl bg-card/15 border border-border/25 px-4 py-3">
                   <Label className="text-sm text-foreground/60 font-medium">Proporção do container</Label>
                   <Select value={bannerAspect} onValueChange={setBannerAspect}>
-                    <SelectTrigger className="w-[220px] bg-card/10 border-border/15">
+                    <SelectTrigger className="w-[220px] bg-card/20 border-border/30">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -714,7 +714,7 @@ export default function AdminVitrinePage() {
                 </div>
 
                 {/* Toggle visibility */}
-                <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
+                <div className="flex items-center justify-between rounded-xl bg-card/15 border border-border/25 px-4 py-3">
                   <p className="text-sm font-medium text-foreground/60">
                     Exibir banner principal na vitrine
                   </p>
@@ -766,7 +766,7 @@ export default function AdminVitrinePage() {
                       Banners Promo{" "}
                       <span className="font-normal text-muted-foreground/50">Campanhas Eventos</span>
                     </h3>
-                    <p className="text-[11px] text-muted-foreground/40 mt-0.5">
+                    <p className="text-xs text-muted-foreground/70 mt-0.5">
                       Tamanho recomendado: 1200×400px • Aparecem entre as prateleiras
                     </p>
                   </div>
@@ -784,13 +784,13 @@ export default function AdminVitrinePage() {
                 {/* List or empty state */}
                 {promoBanners.length === 0 ? (
                   <div className="text-center py-12 rounded-xl border border-dashed border-border/12 bg-card/3">
-                    <div className="w-12 h-12 rounded-2xl bg-card/8 border border-border/15 flex items-center justify-center mx-auto mb-4">
-                      <ImageIcon className="h-6 w-6 text-muted-foreground/20" />
+                    <div className="w-12 h-12 rounded-2xl bg-card/8 border border-border/30 flex items-center justify-center mx-auto mb-4">
+                      <ImageIcon className="h-6 w-6 text-muted-foreground/50" />
                     </div>
                     <p className="text-[13px] font-medium text-foreground/50 mb-1">
                       Nenhum banner secundário cadastrado
                     </p>
-                    <p className="text-[11px] text-muted-foreground/30 max-w-xs mx-auto">
+                    <p className="text-xs text-muted-foreground/60 max-w-xs mx-auto">
                       Adicione banners promocionais para a vitrine
                     </p>
                   </div>
@@ -799,9 +799,9 @@ export default function AdminVitrinePage() {
                     {promoBanners.map((banner: any) => (
                       <div
                         key={banner.id}
-                        className="flex items-center gap-4 rounded-xl border border-border/15 bg-card/8 px-5 py-3.5 transition-all hover:bg-card/12"
+                        className="flex items-center gap-4 rounded-xl border border-border/30 bg-card/8 px-5 py-3.5 transition-all hover:bg-card/12"
                       >
-                        <div className="w-20 h-[28px] rounded-lg overflow-hidden border border-border/10 bg-card/10 shrink-0">
+                        <div className="w-20 h-[28px] rounded-lg overflow-hidden border border-border/25 bg-card/20 shrink-0">
                           {banner.image_url ? (
                             <img src={banner.image_url} alt="" className="w-full h-full object-cover" />
                           ) : (
@@ -818,19 +818,19 @@ export default function AdminVitrinePage() {
                               className={`text-[9px] rounded-full px-2 border font-medium ${
                                 banner.is_active
                                   ? "text-emerald-400/80 border-emerald-500/25 bg-emerald-500/10"
-                                  : "text-muted-foreground/40 border-border/15"
+                                  : "text-muted-foreground/70 border-border/30"
                               }`}
                             >
                               {banner.is_active ? "Ativo" : "Inativo"}
                             </Badge>
                             <Badge
                               variant="outline"
-                              className="text-[9px] rounded-full px-2 border text-muted-foreground/50 border-border/15"
+                              className="text-[9px] rounded-full px-2 border text-muted-foreground/50 border-border/30"
                             >
                               Após prateleira {banner.position_after_shelf}
                             </Badge>
                           </div>
-                          <p className="text-[10px] text-muted-foreground/25 mt-0.5 truncate">
+                          <p className="text-[10px] text-muted-foreground/60 mt-0.5 truncate">
                             {banner.link_url ? `Link: ${banner.link_url}` : "Sem link"}
                           </p>
                         </div>
@@ -838,7 +838,7 @@ export default function AdminVitrinePage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-muted-foreground/25 hover:text-foreground/60"
+                            className="h-7 w-7 text-muted-foreground/60 hover:text-foreground/60"
                             onClick={() => openEditPromo(banner)}
                             title="Editar"
                           >
@@ -847,7 +847,7 @@ export default function AdminVitrinePage() {
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-7 w-7 text-muted-foreground/25 hover:text-destructive/60"
+                            className="h-7 w-7 text-muted-foreground/60 hover:text-destructive/60"
                             onClick={() => setDeletePromoTarget(banner)}
                             title="Excluir"
                           >
@@ -870,7 +870,7 @@ export default function AdminVitrinePage() {
                     Prateleiras (Shelves){" "}
                     <span className="font-normal text-muted-foreground/50">da Vitrine</span>
                   </h3>
-                  <p className="text-[11px] text-muted-foreground/40 mt-0.5">
+                  <p className="text-xs text-muted-foreground/70 mt-0.5">
                     Organize os cursos em fileiras horizontais estilo Netflix
                   </p>
                 </div>
@@ -887,17 +887,17 @@ export default function AdminVitrinePage() {
 
               {isLoading ? (
                 <div className="py-16 text-center">
-                  <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+                  <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
                     Carregando prateleiras...
                   </p>
                 </div>
               ) : shelves.length === 0 ? (
                 <div className="rounded-xl border border-dashed border-border/12 bg-card/3 py-16 text-center">
-                  <Layout className="mx-auto mb-4 h-8 w-8 text-muted-foreground/15" />
-                  <p className="text-sm text-muted-foreground/35">
+                  <Layout className="mx-auto mb-4 h-8 w-8 text-muted-foreground/50" />
+                  <p className="text-sm text-muted-foreground/70">
                     Nenhuma prateleira criada ainda.
                   </p>
-                  <p className="text-[12px] text-muted-foreground/25 mt-1">
+                  <p className="text-[12px] text-muted-foreground/60 mt-1">
                     Crie prateleiras para organizar os cursos na vitrine do aluno.
                   </p>
                 </div>
@@ -912,15 +912,15 @@ export default function AdminVitrinePage() {
                         onDragStart={shelfDrag.handleDragStart(idx)}
                         onDragEnd={shelfDrag.handleDragEnd}
                         onDragOver={shelfDrag.handleDragOver(idx)}
-                        className="flex items-center gap-4 rounded-xl border border-border/15 bg-card/8 px-4 py-3.5 transition-all hover:bg-card/12 cursor-grab active:cursor-grabbing"
+                        className="flex items-center gap-4 rounded-xl border border-border/30 bg-card/8 px-4 py-3.5 transition-all hover:bg-card/12 cursor-grab active:cursor-grabbing"
                       >
-                        <GripVertical className="h-4 w-4 text-muted-foreground/15 shrink-0" />
+                        <GripVertical className="h-4 w-4 text-muted-foreground/50 shrink-0" />
 
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-bold text-foreground/80 uppercase tracking-wide truncate">
                             {shelf.name}
                           </p>
-                          <p className="text-[11px] text-muted-foreground/35 mt-0.5">
+                          <p className="text-xs text-muted-foreground/70 mt-0.5">
                             {modeLabel(shelf.mode)}
                             {shelf.mode === "auto" && ` — ${criteriaLabel(shelf.auto_criteria)}`}
                             {shelf.mode === "manual" && ` • ${courseCount} curso${courseCount !== 1 ? "s" : ""}`}
@@ -937,7 +937,7 @@ export default function AdminVitrinePage() {
                           <Button
                             variant="outline"
                             size="icon"
-                            className="h-8 w-8 border-border/15 text-muted-foreground/40 hover:text-foreground/60"
+                            className="h-8 w-8 border-border/30 text-muted-foreground/70 hover:text-foreground/60"
                             onClick={() => openEdit(shelf)}
                             title="Editar"
                           >
@@ -946,7 +946,7 @@ export default function AdminVitrinePage() {
                           <Button
                             variant="outline"
                             size="icon"
-                            className="h-8 w-8 border-border/15 text-muted-foreground/40 hover:text-destructive/60"
+                            className="h-8 w-8 border-border/30 text-muted-foreground/70 hover:text-destructive/60"
                             onClick={() => setDeleteTarget(shelf)}
                             title="Excluir"
                           >
@@ -968,7 +968,7 @@ export default function AdminVitrinePage() {
             <div className="sticky top-4 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Monitor className="h-4 w-4 text-muted-foreground/40" />
+                  <Monitor className="h-4 w-4 text-muted-foreground/70" />
                   <span className="text-[12px] font-semibold text-foreground/60">
                     Pré-visualização
                   </span>
@@ -980,7 +980,7 @@ export default function AdminVitrinePage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="h-7 px-2 text-[10px] text-muted-foreground/30 hover:text-foreground/60"
+                  className="h-7 px-2 text-[10px] text-muted-foreground/60 hover:text-foreground/60"
                   onClick={() => setShowPreview(false)}
                 >
                   <EyeOff className="h-3 w-3 mr-1" />
@@ -993,10 +993,10 @@ export default function AdminVitrinePage() {
                 const previewShelves = studentShelvesData?.shelves || [];
                 const previewFeatured = studentShelvesData?.featuredCourse;
                 return (
-                  <div className="rounded-xl border border-border/15 bg-background/50 overflow-hidden">
+                  <div className="rounded-xl border border-border/30 bg-background/50 overflow-hidden">
                     {/* Mini banner */}
                     {previewFeatured && (
-                      <div className={`relative w-full ${(previewFeatured.banner_aspect || bannerAspect) === "21:9" ? "aspect-[21/9]" : (previewFeatured.banner_aspect || bannerAspect) === "16:9" ? "aspect-[16/9]" : "aspect-[1920/500]"} bg-card/10`}>
+                      <div className={`relative w-full ${(previewFeatured.banner_aspect || bannerAspect) === "21:9" ? "aspect-[21/9]" : (previewFeatured.banner_aspect || bannerAspect) === "16:9" ? "aspect-[16/9]" : "aspect-[1920/500]"} bg-card/20`}>
                         {(previewFeatured.banner_image_url || previewFeatured.cover_image_url) ? (
                           <img
                             src={previewFeatured.banner_image_url || previewFeatured.cover_image_url}
@@ -1020,7 +1020,7 @@ export default function AdminVitrinePage() {
                     {/* Mini shelves — from student data */}
                     <div className="p-3 space-y-3">
                       {previewShelves.length === 0 ? (
-                        <p className="text-[9px] text-muted-foreground/25 text-center py-4">
+                        <p className="text-[9px] text-muted-foreground/60 text-center py-4">
                           Nenhuma prateleira ativa
                         </p>
                       ) : (
@@ -1032,7 +1032,7 @@ export default function AdminVitrinePage() {
                             <div className="flex gap-1.5 overflow-hidden">
                               {shelf.courses.slice(0, 4).map((c: any) => (
                                 <div key={c.id} className="shrink-0 w-[48px]">
-                                  <div className="aspect-[2/3] rounded-md overflow-hidden border border-border/8 bg-card/10">
+                                  <div className="aspect-[2/3] rounded-md overflow-hidden border border-border/20 bg-card/20">
                                     {c.cover_image_url ? (
                                       <img src={c.cover_image_url} alt="" className="w-full h-full object-cover" />
                                     ) : (
@@ -1046,7 +1046,7 @@ export default function AdminVitrinePage() {
                         ))
                       )}
                       {previewShelves.length > 3 && (
-                        <p className="text-[9px] text-muted-foreground/20 text-center">
+                        <p className="text-[9px] text-muted-foreground/50 text-center">
                           +{previewShelves.length - 3} prateleira(s)
                         </p>
                       )}
@@ -1060,7 +1060,7 @@ export default function AdminVitrinePage() {
                 href="/cursos"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-1.5 w-full py-2 rounded-lg border border-border/10 bg-card/5 text-[11px] text-muted-foreground/40 hover:text-gold/60 hover:border-gold/15 transition-all"
+                className="flex items-center justify-center gap-1.5 w-full py-2 rounded-lg border border-border/25 bg-card/15 text-xs text-muted-foreground/70 hover:text-gold/60 hover:border-gold/15 transition-all"
               >
                 <ExternalLink className="h-3 w-3" />
                 Abrir vitrine do aluno
@@ -1093,7 +1093,7 @@ export default function AdminVitrinePage() {
               <DialogTitle className="font-display text-base font-bold text-foreground/85">
                 {editingShelf ? "Editar Prateleira" : "Nova Prateleira"}
               </DialogTitle>
-              <p className="text-[11px] text-muted-foreground/40">
+              <p className="text-xs text-muted-foreground/70">
                 Configure uma prateleira de cursos para a vitrine
               </p>
             </DialogHeader>
@@ -1124,18 +1124,18 @@ export default function AdminVitrinePage() {
           >
             <div className="px-6 pb-4 space-y-4">
               <div className="space-y-1.5">
-                <Label className="text-[11px] font-semibold text-foreground/60">Nome da Prateleira</Label>
+                <Label className="text-xs font-semibold text-foreground/60">Nome da Prateleira</Label>
                 <Input
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
                   placeholder="Ex: Lançamentos"
                   required
-                  className="bg-card/10 border-border/15"
+                  className="bg-card/20 border-border/30"
                 />
               </div>
 
               <div className="space-y-1.5">
-                <Label className="text-[11px] font-semibold text-foreground/60">Tipo</Label>
+                <Label className="text-xs font-semibold text-foreground/60">Tipo</Label>
                 <Select value={formMode} onValueChange={(v) => {
                   setFormMode(v);
                   if (v === "manual" && editingShelf) {
@@ -1145,7 +1145,7 @@ export default function AdminVitrinePage() {
                     setSelectedCourseIds(existing);
                   }
                 }}>
-                  <SelectTrigger className="bg-card/10 border-border/15">
+                  <SelectTrigger className="bg-card/20 border-border/30">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -1157,9 +1157,9 @@ export default function AdminVitrinePage() {
 
               {formMode === "auto" && (
                 <div className="space-y-1.5">
-                  <Label className="text-[11px] font-semibold text-foreground/60">Critério</Label>
+                  <Label className="text-xs font-semibold text-foreground/60">Critério</Label>
                   <Select value={formCriteria} onValueChange={setFormCriteria}>
-                    <SelectTrigger className="bg-card/10 border-border/15">
+                    <SelectTrigger className="bg-card/20 border-border/30">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1175,14 +1175,14 @@ export default function AdminVitrinePage() {
 
               {formMode === "manual" && (
                 <div className="space-y-1.5">
-                  <Label className="text-[11px] font-semibold text-foreground/60">Selecionar Cursos</Label>
-                  <div className="rounded-xl border border-border/10 bg-card/5 max-h-[220px] overflow-y-auto divide-y divide-border/5">
+                  <Label className="text-xs font-semibold text-foreground/60">Selecionar Cursos</Label>
+                  <div className="rounded-xl border border-border/25 bg-card/15 max-h-[220px] overflow-y-auto divide-y divide-border/5">
                     {courses.map((course: any) => {
                       const isSelected = selectedCourseIds.includes(course.id);
                       return (
                         <div
                           key={course.id}
-                          className="flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors hover:bg-card/10"
+                          className="flex items-center gap-3 px-4 py-2.5 cursor-pointer transition-colors hover:bg-card/20"
                           onClick={() => toggleCourse(course.id)}
                         >
                           <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center shrink-0 transition-colors ${isSelected ? "border-gold bg-gold" : "border-muted-foreground/20"}`}>
@@ -1195,7 +1195,7 @@ export default function AdminVitrinePage() {
                       );
                     })}
                   </div>
-                  <p className="text-[11px] text-muted-foreground/35">
+                  <p className="text-xs text-muted-foreground/70">
                     {selectedCourseIds.length} curso(s) selecionado(s)
                   </p>
                 </div>
@@ -1207,7 +1207,7 @@ export default function AdminVitrinePage() {
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border/10">
+            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border/25">
               <Button type="button" variant="outline" onClick={closeDialog}>
                 Cancelar
               </Button>
@@ -1274,7 +1274,7 @@ export default function AdminVitrinePage() {
               <DialogTitle className="font-display text-base font-bold text-foreground/85">
                 {editingPromo ? "Editar Banner Secundário" : "Novo Banner Secundário"}
               </DialogTitle>
-              <p className="text-[11px] text-muted-foreground/40">Recomendado: 1200 × 400 px</p>
+              <p className="text-xs text-muted-foreground/70">Recomendado: 1200 × 400 px</p>
             </DialogHeader>
           </div>
 
@@ -1284,12 +1284,12 @@ export default function AdminVitrinePage() {
               <div className="flex-1 px-6 pb-6 space-y-4">
                 {/* Name */}
                 <div className="space-y-1.5">
-                  <Label className="text-[11px] font-semibold text-foreground/60">Nome da Promoção (opcional)</Label>
+                  <Label className="text-xs font-semibold text-foreground/60">Nome da Promoção (opcional)</Label>
                   <Input
                     value={promoTitle}
                     onChange={(e) => setPromoTitle(e.target.value)}
                     placeholder="Ex: Black Friday 2024"
-                    className="bg-card/10 border-border/15"
+                    className="bg-card/20 border-border/30"
                   />
                 </div>
 
@@ -1311,9 +1311,9 @@ export default function AdminVitrinePage() {
                 {/* Position & Type */}
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
-                    <Label className="text-[11px] font-semibold text-foreground/60">Posição</Label>
+                    <Label className="text-xs font-semibold text-foreground/60">Posição</Label>
                     <Select value={promoPosition} onValueChange={setPromoPosition}>
-                      <SelectTrigger className="bg-card/10 border-border/15">
+                      <SelectTrigger className="bg-card/20 border-border/30">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -1324,9 +1324,9 @@ export default function AdminVitrinePage() {
                     </Select>
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[11px] font-semibold text-foreground/60">Tipo</Label>
+                    <Label className="text-xs font-semibold text-foreground/60">Tipo</Label>
                     <Select value={promoType} onValueChange={setPromoType}>
-                      <SelectTrigger className="bg-card/10 border-border/15">
+                      <SelectTrigger className="bg-card/20 border-border/30">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -1338,8 +1338,8 @@ export default function AdminVitrinePage() {
                 </div>
 
                 {/* Onde Exibir */}
-                <div className="rounded-xl bg-card/5 border border-border/10 px-4 py-3 space-y-2">
-                  <p className="text-[11px] font-semibold text-foreground/60">Onde Exibir</p>
+                <div className="rounded-xl bg-card/15 border border-border/25 px-4 py-3 space-y-2">
+                  <p className="text-xs font-semibold text-foreground/60">Onde Exibir</p>
                   <div className="flex items-center gap-6">
                     <div className="flex items-center gap-2">
                       <Switch checked={promoShowVitrine} onCheckedChange={setPromoShowVitrine} />
@@ -1353,10 +1353,10 @@ export default function AdminVitrinePage() {
                 </div>
 
                 {/* Agendamento */}
-                <div className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3">
+                <div className="flex items-center justify-between rounded-xl bg-card/15 border border-border/25 px-4 py-3">
                   <div>
                     <p className="text-sm font-medium text-foreground/60">Agendamento Automático</p>
-                    <p className="text-[10px] text-muted-foreground/30">Ativar/desativar banner em datas específicas</p>
+                    <p className="text-[10px] text-muted-foreground/60">Ativar/desativar banner em datas específicas</p>
                   </div>
                   <Switch checked={promoSchedule} onCheckedChange={setPromoSchedule} />
                 </div>
@@ -1370,7 +1370,7 @@ export default function AdminVitrinePage() {
             </div>
 
             {/* Footer */}
-            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border/10">
+            <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border/25">
               <Button
                 type="button"
                 variant="outline"
@@ -1465,7 +1465,7 @@ function CardsConfigTab({ settings, onSave, saving }: { settings: any; onSave: (
           Configuração dos Cards{" "}
           <span className="font-normal text-muted-foreground/50">(Netflix Style)</span>
         </h3>
-        <p className="text-[11px] text-muted-foreground/40 mt-0.5">
+        <p className="text-xs text-muted-foreground/70 mt-0.5">
           Personalize a aparência dos cards de cursos nas prateleiras
         </p>
       </div>
@@ -1473,7 +1473,7 @@ function CardsConfigTab({ settings, onSave, saving }: { settings: any; onSave: (
       {CARD_TOGGLES.map((item) => (
         <div
           key={item.key}
-          className="flex items-center justify-between rounded-xl bg-card/5 border border-border/10 px-4 py-3"
+          className="flex items-center justify-between rounded-xl bg-card/15 border border-border/25 px-4 py-3"
         >
           <p className="text-sm font-medium text-foreground/60">{item.label}</p>
           <Switch
@@ -1484,7 +1484,7 @@ function CardsConfigTab({ settings, onSave, saving }: { settings: any; onSave: (
       ))}
 
       {/* Gradient intensity slider - cards */}
-      <div className="rounded-xl bg-card/5 border border-border/10 px-4 py-3 space-y-2">
+      <div className="rounded-xl bg-card/15 border border-border/25 px-4 py-3 space-y-2">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium text-foreground/60">Intensidade do gradiente nos cards</p>
           <span className="text-sm font-semibold text-gold/70">{config.cardGradient}%</span>
@@ -1497,13 +1497,13 @@ function CardsConfigTab({ settings, onSave, saving }: { settings: any; onSave: (
           onChange={(e) => setConfig((prev) => ({ ...prev, cardGradient: Number(e.target.value) }))}
           className="w-full h-1.5 rounded-full appearance-none bg-muted/20 accent-gold cursor-pointer"
         />
-        <p className="text-[10px] text-muted-foreground/30">
+        <p className="text-[10px] text-muted-foreground/60">
           0% = sem escurecimento | 100% = escurecimento total
         </p>
       </div>
 
       {/* Gradient intensity slider - banner */}
-      <div className="rounded-xl bg-card/5 border border-border/10 px-4 py-3 space-y-2">
+      <div className="rounded-xl bg-card/15 border border-border/25 px-4 py-3 space-y-2">
         <div className="flex items-center justify-between">
           <p className="text-sm font-medium text-foreground/60">Intensidade do gradiente no banner principal</p>
           <span className="text-sm font-semibold text-gold/70">{config.bannerGradient}%</span>
@@ -1516,7 +1516,7 @@ function CardsConfigTab({ settings, onSave, saving }: { settings: any; onSave: (
           onChange={(e) => setConfig((prev) => ({ ...prev, bannerGradient: Number(e.target.value) }))}
           className="w-full h-1.5 rounded-full appearance-none bg-muted/20 accent-gold cursor-pointer"
         />
-        <p className="text-[10px] text-muted-foreground/30">
+        <p className="text-[10px] text-muted-foreground/60">
           Controla a opacidade do gradiente sobre o banner hero
         </p>
       </div>
@@ -1530,7 +1530,7 @@ function CardsConfigTab({ settings, onSave, saving }: { settings: any; onSave: (
           type="number"
           value={config.cardsPerShelf}
           onChange={(e) => setConfig((prev) => ({ ...prev, cardsPerShelf: Number(e.target.value) || 20 }))}
-          className="bg-card/10 border-border/15 max-w-[200px]"
+          className="bg-card/20 border-border/30 max-w-[200px]"
         />
       </div>
 

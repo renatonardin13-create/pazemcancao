@@ -122,21 +122,21 @@ function ContentPage() {
           <h1 className="font-display text-3xl font-bold text-foreground/85 tracking-tight">
             Conteúdos Exclusivos
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground/40">
+          <p className="mt-2 text-sm text-muted-foreground/70">
             E-books, videoaulas e materiais para sua jornada espiritual
           </p>
         </div>
 
         {isLoading ? (
           <div className="text-center py-16">
-            <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+            <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
               Carregando conteúdos...
             </p>
           </div>
         ) : !items.length ? (
-          <div className="text-center py-16 rounded-2xl border border-border/15 bg-card/5">
-            <BookOpen className="h-8 w-8 text-muted-foreground/15 mx-auto mb-4" />
-            <p className="text-sm text-muted-foreground/35">Nenhum conteúdo disponível ainda.</p>
+          <div className="text-center py-16 rounded-2xl border border-border/30 bg-card/15">
+            <BookOpen className="h-8 w-8 text-muted-foreground/50 mx-auto mb-4" />
+            <p className="text-sm text-muted-foreground/70">Nenhum conteúdo disponível ainda.</p>
           </div>
         ) : (
           <>
@@ -151,7 +151,7 @@ function ContentPage() {
                     <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
                       ▶️ Continue sua caminhada
                     </h2>
-                    <p className="text-[10px] text-muted-foreground/30">
+                    <p className="text-[10px] text-muted-foreground/60">
                       Retome de onde parou
                     </p>
                   </div>
@@ -184,7 +184,7 @@ function ContentPage() {
                     <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
                       {label}
                     </h2>
-                    <span className="text-[10px] text-muted-foreground/25">{catItems.length} item(ns)</span>
+                    <span className="text-[10px] text-muted-foreground/60">{catItems.length} item(ns)</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                     {catItems.map((item: any, idx: number) => (
@@ -209,7 +209,7 @@ function ContentPage() {
                   <h2 className="font-display text-xl font-bold text-foreground/80 tracking-tight">
                     ✨ Sua Jornada
                   </h2>
-                  <p className="mt-1 text-[11px] text-muted-foreground/35">
+                  <p className="mt-1 text-xs text-muted-foreground/70">
                     Trilhas guiadas para acompanhar seu momento
                   </p>
                 </div>
@@ -221,7 +221,7 @@ function ContentPage() {
                         <h3 className="font-display text-[15px] font-bold text-foreground/70 tracking-tight">
                           {label}
                         </h3>
-                        <span className="text-[10px] text-muted-foreground/25">{jgItems.length} item(ns)</span>
+                        <span className="text-[10px] text-muted-foreground/60">{jgItems.length} item(ns)</span>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                         {jgItems.map((item: any, idx: number) => {
@@ -254,7 +254,7 @@ function ContentPage() {
                     <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
                       {label}
                     </h2>
-                    <span className="text-[10px] text-muted-foreground/25">{catItems.length} item(ns)</span>
+                    <span className="text-[10px] text-muted-foreground/60">{catItems.length} item(ns)</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                     {catItems.map((item: any, idx: number) => (
@@ -280,12 +280,12 @@ function ContentPage() {
                 <section key={type} className="space-y-5">
                   <div className="flex items-center gap-3">
                     <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/15">
-                      <TypeIcon className="h-4 w-4 text-gold/50" />
+                      <TypeIcon className="h-4 w-4 text-gold/70" />
                     </div>
                     <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
                       {config.label}
                     </h2>
-                    <span className="text-[10px] text-muted-foreground/25">{typeItems.length} item(ns)</span>
+                    <span className="text-[10px] text-muted-foreground/60">{typeItems.length} item(ns)</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                     {typeItems.map((item: any, idx: number) => (

@@ -51,7 +51,7 @@ export function AdminSidebar() {
                 <Shield className="h-3.5 w-3.5 text-gold/60" />
               </div>
               <div className="overflow-hidden">
-                <p className="text-[11px] font-bold text-sidebar-foreground/80 tracking-tight truncate">Admin</p>
+                <p className="text-xs font-bold text-sidebar-foreground/80 tracking-tight truncate">Admin</p>
                 <p className="text-[9px] text-sidebar-foreground/30 truncate">Plataforma de Louvores</p>
               </div>
             </div>

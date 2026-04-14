@@ -219,7 +219,7 @@ function LoginPage() {
   const divider = (
     <div className="flex items-center gap-3 my-6">
       <div className="flex-1 h-px bg-border/20" />
-      <span className="text-[10px] text-muted-foreground/40 uppercase tracking-widest">ou</span>
+      <span className="text-[10px] text-muted-foreground/70 uppercase tracking-widest">ou</span>
       <div className="flex-1 h-px bg-border/20" />
     </div>
   );
@@ -271,7 +271,7 @@ function LoginPage() {
                   href={`https://wa.me/5517988308037?text=${encodeURIComponent('Olá, preciso de ajuda para acessar o Paz em Canção')}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 text-emerald-400/70 border border-emerald-500/15 px-5 py-2.5 text-[11px] font-semibold tracking-wider uppercase hover:bg-emerald-500/20 hover:text-emerald-400/90 transition-all duration-500"
+                  className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 text-emerald-400/70 border border-emerald-500/15 px-5 py-2.5 text-xs font-semibold tracking-wider uppercase hover:bg-emerald-500/20 hover:text-emerald-400/90 transition-all duration-500"
                 >
                   Falar com Suporte
                 </a>
@@ -439,7 +439,7 @@ function LoginPage() {
                               placeholder="seu@email.com"
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
-                              className="pl-12 h-14 bg-background/60 border-border/40 rounded-xl text-base placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                              className="pl-12 h-14 bg-background/60 border-border/40 rounded-xl text-base placeholder:text-muted-foreground/70 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                               required
                             />
                           </div>
@@ -457,7 +457,7 @@ function LoginPage() {
                               placeholder="••••••••"
                               value={password}
                               onChange={(e) => setPassword(e.target.value)}
-                              className="pl-12 h-14 bg-background/60 border-border/40 rounded-xl text-base placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                              className="pl-12 h-14 bg-background/60 border-border/40 rounded-xl text-base placeholder:text-muted-foreground/70 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                               required
                             />
                           </div>
@@ -546,7 +546,7 @@ function LoginPage() {
                                   placeholder="Seu nome"
                                   value={signupName}
                                   onChange={(e) => setSignupName(e.target.value)}
-                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/70 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                                   required
                                 />
                               </div>
@@ -564,7 +564,7 @@ function LoginPage() {
                                   placeholder="seu@email.com"
                                   value={signupEmail}
                                   onChange={(e) => setSignupEmail(e.target.value)}
-                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/70 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                                   required
                                 />
                               </div>
@@ -582,7 +582,7 @@ function LoginPage() {
                                   placeholder="Mínimo 6 caracteres"
                                   value={signupPassword}
                                   onChange={(e) => setSignupPassword(e.target.value)}
-                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/70 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                                   required
                                   minLength={6}
                                 />
@@ -601,7 +601,7 @@ function LoginPage() {
                                   placeholder="Repita a senha"
                                   value={signupConfirm}
                                   onChange={(e) => setSignupConfirm(e.target.value)}
-                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/70 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                                   required
                                   minLength={6}
                                 />
@@ -615,7 +615,7 @@ function LoginPage() {
                                 onCheckedChange={(checked) => setAcceptTerms(checked === true)}
                                 className="mt-0.5 border-border/40 data-[state=checked]:bg-gold/20 data-[state=checked]:border-gold/30"
                               />
-                              <label htmlFor="terms" className="text-[11px] text-muted-foreground/60 leading-[1.6] cursor-pointer">
+                              <label htmlFor="terms" className="text-xs text-muted-foreground/60 leading-[1.6] cursor-pointer">
                                 Li e aceito os{" "}
                                 <Link to="/termos" className="text-gold/55 underline underline-offset-2 hover:text-gold/70" target="_blank">
                                   Termos de Uso
@@ -648,7 +648,7 @@ function LoginPage() {
                       <div className="mt-6 text-center">
                         <button
                           onClick={() => { setView("login"); setError(""); setSuccessMsg(""); }}
-                          className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground/50 hover:text-muted-foreground/75 transition-colors duration-500"
+                          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground/50 hover:text-muted-foreground/75 transition-colors duration-500"
                         >
                           <ArrowLeft className="h-3 w-3" />
                           Voltar ao login
@@ -701,7 +701,7 @@ function LoginPage() {
                               placeholder="seu@email.com"
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
-                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/70 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                               required
                             />
                           </div>
@@ -726,7 +726,7 @@ function LoginPage() {
                       <div className="mt-7 text-center">
                         <button
                           onClick={() => { setView("login"); setError(""); }}
-                          className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground/50 hover:text-muted-foreground/75 transition-colors duration-500"
+                          className="inline-flex items-center gap-1.5 text-xs text-muted-foreground/50 hover:text-muted-foreground/75 transition-colors duration-500"
                         >
                           <ArrowLeft className="h-3 w-3" />
                           Voltar ao login
@@ -760,7 +760,7 @@ function LoginPage() {
 
                       <button
                         onClick={() => { setView("login"); setError(""); }}
-                        className="inline-flex items-center gap-1.5 text-[11px] text-gold/55 hover:text-gold/70 transition-colors duration-500"
+                        className="inline-flex items-center gap-1.5 text-xs text-gold/55 hover:text-gold/70 transition-colors duration-500"
                       >
                         <ArrowLeft className="h-3 w-3" />
                         Voltar ao login
@@ -823,7 +823,7 @@ function LoginPage() {
                               placeholder="Mínimo 6 caracteres"
                               value={newPassword}
                               onChange={(e) => setNewPassword(e.target.value)}
-                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/70 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                               required
                               minLength={6}
                             />
@@ -842,7 +842,7 @@ function LoginPage() {
                               placeholder="Repita a senha"
                               value={confirmPassword}
                               onChange={(e) => setConfirmPassword(e.target.value)}
-                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/70 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                               required
                               minLength={6}
                             />

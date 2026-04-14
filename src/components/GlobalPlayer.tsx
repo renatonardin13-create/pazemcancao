@@ -43,7 +43,7 @@ export function GlobalPlayer() {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-2xl border-t border-border/10 pb-[env(safe-area-inset-bottom,0px)]">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-2xl border-t border-border/25 pb-[env(safe-area-inset-bottom,0px)]">
       {/* Progress bar — touch-friendly height on mobile */}
       <div
         className="h-1.5 sm:h-1 w-full bg-muted/10 cursor-pointer group relative"
@@ -60,12 +60,12 @@ export function GlobalPlayer() {
       <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-2.5 sm:py-3 max-w-5xl mx-auto">
         {/* Cover + info */}
         <div className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0">
-          <div className="shrink-0 h-10 w-10 sm:h-11 sm:w-11 rounded-lg overflow-hidden bg-card/20 border border-border/10 shadow-md">
+          <div className="shrink-0 h-10 w-10 sm:h-11 sm:w-11 rounded-lg overflow-hidden bg-card/20 border border-border/25 shadow-md">
             {currentTrack.coverUrl ? (
               <img src={currentTrack.coverUrl} alt={currentTrack.title} className="h-full w-full object-cover" />
             ) : (
               <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-gold/5 to-transparent">
-                <Music className="h-4 w-4 text-muted-foreground/25" />
+                <Music className="h-4 w-4 text-muted-foreground/60" />
               </div>
             )}
           </div>
@@ -75,7 +75,7 @@ export function GlobalPlayer() {
               {currentTrack.title}
             </p>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-[9px] sm:text-[10px] text-muted-foreground/30">{currentTrack.category}</span>
+              <span className="text-[9px] sm:text-[10px] text-muted-foreground/60">{currentTrack.category}</span>
               {hasQueue && (
                 <>
                   <span className="text-[9px] sm:text-[10px] text-border/20">·</span>
@@ -87,7 +87,7 @@ export function GlobalPlayer() {
         </div>
 
         {/* Time */}
-        <div className="hidden sm:flex items-center gap-1 text-[10px] text-muted-foreground/30 tabular-nums shrink-0">
+        <div className="hidden sm:flex items-center gap-1 text-[10px] text-muted-foreground/60 tabular-nums shrink-0">
           <span>{formatSecs(currentTime)}</span>
           <span className="text-border/15">/</span>
           <span>{duration > 0 ? formatSecs(duration) : currentTrack.duration}</span>
@@ -98,7 +98,7 @@ export function GlobalPlayer() {
           {hasQueue && (
             <button
               onClick={previous}
-              className="flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-lg text-muted-foreground/30 hover:text-foreground/60 transition-colors duration-300 active:scale-90"
+              className="flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-lg text-muted-foreground/60 hover:text-foreground/60 transition-colors duration-300 active:scale-90"
             >
               <SkipBack className="h-3.5 w-3.5" />
             </button>
@@ -118,7 +118,7 @@ export function GlobalPlayer() {
           {hasQueue && (
             <button
               onClick={next}
-              className="flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-lg text-muted-foreground/30 hover:text-foreground/60 transition-colors duration-300 active:scale-90"
+              className="flex h-9 w-9 sm:h-8 sm:w-8 items-center justify-center rounded-lg text-muted-foreground/60 hover:text-foreground/60 transition-colors duration-300 active:scale-90"
             >
               <SkipForward className="h-3.5 w-3.5" />
             </button>
@@ -127,7 +127,7 @@ export function GlobalPlayer() {
           {canDownload && (
             <button
               onClick={handleDownload}
-              className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/20 hover:text-gold/40 transition-colors duration-300 ml-1"
+              className="hidden sm:flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground/50 hover:text-gold/40 transition-colors duration-300 ml-1"
             >
               <Download className="h-3.5 w-3.5" />
             </button>
@@ -135,7 +135,7 @@ export function GlobalPlayer() {
 
           <button
             onClick={stop}
-            className="flex h-8 w-8 sm:h-7 sm:w-7 items-center justify-center rounded-lg text-muted-foreground/15 hover:text-muted-foreground/40 transition-colors duration-300 active:scale-90"
+            className="flex h-8 w-8 sm:h-7 sm:w-7 items-center justify-center rounded-lg text-muted-foreground/50 hover:text-muted-foreground/70 transition-colors duration-300 active:scale-90"
           >
             <X className="h-3.5 w-3.5 sm:h-3 sm:w-3" />
           </button>

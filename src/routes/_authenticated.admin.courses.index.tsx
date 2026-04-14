@@ -117,12 +117,12 @@ function AdminCoursesPage() {
           </div>
           <div className="flex items-center gap-2.5">
             <div className="relative hidden sm:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/70" />
               <Input
                 placeholder="Buscar por nome..."
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                className="pl-9 h-10 w-52 bg-background/40 border-border/20 rounded-xl text-sm placeholder:text-muted-foreground/35"
+                className="pl-9 h-10 w-52 bg-background/40 border-border/20 rounded-xl text-sm placeholder:text-muted-foreground/70"
               />
             </div>
             <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
@@ -149,13 +149,13 @@ function AdminCoursesPage() {
       {/* Table */}
       {isLoading ? (
         <div className="text-center py-16">
-          <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+          <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
             Carregando...
           </p>
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-20 rounded-2xl border border-border/15 bg-card shadow-lg shadow-black/10">
-          <Video className="h-10 w-10 text-gold/20 mx-auto mb-4" />
+        <div className="text-center py-20 rounded-2xl border border-border/30 bg-card shadow-lg shadow-black/10">
+          <Video className="h-10 w-10 text-gold/45 mx-auto mb-4" />
           <p className="text-sm text-muted-foreground/50 font-medium">
             {allCourses.length === 0
               ? "Nenhum curso cadastrado ainda."
@@ -171,29 +171,29 @@ function AdminCoursesPage() {
           )}
         </div>
       ) : (
-        <div className="rounded-2xl border border-border/15 bg-card overflow-hidden shadow-lg shadow-black/10">
+        <div className="rounded-2xl border border-border/30 bg-card overflow-hidden shadow-lg shadow-black/10">
           <Table>
             <TableHeader>
-              <TableRow className="border-border/10 hover:bg-transparent">
-                <TableHead className="w-[72px] text-[10px] uppercase tracking-widest text-muted-foreground/30">
+              <TableRow className="border-border/25 hover:bg-transparent">
+                <TableHead className="w-[72px] text-[10px] uppercase tracking-widest text-muted-foreground/60">
                   Capa
                 </TableHead>
-                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/30">
+                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/60">
                   Nome do Curso
                 </TableHead>
-                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/30 w-[90px]">
+                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/60 w-[90px]">
                   Tipo
                 </TableHead>
-                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/30 w-[100px]">
+                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/60 w-[100px]">
                   Status
                 </TableHead>
-                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/30 w-[80px] text-center">
+                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/60 w-[80px] text-center">
                   Módulos
                 </TableHead>
-                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/30 w-[80px] text-center">
+                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/60 w-[80px] text-center">
                   Aulas
                 </TableHead>
-                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/30 w-[60px] text-right">
+                <TableHead className="text-[10px] uppercase tracking-widest text-muted-foreground/60 w-[60px] text-right">
                   Ações
                 </TableHead>
               </TableRow>
@@ -202,7 +202,7 @@ function AdminCoursesPage() {
               {paginated.map((course: any) => (
                 <TableRow
                   key={course.id}
-                  className="border-border/8 hover:bg-card/10"
+                  className="border-border/20 hover:bg-card/20"
                 >
                   {/* Cover */}
                   <TableCell className="py-3">
@@ -215,11 +215,11 @@ function AdminCoursesPage() {
                         />
                       ) : course.course_type === "video" ? (
                         <div className="h-14 w-14 flex items-center justify-center">
-                          <Video className="h-5 w-5 text-gold/30" />
+                          <Video className="h-5 w-5 text-gold/55" />
                         </div>
                       ) : (
                         <div className="h-14 w-14 flex items-center justify-center">
-                          <BookText className="h-5 w-5 text-muted-foreground/30" />
+                          <BookText className="h-5 w-5 text-muted-foreground/60" />
                         </div>
                       )}
                     </div>
@@ -231,7 +231,7 @@ function AdminCoursesPage() {
                       {course.title}
                     </p>
                     {course.categories?.name && (
-                      <span className="text-[11px] text-muted-foreground/30">
+                      <span className="text-xs text-muted-foreground/60">
                         {course.categories.name}
                       </span>
                     )}
@@ -239,7 +239,7 @@ function AdminCoursesPage() {
 
                   {/* Type */}
                   <TableCell>
-                    <span className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground/40">
+                    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground/70">
                       {course.course_type === "video" ? (
                         <Video className="h-3 w-3" />
                       ) : (
@@ -335,7 +335,7 @@ function AdminCoursesPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center px-5 py-3 border-t border-border/10 gap-1">
+            <div className="flex items-center justify-center px-5 py-3 border-t border-border/25 gap-1">
               <Button
                 variant="ghost"
                 size="icon"

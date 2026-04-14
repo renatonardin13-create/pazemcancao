@@ -12,12 +12,12 @@ export function FooterLinks({ variant = "full" }: FooterLinksProps) {
         <Link to="/termos" className="hover:text-gold/60 transition-colors duration-500">
           Termos de Uso
         </Link>
-        <span className="text-gold/20">·</span>
+        <span className="text-gold/45">·</span>
         <Link to="/privacidade" className="hover:text-gold/60 transition-colors duration-500">
           Privacidade
         </Link>
       </div>
-      <p className="text-xs text-muted-foreground/40">
+      <p className="text-xs text-muted-foreground/70">
         © {new Date().getFullYear()} Paz em Canção
       </p>
     </footer>

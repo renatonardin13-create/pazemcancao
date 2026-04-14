@@ -129,50 +129,50 @@ function AdminJourneysPage() {
 
       {/* Create form */}
       {showForm && (
-        <div className="rounded-2xl border border-border/15 bg-card/10 p-6 space-y-4">
+        <div className="rounded-2xl border border-border/30 bg-card/20 p-6 space-y-4">
           <h3 className="text-sm font-semibold text-foreground/70">Nova Trilha</h3>
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="text-[11px] text-muted-foreground/40 uppercase tracking-wider mb-1.5 block">Nome</label>
+              <label className="text-xs text-muted-foreground/70 uppercase tracking-wider mb-1.5 block">Nome</label>
               <Input
                 value={newItem.name}
                 onChange={(e) => handleNameChange(e.target.value)}
                 placeholder="Ex: Para dias difíceis"
-                className="bg-card/10 border-border/15"
+                className="bg-card/20 border-border/30"
               />
             </div>
             <div>
-              <label className="text-[11px] text-muted-foreground/40 uppercase tracking-wider mb-1.5 block">Slug</label>
+              <label className="text-xs text-muted-foreground/70 uppercase tracking-wider mb-1.5 block">Slug</label>
               <Input
                 value={newItem.slug}
                 onChange={(e) => setNewItem((prev) => ({ ...prev, slug: e.target.value }))}
                 placeholder="para_dias_dificeis"
-                className="bg-card/10 border-border/15"
+                className="bg-card/20 border-border/30"
               />
             </div>
             <div>
-              <label className="text-[11px] text-muted-foreground/40 uppercase tracking-wider mb-1.5 block">Ícone (emoji)</label>
+              <label className="text-xs text-muted-foreground/70 uppercase tracking-wider mb-1.5 block">Ícone (emoji)</label>
               <Input
                 value={newItem.icon}
                 onChange={(e) => setNewItem((prev) => ({ ...prev, icon: e.target.value }))}
                 placeholder="🌧️"
-                className="bg-card/10 border-border/15"
+                className="bg-card/20 border-border/30"
               />
             </div>
             <div>
-              <label className="text-[11px] text-muted-foreground/40 uppercase tracking-wider mb-1.5 block">Descrição</label>
+              <label className="text-xs text-muted-foreground/70 uppercase tracking-wider mb-1.5 block">Descrição</label>
               <Input
                 value={newItem.description}
                 onChange={(e) => setNewItem((prev) => ({ ...prev, description: e.target.value }))}
                 placeholder="Breve descrição..."
-                className="bg-card/10 border-border/15"
+                className="bg-card/20 border-border/30"
               />
             </div>
           </div>
           <div className="flex justify-end gap-3 pt-2">
             <button
               onClick={() => setShowForm(false)}
-              className="px-4 py-2 text-[11px] uppercase tracking-wider text-muted-foreground/40 hover:text-muted-foreground/60 transition-colors"
+              className="px-4 py-2 text-xs uppercase tracking-wider text-muted-foreground/70 hover:text-muted-foreground/60 transition-colors"
             >
               Cancelar
             </button>
@@ -185,7 +185,7 @@ function AdminJourneysPage() {
                 createMutation.mutate(newItem);
               }}
               disabled={createMutation.isPending}
-              className="flex items-center gap-2 rounded-xl h-9 px-5 text-[11px] font-semibold uppercase tracking-wider bg-gold/20 text-gold/80 border border-gold/15 hover:bg-gold/30 transition-all duration-500 disabled:opacity-50"
+              className="flex items-center gap-2 rounded-xl h-9 px-5 text-xs font-semibold uppercase tracking-wider bg-gold/20 text-gold/80 border border-gold/15 hover:bg-gold/30 transition-all duration-500 disabled:opacity-50"
             >
               {createMutation.isPending ? "Criando..." : "Criar"}
             </button>
@@ -197,30 +197,30 @@ function AdminJourneysPage() {
       {isLoading ? (
         <ListSkeleton rows={4} />
       ) : !journeys.length ? (
-        <div className="text-center py-16 rounded-2xl border border-border/15 bg-card/5">
-          <Compass className="h-8 w-8 text-muted-foreground/15 mx-auto mb-4" />
-          <p className="text-sm text-muted-foreground/35">Nenhuma trilha cadastrada.</p>
+        <div className="text-center py-16 rounded-2xl border border-border/30 bg-card/15">
+          <Compass className="h-8 w-8 text-muted-foreground/50 mx-auto mb-4" />
+          <p className="text-sm text-muted-foreground/70">Nenhuma trilha cadastrada.</p>
         </div>
       ) : (
-        <div className="rounded-2xl border border-border/15 overflow-hidden">
+        <div className="rounded-2xl border border-border/30 overflow-hidden">
           {journeys.map((item: any, index: number) => (
             <div
               key={item.id}
-              className="flex items-center gap-4 px-5 py-4 border-b border-border/8 last:border-0 hover:bg-card/10 transition-colors"
+              className="flex items-center gap-4 px-5 py-4 border-b border-border/20 last:border-0 hover:bg-card/20 transition-colors"
             >
               {/* Reorder */}
               <div className="flex flex-col gap-0.5 shrink-0">
                 <button
                   onClick={() => moveItem(index, "up")}
                   disabled={index === 0}
-                  className="text-muted-foreground/20 hover:text-gold/50 disabled:opacity-20 disabled:cursor-not-allowed transition-colors text-[10px]"
+                  className="text-muted-foreground/50 hover:text-gold/70 disabled:opacity-20 disabled:cursor-not-allowed transition-colors text-[10px]"
                 >
                   ▲
                 </button>
                 <button
                   onClick={() => moveItem(index, "down")}
                   disabled={index === journeys.length - 1}
-                  className="text-muted-foreground/20 hover:text-gold/50 disabled:opacity-20 disabled:cursor-not-allowed transition-colors text-[10px]"
+                  className="text-muted-foreground/50 hover:text-gold/70 disabled:opacity-20 disabled:cursor-not-allowed transition-colors text-[10px]"
                 >
                   ▼
                 </button>
@@ -234,22 +234,22 @@ function AdminJourneysPage() {
               {/* Content */}
               {editingId === item.id ? (
                 <div className="flex-1 grid sm:grid-cols-4 gap-2">
-                  <Input value={editValues.name} onChange={(e) => setEditValues((p) => ({ ...p, name: e.target.value }))} placeholder="Nome" className="bg-card/10 border-border/15 text-sm h-8" />
-                  <Input value={editValues.slug} onChange={(e) => setEditValues((p) => ({ ...p, slug: e.target.value }))} placeholder="Slug" className="bg-card/10 border-border/15 text-sm h-8" />
-                  <Input value={editValues.icon} onChange={(e) => setEditValues((p) => ({ ...p, icon: e.target.value }))} placeholder="Ícone" className="bg-card/10 border-border/15 text-sm h-8" />
-                  <Input value={editValues.description} onChange={(e) => setEditValues((p) => ({ ...p, description: e.target.value }))} placeholder="Descrição" className="bg-card/10 border-border/15 text-sm h-8" />
+                  <Input value={editValues.name} onChange={(e) => setEditValues((p) => ({ ...p, name: e.target.value }))} placeholder="Nome" className="bg-card/20 border-border/30 text-sm h-8" />
+                  <Input value={editValues.slug} onChange={(e) => setEditValues((p) => ({ ...p, slug: e.target.value }))} placeholder="Slug" className="bg-card/20 border-border/30 text-sm h-8" />
+                  <Input value={editValues.icon} onChange={(e) => setEditValues((p) => ({ ...p, icon: e.target.value }))} placeholder="Ícone" className="bg-card/20 border-border/30 text-sm h-8" />
+                  <Input value={editValues.description} onChange={(e) => setEditValues((p) => ({ ...p, description: e.target.value }))} placeholder="Descrição" className="bg-card/20 border-border/30 text-sm h-8" />
                 </div>
               ) : (
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-foreground/75 truncate">{item.name}</p>
-                  <p className="text-[11px] text-muted-foreground/30">
+                  <p className="text-xs text-muted-foreground/60">
                     {item.slug}
                     {item.description && ` · ${item.description}`}
                   </p>
                 </div>
               )}
 
-              <span className="text-[9px] text-muted-foreground/20 tabular-nums shrink-0">#{item.sort_order}</span>
+              <span className="text-[9px] text-muted-foreground/50 tabular-nums shrink-0">#{item.sort_order}</span>
 
               {/* Actions */}
               <div className="flex items-center gap-1 shrink-0">
@@ -258,18 +258,18 @@ function AdminJourneysPage() {
                     <button onClick={() => updateMutation.mutate({ id: item.id, ...editValues })} className="p-2 text-emerald-400/50 hover:text-emerald-400/80 transition-colors" title="Salvar">
                       <Check className="h-3.5 w-3.5" />
                     </button>
-                    <button onClick={() => setEditingId(null)} className="p-2 text-muted-foreground/30 hover:text-muted-foreground/60 transition-colors" title="Cancelar">
+                    <button onClick={() => setEditingId(null)} className="p-2 text-muted-foreground/60 hover:text-muted-foreground/60 transition-colors" title="Cancelar">
                       <X className="h-3.5 w-3.5" />
                     </button>
                   </>
                 ) : (
                   <>
-                    <button onClick={() => startEdit(item)} className="p-2 text-muted-foreground/30 hover:text-gold/60 transition-colors" title="Editar">
+                    <button onClick={() => startEdit(item)} className="p-2 text-muted-foreground/60 hover:text-gold/60 transition-colors" title="Editar">
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
                     <button
                       onClick={() => { if (confirm("Remover esta trilha?")) deleteMutation.mutate(item.id); }}
-                      className="p-2 text-muted-foreground/30 hover:text-destructive/60 transition-colors"
+                      className="p-2 text-muted-foreground/60 hover:text-destructive/60 transition-colors"
                       title="Remover"
                     >
                       <Trash2 className="h-3.5 w-3.5" />

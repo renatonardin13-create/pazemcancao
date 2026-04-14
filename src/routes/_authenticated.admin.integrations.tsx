@@ -59,7 +59,7 @@ function IntegrationsPage() {
           <div className="flex items-center gap-3">
             <Link
               to="/admin"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/15 bg-background/30 text-muted-foreground/50 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all duration-200"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/30 bg-background/30 text-muted-foreground/50 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all duration-200"
             >
               <ArrowLeft className="h-4 w-4" />
             </Link>
@@ -67,7 +67,7 @@ function IntegrationsPage() {
               <h1 className="font-display text-xl font-black text-foreground tracking-tight">
                 Integrações
               </h1>
-              <p className="text-[11px] text-muted-foreground/50 mt-0.5">
+              <p className="text-xs text-muted-foreground/50 mt-0.5">
                 Configure webhooks para liberar acesso automático após compras
               </p>
             </div>
@@ -206,7 +206,7 @@ function IntegrationsPage() {
                   integrations.map((integ) => {
                     const pc = platformColors[integ.platform] || platformColors.kiwify;
                     return (
-                      <TableRow key={integ.id} className="border-border/10">
+                      <TableRow key={integ.id} className="border-border/25">
                         <TableCell className="font-medium">{integ.courseTitle}</TableCell>
                         <TableCell>
                           <Badge variant="outline" className={`text-[10px] ${pc.bg}`}>
@@ -256,7 +256,7 @@ function IntegrationsPage() {
           </div>
 
           {/* Hint */}
-          <div className="mt-4 flex items-center gap-2 rounded-lg bg-muted/10 border border-border/15 px-4 py-3">
+          <div className="mt-4 flex items-center gap-2 rounded-lg bg-muted/10 border border-border/30 px-4 py-3">
             <Lightbulb className="h-4 w-4 text-amber-400 shrink-0" />
             <p className="text-xs text-muted-foreground">
               Configure webhooks na aba <span className="font-semibold text-foreground/70">Configurações</span> de cada curso
@@ -274,7 +274,7 @@ function IntegrationsPage() {
           </div>
 
           <Accordion type="single" collapsible className="space-y-2">
-            <AccordionItem value="hotmart" className="border border-border/15 rounded-lg px-4">
+            <AccordionItem value="hotmart" className="border border-border/30 rounded-lg px-4">
               <AccordionTrigger className="hover:no-underline py-4">
                 <div className="flex items-center gap-3">
                   <span className="h-2.5 w-2.5 rounded-full bg-orange-500" />
@@ -290,7 +290,7 @@ function IntegrationsPage() {
                   <li>5. Selecione os eventos: <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">purchase.approved</code></li>
                   <li>6. Salve e teste o webhook</li>
                 </ol>
-                <div className="mt-4 rounded-lg bg-muted/10 border border-border/15 px-4 py-2.5">
+                <div className="mt-4 rounded-lg bg-muted/10 border border-border/30 px-4 py-2.5">
                   <p className="text-xs text-muted-foreground">
                     <span className="font-semibold text-foreground/70">Dica:</span> O email do comprador virá no campo <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">buyer.email</code>
                   </p>
@@ -298,7 +298,7 @@ function IntegrationsPage() {
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="kiwify" className="border border-border/15 rounded-lg px-4">
+            <AccordionItem value="kiwify" className="border border-border/30 rounded-lg px-4">
               <AccordionTrigger className="hover:no-underline py-4">
                 <div className="flex items-center gap-3">
                   <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
@@ -314,7 +314,7 @@ function IntegrationsPage() {
                   <li>5. Ative os eventos: <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">order.paid</code></li>
                   <li>6. Salve a configuração</li>
                 </ol>
-                <div className="mt-4 rounded-lg bg-muted/10 border border-border/15 px-4 py-2.5">
+                <div className="mt-4 rounded-lg bg-muted/10 border border-border/30 px-4 py-2.5">
                   <p className="text-xs text-muted-foreground">
                     <span className="font-semibold text-foreground/70">Dica:</span> O email virá em <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">Customer.email</code>
                   </p>
@@ -322,7 +322,7 @@ function IntegrationsPage() {
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="cakto" className="border border-border/15 rounded-lg px-4">
+            <AccordionItem value="cakto" className="border border-border/30 rounded-lg px-4">
               <AccordionTrigger className="hover:no-underline py-4">
                 <div className="flex items-center gap-3">
                   <span className="h-2.5 w-2.5 rounded-full bg-purple-500" />
@@ -338,7 +338,7 @@ function IntegrationsPage() {
                   <li>5. Selecione os eventos de compra aprovada</li>
                   <li>6. Salve e teste a integração</li>
                 </ol>
-                <div className="mt-4 rounded-lg bg-muted/10 border border-border/15 px-4 py-2.5">
+                <div className="mt-4 rounded-lg bg-muted/10 border border-border/30 px-4 py-2.5">
                   <p className="text-xs text-muted-foreground">
                     <span className="font-semibold text-foreground/70">Dica:</span> O email do comprador virá no campo de dados do cliente
                   </p>

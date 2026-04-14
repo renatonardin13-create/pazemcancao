@@ -46,7 +46,7 @@ function EditCoursePage() {
   if (isLoading) {
     return (
       <div className="text-center py-16">
-        <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+        <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
           Carregando curso...
         </p>
       </div>
@@ -68,7 +68,7 @@ function EditCoursePage() {
           <div className="flex items-center gap-3 min-w-0">
             <Link
               to="/admin/courses"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/15 bg-background/30 text-muted-foreground/50 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all duration-200 shrink-0"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/30 bg-background/30 text-muted-foreground/50 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all duration-200 shrink-0"
             >
               <ArrowLeft className="h-4 w-4" />
             </Link>
@@ -76,7 +76,7 @@ function EditCoursePage() {
               <h1 className="font-display text-xl font-black text-foreground tracking-tight truncate">
                 Gerenciar: <span className="text-gold">{courseTitle}</span>
               </h1>
-              <p className="text-[11px] text-muted-foreground/50 mt-0.5">
+              <p className="text-xs text-muted-foreground/50 mt-0.5">
                 Gerencie detalhes, módulos e aulas do curso
               </p>
             </div>
@@ -107,7 +107,7 @@ function EditCoursePage() {
 
       {/* Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="bg-card/60 border border-border/10 p-1 rounded-xl">
+        <TabsList className="bg-card/60 border border-border/25 p-1 rounded-xl">
           <TabsTrigger value="details" className={tabTriggerClass}>
             Detalhes
           </TabsTrigger>
