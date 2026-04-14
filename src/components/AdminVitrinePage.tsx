@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { ImageUploadField } from "@/components/ImageUploadField";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { toast } from "sonner";
 import {
@@ -719,38 +720,20 @@ export default function AdminVitrinePage() {
                   <Switch checked={bannerEnabled} onCheckedChange={setBannerEnabled} />
                 </div>
 
-                {/* Action buttons */}
-                <div className="flex items-center gap-3">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-1.5 border-destructive/20 text-destructive/60 hover:text-destructive hover:border-destructive/40"
-                    onClick={() => {
-                      setBannerImageUrl("");
-                      setBannerImgDims(null);
-                      toast.success("Banner removido");
-                    }}
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                    Remover Banner
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-1.5 border-gold/20 text-gold/60 hover:text-gold hover:border-gold/30"
-                    onClick={() => {
-                      const url = prompt("Cole a URL da nova imagem do banner:");
-                      if (url) {
-                        setBannerImageUrl(url);
-                        setBannerImgDims(null);
-                        toast.success("Banner atualizado");
-                      }
-                    }}
-                  >
-                    <ImageIcon className="h-3.5 w-3.5" />
-                    Trocar Banner
-                  </Button>
-                </div>
+                {/* Upload / Replace banner */}
+                <ImageUploadField
+                  label="Imagem do Banner"
+                  hint="Arraste ou clique para enviar. Formatos: JPG, PNG, WebP (máx 5MB)"
+                  value={bannerImageUrl}
+                  onChange={(url) => {
+                    setBannerImageUrl(url);
+                    setBannerImgDims(null);
+                  }}
+                  bucket="covers"
+                  folder="banners"
+                  aspectClass="aspect-[3/1]"
+                  uploadLabel="Clique para enviar o banner"
+                />
 
                 {/* Save button */}
                 <Button
@@ -1309,26 +1292,17 @@ export default function AdminVitrinePage() {
                   />
                 </div>
 
-                {/* Preview */}
-                <div className="space-y-1.5">
-                  <Label className="text-[11px] font-semibold text-foreground/60">Preview do Banner</Label>
-                  <div
-                    className="relative w-full aspect-[3/1] rounded-xl border-2 border-dashed border-border/15 bg-card/5 flex flex-col items-center justify-center cursor-pointer hover:border-gold/20 transition-colors overflow-hidden"
-                    onClick={() => {
-                      const url = prompt("Cole a URL da imagem do banner:");
-                      if (url) setPromoImageUrl(url);
-                    }}
-                  >
-                    {promoImageUrl ? (
-                      <img src={promoImageUrl} alt="Preview" className="w-full h-full object-cover" />
-                    ) : (
-                      <>
-                        <ImageIcon className="h-8 w-8 text-muted-foreground/15 mb-2" />
-                        <span className="text-gold/50 text-[11px] font-medium">↑ Clique para upload</span>
-                      </>
-                    )}
-                  </div>
-                </div>
+                {/* Preview / Upload */}
+                <ImageUploadField
+                  label="Imagem do Banner"
+                  hint="Recomendado: 1200 × 400px. Arraste ou clique."
+                  value={promoImageUrl}
+                  onChange={setPromoImageUrl}
+                  bucket="covers"
+                  folder="promo-banners"
+                  aspectClass="aspect-[3/1]"
+                  uploadLabel="Clique para enviar imagem"
+                />
               </div>
 
               {/* Right column */}
