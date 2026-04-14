@@ -510,13 +510,15 @@ function AdminUsersPage() {
           </SelectContent>
         </Select>
         <Select value={courseFilter} onValueChange={(v) => { setCourseFilter(v); setCurrentPage(1); }}>
-          <SelectTrigger className="w-[180px] bg-card/10 border-border/15">
-            <SelectValue placeholder="Todos os cursos" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos os cursos</SelectItem>
-          </SelectContent>
-        </Select>
+           <SelectTrigger className="w-[180px] bg-card/10 border-border/15">
+              <SelectValue placeholder="Todos os cursos" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos os alunos</SelectItem>
+              <SelectItem value="with_courses">Com cursos</SelectItem>
+              <SelectItem value="no_courses">Sem cursos</SelectItem>
+            </SelectContent>
+          </Select>
       </div>
 
       {/* Table */}
