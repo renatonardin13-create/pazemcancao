@@ -100,7 +100,7 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
         granted_at: enrollment?.granted_at,
         access_origin: enrollment?.access_origin,
       };
-    });
+    })
     .sort((a, b) => {
       const aDate = new Date(a.granted_at || a.enrolled_at || 0).getTime();
       const bDate = new Date(b.granted_at || b.enrolled_at || 0).getTime();
