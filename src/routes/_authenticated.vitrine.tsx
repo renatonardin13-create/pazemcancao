@@ -140,7 +140,7 @@ function VitrinePage() {
 
                     {/* Horizontal scroll */}
                     <div className="relative -mx-4 sm:-mx-8 px-4 sm:px-8">
-                      <div className="flex gap-5 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
+                      <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
                         {shelf.courses.map((course: any) => (
                           <CourseCard key={course.id} course={course} />
                         ))}
@@ -197,6 +197,7 @@ function CourseCard({ course }: { course: any }) {
   const isAvailable = course.access_state === "available";
   const isBlocked = course.access_state === "blocked";
   const isExpired = course.access_state === "expired";
+  const isDimmed = isLocked || isBlocked || isExpired;
 
   const handleLockedClick = () => {
     if (course.checkout_url) {
@@ -205,107 +206,108 @@ function CourseCard({ course }: { course: any }) {
   };
 
   const cardContent = (
-    <div className="group relative w-[220px] sm:w-[260px] shrink-0 snap-start">
-      <div className="relative aspect-[3/4] rounded-xl overflow-hidden border border-border/30 group-hover:border-gold/20 transition-all duration-500">
+    <div className="group relative w-[240px] sm:w-[280px] shrink-0 snap-start">
+      <div className="relative aspect-[2/3] rounded-2xl overflow-hidden border border-border/25 transition-all duration-500 group-hover:border-gold/30 group-hover:shadow-xl group-hover:shadow-gold/5 group-hover:scale-[1.03]">
+        {/* Image */}
         {course.cover_image_url ? (
           <img
             src={course.cover_image_url}
             alt={course.title}
-            className={`w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 ${(isLocked || isBlocked || isExpired) ? "brightness-[0.35] saturate-[0.3]" : ""}`}
+            className={`w-full h-full object-cover transition-all duration-700 group-hover:scale-110 ${isDimmed ? "brightness-[0.3] saturate-[0.2]" : ""}`}
           />
         ) : (
-          <div className="w-full h-full bg-muted/20 flex items-center justify-center">
-            <Store className="h-8 w-8 text-muted-foreground/50" />
+          <div className="w-full h-full bg-muted/15 flex items-center justify-center">
+            <Store className="h-10 w-10 text-muted-foreground/40" />
           </div>
         )}
 
-        {/* Dark overlay for locked/blocked/expired */}
-        <div className={`absolute inset-0 ${(isLocked || isBlocked || isExpired) ? "bg-gradient-to-t from-black/95 via-black/60 to-black/30" : "bg-gradient-to-t from-background/90 via-background/30 to-transparent"}`} />
+        {/* Gradient overlay */}
+        <div className={`absolute inset-0 ${isDimmed ? "bg-gradient-to-t from-black/95 via-black/50 to-black/20" : "bg-gradient-to-t from-background via-background/40 to-transparent opacity-80 group-hover:opacity-90 transition-opacity duration-500"}`} />
 
-        {/* Lock icon centered for locked/blocked courses */}
-        {(isLocked || isBlocked || isExpired) && (
-          <>
-            <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-              <div className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-md border border-gold/20 flex items-center justify-center mb-3">
-                <Lock className="h-6 w-6 text-gold/70" />
-              </div>
-              <span className="text-xs font-bold uppercase tracking-[0.2em] text-gold/70">
-                {isBlocked ? "Acesso Bloqueado" : isExpired ? "Acesso Expirado" : "Conteúdo Premium"}
-              </span>
+        {/* Lock overlay for locked/blocked */}
+        {isDimmed && (
+          <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
+            <div className="w-16 h-16 rounded-full bg-black/60 backdrop-blur-lg border border-gold/25 flex items-center justify-center mb-3 shadow-lg shadow-black/30">
+              <Lock className="h-7 w-7 text-gold/80" />
             </div>
-            {isLocked && (
-              <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-gold/15 backdrop-blur-sm px-3 py-1.5 border border-gold/25">
-                <ShoppingCart className="h-3 w-3 text-gold/70" />
-                <span className="text-[11px] font-bold uppercase tracking-wider text-gold/70">
-                  Adquirir
-                </span>
-              </div>
-            )}
-          </>
+            <span className="text-xs font-bold uppercase tracking-widest text-gold/80">
+              {isBlocked ? "Bloqueado" : isExpired ? "Expirado" : "Premium"}
+            </span>
+          </div>
         )}
 
-        {/* Preview badge */}
+        {/* Top badges */}
+        {isLocked && !isBlocked && !isExpired && (
+          <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 rounded-full bg-gold/20 backdrop-blur-md px-3 py-1.5 border border-gold/30 shadow-lg">
+            <ShoppingCart className="h-3 w-3 text-gold" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-gold">
+              Adquirir
+            </span>
+          </div>
+        )}
+
         {hasPreview && !isLocked && (
-          <div className="absolute top-3 right-3 flex items-center gap-1.5 rounded-full bg-emerald-500/20 backdrop-blur-sm px-3 py-1.5 border border-emerald-500/20">
-            <Play className="h-3 w-3 text-emerald-400/70" />
-            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-400/70">
+          <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 rounded-full bg-emerald-500/25 backdrop-blur-md px-3 py-1.5 border border-emerald-500/30">
+            <Play className="h-3 w-3 text-emerald-400" />
+            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-400">
               Preview
             </span>
           </div>
         )}
 
+        {/* Progress indicator at top for enrolled */}
+        {isInProgress && (
+          <div className="absolute top-0 left-0 right-0 z-20 h-1 bg-gold/20">
+            <div className="h-full bg-gold rounded-r-full transition-all" style={{ width: `${course.progress_pct}%` }} />
+          </div>
+        )}
+        {isCompleted && (
+          <div className="absolute top-0 left-0 right-0 z-20 h-1 bg-emerald-500" />
+        )}
+
         {/* Bottom info */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
-          <h3 className={`font-display text-sm font-bold leading-tight line-clamp-2 transition-colors ${(isLocked || isBlocked || isExpired) ? "text-foreground/60" : "text-foreground/90 group-hover:text-gold"}`}>
+        <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
+          <h3 className={`font-display text-base font-bold leading-snug line-clamp-2 transition-colors duration-300 ${isDimmed ? "text-foreground/50" : "text-foreground group-hover:text-gold"}`}>
             {course.title}
           </h3>
-          {course.short_description && (
-            <p className="text-xs text-muted-foreground/70 mt-1 line-clamp-1">
+          {course.short_description && !isDimmed && (
+            <p className="text-xs text-muted-foreground mt-1.5 line-clamp-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               {course.short_description}
             </p>
           )}
 
+          {/* Status / CTA */}
           <div className="mt-3">
             {isCompleted ? (
-              <>
-                <div className="w-full h-1 rounded-full bg-emerald-500/20 mb-2">
-                  <div className="h-full rounded-full bg-emerald-500/70" style={{ width: '100%' }} />
-                </div>
-                <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-400/70">
-                  ✓ Concluído
-                </span>
-              </>
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-400">
+                ✓ Concluído
+              </span>
             ) : isInProgress ? (
-              <>
-                <div className="w-full h-1 rounded-full bg-gold/20 mb-2">
-                  <div className="h-full rounded-full bg-gold/70" style={{ width: `${course.progress_pct}%` }} />
-                </div>
-                <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold/70">
-                  {course.progress_pct}% concluído <ArrowRight className="h-3 w-3" />
-                </span>
-              </>
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold">
+                {course.progress_pct}% · Continuar <ArrowRight className="h-3 w-3" />
+              </span>
             ) : isEnrolled ? (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold/70">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold group-hover:gap-2.5 transition-all">
                 Acessar <ArrowRight className="h-3 w-3" />
               </span>
             ) : isLocked ? (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold/70">
-                <ShoppingCart className="h-3 w-3" /> Comprar Agora
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold/80">
+                <ShoppingCart className="h-3 w-3" /> Comprar
               </span>
             ) : isBlocked ? (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-red-400/50">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-red-400/70">
                 <Lock className="h-3 w-3" /> Bloqueado
               </span>
             ) : isExpired ? (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-orange-400/50">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-orange-400/70">
                 <Lock className="h-3 w-3" /> Expirado
               </span>
             ) : hasPreview ? (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-400/60">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-400">
                 <Play className="h-3 w-3" /> Pré-visualizar
               </span>
             ) : isAvailable ? (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold/70">
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold group-hover:gap-2.5 transition-all">
                 Ver Detalhes <ArrowRight className="h-3 w-3" />
               </span>
             ) : null}
@@ -331,7 +333,6 @@ function CourseCard({ course }: { course: any }) {
     );
   }
 
-  // Blocked/expired — show card but no action
   return cardContent;
 }
 
