@@ -94,6 +94,20 @@ function ContentPage() {
     staleTime: 60_000,
   });
 
+  const { data: favData } = useQuery({
+    queryKey: ["user-favorites"],
+    queryFn: () => listFavorites(),
+    staleTime: 30_000,
+  });
+
+  const favoriteIds = useMemo(() => new Set(favData?.favoriteIds || []), [favData]);
+
+  const handleToggleFavorite = useCallback((contentId: string, currentlyFav: boolean) => {
+    toggleFavorite({ data: { contentId, isFavorite: currentlyFav } }).then(() => {
+      queryClient.invalidateQueries({ queryKey: ["user-favorites"] });
+    });
+  }, [queryClient]);
+
   const displayName =
     profileData?.profile?.display_name ||
     user?.user_metadata?.full_name ||
