@@ -219,7 +219,7 @@ function AdminSalesPage() {
                         <TableCell className="font-mono text-xs text-muted-foreground">
                           {txn.transaction_code}
                         </TableCell>
-                        <TableCell>{txn.buyer_name}</TableCell>
+                        <TableCell className="font-semibold text-foreground">{txn.buyer_name}</TableCell>
                         <TableCell>{txn.course_title}</TableCell>
                         <TableCell className="text-gold font-medium">
                           {formatCurrency(Number(txn.amount))}
