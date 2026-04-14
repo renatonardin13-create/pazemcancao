@@ -4,6 +4,7 @@ import { getMyProfile, updateMyProfile, changePassword } from "@/lib/profile.fun
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
@@ -80,12 +81,17 @@ function ProfilePage() {
 
   const enrollments = data?.enrollments || [];
   const completedByCourse = data?.completedByCourse || {};
+  const contentStats = data?.contentStats || { viewed: 0, completed: 0, totalItems: 0 };
+  const timeWatchedLabel = data?.timeWatchedLabel || '0h';
 
   const totalCourses = enrollments.length;
   const totalLessonsCompleted = Object.values(completedByCourse).reduce(
     (a: number, b: number) => a + b,
     0
   );
+  const overallProgressPct = contentStats.totalItems > 0
+    ? Math.round((contentStats.completed / contentStats.totalItems) * 100)
+    : 0;
 
   const email = data?.email || "";
   const name = displayName || data?.profile?.display_name || email.split("@")[0] || "Aluno";
@@ -158,13 +164,28 @@ function ProfilePage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="rounded-xl border border-border/30 bg-card/8 p-5"
+              className="rounded-xl border border-border/30 bg-card/8 p-5 space-y-5"
             >
-              <h3 className="text-[12px] font-semibold text-muted-foreground/50 flex items-center gap-1.5 mb-4">
+              <h3 className="text-[12px] font-semibold text-muted-foreground/50 flex items-center gap-1.5">
                 <Award className="h-4 w-4 text-gold/60" />
                 Estatísticas
               </h3>
-              <div className="grid grid-cols-3 gap-4">
+
+              {/* Overall progress */}
+              {contentStats.totalItems > 0 && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-muted-foreground/60">Progresso geral</span>
+                    <span className="text-xs font-bold text-foreground/70">{overallProgressPct}%</span>
+                  </div>
+                  <Progress value={overallProgressPct} className="h-2 bg-muted/15" />
+                  <p className="text-[10px] text-muted-foreground/40">
+                    {contentStats.completed} de {contentStats.totalItems} conteúdos concluídos
+                  </p>
+                </div>
+              )}
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold/10 shrink-0">
                     <BookOpen className="h-5 w-5 text-gold/60" />
@@ -184,7 +205,18 @@ function ProfilePage() {
                     <p className="font-display text-xl font-bold text-foreground/85">
                       {totalLessonsCompleted}
                     </p>
-                    <p className="text-xs text-muted-foreground/70">Aulas concluídas</p>
+                    <p className="text-xs text-muted-foreground/70">Aulas</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 shrink-0">
+                    <CheckCircle2 className="h-5 w-5 text-purple-400/60" />
+                  </div>
+                  <div>
+                    <p className="font-display text-xl font-bold text-foreground/85">
+                      {contentStats.completed}
+                    </p>
+                    <p className="text-xs text-muted-foreground/70">Conteúdos</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -193,9 +225,9 @@ function ProfilePage() {
                   </div>
                   <div>
                     <p className="font-display text-xl font-bold text-foreground/85">
-                      0h
+                      {timeWatchedLabel}
                     </p>
-                    <p className="text-xs text-muted-foreground/70">Tempo assistido</p>
+                    <p className="text-xs text-muted-foreground/70">Tempo</p>
                   </div>
                 </div>
               </div>

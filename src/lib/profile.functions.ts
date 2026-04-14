@@ -28,22 +28,56 @@ export const getMyProfile = createServerFn({ method: 'POST' })
     // Get lesson progress counts per course
     const { data: progressData } = await supabase
       .from('lesson_progress')
-      .select('course_id, completed')
-      .eq('user_id', userId)
-      .eq('completed', true);
+      .select('course_id, completed, watched_seconds')
+      .eq('user_id', userId);
 
     const completedByCourse: Record<string, number> = {};
+    let totalWatchedSeconds = 0;
     if (progressData) {
       for (const p of progressData) {
-        completedByCourse[p.course_id] = (completedByCourse[p.course_id] || 0) + 1;
+        if (p.completed) {
+          completedByCourse[p.course_id] = (completedByCourse[p.course_id] || 0) + 1;
+        }
+        totalWatchedSeconds += p.watched_seconds || 0;
       }
     }
+
+    // Get content progress stats
+    const { data: contentProgress } = await supabaseAdmin
+      .from('user_content_progress')
+      .select('content_id, viewed_at, completed_at, last_position_seconds')
+      .eq('user_email', email.toLowerCase());
+
+    let contentViewed = 0;
+    let contentCompleted = 0;
+    let contentTotalPositionSeconds = 0;
+    if (contentProgress) {
+      for (const cp of contentProgress) {
+        if (cp.viewed_at) contentViewed++;
+        if (cp.completed_at) contentCompleted++;
+        contentTotalPositionSeconds += cp.last_position_seconds || 0;
+      }
+    }
+
+    // Total time = lesson watched_seconds + content position seconds
+    const totalSeconds = totalWatchedSeconds + contentTotalPositionSeconds;
+    const totalHours = Math.floor(totalSeconds / 3600);
+    const totalMinutes = Math.floor((totalSeconds % 3600) / 60);
+    const timeWatchedLabel = totalHours > 0
+      ? `${totalHours}h${totalMinutes > 0 ? `${totalMinutes}m` : ''}`
+      : totalMinutes > 0 ? `${totalMinutes}m` : '0h';
 
     return {
       profile: profile || { user_id: userId, display_name: '', avatar_url: null, bio: null },
       email,
       enrollments: enrollments || [],
       completedByCourse,
+      contentStats: {
+        viewed: contentViewed,
+        completed: contentCompleted,
+        totalItems: contentProgress?.length || 0,
+      },
+      timeWatchedLabel,
     };
   });
 

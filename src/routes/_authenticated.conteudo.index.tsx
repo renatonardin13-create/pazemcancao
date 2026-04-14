@@ -1,4 +1,5 @@
 import { EmptyState } from "@/components/EmptyState";
+import { Progress } from "@/components/ui/progress";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useCallback } from "react";
@@ -319,17 +320,31 @@ function ContentPage() {
               </p>
             </div>
 
-            {/* Stats bar */}
+            {/* Stats bar with progress */}
             {stats.unlocked > 0 && (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="flex flex-wrap gap-4 sm:gap-6"
+                className="space-y-3"
               >
-                <StatPill icon={Library} label="Disponíveis" value={stats.unlocked} color="text-gold/60" />
-                <StatPill icon={TrendingUp} label="Em andamento" value={stats.inProgress} color="text-primary/60" />
-                <StatPill icon={CheckCircle2} label="Concluídos" value={stats.completed} color="text-player-completed/60" />
+                <div className="flex flex-wrap gap-4 sm:gap-6">
+                  <StatPill icon={Library} label="Disponíveis" value={stats.unlocked} color="text-gold/60" />
+                  <StatPill icon={TrendingUp} label="Em andamento" value={stats.inProgress} color="text-primary/60" />
+                  <StatPill icon={CheckCircle2} label="Concluídos" value={stats.completed} color="text-player-completed/60" />
+                </div>
+                {/* Overall progress bar */}
+                {(stats.completed > 0 || stats.inProgress > 0) && (
+                  <div className="flex items-center gap-3 max-w-sm">
+                    <Progress
+                      value={Math.round((stats.completed / stats.unlocked) * 100)}
+                      className="h-1.5 bg-muted/10 flex-1"
+                    />
+                    <span className="text-[10px] font-medium text-muted-foreground/40 tabular-nums">
+                      {Math.round((stats.completed / stats.unlocked) * 100)}%
+                    </span>
+                  </div>
+                )}
               </motion.div>
             )}
           </div>
