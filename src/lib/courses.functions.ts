@@ -59,17 +59,31 @@ export const getCourseDetail = createServerFn({ method: 'POST' })
 
     if (error) throw new Error(error.message);
 
-    const { data: lessons } = await supabase
+    const lessonsQuery = supabase
       .from('lessons')
       .select('*')
       .eq('course_id', data.courseId)
       .order('sort_order', { ascending: true });
 
-    const { data: modules } = await supabase
+    // Hide draft lessons from non-admin users
+    if (!isAdmin) {
+      lessonsQuery.eq('status', 'published');
+    }
+
+    const { data: lessons } = await lessonsQuery;
+
+    const modulesQuery = supabase
       .from('modules')
       .select('id, title, description, sort_order, status')
       .eq('course_id', data.courseId)
       .order('sort_order', { ascending: true });
+
+    // Hide draft modules from non-admin users
+    if (!isAdmin) {
+      modulesQuery.eq('status', 'published');
+    }
+
+    const { data: modules } = await modulesQuery;
 
     const { data: progress } = await supabase
       .from('lesson_progress')
