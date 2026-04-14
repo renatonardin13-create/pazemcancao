@@ -276,6 +276,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   };
 
   const openCreateModule = () => {
+    console.log("[DEBUG] openCreateModule called");
     setModTitle("");
     setModDesc("");
     setModThumbnailUrl("");
@@ -326,11 +327,13 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   };
 
   const handleSaveModule = () => {
+    console.log("[DEBUG] handleSaveModule called, title:", modTitle.trim());
     if (!modTitle.trim()) return;
     const status = modPublished ? "published" : "draft";
     if (moduleDialog.editId) {
       updateModM.mutate({ id: moduleDialog.editId, title: modTitle.trim(), description: modDesc.trim() || undefined, status, thumbnail_url: modThumbnailUrl.trim() || undefined });
     } else {
+      console.log("[DEBUG] creating module for courseId:", courseId);
       createModM.mutate({ title: modTitle.trim(), description: modDesc.trim() || undefined, status, thumbnail_url: modThumbnailUrl.trim() || undefined });
     }
   };
