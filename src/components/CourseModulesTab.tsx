@@ -327,20 +327,42 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
     setLessonDialog({ open: true, moduleId: lesson.module_id, editId: lesson.id });
   };
 
+  const [modTitleError, setModTitleError] = useState("");
+  const [lesTitleError, setLesTitleError] = useState("");
+
   const handleSaveModule = () => {
-    console.log("[DEBUG] handleSaveModule called, title:", modTitle.trim());
-    if (!modTitle.trim()) return;
+    if (!modTitle.trim()) {
+      setModTitleError("O nome do módulo é obrigatório");
+      toast.error("O nome do módulo é obrigatório");
+      return;
+    }
+    if (modTitle.trim().length < 2) {
+      setModTitleError("O nome deve ter pelo menos 2 caracteres");
+      toast.error("O nome deve ter pelo menos 2 caracteres");
+      return;
+    }
+    setModTitleError("");
     const status = modPublished ? "published" : "draft";
     if (moduleDialog.editId) {
       updateModM.mutate({ id: moduleDialog.editId, title: modTitle.trim(), description: modDesc.trim() || undefined, status, thumbnail_url: modThumbnailUrl.trim() || undefined });
     } else {
-      console.log("[DEBUG] creating module for courseId:", courseId);
       createModM.mutate({ title: modTitle.trim(), description: modDesc.trim() || undefined, status, thumbnail_url: modThumbnailUrl.trim() || undefined });
     }
   };
 
   const handleSaveLesson = () => {
-    if (!lesTitle.trim() || !lessonDialog.moduleId) return;
+    if (!lesTitle.trim()) {
+      setLesTitleError("O nome da aula é obrigatório");
+      toast.error("O nome da aula é obrigatório");
+      return;
+    }
+    if (lesTitle.trim().length < 2) {
+      setLesTitleError("O nome deve ter pelo menos 2 caracteres");
+      toast.error("O nome deve ter pelo menos 2 caracteres");
+      return;
+    }
+    if (!lessonDialog.moduleId) return;
+    setLesTitleError("");
     const payload = {
       title: lesTitle.trim(),
       description: lesDesc.trim() || undefined,
@@ -734,11 +756,11 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
               <Label className="text-sm font-bold">Nome do Módulo *</Label>
               <Input
                 value={modTitle}
-                onChange={(e) => setModTitle(e.target.value)}
+                onChange={(e) => { setModTitle(e.target.value); if (modTitleError) setModTitleError(""); }}
                 placeholder="Ex: Módulo 1 - Introdução"
-                className="h-11 bg-card/10 border-gold/20 focus:border-gold/40"
+                className={`h-11 bg-card/10 border-gold/20 focus:border-gold/40 ${modTitleError ? "border-destructive" : ""}`}
               />
-            </div>
+              {modTitleError && <p className="text-[0.8rem] font-medium text-destructive">{modTitleError}</p>}
             <div className="space-y-2">
               <Label className="text-sm font-bold">Descrição</Label>
               <Textarea
@@ -819,11 +841,11 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
               <Label className="text-sm font-semibold">Nome da Aula *</Label>
               <Input
                 value={lesTitle}
-                onChange={(e) => setLesTitle(e.target.value)}
+                onChange={(e) => { setLesTitle(e.target.value); if (lesTitleError) setLesTitleError(""); }}
                 placeholder="Ex: Aula 1 - Introdução"
-                className="bg-card/10 border-gold/20 focus:border-gold/40"
+                className={`bg-card/10 border-gold/20 focus:border-gold/40 ${lesTitleError ? "border-destructive" : ""}`}
               />
-            </div>
+              {lesTitleError && <p className="text-[0.8rem] font-medium text-destructive">{lesTitleError}</p>}
 
             {/* Descrição */}
             <div className="space-y-2">
