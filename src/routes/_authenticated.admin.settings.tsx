@@ -10,7 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, Settings, Upload, Palette, Globe, Link2, Bell, Wrench, RefreshCw, Save, Download, UploadCloud, AlertTriangle } from "lucide-react";
+import { ArrowLeft, Settings, Upload, Palette, Globe, Link2, Bell, Wrench, RefreshCw, Save, Download, UploadCloud, AlertTriangle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
@@ -201,7 +201,7 @@ function BrandingTab({ settings, onSave, saving }: { settings: any; onSave: (v: 
             </div>
           </div>
           <Button onClick={() => onSave({ platform_name: name, logo_url: logoUrl || null, favicon_url: faviconUrl || null })} disabled={saving} className="w-full gap-2">
-            <Save className="h-4 w-4" /> Salvar Identidade Visual
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Salvar Identidade Visual
           </Button>
         </CardContent>
       </Card>
@@ -249,7 +249,7 @@ function ColorsTab({ settings, onSave, saving }: { settings: any; onSave: (v: an
             <RefreshCw className="h-3.5 w-3.5" /> Restaurar Cores Padrão
           </Button>
           <Button onClick={() => onSave(colors)} disabled={saving} className="w-full gap-2">
-            <Save className="h-4 w-4" /> Salvar Cores
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Salvar Cores
           </Button>
         </CardContent>
       </Card>
@@ -310,7 +310,7 @@ function GeneralTab({ settings, onSave, saving }: { settings: any; onSave: (v: a
           </div>
         </div>
         <Button onClick={() => onSave({ welcome_message: welcome, footer_text: footer, support_email: email })} disabled={saving} className="w-full gap-2">
-          <Save className="h-4 w-4" /> Salvar Configurações
+          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Salvar Configurações
         </Button>
       </CardContent>
     </Card>
@@ -342,7 +342,7 @@ function AnalyticsTab({ settings, onSave, saving }: { settings: any; onSave: (v:
           </div>
         </div>
         <Button onClick={() => onSave({ google_analytics_id: ga, facebook_pixel_id: fb })} disabled={saving} className="w-full gap-2">
-          <Save className="h-4 w-4" /> Salvar Integrações
+          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Salvar Integrações
         </Button>
       </CardContent>
     </Card>
@@ -443,7 +443,7 @@ function NotificationsTab({ settings, onSave, saving }: { settings: any; onSave:
           disabled={saving}
           className="w-full gap-2"
         >
-          <Save className="h-4 w-4" /> Salvar Notificações
+          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Salvar Notificações
         </Button>
       </CardContent>
     </Card>
@@ -515,7 +515,7 @@ function AdvancedTab({ settings, onSave, saving }: { settings: any; onSave: (v: 
             </div>
           </div>
           <Button onClick={() => onSave({ ...settings, maintenance_mode: maintenance, allow_signups: allowSignups })} disabled={saving} className="w-full gap-2">
-            <Save className="h-4 w-4" /> Salvar Controles
+            {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Salvar Controles
           </Button>
         </CardContent>
       </Card>
