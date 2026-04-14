@@ -60,8 +60,14 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
   }, [integration]);
 
   const mutation = useMutation({
-    mutationFn: () =>
-      upsertCourseIntegration({
+    mutationFn: () => {
+      if (isEnabled && !externalProductId.trim()) {
+        throw new Error("O ID do produto externo é obrigatório quando a integração está habilitada");
+      }
+      if (checkoutUrl.trim() && !/^https?:\/\/.+/.test(checkoutUrl.trim())) {
+        throw new Error("A URL do checkout deve ser um link válido (começando com http:// ou https://)");
+      }
+      return upsertCourseIntegration({
         data: {
           courseId,
           is_enabled: isEnabled,
@@ -72,13 +78,14 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
           notes: notes || undefined,
           webhook_active: webhookActive,
         },
-      }),
+      });
+    },
     onSuccess: () => {
       toast.success("Integração salva com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["course-integration", courseId] });
     },
     onError: (err: Error) => {
-      toast.error("Erro ao salvar: " + err.message);
+      toast.error(err.message);
     },
   });
 

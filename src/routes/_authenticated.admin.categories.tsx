@@ -371,6 +371,7 @@ function AdminCategoriesPage() {
             onSubmit={(e) => {
               e.preventDefault();
               if (!editingCat) return;
+              if (!editCatValues.name.trim()) { toast.error("Nome é obrigatório"); return; }
               updateCatMutation.mutate({ id: editingCat.id, ...editCatValues });
             }}
             className="space-y-4 mt-4"
@@ -444,6 +445,7 @@ function AdminCategoriesPage() {
             onSubmit={(e) => {
               e.preventDefault();
               if (!editingTag) return;
+              if (!editTagValues.name.trim()) { toast.error("Nome é obrigatório"); return; }
               updateTagMutation.mutate({ id: editingTag.id, ...editTagValues });
             }}
             className="space-y-4 mt-4"
