@@ -215,7 +215,7 @@ function AdminSalesPage() {
                   (data?.transactions || []).map((txn: any) => {
                     const cfg = statusConfig[txn.status] || { label: txn.status, variant: "outline" as const };
                     return (
-                      <TableRow key={txn.id} className="border-border/10">
+                      <TableRow key={txn.id} className="border-border/25">
                         <TableCell className="font-mono text-xs text-muted-foreground">
                           {txn.transaction_code}
                         </TableCell>
@@ -289,7 +289,7 @@ function StatCard({ label, value, change, icon }: { label: string; value: string
             <p className="text-xs text-muted-foreground mb-1">{label}</p>
             <p className="text-2xl font-bold text-foreground">{value}</p>
             {change !== 0 && (
-              <p className={`text-[11px] mt-1 flex items-center gap-1 ${change > 0 ? "text-emerald-400" : "text-red-400"}`}>
+              <p className={`text-xs mt-1 flex items-center gap-1 ${change > 0 ? "text-emerald-400" : "text-red-400"}`}>
                 <TrendingUp className={`h-3 w-3 ${change < 0 ? "rotate-180" : ""}`} />
                 {change > 0 ? "+" : ""}{change}% vs mês anterior
               </p>

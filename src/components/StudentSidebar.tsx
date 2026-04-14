@@ -119,7 +119,7 @@ export function StudentSidebar() {
   const sidebarContent = (
     <div className="flex flex-col h-full">
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-border/10">
+      <div className="px-5 py-5 border-b border-border/25">
         <LogoBrand size="md" showSubtitle />
       </div>
 
@@ -238,10 +238,10 @@ export function StudentSidebar() {
       </nav>
 
       {/* Logout */}
-      <div className="px-3 py-4 border-t border-border/10">
+      <div className="px-3 py-4 border-t border-border/25">
         <button
           onClick={() => { logout(); setMobileOpen(false); }}
-          className="flex items-center gap-3 rounded-xl px-4 py-2.5 w-full text-[11px] font-medium uppercase tracking-[0.15em] text-muted-foreground/60 hover:text-muted-foreground/55 hover:bg-muted/10 transition-all duration-300"
+          className="flex items-center gap-3 rounded-xl px-4 py-2.5 w-full text-xs font-medium uppercase tracking-[0.15em] text-muted-foreground/60 hover:text-muted-foreground/55 hover:bg-muted/10 transition-all duration-300"
         >
           <LogOut className="h-4 w-4" />
           Sair
@@ -253,7 +253,7 @@ export function StudentSidebar() {
   return (
     <>
       {/* Mobile trigger */}
-      <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-background/80 backdrop-blur-2xl border-b border-border/10 md:hidden">
+      <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-background/80 backdrop-blur-2xl border-b border-border/25 md:hidden">
         <LogoBrand size="sm" />
         <button
           onClick={() => setMobileOpen(!mobileOpen)}

@@ -43,7 +43,7 @@ export function GlobalPlayer() {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-2xl border-t border-border/10 pb-[env(safe-area-inset-bottom,0px)]">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-2xl border-t border-border/25 pb-[env(safe-area-inset-bottom,0px)]">
       {/* Progress bar — touch-friendly height on mobile */}
       <div
         className="h-1.5 sm:h-1 w-full bg-muted/10 cursor-pointer group relative"
@@ -60,7 +60,7 @@ export function GlobalPlayer() {
       <div className="flex items-center gap-2 sm:gap-3 px-3 sm:px-6 py-2.5 sm:py-3 max-w-5xl mx-auto">
         {/* Cover + info */}
         <div className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0">
-          <div className="shrink-0 h-10 w-10 sm:h-11 sm:w-11 rounded-lg overflow-hidden bg-card/20 border border-border/10 shadow-md">
+          <div className="shrink-0 h-10 w-10 sm:h-11 sm:w-11 rounded-lg overflow-hidden bg-card/20 border border-border/25 shadow-md">
             {currentTrack.coverUrl ? (
               <img src={currentTrack.coverUrl} alt={currentTrack.title} className="h-full w-full object-cover" />
             ) : (

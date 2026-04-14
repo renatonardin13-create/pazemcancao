@@ -392,7 +392,7 @@ function AdminUsersPage() {
                     </button>
                   </div>
                   {addCourseIds.length > 0 && (
-                    <p className="text-[11px] text-emerald-400/60 mt-3">
+                    <p className="text-xs text-emerald-400/60 mt-3">
                       <Check className="h-3 w-3 inline mr-1" />
                       {addCourseIds.length} curso(s) liberado(s) automaticamente
                     </p>
@@ -412,10 +412,10 @@ function AdminUsersPage() {
                   <Label htmlFor="add-email">E-mail</Label>
                   <Input id="add-email" type="email" value={addEmail} onChange={(e) => setAddEmail(e.target.value)} placeholder="email@exemplo.com" required />
                 </div>
-                <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/10 px-4 py-3">
+                <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/25 px-4 py-3">
                   <div>
                     <p className="text-sm font-medium text-foreground/70">Status</p>
-                    <p className="text-[11px] text-muted-foreground/70">
+                    <p className="text-xs text-muted-foreground/70">
                       {addEnabled ? "Ativo — aluno pode acessar a plataforma" : "Inativo — acesso bloqueado"}
                     </p>
                   </div>
@@ -427,11 +427,11 @@ function AdminUsersPage() {
                     Cursos Liberados
                   </Label>
                   {courses.length === 0 ? (
-                    <div className="rounded-xl border border-border/10 bg-muted/5 p-4 text-center">
+                    <div className="rounded-xl border border-border/25 bg-muted/5 p-4 text-center">
                       <p className="text-[12px] text-muted-foreground/70">Nenhum curso cadastrado ainda.</p>
                     </div>
                   ) : (
-                    <div className="rounded-xl border border-border/10 bg-muted/5 max-h-48 overflow-y-auto divide-y divide-border/5">
+                    <div className="rounded-xl border border-border/25 bg-muted/5 max-h-48 overflow-y-auto divide-y divide-border/5">
                       {courses.map((course: any) => {
                         const isSelected = addCourseIds.includes(course.id);
                         return (
@@ -440,7 +440,7 @@ function AdminUsersPage() {
                             <div className="flex-1 min-w-0">
                               <p className="text-sm font-medium text-foreground/70 truncate">{course.title}</p>
                             </div>
-                            <Badge variant="outline" className={`text-[9px] shrink-0 ${course.status === "published" ? "text-emerald-400/70 border-emerald-500/20" : "text-muted-foreground/70 border-border/15"}`}>
+                            <Badge variant="outline" className={`text-[9px] shrink-0 ${course.status === "published" ? "text-emerald-400/70 border-emerald-500/20" : "text-muted-foreground/70 border-border/30"}`}>
                               {course.status === "published" ? "Publicado" : "Rascunho"}
                             </Badge>
                           </div>
@@ -449,7 +449,7 @@ function AdminUsersPage() {
                     </div>
                   )}
                   {addCourseIds.length > 0 && (
-                    <p className="text-[11px] text-gold/60">{addCourseIds.length} curso(s) selecionado(s)</p>
+                    <p className="text-xs text-gold/60">{addCourseIds.length} curso(s) selecionado(s)</p>
                   )}
                 </div>
                 <Button type="submit" className="w-full bg-gold/90 text-gold-foreground hover:bg-gold" disabled={addStudentMut.isPending}>
@@ -477,9 +477,9 @@ function AdminUsersPage() {
             ].map((stat) => (
               <div
                 key={stat.label}
-                className="rounded-xl border border-border/15 bg-card/8 p-5"
+                className="rounded-xl border border-border/30 bg-card/8 p-5"
               >
-                <p className="text-[11px] text-muted-foreground/45 mb-1">{stat.label}</p>
+                <p className="text-xs text-muted-foreground/45 mb-1">{stat.label}</p>
                 <p className={`font-display text-2xl font-bold ${stat.color}`}>
                   {isLoading ? "—" : stat.value}
                 </p>
@@ -497,11 +497,11 @@ function AdminUsersPage() {
             value={searchQuery}
             onChange={(e) => { setSearchQuery(e.target.value); setCurrentPage(1); }}
             placeholder="Buscar por nome ou email..."
-            className="pl-10 bg-card/10 border-border/15"
+            className="pl-10 bg-card/20 border-border/30"
           />
         </div>
         <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
-          <SelectTrigger className="w-[140px] bg-card/10 border-border/15">
+          <SelectTrigger className="w-[140px] bg-card/20 border-border/30">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -512,7 +512,7 @@ function AdminUsersPage() {
           </SelectContent>
         </Select>
         <Select value={courseFilter} onValueChange={(v) => { setCourseFilter(v); setCurrentPage(1); }}>
-           <SelectTrigger className="w-[180px] bg-card/10 border-border/15">
+           <SelectTrigger className="w-[180px] bg-card/20 border-border/30">
               <SelectValue placeholder="Todos os cursos" />
             </SelectTrigger>
             <SelectContent>
@@ -527,21 +527,21 @@ function AdminUsersPage() {
       {isLoading ? (
         <ListSkeleton rows={6} />
       ) : !filteredBuyers.length ? (
-        <div className="rounded-xl border border-border/15 bg-card/5 py-16 text-center">
+        <div className="rounded-xl border border-border/30 bg-card/15 py-16 text-center">
           <Users className="mx-auto mb-4 h-8 w-8 text-muted-foreground/50" />
           <p className="text-sm text-muted-foreground/70">Nenhum aluno encontrado.</p>
         </div>
       ) : (
-        <div className="rounded-xl border border-border/15 overflow-hidden">
+        <div className="rounded-xl border border-border/30 overflow-hidden">
           {/* Table header */}
-          <div className="grid grid-cols-[1fr_1fr_100px_80px_140px_120px_50px] gap-4 px-5 py-3 border-b border-border/10 bg-card/5">
-            <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">Aluno</span>
-            <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">Email</span>
-            <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">Status</span>
-            <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider text-center">Cursos</span>
-            <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">Progresso</span>
-            <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider">Último Acesso</span>
-            <span className="text-[11px] font-medium text-muted-foreground/50 uppercase tracking-wider text-center">Ações</span>
+          <div className="grid grid-cols-[1fr_1fr_100px_80px_140px_120px_50px] gap-4 px-5 py-3 border-b border-border/25 bg-card/15">
+            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider">Aluno</span>
+            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider">Email</span>
+            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider">Status</span>
+            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider text-center">Cursos</span>
+            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider">Progresso</span>
+            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider">Último Acesso</span>
+            <span className="text-xs font-medium text-muted-foreground/50 uppercase tracking-wider text-center">Ações</span>
           </div>
 
           {/* Table rows */}
@@ -594,7 +594,7 @@ function AdminUsersPage() {
                 {/* Progresso */}
                 <div className="flex items-center gap-2">
                   <Progress value={buyer.progress_pct ?? 0} className="h-1.5 flex-1 bg-muted/20" />
-                  <span className="text-[11px] text-muted-foreground/70 tabular-nums w-8 text-right">{buyer.progress_pct ?? 0}%</span>
+                  <span className="text-xs text-muted-foreground/70 tabular-nums w-8 text-right">{buyer.progress_pct ?? 0}%</span>
                 </div>
 
                 {/* Último Acesso */}
@@ -703,7 +703,7 @@ function AdminUsersPage() {
                   setEditEnabled(v !== "blocked");
                   setEditIsTrial(v === "trial");
                 }}>
-                  <SelectTrigger className="bg-card/10 border-border/15">
+                  <SelectTrigger className="bg-card/20 border-border/30">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -718,7 +718,7 @@ function AdminUsersPage() {
                 {courses.length === 0 ? (
                   <p className="text-[12px] text-muted-foreground/70 py-2">Nenhum curso cadastrado.</p>
                 ) : (
-                  <div className="rounded-xl border border-border/10 bg-muted/5 max-h-48 overflow-y-auto divide-y divide-border/5">
+                  <div className="rounded-xl border border-border/25 bg-muted/5 max-h-48 overflow-y-auto divide-y divide-border/5">
                     {courses.map((course: any) => {
                       const isEnrolled = editEnrolledIds.includes(course.id);
                       const isSelected = editCourseIds.includes(course.id);
@@ -755,7 +755,7 @@ function AdminUsersPage() {
                     })}
                   </div>
                 )}
-                <p className="text-[11px] text-gold/60">
+                <p className="text-xs text-gold/60">
                   {(editCourseIds.length > 0 ? editCourseIds.length : editEnrolledIds.length)} curso(s) selecionado(s)
                 </p>
               </div>
@@ -814,7 +814,7 @@ function AdminUsersPage() {
               <div className="space-y-2">
                 <Label htmlFor="trial-days">Dias de teste</Label>
                 <Input id="trial-days" type="number" min={1} max={90} value={trialDays} onChange={(e) => setTrialDays(Number(e.target.value))} required />
-                <p className="text-[11px] text-muted-foreground/70">O cliente poderá apenas ouvir (sem download). Após o prazo, o acesso será bloqueado.</p>
+                <p className="text-xs text-muted-foreground/70">O cliente poderá apenas ouvir (sem download). Após o prazo, o acesso será bloqueado.</p>
               </div>
               <Button type="submit" className="w-full" disabled={createTrial.isPending}>
                 {createTrial.isPending ? "Cadastrando..." : "Cadastrar Cliente de Teste"}
@@ -861,8 +861,8 @@ function AdminUsersPage() {
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-xl border border-border/15 bg-card/8 p-4">
-                    <p className="text-[11px] text-muted-foreground/45 flex items-center gap-1.5 mb-1">
+                  <div className="rounded-xl border border-border/30 bg-card/8 p-4">
+                    <p className="text-xs text-muted-foreground/45 flex items-center gap-1.5 mb-1">
                       <Calendar className="h-3 w-3" />
                       Cadastrado em
                     </p>
@@ -872,8 +872,8 @@ function AdminUsersPage() {
                         : "—"}
                     </p>
                   </div>
-                  <div className="rounded-xl border border-border/15 bg-card/8 p-4">
-                    <p className="text-[11px] text-muted-foreground/45 flex items-center gap-1.5 mb-1">
+                  <div className="rounded-xl border border-border/30 bg-card/8 p-4">
+                    <p className="text-xs text-muted-foreground/45 flex items-center gap-1.5 mb-1">
                       <Clock className="h-3 w-3" />
                       Último acesso
                     </p>
@@ -881,8 +881,8 @@ function AdminUsersPage() {
                       {detailBuyer.last_login_at ? formatDate(detailBuyer.last_login_at) : "Nunca"}
                     </p>
                   </div>
-                  <div className="rounded-xl border border-border/15 bg-card/8 p-4">
-                    <p className="text-[11px] text-muted-foreground/45 flex items-center gap-1.5 mb-1">
+                  <div className="rounded-xl border border-border/30 bg-card/8 p-4">
+                    <p className="text-xs text-muted-foreground/45 flex items-center gap-1.5 mb-1">
                       <BookOpen className="h-3 w-3" />
                       Cursos liberados
                     </p>
@@ -890,8 +890,8 @@ function AdminUsersPage() {
                       {detailLoading ? "..." : studentDetail?.enrolledCount ?? 0}
                     </p>
                   </div>
-                  <div className="rounded-xl border border-border/15 bg-card/8 p-4">
-                    <p className="text-[11px] text-muted-foreground/45 flex items-center gap-1.5 mb-1">
+                  <div className="rounded-xl border border-border/30 bg-card/8 p-4">
+                    <p className="text-xs text-muted-foreground/45 flex items-center gap-1.5 mb-1">
                       <TrendingUp className="h-3 w-3" />
                       Progresso geral
                     </p>
@@ -908,7 +908,7 @@ function AdminUsersPage() {
                   Gerencie o acesso do aluno aos cursos da plataforma.
                 </p>
                 {detailLoading ? (
-                  <p className="text-center text-[11px] text-muted-foreground/60 py-8 animate-pulse">Carregando cursos...</p>
+                  <p className="text-center text-xs text-muted-foreground/60 py-8 animate-pulse">Carregando cursos...</p>
                 ) : !studentDetail?.courses?.length ? (
                   <p className="text-center text-sm text-muted-foreground/70 py-8">Nenhum curso cadastrado.</p>
                 ) : (
@@ -916,7 +916,7 @@ function AdminUsersPage() {
                     {studentDetail.courses.map((course: any) => (
                       <div
                         key={course.id}
-                        className="flex items-center gap-3 rounded-xl border border-border/15 bg-card/8 p-3"
+                        className="flex items-center gap-3 rounded-xl border border-border/30 bg-card/8 p-3"
                       >
                         {course.cover_image_url ? (
                           <img src={course.cover_image_url} alt="" className="h-10 w-10 rounded-lg object-cover shrink-0" />
@@ -927,7 +927,7 @@ function AdminUsersPage() {
                         )}
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium text-foreground/80 truncate">{course.title}</p>
-                          <p className="text-[11px] text-muted-foreground/70">
+                          <p className="text-xs text-muted-foreground/70">
                             {course.hasAccess ? "Com acesso" : "Sem acesso"}
                           </p>
                         </div>
@@ -950,7 +950,7 @@ function AdminUsersPage() {
 
               {/* Tab: Progresso */}
               <TabsContent value="progress" className="mt-4 space-y-4">
-                <div className="rounded-xl border border-border/15 bg-card/8 p-4">
+                <div className="rounded-xl border border-border/30 bg-card/8 p-4">
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm font-semibold text-foreground/80">Progresso Geral</p>
                     <span className="text-sm font-bold text-foreground/70">
@@ -963,7 +963,7 @@ function AdminUsersPage() {
                 <p className="text-[13px] text-muted-foreground/50">Progresso por curso:</p>
 
                 {detailLoading ? (
-                  <p className="text-center text-[11px] text-muted-foreground/60 py-8 animate-pulse">Carregando...</p>
+                  <p className="text-center text-xs text-muted-foreground/60 py-8 animate-pulse">Carregando...</p>
                 ) : (() => {
                   const enrolled = (studentDetail?.courses || []).filter((c: any) => c.hasAccess);
                   if (!enrolled.length) {
@@ -976,13 +976,13 @@ function AdminUsersPage() {
                   return (
                     <div className="space-y-3 max-h-[280px] overflow-y-auto pr-1">
                       {enrolled.map((course: any) => (
-                        <div key={course.id} className="rounded-xl border border-border/15 bg-card/8 p-4">
+                        <div key={course.id} className="rounded-xl border border-border/30 bg-card/8 p-4">
                           <div className="flex items-center justify-between mb-2">
                             <p className="text-sm font-medium text-foreground/80 truncate">{course.title}</p>
                             <span className="text-[12px] text-muted-foreground/50 shrink-0 ml-2">{course.progressPct}%</span>
                           </div>
                           <Progress value={course.progressPct} className="h-1.5 bg-muted/20" />
-                          <p className="text-[11px] text-muted-foreground/70 mt-1.5">
+                          <p className="text-xs text-muted-foreground/70 mt-1.5">
                             {course.completedLessons}/{course.totalLessons} aulas concluídas
                           </p>
                         </div>
@@ -1058,7 +1058,7 @@ function AdminUsersPage() {
 
               {/* Course list */}
               {accessLoading ? (
-                <p className="text-center text-[11px] text-muted-foreground/60 py-8 animate-pulse">Carregando cursos...</p>
+                <p className="text-center text-xs text-muted-foreground/60 py-8 animate-pulse">Carregando cursos...</p>
               ) : !accessDetail?.courses?.length ? (
                 <p className="text-center text-sm text-muted-foreground/70 py-8">Nenhum curso cadastrado.</p>
               ) : (
@@ -1066,7 +1066,7 @@ function AdminUsersPage() {
                   {accessDetail.courses.map((course: any) => (
                     <div
                       key={course.id}
-                      className="flex items-center gap-3 rounded-xl border border-border/15 bg-card/8 p-3"
+                      className="flex items-center gap-3 rounded-xl border border-border/30 bg-card/8 p-3"
                     >
                       {course.cover_image_url ? (
                         <img src={course.cover_image_url} alt="" className="h-11 w-11 rounded-lg object-cover shrink-0" />
@@ -1105,7 +1105,7 @@ function AdminUsersPage() {
               )}
 
               {/* Footer */}
-              <div className="flex items-center justify-between pt-2 border-t border-border/10">
+              <div className="flex items-center justify-between pt-2 border-t border-border/25">
                 <p className="text-[12px] text-gold/60">
                   <span className="font-semibold">{accessDetail?.enrolledCount ?? 0}</span> de{" "}
                   {accessDetail?.courses?.length ?? 0} cursos liberados

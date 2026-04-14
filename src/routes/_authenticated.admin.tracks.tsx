@@ -105,7 +105,7 @@ function AdminTracksPage() {
             <h1 className="font-display text-xl font-black text-foreground tracking-tight">
               Músicas
             </h1>
-            <p className="text-[11px] text-muted-foreground/50 mt-0.5">
+            <p className="text-xs text-muted-foreground/50 mt-0.5">
               Gerencie as músicas disponíveis para ouvir e baixar
             </p>
           </div>
@@ -128,13 +128,13 @@ function AdminTracksPage() {
             placeholder="Buscar por título..."
             value={searchQuery}
             onChange={(e) => handleSearch(e.target.value)}
-            className="w-full h-9 pl-9 pr-3 rounded-xl border border-border/15 bg-card/10 text-sm text-foreground/75 placeholder:text-muted-foreground/60 focus:outline-none focus:border-gold/25 transition-colors"
+            className="w-full h-9 pl-9 pr-3 rounded-xl border border-border/30 bg-card/20 text-sm text-foreground/75 placeholder:text-muted-foreground/60 focus:outline-none focus:border-gold/25 transition-colors"
           />
         </div>
         <select
           value={filterCategory}
           onChange={(e) => { setFilterCategory(e.target.value); setPage(1); }}
-          className="h-9 px-3 rounded-xl border border-border/15 bg-card/10 text-[11px] font-semibold uppercase tracking-wider text-foreground/60 focus:outline-none focus:border-gold/25 transition-colors"
+          className="h-9 px-3 rounded-xl border border-border/30 bg-card/20 text-xs font-semibold uppercase tracking-wider text-foreground/60 focus:outline-none focus:border-gold/25 transition-colors"
         >
           <option value="all">Todas categorias</option>
           {categories.map((cat) => (
@@ -144,7 +144,7 @@ function AdminTracksPage() {
         <select
           value={filterStatus}
           onChange={(e) => { setFilterStatus(e.target.value as any); setPage(1); }}
-          className="h-9 px-3 rounded-xl border border-border/15 bg-card/10 text-[11px] font-semibold uppercase tracking-wider text-foreground/60 focus:outline-none focus:border-gold/25 transition-colors"
+          className="h-9 px-3 rounded-xl border border-border/30 bg-card/20 text-xs font-semibold uppercase tracking-wider text-foreground/60 focus:outline-none focus:border-gold/25 transition-colors"
         >
           <option value="all">Todos status</option>
           <option value="active">Ativos</option>
@@ -156,7 +156,7 @@ function AdminTracksPage() {
       </div>
 
       {showForm && (
-        <div className="rounded-2xl border border-border/15 bg-card/10 p-6">
+        <div className="rounded-2xl border border-border/30 bg-card/20 p-6">
           <AddTrackForm
             onSuccess={() => {
               setShowForm(false);
@@ -169,22 +169,22 @@ function AdminTracksPage() {
 
       {isLoading ? (
         <div className="text-center py-16">
-          <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
+          <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
             Carregando...
           </p>
         </div>
       ) : !tracks.length ? (
-        <div className="text-center py-16 rounded-2xl border border-border/15 bg-card/5">
+        <div className="text-center py-16 rounded-2xl border border-border/30 bg-card/15">
           <Music className="h-8 w-8 text-muted-foreground/50 mx-auto mb-4" />
           <p className="text-sm text-muted-foreground/70">Nenhuma música encontrada.</p>
         </div>
       ) : (
         <>
-          <div className="rounded-2xl border border-border/15 overflow-hidden">
+          <div className="rounded-2xl border border-border/30 overflow-hidden">
             {tracks.map((track: any) => (
               <div
                 key={track.id}
-                className="flex items-center gap-4 px-5 py-4 border-b border-border/8 last:border-0 hover:bg-card/10 transition-colors"
+                className="flex items-center gap-4 px-5 py-4 border-b border-border/20 last:border-0 hover:bg-card/20 transition-colors"
               >
                 {track.cover_url ? (
                   <img
@@ -202,7 +202,7 @@ function AdminTracksPage() {
                   <p className="text-sm font-semibold text-foreground/75 truncate">
                     {track.title}
                   </p>
-                  <p className="text-[11px] text-muted-foreground/60">
+                  <p className="text-xs text-muted-foreground/60">
                     {track.category} · {track.duration}
                   </p>
                 </div>
@@ -323,7 +323,7 @@ function AdminTracksPage() {
               <button
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page <= 1}
-                className="flex items-center gap-1 h-8 px-3 rounded-lg border border-border/15 text-[11px] font-semibold text-foreground/50 hover:bg-card/15 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center gap-1 h-8 px-3 rounded-lg border border-border/30 text-xs font-semibold text-foreground/50 hover:bg-card/15 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronLeft className="h-3.5 w-3.5" />
                 Anterior
@@ -357,7 +357,7 @@ function AdminTracksPage() {
               <button
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={page >= totalPages}
-                className="flex items-center gap-1 h-8 px-3 rounded-lg border border-border/15 text-[11px] font-semibold text-foreground/50 hover:bg-card/15 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="flex items-center gap-1 h-8 px-3 rounded-lg border border-border/30 text-xs font-semibold text-foreground/50 hover:bg-card/15 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 Próximo
                 <ChevronRight className="h-3.5 w-3.5" />

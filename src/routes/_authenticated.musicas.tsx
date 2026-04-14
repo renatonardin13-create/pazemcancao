@@ -252,7 +252,7 @@ function MusicLibraryPage() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Buscar músicas..."
-              className="pl-9 bg-card/10 border-border/15 text-sm h-10"
+              className="pl-9 bg-card/20 border-border/30 text-sm h-10"
             />
           </div>
         </motion.div>
@@ -286,7 +286,7 @@ function MusicLibraryPage() {
                       <h2 className="font-display text-lg font-bold text-foreground/85 tracking-tight">
                         Bônus Exclusivos
                       </h2>
-                      <p className="text-[11px] text-amber-400/40 mt-0.5">
+                      <p className="text-xs text-amber-400/40 mt-0.5">
                         {bonusTracks.length} música{bonusTracks.length !== 1 ? "s" : ""} especiai{bonusTracks.length !== 1 ? "s" : "l"}
                       </p>
                     </div>
@@ -344,7 +344,7 @@ function MusicLibraryPage() {
                     {catTracks.length > 1 && (
                       <button
                         onClick={() => setExpandedCategory(expandedCategory === category ? null : category)}
-                        className="text-[11px] font-medium text-gold/70 hover:text-gold/80 transition-colors duration-300 whitespace-nowrap"
+                        className="text-xs font-medium text-gold/70 hover:text-gold/80 transition-colors duration-300 whitespace-nowrap"
                       >
                         {expandedCategory === category ? "← Voltar" : "Ver todas →"}
                       </button>
@@ -478,13 +478,13 @@ function TrackCard({
             isCarousel ? "h-full flex flex-col" : ""
           } ${
             effectiveLocked
-              ? "border-border/10 shadow-[0_4px_30px_-10px] shadow-black/20 opacity-70 grayscale-[30%]"
+              ? "border-border/25 shadow-[0_4px_30px_-10px] shadow-black/20 opacity-70 grayscale-[30%]"
               : isPlaying
                 ? "border-gold/30 shadow-[0_8px_50px_-12px] shadow-gold/20 ring-1 ring-gold/10"
                 : isThis
                   ? "border-gold/15 shadow-[0_4px_30px_-10px] shadow-gold/10"
-                  : "border-border/8 shadow-[0_4px_30px_-10px] shadow-black/20 hover:border-gold/15"
-          } bg-card/10`}
+                  : "border-border/20 shadow-[0_4px_30px_-10px] shadow-black/20 hover:border-gold/15"
+          } bg-card/20`}
         >
           {/* Cover area */}
           <div className={`relative ${isCarousel ? "aspect-square" : "aspect-square"} w-full bg-gradient-to-br ${gradient} overflow-hidden`}>

@@ -197,7 +197,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
           {/* Cover */}
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/70">
+            <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
               Capa
             </Label>
             <ImageFieldHint ratio="1:1" recommendedSize="500x500" file={coverFile} previewUrl={coverPreview} />
@@ -207,7 +207,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
                   <img
                     src={coverPreview}
                     alt="Capa"
-                    className="h-20 w-20 rounded-xl object-cover border border-border/15"
+                    className="h-20 w-20 rounded-xl object-cover border border-border/30"
                   />
                   <button
                     onClick={removeCover}
@@ -224,7 +224,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
                 </div>
               )}
               <div>
-                <label className="flex items-center gap-2 cursor-pointer rounded-lg border border-border/15 bg-card/15 px-3 py-2 text-[11px] text-muted-foreground/50 hover:border-gold/20 hover:text-gold/60 transition-all">
+                <label className="flex items-center gap-2 cursor-pointer rounded-lg border border-border/30 bg-card/15 px-3 py-2 text-xs text-muted-foreground/50 hover:border-gold/20 hover:text-gold/60 transition-all">
                   <Upload className="h-3.5 w-3.5" />
                   Enviar imagem
                   <input
@@ -245,24 +245,24 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
           {/* Title */}
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/70">
+            <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
               Título
             </Label>
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="bg-card/15 border-border/15 text-sm"
+              className="bg-card/15 border-border/30 text-sm"
               disabled={isSubmitting}
             />
           </div>
 
           {/* Category */}
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/70">
+            <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
               Categoria
             </Label>
             <Select value={category} onValueChange={setCategory} disabled={isSubmitting}>
-              <SelectTrigger className="bg-card/15 border-border/15 text-sm">
+              <SelectTrigger className="bg-card/15 border-border/30 text-sm">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -275,13 +275,13 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
           {/* Description */}
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/70">
+            <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
               Descrição
             </Label>
             <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="bg-card/15 border-border/15 text-sm min-h-[70px]"
+              className="bg-card/15 border-border/30 text-sm min-h-[70px]"
               disabled={isSubmitting}
             />
           </div>
@@ -303,7 +303,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
             </div>
             {isBonus && (
               <div className="space-y-2">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/70">
+                <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
                   Liberar em quantos dias?
                 </Label>
                 <div className="flex items-center gap-2">
@@ -314,7 +314,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
                     placeholder="Ex: 7"
                     value={bonusDays}
                     onChange={(e) => setBonusDays(e.target.value)}
-                    className="bg-card/15 border-border/15 text-sm w-24"
+                    className="bg-card/15 border-border/30 text-sm w-24"
                     disabled={isSubmitting}
                   />
                   <span className="text-xs text-muted-foreground/70">dias</span>
@@ -337,14 +337,14 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
               variant="ghost"
               onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
-              className="text-[11px] text-muted-foreground/70"
+              className="text-xs text-muted-foreground/70"
             >
               Cancelar
             </Button>
             <Button
               onClick={() => saveMutation.mutate()}
               disabled={!title.trim() || isSubmitting}
-              className="gap-2 rounded-full bg-gold/15 text-gold/65 border border-gold/12 px-5 h-9 text-[11px] font-bold tracking-[0.15em] uppercase hover:bg-gold/25 hover:text-gold/85 transition-all duration-500"
+              className="gap-2 rounded-full bg-gold/15 text-gold/65 border border-gold/12 px-5 h-9 text-xs font-bold tracking-[0.15em] uppercase hover:bg-gold/25 hover:text-gold/85 transition-all duration-500"
             >
               {isSubmitting ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />

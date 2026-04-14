@@ -129,12 +129,12 @@ function ContentPage() {
 
         {isLoading ? (
           <div className="text-center py-16">
-            <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
+            <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
               Carregando conteúdos...
             </p>
           </div>
         ) : !items.length ? (
-          <div className="text-center py-16 rounded-2xl border border-border/15 bg-card/5">
+          <div className="text-center py-16 rounded-2xl border border-border/30 bg-card/15">
             <BookOpen className="h-8 w-8 text-muted-foreground/50 mx-auto mb-4" />
             <p className="text-sm text-muted-foreground/70">Nenhum conteúdo disponível ainda.</p>
           </div>
@@ -209,7 +209,7 @@ function ContentPage() {
                   <h2 className="font-display text-xl font-bold text-foreground/80 tracking-tight">
                     ✨ Sua Jornada
                   </h2>
-                  <p className="mt-1 text-[11px] text-muted-foreground/70">
+                  <p className="mt-1 text-xs text-muted-foreground/70">
                     Trilhas guiadas para acompanhar seu momento
                   </p>
                 </div>

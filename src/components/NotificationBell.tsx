@@ -51,7 +51,7 @@ export function NotificationBell() {
 
       {open && (
         <div className="absolute right-0 top-full mt-2 w-80 max-h-96 overflow-y-auto rounded-2xl border border-border/20 bg-background/95 backdrop-blur-xl shadow-2xl z-50">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-border/10">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-border/25">
             <h3 className="text-xs font-semibold uppercase tracking-widest text-foreground/60">
               Notificações
             </h3>
@@ -83,7 +83,7 @@ export function NotificationBell() {
                     <Gift className="h-3.5 w-3.5 text-amber-400/70" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-[11px] font-semibold text-foreground/70">{n.title}</p>
+                    <p className="text-xs font-semibold text-foreground/70">{n.title}</p>
                     <p className="text-[10px] text-muted-foreground/70 mt-0.5 leading-relaxed">
                       {n.message}
                     </p>

@@ -94,7 +94,7 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
 
       {/* Mobile dropdown menu */}
       {mobileMenuOpen && (
-        <div className="sm:hidden border-t border-border/10 bg-background/95 backdrop-blur-2xl animate-in slide-in-from-top-2 duration-200">
+        <div className="sm:hidden border-t border-border/25 bg-background/95 backdrop-blur-2xl animate-in slide-in-from-top-2 duration-200">
           <nav className="flex flex-col py-2 px-4">
             {navItems.map(({ to, icon: Icon, label }) => (
               <Link

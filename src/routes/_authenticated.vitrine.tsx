@@ -102,13 +102,13 @@ function VitrinePage() {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Buscar cursos..."
-                className="pl-9 bg-card/10 border-border/15 text-sm h-10"
+                className="pl-9 bg-card/20 border-border/30 text-sm h-10"
               />
             </div>
 
             {isLoading ? (
               <div className="text-center py-24">
-                <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
+                <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
                   Carregando vitrine...
                 </p>
               </div>
@@ -163,14 +163,14 @@ function VitrinePage() {
                               <img
                                 src={banner.image_url}
                                 alt={banner.title}
-                                className="w-full rounded-xl border border-border/10 hover:border-gold/20 transition-colors"
+                                className="w-full rounded-xl border border-border/25 hover:border-gold/20 transition-colors"
                               />
                             </a>
                           ) : (
                             <img
                               src={banner.image_url}
                               alt={banner.title}
-                              className="w-full rounded-xl border border-border/10"
+                              className="w-full rounded-xl border border-border/25"
                             />
                           )}
                         </motion.div>
@@ -206,7 +206,7 @@ function CourseCard({ course }: { course: any }) {
 
   const cardContent = (
     <div className="group relative w-[220px] sm:w-[260px] shrink-0 snap-start">
-      <div className="relative aspect-[3/4] rounded-xl overflow-hidden border border-border/15 group-hover:border-gold/20 transition-all duration-500">
+      <div className="relative aspect-[3/4] rounded-xl overflow-hidden border border-border/30 group-hover:border-gold/20 transition-all duration-500">
         {course.cover_image_url ? (
           <img
             src={course.cover_image_url}

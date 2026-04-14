@@ -76,20 +76,20 @@ function MeusCoursosPage() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="grid grid-cols-3 gap-4 mb-8"
           >
-            <div className="rounded-xl border border-border/15 bg-card/8 p-5">
-              <p className="text-[11px] text-muted-foreground/50 mb-1">Total</p>
+            <div className="rounded-xl border border-border/30 bg-card/8 p-5">
+              <p className="text-xs text-muted-foreground/50 mb-1">Total</p>
               <p className="font-display text-3xl font-bold text-gold">
                 {isLoading ? "—" : stats.total}
               </p>
             </div>
-            <div className="rounded-xl border border-border/15 bg-card/8 p-5">
-              <p className="text-[11px] text-muted-foreground/50 mb-1">Andamento</p>
+            <div className="rounded-xl border border-border/30 bg-card/8 p-5">
+              <p className="text-xs text-muted-foreground/50 mb-1">Andamento</p>
               <p className="font-display text-3xl font-bold text-gold">
                 {isLoading ? "—" : stats.inProgress}
               </p>
             </div>
-            <div className="rounded-xl border border-border/15 bg-card/8 p-5">
-              <p className="text-[11px] text-muted-foreground/50 mb-1">Concluídos</p>
+            <div className="rounded-xl border border-border/30 bg-card/8 p-5">
+              <p className="text-xs text-muted-foreground/50 mb-1">Concluídos</p>
               <p className="font-display text-3xl font-bold text-gold">
                 {isLoading ? "—" : stats.completed}
               </p>
@@ -109,11 +109,11 @@ function MeusCoursosPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar curso..."
-                className="pl-10 bg-card/10 border-border/15"
+                className="pl-10 bg-card/20 border-border/30"
               />
             </div>
             <Select value={filter} onValueChange={setFilter}>
-              <SelectTrigger className="w-[160px] bg-card/10 border-border/15">
+              <SelectTrigger className="w-[160px] bg-card/20 border-border/30">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -141,7 +141,7 @@ function MeusCoursosPage() {
                   </p>
                   <Link
                     to="/vitrine"
-                    className="inline-flex items-center gap-2 rounded-xl bg-gold/15 text-gold/70 border border-gold/20 px-6 py-2.5 text-[11px] font-bold uppercase tracking-wider hover:bg-gold/25 hover:text-gold/90 transition-all"
+                    className="inline-flex items-center gap-2 rounded-xl bg-gold/15 text-gold/70 border border-gold/20 px-6 py-2.5 text-xs font-bold uppercase tracking-wider hover:bg-gold/25 hover:text-gold/90 transition-all"
                   >
                     Explorar Vitrine <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
@@ -164,7 +164,7 @@ function MeusCoursosPage() {
                   <Link
                     to="/cursos/$courseId"
                     params={{ courseId: course.id }}
-                    className="group flex items-center gap-5 rounded-xl border border-border/15 bg-card/8 p-4 sm:p-5 hover:border-gold/20 hover:bg-card/15 transition-all duration-300"
+                    className="group flex items-center gap-5 rounded-xl border border-border/30 bg-card/8 p-4 sm:p-5 hover:border-gold/20 hover:bg-card/15 transition-all duration-300"
                   >
                     {/* Cover */}
                     {course.cover_image_url ? (
@@ -189,7 +189,7 @@ function MeusCoursosPage() {
                           {course.short_description}
                         </p>
                       )}
-                      <div className="flex items-center gap-4 mt-2 text-[11px] text-muted-foreground/45">
+                      <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground/45">
                         <span className="flex items-center gap-1">
                           <Layers className="h-3 w-3" />
                           {course.module_count} mód.
@@ -200,7 +200,7 @@ function MeusCoursosPage() {
                         </span>
                       </div>
                       <div className="flex items-center gap-3 mt-3">
-                        <span className="text-[11px] text-muted-foreground/70">Progresso</span>
+                        <span className="text-xs text-muted-foreground/70">Progresso</span>
                         <Progress value={course.progress_pct} className="h-1.5 flex-1 bg-muted/20" />
                         <span className="text-[12px] font-bold text-gold tabular-nums w-10 text-right">
                           {course.progress_pct}%

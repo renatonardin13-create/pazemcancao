@@ -144,7 +144,7 @@ function CourseDetailPage() {
     return (
       <div
         key={lesson.id}
-        className="flex items-center gap-4 px-5 py-4 border-b border-border/8 last:border-0 transition-colors hover:bg-card/10"
+        className="flex items-center gap-4 px-5 py-4 border-b border-border/20 last:border-0 transition-colors hover:bg-card/20"
       >
         <div className="shrink-0">
           {completed ? (
@@ -238,7 +238,7 @@ function CourseDetailPage() {
           className="mb-12"
         >
           {course.banner_image_url && (
-            <div className="mb-8 rounded-2xl overflow-hidden aspect-[21/9] border border-border/10">
+            <div className="mb-8 rounded-2xl overflow-hidden aspect-[21/9] border border-border/25">
               <img
                 src={course.banner_image_url}
                 alt={course.title}
@@ -249,7 +249,7 @@ function CourseDetailPage() {
 
           <div className="flex items-start gap-6">
             {course.cover_image_url ? (
-              <div className="hidden sm:block shrink-0 h-28 w-28 rounded-xl overflow-hidden border border-border/10">
+              <div className="hidden sm:block shrink-0 h-28 w-28 rounded-xl overflow-hidden border border-border/25">
                 <img
                   src={course.cover_image_url}
                   alt={course.title}
@@ -257,7 +257,7 @@ function CourseDetailPage() {
                 />
               </div>
             ) : (
-              <div className="hidden sm:flex shrink-0 h-28 w-28 items-center justify-center rounded-xl border border-border/10 bg-card/15">
+              <div className="hidden sm:flex shrink-0 h-28 w-28 items-center justify-center rounded-xl border border-border/25 bg-card/15">
                 <BookOpen className="h-8 w-8 text-muted-foreground/50" />
               </div>
             )}
@@ -280,7 +280,7 @@ function CourseDetailPage() {
                 </p>
               )}
 
-              <div className="mt-4 flex flex-wrap items-center gap-4 text-[11px] text-muted-foreground/60">
+              <div className="mt-4 flex flex-wrap items-center gap-4 text-xs text-muted-foreground/60">
                 <span className="flex items-center gap-1.5">
                   <Video className="h-3.5 w-3.5" />
                   {totalLessons} aula{totalLessons !== 1 ? "s" : ""}
@@ -304,7 +304,7 @@ function CourseDetailPage() {
           className="mb-10"
         >
           {!canAccessCourse ? (
-            <div className="rounded-2xl border border-border/10 bg-card/5 p-5">
+            <div className="rounded-2xl border border-border/25 bg-card/15 p-5">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <span className="inline-flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.3em] text-gold/45">
@@ -323,7 +323,7 @@ function CourseDetailPage() {
                     href={integration.checkout_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-gold/12 bg-gold/15 px-6 text-[11px] font-semibold uppercase tracking-wider text-gold/70 transition-all duration-500 hover:bg-gold/22"
+                    className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-gold/12 bg-gold/15 px-6 text-xs font-semibold uppercase tracking-wider text-gold/70 transition-all duration-500 hover:bg-gold/22"
                   >
                     Desbloquear curso
                     <ExternalLink className="h-3.5 w-3.5" />
@@ -332,9 +332,9 @@ function CourseDetailPage() {
               </div>
             </div>
           ) : (
-            <div className="rounded-2xl border border-border/10 bg-card/5 p-5">
+            <div className="rounded-2xl border border-border/25 bg-card/15 p-5">
               <div className="flex items-center justify-between mb-3">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70">
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70">
                   Seu progresso
                 </span>
                 <span className="text-[13px] font-bold text-gold/60 tabular-nums">
@@ -342,7 +342,7 @@ function CourseDetailPage() {
                 </span>
               </div>
               <Progress value={progressPercent} className="h-1.5" />
-              <p className="mt-2.5 text-[11px] text-muted-foreground/60">
+              <p className="mt-2.5 text-xs text-muted-foreground/60">
                 {completedLessons} de {totalLessons} aula
                 {totalLessons !== 1 ? "s" : ""} concluída
                 {completedLessons !== 1 ? "s" : ""}
@@ -357,9 +357,9 @@ function CourseDetailPage() {
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.25 }}
-            className="mb-10 rounded-2xl border border-border/10 bg-card/5 p-6"
+            className="mb-10 rounded-2xl border border-border/25 bg-card/15 p-6"
           >
-            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70 mb-4">
+            <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70 mb-4">
               Sobre o curso
             </h2>
             <p className="text-[14px] leading-[2] text-muted-foreground/55 font-light whitespace-pre-line">
@@ -374,12 +374,12 @@ function CourseDetailPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.35 }}
         >
-          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70 mb-5">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70 mb-5">
             Conteúdo do Curso
           </h2>
 
           {totalLessons === 0 ? (
-            <div className="text-center py-12 rounded-2xl border border-border/10 bg-card/5">
+            <div className="text-center py-12 rounded-2xl border border-border/25 bg-card/15">
               <p className="text-sm text-muted-foreground/70">
                 Nenhuma aula disponível ainda.
               </p>
@@ -403,14 +403,14 @@ function CourseDetailPage() {
                   return (
                     <div
                       key={mod.id}
-                      className="rounded-2xl border border-border/10 overflow-hidden"
+                      className="rounded-2xl border border-border/25 overflow-hidden"
                     >
                       <button
                         type="button"
                         onClick={() => toggleModule(mod.id)}
-                        className="w-full flex items-center gap-3 px-5 py-4 hover:bg-card/10 transition-colors text-left"
+                        className="w-full flex items-center gap-3 px-5 py-4 hover:bg-card/20 transition-colors text-left"
                       >
-                        <div className="shrink-0 w-6 h-6 flex items-center justify-center rounded-lg bg-card/10 border border-border/10">
+                        <div className="shrink-0 w-6 h-6 flex items-center justify-center rounded-lg bg-card/20 border border-border/25">
                           {isExpanded ? (
                             <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/70" />
                           ) : (
@@ -422,7 +422,7 @@ function CourseDetailPage() {
                             {mod.title}
                           </p>
                           {mod.description && (
-                            <p className="text-[11px] text-muted-foreground/60 mt-0.5 truncate">
+                            <p className="text-xs text-muted-foreground/60 mt-0.5 truncate">
                               {mod.description}
                             </p>
                           )}
@@ -433,7 +433,7 @@ function CourseDetailPage() {
                       </button>
 
                       {isExpanded && (
-                        <div className="border-t border-border/8">
+                        <div className="border-t border-border/20">
                           {modLessons.map((lesson: any, idx: number) =>
                             renderLesson(lesson, idx)
                           )}
@@ -445,10 +445,10 @@ function CourseDetailPage() {
 
               {/* Lessons without module */}
               {unmoduled.length > 0 && (
-                <div className="rounded-2xl border border-border/10 overflow-hidden">
+                <div className="rounded-2xl border border-border/25 overflow-hidden">
                   {modules.length > 0 && (
-                    <div className="px-5 py-3 border-b border-border/8">
-                      <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                    <div className="px-5 py-3 border-b border-border/20">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/60">
                         Aulas avulsas
                       </p>
                     </div>

@@ -76,8 +76,8 @@ export function TrackCard({ track, index }: TrackCardProps) {
         className={`relative rounded-3xl border transition-all duration-700 overflow-hidden h-full flex flex-col ${
           isPlaying
             ? "border-gold/25 shadow-[0_8px_50px_-12px] shadow-gold/15"
-            : "border-border/8 shadow-[0_4px_30px_-10px] shadow-black/20 hover:border-gold/15 hover:shadow-[0_8px_40px_-10px] hover:shadow-gold/8"
-        } bg-card/10`}
+            : "border-border/20 shadow-[0_4px_30px_-10px] shadow-black/20 hover:border-gold/15 hover:shadow-[0_8px_40px_-10px] hover:shadow-gold/8"
+        } bg-card/20`}
       >
         {/* Cover image area */}
         <div className={`relative h-40 sm:h-44 w-full bg-gradient-to-br ${gradient} overflow-hidden`}>

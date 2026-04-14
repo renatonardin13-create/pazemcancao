@@ -149,12 +149,12 @@ function AdminCoursesPage() {
       {/* Table */}
       {isLoading ? (
         <div className="text-center py-16">
-          <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
+          <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
             Carregando...
           </p>
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-20 rounded-2xl border border-border/15 bg-card shadow-lg shadow-black/10">
+        <div className="text-center py-20 rounded-2xl border border-border/30 bg-card shadow-lg shadow-black/10">
           <Video className="h-10 w-10 text-gold/45 mx-auto mb-4" />
           <p className="text-sm text-muted-foreground/50 font-medium">
             {allCourses.length === 0
@@ -171,10 +171,10 @@ function AdminCoursesPage() {
           )}
         </div>
       ) : (
-        <div className="rounded-2xl border border-border/15 bg-card overflow-hidden shadow-lg shadow-black/10">
+        <div className="rounded-2xl border border-border/30 bg-card overflow-hidden shadow-lg shadow-black/10">
           <Table>
             <TableHeader>
-              <TableRow className="border-border/10 hover:bg-transparent">
+              <TableRow className="border-border/25 hover:bg-transparent">
                 <TableHead className="w-[72px] text-[10px] uppercase tracking-widest text-muted-foreground/60">
                   Capa
                 </TableHead>
@@ -202,7 +202,7 @@ function AdminCoursesPage() {
               {paginated.map((course: any) => (
                 <TableRow
                   key={course.id}
-                  className="border-border/8 hover:bg-card/10"
+                  className="border-border/20 hover:bg-card/20"
                 >
                   {/* Cover */}
                   <TableCell className="py-3">
@@ -231,7 +231,7 @@ function AdminCoursesPage() {
                       {course.title}
                     </p>
                     {course.categories?.name && (
-                      <span className="text-[11px] text-muted-foreground/60">
+                      <span className="text-xs text-muted-foreground/60">
                         {course.categories.name}
                       </span>
                     )}
@@ -239,7 +239,7 @@ function AdminCoursesPage() {
 
                   {/* Type */}
                   <TableCell>
-                    <span className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground/70">
+                    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground/70">
                       {course.course_type === "video" ? (
                         <Video className="h-3 w-3" />
                       ) : (
@@ -335,7 +335,7 @@ function AdminCoursesPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center px-5 py-3 border-t border-border/10 gap-1">
+            <div className="flex items-center justify-center px-5 py-3 border-t border-border/25 gap-1">
               <Button
                 variant="ghost"
                 size="icon"

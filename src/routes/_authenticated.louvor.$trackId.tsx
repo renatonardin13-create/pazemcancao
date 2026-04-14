@@ -106,7 +106,7 @@ function TrackDetailPage() {
             <div className={`relative mx-auto flex h-40 w-40 sm:h-52 sm:w-52 items-center justify-center rounded-3xl border transition-all duration-1000 ${
               isPlaying
                 ? "border-gold/20 bg-gold/[0.06] shadow-[0_0_80px_-16px] shadow-gold/15"
-                : "border-border/10 bg-card/15"
+                : "border-border/25 bg-card/15"
             }`}>
               {/* Breathing ring when playing */}
               {isPlaying && (
@@ -142,7 +142,7 @@ function TrackDetailPage() {
           </motion.h1>
 
           {/* Duration */}
-          <motion.p variants={fadeUp} custom={0.35} className="mt-4 text-[11px] tracking-[0.3em] text-muted-foreground/60 font-medium">
+          <motion.p variants={fadeUp} custom={0.35} className="mt-4 text-xs tracking-[0.3em] text-muted-foreground/60 font-medium">
             {track.duration}
           </motion.p>
 
@@ -201,7 +201,7 @@ function TrackDetailPage() {
             {/* Download button */}
             <button
               onClick={handleDownload}
-              className="mt-5 w-full flex items-center justify-center gap-2.5 rounded-full py-4 text-[11px] font-semibold tracking-[0.2em] uppercase text-muted-foreground/60 border border-border/8 hover:text-gold/70 hover:border-gold/15 hover:bg-gold/[0.03] transition-all duration-500"
+              className="mt-5 w-full flex items-center justify-center gap-2.5 rounded-full py-4 text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground/60 border border-border/20 hover:text-gold/70 hover:border-gold/15 hover:bg-gold/[0.03] transition-all duration-500"
             >
               <Download className="h-3.5 w-3.5" />
               Baixar Louvor

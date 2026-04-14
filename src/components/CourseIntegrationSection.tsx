@@ -129,10 +129,10 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Enable toggle */}
-          <div className="flex items-center justify-between rounded-lg border border-border/15 p-4">
+          <div className="flex items-center justify-between rounded-lg border border-border/30 p-4">
             <div>
               <Label className="text-sm font-medium">Habilitar integração externa</Label>
-              <p className="text-[11px] text-muted-foreground/50 mt-0.5">
+              <p className="text-xs text-muted-foreground/50 mt-0.5">
                 Ative para vincular a um produto de plataforma de pagamento
               </p>
             </div>
@@ -145,7 +145,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
               <div className="space-y-2">
                 <Label className="text-sm font-medium">Plataforma de Pagamento</Label>
                 <Select value={platform} onValueChange={setPlatform}>
-                  <SelectTrigger className="bg-card/10 border-gold/20 focus:border-gold/40">
+                  <SelectTrigger className="bg-card/20 border-gold/20 focus:border-gold/40">
                     <SelectValue placeholder="Selecione a plataforma" />
                   </SelectTrigger>
                   <SelectContent>
@@ -159,7 +159,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-[11px] text-muted-foreground/70">
+                <p className="text-xs text-muted-foreground/70">
                   Plataforma onde o produto está cadastrado
                 </p>
               </div>
@@ -171,9 +171,9 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                   value={externalProductId}
                   onChange={(e) => setExternalProductId(e.target.value)}
                   placeholder="Ex: F80185198L"
-                  className="bg-card/10 border-border/15 font-mono text-sm"
+                  className="bg-card/20 border-border/30 font-mono text-sm"
                 />
-                <p className="text-[11px] text-muted-foreground/70">
+                <p className="text-xs text-muted-foreground/70">
                   Identificador único do produto na plataforma de pagamento
                 </p>
               </div>
@@ -187,9 +187,9 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                   value={externalProductName}
                   onChange={(e) => setExternalProductName(e.target.value)}
                   placeholder="Ex: Curso Completo de Marketing"
-                  className="bg-card/10 border-border/15"
+                  className="bg-card/20 border-border/30"
                 />
-                <p className="text-[11px] text-muted-foreground/70">
+                <p className="text-xs text-muted-foreground/70">
                   Nome do produto como aparece na plataforma externa (para referência)
                 </p>
               </div>
@@ -204,9 +204,9 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                   value={checkoutUrl}
                   onChange={(e) => setCheckoutUrl(e.target.value)}
                   placeholder={`https://go.${platform}.com/${externalProductId || "..."}`}
-                  className="bg-card/10 border-border/15 font-mono text-sm"
+                  className="bg-card/20 border-border/30 font-mono text-sm"
                 />
-                <p className="text-[11px] text-muted-foreground/70">
+                <p className="text-xs text-muted-foreground/70">
                   Link de compra onde os alunos serão redirecionados
                 </p>
               </div>
@@ -221,9 +221,9 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Anotações sobre a integração, configurações especiais, etc."
                   rows={3}
-                  className="bg-card/10 border-border/15"
+                  className="bg-card/20 border-border/30"
                 />
-                <p className="text-[11px] text-muted-foreground/70">
+                <p className="text-xs text-muted-foreground/70">
                   Anotações internas sobre a configuração da integração
                 </p>
               </div>
@@ -274,16 +274,16 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                   )}
                 </Button>
               </div>
-              <p className="text-[11px] text-muted-foreground/70">
+              <p className="text-xs text-muted-foreground/70">
                 Cole esta URL nas configurações de webhook da plataforma de pagamento
               </p>
             </div>
 
             {/* Webhook status toggle */}
-            <div className="flex items-center justify-between rounded-lg border border-border/15 p-4">
+            <div className="flex items-center justify-between rounded-lg border border-border/30 p-4">
               <div>
                 <Label className="text-sm font-medium">Status do Webhook</Label>
-                <p className="text-[11px] text-muted-foreground/50 mt-0.5">
+                <p className="text-xs text-muted-foreground/50 mt-0.5">
                   {webhookActive
                     ? "Webhook ativo e recebendo notificações"
                     : "Webhook desativado"}

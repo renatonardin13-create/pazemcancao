@@ -52,8 +52,8 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
       onClick={isLocked ? handleLockedClick : undefined}
       className={`group relative rounded-3xl border overflow-hidden h-full flex flex-col transition-all duration-700 ${
         isLocked
-          ? "border-border/8 bg-card/5 cursor-pointer"
-          : "border-border/8 bg-card/10 hover:border-gold/15 hover:shadow-[0_8px_40px_-10px] hover:shadow-gold/8"
+          ? "border-border/20 bg-card/15 cursor-pointer"
+          : "border-border/20 bg-card/20 hover:border-gold/15 hover:shadow-[0_8px_40px_-10px] hover:shadow-gold/8"
       } shadow-[0_4px_30px_-10px] shadow-black/20`}
     >
       {/* Cover image area */}

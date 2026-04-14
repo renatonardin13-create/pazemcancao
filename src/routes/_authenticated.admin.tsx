@@ -14,7 +14,7 @@ function AdminLayout() {
   if (adminLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <p className="text-[11px] uppercase tracking-[0.4em] text-gold/70 animate-pulse">
+        <p className="text-xs uppercase tracking-[0.4em] text-gold/70 animate-pulse">
           Verificando acesso...
         </p>
       </div>
@@ -37,14 +37,14 @@ function AdminLayout() {
           <div className="mt-8 flex flex-col items-center gap-3">
             <Link
               to="/downloads"
-              className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.3em] text-gold/45 hover:text-gold/65 transition-colors duration-500"
+              className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.3em] text-gold/45 hover:text-gold/65 transition-colors duration-500"
             >
               <ArrowLeft className="h-3 w-3" />
               Voltar
             </Link>
             <button
               onClick={() => logout()}
-              className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60 hover:text-muted-foreground/50 transition-colors duration-500"
+              className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/60 hover:text-muted-foreground/50 transition-colors duration-500"
             >
               <LogOut className="h-3 w-3" />
               Sair
@@ -62,7 +62,7 @@ function AdminLayout() {
 
         <div className="flex-1 flex flex-col min-w-0">
           {/* Top bar */}
-          <header className="sticky top-0 z-40 h-14 flex items-center gap-3 border-b border-border/15 bg-background/80 backdrop-blur-xl px-4">
+          <header className="sticky top-0 z-40 h-14 flex items-center gap-3 border-b border-border/30 bg-background/80 backdrop-blur-xl px-4">
             <SidebarTrigger className="text-muted-foreground/70 hover:text-muted-foreground/70" />
             <div className="h-4 w-px bg-border/20" />
             <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-muted-foreground/60">
