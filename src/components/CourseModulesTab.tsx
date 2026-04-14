@@ -670,14 +670,14 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
 
                             {/* Content type icon */}
                             <div className="w-9 h-9 rounded-lg bg-gold/10 border border-gold/20 flex items-center justify-center shrink-0">
-                              {lesson.content_type === "pdf" || lesson.content_url?.endsWith(".pdf") ? (
+                              {(lesson.content_type || "video") === "pdf" ? (
                                 <FileText className="h-4 w-4 text-gold/70" />
-                              ) : lesson.video_url ? (
-                                <Video className="h-4 w-4 text-gold/70" />
-                              ) : lesson.content_url ? (
+                              ) : (lesson.content_type || "video") === "file" ? (
                                 <File className="h-4 w-4 text-gold/70" />
-                              ) : (
+                              ) : (lesson.content_type || "video") === "link" ? (
                                 <LinkIcon className="h-4 w-4 text-gold/70" />
+                              ) : (
+                                <Video className="h-4 w-4 text-gold/70" />
                               )}
                             </div>
 
