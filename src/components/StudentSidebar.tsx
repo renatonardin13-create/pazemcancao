@@ -170,8 +170,9 @@ export function StudentSidebar() {
                  {visibleCategories
                    .filter((cat: any) => {
                      const slug = (cat.slug || cat.name.toLowerCase()).toLowerCase();
-                     const name = cat.name.toLowerCase();
-                     return slug !== "destaques" && name !== "destaques" && name !== "destaques (top 10)";
+                     const plainName = cat.name.toLowerCase().replace(/^[^\p{L}\p{N}]+/u, "").trim();
+                     return slug !== "destaques" && slug !== "top-10-mais-fortes"
+                       && !plainName.startsWith("destaques");
                    })
                    .map((cat: any) => {
                   const catSlug = cat.slug || cat.name.toLowerCase();
