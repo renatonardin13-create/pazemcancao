@@ -21,6 +21,8 @@ import {
   ExternalLink,
   Link2,
   Lock,
+  Play,
+  Layers,
 } from "lucide-react";
 import { useState } from "react";
 import { motion } from "framer-motion";
@@ -126,89 +128,110 @@ function CourseDetailPage() {
 
   const getLessonIcon = (lesson: any) => {
     const ct = lesson.content_type || "video";
-    if (ct === "pdf") return <FileText className="h-3.5 w-3.5 text-muted-foreground/60" />;
-    if (ct === "file") return <FileIcon className="h-3.5 w-3.5 text-muted-foreground/60" />;
-    if (ct === "link") return <Link2 className="h-3.5 w-3.5 text-muted-foreground/60" />;
-    return <Video className="h-3.5 w-3.5 text-muted-foreground/60" />;
+    if (ct === "pdf") return <FileText className="h-4 w-4" />;
+    if (ct === "file") return <FileIcon className="h-4 w-4" />;
+    if (ct === "link") return <Link2 className="h-4 w-4" />;
+    return <Video className="h-4 w-4" />;
   };
 
   const renderLesson = (lesson: any, index: number) => {
     const completed = isLessonCompleted(lesson.id);
     const canOpenLesson = canAccessCourse || lesson.is_free_preview;
-    const lessonTitleClasses = `text-sm font-medium truncate block transition-colors ${
-      completed
-        ? "text-muted-foreground/70 line-through"
-        : canOpenLesson
-          ? "text-foreground/70 hover:text-gold/70"
-          : "text-muted-foreground/60"
-    }`;
 
-    return (
+    const content = (
       <div
-        key={lesson.id}
-        className="flex items-center gap-4 px-5 py-4 border-b border-border/20 last:border-0 transition-colors hover:bg-card/20"
+        className={`group/lesson flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3.5 sm:py-4 border-b border-border/10 last:border-0 transition-all duration-300 ${
+          canOpenLesson ? "hover:bg-gold/[0.03] cursor-pointer" : ""
+        } ${completed ? "opacity-60" : ""}`}
       >
-        <div className="shrink-0">
+        {/* Number circle */}
+        <div className={`shrink-0 flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold tabular-nums transition-colors duration-300 ${
+          completed
+            ? "bg-emerald-500/15 text-emerald-400/80 border border-emerald-500/20"
+            : canOpenLesson
+              ? "bg-gold/[0.06] text-gold/60 border border-gold/10 group-hover/lesson:bg-gold/10 group-hover/lesson:text-gold/80"
+              : "bg-muted/10 text-muted-foreground/40 border border-border/15"
+        }`}>
           {completed ? (
-            <CheckCircle2 className="h-5 w-5 text-emerald-400/60" />
+            <CheckCircle2 className="h-4 w-4" />
           ) : (
-            <Circle className="h-5 w-5 text-muted-foreground/50" />
+            String(index + 1).padStart(2, "0")
           )}
         </div>
 
-        <span className="text-xs font-bold text-muted-foreground/50 tabular-nums shrink-0 w-6 text-center">
-          {String(index + 1).padStart(2, "0")}
-        </span>
-
+        {/* Content */}
         <div className="flex-1 min-w-0">
-          {canOpenLesson ? (
-            <Link
-              to="/cursos/$courseId/aula/$lessonId"
-              params={{ courseId, lessonId: lesson.id }}
-              className={lessonTitleClasses}
-            >
-              {lesson.title}
-            </Link>
-          ) : (
-            <span className={lessonTitleClasses}>{lesson.title}</span>
-          )}
-          <div className="flex items-center gap-3 mt-1">
-            {getLessonIcon(lesson)}
+          <span className={`text-[13px] sm:text-sm font-medium block transition-colors duration-300 ${
+            completed
+              ? "text-muted-foreground/50 line-through"
+              : canOpenLesson
+                ? "text-foreground/75 group-hover/lesson:text-gold/80"
+                : "text-muted-foreground/50"
+          }`}>
+            {lesson.title}
+          </span>
+          <div className="flex items-center gap-2.5 mt-1">
+            <span className={`${completed ? "text-muted-foreground/30" : "text-muted-foreground/40"}`}>
+              {getLessonIcon(lesson)}
+            </span>
             {lesson.duration && lesson.duration !== "0:00" && (
-              <span className="text-xs text-muted-foreground/60">
+              <span className="text-[11px] text-muted-foreground/40 tabular-nums">
                 {lesson.duration}
               </span>
             )}
-            {lesson.is_free_preview && (
-              <span className="text-[11px] uppercase tracking-wider text-gold/40 font-semibold">
-                Preview
+            {lesson.is_free_preview && !canAccessCourse && (
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gold/50 bg-gold/[0.06] px-1.5 py-0.5 rounded">
+                Prévia
               </span>
             )}
             {!canOpenLesson && (
-              <span className="inline-flex items-center gap-1 text-[11px] uppercase tracking-wider text-muted-foreground/60 font-semibold">
-                <Lock className="h-3 w-3" />
-                Bloqueada
-              </span>
+              <Lock className="h-3 w-3 text-muted-foreground/30" />
             )}
           </div>
         </div>
 
+        {/* Actions */}
+        {canOpenLesson && !completed && (
+          <div className="shrink-0 opacity-0 group-hover/lesson:opacity-100 transition-opacity duration-300">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gold/10 text-gold/60">
+              <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
+            </div>
+          </div>
+        )}
+
         {!completed && enrollment && (
           <button
-            onClick={() =>
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
               progressMutation.mutate({
                 lessonId: lesson.id,
                 watchedSeconds: 0,
                 completed: true,
-              })
-            }
-            className="shrink-0 text-[11px] uppercase tracking-wider text-muted-foreground/50 hover:text-emerald-400/50 transition-colors font-semibold"
+              });
+            }}
+            className="shrink-0 text-[10px] uppercase tracking-wider text-muted-foreground/30 hover:text-emerald-400/60 transition-colors font-bold"
           >
             Concluir
           </button>
         )}
       </div>
     );
+
+    if (canOpenLesson) {
+      return (
+        <Link
+          key={lesson.id}
+          to="/cursos/$courseId/aula/$lessonId"
+          params={{ courseId, lessonId: lesson.id }}
+          className="block"
+        >
+          {content}
+        </Link>
+      );
+    }
+
+    return <div key={lesson.id}>{content}</div>;
   };
 
   return (
@@ -376,22 +399,33 @@ function CourseDetailPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.35 }}
         >
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/70 mb-5">
-            Conteúdo do Curso
-          </h2>
+          <div className="flex items-center gap-3 mb-6">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/10">
+              <Layers className="h-4 w-4 text-gold/60" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-foreground/80 tracking-tight">
+                Conteúdo do Curso
+              </h2>
+              <p className="text-[11px] text-muted-foreground/40 mt-0.5">
+                {modules.length} módulo{modules.length !== 1 ? "s" : ""} · {totalLessons} aula{totalLessons !== 1 ? "s" : ""}
+              </p>
+            </div>
+          </div>
 
           {totalLessons === 0 ? (
-            <div className="text-center py-12 rounded-2xl border border-border/25 bg-card/15">
-              <p className="text-sm text-muted-foreground/70">
+            <div className="text-center py-16 rounded-2xl border border-border/15 bg-card/8">
+              <BookOpen className="h-8 w-8 text-muted-foreground/20 mx-auto mb-3" />
+              <p className="text-sm text-muted-foreground/50">
                 Nenhuma aula disponível ainda.
               </p>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {/* Modules */}
               {modules
                 .sort((a: any, b: any) => a.sort_order - b.sort_order)
-                .map((mod: any) => {
+                .map((mod: any, modIdx: number) => {
                   const modLessons = (moduleMap[mod.id] || []).sort(
                     (a: any, b: any) => a.sort_order - b.sort_order
                   );
@@ -401,41 +435,76 @@ function CourseDetailPage() {
                   const modCompleted = modLessons.filter((l: any) =>
                     isLessonCompleted(l.id)
                   ).length;
+                  const modProgress = Math.round((modCompleted / modLessons.length) * 100);
+                  const isModuleComplete = modCompleted === modLessons.length;
 
                   return (
                     <div
                       key={mod.id}
-                      className="rounded-2xl border border-border/25 overflow-hidden"
+                      className={`rounded-2xl border overflow-hidden transition-all duration-300 ${
+                        isExpanded
+                          ? "border-gold/15 bg-card/10 shadow-lg shadow-gold/[0.02]"
+                          : "border-border/15 bg-card/5 hover:border-border/25 hover:bg-card/8"
+                      }`}
                     >
                       <button
                         type="button"
                         onClick={() => toggleModule(mod.id)}
-                        className="w-full flex items-center gap-3 px-5 py-4 hover:bg-card/20 transition-colors text-left"
+                        className="w-full flex items-center gap-3 sm:gap-4 px-4 sm:px-6 py-4 sm:py-5 text-left transition-colors"
                       >
-                        <div className="shrink-0 w-6 h-6 flex items-center justify-center rounded-lg bg-card/20 border border-border/25">
-                          {isExpanded ? (
-                            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/70" />
+                        {/* Module number */}
+                        <div className={`shrink-0 flex h-10 w-10 items-center justify-center rounded-xl text-xs font-black tabular-nums transition-colors ${
+                          isModuleComplete
+                            ? "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400/70"
+                            : isExpanded
+                              ? "bg-gold/10 border border-gold/15 text-gold/70"
+                              : "bg-muted/8 border border-border/20 text-muted-foreground/40"
+                        }`}>
+                          {isModuleComplete ? (
+                            <CheckCircle2 className="h-5 w-5" />
                           ) : (
-                            <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/70" />
+                            String(modIdx + 1).padStart(2, "0")
                           )}
                         </div>
+
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold text-foreground/80 truncate">
+                          <p className={`text-sm font-bold truncate transition-colors ${
+                            isExpanded ? "text-foreground/85" : "text-foreground/70"
+                          }`}>
                             {mod.title}
                           </p>
                           {mod.description && (
-                            <p className="text-xs text-muted-foreground/60 mt-0.5 truncate">
+                            <p className="text-[11px] text-muted-foreground/40 mt-0.5 truncate">
                               {mod.description}
                             </p>
                           )}
+                          {/* Mini progress bar */}
+                          <div className="flex items-center gap-2 mt-2">
+                            <div className="h-[3px] flex-1 max-w-[120px] rounded-full bg-muted/10 overflow-hidden">
+                              <div
+                                className={`h-full rounded-full transition-all duration-500 ${isModuleComplete ? "bg-emerald-400/60" : "bg-gold/40"}`}
+                                style={{ width: `${modProgress}%` }}
+                              />
+                            </div>
+                            <span className="text-[10px] font-bold tabular-nums text-muted-foreground/40">
+                              {modCompleted}/{modLessons.length}
+                            </span>
+                          </div>
                         </div>
-                        <span className="text-xs text-muted-foreground/60 shrink-0">
-                          {modCompleted}/{modLessons.length}
-                        </span>
+
+                        <div className={`shrink-0 flex h-7 w-7 items-center justify-center rounded-lg transition-all duration-300 ${
+                          isExpanded ? "bg-gold/10 rotate-0" : "bg-muted/8"
+                        }`}>
+                          {isExpanded ? (
+                            <ChevronDown className="h-4 w-4 text-gold/60" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4 text-muted-foreground/40" />
+                          )}
+                        </div>
                       </button>
 
                       {isExpanded && (
-                        <div className="border-t border-border/20">
+                        <div className="border-t border-border/10">
                           {modLessons.map((lesson: any, idx: number) =>
                             renderLesson(lesson, idx)
                           )}
@@ -447,10 +516,10 @@ function CourseDetailPage() {
 
               {/* Lessons without module */}
               {unmoduled.length > 0 && (
-                <div className="rounded-2xl border border-border/25 overflow-hidden">
+                <div className="rounded-2xl border border-border/15 bg-card/5 overflow-hidden">
                   {modules.length > 0 && (
-                    <div className="px-5 py-3 border-b border-border/20">
-                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/60">
+                    <div className="px-5 py-3.5 border-b border-border/10">
+                      <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-muted-foreground/40">
                         Aulas avulsas
                       </p>
                     </div>
