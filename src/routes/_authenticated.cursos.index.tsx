@@ -227,33 +227,33 @@ function MyCoursesShelf({ courses }: { courses: any[] }) {
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.1 }}
-      className="mb-16"
+      className="mb-20"
     >
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-3.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold/[0.08] border border-gold/10">
-            <GraduationCap className="h-4.5 w-4.5 text-gold" />
+      <div className="flex items-center justify-between mb-10">
+        <div className="flex items-center gap-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold/[0.07] border border-gold/10">
+            <GraduationCap className="h-5 w-5 text-gold" />
           </div>
           <div>
-            <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+            <h2 className="font-display text-2xl sm:text-[28px] font-extrabold text-foreground tracking-tight leading-none">
               Meus cursos
             </h2>
-            <p className="text-[11px] text-muted-foreground/40 mt-0.5 tracking-wide">Seus cursos matriculados</p>
+            <p className="text-[11px] text-muted-foreground/35 mt-1 tracking-wide">Seus cursos matriculados</p>
           </div>
         </div>
-        <Link to="/cursos" className="text-[11px] font-bold text-gold/50 uppercase tracking-widest hover:text-gold/80 transition-colors duration-300 flex items-center gap-1">
+        <Link to="/cursos" className="text-[11px] font-bold text-gold/40 uppercase tracking-[0.15em] hover:text-gold/70 transition-colors duration-300 flex items-center gap-1.5">
           Ver todos <ArrowRight className="h-3 w-3" />
         </Link>
       </div>
 
-      <div ref={dragRef} className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth cursor-grab select-none">
+      <div ref={dragRef} className="flex gap-5 sm:gap-6 lg:gap-7 overflow-x-auto pb-6 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth cursor-grab select-none">
         {courses.map((course: any, idx: number) => (
           <motion.div
             key={`mc-${course.id}`}
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
-            className="flex-shrink-0 snap-start w-[280px] sm:w-[340px] md:w-[400px] lg:w-[440px]"
+            className="flex-shrink-0 snap-start w-[300px] sm:w-[360px] md:w-[420px] lg:w-[480px]"
           >
             <MyCoursesCard course={course} />
           </motion.div>
@@ -272,27 +272,27 @@ function MyCoursesCard({ course }: { course: any }) {
     <Link
       to="/cursos/$courseId"
       params={{ courseId: course.id }}
-      className="group relative block rounded-xl overflow-hidden cursor-pointer"
+      className="group relative block rounded-2xl overflow-hidden cursor-pointer"
     >
-      <div className="relative aspect-video overflow-hidden bg-card/10">
+      <div className="relative aspect-video overflow-hidden bg-card/5 shadow-lg shadow-black/20 group-hover:shadow-2xl group-hover:shadow-black/40 transition-shadow duration-500 rounded-2xl">
         {course.cover_image_url ? (
           <img
             src={course.cover_image_url}
             alt={course.title}
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+            className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-[1.12]"
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-card/30 via-muted/10 to-background flex items-center justify-center">
-            <BookOpen className="h-8 w-8 text-muted-foreground/15" />
+          <div className="w-full h-full bg-gradient-to-br from-card/40 via-muted/10 to-background flex items-center justify-center">
+            <BookOpen className="h-10 w-10 text-muted-foreground/10" />
           </div>
         )}
 
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-500" />
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent" />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-500" />
+        <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
         {/* Status badge — top left */}
-        <div className="absolute top-2.5 left-2.5 z-10">
+        <div className="absolute top-3 left-3 z-10">
           {isCompleted ? (
             <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-500/90 px-2.5 py-1 text-[10px] font-bold text-white uppercase tracking-wider backdrop-blur-sm">
               <CheckCircle2 className="h-3 w-3" /> Concluído
@@ -302,25 +302,25 @@ function MyCoursesCard({ course }: { course: any }) {
               <Play className="h-3 w-3 fill-current" /> Em andamento
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2.5 py-1 text-[10px] font-bold text-white uppercase tracking-wider backdrop-blur-sm">
+            <span className="inline-flex items-center gap-1 rounded-lg bg-white/10 px-2.5 py-1 text-[10px] font-bold text-white uppercase tracking-wider backdrop-blur-sm">
               Novo
             </span>
           )}
         </div>
 
-        {/* Play / Continue button on hover */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-400 z-10">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/90 shadow-2xl shadow-gold/40 backdrop-blur-sm scale-75 group-hover:scale-100 transition-transform duration-500 ease-out">
-            <Play className="h-6 w-6 text-gold-foreground fill-gold-foreground ml-0.5" />
+        {/* Play button on hover */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 z-10">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gold shadow-2xl shadow-gold/30 backdrop-blur-sm scale-[0.6] group-hover:scale-100 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
+            <Play className="h-7 w-7 text-gold-foreground fill-gold-foreground ml-0.5" />
           </div>
         </div>
 
         {/* Title + progress */}
-        <div className="absolute inset-x-0 bottom-0 p-4 z-10 translate-y-2 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-          <h3 className="text-sm font-bold text-white line-clamp-2 leading-snug drop-shadow-lg">
+        <div className="absolute inset-x-0 bottom-0 p-5 z-10 translate-y-1 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+          <h3 className="text-[15px] font-bold text-white line-clamp-2 leading-[1.3] drop-shadow-xl tracking-tight">
             {course.title}
           </h3>
-          <p className="text-[11px] text-white/50 mt-1">
+          <p className="text-[11px] text-white/40 mt-1.5">
             {course.completed_lessons}/{course.lesson_count || course.total_lessons} aulas
             {isInProgress && ` • ${progress}%`}
           </p>
@@ -328,16 +328,16 @@ function MyCoursesCard({ course }: { course: any }) {
 
         {/* Progress bar */}
         {(isInProgress || isCompleted) && (
-          <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/10 z-20">
+          <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/[0.06] z-20">
             <div
-              className={`h-full rounded-r-full transition-all duration-700 ${isCompleted ? "bg-emerald-400" : "bg-gold"}`}
+              className={`h-full rounded-r-full transition-all duration-700 ${isCompleted ? "bg-player-completed" : "bg-gold"}`}
               style={{ width: `${Math.min(progress, 100)}%` }}
             />
           </div>
         )}
       </div>
 
-      <div className="absolute inset-0 rounded-xl border border-transparent group-hover:border-gold/30 transition-colors duration-500 pointer-events-none z-20" />
+      <div className="absolute inset-0 rounded-2xl border border-transparent group-hover:border-gold/20 transition-colors duration-500 pointer-events-none z-20" />
     </Link>
   );
 }
@@ -349,33 +349,33 @@ function ContinueWatchingShelf({ courses }: { courses: any[] }) {
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.05 }}
-      className="mb-16"
+      className="mb-20"
     >
-        <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-3.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold/[0.08] border border-gold/10">
-            <PlayCircle className="h-4.5 w-4.5 text-gold" />
+      <div className="flex items-center justify-between mb-10">
+        <div className="flex items-center gap-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold/[0.07] border border-gold/10">
+            <PlayCircle className="h-5 w-5 text-gold" />
           </div>
           <div>
-            <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+            <h2 className="font-display text-2xl sm:text-[28px] font-extrabold text-foreground tracking-tight leading-none">
               Continue assistindo
             </h2>
-            <p className="text-[11px] text-muted-foreground/40 mt-0.5 tracking-wide">Retome de onde parou</p>
+            <p className="text-[11px] text-muted-foreground/35 mt-1 tracking-wide">Retome de onde parou</p>
           </div>
         </div>
-        <Link to="/cursos" className="text-[11px] font-bold text-gold/50 uppercase tracking-widest hover:text-gold/80 transition-colors duration-300 flex items-center gap-1">
+        <Link to="/cursos" className="text-[11px] font-bold text-gold/40 uppercase tracking-[0.15em] hover:text-gold/70 transition-colors duration-300 flex items-center gap-1.5">
           Ver todos <ArrowRight className="h-3 w-3" />
         </Link>
       </div>
 
-      <div ref={dragRef} className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth cursor-grab select-none">
+      <div ref={dragRef} className="flex gap-5 sm:gap-6 lg:gap-7 overflow-x-auto pb-6 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth cursor-grab select-none">
         {courses.map((course: any, idx: number) => (
           <motion.div
             key={`cw-${course.id}`}
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
-            className="flex-shrink-0 snap-start w-[280px] sm:w-[340px] md:w-[400px] lg:w-[440px]"
+            className="flex-shrink-0 snap-start w-[300px] sm:w-[360px] md:w-[420px] lg:w-[480px]"
           >
             <ContinueWatchingCard course={course} />
           </motion.div>
@@ -398,44 +398,44 @@ function ContinueWatchingCard({ course }: { course: any }) {
     <Link
       to={linkTo as any}
       params={linkParams as any}
-      className="group relative block rounded-xl overflow-hidden cursor-pointer"
+      className="group relative block rounded-2xl overflow-hidden cursor-pointer"
     >
-      <div className="relative aspect-video overflow-hidden bg-card/10">
+      <div className="relative aspect-video overflow-hidden bg-card/5 shadow-lg shadow-black/20 group-hover:shadow-2xl group-hover:shadow-black/40 transition-shadow duration-500 rounded-2xl">
         {course.cover_image_url ? (
           <img
             src={course.cover_image_url}
             alt={course.title}
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+            className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-[1.12]"
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-card/30 via-muted/10 to-background flex items-center justify-center">
-            <BookOpen className="h-8 w-8 text-muted-foreground/15" />
+          <div className="w-full h-full bg-gradient-to-br from-card/40 via-muted/10 to-background flex items-center justify-center">
+            <BookOpen className="h-10 w-10 text-muted-foreground/10" />
           </div>
         )}
 
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-500" />
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent" />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-500" />
+        <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
         {/* Play button */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-400 z-10">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/90 shadow-2xl shadow-gold/40 backdrop-blur-sm scale-75 group-hover:scale-100 transition-transform duration-500 ease-out">
-            <Play className="h-6 w-6 text-gold-foreground fill-gold-foreground ml-0.5" />
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 z-10">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gold shadow-2xl shadow-gold/30 backdrop-blur-sm scale-[0.6] group-hover:scale-100 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
+            <Play className="h-7 w-7 text-gold-foreground fill-gold-foreground ml-0.5" />
           </div>
         </div>
 
         {/* Title + progress info */}
-        <div className="absolute inset-x-0 bottom-0 p-4 z-10 translate-y-2 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-          <h3 className="text-sm font-bold text-white line-clamp-2 leading-snug drop-shadow-lg">
+        <div className="absolute inset-x-0 bottom-0 p-5 z-10 translate-y-1 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+          <h3 className="text-[15px] font-bold text-white line-clamp-2 leading-[1.3] drop-shadow-xl tracking-tight">
             {course.title}
           </h3>
-          <p className="text-[11px] text-white/50 mt-1">
+          <p className="text-[11px] text-white/40 mt-1.5">
             {course.completed_lessons}/{course.total_lessons} aulas • {progress}%
           </p>
         </div>
 
         {/* Progress bar */}
-        <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/10 z-20">
+        <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/[0.06] z-20">
           <div
             className="h-full rounded-r-full bg-gold transition-all duration-700"
             style={{ width: `${Math.min(progress, 100)}%` }}
@@ -443,7 +443,7 @@ function ContinueWatchingCard({ course }: { course: any }) {
         </div>
       </div>
 
-      <div className="absolute inset-0 rounded-xl border border-transparent group-hover:border-gold/30 transition-colors duration-500 pointer-events-none z-20" />
+      <div className="absolute inset-0 rounded-2xl border border-transparent group-hover:border-gold/20 transition-colors duration-500 pointer-events-none z-20" />
     </Link>
   );
 }
@@ -463,28 +463,28 @@ function ShelfSection({ shelf, delay, promoBanners, shelfIndex }: {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay }}
-        className="mb-16"
+        className="mb-20"
       >
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+        <div className="flex items-center justify-between mb-10">
+          <h2 className="font-display text-2xl sm:text-[28px] font-extrabold text-foreground tracking-tight leading-none">
             {shelf.name}
           </h2>
           {(shelf.courses?.length ?? 0) > 3 && (
-            <Link to="/cursos" className="text-[11px] font-bold text-gold/50 uppercase tracking-widest hover:text-gold/80 transition-colors duration-300 flex items-center gap-1">
+            <Link to="/cursos" className="text-[11px] font-bold text-gold/40 uppercase tracking-[0.15em] hover:text-gold/70 transition-colors duration-300 flex items-center gap-1.5">
               Ver todos <ArrowRight className="h-3 w-3" />
             </Link>
           )}
         </div>
 
         {/* Horizontal scroll row */}
-        <div ref={dragRef} className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth cursor-grab select-none">
+        <div ref={dragRef} className="flex gap-5 sm:gap-6 lg:gap-7 overflow-x-auto pb-6 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth cursor-grab select-none">
           {(shelf.courses || []).map((course: any, idx: number) => (
             <motion.div
               key={`${shelf.id}-${course.id}`}
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
-              className="flex-shrink-0 snap-start w-[280px] sm:w-[340px] md:w-[400px] lg:w-[440px]"
+              className="flex-shrink-0 snap-start w-[300px] sm:w-[360px] md:w-[420px] lg:w-[480px]"
             >
               <CourseShelfCard
                 course={course}
@@ -502,14 +502,14 @@ function ShelfSection({ shelf, delay, promoBanners, shelfIndex }: {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: delay + 0.1 }}
-          className="mb-16"
+          className="mb-20"
         >
           {banner.link_url ? (
-            <a href={banner.link_url} target="_blank" rel="noopener noreferrer" className="block rounded-2xl overflow-hidden border border-border/15 hover:border-gold/20 transition-all duration-300">
+            <a href={banner.link_url} target="_blank" rel="noopener noreferrer" className="block rounded-2xl overflow-hidden border border-border/10 hover:border-gold/15 transition-all duration-300">
               <img src={banner.image_url} alt={banner.title} className="w-full h-auto object-cover" />
             </a>
           ) : (
-            <div className="rounded-2xl overflow-hidden border border-border/15">
+            <div className="rounded-2xl overflow-hidden border border-border/10">
               <img src={banner.image_url} alt={banner.title} className="w-full h-auto object-cover" />
             </div>
           )}
