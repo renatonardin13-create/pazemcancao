@@ -52,8 +52,8 @@ export const Route = createFileRoute("/_authenticated/cursos/$courseId")({
 function CourseDetailPage() {
   // DEBUG: temporary marker to confirm this is the active component
   const DEBUG_BANNER = (
-    <div className="fixed top-0 left-0 right-0 z-[9999] bg-red-600 text-white text-center py-2 font-bold text-lg tracking-widest">
-      NOVA VERSÃO ATIVA
+    <div className="fixed top-0 left-0 right-0 z-[9999] bg-destructive text-destructive-foreground text-center py-3 font-bold text-xl tracking-widest shadow-lg">
+      🎬 PLAYER NOVA VERSÃO ATIVA 🎬
     </div>
   );
   const { courseId } = Route.useParams();
