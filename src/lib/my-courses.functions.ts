@@ -9,7 +9,7 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
     // Get all enrollments for the authenticated user (not just active — we filter below)
     const { data: enrollments } = await supabase
       .from('enrollments')
-      .select('course_id, progress_percentage, status, enrolled_at, access_origin, granted_at, expires_at')
+      .select('course_id, progress_percentage, status, enrolled_at, access_origin, granted_at, expires_at, updated_at')
       .eq('user_id', userId)
       .order('granted_at', { ascending: false })
       .order('enrolled_at', { ascending: false });
@@ -72,20 +72,25 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
     // Get progress per course
     const { data: progress } = await supabase
       .from('lesson_progress')
-      .select('course_id, lesson_id, completed, updated_at')
+      .select('course_id, lesson_id, completed')
       .eq('user_id', userId)
       .in('course_id', courseIds);
 
     const completedLessonsMap = new Map<string, number>();
-    const lastAccessMap = new Map<string, string>();
     for (const p of progress || []) {
       if (p.completed) {
         completedLessonsMap.set(p.course_id, (completedLessonsMap.get(p.course_id) || 0) + 1);
       }
-      // Track most recent activity per course
-      const prev = lastAccessMap.get(p.course_id);
-      if (!prev || p.updated_at > prev) {
-        lastAccessMap.set(p.course_id, p.updated_at);
+    }
+
+    // Use enrollment updated_at as last access timestamp (updated on every course page open)
+    const lastAccessMap = new Map<string, string>();
+    for (const enrollment of uniqueEnrollments) {
+      if (enrollment.course_id) {
+        const updatedAt = (enrollment as any).updated_at;
+        if (updatedAt) {
+          lastAccessMap.set(enrollment.course_id, updatedAt);
+        }
       }
     }
 

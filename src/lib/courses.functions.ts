@@ -85,6 +85,14 @@ export const getCourseDetail = createServerFn({ method: 'POST' })
       .eq('status', 'active')
       .maybeSingle();
 
+    // Track course access — update enrollment's updated_at to feed "Continue de onde parou"
+    if (enrollment) {
+      await supabase
+        .from('enrollments')
+        .update({ updated_at: new Date().toISOString() })
+        .eq('id', enrollment.id);
+    }
+
     const { data: integration } = await supabaseAdmin
       .from('course_integrations')
       .select('is_enabled, checkout_url, external_product_name')
