@@ -487,7 +487,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
         .eq('status', 'active');
     }
 
-    await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Access expired: ${status}` });
+    await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Access expired: ${status}`, ...audit, isSuccess: true });
     return jsonResponse({ success: true, message: `Access expired: ${status}` });
   }
 
