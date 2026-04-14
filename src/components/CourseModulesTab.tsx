@@ -1013,10 +1013,10 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                     />
                   </label>
                 )}
-              </div>
               {lesContentError && (lesContentType === "pdf" || lesContentType === "file") && (
                 <p className="text-[0.8rem] font-medium text-destructive">{lesContentError}</p>
               )}
+              </div>
             )}
 
             {lesContentType === "link" && (
