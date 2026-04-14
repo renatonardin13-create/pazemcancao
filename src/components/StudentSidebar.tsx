@@ -66,10 +66,18 @@ export function StudentSidebar() {
   }, [allTracks]);
 
   const visibleCategories = useMemo(() => {
+    const seen = new Set<string>();
     return categories.filter((cat: any) => {
       const slug = (cat.slug || cat.name.toLowerCase()).toLowerCase();
       const name = cat.name.toLowerCase();
-      return categoriesWithTracks.has(slug) || categoriesWithTracks.has(name);
+      // Strip emoji prefix for matching
+      const plainName = name.replace(/^[^\p{L}\p{N}]+/u, "").trim();
+      const hasTrack = categoriesWithTracks.has(slug) || categoriesWithTracks.has(name);
+      if (!hasTrack) return false;
+      // Deduplicate by slug
+      if (seen.has(slug)) return false;
+      seen.add(slug);
+      return true;
     });
   }, [categories, categoriesWithTracks]);
 
@@ -162,8 +170,9 @@ export function StudentSidebar() {
                  {visibleCategories
                    .filter((cat: any) => {
                      const slug = (cat.slug || cat.name.toLowerCase()).toLowerCase();
-                     const name = cat.name.toLowerCase();
-                     return slug !== "destaques" && name !== "destaques" && name !== "destaques (top 10)";
+                     const plainName = cat.name.toLowerCase().replace(/^[^\p{L}\p{N}]+/u, "").trim();
+                     return slug !== "destaques" && slug !== "top-10-mais-fortes"
+                       && !plainName.startsWith("destaques");
                    })
                    .map((cat: any) => {
                   const catSlug = cat.slug || cat.name.toLowerCase();
