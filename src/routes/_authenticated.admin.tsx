@@ -72,10 +72,10 @@ function AdminLayout() {
 
         <div className="flex-1 flex flex-col min-w-0">
           {/* Top bar */}
-          <header className="sticky top-0 z-40 h-14 flex items-center gap-3 border-b border-border/30 bg-background/80 backdrop-blur-xl px-4">
+          <header className="sticky top-0 z-40 h-14 flex items-center gap-2 sm:gap-3 border-b border-border/30 bg-background/80 backdrop-blur-xl px-3 sm:px-4">
             <SidebarTrigger className="text-muted-foreground/70 hover:text-muted-foreground/70" />
-            <div className="h-4 w-px bg-border/20" />
-            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground/60">
+            <div className="h-4 w-px bg-border/20 hidden sm:block" />
+            <span className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground/60 hidden md:inline">
               Painel Administrativo
             </span>
             <div className="ml-auto flex items-center gap-3">
