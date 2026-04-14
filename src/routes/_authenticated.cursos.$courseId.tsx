@@ -283,7 +283,7 @@ function CourseDetailPage() {
           {course.banner_image_url || course.cover_image_url ? (
             <>
               <img
-                src={course.banner_image_url || course.cover_image_url}
+                src={course.banner_image_url ?? course.cover_image_url ?? undefined}
                 alt={course.title}
                 className="absolute inset-0 h-full w-full object-cover"
               />
