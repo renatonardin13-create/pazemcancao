@@ -747,6 +747,7 @@ function LessonDetailPage() {
                       courseId={courseId}
                       isActive={l.id === lessonId}
                       isCompleted={isLessonCompleted(l.id)}
+                      isNext={l.id === nextLesson?.id}
                     />
                   ))
                 ) : (
@@ -784,6 +785,7 @@ function LessonDetailPage() {
                               courseId={courseId}
                               isActive={l.id === lessonId}
                               isCompleted={isLessonCompleted(l.id)}
+                              isNext={l.id === nextLesson?.id}
                             />
                           ))}
                         </ModuleSection>
@@ -806,6 +808,7 @@ function LessonDetailPage() {
                           courseId={courseId}
                           isActive={l.id === lessonId}
                           isCompleted={isLessonCompleted(l.id)}
+                          isNext={l.id === nextLesson?.id}
                         />
                       ))}
                     </ModuleSection>
