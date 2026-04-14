@@ -228,13 +228,19 @@ export default function AdminVitrinePage() {
     queryFn: () => getPlatformSettings(),
   });
 
+  // Load student-facing shelves for accurate preview
+  const { data: studentShelvesData } = useQuery({
+    queryKey: ["student-shelves-preview"],
+    queryFn: () => getStudentShelves(),
+    staleTime: 30_000,
+  });
+
   // Hydrate banner state from saved settings
   const bannerSettingsLoaded = useRef(false);
-  if (settingsData?.settings?.hero_banner && !bannerSettingsLoaded.current) {
-    const saved = settingsData.settings.hero_banner;
-    bannerSettingsLoaded.current = true;
-    // Use setTimeout to avoid setting state during render
-    setTimeout(() => {
+  useEffect(() => {
+    if (settingsData?.settings?.hero_banner && !bannerSettingsLoaded.current) {
+      const saved = settingsData.settings.hero_banner;
+      bannerSettingsLoaded.current = true;
       if (saved.enabled !== undefined) setBannerEnabled(saved.enabled);
       if (saved.title) setBannerTitle(saved.title);
       if (saved.subtitle) setBannerSubtitle(saved.subtitle);
@@ -242,8 +248,8 @@ export default function AdminVitrinePage() {
       if (saved.course_id) setBannerCourseId(saved.course_id);
       if (saved.fit) setBannerFit(saved.fit);
       if (saved.aspect) setBannerAspect(saved.aspect);
-    }, 0);
-  }
+    }
+  }, [settingsData]);
 
   const shelves = data?.shelves ?? [];
   const courses = coursesData?.courses ?? [];
