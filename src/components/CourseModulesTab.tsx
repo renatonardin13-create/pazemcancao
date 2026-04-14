@@ -148,23 +148,21 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   });
 
   const createLesM = useMutation({
-    mutationFn: (input: { moduleId: string; title: string; description?: string; video_url?: string; content_url?: string; content_type?: string; is_free_preview?: boolean; duration?: string }) =>
+    mutationFn: (input: { moduleId: string; title: string; description?: string; video_url?: string; content_url?: string; content_type?: string; is_free_preview?: boolean; duration?: string; thumbnail_url?: string; status?: string }) =>
       createLesson({ data: { courseId, ...input } }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
       toast.success("Aula criada com sucesso");
-      setLessonDialog({ open: false });
     },
     onError: (e: Error) => toast.error(e.message),
   });
 
   const updateLesM = useMutation({
-    mutationFn: (input: { id: string; title?: string; description?: string; video_url?: string; content_url?: string; content_type?: string; is_free_preview?: boolean; duration?: string }) =>
+    mutationFn: (input: { id: string; title?: string; description?: string; video_url?: string; content_url?: string; content_type?: string; is_free_preview?: boolean; duration?: string; thumbnail_url?: string; status?: string }) =>
       updateLesson({ data: input }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey });
       toast.success("Aula atualizada");
-      setLessonDialog({ open: false });
     },
     onError: (e: Error) => toast.error(e.message),
   });
@@ -325,8 +323,8 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
     setLesFreePreview(lesson.is_free_preview || false);
     setLesDuration(lesson.duration || "0:00");
     setLesContentType(inferContentType(lesson));
-    setLesThumbnailUrl("");
-    setLesPublished(true);
+    setLesThumbnailUrl(lesson.thumbnail_url || "");
+    setLesPublished((lesson.status || "published") === "published");
     setLessonDialog({ open: true, moduleId: lesson.module_id, editId: lesson.id });
   };
 
@@ -353,48 +351,60 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
     }
   };
 
-  const handleSaveLesson = () => {
-    if (!lesTitle.trim()) {
-      setLesTitleError("O nome da aula é obrigatório");
-      toast.error("O nome da aula é obrigatório");
-      return;
-    }
-    if (lesTitle.trim().length < 2) {
-      setLesTitleError("O nome deve ter pelo menos 2 caracteres");
-      toast.error("O nome deve ter pelo menos 2 caracteres");
-      return;
-    }
-    if ((lesContentType === "pdf" || lesContentType === "file") && !lesContentUrl.trim()) {
-      toast.error("Envie o arquivo antes de salvar a aula");
-      return;
-    }
-    if (lesContentType === "video" && !lesVideoUrl.trim()) {
-      toast.error("Informe a URL ou código embed do vídeo");
-      return;
-    }
-    if (lesContentType === "link" && !lesContentUrl.trim()) {
-      toast.error("Informe a URL externa");
-      return;
-    }
-    if (lesContentType === "link" && lesContentUrl.trim() && !/^https?:\/\/.+/i.test(lesContentUrl.trim())) {
-      toast.error("A URL deve começar com http:// ou https://");
-      return;
-    }
-    if (!lessonDialog.moduleId) return;
-    setLesTitleError("");
-    const payload: any = {
-      title: lesTitle.trim(),
-      description: lesDesc.trim() || undefined,
-      video_url: lesContentType === "video" ? (lesVideoUrl.trim() || undefined) : (lessonDialog.editId ? "" : undefined),
-      content_url: lesContentType !== "video" ? (lesContentUrl.trim() || undefined) : (lessonDialog.editId ? "" : undefined),
-      content_type: lesContentType,
-      is_free_preview: lesFreePreview,
-      duration: lesDuration || "0:00",
-    };
-    if (lessonDialog.editId) {
-      updateLesM.mutate({ id: lessonDialog.editId, ...payload });
-    } else {
-      createLesM.mutate({ moduleId: lessonDialog.moduleId, ...payload });
+  const handleSaveLesson = async () => {
+    try {
+      if (!lesTitle.trim()) {
+        setLesTitleError("O nome da aula é obrigatório");
+        toast.error("O nome da aula é obrigatório");
+        return;
+      }
+      if (lesTitle.trim().length < 2) {
+        setLesTitleError("O nome deve ter pelo menos 2 caracteres");
+        toast.error("O nome deve ter pelo menos 2 caracteres");
+        return;
+      }
+      if ((lesContentType === "pdf" || lesContentType === "file") && !lesContentUrl.trim()) {
+        toast.error("Envie o arquivo antes de salvar a aula");
+        return;
+      }
+      if (lesContentType === "video" && !lesVideoUrl.trim()) {
+        toast.error("Informe a URL ou código embed do vídeo");
+        return;
+      }
+      if (lesContentType === "link" && !lesContentUrl.trim()) {
+        toast.error("Informe a URL externa");
+        return;
+      }
+      if (lesContentType === "link" && lesContentUrl.trim() && !/^https?:\/\/.+/i.test(lesContentUrl.trim())) {
+        toast.error("A URL deve começar com http:// ou https://");
+        return;
+      }
+      if (!lessonDialog.moduleId) return;
+
+      setLesTitleError("");
+
+      const payload: any = {
+        title: lesTitle.trim(),
+        description: lesDesc.trim() || undefined,
+        video_url: lesContentType === "video" ? (lesVideoUrl.trim() || undefined) : (lessonDialog.editId ? "" : undefined),
+        content_url: lesContentType !== "video" ? (lesContentUrl.trim() || undefined) : (lessonDialog.editId ? "" : undefined),
+        content_type: lesContentType,
+        is_free_preview: lesFreePreview,
+        duration: lesDuration || "0:00",
+        thumbnail_url: lesThumbnailUrl.trim() || undefined,
+        status: lesPublished ? "published" : "draft",
+      };
+
+      if (lessonDialog.editId) {
+        await updateLesM.mutateAsync({ id: lessonDialog.editId, ...payload });
+      } else {
+        await createLesM.mutateAsync({ moduleId: lessonDialog.moduleId, ...payload });
+      }
+
+      setLessonDialog({ open: false });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Erro ao salvar a aula";
+      toast.error(message);
     }
   };
 
@@ -1175,10 +1185,10 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
             </Button>
             <Button
               onClick={handleSaveLesson}
-              disabled={!lesTitle.trim() || createLesM.isPending || updateLesM.isPending}
+              disabled={!lesTitle.trim() || createLesM.isPending || updateLesM.isPending || lesFileUploading}
               className="bg-gold/90 text-gold-foreground hover:bg-gold font-semibold"
             >
-              {(createLesM.isPending || updateLesM.isPending) && (
+              {(createLesM.isPending || updateLesM.isPending || lesFileUploading) && (
                 <Loader2 className="h-3.5 w-3.5 mr-1 animate-spin" />
               )}
               {lessonDialog.editId ? "Salvar Alterações" : "Criar Aula"}
