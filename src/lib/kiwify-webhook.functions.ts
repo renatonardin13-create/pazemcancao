@@ -401,22 +401,33 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
         const authUser = authUsers.users.find((user) => user.email?.toLowerCase() === customerEmail);
 
         if (authUser) {
-          const { error: enrollmentError } = await supabaseAdmin
+          // Check if enrollment already exists
+          const { data: existingEnrollment } = await supabaseAdmin
             .from('enrollments')
-            .upsert(
-              {
+            .select('id')
+            .eq('user_id', authUser.id)
+            .eq('course_id', resolvedCourseId)
+            .maybeSingle();
+
+          if (existingEnrollment) {
+            await supabaseAdmin
+              .from('enrollments')
+              .update({ status: 'active', access_origin: 'webhook', granted_at: new Date().toISOString() })
+              .eq('id', existingEnrollment.id);
+          } else {
+            const { error: enrollmentError } = await supabaseAdmin
+              .from('enrollments')
+              .insert({
                 user_id: authUser.id,
                 course_id: resolvedCourseId,
                 email: customerEmail,
                 access_origin: 'webhook',
                 status: 'active',
                 granted_at: new Date().toISOString(),
-              },
-              { onConflict: 'user_id,course_id' }
-            );
-
-          if (!enrollmentError) {
-            linkedCourseId = resolvedCourseId;
+              });
+            if (enrollmentError) {
+              console.error('[webhook] Enrollment insert error:', enrollmentError.message);
+            }
           }
         }
       }
