@@ -648,7 +648,7 @@ function LessonDetailPage() {
                 )}
               </div>
             </motion.div>
-          )
+          )}
 
           {/* ─── Lesson info — refined ─── */}
           {!accessRestricted && (
