@@ -183,7 +183,7 @@ function MeusCoursosPage() {
                   ))}
 
                   {/* ═══ BIBLIOTECA RESUMO ═══ */}
-                  <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} className="mb-10 rounded-2xl border border-border/20 bg-card/8 p-5 sm:p-6">
+                  <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} className="mb-16 rounded-2xl border border-border/20 bg-card/8 p-5 sm:p-6">
                     <div className="flex items-center gap-3 mb-4">
                       <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
                         <Layers className="h-4 w-4 text-primary/70" />
@@ -225,9 +225,9 @@ function MyCoursesShelf({ courses }: { courses: any[] }) {
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.1 }}
-      className="mb-12"
+      className="mb-16"
     >
-      <div className="flex items-end justify-between mb-5">
+      <div className="flex items-end justify-between mb-7">
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.08] border border-gold/10">
             <GraduationCap className="h-4 w-4 text-gold" />
@@ -340,9 +340,9 @@ function ContinueWatchingShelf({ courses }: { courses: any[] }) {
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.05 }}
-      className="mb-12"
+      className="mb-16"
     >
-      <div className="flex items-end justify-between mb-5">
+      <div className="flex items-end justify-between mb-7">
         <div className="flex items-center gap-3">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.08] border border-gold/10">
             <PlayCircle className="h-4 w-4 text-gold" />
@@ -447,10 +447,10 @@ function ShelfSection({ shelf, delay, promoBanners, shelfIndex }: {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay }}
-        className="mb-12"
+        className="mb-16"
       >
         {/* Shelf header */}
-        <div className="flex items-end justify-between mb-5">
+        <div className="flex items-end justify-between mb-7">
           <h2 className="font-display text-xl sm:text-2xl font-bold text-foreground/90 tracking-tight">
             {shelf.name}
           </h2>
@@ -487,7 +487,7 @@ function ShelfSection({ shelf, delay, promoBanners, shelfIndex }: {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: delay + 0.1 }}
-          className="mb-12"
+          className="mb-16"
         >
           {banner.link_url ? (
             <a href={banner.link_url} target="_blank" rel="noopener noreferrer" className="block rounded-2xl overflow-hidden border border-border/15 hover:border-gold/20 transition-all duration-300">
