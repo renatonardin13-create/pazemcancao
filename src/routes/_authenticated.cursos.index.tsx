@@ -166,9 +166,14 @@ function MeusCoursosPage() {
                 <CardGridSkeleton count={6} />
               ) : (
                 <>
+                  {/* ═══ CONTINUE ASSISTINDO ═══ */}
+                  {continueWatchingCourses.length > 0 && (
+                    <ContinueWatchingShelf courses={continueWatchingCourses} />
+                  )}
+
                   {/* ═══ PRATELEIRAS DO ADMIN ═══ */}
                   {shelves.map((shelf: any, shelfIdx: number) => (
-                    <ShelfSection key={shelf.id} shelf={shelf} delay={0.1 + shelfIdx * 0.05} promoBanners={promoBanners} shelfIndex={shelfIdx} />
+                    <ShelfSection key={shelf.id} shelf={shelf} delay={0.15 + shelfIdx * 0.05} promoBanners={promoBanners} shelfIndex={shelfIdx} />
                   ))}
 
                   {/* ═══ BIBLIOTECA RESUMO ═══ */}
