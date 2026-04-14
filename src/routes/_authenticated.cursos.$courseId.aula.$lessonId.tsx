@@ -76,6 +76,7 @@ function LessonDetailPage() {
       queryClient.invalidateQueries({ queryKey: ["course-detail", courseId] });
       toast.success("Aula concluída! ✓");
       setShowNextUp(true);
+      setCountdown(5);
     },
   });
 
@@ -87,6 +88,48 @@ function LessonDetailPage() {
       videoRef.current = null;
     };
   }, [lessonId]);
+
+  // Reset countdown on lesson change
+  useEffect(() => {
+    setCountdown(null);
+    setShowNextUp(false);
+    if (countdownRef.current) {
+      clearInterval(countdownRef.current);
+      countdownRef.current = null;
+    }
+  }, [lessonId]);
+
+  // Countdown timer effect
+  useEffect(() => {
+    if (countdown === null || countdown <= 0) return;
+
+    countdownRef.current = setInterval(() => {
+      setCountdown((prev) => {
+        if (prev === null || prev <= 1) {
+          if (countdownRef.current) clearInterval(countdownRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      if (countdownRef.current) {
+        clearInterval(countdownRef.current);
+        countdownRef.current = null;
+      }
+    };
+  }, [countdown !== null && countdown > 0]);
+
+  // Navigate when countdown reaches 0
+  useEffect(() => {
+    if (countdown === 0 && data?.nextLesson) {
+      navigate({
+        to: "/cursos/$courseId/aula/$lessonId",
+        params: { courseId, lessonId: data.nextLesson.id },
+      });
+    }
+  }, [countdown, data?.nextLesson, courseId, navigate]);
 
   if (isLoading) {
     return (
