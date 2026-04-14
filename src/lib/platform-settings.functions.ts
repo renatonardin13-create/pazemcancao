@@ -21,11 +21,13 @@ export const getPlatformSettings = createServerFn({ method: 'POST' })
 export const updatePlatformSetting = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { key: string; value: Record<string, any> }) => input)
-  .handler(async ({ data, context }) => {
-    const { error } = await context.supabase
+  .handler(async ({ data }) => {
+    const { error } = await supabaseAdmin
       .from('platform_settings')
-      .update({ value: data.value as any, updated_at: new Date().toISOString() })
-      .eq('key', data.key);
+      .upsert(
+        { key: data.key, value: data.value as any, updated_at: new Date().toISOString() },
+        { onConflict: 'key' }
+      );
 
     if (error) throw new Error(error.message);
     return { success: true };
