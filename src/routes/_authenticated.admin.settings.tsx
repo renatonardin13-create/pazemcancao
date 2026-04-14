@@ -122,11 +122,13 @@ function BrandingTab({ settings, onSave, saving }: { settings: any; onSave: (v: 
   const [name, setName] = useState(settings.platform_name || "");
   const [logoUrl, setLogoUrl] = useState(settings.logo_url || "");
   const [faviconUrl, setFaviconUrl] = useState(settings.favicon_url || "");
+  const [uploading, setUploading] = useState<"logo" | "favicon" | null>(null);
   const logoRef = useRef<HTMLInputElement>(null);
   const faviconRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = async (file: File, type: "logo" | "favicon") => {
     if (file.size > 2 * 1024 * 1024) { toast.error("Arquivo muito grande (máx 2MB)"); return; }
+    setUploading(type);
     const reader = new FileReader();
     reader.onload = async () => {
       const base64 = (reader.result as string).split(",")[1];
@@ -136,8 +138,13 @@ function BrandingTab({ settings, onSave, saving }: { settings: any; onSave: (v: 
         });
         if (type === "logo") setLogoUrl(res.url);
         else setFaviconUrl(res.url);
-        toast.success(`${type === "logo" ? "Logo" : "Favicon"} enviado!`);
-      } catch (err: any) { toast.error(err.message); }
+        toast.success(`${type === "logo" ? "Logo" : "Favicon"} enviado com sucesso!`);
+      } catch (err: any) { toast.error(err.message || "Erro ao enviar arquivo"); }
+      finally { setUploading(null); }
+    };
+    reader.onerror = () => {
+      toast.error("Erro ao ler arquivo");
+      setUploading(null);
     };
     reader.readAsDataURL(file);
   };
@@ -151,11 +158,25 @@ function BrandingTab({ settings, onSave, saving }: { settings: any; onSave: (v: 
             <p className="text-sm text-muted-foreground">Faça upload do logo que aparecerá no sidebar e área do aluno</p>
           </div>
           <div
-            className="border-2 border-dashed border-border/30 rounded-lg p-8 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-border/50 transition-colors min-h-[180px]"
-            onClick={() => logoRef.current?.click()}
+            className="border-2 border-dashed border-border/30 rounded-lg p-8 flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-border/50 transition-colors min-h-[180px] relative"
+            onClick={() => !uploading && logoRef.current?.click()}
           >
+            {uploading === "logo" && (
+              <div className="absolute inset-0 bg-background/60 flex items-center justify-center rounded-lg z-10">
+                <Loader2 className="h-6 w-6 animate-spin text-foreground/60" />
+              </div>
+            )}
             {logoUrl ? (
-              <img src={logoUrl} alt="Logo" className="max-h-20 object-contain" />
+              <>
+                <img src={logoUrl} alt="Logo" className="max-h-20 object-contain" />
+                <button
+                  type="button"
+                  onClick={(e) => { e.stopPropagation(); setLogoUrl(""); }}
+                  className="mt-2 text-xs text-destructive/60 hover:text-destructive flex items-center gap-1"
+                >
+                  <AlertTriangle className="h-3 w-3" /> Remover logo
+                </button>
+              </>
             ) : (
               <>
                 <Upload className="h-8 w-8 text-muted-foreground/40" />
@@ -182,11 +203,25 @@ function BrandingTab({ settings, onSave, saving }: { settings: any; onSave: (v: 
             <div>
               <Label className="text-sm font-semibold">Favicon</Label>
               <div
-                className="mt-1.5 flex items-center gap-3 p-3 border border-border/20 rounded-lg cursor-pointer hover:border-border/40 transition-colors"
-                onClick={() => faviconRef.current?.click()}
+                className="mt-1.5 flex items-center gap-3 p-3 border border-border/20 rounded-lg cursor-pointer hover:border-border/40 transition-colors relative"
+                onClick={() => !uploading && faviconRef.current?.click()}
               >
+                {uploading === "favicon" && (
+                  <div className="absolute inset-0 bg-background/60 flex items-center justify-center rounded-lg z-10">
+                    <Loader2 className="h-4 w-4 animate-spin text-foreground/60" />
+                  </div>
+                )}
                 {faviconUrl ? (
-                  <img src={faviconUrl} alt="Favicon" className="h-8 w-8 object-contain" />
+                  <div className="flex items-center gap-3">
+                    <img src={faviconUrl} alt="Favicon" className="h-8 w-8 object-contain" />
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); setFaviconUrl(""); }}
+                      className="text-xs text-destructive/60 hover:text-destructive"
+                    >
+                      Remover
+                    </button>
+                  </div>
                 ) : (
                   <div className="h-8 w-8 rounded border border-dashed border-border/30 flex items-center justify-center">
                     <Upload className="h-4 w-4 text-muted-foreground/40" />
@@ -200,7 +235,7 @@ function BrandingTab({ settings, onSave, saving }: { settings: any; onSave: (v: 
               <input ref={faviconRef} type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0], "favicon")} />
             </div>
           </div>
-          <Button onClick={() => onSave({ platform_name: name, logo_url: logoUrl || null, favicon_url: faviconUrl || null })} disabled={saving} className="w-full gap-2">
+          <Button onClick={() => onSave({ platform_name: name, logo_url: logoUrl || null, favicon_url: faviconUrl || null })} disabled={saving || !!uploading} className="w-full gap-2">
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Salvar Identidade Visual
           </Button>
         </CardContent>
