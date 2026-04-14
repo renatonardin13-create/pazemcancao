@@ -35,6 +35,7 @@ import {
   Sparkles,
   Search,
   Share2,
+  List,
 } from "lucide-react";
 
 export const Route = createFileRoute(
@@ -52,6 +53,7 @@ function LessonDetailPage() {
   const { courseId, lessonId } = Route.useParams();
   const queryClient = useQueryClient();
   const [searchQuery, setSearchQuery] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["lesson-detail", courseId, lessonId],
@@ -533,23 +535,25 @@ function LessonDetailPage() {
           {/* Bottom navigation */}
           {!accessRestricted && (
             <div className="border-t border-border/20 bg-background/95 backdrop-blur-xl mt-auto">
-              <div className="flex items-center justify-center gap-3 px-4 sm:px-6 py-3">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 px-3 sm:px-6 py-3 flex-wrap">
                 {prevLesson ? (
                   <Link
                     to="/cursos/$courseId/aula/$lessonId"
                     params={{ courseId, lessonId: prevLesson.id }}
-                    className="flex items-center gap-2 rounded-xl border border-border/25 bg-card/10 px-5 py-2.5 text-[12px] font-medium text-muted-foreground/60 hover:bg-card/20 hover:text-foreground/70 transition-all"
+                    className="flex items-center gap-1.5 sm:gap-2 rounded-xl border border-border/25 bg-card/10 px-3 sm:px-5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] font-medium text-muted-foreground/60 hover:bg-card/20 hover:text-foreground/70 transition-all"
                   >
-                    <ChevronLeft className="h-3.5 w-3.5" />
-                    Anterior
+                    <ChevronLeft className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                    <span className="hidden sm:inline">Anterior</span>
+                    <span className="sm:hidden">Ant.</span>
                   </Link>
                 ) : (
                   <button
                     disabled
-                    className="flex items-center gap-2 rounded-xl border border-border/10 bg-card/5 px-5 py-2.5 text-[12px] font-medium text-muted-foreground/25 cursor-not-allowed"
+                    className="flex items-center gap-1.5 sm:gap-2 rounded-xl border border-border/10 bg-card/5 px-3 sm:px-5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] font-medium text-muted-foreground/25 cursor-not-allowed"
                   >
-                    <ChevronLeft className="h-3.5 w-3.5" />
-                    Anterior
+                    <ChevronLeft className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                    <span className="hidden sm:inline">Anterior</span>
+                    <span className="sm:hidden">Ant.</span>
                   </button>
                 )}
 
@@ -565,18 +569,19 @@ function LessonDetailPage() {
                       }
                     }}
                     disabled={progressMutation.isPending || isCompleted}
-                    className={`gap-2 px-6 text-[12px] font-bold uppercase tracking-wider ${
+                    size="sm"
+                    className={`gap-1.5 sm:gap-2 px-3 sm:px-6 text-[11px] sm:text-[12px] font-bold uppercase tracking-wider ${
                       isCompleted
                         ? "bg-emerald-500/15 text-emerald-400/70 border border-emerald-500/15 hover:bg-emerald-500/20"
                         : "bg-gold/90 text-gold-foreground hover:bg-gold"
                     }`}
                     variant={isCompleted ? "outline" : "default"}
                   >
-                    <CheckCircle2 className="h-4 w-4" />
+                    <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     {isCompleted
                       ? "Concluída"
                       : progressMutation.isPending
-                        ? "Salvando..."
+                        ? "..."
                         : "Concluir"}
                   </Button>
                 )}
@@ -585,18 +590,20 @@ function LessonDetailPage() {
                   <Link
                     to="/cursos/$courseId/aula/$lessonId"
                     params={{ courseId, lessonId: nextLesson.id }}
-                    className="flex items-center gap-2 rounded-xl border border-gold/25 bg-gold/[0.08] px-5 py-2.5 text-[12px] font-medium text-gold/70 hover:bg-gold/15 hover:text-gold transition-all"
+                    className="flex items-center gap-1.5 sm:gap-2 rounded-xl border border-gold/25 bg-gold/[0.08] px-3 sm:px-5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] font-medium text-gold/70 hover:bg-gold/15 hover:text-gold transition-all"
                   >
-                    Próximo
-                    <ArrowRight className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Próximo</span>
+                    <span className="sm:hidden">Próx.</span>
+                    <ArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                   </Link>
                 ) : (
                   <button
                     disabled
-                    className="flex items-center gap-2 rounded-xl border border-border/10 bg-card/5 px-5 py-2.5 text-[12px] font-medium text-muted-foreground/25 cursor-not-allowed"
+                    className="flex items-center gap-1.5 sm:gap-2 rounded-xl border border-border/10 bg-card/5 px-3 sm:px-5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] font-medium text-muted-foreground/25 cursor-not-allowed"
                   >
-                    Próximo
-                    <ArrowRight className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Próximo</span>
+                    <span className="sm:hidden">Próx.</span>
+                    <ArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                   </button>
                 )}
               </div>
@@ -606,123 +613,141 @@ function LessonDetailPage() {
 
         {/* Right Sidebar - Playlist */}
         <aside className="w-full lg:w-[340px] xl:w-[380px] shrink-0 border-t lg:border-t-0 lg:border-l border-player-sidebar-border bg-player-sidebar-bg lg:overflow-y-auto lg:max-h-[calc(100vh-56px)] lg:sticky lg:top-14">
-          {/* Sidebar header */}
-          <div className="p-4 border-b border-player-sidebar-border">
-            <div className="flex items-center justify-between mb-1">
-              <h3 className="text-sm font-bold text-foreground/80">Aulas</h3>
-              <span className="text-sm font-bold text-gold">
-                {progressPercent}%
-              </span>
+          {/* Mobile toggle */}
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="flex lg:hidden items-center justify-between w-full px-4 py-3 text-sm font-semibold text-foreground/70 active:bg-card/10"
+          >
+            <div className="flex items-center gap-2">
+              <List className="h-4 w-4 text-gold/60" />
+              <span>Playlist · {completedCount}/{totalLessons}</span>
             </div>
-            <p className="text-xs text-muted-foreground/50 mb-3">
-              {completedCount}/{totalLessons} assistidas
-            </p>
-            <Progress value={progressPercent} className="h-1.5 mb-3" />
-
-            {isCourseCompleted && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="flex items-center justify-center gap-2 rounded-lg bg-player-completed/10 border border-player-completed/15 py-2 px-3 mb-3"
-              >
-                <Award className="h-4 w-4 text-player-completed/70" />
-                <span className="text-xs font-semibold text-player-completed/70">
-                  Curso concluído!
-                </span>
-              </motion.div>
-            )}
-
-            {/* Search */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/40" />
-              <Input
-                placeholder="Buscar nesta playlist..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-9 h-9 text-xs bg-card/10 border-border/20 placeholder:text-muted-foreground/30"
-              />
-            </div>
-          </div>
-
-          {/* Lesson list */}
-          <div className="divide-y divide-border/6">
-            {filteredBySearch ? (
-              filteredBySearch.length > 0 ? (
-                filteredBySearch.map((l: any) => (
-                  <LessonSidebarItem
-                    key={l.id}
-                    lesson={l}
-                    courseId={courseId}
-                    isActive={l.id === lessonId}
-                    isCompleted={isLessonCompleted(l.id)}
-                    courseCoverUrl={course.cover_image_url}
-                  />
-                ))
-              ) : (
-                <div className="p-6 text-center">
-                  <p className="text-xs text-muted-foreground/40">
-                    Nenhuma aula encontrada
-                  </p>
-                </div>
-              )
+            {sidebarOpen ? (
+              <ChevronUp className="h-4 w-4 text-muted-foreground/50" />
             ) : (
-              <>
-                {modules.length > 0 &&
-                  modules.map((mod: any) => {
-                    const modLessons = (moduleMap[mod.id] || []) as any[];
-                    if (modLessons.length === 0) return null;
-                    const modCompleted = modLessons.filter((l: any) =>
-                      isLessonCompleted(l.id)
-                    ).length;
-                    const hasActiveLesson = modLessons.some(
-                      (l: any) => l.id === lessonId
-                    );
-
-                    return (
-                      <ModuleSection
-                        key={mod.id}
-                        title={mod.title}
-                        completedCount={modCompleted}
-                        totalCount={modLessons.length}
-                        defaultOpen={hasActiveLesson}
-                      >
-                        {modLessons.map((l: any) => (
-                          <LessonSidebarItem
-                            key={l.id}
-                            lesson={l}
-                            courseId={courseId}
-                            isActive={l.id === lessonId}
-                            isCompleted={isLessonCompleted(l.id)}
-                            courseCoverUrl={course.cover_image_url}
-                          />
-                        ))}
-                      </ModuleSection>
-                    );
-                  })}
-
-                {unmoduled.length > 0 && (
-                  <ModuleSection
-                    title="Aulas"
-                    completedCount={
-                      unmoduled.filter((l: any) => isLessonCompleted(l.id)).length
-                    }
-                    totalCount={unmoduled.length}
-                    defaultOpen
-                  >
-                    {unmoduled.map((l: any) => (
-                      <LessonSidebarItem
-                        key={l.id}
-                        lesson={l}
-                        courseId={courseId}
-                        isActive={l.id === lessonId}
-                        isCompleted={isLessonCompleted(l.id)}
-                        courseCoverUrl={course.cover_image_url}
-                      />
-                    ))}
-                  </ModuleSection>
-                )}
-              </>
+              <ChevronDown className="h-4 w-4 text-muted-foreground/50" />
             )}
+          </button>
+
+          <div className={`${sidebarOpen ? "block" : "hidden"} lg:block`}>
+            {/* Sidebar header */}
+            <div className="p-4 border-b border-player-sidebar-border">
+              <div className="flex items-center justify-between mb-1">
+                <h3 className="text-sm font-bold text-foreground/80 hidden lg:block">Aulas</h3>
+                <span className="text-sm font-bold text-gold">
+                  {progressPercent}%
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground/50 mb-3 hidden lg:block">
+                {completedCount}/{totalLessons} assistidas
+              </p>
+              <Progress value={progressPercent} className="h-1.5 mb-3" />
+
+              {isCourseCompleted && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="flex items-center justify-center gap-2 rounded-lg bg-player-completed/10 border border-player-completed/15 py-2 px-3 mb-3"
+                >
+                  <Award className="h-4 w-4 text-player-completed/70" />
+                  <span className="text-xs font-semibold text-player-completed/70">
+                    Curso concluído!
+                  </span>
+                </motion.div>
+              )}
+
+              {/* Search */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/40" />
+                <Input
+                  placeholder="Buscar nesta playlist..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9 h-9 text-xs bg-card/10 border-border/20 placeholder:text-muted-foreground/30"
+                />
+              </div>
+            </div>
+
+            {/* Lesson list */}
+            <div className="divide-y divide-border/6 max-h-[50vh] lg:max-h-none overflow-y-auto">
+              {filteredBySearch ? (
+                filteredBySearch.length > 0 ? (
+                  filteredBySearch.map((l: any) => (
+                    <LessonSidebarItem
+                      key={l.id}
+                      lesson={l}
+                      courseId={courseId}
+                      isActive={l.id === lessonId}
+                      isCompleted={isLessonCompleted(l.id)}
+                      courseCoverUrl={course.cover_image_url}
+                    />
+                  ))
+                ) : (
+                  <div className="p-6 text-center">
+                    <p className="text-xs text-muted-foreground/40">
+                      Nenhuma aula encontrada
+                    </p>
+                  </div>
+                )
+              ) : (
+                <>
+                  {modules.length > 0 &&
+                    modules.map((mod: any) => {
+                      const modLessons = (moduleMap[mod.id] || []) as any[];
+                      if (modLessons.length === 0) return null;
+                      const modCompleted = modLessons.filter((l: any) =>
+                        isLessonCompleted(l.id)
+                      ).length;
+                      const hasActiveLesson = modLessons.some(
+                        (l: any) => l.id === lessonId
+                      );
+
+                      return (
+                        <ModuleSection
+                          key={mod.id}
+                          title={mod.title}
+                          completedCount={modCompleted}
+                          totalCount={modLessons.length}
+                          defaultOpen={hasActiveLesson}
+                        >
+                          {modLessons.map((l: any) => (
+                            <LessonSidebarItem
+                              key={l.id}
+                              lesson={l}
+                              courseId={courseId}
+                              isActive={l.id === lessonId}
+                              isCompleted={isLessonCompleted(l.id)}
+                              courseCoverUrl={course.cover_image_url}
+                            />
+                          ))}
+                        </ModuleSection>
+                      );
+                    })}
+
+                  {unmoduled.length > 0 && (
+                    <ModuleSection
+                      title="Aulas"
+                      completedCount={
+                        unmoduled.filter((l: any) => isLessonCompleted(l.id)).length
+                      }
+                      totalCount={unmoduled.length}
+                      defaultOpen
+                    >
+                      {unmoduled.map((l: any) => (
+                        <LessonSidebarItem
+                          key={l.id}
+                          lesson={l}
+                          courseId={courseId}
+                          isActive={l.id === lessonId}
+                          isCompleted={isLessonCompleted(l.id)}
+                          courseCoverUrl={course.cover_image_url}
+                        />
+                      ))}
+                    </ModuleSection>
+                  )}
+                </>
+              )}
+            </div>
           </div>
         </aside>
       </div>
