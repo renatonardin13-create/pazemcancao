@@ -386,23 +386,18 @@ function MeusCoursosPage() {
             </motion.div>
           )}
 
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6"
-          >
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
-              <Input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Buscar curso..."
-                className="pl-10 bg-card/20 border-border/30"
-              />
+          {/* Section: Todos os cursos */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5 mt-2">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
+                <BookOpen className="h-4 w-4 text-primary/70" />
+              </div>
+              <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
+                Todos os cursos
+              </h2>
             </div>
             <Select value={filter} onValueChange={setFilter}>
-              <SelectTrigger className="w-[160px] bg-card/20 border-border/30">
+              <SelectTrigger className="w-[160px] bg-card/15 border-border/20 text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -412,16 +407,6 @@ function MeusCoursosPage() {
                 <SelectItem value="not_started">Não iniciados</SelectItem>
               </SelectContent>
             </Select>
-          </motion.div>
-
-          {/* Section header */}
-          <div className="flex items-center gap-3 mb-5 mt-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
-              <BookOpen className="h-4 w-4 text-primary/70" />
-            </div>
-            <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
-              Todos os cursos
-            </h2>
           </div>
 
           {/* Course List */}
