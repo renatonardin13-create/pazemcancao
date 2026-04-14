@@ -73,6 +73,15 @@ function MeusCoursosPage() {
   const recommendations = (recData?.recommendations || []).filter((c: any) => !continueIds.has(c.id));
   const trending = trendData?.ranked || [];
 
+  // Hero banner: first in-progress course, or first recommended, or first trending
+  const heroCourse = useMemo(() => {
+    if (continueItems.length > 0) return { ...continueItems[0], _heroType: "continue" as const };
+    if (recommendations.length > 0) return { ...recommendations[0], _heroType: "recommended" as const };
+    if (trending.length > 0) return { ...trending[0], _heroType: "trending" as const };
+    if (courses.length > 0) return { ...courses[0], _heroType: "course" as const };
+    return null;
+  }, [continueItems, recommendations, trending, courses]);
+
   const filtered = courses.filter((c: any) => {
     const matchSearch = !search || c.title?.toLowerCase().includes(search.toLowerCase());
     const matchFilter =
