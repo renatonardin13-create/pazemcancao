@@ -114,6 +114,29 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       salesCountMap.set(enrollment.course_id, current + 1);
     }
 
+    // Get lesson counts per course for progress calculation
+    const lessonCountMap = new Map<string, number>();
+    for (const l of lessonCounts || []) {
+      lessonCountMap.set(l.course_id, (lessonCountMap.get(l.course_id) || 0) + 1);
+    }
+
+    // Get user's lesson progress for enrolled courses
+    const enrolledIds = Array.from(activeEnrollmentIds);
+    const completedLessonsMap = new Map<string, number>();
+    if (enrolledIds.length > 0) {
+      const { data: progressData } = await supabase
+        .from('lesson_progress')
+        .select('course_id, completed')
+        .eq('user_id', userId)
+        .in('course_id', enrolledIds);
+
+      for (const p of progressData || []) {
+        if (p.completed) {
+          completedLessonsMap.set(p.course_id, (completedLessonsMap.get(p.course_id) || 0) + 1);
+        }
+      }
+    }
+
     const enrichCourse = (course: any) => {
       const isEnrolled = enrolledCourseIds.has(course.id) || isAdmin;
       const isBlocked = blockedEnrollmentIds.has(course.id);
@@ -122,10 +145,21 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       const checkoutUrl = integrationMap.get(course.id) || null;
       const hasCheckout = !!checkoutUrl;
 
-      // Determine access state — NEVER hide published courses
+      // Progress calculation
+      const totalLessons = lessonCountMap.get(course.id) || 0;
+      const completedLessons = completedLessonsMap.get(course.id) || 0;
+      const progressPct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+
+      // Determine access state
       let accessState: string;
       if (isEnrolled) {
-        accessState = 'enrolled';
+        if (progressPct >= 100 && totalLessons > 0) {
+          accessState = 'completed';
+        } else if (progressPct > 0) {
+          accessState = 'in_progress';
+        } else {
+          accessState = 'enrolled';
+        }
       } else if (isBlocked) {
         accessState = 'blocked';
       } else if (isExpired) {
@@ -135,7 +169,6 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       } else if (hasCheckout) {
         accessState = 'locked';
       } else {
-        // Course is published but user has no enrollment and no checkout — show as available
         accessState = 'available';
       }
 
@@ -147,6 +180,9 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
         checkout_url: checkoutUrl,
         access_state: accessState,
         sales_count: salesCountMap.get(course.id) || 0,
+        progress_pct: progressPct,
+        total_lessons: totalLessons,
+        completed_lessons: completedLessons,
       };
     };
 
