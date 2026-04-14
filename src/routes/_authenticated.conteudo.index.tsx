@@ -477,6 +477,7 @@ function ContentPage() {
                 viewedIds={data?.viewedIds || []}
                 downloadedIds={data?.downloadedIds || []}
                 progressMap={progressMap}
+                popularityMap={data?.popularityMap || {}}
               />
             </>
           )}
