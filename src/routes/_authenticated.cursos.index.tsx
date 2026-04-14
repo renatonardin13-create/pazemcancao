@@ -81,7 +81,6 @@ function MeusCoursosPage() {
   const courses = data?.courses || [];
   const stats = data?.stats || { total: 0, inProgress: 0, completed: 0 };
 
-  // "Continue de onde parou" — recently accessed, in progress, max 5
   const continueItems = useMemo(() => {
     return courses
       .filter((c: any) => c.last_accessed_at && c.progress_pct > 0 && c.progress_pct < 100)
@@ -94,7 +93,6 @@ function MeusCoursosPage() {
   const trending = trendData?.ranked || [];
   const newCourses = (newData?.courses || []).filter((c: any) => !continueIds.has(c.id));
 
-  // Hero course — priority: in-progress > recommended > trending > first course
   const heroCourse = useMemo(() => {
     const inProgressCourse = continueItems[0];
     if (inProgressCourse) return { ...inProgressCourse, _heroType: 'continue' as const };
@@ -122,112 +120,9 @@ function MeusCoursosPage() {
     <div className="min-h-screen bg-background flex flex-col">
 
       <main className="flex-1 w-full pb-28">
-        {/* Hero Banner */}
-        {!isLoading && heroCourse && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1 }}
-            className="relative w-full h-[260px] sm:h-[340px] md:h-[380px] overflow-hidden"
-          >
-            {/* Background image */}
-            {(heroCourse.banner_image_url || heroCourse.cover_image_url) ? (
-              <img
-                src={heroCourse.banner_image_url || heroCourse.cover_image_url}
-                alt={heroCourse.title}
-                className="w-full h-full object-cover scale-105"
-              />
-            ) : (
-              <div className="w-full h-full bg-gradient-to-br from-card/30 via-background to-background" />
-            )}
 
-            {/* Cinematic gradient overlays */}
-            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-transparent" />
-
-            {/* Content */}
-            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 md:px-12 lg:px-16">
-              <div className="max-w-[1100px] mx-auto">
-                {/* Badge */}
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.3 }}
-                  className="mb-3"
-                >
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-gold/10 backdrop-blur-sm px-3 py-1 border border-gold/15 text-[10px] font-bold uppercase tracking-widest text-gold/80">
-                    {heroCourse._heroType === 'continue' && (
-                      <><PlayCircle className="h-3 w-3" /> Continue de onde parou</>
-                    )}
-                    {heroCourse._heroType === 'recommended' && (
-                      <><Sparkles className="h-3 w-3" /> Recomendado para você</>
-                    )}
-                    {heroCourse._heroType === 'trending' && (
-                      <><TrendingUp className="h-3 w-3" /> Em destaque</>
-                    )}
-                    {heroCourse._heroType === 'enrolled' && (
-                      <><Heart className="h-3 w-3" /> Seu curso</>
-                    )}
-                  </span>
-                </motion.div>
-
-                {/* Title */}
-                <motion.h2
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, delay: 0.4 }}
-                  className="font-display text-xl sm:text-3xl md:text-4xl font-bold text-foreground/95 tracking-tight mb-2 max-w-lg leading-tight drop-shadow-lg"
-                >
-                  {heroCourse.title}
-                </motion.h2>
-
-                {/* Description */}
-                {heroCourse.short_description && (
-                  <motion.p
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.5 }}
-                    className="text-[13px] text-muted-foreground/60 mb-5 max-w-md line-clamp-2 leading-relaxed"
-                  >
-                    {heroCourse.short_description}
-                  </motion.p>
-                )}
-
-                {/* Progress bar for continue */}
-                {heroCourse._heroType === 'continue' && heroCourse.progress_pct > 0 && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 0.5, delay: 0.55 }}
-                    className="flex items-center gap-3 mb-4 max-w-xs"
-                  >
-                    <Progress value={heroCourse.progress_pct} className="h-1.5 flex-1 bg-muted/15" />
-                    <span className="text-[11px] font-bold text-gold/80 tabular-nums">{heroCourse.progress_pct}%</span>
-                  </motion.div>
-                )}
-
-                {/* CTA Button */}
-                <motion.div
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.6 }}
-                >
-                  <Link
-                    to="/cursos/$courseId"
-                    params={{ courseId: heroCourse.id }}
-                    className="inline-flex items-center gap-2 rounded-xl bg-gold/90 text-background px-6 py-3 text-[12px] font-bold uppercase tracking-wider hover:bg-gold transition-all duration-300 hover:shadow-lg hover:shadow-gold/20"
-                  >
-                    {heroCourse._heroType === 'continue' ? 'Continuar agora' : 'Ver detalhes'}
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </motion.div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
+        {/* ═══ 1. SAUDAÇÃO + BUSCA ═══ */}
         <div className="mx-auto w-full max-w-[1100px] px-4 sm:px-8 lg:px-12 pt-8 sm:pt-10">
-          {/* Personalized Greeting */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -245,12 +140,11 @@ function MeusCoursosPage() {
             </p>
           </motion.div>
 
-          {/* Search bar */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-8"
+            className="mb-6"
           >
             <div className="relative max-w-md">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
@@ -262,133 +156,97 @@ function MeusCoursosPage() {
               />
             </div>
           </motion.div>
+        </div>
 
-          {/* Minha Biblioteca */}
+        {/* ═══ 2. BANNER PRINCIPAL ═══ */}
+        {!isLoading && heroCourse && (
           <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="mb-10 rounded-2xl border border-border/20 bg-card/8 p-5 sm:p-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            className="relative w-full h-[260px] sm:h-[340px] md:h-[380px] overflow-hidden"
           >
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
-                  <BookOpen className="h-4 w-4 text-primary/70" />
-                </div>
-                <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
-                  Minha biblioteca
-                </h2>
-              </div>
-              <Link
-                to="/cursos"
-                search={{ filter: "all" } as any}
-                className="inline-flex items-center gap-1.5 text-[11px] font-bold text-gold/70 uppercase tracking-wider hover:text-gold transition-colors"
-              >
-                Ver tudo <ArrowRight className="h-3 w-3" />
-              </Link>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="rounded-xl border border-border/15 bg-background/30 p-4 text-center">
-                <p className="font-display text-2xl font-bold text-gold">
-                  {isLoading ? "—" : stats.total}
-                </p>
-                <p className="text-[10px] text-muted-foreground/45 mt-1 uppercase tracking-wider">Cursos</p>
-              </div>
-              <div className="rounded-xl border border-border/15 bg-background/30 p-4 text-center">
-                <p className="font-display text-2xl font-bold text-gold">
-                  {isLoading ? "—" : stats.inProgress}
-                </p>
-                <p className="text-[10px] text-muted-foreground/45 mt-1 uppercase tracking-wider">Em andamento</p>
-              </div>
-              <div className="rounded-xl border border-border/15 bg-background/30 p-4 text-center">
-                <p className="font-display text-2xl font-bold text-gold">
-                  {isLoading ? "—" : stats.completed}
-                </p>
-                <p className="text-[10px] text-muted-foreground/45 mt-1 uppercase tracking-wider">Concluídos</p>
-              </div>
-              <div className="rounded-xl border border-border/15 bg-background/30 p-4 text-center">
-                <p className="font-display text-2xl font-bold text-gold">
-                  {favData?.count ?? "—"}
-                </p>
-                <p className="text-[10px] text-muted-foreground/45 mt-1 uppercase tracking-wider flex items-center justify-center gap-1">
-                  <Heart className="h-3 w-3" /> Favoritos
-                </p>
+            {(heroCourse.banner_image_url || heroCourse.cover_image_url) ? (
+              <img
+                src={heroCourse.banner_image_url || heroCourse.cover_image_url}
+                alt={heroCourse.title}
+                className="w-full h-full object-cover scale-105"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-card/30 via-background to-background" />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 md:px-12 lg:px-16">
+              <div className="max-w-[1100px] mx-auto">
+                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="mb-3">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-gold/10 backdrop-blur-sm px-3 py-1 border border-gold/15 text-[10px] font-bold uppercase tracking-widest text-gold/80">
+                    {heroCourse._heroType === 'continue' && <><PlayCircle className="h-3 w-3" /> Continue de onde parou</>}
+                    {heroCourse._heroType === 'recommended' && <><Sparkles className="h-3 w-3" /> Recomendado para você</>}
+                    {heroCourse._heroType === 'trending' && <><TrendingUp className="h-3 w-3" /> Em destaque</>}
+                    {heroCourse._heroType === 'enrolled' && <><Heart className="h-3 w-3" /> Seu curso</>}
+                  </span>
+                </motion.div>
+                <motion.h2 initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.4 }} className="font-display text-xl sm:text-3xl md:text-4xl font-bold text-foreground/95 tracking-tight mb-2 max-w-lg leading-tight drop-shadow-lg">
+                  {heroCourse.title}
+                </motion.h2>
+                {heroCourse.short_description && (
+                  <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5 }} className="text-[13px] text-muted-foreground/60 mb-5 max-w-md line-clamp-2 leading-relaxed">
+                    {heroCourse.short_description}
+                  </motion.p>
+                )}
+                {heroCourse._heroType === 'continue' && heroCourse.progress_pct > 0 && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5, delay: 0.55 }} className="flex items-center gap-3 mb-4 max-w-xs">
+                    <Progress value={heroCourse.progress_pct} className="h-1.5 flex-1 bg-muted/15" />
+                    <span className="text-[11px] font-bold text-gold/80 tabular-nums">{heroCourse.progress_pct}%</span>
+                  </motion.div>
+                )}
+                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.6 }}>
+                  <Link
+                    to="/cursos/$courseId"
+                    params={{ courseId: heroCourse.id }}
+                    className="inline-flex items-center gap-2 rounded-xl bg-gold/90 text-background px-6 py-3 text-[12px] font-bold uppercase tracking-wider hover:bg-gold transition-all duration-300 hover:shadow-lg hover:shadow-gold/20"
+                  >
+                    {heroCourse._heroType === 'continue' ? 'Continuar agora' : 'Ver detalhes'}
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                </motion.div>
               </div>
             </div>
           </motion.div>
-          {/* Continue de onde parou */}
-          {!isLoading && continueItems.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.12 }}
-              className="mb-10"
-            >
-              <div className="flex items-center gap-3 mb-5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
-                  <PlayCircle className="h-4 w-4 text-primary/70" />
-                </div>
-                <div>
-                  <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
-                    Continue sua caminhada
-                  </h2>
-                  <p className="text-[11px] text-muted-foreground/40 mt-0.5 italic">
-                    Retome de onde você parou, no seu ritmo
-                  </p>
-                </div>
-              </div>
+        )}
 
+        <div className="mx-auto w-full max-w-[1100px] px-4 sm:px-8 lg:px-12 pt-8">
+
+          {/* ═══ 3. CONTINUE DE ONDE PAROU ═══ */}
+          {!isLoading && continueItems.length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.12 }} className="mb-10">
+              <SectionHeader icon={PlayCircle} title="Continue sua caminhada" subtitle="Retome de onde você parou, no seu ritmo" />
               <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
                 {continueItems.map((course: any, idx: number) => (
-                  <motion.div
-                    key={`continue-${course.id}`}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: 0.06 * idx }}
-                    className="flex-shrink-0 w-[280px] sm:w-[300px]"
-                  >
+                  <motion.div key={`continue-${course.id}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.06 * idx }} className="flex-shrink-0 w-[280px] sm:w-[300px]">
                     <Link
                       to="/cursos/$courseId"
                       params={{ courseId: course.id }}
                       className="group flex gap-4 rounded-xl border border-border/20 bg-card/10 p-3 transition-all duration-500 hover:border-gold/25 hover:bg-card/20 hover:shadow-lg hover:shadow-gold/5"
                     >
-                      {/* Thumbnail */}
                       <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
                         {course.cover_image_url ? (
-                          <img
-                            src={course.cover_image_url}
-                            alt={course.title}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                          />
+                          <img src={course.cover_image_url} alt={course.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                         ) : (
-                          <div className="w-full h-full bg-muted/15 flex items-center justify-center">
-                            <BookOpen className="h-6 w-6 text-muted-foreground/30" />
-                          </div>
+                          <div className="w-full h-full bg-muted/15 flex items-center justify-center"><BookOpen className="h-6 w-6 text-muted-foreground/30" /></div>
                         )}
-                        {/* Progress overlay */}
                         <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/40">
-                          <div
-                            className="h-full bg-gold rounded-r-full transition-all"
-                            style={{ width: `${course.progress_pct}%` }}
-                          />
+                          <div className="h-full bg-gold rounded-r-full transition-all" style={{ width: `${course.progress_pct}%` }} />
                         </div>
                       </div>
-
-                      {/* Info */}
                       <div className="flex-1 min-w-0 flex flex-col justify-center">
-                        <h3 className="text-sm font-bold text-foreground/80 line-clamp-2 leading-snug group-hover:text-gold transition-colors duration-300">
-                          {course.title}
-                        </h3>
+                        <h3 className="text-sm font-bold text-foreground/80 line-clamp-2 leading-snug group-hover:text-gold transition-colors duration-300">{course.title}</h3>
                         <div className="flex items-center gap-2 mt-1.5">
                           <Progress value={course.progress_pct} className="h-1 flex-1 bg-muted/10" />
-                          <span className="text-[10px] font-bold text-gold/70 tabular-nums">
-                            {course.progress_pct}%
-                          </span>
+                          <span className="text-[10px] font-bold text-gold/70 tabular-nums">{course.progress_pct}%</span>
                         </div>
-                        <p className="text-[10px] text-muted-foreground/40 mt-1">
-                          {course.completed_lessons}/{course.lesson_count} aulas
-                        </p>
+                        <p className="text-[10px] text-muted-foreground/40 mt-1">{course.completed_lessons}/{course.lesson_count} aulas</p>
                       </div>
                     </Link>
                   </motion.div>
@@ -397,43 +255,17 @@ function MeusCoursosPage() {
             </motion.div>
           )}
 
-          {/* Recomendado para você */}
+          {/* ═══ 4. RECOMENDADO PARA VOCÊ ═══ */}
           {!isLoading && recommendations.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.18 }}
-              className="mb-10"
-            >
-              <div className="flex items-center gap-3 mb-5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
-                  <Sparkles className="h-4 w-4 text-primary/70" />
-                </div>
-                <div>
-                  <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
-                    Recomendado para você
-                  </h2>
-                  <p className="text-[11px] text-muted-foreground/40 mt-0.5 italic">
-                    Cursos selecionados com base no seu perfil
-                  </p>
-                </div>
-              </div>
-
+            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.18 }} className="mb-10">
+              <SectionHeader icon={Sparkles} title="Recomendado para você" subtitle="Cursos selecionados com base no seu perfil" />
               <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-hide -mx-1 px-1">
                 {recommendations.slice(0, 8).map((course: any, idx: number) => (
-                  <motion.div
-                    key={`rec-${course.id}`}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: 0.06 * idx }}
-                    className="flex-shrink-0 w-[200px] sm:w-[220px]"
-                  >
+                  <motion.div key={`rec-${course.id}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.06 * idx }} className="flex-shrink-0 w-[200px] sm:w-[220px]">
                     <CourseShelfCard
                       course={course}
                       badge={course.enrollment_count > 0 ? (
-                        <span className="rounded-full bg-background/60 backdrop-blur-sm px-2 py-0.5 border border-border/20 text-[9px] font-bold text-muted-foreground/60">
-                          {course.enrollment_count} alunos
-                        </span>
+                        <span className="rounded-full bg-background/60 backdrop-blur-sm px-2 py-0.5 border border-border/20 text-[9px] font-bold text-muted-foreground/60">{course.enrollment_count} alunos</span>
                       ) : undefined}
                     />
                   </motion.div>
@@ -442,48 +274,47 @@ function MeusCoursosPage() {
             </motion.div>
           )}
 
-          {/* Mais acessados */}
-          {!isLoading && trending.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.22 }}
-              className="mb-10"
-            >
-              <div className="flex items-center gap-3 mb-5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
-                  <TrendingUp className="h-4 w-4 text-primary/70" />
-                </div>
-                <div>
-                  <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
-                    Mais acessados
-                  </h2>
-                  <p className="text-[11px] text-muted-foreground/40 mt-0.5 italic">
-                    Os cursos mais populares da plataforma
-                  </p>
-                </div>
+          {/* ═══ 5. CONTEÚDOS EM DESTAQUE ═══ */}
+          {!isLoading && (featuredData?.items?.length ?? 0) > 0 && (
+            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.22 }} className="mb-10">
+              <SectionHeader icon={Star} title="Conteúdos em destaque" subtitle="Selecionados especialmente para sua jornada" />
+              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
+                {(featuredData?.items || []).map((item: any, idx: number) => {
+                  const isCourse = featuredData?.source === 'courses' || item.content_type === 'course';
+                  const coverImg = item.card_cover_url || item.cover_url;
+                  return (
+                    <motion.div key={`feat-${item.id}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.06 * idx }} className="flex-shrink-0 w-[220px] sm:w-[240px]">
+                      {isCourse ? (
+                        <Link to="/cursos/$courseId" params={{ courseId: item.id }} className="group block rounded-xl border border-border/20 bg-card/10 overflow-hidden transition-all duration-500 hover:border-gold/25 hover:bg-card/20 hover:shadow-lg hover:shadow-gold/5">
+                          <FeaturedCardInner item={item} coverImg={coverImg} />
+                        </Link>
+                      ) : (
+                        <Link to="/conteudo/$trackId" params={{ trackId: item.id }} className="group block rounded-xl border border-border/20 bg-card/10 overflow-hidden transition-all duration-500 hover:border-gold/25 hover:bg-card/20 hover:shadow-lg hover:shadow-gold/5">
+                          <FeaturedCardInner item={item} coverImg={coverImg} />
+                        </Link>
+                      )}
+                    </motion.div>
+                  );
+                })}
               </div>
+            </motion.div>
+          )}
 
+          {/* ═══ 6. MAIS ACESSADOS ═══ */}
+          {!isLoading && trending.length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.26 }} className="mb-10">
+              <SectionHeader icon={TrendingUp} title="Mais acessados" subtitle="Os cursos mais populares da plataforma" />
               <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-hide -mx-1 px-1">
                 {trending.map((course: any, idx: number) => (
-                  <motion.div
-                    key={`trend-${course.id}`}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: 0.06 * idx }}
-                    className="flex-shrink-0 w-[200px] sm:w-[220px]"
-                  >
+                  <motion.div key={`trend-${course.id}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.06 * idx }} className="flex-shrink-0 w-[200px] sm:w-[220px]">
                     <CourseShelfCard
                       course={course}
                       showDescription={false}
                       badge={
                         <div className={`flex h-7 w-7 items-center justify-center rounded-full border text-xs font-black tabular-nums ${
-                          idx === 0
-                            ? "bg-gold/90 border-gold text-background"
-                            : idx === 1
-                              ? "bg-muted/60 border-muted-foreground/20 text-foreground/70"
-                              : idx === 2
-                                ? "bg-amber-800/40 border-amber-700/30 text-amber-200/80"
+                          idx === 0 ? "bg-gold/90 border-gold text-background"
+                            : idx === 1 ? "bg-muted/60 border-muted-foreground/20 text-foreground/70"
+                              : idx === 2 ? "bg-amber-800/40 border-amber-700/30 text-amber-200/80"
                                 : "bg-background/60 backdrop-blur-sm border-border/30 text-muted-foreground/60"
                         }`}>
                           {idx + 1}
@@ -497,102 +328,17 @@ function MeusCoursosPage() {
             </motion.div>
           )}
 
-          {/* Conteúdos em destaque */}
-          {!isLoading && (featuredData?.items?.length ?? 0) > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.26 }}
-              className="mb-10"
-            >
-              <div className="flex items-center gap-3 mb-5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
-                  <Star className="h-4 w-4 text-primary/70" />
-                </div>
-                <div>
-                  <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
-                    Conteúdos em destaque
-                  </h2>
-                  <p className="text-[11px] text-muted-foreground/40 mt-0.5 italic">
-                    Selecionados especialmente para sua jornada
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
-                {(featuredData?.items || []).map((item: any, idx: number) => {
-                  const isCourse = featuredData?.source === 'courses' || item.content_type === 'course';
-                  const coverImg = item.card_cover_url || item.cover_url;
-
-                  return (
-                    <motion.div
-                      key={`feat-${item.id}`}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.5, delay: 0.06 * idx }}
-                      className="flex-shrink-0 w-[220px] sm:w-[240px]"
-                    >
-                      {isCourse ? (
-                        <Link
-                          to="/cursos/$courseId"
-                          params={{ courseId: item.id }}
-                          className="group block rounded-xl border border-border/20 bg-card/10 overflow-hidden transition-all duration-500 hover:border-gold/25 hover:bg-card/20 hover:shadow-lg hover:shadow-gold/5"
-                        >
-                          <FeaturedCardInner item={item} coverImg={coverImg} />
-                        </Link>
-                      ) : (
-                        <Link
-                          to="/conteudo/$trackId"
-                          params={{ trackId: item.id }}
-                          className="group block rounded-xl border border-border/20 bg-card/10 overflow-hidden transition-all duration-500 hover:border-gold/25 hover:bg-card/20 hover:shadow-lg hover:shadow-gold/5"
-                        >
-                          <FeaturedCardInner item={item} coverImg={coverImg} />
-                        </Link>
-                      )}
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </motion.div>
-          )}
-
-          {/* Novos conteúdos */}
+          {/* ═══ 7. NOVOS CONTEÚDOS ═══ */}
           {!isLoading && newCourses.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="mb-10"
-            >
-              <div className="flex items-center gap-3 mb-5">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
-                  <Zap className="h-4 w-4 text-primary/70" />
-                </div>
-                <div>
-                  <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
-                    Novos conteúdos
-                  </h2>
-                  <p className="text-[11px] text-muted-foreground/40 mt-0.5 italic">
-                    Adicionados recentemente à plataforma
-                  </p>
-                </div>
-              </div>
-
+            <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.3 }} className="mb-10">
+              <SectionHeader icon={Zap} title="Novos conteúdos" subtitle="Adicionados recentemente à plataforma" />
               <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-hide -mx-1 px-1">
                 {newCourses.slice(0, 8).map((course: any, idx: number) => (
-                  <motion.div
-                    key={`new-${course.id}`}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.5, delay: 0.06 * idx }}
-                    className="flex-shrink-0 w-[200px] sm:w-[220px]"
-                  >
+                  <motion.div key={`new-${course.id}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.06 * idx }} className="flex-shrink-0 w-[200px] sm:w-[220px]">
                     <CourseShelfCard
                       course={course}
                       badge={
-                        <span className="rounded-full bg-gold/20 backdrop-blur-sm px-2.5 py-0.5 border border-gold/20 text-[9px] font-bold text-gold uppercase tracking-wider">
-                          Novo
-                        </span>
+                        <span className="rounded-full bg-gold/20 backdrop-blur-sm px-2.5 py-0.5 border border-gold/20 text-[9px] font-bold text-gold uppercase tracking-wider">Novo</span>
                       }
                     />
                   </motion.div>
@@ -601,15 +347,48 @@ function MeusCoursosPage() {
             </motion.div>
           )}
 
-          {/* Section: Todos os cursos */}
+          {/* ═══ 8. MINHA BIBLIOTECA ═══ */}
+          <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.34 }} className="mb-10 rounded-2xl border border-border/20 bg-card/8 p-5 sm:p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
+                  <BookOpen className="h-4 w-4 text-primary/70" />
+                </div>
+                <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">Minha biblioteca</h2>
+              </div>
+              <Link to="/cursos" search={{ filter: "all" } as any} className="inline-flex items-center gap-1.5 text-[11px] font-bold text-gold/70 uppercase tracking-wider hover:text-gold transition-colors">
+                Ver tudo <ArrowRight className="h-3 w-3" />
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="rounded-xl border border-border/15 bg-background/30 p-4 text-center">
+                <p className="font-display text-2xl font-bold text-gold">{isLoading ? "—" : stats.total}</p>
+                <p className="text-[10px] text-muted-foreground/45 mt-1 uppercase tracking-wider">Cursos</p>
+              </div>
+              <div className="rounded-xl border border-border/15 bg-background/30 p-4 text-center">
+                <p className="font-display text-2xl font-bold text-gold">{isLoading ? "—" : stats.inProgress}</p>
+                <p className="text-[10px] text-muted-foreground/45 mt-1 uppercase tracking-wider">Em andamento</p>
+              </div>
+              <div className="rounded-xl border border-border/15 bg-background/30 p-4 text-center">
+                <p className="font-display text-2xl font-bold text-gold">{isLoading ? "—" : stats.completed}</p>
+                <p className="text-[10px] text-muted-foreground/45 mt-1 uppercase tracking-wider">Concluídos</p>
+              </div>
+              <div className="rounded-xl border border-border/15 bg-background/30 p-4 text-center">
+                <p className="font-display text-2xl font-bold text-gold">{favData?.count ?? "—"}</p>
+                <p className="text-[10px] text-muted-foreground/45 mt-1 uppercase tracking-wider flex items-center justify-center gap-1">
+                  <Heart className="h-3 w-3" /> Favoritos
+                </p>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* ═══ TODOS OS CURSOS ═══ */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5 mt-2">
             <div className="flex items-center gap-3">
               <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
                 <BookOpen className="h-4 w-4 text-primary/70" />
               </div>
-              <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
-                Todos os cursos
-              </h2>
+              <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">Todos os cursos</h2>
             </div>
             <Select value={filter} onValueChange={setFilter}>
               <SelectTrigger className="w-[160px] bg-card/15 border-border/20 text-xs">
@@ -624,133 +403,71 @@ function MeusCoursosPage() {
             </Select>
           </div>
 
-          {/* Course List */}
           {isLoading ? (
             <CardGridSkeleton count={6} />
           ) : filtered.length === 0 ? (
             courses.length === 0 ? (
-              <EmptyState
-                icon={BookOpen}
-                title="Você ainda não possui cursos"
-                description="Adquira um curso na vitrine para começar sua jornada de aprendizado."
-                actionLabel="Explorar Vitrine"
-                actionTo="/vitrine"
-                actionIcon={ArrowRight}
-              />
+              <EmptyState icon={BookOpen} title="Você ainda não possui cursos" description="Adquira um curso na vitrine para começar sua jornada de aprendizado." actionLabel="Explorar Vitrine" actionTo="/vitrine" actionIcon={ArrowRight} />
             ) : (
-              <EmptyState
-                icon={Search}
-                title="Nenhum curso encontrado"
-                description="Tente ajustar os filtros para encontrar o que procura."
-              />
+              <EmptyState icon={Search} title="Nenhum curso encontrado" description="Tente ajustar os filtros para encontrar o que procura." />
             )
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {filtered.map((course: any, idx: number) => {
                 const isCompleted = course.progress_pct >= 100;
                 const isInProgress = course.progress_pct > 0 && course.progress_pct < 100;
-
                 return (
-                <motion.div
-                  key={course.id}
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 8) }}
-                >
-                  <Link
-                    to="/cursos/$courseId"
-                    params={{ courseId: course.id }}
-                    className="group relative block rounded-2xl overflow-hidden border border-border/10 transition-all duration-500 hover:scale-[1.02] hover:border-gold/15 hover:shadow-2xl hover:shadow-gold/[0.07] hover:-translate-y-1"
-                  >
-                    {/* Full-bleed cover */}
-                    <div className="relative aspect-[16/10] overflow-hidden">
-                      {course.cover_image_url ? (
-                        <img
-                          src={course.cover_image_url}
-                          alt={course.title}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div className="w-full h-full bg-gradient-to-br from-muted/20 to-muted/5 flex items-center justify-center">
-                          <BookOpen className="h-12 w-12 text-muted-foreground/20" />
-                        </div>
-                      )}
-
-                      {/* Cinematic gradient overlay */}
-                      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
-
-                      {/* Glow ring on hover */}
-                      <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/[0.06] group-hover:ring-gold/20 transition-all duration-500" />
-
-                      {/* Progress bar — bottom of image */}
-                      {course.progress_pct > 0 && (
-                        <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/[0.08]">
-                          <div
-                            className={`h-full transition-all duration-700 ${isCompleted ? "bg-emerald-400" : "bg-gold"}`}
-                            style={{ width: `${course.progress_pct}%` }}
-                          />
-                        </div>
-                      )}
-
-                      {/* Status badge — top right */}
-                      <div className="absolute top-3 right-3">
-                        {isCompleted ? (
-                          <div className="flex items-center gap-1 rounded-full bg-emerald-500/25 backdrop-blur-xl px-2.5 py-1 border border-emerald-400/20 shadow-lg shadow-emerald-500/10">
-                            <CheckCircle2 className="h-3 w-3 text-emerald-400" />
-                            <span className="text-[10px] font-bold text-emerald-300 tracking-wide uppercase">Concluído</span>
+                  <motion.div key={course.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 8) }}>
+                    <Link
+                      to="/cursos/$courseId"
+                      params={{ courseId: course.id }}
+                      className="group relative block rounded-2xl overflow-hidden border border-border/10 transition-all duration-500 hover:scale-[1.02] hover:border-gold/15 hover:shadow-2xl hover:shadow-gold/[0.07] hover:-translate-y-1"
+                    >
+                      <div className="relative aspect-[16/10] overflow-hidden">
+                        {course.cover_image_url ? (
+                          <img src={course.cover_image_url} alt={course.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" loading="lazy" />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-muted/20 to-muted/5 flex items-center justify-center">
+                            <BookOpen className="h-12 w-12 text-muted-foreground/20" />
                           </div>
-                        ) : isInProgress ? (
-                          <div className="flex items-center gap-1 rounded-full bg-gold/20 backdrop-blur-xl px-2.5 py-1 border border-gold/20 shadow-lg shadow-gold/10">
-                            <Play className="h-3 w-3 text-gold fill-gold" />
-                            <span className="text-[10px] font-bold text-gold tracking-wide uppercase">Em andamento</span>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
+                        <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/[0.06] group-hover:ring-gold/20 transition-all duration-500" />
+                        {course.progress_pct > 0 && (
+                          <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/[0.08]">
+                            <div className={`h-full transition-all duration-700 ${isCompleted ? "bg-emerald-400" : "bg-gold"}`} style={{ width: `${course.progress_pct}%` }} />
                           </div>
-                        ) : null}
-                      </div>
-
-                      {/* Content overlay — bottom */}
-                      <div className="absolute bottom-0 left-0 right-0 p-4 pt-10">
-                        <h3 className="font-display text-[15px] font-bold text-foreground leading-tight line-clamp-2 drop-shadow-lg group-hover:text-gold transition-colors duration-300">
-                          {course.title}
-                        </h3>
-
-                        <div className="flex items-center gap-3 mt-2 text-[11px] text-muted-foreground/60">
-                          <span className="flex items-center gap-1">
-                            <Layers className="h-3 w-3" />
-                            {course.module_count} mód.
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {course.lesson_count} aulas
-                          </span>
-                          {isInProgress && (
-                            <>
-                              <span className="text-border/30">·</span>
-                              <span className="text-gold/70 font-bold tabular-nums">
-                                {course.progress_pct}%
-                              </span>
-                            </>
-                          )}
-                          {isCompleted && (
-                            <>
-                              <span className="text-border/30">·</span>
-                              <span className="text-emerald-400/70 font-bold tabular-nums">
-                                100%
-                              </span>
-                            </>
-                          )}
+                        )}
+                        <div className="absolute top-3 right-3">
+                          {isCompleted ? (
+                            <div className="flex items-center gap-1 rounded-full bg-emerald-500/25 backdrop-blur-xl px-2.5 py-1 border border-emerald-400/20 shadow-lg shadow-emerald-500/10">
+                              <CheckCircle2 className="h-3 w-3 text-emerald-400" />
+                              <span className="text-[10px] font-bold text-emerald-300 tracking-wide uppercase">Concluído</span>
+                            </div>
+                          ) : isInProgress ? (
+                            <div className="flex items-center gap-1 rounded-full bg-gold/20 backdrop-blur-xl px-2.5 py-1 border border-gold/20 shadow-lg shadow-gold/10">
+                              <Play className="h-3 w-3 text-gold fill-gold" />
+                              <span className="text-[10px] font-bold text-gold tracking-wide uppercase">Em andamento</span>
+                            </div>
+                          ) : null}
+                        </div>
+                        <div className="absolute bottom-0 left-0 right-0 p-4 pt-10">
+                          <h3 className="font-display text-[15px] font-bold text-foreground leading-tight line-clamp-2 drop-shadow-lg group-hover:text-gold transition-colors duration-300">{course.title}</h3>
+                          <div className="flex items-center gap-3 mt-2 text-[11px] text-muted-foreground/60">
+                            <span className="flex items-center gap-1"><Layers className="h-3 w-3" />{course.module_count} mód.</span>
+                            <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{course.lesson_count} aulas</span>
+                            {isInProgress && <><span className="text-border/30">·</span><span className="text-gold/70 font-bold tabular-nums">{course.progress_pct}%</span></>}
+                            {isCompleted && <><span className="text-border/30">·</span><span className="text-emerald-400/70 font-bold tabular-nums">100%</span></>}
+                          </div>
+                        </div>
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gold/90 shadow-xl shadow-gold/30 backdrop-blur-sm">
+                            <Play className="h-5 w-5 text-background fill-background ml-0.5" />
+                          </div>
                         </div>
                       </div>
-
-                      {/* Hover play icon */}
-                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gold/90 shadow-xl shadow-gold/30 backdrop-blur-sm">
-                          <Play className="h-5 w-5 text-background fill-background ml-0.5" />
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                </motion.div>
+                    </Link>
+                  </motion.div>
                 );
               })}
             </div>
@@ -764,20 +481,30 @@ function MeusCoursosPage() {
   );
 }
 
+/* ── Helpers ── */
+
+function SectionHeader({ icon: Icon, title, subtitle }: { icon: any; title: string; subtitle: string }) {
+  return (
+    <div className="flex items-center gap-3 mb-5">
+      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
+        <Icon className="h-4 w-4 text-primary/70" />
+      </div>
+      <div>
+        <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">{title}</h2>
+        <p className="text-[11px] text-muted-foreground/40 mt-0.5 italic">{subtitle}</p>
+      </div>
+    </div>
+  );
+}
+
 function FeaturedCardInner({ item, coverImg }: { item: any; coverImg: string | null }) {
   return (
     <>
       <div className="relative aspect-video overflow-hidden">
         {coverImg ? (
-          <img
-            src={coverImg}
-            alt={item.title}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-          />
+          <img src={coverImg} alt={item.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
         ) : (
-          <div className="w-full h-full bg-muted/15 flex items-center justify-center">
-            <Star className="h-6 w-6 text-muted-foreground/30" />
-          </div>
+          <div className="w-full h-full bg-muted/15 flex items-center justify-center"><Star className="h-6 w-6 text-muted-foreground/30" /></div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-60" />
         {item.badge_text && (
@@ -792,15 +519,9 @@ function FeaturedCardInner({ item, coverImg }: { item: any; coverImg: string | n
         )}
       </div>
       <div className="p-3">
-        <h3 className="text-sm font-bold text-foreground/80 line-clamp-2 leading-snug group-hover:text-gold transition-colors duration-300">
-          {item.title}
-        </h3>
-        {item.description && (
-          <p className="text-[10px] text-muted-foreground/40 mt-1 line-clamp-1">{item.description}</p>
-        )}
-        <div className="mt-2 flex items-center text-[10px] font-bold text-gold/60 uppercase tracking-wider">
-          Explorar <ArrowRight className="h-3 w-3 ml-1" />
-        </div>
+        <h3 className="text-sm font-bold text-foreground/80 line-clamp-2 leading-snug group-hover:text-gold transition-colors duration-300">{item.title}</h3>
+        {item.description && <p className="text-[10px] text-muted-foreground/40 mt-1 line-clamp-1">{item.description}</p>}
+        <div className="mt-2 flex items-center text-[10px] font-bold text-gold/60 uppercase tracking-wider">Explorar <ArrowRight className="h-3 w-3 ml-1" /></div>
       </div>
     </>
   );
