@@ -533,23 +533,25 @@ function LessonDetailPage() {
           {/* Bottom navigation */}
           {!accessRestricted && (
             <div className="border-t border-border/20 bg-background/95 backdrop-blur-xl mt-auto">
-              <div className="flex items-center justify-center gap-3 px-4 sm:px-6 py-3">
+            <div className="flex items-center justify-center gap-2 sm:gap-3 px-3 sm:px-6 py-3 flex-wrap">
                 {prevLesson ? (
                   <Link
                     to="/cursos/$courseId/aula/$lessonId"
                     params={{ courseId, lessonId: prevLesson.id }}
-                    className="flex items-center gap-2 rounded-xl border border-border/25 bg-card/10 px-5 py-2.5 text-[12px] font-medium text-muted-foreground/60 hover:bg-card/20 hover:text-foreground/70 transition-all"
+                    className="flex items-center gap-1.5 sm:gap-2 rounded-xl border border-border/25 bg-card/10 px-3 sm:px-5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] font-medium text-muted-foreground/60 hover:bg-card/20 hover:text-foreground/70 transition-all"
                   >
-                    <ChevronLeft className="h-3.5 w-3.5" />
-                    Anterior
+                    <ChevronLeft className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                    <span className="hidden sm:inline">Anterior</span>
+                    <span className="sm:hidden">Ant.</span>
                   </Link>
                 ) : (
                   <button
                     disabled
-                    className="flex items-center gap-2 rounded-xl border border-border/10 bg-card/5 px-5 py-2.5 text-[12px] font-medium text-muted-foreground/25 cursor-not-allowed"
+                    className="flex items-center gap-1.5 sm:gap-2 rounded-xl border border-border/10 bg-card/5 px-3 sm:px-5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] font-medium text-muted-foreground/25 cursor-not-allowed"
                   >
-                    <ChevronLeft className="h-3.5 w-3.5" />
-                    Anterior
+                    <ChevronLeft className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+                    <span className="hidden sm:inline">Anterior</span>
+                    <span className="sm:hidden">Ant.</span>
                   </button>
                 )}
 
@@ -565,18 +567,19 @@ function LessonDetailPage() {
                       }
                     }}
                     disabled={progressMutation.isPending || isCompleted}
-                    className={`gap-2 px-6 text-[12px] font-bold uppercase tracking-wider ${
+                    size="sm"
+                    className={`gap-1.5 sm:gap-2 px-3 sm:px-6 text-[11px] sm:text-[12px] font-bold uppercase tracking-wider ${
                       isCompleted
                         ? "bg-emerald-500/15 text-emerald-400/70 border border-emerald-500/15 hover:bg-emerald-500/20"
                         : "bg-gold/90 text-gold-foreground hover:bg-gold"
                     }`}
                     variant={isCompleted ? "outline" : "default"}
                   >
-                    <CheckCircle2 className="h-4 w-4" />
+                    <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     {isCompleted
                       ? "Concluída"
                       : progressMutation.isPending
-                        ? "Salvando..."
+                        ? "..."
                         : "Concluir"}
                   </Button>
                 )}
@@ -585,18 +588,20 @@ function LessonDetailPage() {
                   <Link
                     to="/cursos/$courseId/aula/$lessonId"
                     params={{ courseId, lessonId: nextLesson.id }}
-                    className="flex items-center gap-2 rounded-xl border border-gold/25 bg-gold/[0.08] px-5 py-2.5 text-[12px] font-medium text-gold/70 hover:bg-gold/15 hover:text-gold transition-all"
+                    className="flex items-center gap-1.5 sm:gap-2 rounded-xl border border-gold/25 bg-gold/[0.08] px-3 sm:px-5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] font-medium text-gold/70 hover:bg-gold/15 hover:text-gold transition-all"
                   >
-                    Próximo
-                    <ArrowRight className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Próximo</span>
+                    <span className="sm:hidden">Próx.</span>
+                    <ArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                   </Link>
                 ) : (
                   <button
                     disabled
-                    className="flex items-center gap-2 rounded-xl border border-border/10 bg-card/5 px-5 py-2.5 text-[12px] font-medium text-muted-foreground/25 cursor-not-allowed"
+                    className="flex items-center gap-1.5 sm:gap-2 rounded-xl border border-border/10 bg-card/5 px-3 sm:px-5 py-2 sm:py-2.5 text-[11px] sm:text-[12px] font-medium text-muted-foreground/25 cursor-not-allowed"
                   >
-                    Próximo
-                    <ArrowRight className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Próximo</span>
+                    <span className="sm:hidden">Próx.</span>
+                    <ArrowRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />
                   </button>
                 )}
               </div>
