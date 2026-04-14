@@ -1,4 +1,5 @@
 import { toastError } from "@/lib/toast-utils";
+import { ListSkeleton } from "@/components/LoadingSkeletons";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -194,11 +195,7 @@ function AdminJourneysPage() {
 
       {/* Journey list */}
       {isLoading ? (
-        <div className="text-center py-16">
-          <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
-            Carregando...
-          </p>
-        </div>
+        <ListSkeleton rows={4} />
       ) : !journeys.length ? (
         <div className="text-center py-16 rounded-2xl border border-border/15 bg-card/5">
           <Compass className="h-8 w-8 text-muted-foreground/15 mx-auto mb-4" />

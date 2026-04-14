@@ -1,4 +1,5 @@
 import { toastError } from "@/lib/toast-utils";
+import { ListSkeleton } from "@/components/LoadingSkeletons";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -243,9 +244,7 @@ function AdminCategoriesPage() {
           </div>
 
           {catLoading ? (
-            <div className="text-center py-12">
-              <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">Carregando...</p>
-            </div>
+            <ListSkeleton rows={3} />
           ) : !categories.length ? (
             <div className="text-center py-12">
               <FolderOpen className="h-8 w-8 text-muted-foreground/15 mx-auto mb-3" />
@@ -293,9 +292,7 @@ function AdminCategoriesPage() {
           </div>
 
           {tagLoading ? (
-            <div className="text-center py-12">
-              <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">Carregando...</p>
-            </div>
+            <ListSkeleton rows={3} />
           ) : !tags.length ? (
             <div className="text-center py-12">
               <Tag className="h-8 w-8 text-muted-foreground/15 mx-auto mb-3" />

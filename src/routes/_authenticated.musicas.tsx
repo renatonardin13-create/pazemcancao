@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
+import { ListSkeleton } from "@/components/LoadingSkeletons";
 import { logDownload } from "@/lib/analytics.functions";
 import { Music, Play, Pause, Download, Search, Headphones, Lock, Gift } from "lucide-react";
 import { StudentLayout } from "@/components/StudentLayout";
@@ -258,12 +259,7 @@ function MusicLibraryPage() {
 
         {/* Content */}
         {isLoading ? (
-          <div className="text-center py-24">
-            <div className="w-px h-12 mx-auto bg-gradient-to-b from-transparent via-gold/15 to-transparent animate-breathe mb-6" />
-            <p className="text-[11px] uppercase tracking-[0.4em] text-gold/25">
-              Carregando músicas...
-            </p>
-          </div>
+          <ListSkeleton rows={6} />
         ) : filteredTracks.length === 0 ? (
           <div className="text-center py-24">
             <Music className="h-10 w-10 text-muted-foreground/15 mx-auto mb-5" />

@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { CardGridSkeleton } from "@/components/LoadingSkeletons";
 import { useQuery } from "@tanstack/react-query";
 import { getMyCoursesData } from "@/lib/my-courses.functions";
 import { StudentLayout } from "@/components/StudentLayout";
@@ -126,11 +127,7 @@ function MeusCoursosPage() {
 
           {/* Course List */}
           {isLoading ? (
-            <div className="text-center py-24">
-              <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
-                Carregando cursos...
-              </p>
-            </div>
+            <CardGridSkeleton count={6} />
           ) : filtered.length === 0 ? (
             <div className="text-center py-24">
               <BookOpen className="h-10 w-10 text-muted-foreground/15 mx-auto mb-5" />

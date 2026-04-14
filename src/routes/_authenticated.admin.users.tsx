@@ -1,4 +1,5 @@
 import { toastError } from "@/lib/toast-utils";
+import { ListSkeleton } from "@/components/LoadingSkeletons";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Users, ShieldCheck, Ban, Activity, UserPlus, Clock, Pencil, ToggleLeft, ToggleRight, Trash2, Copy, KeyRound, BookOpen, Check, Search, MoreHorizontal, ChevronLeft, ChevronRight, TrendingUp, Eye, Mail, Calendar, ShieldAlert } from "lucide-react";
@@ -524,11 +525,7 @@ function AdminUsersPage() {
 
       {/* Table */}
       {isLoading ? (
-        <div className="py-16 text-center">
-          <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
-            Carregando alunos...
-          </p>
-        </div>
+        <ListSkeleton rows={6} />
       ) : !filteredBuyers.length ? (
         <div className="rounded-xl border border-border/15 bg-card/5 py-16 text-center">
           <Users className="mx-auto mb-4 h-8 w-8 text-muted-foreground/15" />

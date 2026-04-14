@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { PageLoading } from "@/components/LoadingSkeletons";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getCourseDetail,
@@ -77,13 +78,7 @@ function CourseDetailPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
-          Carregando curso...
-        </p>
-      </div>
-    );
+    return <PageLoading message="Carregando curso..." />;
   }
 
   if (error || !data?.course) {
