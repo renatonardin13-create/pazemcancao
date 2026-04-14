@@ -108,9 +108,9 @@ export function AdminDashboard() {
         </div>
 
         {/* Period selector row */}
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/25 relative z-10">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-4 pt-4 border-t border-border/25 relative z-10 gap-3">
           <span className="text-xs text-muted-foreground/70 font-medium">Período de análise</span>
-          <div className="flex gap-1 rounded-xl bg-background/30 border border-border/30 p-1">
+          <div className="flex gap-1 rounded-xl bg-background/30 border border-border/30 p-1 w-full sm:w-auto">
             {PERIOD_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
