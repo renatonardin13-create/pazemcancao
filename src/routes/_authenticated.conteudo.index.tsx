@@ -63,6 +63,19 @@ function getGreeting(): string {
 
 function ContentPage() {
   const { user } = useAuth();
+  const queryClient = useQueryClient();
+
+  const handleTrackView = useCallback((contentId: string) => {
+    trackContentView({ data: { contentId } }).then(() => {
+      queryClient.invalidateQueries({ queryKey: ["content-items"] });
+    });
+  }, [queryClient]);
+
+  const handleTrackDownload = useCallback((contentId: string) => {
+    trackContentDownload({ data: { contentId } }).then(() => {
+      queryClient.invalidateQueries({ queryKey: ["content-items"] });
+    });
+  }, [queryClient]);
 
   const { data, isLoading } = useQuery({
     queryKey: ["content-items"],
