@@ -9,7 +9,7 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
     // Get all enrollments for the authenticated user (not just active — we filter below)
     const { data: enrollments } = await supabase
       .from('enrollments')
-      .select('course_id, progress_percentage, status, enrolled_at, access_origin, granted_at, expires_at')
+      .select('course_id, progress_percentage, status, enrolled_at, access_origin, granted_at, expires_at, updated_at')
       .eq('user_id', userId)
       .order('granted_at', { ascending: false })
       .order('enrolled_at', { ascending: false });
