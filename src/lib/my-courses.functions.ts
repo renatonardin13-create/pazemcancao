@@ -72,14 +72,20 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
     // Get progress per course
     const { data: progress } = await supabase
       .from('lesson_progress')
-      .select('course_id, lesson_id, completed')
+      .select('course_id, lesson_id, completed, updated_at')
       .eq('user_id', userId)
       .in('course_id', courseIds);
 
     const completedLessonsMap = new Map<string, number>();
+    const lastAccessMap = new Map<string, string>();
     for (const p of progress || []) {
       if (p.completed) {
         completedLessonsMap.set(p.course_id, (completedLessonsMap.get(p.course_id) || 0) + 1);
+      }
+      // Track most recent activity per course
+      const prev = lastAccessMap.get(p.course_id);
+      if (!prev || p.updated_at > prev) {
+        lastAccessMap.set(p.course_id, p.updated_at);
       }
     }
 
@@ -99,6 +105,7 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
         enrolled_at: enrollment?.enrolled_at,
         granted_at: enrollment?.granted_at,
         access_origin: enrollment?.access_origin,
+        last_accessed_at: lastAccessMap.get(course.id) || null,
       };
     })
     .sort((a, b) => {
