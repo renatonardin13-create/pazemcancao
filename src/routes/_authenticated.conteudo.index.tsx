@@ -581,12 +581,16 @@ function ContentGrid({
   config,
   progressMap,
   lastAccessedId,
+  onTrackView,
+  onTrackDownload,
 }: {
   items: any[];
   hasAccess: boolean;
   config: { gradient: string; icon: any };
   progressMap: Record<string, any>;
   lastAccessedId: string | null;
+  onTrackView?: (contentId: string) => void;
+  onTrackDownload?: (contentId: string) => void;
 }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
@@ -600,6 +604,8 @@ function ContentGrid({
           TypeIcon={config.icon}
           progress={progressMap[item.id]}
           isLastAccessed={item.id === lastAccessedId}
+          onTrackView={onTrackView}
+          onTrackDownload={onTrackDownload}
         />
       ))}
     </div>
