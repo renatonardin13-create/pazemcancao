@@ -383,7 +383,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
 
       if (buyerError) {
         await markEventFailed(eventKey, `DB upsert error: ${buyerError.message}`);
-        await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 500, responseMessage: 'Failed to register buyer' });
+        await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 500, responseMessage: 'Failed to register buyer', ...audit, isSuccess: false, errorDetails: buyerError.message });
         return jsonResponse({ error: 'Failed to register buyer' }, 500);
       }
 
