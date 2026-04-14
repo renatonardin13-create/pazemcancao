@@ -6,9 +6,12 @@ import { getMyCoursesData, getRecommendedCourses, getMostAccessedCourses } from 
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { motion } from "framer-motion";
-import { BookOpen, Search, ArrowRight, Layers, Clock, PlayCircle, Sparkles, TrendingUp, CheckCircle2, Play } from "lucide-react";
+import { BookOpen, Search, ArrowRight, Layers, Clock, PlayCircle, Sparkles, TrendingUp, CheckCircle2, Play, Heart } from "lucide-react";
 import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/hooks/use-auth";
+import { useQuery as useProfileQuery } from "@tanstack/react-query";
+import { getMyProfile } from "@/lib/profile.functions";
 import { Progress } from "@/components/ui/progress";
 import {
   Select,
@@ -23,6 +26,14 @@ export const Route = createFileRoute("/_authenticated/cursos/")({
 });
 
 function MeusCoursosPage() {
+  const { user } = useAuth();
+
+  const { data: profileData } = useProfileQuery({
+    queryKey: ["my-profile"],
+    queryFn: () => getMyProfile(),
+    staleTime: 60_000,
+  });
+
   const { data, isLoading } = useQuery({
     queryKey: ["my-courses"],
     queryFn: () => getMyCoursesData(),
@@ -45,6 +56,8 @@ function MeusCoursosPage() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
+  const displayName = profileData?.profile?.display_name || user?.email?.split("@")[0] || "aluno";
+  const firstName = displayName.split(" ")[0];
   const courses = data?.courses || [];
   const stats = data?.stats || { total: 0, inProgress: 0, completed: 0 };
 
@@ -76,21 +89,39 @@ function MeusCoursosPage() {
 
       <main className="flex-1 w-full pb-28">
         <div className="mx-auto w-full max-w-[1100px] px-4 sm:px-8 lg:px-12 pt-8 sm:pt-12">
-          {/* Header */}
+          {/* Personalized Greeting */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex items-center gap-3 mb-8"
+            transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+            className="mb-8"
           >
-            <BookOpen className="h-7 w-7 text-gold" />
-            <div>
+            <div className="flex items-start gap-1.5 mb-1">
+              <Heart className="h-4 w-4 text-gold/50 mt-1 flex-shrink-0" />
               <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
-                Meus Cursos
+                Olá, {firstName}.
               </h1>
-              <p className="text-[13px] text-muted-foreground/50 mt-0.5">
-                Todos os cursos que você tem acesso
-              </p>
+            </div>
+            <p className="text-[13px] sm:text-sm text-muted-foreground/50 mt-1 ml-[22px] italic leading-relaxed max-w-md">
+              Que sua jornada hoje seja leve, profunda e cheia de paz.
+            </p>
+          </motion.div>
+
+          {/* Search bar */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mb-8"
+          >
+            <div className="relative max-w-md">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Buscar entre seus cursos..."
+                className="pl-10 h-11 bg-card/15 border-border/20 rounded-xl text-sm placeholder:text-muted-foreground/30 focus:border-gold/30 focus:ring-gold/10"
+              />
             </div>
           </motion.div>
 
@@ -98,24 +129,24 @@ function MeusCoursosPage() {
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="grid grid-cols-1 xs:grid-cols-3 gap-3 sm:gap-4 mb-8"
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="grid grid-cols-3 gap-3 sm:gap-4 mb-10"
           >
-            <div className="rounded-xl border border-border/30 bg-card/8 p-5">
-              <p className="text-xs text-muted-foreground/50 mb-1">Total</p>
-              <p className="font-display text-3xl font-bold text-gold">
+            <div className="rounded-xl border border-border/20 bg-card/8 p-4 sm:p-5 text-center">
+              <p className="text-[10px] sm:text-xs text-muted-foreground/40 mb-1 uppercase tracking-wider">Cursos</p>
+              <p className="font-display text-2xl sm:text-3xl font-bold text-gold">
                 {isLoading ? "—" : stats.total}
               </p>
             </div>
-            <div className="rounded-xl border border-border/30 bg-card/8 p-5">
-              <p className="text-xs text-muted-foreground/50 mb-1">Andamento</p>
-              <p className="font-display text-3xl font-bold text-gold">
+            <div className="rounded-xl border border-border/20 bg-card/8 p-4 sm:p-5 text-center">
+              <p className="text-[10px] sm:text-xs text-muted-foreground/40 mb-1 uppercase tracking-wider">Em andamento</p>
+              <p className="font-display text-2xl sm:text-3xl font-bold text-gold">
                 {isLoading ? "—" : stats.inProgress}
               </p>
             </div>
-            <div className="rounded-xl border border-border/30 bg-card/8 p-5">
-              <p className="text-xs text-muted-foreground/50 mb-1">Concluídos</p>
-              <p className="font-display text-3xl font-bold text-gold">
+            <div className="rounded-xl border border-border/20 bg-card/8 p-4 sm:p-5 text-center">
+              <p className="text-[10px] sm:text-xs text-muted-foreground/40 mb-1 uppercase tracking-wider">Concluídos</p>
+              <p className="font-display text-2xl sm:text-3xl font-bold text-gold">
                 {isLoading ? "—" : stats.completed}
               </p>
             </div>
@@ -355,23 +386,18 @@ function MeusCoursosPage() {
             </motion.div>
           )}
 
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6"
-          >
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
-              <Input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Buscar curso..."
-                className="pl-10 bg-card/20 border-border/30"
-              />
+          {/* Section: Todos os cursos */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-5 mt-2">
+            <div className="flex items-center gap-3">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
+                <BookOpen className="h-4 w-4 text-primary/70" />
+              </div>
+              <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
+                Todos os cursos
+              </h2>
             </div>
             <Select value={filter} onValueChange={setFilter}>
-              <SelectTrigger className="w-[160px] bg-card/20 border-border/30">
+              <SelectTrigger className="w-[160px] bg-card/15 border-border/20 text-xs">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -381,16 +407,6 @@ function MeusCoursosPage() {
                 <SelectItem value="not_started">Não iniciados</SelectItem>
               </SelectContent>
             </Select>
-          </motion.div>
-
-          {/* Section header */}
-          <div className="flex items-center gap-3 mb-5 mt-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
-              <BookOpen className="h-4 w-4 text-primary/70" />
-            </div>
-            <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
-              Todos os cursos
-            </h2>
           </div>
 
           {/* Course List */}
