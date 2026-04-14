@@ -290,14 +290,14 @@ export function AdminDashboard() {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.25 }}
-        className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
         {[
           { label: "Categorias", value: data?.totalCategories ?? 0, icon: BarChart3, color: "text-purple-400", bg: "bg-purple-400/10", border: "border-purple-400/20" },
           { label: "Músicas Ativas", value: data?.activeTracks ?? 0, icon: Music, color: "text-pink-400", bg: "bg-pink-400/10", border: "border-pink-400/20" },
           { label: "Sessões Ativas", value: data?.activeSessions ?? 0, icon: Activity, color: "text-cyan-400", bg: "bg-cyan-400/10", border: "border-cyan-400/20" },
           { label: "Total de Músicas", value: data?.totalTracks ?? 0, icon: Headphones, color: "text-indigo-400", bg: "bg-indigo-400/10", border: "border-indigo-400/20" },
         ].map((s) => (
-          <div key={s.label} className={`flex items-center gap-3.5 rounded-xl border ${s.border} ${s.bg} px-4 py-3.5 transition-all hover:shadow-md bg-card shadow-md shadow-black/5`}>
+          <div key={s.label} className={`flex items-center gap-2.5 sm:gap-3.5 rounded-xl border ${s.border} ${s.bg} px-3 sm:px-4 py-3 sm:py-3.5 transition-all hover:shadow-md bg-card shadow-md shadow-black/5`}>
             <div className={`flex h-9 w-9 items-center justify-center rounded-xl ${s.bg} border ${s.border} shrink-0`}>
               <s.icon className={`h-4.5 w-4.5 ${s.color}`} />
             </div>
@@ -311,13 +311,13 @@ export function AdminDashboard() {
         ))}
       </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 lg:gap-5">
         {/* Sales Chart — large, prominent */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.3 }}
-          className="lg:col-span-2 relative rounded-2xl border border-gold/20 bg-gradient-to-br from-gold/[0.04] via-card to-card p-6 sm:p-7 overflow-hidden shadow-xl shadow-black/10">
+          className="lg:col-span-2 relative rounded-2xl border border-gold/20 bg-gradient-to-br from-gold/[0.04] via-card to-card p-4 sm:p-7 overflow-hidden shadow-xl shadow-black/10">
           <div className="pointer-events-none absolute -top-32 -right-32 h-72 w-72 rounded-full bg-gold/[0.08] blur-[100px]" />
 
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-5 relative">
