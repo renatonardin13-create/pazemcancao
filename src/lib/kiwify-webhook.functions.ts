@@ -265,6 +265,9 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
   // Resolve course: prefer query param, fallback to product ID lookup via course_integrations
   const resolvedCourseId = courseIdFromQuery || await resolveCourseByProductId(externalProductId);
 
+  // Shared audit fields for all log calls in this request
+  const audit = { externalProductId, internalCourseId: resolvedCourseId };
+
   if (!customerEmail) {
     await logWebhookEvent({
       eventType: status || 'unknown',
