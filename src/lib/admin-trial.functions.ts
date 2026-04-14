@@ -105,26 +105,40 @@ export const addStudent = createServerFn({ method: 'POST' })
       authUserId = existingUser.id;
     }
 
-    // Create enrollments for selected courses using upsert (unique on user_id + course_id)
-    if (data.courseIds && data.courseIds.length > 0) {
-      for (const courseId of data.courseIds) {
-        const { error: enrollError } = await supabaseAdmin
-          .from('enrollments')
-          .upsert(
-            {
-              user_id: authUserId,
-              course_id: courseId,
-              status: 'active',
-              access_origin: 'manual',
-              email,
-              granted_at: new Date().toISOString(),
-            },
-            { onConflict: 'user_id,course_id' }
-          );
+    // Create enrollments for selected courses in a single deduplicated upsert
+    const selectedCourseIds = Array.from(new Set(data.courseIds ?? []));
 
-        if (enrollError) {
-          console.error(`Enrollment error for course ${courseId}:`, enrollError.message);
-        }
+    if (selectedCourseIds.length > 0) {
+      const { data: validCourses, error: coursesError } = await supabaseAdmin
+        .from('courses')
+        .select('id')
+        .in('id', selectedCourseIds);
+
+      if (coursesError) throw new Error(coursesError.message);
+
+      const validCourseIds = new Set((validCourses || []).map((course: { id: string }) => course.id));
+      const invalidCourseIds = selectedCourseIds.filter((courseId) => !validCourseIds.has(courseId));
+
+      if (invalidCourseIds.length > 0) {
+        throw new Error('Um ou mais cursos selecionados não são válidos.');
+      }
+
+      const grantedAt = new Date().toISOString();
+      const enrollmentRows = selectedCourseIds.map((courseId) => ({
+        user_id: authUserId,
+        course_id: courseId,
+        status: 'active',
+        access_origin: 'admin_manual',
+        email,
+        granted_at: grantedAt,
+      }));
+
+      const { error: enrollError } = await supabaseAdmin
+        .from('enrollments')
+        .upsert(enrollmentRows, { onConflict: 'user_id,course_id' });
+
+      if (enrollError) {
+        throw new Error(`Erro ao criar vínculos dos cursos: ${enrollError.message}`);
       }
     }
 
