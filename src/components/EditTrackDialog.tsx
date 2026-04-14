@@ -180,12 +180,13 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-card border-border/20">
+      <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="text-foreground/85">Editar Música</DialogTitle>
+          <DialogTitle>Editar Música</DialogTitle>
+          <p className="text-xs text-muted-foreground">Atualize as informações da música</p>
         </DialogHeader>
 
-        <div className="space-y-4 pt-2">
+        <div className="space-y-5 px-6 py-5 max-h-[65vh] overflow-y-auto">
           {statusMessage ? (
             <Alert variant={statusType === "error" ? "destructive" : "default"}>
               <AlertTitle>
@@ -197,7 +198,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
           {/* Cover */}
           <div className="space-y-2">
-            <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
+            <Label className="text-xs font-semibold text-foreground/80">
               Capa
             </Label>
             <ImageFieldHint ratio="1:1" recommendedSize="500x500" file={coverFile} previewUrl={coverPreview} />
@@ -219,12 +220,12 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
                   </button>
                 </div>
               ) : (
-                <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-muted/15 border border-dashed border-border/20">
-                  <ImageIcon className="h-6 w-6 text-muted-foreground/50" />
+                <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-muted/10 border border-dashed border-border/20">
+                  <ImageIcon className="h-6 w-6 text-muted-foreground/40" />
                 </div>
               )}
               <div>
-                <label className="flex items-center gap-2 cursor-pointer rounded-lg border border-border/30 bg-card/15 px-3 py-2 text-xs text-muted-foreground/50 hover:border-gold/20 hover:text-gold/60 transition-all">
+                <label className="flex items-center gap-2 cursor-pointer rounded-lg border border-border/25 bg-muted/5 px-3 py-2 text-xs text-muted-foreground hover:border-gold/20 hover:text-gold transition-all">
                   <Upload className="h-3.5 w-3.5" />
                   Enviar imagem
                   <input
@@ -244,25 +245,25 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
           </div>
 
           {/* Title */}
-          <div className="space-y-2">
-            <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
+          <div className="space-y-1.5">
+            <Label className="text-xs font-semibold text-foreground/80">
               Título
             </Label>
             <Input
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="bg-card/15 border-border/30 text-sm"
+              className="bg-background/50 border-border/20 focus:border-gold/40 text-sm h-10"
               disabled={isSubmitting}
             />
           </div>
 
           {/* Category */}
-          <div className="space-y-2">
-            <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
+          <div className="space-y-1.5">
+            <Label className="text-xs font-semibold text-foreground/80">
               Categoria
             </Label>
             <Select value={category} onValueChange={setCategory} disabled={isSubmitting}>
-              <SelectTrigger className="bg-card/15 border-border/30 text-sm">
+              <SelectTrigger className="bg-background/50 border-border/20 text-sm h-10">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -274,14 +275,14 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
           </div>
 
           {/* Description */}
-          <div className="space-y-2">
-            <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
+          <div className="space-y-1.5">
+            <Label className="text-xs font-semibold text-foreground/80">
               Descrição
             </Label>
             <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="bg-card/15 border-border/30 text-sm min-h-[70px]"
+              className="bg-background/50 border-border/20 focus:border-gold/40 text-sm min-h-[70px] resize-none"
               disabled={isSubmitting}
             />
           </div>
@@ -291,7 +292,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Gift className="h-4 w-4 text-amber-400/60" />
-                <Label className="text-[12px] font-semibold text-foreground/70">
+                <Label className="text-xs font-semibold text-foreground/80">
                   Música Bônus
                 </Label>
               </div>
@@ -303,7 +304,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
             </div>
             {isBonus && (
               <div className="space-y-2">
-                <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
+                <Label className="text-xs font-semibold text-foreground/80">
                   Liberar em quantos dias?
                 </Label>
                 <div className="flex items-center gap-2">
@@ -314,13 +315,13 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
                     placeholder="Ex: 7"
                     value={bonusDays}
                     onChange={(e) => setBonusDays(e.target.value)}
-                    className="bg-card/15 border-border/30 text-sm w-24"
+                    className="bg-background/50 border-border/20 text-sm w-24 h-10"
                     disabled={isSubmitting}
                   />
-                  <span className="text-xs text-muted-foreground/70">dias</span>
+                  <span className="text-xs text-muted-foreground">dias</span>
                 </div>
                 {bonusDays && parseInt(bonusDays) > 0 && (
-                  <p className="text-xs text-amber-400/50">
+                  <p className="text-xs text-amber-400/60">
                     📅 Será liberada em {new Date(Date.now() + parseInt(bonusDays) * 86400000).toLocaleDateString("pt-BR")}
                   </p>
                 )}
@@ -330,28 +331,28 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
               </div>
             )}
           </div>
+        </div>
 
-          {/* Actions */}
-          <div className="flex justify-end gap-2 pt-2">
-            <Button
-              variant="ghost"
-              onClick={() => onOpenChange(false)}
-              disabled={isSubmitting}
-              className="text-xs text-muted-foreground/70"
-            >
-              Cancelar
-            </Button>
-            <Button
-              onClick={() => saveMutation.mutate()}
-              disabled={!title.trim() || isSubmitting}
-              className="gap-2 rounded-full bg-gold/15 text-gold/65 border border-gold/12 px-5 h-9 text-xs font-bold tracking-[0.15em] uppercase hover:bg-gold/25 hover:text-gold/85 transition-all duration-500"
-            >
-              {isSubmitting ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : null}
-              {isSubmitting ? "Salvando..." : "Salvar"}
-            </Button>
-          </div>
+        {/* Footer */}
+        <div className="flex justify-end gap-2.5 px-6 py-4 border-t border-border/15 bg-muted/[0.03]">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onOpenChange(false)}
+            disabled={isSubmitting}
+          >
+            Cancelar
+          </Button>
+          <Button
+            size="sm"
+            onClick={() => saveMutation.mutate()}
+            disabled={!title.trim() || isSubmitting}
+          >
+            {isSubmitting ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />
+            ) : null}
+            {isSubmitting ? "Salvando..." : "Salvar Alterações"}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
