@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { BookOpen, Play, Lock } from "lucide-react";
+import { BookOpen, Play, Lock, Clock, BookOpenCheck } from "lucide-react";
 
 interface CourseShelfCardProps {
   course: any;
@@ -11,7 +11,8 @@ interface CourseShelfCardProps {
 }
 
 /**
- * Netflix-style shelf card — 16:9 cinematic thumbnail with hover overlay.
+ * Netflix-style shelf card — 16:9 cinematic thumbnail with rich hover preview.
+ * On desktop hover: card scales up, reveals extra info, play button, and description.
  */
 export function CourseShelfCard({
   course,
@@ -30,78 +31,107 @@ export function CourseShelfCard({
   return (
     <Wrapper
       {...(wrapperProps as any)}
-      className="group relative block rounded-xl overflow-hidden cursor-pointer"
+      className="group/card relative block cursor-pointer"
     >
-      {/* Image container — 16:9 */}
-      <div className="relative aspect-video overflow-hidden bg-card/10">
-        {course.cover_image_url ? (
-          <img
-            src={course.cover_image_url}
-            alt={course.title}
-            className={`w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110 ${isLocked ? 'saturate-[0.3]' : ''}`}
-            loading="lazy"
-          />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-card/30 via-muted/10 to-background flex items-center justify-center">
-            <BookOpen className="h-8 w-8 text-muted-foreground/15" />
-          </div>
-        )}
+      {/* Outer container — scales up on hover (desktop only) */}
+      <div className="relative rounded-xl overflow-visible md:transition-transform md:duration-500 md:ease-[cubic-bezier(0.22,1,0.36,1)] md:group-hover/card:scale-[1.08] md:group-hover/card:z-30">
+        
+        {/* Shadow glow on hover */}
+        <div className="absolute -inset-2 rounded-2xl bg-gold/0 md:group-hover/card:bg-gold/[0.04] md:transition-all md:duration-500 blur-xl pointer-events-none" />
 
-        {/* Dark overlay on hover (stronger for locked) */}
-        <div className={`absolute inset-0 transition-all duration-500 ${isLocked ? 'bg-black/40 group-hover:bg-black/60' : 'bg-black/0 group-hover:bg-black/60'}`} />
+        {/* Main card body */}
+        <div className="relative rounded-xl overflow-hidden bg-card/10">
+          
+          {/* Image — 16:9 */}
+          <div className="relative aspect-video overflow-hidden">
+            {course.cover_image_url ? (
+              <img
+                src={course.cover_image_url}
+                alt={course.title}
+                className={`w-full h-full object-cover md:transition-transform md:duration-700 md:ease-out md:group-hover/card:scale-110 ${isLocked ? 'saturate-[0.3]' : ''}`}
+                loading="lazy"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-card/30 via-muted/10 to-background flex items-center justify-center">
+                <BookOpen className="h-8 w-8 text-muted-foreground/15" />
+              </div>
+            )}
 
-        {/* Always-visible subtle bottom gradient for readability */}
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent" />
+            {/* Overlay layers */}
+            <div className={`absolute inset-0 md:transition-all md:duration-500 ${isLocked ? 'bg-black/40 md:group-hover/card:bg-black/55' : 'bg-black/0 md:group-hover/card:bg-black/50'}`} />
+            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-        {/* Badge — top left */}
-        {badge && (
-          <div className="absolute top-2.5 left-2.5 z-10">
-            {badge}
-          </div>
-        )}
+            {/* Badge — top left */}
+            {badge && (
+              <div className="absolute top-2.5 left-2.5 z-10">{badge}</div>
+            )}
 
-        {/* Center icon — Play or Lock */}
-        <div className="absolute inset-0 flex items-center justify-center z-10">
-          {isLocked ? (
-            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/10 opacity-80 group-hover:opacity-100 transition-opacity duration-300">
-              <Lock className="h-4.5 w-4.5 text-white/70" />
+            {/* Center icon */}
+            <div className="absolute inset-0 flex items-center justify-center z-10">
+              {isLocked ? (
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 backdrop-blur-md border border-white/10 opacity-80 md:group-hover/card:opacity-100 md:transition-opacity md:duration-300">
+                  <Lock className="h-4 w-4 text-white/70" />
+                </div>
+              ) : (
+                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/90 shadow-2xl shadow-gold/40 backdrop-blur-sm scale-75 opacity-0 md:group-hover/card:opacity-100 md:group-hover/card:scale-100 md:transition-all md:duration-500 md:ease-out">
+                  <Play className="h-6 w-6 text-gold-foreground fill-gold-foreground ml-0.5" />
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/90 shadow-2xl shadow-gold/40 backdrop-blur-sm scale-75 opacity-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-500 ease-out">
-              <Play className="h-6 w-6 text-gold-foreground fill-gold-foreground ml-0.5" />
+
+            {/* Title + meta — always visible, enriched on hover */}
+            <div className="absolute inset-x-0 bottom-0 p-4 z-10 md:translate-y-1 md:group-hover/card:translate-y-0 md:transition-transform md:duration-500 md:ease-out">
+              <h3 className="text-sm font-bold text-white line-clamp-2 leading-snug drop-shadow-lg">
+                {course.title}
+              </h3>
+
+              {isLocked ? (
+                <p className="text-[10px] text-white/40 mt-1 uppercase tracking-wider font-medium">
+                  Acesso bloqueado
+                </p>
+              ) : (
+                <>
+                  {/* Meta info row — visible on hover */}
+                  <div className="flex items-center gap-2 mt-1.5 opacity-100 md:opacity-0 md:group-hover/card:opacity-100 md:transition-opacity md:duration-400 md:delay-75">
+                    {course.total_lessons > 0 && (
+                      <span className="inline-flex items-center gap-1 text-[10px] text-white/50 font-medium">
+                        <BookOpenCheck className="h-3 w-3" />
+                        {course.total_lessons} aulas
+                      </span>
+                    )}
+                    {hasProgress && (
+                      <span className="inline-flex items-center gap-1 text-[10px] text-gold/80 font-bold tabular-nums">
+                        <Clock className="h-3 w-3" />
+                        {progress}%
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Description — only on hover */}
+                  {course.short_description && (
+                    <p className="text-[11px] text-white/50 mt-1.5 line-clamp-2 leading-relaxed hidden md:block opacity-0 md:group-hover/card:opacity-100 md:transition-opacity md:duration-500 md:delay-100">
+                      {course.short_description}
+                    </p>
+                  )}
+                </>
+              )}
             </div>
-          )}
+
+            {/* Progress bar */}
+            {hasProgress && !isLocked && (
+              <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/10 z-20">
+                <div
+                  className={`h-full rounded-r-full md:transition-all md:duration-700 ${progress >= 100 ? "bg-player-completed" : "bg-gold"}`}
+                  style={{ width: `${Math.min(progress, 100)}%` }}
+                />
+              </div>
+            )}
+          </div>
         </div>
 
-        {/* Title + info */}
-        <div className="absolute inset-x-0 bottom-0 p-4 z-10 translate-y-2 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-          <h3 className="text-sm font-bold text-white line-clamp-2 leading-snug drop-shadow-lg">
-            {course.title}
-          </h3>
-          {isLocked ? (
-            <p className="text-[10px] text-white/40 mt-1 uppercase tracking-wider font-medium">
-              Acesso bloqueado
-            </p>
-          ) : course.short_description ? (
-            <p className="text-[11px] text-white/60 mt-1 line-clamp-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-              {course.short_description}
-            </p>
-          ) : null}
-        </div>
-
-        {/* Progress bar */}
-        {hasProgress && !isLocked && (
-          <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/10 z-20">
-            <div
-              className={`h-full rounded-r-full transition-all duration-700 ${progress >= 100 ? "bg-player-completed" : "bg-gold"}`}
-              style={{ width: `${Math.min(progress, 100)}%` }}
-            />
-          </div>
-        )}
+        {/* Border glow on hover */}
+        <div className={`absolute inset-0 rounded-xl border border-transparent md:transition-colors md:duration-500 pointer-events-none z-20 ${isLocked ? 'md:group-hover/card:border-white/10' : 'md:group-hover/card:border-gold/25'}`} />
       </div>
-
-      {/* Border glow on hover */}
-      <div className={`absolute inset-0 rounded-xl border border-transparent transition-colors duration-500 pointer-events-none z-20 ${isLocked ? 'group-hover:border-white/10' : 'group-hover:border-gold/30'}`} />
     </Wrapper>
   );
 }
