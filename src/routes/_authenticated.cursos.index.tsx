@@ -6,8 +6,8 @@ import { getMyCoursesData } from "@/lib/my-courses.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { motion } from "framer-motion";
-import { BookOpen, Search, ArrowRight, Layers, Clock } from "lucide-react";
-import { useState } from "react";
+import { BookOpen, Search, ArrowRight, Layers, Clock, PlayCircle } from "lucide-react";
+import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -35,6 +35,14 @@ function MeusCoursosPage() {
 
   const courses = data?.courses || [];
   const stats = data?.stats || { total: 0, inProgress: 0, completed: 0 };
+
+  // "Continue de onde parou" — recently accessed, in progress, max 5
+  const continueItems = useMemo(() => {
+    return courses
+      .filter((c: any) => c.last_accessed_at && c.progress_pct > 0 && c.progress_pct < 100)
+      .sort((a: any, b: any) => new Date(b.last_accessed_at).getTime() - new Date(a.last_accessed_at).getTime())
+      .slice(0, 5);
+  }, [courses]);
 
   const filtered = courses.filter((c: any) => {
     const matchSearch = !search || c.title?.toLowerCase().includes(search.toLowerCase());
@@ -96,8 +104,87 @@ function MeusCoursosPage() {
               </p>
             </div>
           </motion.div>
+          {/* Continue de onde parou */}
+          {!isLoading && continueItems.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.12 }}
+              className="mb-10"
+            >
+              <div className="flex items-center gap-3 mb-5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
+                  <PlayCircle className="h-4 w-4 text-primary/70" />
+                </div>
+                <div>
+                  <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
+                    Continue sua caminhada
+                  </h2>
+                  <p className="text-[11px] text-muted-foreground/40 mt-0.5 italic">
+                    Retome de onde você parou, no seu ritmo
+                  </p>
+                </div>
+              </div>
 
-          {/* Search & Filter */}
+              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
+                {continueItems.map((course: any, idx: number) => (
+                  <motion.div
+                    key={`continue-${course.id}`}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.06 * idx }}
+                    className="flex-shrink-0 w-[280px] sm:w-[300px]"
+                  >
+                    <Link
+                      to="/cursos/$courseId"
+                      params={{ courseId: course.id }}
+                      className="group flex gap-4 rounded-xl border border-border/20 bg-card/10 p-3 transition-all duration-500 hover:border-gold/25 hover:bg-card/20 hover:shadow-lg hover:shadow-gold/5"
+                    >
+                      {/* Thumbnail */}
+                      <div className="relative w-20 h-20 rounded-lg overflow-hidden flex-shrink-0">
+                        {course.cover_image_url ? (
+                          <img
+                            src={course.cover_image_url}
+                            alt={course.title}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-muted/15 flex items-center justify-center">
+                            <BookOpen className="h-6 w-6 text-muted-foreground/30" />
+                          </div>
+                        )}
+                        {/* Progress overlay */}
+                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/40">
+                          <div
+                            className="h-full bg-gold rounded-r-full transition-all"
+                            style={{ width: `${course.progress_pct}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Info */}
+                      <div className="flex-1 min-w-0 flex flex-col justify-center">
+                        <h3 className="text-sm font-bold text-foreground/80 line-clamp-2 leading-snug group-hover:text-gold transition-colors duration-300">
+                          {course.title}
+                        </h3>
+                        <div className="flex items-center gap-2 mt-1.5">
+                          <Progress value={course.progress_pct} className="h-1 flex-1 bg-muted/10" />
+                          <span className="text-[10px] font-bold text-gold/70 tabular-nums">
+                            {course.progress_pct}%
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground/40 mt-1">
+                          {course.completed_lessons}/{course.lesson_count} aulas
+                        </p>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
