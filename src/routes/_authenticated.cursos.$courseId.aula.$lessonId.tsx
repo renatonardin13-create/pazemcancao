@@ -73,7 +73,8 @@ function LessonDetailPage() {
         queryKey: ["lesson-detail", courseId, lessonId],
       });
       queryClient.invalidateQueries({ queryKey: ["course-detail", courseId] });
-      toast.success("Progresso atualizado!");
+      toast.success("Aula concluída! ✓");
+      setShowNextUp(true);
     },
   });
 
