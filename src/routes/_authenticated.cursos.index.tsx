@@ -66,6 +66,7 @@ function MeusCoursosPage() {
   const promoBanners = shelvesData?.promoBanners || [];
   const stats = myData?.stats || { total: 0, inProgress: 0, completed: 0 };
   const continueWatchingCourses = continueData?.courses || [];
+  const myCourses = myData?.courses || [];
 
   // Collect all courses from shelves for search
   const allShelfCourses = useMemo(() => {
