@@ -27,7 +27,7 @@ export const Route = createFileRoute("/_authenticated/cursos/")({
 function MeusCoursosPage() {
   const { user } = useAuth();
 
-  const { data: profileData } = useProfileQuery({
+  const { data: profileData } = useQuery({
     queryKey: ["my-profile"],
     queryFn: () => getMyProfile(),
     staleTime: 60_000,
