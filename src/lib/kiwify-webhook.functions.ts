@@ -450,6 +450,8 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
         purchase_linked: orderId,
         content_unlocks_created: unlocksCreated,
         course_id: linkedCourseId,
+        external_product_id: externalProductId || null,
+        platform: payloadPlatform || null,
       });
 
       await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: linkedCourseId ? 'Buyer approved and enrolled' : 'Buyer approved' });
