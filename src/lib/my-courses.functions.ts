@@ -25,13 +25,13 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
       return true;
     });
 
-    if (!enrollments || enrollments.length === 0) {
+    if (activeEnrollments.length === 0) {
       return { courses: [], stats: { total: 0, inProgress: 0, completed: 0 } };
     }
 
     // Keep a single active access record per course
-    const enrollmentByCourse = new Map<string, (typeof enrollments)[number]>();
-    for (const enrollment of enrollments) {
+    const enrollmentByCourse = new Map<string, (typeof activeEnrollments)[number]>();
+    for (const enrollment of activeEnrollments) {
       if (!enrollmentByCourse.has(enrollment.course_id)) {
         enrollmentByCourse.set(enrollment.course_id, enrollment);
       }
