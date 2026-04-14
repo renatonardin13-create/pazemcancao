@@ -77,7 +77,7 @@ function AuthenticatedLayout() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_40%,var(--color-gold)/0.025,transparent_70%)]" />
         <div className="relative flex flex-col items-center gap-6 animate-in fade-in duration-1000">
           <div className="w-px h-12 bg-gradient-to-b from-transparent via-gold/15 to-transparent animate-breathe" />
-          <p className="text-[11px] font-medium uppercase tracking-[0.4em] text-gold/25">
+          <p className="text-[11px] font-medium uppercase tracking-[0.4em] text-gold/70">
             Preparando seu espaço
           </p>
         </div>
@@ -117,7 +117,7 @@ function AuthenticatedLayout() {
               </a>
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.3em] text-muted-foreground/35 hover:text-muted-foreground/55 transition-colors duration-500"
+                className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.3em] text-muted-foreground/70 hover:text-muted-foreground/55 transition-colors duration-500"
               >
                 <LogOut className="h-3 w-3" />
                 Sair
@@ -145,7 +145,7 @@ function AuthenticatedLayout() {
             Acesso não autorizado
           </h2>
           <div className="mx-auto mt-5 h-px w-10 bg-gradient-to-r from-transparent via-gold/12 to-transparent" />
-          <p className="mt-6 text-[14px] leading-[2] text-muted-foreground/40 font-light">
+          <p className="mt-6 text-[14px] leading-[2] text-muted-foreground/70 font-light">
             Este e-mail não possui compra registrada.<br />
             Se você já comprou, use o e-mail da compra.
           </p>
@@ -168,7 +168,7 @@ function AuthenticatedLayout() {
             </a>
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.3em] text-muted-foreground/25 hover:text-muted-foreground/45 transition-colors duration-500 mt-2"
+              className="flex items-center gap-2 text-[11px] font-medium uppercase tracking-[0.3em] text-muted-foreground/60 hover:text-muted-foreground/45 transition-colors duration-500 mt-2"
             >
               <LogOut className="h-3 w-3" />
               Sair

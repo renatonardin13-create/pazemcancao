@@ -180,7 +180,7 @@ function BrandingTab({ settings, onSave, saving }: { settings: any; onSave: (v: 
               </>
             ) : (
               <>
-                <Upload className="h-8 w-8 text-muted-foreground/40" />
+                <Upload className="h-8 w-8 text-muted-foreground/70" />
                 <p className="text-sm text-muted-foreground">Clique para fazer upload</p>
                 <p className="text-xs text-muted-foreground/60">PNG, JPG ou SVG (max 2MB)</p>
               </>
@@ -225,7 +225,7 @@ function BrandingTab({ settings, onSave, saving }: { settings: any; onSave: (v: 
                   </div>
                 ) : (
                   <div className="h-8 w-8 rounded border border-dashed border-border/30 flex items-center justify-center">
-                    <Upload className="h-4 w-4 text-muted-foreground/40" />
+                    <Upload className="h-4 w-4 text-muted-foreground/70" />
                   </div>
                 )}
                 <div>

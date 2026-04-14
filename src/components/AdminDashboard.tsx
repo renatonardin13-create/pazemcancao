@@ -64,10 +64,10 @@ export function AdminDashboard() {
           <div className="flex items-center gap-2.5">
             {/* Search */}
             <div className="relative hidden md:block">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/70" />
               <Input
                 placeholder="Buscar cursos, alunos..."
-                className="pl-9 h-10 w-56 bg-background/40 border-border/20 rounded-xl text-sm placeholder:text-muted-foreground/35 focus-visible:ring-gold/30 focus-visible:border-gold/30 transition-all"
+                className="pl-9 h-10 w-56 bg-background/40 border-border/20 rounded-xl text-sm placeholder:text-muted-foreground/70 focus-visible:ring-gold/30 focus-visible:border-gold/30 transition-all"
               />
             </div>
 
@@ -109,7 +109,7 @@ export function AdminDashboard() {
 
         {/* Period selector row */}
         <div className="flex items-center justify-between mt-4 pt-4 border-t border-border/10 relative z-10">
-          <span className="text-xs text-muted-foreground/40 font-medium">Período de análise</span>
+          <span className="text-xs text-muted-foreground/70 font-medium">Período de análise</span>
           <div className="flex gap-1 rounded-xl bg-background/30 border border-border/15 p-1">
             {PERIOD_OPTIONS.map((opt) => (
               <button
@@ -118,7 +118,7 @@ export function AdminDashboard() {
                 className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
                   days === opt.value
                     ? "bg-gold/15 text-gold border border-gold/25 shadow-sm shadow-gold/10"
-                    : "text-muted-foreground/40 hover:text-muted-foreground/70 border border-transparent"
+                    : "text-muted-foreground/70 hover:text-muted-foreground/70 border border-transparent"
                 }`}
               >
                 {opt.label}
@@ -151,7 +151,7 @@ export function AdminDashboard() {
             ) : (data?.totalRevenue ?? 0) > 0 ? (
               formatCurrency(data?.totalRevenue ?? 0)
             ) : (
-              <span className="text-2xl text-muted-foreground/30">R$ 0,00</span>
+              <span className="text-2xl text-muted-foreground/60">R$ 0,00</span>
             )}
           </p>
           <div className="flex items-center gap-2 mt-4">
@@ -161,10 +161,10 @@ export function AdminDashboard() {
                   <ArrowUpRight className="h-3.5 w-3.5 text-emerald-400" />
                   <span className="text-[11px] font-bold text-emerald-400">Receita total</span>
                 </div>
-                <span className="text-[10px] text-muted-foreground/40">vendas confirmadas</span>
+                <span className="text-[10px] text-muted-foreground/70">vendas confirmadas</span>
               </>
             ) : (
-              <span className="text-[11px] text-muted-foreground/35">Nenhuma venda registrada ainda</span>
+              <span className="text-[11px] text-muted-foreground/70">Nenhuma venda registrada ainda</span>
             )}
           </div>
         </motion.div>
@@ -190,7 +190,7 @@ export function AdminDashboard() {
             ) : (data?.totalStudents ?? 0) > 0 ? (
               data?.totalStudents ?? 0
             ) : (
-              <span className="text-2xl text-muted-foreground/30">0</span>
+              <span className="text-2xl text-muted-foreground/60">0</span>
             )}
           </p>
           <div className="flex items-center gap-2 mt-4">
@@ -200,10 +200,10 @@ export function AdminDashboard() {
                   <Users className="h-3.5 w-3.5 text-gold" />
                   <span className="text-[11px] font-bold text-gold">Compradores</span>
                 </div>
-                <span className="text-[10px] text-muted-foreground/40">com acesso ativo</span>
+                <span className="text-[10px] text-muted-foreground/70">com acesso ativo</span>
               </>
             ) : (
-              <span className="text-[11px] text-muted-foreground/35">Libere acesso para seus primeiros alunos</span>
+              <span className="text-[11px] text-muted-foreground/70">Libere acesso para seus primeiros alunos</span>
             )}
           </div>
         </motion.div>
@@ -229,7 +229,7 @@ export function AdminDashboard() {
             ) : (data?.activeCourses ?? 0) > 0 ? (
               data?.activeCourses ?? 0
             ) : (
-              <span className="text-2xl text-muted-foreground/30">0</span>
+              <span className="text-2xl text-muted-foreground/60">0</span>
             )}
           </p>
           <div className="flex items-center gap-2 mt-4">
@@ -239,7 +239,7 @@ export function AdminDashboard() {
                   <BookOpen className="h-3.5 w-3.5 text-blue-400" />
                   <span className="text-[11px] font-bold text-blue-400">Publicados</span>
                 </div>
-                <span className="text-[10px] text-muted-foreground/40">de {isLoading ? "—" : data?.totalCourses ?? 0} total</span>
+                <span className="text-[10px] text-muted-foreground/70">de {isLoading ? "—" : data?.totalCourses ?? 0} total</span>
               </>
             ) : (
               <Link to="/admin/courses/new" className="text-[11px] text-gold/60 hover:text-gold transition-colors">
@@ -280,7 +280,7 @@ export function AdminDashboard() {
                 {(data?.pendingEnrollments ?? 0) > 0 ? 'Ação necessária' : 'Tudo em dia'}
               </span>
             </div>
-            <span className="text-[10px] text-muted-foreground/40">aguardando aprovação</span>
+            <span className="text-[10px] text-muted-foreground/70">aguardando aprovação</span>
           </div>
         </motion.div>
       </div>
@@ -338,7 +338,7 @@ export function AdminDashboard() {
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                     days === opt.value
                       ? "bg-gold/15 text-gold border border-gold/20 shadow-sm"
-                      : "text-muted-foreground/40 hover:text-muted-foreground/70"
+                      : "text-muted-foreground/70 hover:text-muted-foreground/70"
                   }`}
                 >
                   {opt.label}
@@ -379,9 +379,9 @@ export function AdminDashboard() {
               </div>
             ) : !analytics?.dailyPlayData?.length ? (
                <div className="flex flex-col items-center justify-center py-16 text-center">
-                 <BarChart3 className="h-12 w-12 text-gold/15 mb-4" />
+                 <BarChart3 className="h-12 w-12 text-gold/40 mb-4" />
                  <p className="text-sm text-muted-foreground/50 font-semibold">Aguardando primeiros dados</p>
-                 <p className="text-[11px] text-muted-foreground/30 mt-1.5 max-w-xs">O gráfico será exibido automaticamente quando houver atividade de plays ou vendas na plataforma.</p>
+                 <p className="text-[11px] text-muted-foreground/60 mt-1.5 max-w-xs">O gráfico será exibido automaticamente quando houver atividade de plays ou vendas na plataforma.</p>
                </div>
             ) : (
               <ResponsiveContainer width="100%" height={280}>
@@ -457,9 +457,9 @@ export function AdminDashboard() {
               </div>
             ) : !data?.topCourses?.length ? (
               <div className="flex flex-col items-center justify-center py-10 text-center">
-                <BookOpen className="h-10 w-10 text-gold/15 mb-3" />
+                <BookOpen className="h-10 w-10 text-gold/40 mb-3" />
                 <p className="text-sm text-muted-foreground/50 font-semibold">Sem ranking ainda</p>
-                <p className="text-[11px] text-muted-foreground/30 mt-1 max-w-[200px]">Nenhum curso com vendas suficientes para exibir o ranking.</p>
+                <p className="text-[11px] text-muted-foreground/60 mt-1 max-w-[200px]">Nenhum curso com vendas suficientes para exibir o ranking.</p>
                 <Link to="/admin/courses/new" className="mt-3 text-[11px] text-gold/60 hover:text-gold transition-colors font-semibold">+ Criar curso</Link>
               </div>
             ) : (
@@ -469,19 +469,19 @@ export function AdminDashboard() {
                   return (
                     <div key={course.id} className="flex items-center gap-3 py-3 px-3 rounded-xl hover:bg-card/20 transition-colors group">
                       <span className="text-lg w-7 text-center shrink-0">
-                        {i < 3 ? medals[i] : <span className="text-sm font-bold text-muted-foreground/25">{i + 1}</span>}
+                        {i < 3 ? medals[i] : <span className="text-sm font-bold text-muted-foreground/60">{i + 1}</span>}
                       </span>
                       {course.coverUrl ? (
                         <img src={course.coverUrl} alt="" className="h-12 w-12 rounded-xl object-cover shrink-0 border border-border/10 shadow-sm" />
                       ) : (
                         <div className="h-12 w-12 rounded-xl bg-muted/15 flex items-center justify-center shrink-0 border border-border/10">
-                          <BookOpen className="h-5 w-5 text-muted-foreground/20" />
+                          <BookOpen className="h-5 w-5 text-muted-foreground/50" />
                         </div>
                       )}
                       <div className="flex-1 min-w-0">
                         <p className="text-sm text-foreground/90 truncate font-bold group-hover:text-foreground transition-colors">{course.title}</p>
                         <div className="flex items-center gap-3 mt-1">
-                          <span className="text-[11px] text-muted-foreground/40 flex items-center gap-1">
+                          <span className="text-[11px] text-muted-foreground/70 flex items-center gap-1">
                             <Users className="h-3 w-3" /> {course.students}
                           </span>
                           <span className="text-[11px] font-bold text-gold/60">
@@ -499,7 +499,7 @@ export function AdminDashboard() {
           {/* Footer link */}
           <Link
             to="/admin/courses"
-            className="mt-4 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border/10 text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/40 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all"
+            className="mt-4 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border/10 text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/70 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all"
           >
             Ver todos os cursos
             <ArrowUpRight className="h-3.5 w-3.5" />
@@ -545,8 +545,8 @@ export function AdminDashboard() {
                 </div>
               ) : !analytics?.topPlayed?.length ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <Headphones className="h-10 w-10 text-muted-foreground/15 mb-3" />
-                  <p className="text-sm text-muted-foreground/40">Nenhum dado ainda</p>
+                  <Headphones className="h-10 w-10 text-muted-foreground/50 mb-3" />
+                  <p className="text-sm text-muted-foreground/70">Nenhum dado ainda</p>
                 </div>
               ) : (
                 <>
@@ -563,11 +563,11 @@ export function AdminDashboard() {
                   <div className="border-t border-border/10">
                     {analytics.topPlayed.map((t: any, i: number) => (
                       <div key={t.trackId} className="flex items-center gap-3 px-5 py-3 border-b border-border/5 last:border-0 hover:bg-card/15 transition-colors">
-                        <span className="text-xs text-muted-foreground/30 w-6 text-right font-mono font-bold">{i + 1}</span>
+                        <span className="text-xs text-muted-foreground/60 w-6 text-right font-mono font-bold">{i + 1}</span>
                         {t.coverUrl ? (
                           <img src={t.coverUrl} alt="" className="h-9 w-9 rounded-lg object-cover border border-border/10" />
                         ) : (
-                          <div className="h-9 w-9 rounded-lg bg-muted/15 flex items-center justify-center border border-border/10"><Music className="h-4 w-4 text-muted-foreground/20" /></div>
+                          <div className="h-9 w-9 rounded-lg bg-muted/15 flex items-center justify-center border border-border/10"><Music className="h-4 w-4 text-muted-foreground/50" /></div>
                         )}
                         <span className="flex-1 text-sm text-foreground/75 truncate font-medium">{t.title}</span>
                         <span className="text-xs font-bold text-gold/70 bg-gold/8 px-2 py-1 rounded-lg">{t.plays} plays</span>
@@ -588,18 +588,18 @@ export function AdminDashboard() {
                 </div>
               ) : !analytics?.topDownloaded?.length ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <Download className="h-10 w-10 text-muted-foreground/15 mb-3" />
-                  <p className="text-sm text-muted-foreground/40">Nenhum download registrado</p>
+                  <Download className="h-10 w-10 text-muted-foreground/50 mb-3" />
+                  <p className="text-sm text-muted-foreground/70">Nenhum download registrado</p>
                 </div>
               ) : (
                 <>
                   {analytics.topDownloaded.map((t: any, i: number) => (
                     <div key={t.trackId} className="flex items-center gap-3 px-5 py-3 border-b border-border/5 last:border-0 hover:bg-card/15 transition-colors">
-                      <span className="text-xs text-muted-foreground/30 w-6 text-right font-mono font-bold">{i + 1}</span>
+                      <span className="text-xs text-muted-foreground/60 w-6 text-right font-mono font-bold">{i + 1}</span>
                       {t.coverUrl ? (
                         <img src={t.coverUrl} alt="" className="h-9 w-9 rounded-lg object-cover border border-border/10" />
                       ) : (
-                        <div className="h-9 w-9 rounded-lg bg-muted/15 flex items-center justify-center border border-border/10"><Music className="h-4 w-4 text-muted-foreground/20" /></div>
+                        <div className="h-9 w-9 rounded-lg bg-muted/15 flex items-center justify-center border border-border/10"><Music className="h-4 w-4 text-muted-foreground/50" /></div>
                       )}
                       <span className="flex-1 text-sm text-foreground/75 truncate font-medium">{t.title}</span>
                       <span className="text-xs font-bold text-emerald-400/70 bg-emerald-400/8 px-2 py-1 rounded-lg">{t.downloads} downloads</span>
@@ -607,13 +607,13 @@ export function AdminDashboard() {
                   ))}
                   {analytics.recentDownloads?.length > 0 && (
                     <div className="border-t border-border/15 p-5">
-                      <h4 className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/35 mb-4 font-medium">Downloads Recentes</h4>
+                      <h4 className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/70 mb-4 font-medium">Downloads Recentes</h4>
                       <div className="space-y-2">
                         {analytics.recentDownloads.slice(0, 10).map((d: any, i: number) => (
                           <div key={i} className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-card/15 transition-colors">
                             <span className="text-xs text-foreground/55 truncate flex-1">{d.email}</span>
-                            <span className="text-[11px] text-muted-foreground/35 shrink-0 ml-3">{d.trackTitle}</span>
-                            <span className="text-[10px] text-muted-foreground/25 ml-3 shrink-0">
+                            <span className="text-[11px] text-muted-foreground/70 shrink-0 ml-3">{d.trackTitle}</span>
+                            <span className="text-[10px] text-muted-foreground/60 ml-3 shrink-0">
                               {new Date(d.downloadedAt).toLocaleDateString('pt-BR')}
                             </span>
                           </div>
@@ -635,15 +635,15 @@ export function AdminDashboard() {
                 </div>
               ) : !analytics?.userActivity?.length ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <Users className="h-10 w-10 text-muted-foreground/15 mb-3" />
-                  <p className="text-sm text-muted-foreground/40">Nenhuma atividade registrada</p>
+                  <Users className="h-10 w-10 text-muted-foreground/50 mb-3" />
+                  <p className="text-sm text-muted-foreground/70">Nenhuma atividade registrada</p>
                 </div>
               ) : (
                 <>
                   <div className="grid grid-cols-[1fr_80px_80px] gap-2 px-5 py-3.5 border-b border-border/15 bg-card/5">
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/30 font-medium">Usuário</span>
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/30 text-right font-medium">Plays</span>
-                    <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/30 text-right font-medium">Downloads</span>
+                    <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/60 font-medium">Usuário</span>
+                    <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/60 text-right font-medium">Plays</span>
+                    <span className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/60 text-right font-medium">Downloads</span>
                   </div>
                   {analytics.userActivity.map((u: any) => (
                     <div key={u.email} className="grid grid-cols-[1fr_80px_80px] gap-2 px-5 py-3 border-b border-border/5 hover:bg-card/15 transition-colors">

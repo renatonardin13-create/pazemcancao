@@ -10,7 +10,7 @@ export const Route = createFileRoute("/_authenticated/louvor/$trackId")({
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="text-center">
         <p className="text-muted-foreground/50">Louvor não encontrado.</p>
-        <Link to="/downloads" className="mt-4 inline-block text-gold/50 hover:text-gold/80 text-sm">
+        <Link to="/downloads" className="mt-4 inline-block text-gold/70 hover:text-gold/80 text-sm">
           Voltar à biblioteca
         </Link>
       </div>
@@ -49,7 +49,7 @@ function TrackDetailPage() {
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
           <p className="text-muted-foreground/50">Louvor não encontrado.</p>
-          <Link to="/downloads" className="mt-4 inline-block text-gold/50 hover:text-gold/80 text-sm">
+          <Link to="/downloads" className="mt-4 inline-block text-gold/70 hover:text-gold/80 text-sm">
             Voltar à biblioteca
           </Link>
         </div>
@@ -87,7 +87,7 @@ function TrackDetailPage() {
       >
         <Link
           to="/downloads"
-          className="group flex items-center gap-2.5 text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/30 hover:text-gold/50 transition-colors duration-500"
+          className="group flex items-center gap-2.5 text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 hover:text-gold/70 transition-colors duration-500"
         >
           <ArrowLeft className="h-3.5 w-3.5 transition-transform duration-300 group-hover:-translate-x-1" />
           Biblioteca
@@ -113,12 +113,12 @@ function TrackDetailPage() {
                 <div className="absolute inset-0 rounded-3xl border border-gold/10 animate-breathe" />
               )}
               <Music className={`h-12 w-12 sm:h-16 sm:w-16 transition-colors duration-700 ${
-                isPlaying ? "text-gold/50" : "text-muted-foreground/15"
+                isPlaying ? "text-gold/70" : "text-muted-foreground/50"
               }`} />
 
               {/* Track number */}
               <span className={`absolute bottom-3 right-4 text-[10px] font-bold tracking-[0.2em] transition-colors duration-500 ${
-                isPlaying ? "text-gold/30" : "text-muted-foreground/10"
+                isPlaying ? "text-gold/55" : "text-muted-foreground/10"
               }`}>
                 {String(track.id).padStart(2, "0")}
               </span>
@@ -142,7 +142,7 @@ function TrackDetailPage() {
           </motion.h1>
 
           {/* Duration */}
-          <motion.p variants={fadeUp} custom={0.35} className="mt-4 text-[11px] tracking-[0.3em] text-muted-foreground/25 font-medium">
+          <motion.p variants={fadeUp} custom={0.35} className="mt-4 text-[11px] tracking-[0.3em] text-muted-foreground/60 font-medium">
             {track.duration}
           </motion.p>
 
@@ -201,7 +201,7 @@ function TrackDetailPage() {
             {/* Download button */}
             <button
               onClick={handleDownload}
-              className="mt-5 w-full flex items-center justify-center gap-2.5 rounded-full py-4 text-[11px] font-semibold tracking-[0.2em] uppercase text-muted-foreground/30 border border-border/8 hover:text-gold/50 hover:border-gold/15 hover:bg-gold/[0.03] transition-all duration-500"
+              className="mt-5 w-full flex items-center justify-center gap-2.5 rounded-full py-4 text-[11px] font-semibold tracking-[0.2em] uppercase text-muted-foreground/60 border border-border/8 hover:text-gold/70 hover:border-gold/15 hover:bg-gold/[0.03] transition-all duration-500"
             >
               <Download className="h-3.5 w-3.5" />
               Baixar Louvor
@@ -211,8 +211,8 @@ function TrackDetailPage() {
           {/* Emotional message */}
           <motion.div variants={fadeUp} custom={0.85} className="mt-16">
             <div className="mx-auto w-px h-12 bg-gradient-to-b from-transparent via-gold/12 to-transparent mb-8" />
-            <Heart className="h-4 w-4 text-gold/25 mx-auto mb-5" />
-            <p className="max-w-sm mx-auto text-[14px] leading-[2.4] text-muted-foreground/40 font-light italic">
+            <Heart className="h-4 w-4 text-gold/70 mx-auto mb-5" />
+            <p className="max-w-sm mx-auto text-[14px] leading-[2.4] text-muted-foreground/70 font-light italic">
               "{emotionalMessage}"
             </p>
           </motion.div>
@@ -227,10 +227,10 @@ function TrackDetailPage() {
                   params={{ trackId: String(prevTrack.id) }}
                   className="group flex flex-col items-start gap-1 max-w-[45%]"
                 >
-                  <span className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground/20 group-hover:text-gold/30 transition-colors">
+                  <span className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground/50 group-hover:text-gold/55 transition-colors">
                     ← Anterior
                   </span>
-                  <span className="text-[12px] font-medium text-muted-foreground/35 group-hover:text-foreground/60 transition-colors truncate w-full">
+                  <span className="text-[12px] font-medium text-muted-foreground/70 group-hover:text-foreground/60 transition-colors truncate w-full">
                     {prevTrack.title}
                   </span>
                 </Link>
@@ -243,10 +243,10 @@ function TrackDetailPage() {
                   params={{ trackId: String(nextTrack.id) }}
                   className="group flex flex-col items-end gap-1 max-w-[45%]"
                 >
-                  <span className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground/20 group-hover:text-gold/30 transition-colors">
+                  <span className="text-[9px] uppercase tracking-[0.3em] text-muted-foreground/50 group-hover:text-gold/55 transition-colors">
                     Próximo →
                   </span>
-                  <span className="text-[12px] font-medium text-muted-foreground/35 group-hover:text-foreground/60 transition-colors truncate w-full text-right">
+                  <span className="text-[12px] font-medium text-muted-foreground/70 group-hover:text-foreground/60 transition-colors truncate w-full text-right">
                     {nextTrack.title}
                   </span>
                 </Link>

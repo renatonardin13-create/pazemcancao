@@ -197,7 +197,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
           {/* Cover */}
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/70">
               Capa
             </Label>
             <ImageFieldHint ratio="1:1" recommendedSize="500x500" file={coverFile} previewUrl={coverPreview} />
@@ -220,7 +220,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
                 </div>
               ) : (
                 <div className="flex h-20 w-20 items-center justify-center rounded-xl bg-muted/15 border border-dashed border-border/20">
-                  <ImageIcon className="h-6 w-6 text-muted-foreground/20" />
+                  <ImageIcon className="h-6 w-6 text-muted-foreground/50" />
                 </div>
               )}
               <div>
@@ -236,7 +236,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
                     disabled={isSubmitting}
                   />
                 </label>
-                <p className="text-[9px] text-muted-foreground/25 mt-1">
+                <p className="text-[9px] text-muted-foreground/60 mt-1">
                   Formato quadrado 1:1
                 </p>
               </div>
@@ -245,7 +245,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
           {/* Title */}
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/70">
               Título
             </Label>
             <Input
@@ -258,7 +258,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
           {/* Category */}
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/70">
               Categoria
             </Label>
             <Select value={category} onValueChange={setCategory} disabled={isSubmitting}>
@@ -275,7 +275,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
           {/* Description */}
           <div className="space-y-2">
-            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+            <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/70">
               Descrição
             </Label>
             <Textarea
@@ -303,7 +303,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
             </div>
             {isBonus && (
               <div className="space-y-2">
-                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/40">
+                <Label className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground/70">
                   Liberar em quantos dias?
                 </Label>
                 <div className="flex items-center gap-2">
@@ -317,14 +317,14 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
                     className="bg-card/15 border-border/15 text-sm w-24"
                     disabled={isSubmitting}
                   />
-                  <span className="text-xs text-muted-foreground/40">dias</span>
+                  <span className="text-xs text-muted-foreground/70">dias</span>
                 </div>
                 {bonusDays && parseInt(bonusDays) > 0 && (
                   <p className="text-[10px] text-amber-400/50">
                     📅 Será liberada em {new Date(Date.now() + parseInt(bonusDays) * 86400000).toLocaleDateString("pt-BR")}
                   </p>
                 )}
-                <p className="text-[9px] text-muted-foreground/30">
+                <p className="text-[9px] text-muted-foreground/60">
                   A música ficará bloqueada por esse período. Se não definir, ficará bloqueada indefinidamente.
                 </p>
               </div>
@@ -337,7 +337,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
               variant="ghost"
               onClick={() => onOpenChange(false)}
               disabled={isSubmitting}
-              className="text-[11px] text-muted-foreground/40"
+              className="text-[11px] text-muted-foreground/70"
             >
               Cancelar
             </Button>

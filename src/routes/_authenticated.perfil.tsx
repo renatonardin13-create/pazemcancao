@@ -101,7 +101,7 @@ function ProfilePage() {
       <main className="flex-1 mx-auto w-full max-w-[800px] px-4 sm:px-6 py-8 space-y-6">
         {isLoading ? (
           <div className="text-center py-24">
-            <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+            <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
               Carregando perfil...
             </p>
           </div>
@@ -145,7 +145,7 @@ function ProfilePage() {
                     {email}
                   </p>
                   {memberSince && (
-                    <p className="text-[11px] text-muted-foreground/35 mt-0.5">
+                    <p className="text-[11px] text-muted-foreground/70 mt-0.5">
                       Membro desde {memberSince}
                     </p>
                   )}
@@ -173,7 +173,7 @@ function ProfilePage() {
                     <p className="font-display text-xl font-bold text-foreground/85">
                       {totalCourses}
                     </p>
-                    <p className="text-[10px] text-muted-foreground/40">Cursos</p>
+                    <p className="text-[10px] text-muted-foreground/70">Cursos</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -184,7 +184,7 @@ function ProfilePage() {
                     <p className="font-display text-xl font-bold text-foreground/85">
                       {totalLessonsCompleted}
                     </p>
-                    <p className="text-[10px] text-muted-foreground/40">Aulas concluídas</p>
+                    <p className="text-[10px] text-muted-foreground/70">Aulas concluídas</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -195,7 +195,7 @@ function ProfilePage() {
                     <p className="font-display text-xl font-bold text-foreground/85">
                       0h
                     </p>
-                    <p className="text-[10px] text-muted-foreground/40">Tempo assistido</p>
+                    <p className="text-[10px] text-muted-foreground/70">Tempo assistido</p>
                   </div>
                 </div>
               </div>
@@ -232,9 +232,9 @@ function ProfilePage() {
                 <Input
                   value={email}
                   disabled
-                  className="bg-muted/10 border-border/10 text-muted-foreground/40"
+                  className="bg-muted/10 border-border/10 text-muted-foreground/70"
                 />
-                <p className="text-[10px] text-muted-foreground/30">
+                <p className="text-[10px] text-muted-foreground/60">
                   O email não pode ser alterado
                 </p>
               </div>

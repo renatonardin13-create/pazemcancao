@@ -104,7 +104,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
     return (
       <Card className="border-border/20">
         <CardContent className="py-8 flex justify-center">
-          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground/40" />
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground/70" />
         </CardContent>
       </Card>
     );
@@ -159,7 +159,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-[11px] text-muted-foreground/40">
+                <p className="text-[11px] text-muted-foreground/70">
                   Plataforma onde o produto está cadastrado
                 </p>
               </div>
@@ -173,7 +173,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                   placeholder="Ex: F80185198L"
                   className="bg-card/10 border-border/15 font-mono text-sm"
                 />
-                <p className="text-[11px] text-muted-foreground/40">
+                <p className="text-[11px] text-muted-foreground/70">
                   Identificador único do produto na plataforma de pagamento
                 </p>
               </div>
@@ -189,7 +189,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                   placeholder="Ex: Curso Completo de Marketing"
                   className="bg-card/10 border-border/15"
                 />
-                <p className="text-[11px] text-muted-foreground/40">
+                <p className="text-[11px] text-muted-foreground/70">
                   Nome do produto como aparece na plataforma externa (para referência)
                 </p>
               </div>
@@ -197,7 +197,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
               {/* Checkout URL */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <LinkIcon className="h-3.5 w-3.5 text-muted-foreground/40" />
+                  <LinkIcon className="h-3.5 w-3.5 text-muted-foreground/70" />
                   <Label className="text-sm font-medium">URL do Checkout</Label>
                 </div>
                 <Input
@@ -206,7 +206,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                   placeholder={`https://go.${platform}.com/${externalProductId || "..."}`}
                   className="bg-card/10 border-border/15 font-mono text-sm"
                 />
-                <p className="text-[11px] text-muted-foreground/40">
+                <p className="text-[11px] text-muted-foreground/70">
                   Link de compra onde os alunos serão redirecionados
                 </p>
               </div>
@@ -223,7 +223,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                   rows={3}
                   className="bg-card/10 border-border/15"
                 />
-                <p className="text-[11px] text-muted-foreground/40">
+                <p className="text-[11px] text-muted-foreground/70">
                   Anotações internas sobre a configuração da integração
                 </p>
               </div>
@@ -274,7 +274,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                   )}
                 </Button>
               </div>
-              <p className="text-[11px] text-muted-foreground/40">
+              <p className="text-[11px] text-muted-foreground/70">
                 Cole esta URL nas configurações de webhook da plataforma de pagamento
               </p>
             </div>

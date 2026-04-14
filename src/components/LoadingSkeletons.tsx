@@ -73,7 +73,7 @@ export function PageLoading({ message = "Carregando..." }: { message?: string })
     <div className="flex min-h-[60vh] items-center justify-center">
       <div className="text-center space-y-4">
         <div className="h-8 w-8 mx-auto border-2 border-muted-foreground/20 border-t-primary rounded-full animate-spin" />
-        <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/40">
+        <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/70">
           {message}
         </p>
       </div>

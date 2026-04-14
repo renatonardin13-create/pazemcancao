@@ -104,7 +104,7 @@ function MeusCoursosPage() {
             className="flex items-center gap-3 mb-6"
           >
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -130,13 +130,13 @@ function MeusCoursosPage() {
             <CardGridSkeleton count={6} />
           ) : filtered.length === 0 ? (
             <div className="text-center py-24">
-              <BookOpen className="h-10 w-10 text-muted-foreground/15 mx-auto mb-5" />
+              <BookOpen className="h-10 w-10 text-muted-foreground/50 mx-auto mb-5" />
               {courses.length === 0 ? (
                 <>
-                  <p className="text-sm text-muted-foreground/40 mb-2">
+                  <p className="text-sm text-muted-foreground/70 mb-2">
                     Você ainda não possui cursos liberados.
                   </p>
-                  <p className="text-[12px] text-muted-foreground/30 mb-6">
+                  <p className="text-[12px] text-muted-foreground/60 mb-6">
                     Adquira um curso na vitrine para começar sua jornada.
                   </p>
                   <Link
@@ -147,7 +147,7 @@ function MeusCoursosPage() {
                   </Link>
                 </>
               ) : (
-                <p className="text-sm text-muted-foreground/40">
+                <p className="text-sm text-muted-foreground/70">
                   Nenhum curso encontrado com os filtros aplicados.
                 </p>
               )}
@@ -175,7 +175,7 @@ function MeusCoursosPage() {
                       />
                     ) : (
                       <div className="h-24 w-24 sm:h-28 sm:w-28 rounded-lg bg-muted/20 flex items-center justify-center shrink-0">
-                        <BookOpen className="h-8 w-8 text-muted-foreground/15" />
+                        <BookOpen className="h-8 w-8 text-muted-foreground/50" />
                       </div>
                     )}
 
@@ -185,7 +185,7 @@ function MeusCoursosPage() {
                         {course.title}
                       </h3>
                       {course.short_description && (
-                        <p className="text-[12px] text-muted-foreground/40 mt-1 line-clamp-1">
+                        <p className="text-[12px] text-muted-foreground/70 mt-1 line-clamp-1">
                           {course.short_description}
                         </p>
                       )}
@@ -200,7 +200,7 @@ function MeusCoursosPage() {
                         </span>
                       </div>
                       <div className="flex items-center gap-3 mt-3">
-                        <span className="text-[11px] text-muted-foreground/40">Progresso</span>
+                        <span className="text-[11px] text-muted-foreground/70">Progresso</span>
                         <Progress value={course.progress_pct} className="h-1.5 flex-1 bg-muted/20" />
                         <span className="text-[12px] font-bold text-gold tabular-nums w-10 text-right">
                           {course.progress_pct}%

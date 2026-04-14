@@ -41,7 +41,7 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
               className={`group flex items-center gap-2 rounded-xl px-3 py-2 transition-all duration-500 ${
                 isActive(to)
                   ? "text-gold/70 bg-gold/[0.06]"
-                  : "text-muted-foreground/35 hover:text-gold/60 hover:bg-muted/15"
+                  : "text-muted-foreground/70 hover:text-gold/60 hover:bg-muted/15"
               }`}
             >
               <Icon className="h-4 w-4" />
@@ -57,7 +57,7 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
               className={`group flex items-center gap-2 rounded-xl px-3 py-2 transition-all duration-500 ${
                 location.pathname.startsWith("/admin")
                   ? "text-gold/70 bg-gold/[0.06]"
-                  : "text-muted-foreground/35 hover:text-gold/60 hover:bg-muted/15"
+                  : "text-muted-foreground/70 hover:text-gold/60 hover:bg-muted/15"
               }`}
             >
               <Settings className="h-4 w-4" />
@@ -70,7 +70,7 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
           {showLogout && (
             <button
               onClick={() => logout()}
-              className="group flex items-center gap-2 rounded-xl px-3.5 py-2 text-muted-foreground/35 hover:text-muted-foreground/60 hover:bg-muted/15 transition-all duration-500 active:scale-95"
+              className="group flex items-center gap-2 rounded-xl px-3.5 py-2 text-muted-foreground/70 hover:text-muted-foreground/60 hover:bg-muted/15 transition-all duration-500 active:scale-95"
             >
               <LogOut className="h-4 w-4 transition-transform duration-300 group-hover:-translate-x-0.5" />
               <span className="hidden md:inline text-[10px] font-semibold uppercase tracking-[0.15em]">
@@ -85,7 +85,7 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
           <NotificationBell />
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground/40 hover:text-foreground/60 hover:bg-muted/15 transition-colors"
+            className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground/70 hover:text-foreground/60 hover:bg-muted/15 transition-colors"
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -134,7 +134,7 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
             {showLogout && (
               <button
                 onClick={() => { logout(); setMobileMenuOpen(false); }}
-                className="flex items-center gap-3 rounded-xl px-4 py-3 text-muted-foreground/40 hover:text-muted-foreground/60 hover:bg-muted/10 transition-all duration-300"
+                className="flex items-center gap-3 rounded-xl px-4 py-3 text-muted-foreground/70 hover:text-muted-foreground/60 hover:bg-muted/10 transition-all duration-300"
               >
                 <LogOut className="h-4.5 w-4.5" />
                 <span className="text-[12px] font-semibold uppercase tracking-[0.15em]">

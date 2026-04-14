@@ -113,7 +113,7 @@ export function StudentSidebar() {
       "flex items-center gap-2.5 rounded-lg px-4 py-2.5 ml-4 text-[13px] font-medium transition-all duration-300",
       active
         ? "text-gold/80 bg-gold/[0.06]"
-        : "text-muted-foreground/35 hover:text-gold/50 hover:bg-muted/8"
+        : "text-muted-foreground/70 hover:text-gold/70 hover:bg-muted/8"
     );
 
   const sidebarContent = (
@@ -164,9 +164,9 @@ export function StudentSidebar() {
                 Louvores
               </span>
               {louvoresOpen ? (
-                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/30" />
+                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/60" />
               ) : (
-                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/30" />
+                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/60" />
               )}
             </button>
 
@@ -241,7 +241,7 @@ export function StudentSidebar() {
       <div className="px-3 py-4 border-t border-border/10">
         <button
           onClick={() => { logout(); setMobileOpen(false); }}
-          className="flex items-center gap-3 rounded-xl px-4 py-2.5 w-full text-[11px] font-medium uppercase tracking-[0.15em] text-muted-foreground/30 hover:text-muted-foreground/55 hover:bg-muted/10 transition-all duration-300"
+          className="flex items-center gap-3 rounded-xl px-4 py-2.5 w-full text-[11px] font-medium uppercase tracking-[0.15em] text-muted-foreground/60 hover:text-muted-foreground/55 hover:bg-muted/10 transition-all duration-300"
         >
           <LogOut className="h-4 w-4" />
           Sair
@@ -257,7 +257,7 @@ export function StudentSidebar() {
         <LogoBrand size="sm" />
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground/40 hover:text-foreground/60 hover:bg-muted/15 transition-colors"
+          className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground/70 hover:text-foreground/60 hover:bg-muted/15 transition-colors"
         >
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>

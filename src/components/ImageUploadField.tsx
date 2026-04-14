@@ -212,13 +212,13 @@ export function ImageUploadField({
               <>
                 <AlertCircle className="h-7 w-7 text-destructive/60" />
                 <span className="text-xs text-destructive/70 font-medium">{errorMsg}</span>
-                <span className="text-[10px] text-muted-foreground/40 flex items-center gap-1">
+                <span className="text-[10px] text-muted-foreground/70 flex items-center gap-1">
                   <RefreshCw className="h-3 w-3" /> Clique para tentar novamente
                 </span>
               </>
             ) : (
               <>
-                <Upload className="h-7 w-7 text-gold/50" />
+                <Upload className="h-7 w-7 text-gold/70" />
                 <span className="text-xs text-muted-foreground/60 font-medium">{uploadLabel}</span>
               </>
             )}

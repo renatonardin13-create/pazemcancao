@@ -275,7 +275,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   {coverUrl ? (
                     <img src={coverUrl} alt="Capa" className="w-full h-full object-cover" />
                   ) : (
-                    <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground/20">
+                    <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground/50">
                       <ImageIcon className="h-8 w-8" />
                       <span className="text-xs">Sem imagem</span>
                     </div>
@@ -292,7 +292,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                     <div className="flex items-center gap-2 pt-1">
                       {promotionalPrice && parseFloat(promotionalPrice) > 0 ? (
                         <>
-                          <span className="text-xs text-muted-foreground/40 line-through">
+                          <span className="text-xs text-muted-foreground/70 line-through">
                             R$ {parseFloat(price).toFixed(2)}
                           </span>
                           <span className="text-sm font-bold text-gold">

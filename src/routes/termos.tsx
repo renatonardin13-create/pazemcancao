@@ -13,7 +13,7 @@ function TermsPage() {
 
       <header className="relative z-10">
         <div className="mx-auto flex max-w-3xl items-center gap-3 px-6 py-6">
-          <Link to="/" className="flex items-center gap-2 text-muted-foreground/30 hover:text-muted-foreground/50 transition-colors duration-500">
+          <Link to="/" className="flex items-center gap-2 text-muted-foreground/60 hover:text-muted-foreground/50 transition-colors duration-500">
             <ArrowLeft className="h-3.5 w-3.5" />
             <span className="text-[10px] font-medium uppercase tracking-[0.3em]">Voltar</span>
           </Link>
@@ -25,7 +25,7 @@ function TermsPage() {
 
         <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/85 text-center">Termos de Uso</h1>
         <div className="mx-auto mt-4 h-px w-12 bg-gradient-to-r from-transparent via-gold/10 to-transparent" />
-        <p className="mt-5 text-[13px] text-muted-foreground/35 text-center leading-[1.8]">Condições de uso da plataforma Paz em Canção.</p>
+        <p className="mt-5 text-[13px] text-muted-foreground/70 text-center leading-[1.8]">Condições de uso da plataforma Paz em Canção.</p>
 
         <div className="mt-12 space-y-8 text-[14px] leading-[2] text-foreground/55">
           <section>

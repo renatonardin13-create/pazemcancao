@@ -219,7 +219,7 @@ function LoginPage() {
   const divider = (
     <div className="flex items-center gap-3 my-6">
       <div className="flex-1 h-px bg-border/20" />
-      <span className="text-[10px] text-muted-foreground/40 uppercase tracking-widest">ou</span>
+      <span className="text-[10px] text-muted-foreground/70 uppercase tracking-widest">ou</span>
       <div className="flex-1 h-px bg-border/20" />
     </div>
   );
@@ -439,7 +439,7 @@ function LoginPage() {
                               placeholder="seu@email.com"
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
-                              className="pl-12 h-14 bg-background/60 border-border/40 rounded-xl text-base placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                              className="pl-12 h-14 bg-background/60 border-border/40 rounded-xl text-base placeholder:text-muted-foreground/70 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                               required
                             />
                           </div>
@@ -457,7 +457,7 @@ function LoginPage() {
                               placeholder="••••••••"
                               value={password}
                               onChange={(e) => setPassword(e.target.value)}
-                              className="pl-12 h-14 bg-background/60 border-border/40 rounded-xl text-base placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                              className="pl-12 h-14 bg-background/60 border-border/40 rounded-xl text-base placeholder:text-muted-foreground/70 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                               required
                             />
                           </div>
@@ -546,7 +546,7 @@ function LoginPage() {
                                   placeholder="Seu nome"
                                   value={signupName}
                                   onChange={(e) => setSignupName(e.target.value)}
-                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/70 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                                   required
                                 />
                               </div>
@@ -564,7 +564,7 @@ function LoginPage() {
                                   placeholder="seu@email.com"
                                   value={signupEmail}
                                   onChange={(e) => setSignupEmail(e.target.value)}
-                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/70 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                                   required
                                 />
                               </div>
@@ -582,7 +582,7 @@ function LoginPage() {
                                   placeholder="Mínimo 6 caracteres"
                                   value={signupPassword}
                                   onChange={(e) => setSignupPassword(e.target.value)}
-                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/70 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                                   required
                                   minLength={6}
                                 />
@@ -601,7 +601,7 @@ function LoginPage() {
                                   placeholder="Repita a senha"
                                   value={signupConfirm}
                                   onChange={(e) => setSignupConfirm(e.target.value)}
-                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                                  className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/70 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                                   required
                                   minLength={6}
                                 />
@@ -701,7 +701,7 @@ function LoginPage() {
                               placeholder="seu@email.com"
                               value={email}
                               onChange={(e) => setEmail(e.target.value)}
-                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/70 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                               required
                             />
                           </div>
@@ -823,7 +823,7 @@ function LoginPage() {
                               placeholder="Mínimo 6 caracteres"
                               value={newPassword}
                               onChange={(e) => setNewPassword(e.target.value)}
-                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/70 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                               required
                               minLength={6}
                             />
@@ -842,7 +842,7 @@ function LoginPage() {
                               placeholder="Repita a senha"
                               value={confirmPassword}
                               onChange={(e) => setConfirmPassword(e.target.value)}
-                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/40 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
+                              className="pl-11 h-12 bg-background/60 border-border/40 rounded-xl text-sm placeholder:text-muted-foreground/70 focus-visible:ring-gold/20 focus-visible:border-gold/15 transition-all duration-500"
                               required
                               minLength={6}
                             />

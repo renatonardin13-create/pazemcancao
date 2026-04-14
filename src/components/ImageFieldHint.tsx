@@ -107,8 +107,8 @@ export function ImageFieldHint({
   return (
     <div className="space-y-1 mt-1">
       {/* Recommended specs */}
-      <div className="flex items-start gap-1.5 text-[10px] text-muted-foreground/35 leading-relaxed">
-        <Info className="h-3 w-3 mt-[1px] shrink-0 text-muted-foreground/25" />
+      <div className="flex items-start gap-1.5 text-[10px] text-muted-foreground/70 leading-relaxed">
+        <Info className="h-3 w-3 mt-[1px] shrink-0 text-muted-foreground/60" />
         <div>
           <span>Proporção: <span className="text-muted-foreground/50">{ratio}</span></span>
           <span className="mx-1.5">·</span>
@@ -119,13 +119,13 @@ export function ImageFieldHint({
       </div>
 
       {autoCrop && (
-        <p className="text-[9px] text-muted-foreground/25 pl-[18px]">
+        <p className="text-[9px] text-muted-foreground/60 pl-[18px]">
           A imagem poderá ser ajustada automaticamente para o formato da área de exibição.
         </p>
       )}
 
       {note && (
-        <p className="text-[9px] text-muted-foreground/25 pl-[18px]">{note}</p>
+        <p className="text-[9px] text-muted-foreground/60 pl-[18px]">{note}</p>
       )}
 
       {/* Validation result */}

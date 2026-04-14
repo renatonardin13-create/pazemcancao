@@ -116,7 +116,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gold/15 border border-gold/25">
               <Lock className="h-6 w-6 text-gold/70" />
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold/50 bg-black/30 rounded-full px-4 py-1.5 border border-gold/15">
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold/70 bg-black/30 rounded-full px-4 py-1.5 border border-gold/15">
               🔒 Conteúdo Exclusivo
             </span>
           </div>
@@ -174,7 +174,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
 
         {item.description && (
           <p className={`mt-2.5 text-[12px] leading-[1.9] line-clamp-2 transition-colors duration-500 flex-1 ${
-            isLocked ? "text-muted-foreground/25" : "text-muted-foreground/35 group-hover:text-muted-foreground/45"
+            isLocked ? "text-muted-foreground/60" : "text-muted-foreground/70 group-hover:text-muted-foreground/45"
           }`}>
             {item.description}
           </p>
@@ -209,7 +209,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon }: Cont
                 </a>
               )}
               {!item.file_url && !item.video_url && (
-                <span className="text-[10px] text-muted-foreground/25 tracking-wider uppercase">
+                <span className="text-[10px] text-muted-foreground/60 tracking-wider uppercase">
                   Disponível
                 </span>
               )}

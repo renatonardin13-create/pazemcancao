@@ -83,7 +83,7 @@ function LessonDetailPage() {
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
           <div className="w-px h-12 mx-auto bg-gradient-to-b from-transparent via-gold/20 to-transparent animate-pulse mb-4" />
-          <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+          <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
             Carregando aula...
           </p>
         </div>
@@ -95,12 +95,12 @@ function LessonDetailPage() {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
-          <BookOpen className="mx-auto mb-4 h-10 w-10 text-muted-foreground/15" />
+          <BookOpen className="mx-auto mb-4 h-10 w-10 text-muted-foreground/50" />
           <p className="text-muted-foreground/50 mb-4">Erro ao carregar a aula.</p>
           <Link
             to="/cursos/$courseId"
             params={{ courseId }}
-            className="inline-flex items-center gap-2 text-gold/50 hover:text-gold/80 text-sm transition-colors"
+            className="inline-flex items-center gap-2 text-gold/70 hover:text-gold/80 text-sm transition-colors"
           >
             <ChevronLeft className="h-4 w-4" />
             Voltar ao curso
@@ -207,14 +207,14 @@ function LessonDetailPage() {
           <Link
             to="/cursos/$courseId"
             params={{ courseId }}
-            className="flex items-center gap-2 text-[11px] font-semibold text-muted-foreground/40 hover:text-gold/60 transition-colors"
+            className="flex items-center gap-2 text-[11px] font-semibold text-muted-foreground/70 hover:text-gold/60 transition-colors"
           >
             <ChevronLeft className="h-4 w-4" />
             <span className="hidden sm:inline">Voltar à Vitrine</span>
           </Link>
           <div className="flex-1" />
           <div className="flex items-center gap-3">
-            <span className="text-[11px] text-muted-foreground/30 hidden sm:inline">
+            <span className="text-[11px] text-muted-foreground/60 hidden sm:inline">
               {completedCount}/{totalLessons} aulas
             </span>
             <Progress value={progressPercent} className="h-1.5 w-20 sm:w-28" />
@@ -413,8 +413,8 @@ function LessonDetailPage() {
               className="flex items-center justify-center min-h-[40vh] p-6"
             >
               <div className="text-center">
-                <BookOpen className="mx-auto h-10 w-10 text-muted-foreground/15 mb-4" />
-                <p className="text-sm text-muted-foreground/35">
+                <BookOpen className="mx-auto h-10 w-10 text-muted-foreground/50 mb-4" />
+                <p className="text-sm text-muted-foreground/70">
                   Conteúdo em breve.
                 </p>
               </div>
@@ -440,7 +440,7 @@ function LessonDetailPage() {
                 )}
                 <div className="flex items-center gap-3 mt-3 flex-wrap">
                   {lesson.duration && lesson.duration !== "0:00" && (
-                    <span className="text-[11px] text-muted-foreground/35 flex items-center gap-1">
+                    <span className="text-[11px] text-muted-foreground/70 flex items-center gap-1">
                       <Clock className="h-3 w-3" />
                       {lesson.duration}
                     </span>
@@ -448,7 +448,7 @@ function LessonDetailPage() {
                   {lesson.is_free_preview && (
                     <Badge
                       variant="outline"
-                      className="text-[9px] text-gold/50 border-gold/15"
+                      className="text-[9px] text-gold/70 border-gold/15"
                     >
                       Preview gratuito
                     </Badge>
@@ -464,7 +464,7 @@ function LessonDetailPage() {
                   transition={{ delay: 0.15 }}
                   className="rounded-xl border border-border/10 bg-card/5 p-4"
                 >
-                  <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/40 mb-3">
+                  <h3 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground/70 mb-3">
                     Materiais Complementares
                   </h3>
                   <div className="space-y-2">
@@ -487,7 +487,7 @@ function LessonDetailPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 gap-1.5 text-[10px] text-gold/50 hover:text-gold/80"
+                            className="h-8 gap-1.5 text-[10px] text-gold/70 hover:text-gold/80"
                             onClick={() => window.open(mat.url, "_blank")}
                           >
                             <ExternalLink className="h-3 w-3" />
@@ -497,7 +497,7 @@ function LessonDetailPage() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 gap-1.5 text-[10px] text-gold/50 hover:text-gold/80"
+                            className="h-8 gap-1.5 text-[10px] text-gold/70 hover:text-gold/80"
                             onClick={() => handleDownload(mat.url, mat.title)}
                           >
                             <Download className="h-3 w-3" />
@@ -526,7 +526,7 @@ function LessonDetailPage() {
               </span>
             </div>
             <Progress value={progressPercent} className="h-2 mb-3" />
-            <div className="flex items-center justify-between text-[11px] text-muted-foreground/40">
+            <div className="flex items-center justify-between text-[11px] text-muted-foreground/70">
               <span className="flex items-center gap-1">
                 <CheckCircle2 className="h-3 w-3 text-emerald-400/60" />
                 {completedCount}/{totalLessons} aulas
@@ -699,14 +699,14 @@ function ModuleSection({
             <p className="text-[12px] font-semibold text-foreground/70 truncate">
               {title}
             </p>
-            <p className="text-[10px] text-muted-foreground/35 mt-0.5">
+            <p className="text-[10px] text-muted-foreground/70 mt-0.5">
               {completedCount}/{totalCount} concluídas
             </p>
           </div>
           {open ? (
-            <ChevronUp className="h-4 w-4 text-muted-foreground/30 shrink-0" />
+            <ChevronUp className="h-4 w-4 text-muted-foreground/60 shrink-0" />
           ) : (
-            <ChevronDown className="h-4 w-4 text-muted-foreground/30 shrink-0" />
+            <ChevronDown className="h-4 w-4 text-muted-foreground/60 shrink-0" />
           )}
         </button>
       </CollapsibleTrigger>
@@ -744,9 +744,9 @@ function LessonSidebarItem({
         {isCompleted ? (
           <CheckCircle2 className="h-4 w-4 text-emerald-400/60" />
         ) : isActive ? (
-          <Play className="h-4 w-4 text-gold/50 fill-gold/30" />
+          <Play className="h-4 w-4 text-gold/70 fill-gold/30" />
         ) : (
-          <Circle className="h-4 w-4 text-muted-foreground/15" />
+          <Circle className="h-4 w-4 text-muted-foreground/50" />
         )}
       </div>
       <div className="flex-1 min-w-0">
@@ -755,14 +755,14 @@ function LessonSidebarItem({
             isActive
               ? "text-gold/80"
               : isCompleted
-                ? "text-muted-foreground/40"
+                ? "text-muted-foreground/70"
                 : "text-foreground/60"
           }`}
         >
           {lesson.title}
         </p>
         {lesson.duration && lesson.duration !== "0:00" && (
-          <span className="text-[10px] text-muted-foreground/25">
+          <span className="text-[10px] text-muted-foreground/60">
             {lesson.duration}
           </span>
         )}

@@ -97,7 +97,7 @@ function VitrinePage() {
 
             {/* Search bar */}
             <div className="relative max-w-sm mb-8">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/25" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/60" />
               <Input
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -108,14 +108,14 @@ function VitrinePage() {
 
             {isLoading ? (
               <div className="text-center py-24">
-                <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/25 animate-pulse">
+                <p className="text-[11px] uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
                   Carregando vitrine...
                 </p>
               </div>
             ) : filteredShelves.length === 0 ? (
               <div className="text-center py-24">
-                <Store className="h-10 w-10 text-muted-foreground/15 mx-auto mb-5" />
-                <p className="text-sm text-muted-foreground/40">
+                <Store className="h-10 w-10 text-muted-foreground/50 mx-auto mb-5" />
+                <p className="text-sm text-muted-foreground/70">
                   {searchTerm ? "Nenhum curso encontrado para esta busca." : "Nenhum conteúdo disponível na vitrine no momento."}
                 </p>
               </div>
@@ -133,7 +133,7 @@ function VitrinePage() {
                         {shelf.name}
                       </h2>
                       <div className="flex-1 h-px bg-gradient-to-r from-border/15 to-transparent" />
-                      <span className="text-[10px] text-muted-foreground/25">
+                      <span className="text-[10px] text-muted-foreground/60">
                         {shelf.courses.length} curso{shelf.courses.length !== 1 ? "s" : ""}
                       </span>
                     </div>
@@ -215,7 +215,7 @@ function CourseCard({ course }: { course: any }) {
           />
         ) : (
           <div className="w-full h-full bg-muted/20 flex items-center justify-center">
-            <Store className="h-8 w-8 text-muted-foreground/15" />
+            <Store className="h-8 w-8 text-muted-foreground/50" />
           </div>
         )}
 
@@ -229,7 +229,7 @@ function CourseCard({ course }: { course: any }) {
               <div className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-md border border-gold/20 flex items-center justify-center mb-3">
                 <Lock className="h-6 w-6 text-gold/70" />
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold/50">
+              <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold/70">
                 {isBlocked ? "Acesso Bloqueado" : isExpired ? "Acesso Expirado" : "Conteúdo Premium"}
               </span>
             </div>
@@ -260,7 +260,7 @@ function CourseCard({ course }: { course: any }) {
             {course.title}
           </h3>
           {course.short_description && (
-            <p className="text-[10px] text-muted-foreground/40 mt-1 line-clamp-1">
+            <p className="text-[10px] text-muted-foreground/70 mt-1 line-clamp-1">
               {course.short_description}
             </p>
           )}
@@ -289,7 +289,7 @@ function CourseCard({ course }: { course: any }) {
                 Acessar <ArrowRight className="h-3 w-3" />
               </span>
             ) : isLocked ? (
-              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gold/50">
+              <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-gold/70">
                 <ShoppingCart className="h-3 w-3" /> Comprar Agora
               </span>
             ) : isBlocked ? (
