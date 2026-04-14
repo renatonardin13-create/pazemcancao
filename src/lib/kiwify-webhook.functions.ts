@@ -9,7 +9,7 @@ function jsonResponse(data: unknown, status = 200) {
   });
 }
 
-// ─── Legacy log (kept for backward compat with admin dashboard) ───
+// ─── Structured audit log ───
 async function logWebhookEvent(params: {
   eventType: string;
   email?: string;
@@ -17,6 +17,10 @@ async function logWebhookEvent(params: {
   payload?: unknown;
   responseStatus: number;
   responseMessage: string;
+  externalProductId?: string;
+  internalCourseId?: string | null;
+  isSuccess?: boolean;
+  errorDetails?: string | null;
 }) {
   try {
     await supabaseAdmin.from('webhook_logs').insert({
@@ -27,6 +31,11 @@ async function logWebhookEvent(params: {
       payload: params.payload as any,
       response_status: params.responseStatus,
       response_message: params.responseMessage,
+      external_product_id: params.externalProductId || null,
+      internal_course_id: params.internalCourseId || null,
+      processed_at: new Date().toISOString(),
+      is_success: params.isSuccess ?? null,
+      error_details: params.errorDetails || null,
     });
   } catch (e) {
     console.error('Failed to log webhook event:', e);
@@ -243,6 +252,8 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       eventType: 'error',
       responseStatus: 400,
       responseMessage: 'Invalid JSON body',
+      isSuccess: false,
+      errorDetails: 'Request body is not valid JSON',
     });
     return jsonResponse({ error: 'Invalid JSON body' }, 400);
   }
@@ -254,12 +265,16 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
   // Resolve course: prefer query param, fallback to product ID lookup via course_integrations
   const resolvedCourseId = courseIdFromQuery || await resolveCourseByProductId(externalProductId);
 
+  // Shared audit fields for all log calls in this request
+  const audit = { externalProductId, internalCourseId: resolvedCourseId };
+
   if (!customerEmail) {
     await logWebhookEvent({
       eventType: status || 'unknown',
       payload: rawBody,
       responseStatus: 400,
       responseMessage: 'Missing customer email',
+      ...audit, isSuccess: false, errorDetails: 'No customer email in payload',
     });
     return jsonResponse({ error: 'Missing customer email' }, 400);
   }
@@ -293,6 +308,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       payload: rawBody,
       responseStatus: 400,
       responseMessage: 'Missing order status',
+      ...audit, isSuccess: false, errorDetails: 'No status field in payload',
     });
     return jsonResponse({ error: 'Missing order status' }, 400);
   }
@@ -317,13 +333,13 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       .maybeSingle();
 
     if (config && !config.is_active) {
-      await logWebhookEvent({ eventType: 'disabled', payload: rawBody, responseStatus: 200, responseMessage: 'Webhook is disabled' });
+      await logWebhookEvent({ eventType: 'disabled', payload: rawBody, responseStatus: 200, responseMessage: 'Webhook is disabled', ...audit, isSuccess: true });
       return jsonResponse({ status: 'success', message: 'Webhook is disabled' });
     }
 
     const savedToken = (config?.auth_token || '').trim();
     if (savedToken && explicitToken && explicitToken !== savedToken) {
-      await logWebhookEvent({ eventType: 'auth_failed', payload: rawBody, responseStatus: 401, responseMessage: 'Invalid signature' });
+      await logWebhookEvent({ eventType: 'auth_failed', payload: rawBody, responseStatus: 401, responseMessage: 'Invalid signature', ...audit, isSuccess: false, errorDetails: 'Token mismatch' });
       return jsonResponse({ error: 'Invalid signature' }, 401);
     }
     if (savedToken && !explicitToken && bearerToken && bearerToken !== savedToken) {
@@ -345,6 +361,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
         payload: rawBody,
         responseStatus: 200,
         responseMessage: 'Already processed (idempotent)',
+        ...audit, isSuccess: true,
       });
       return jsonResponse({ success: true, message: 'Already processed' });
     }
@@ -366,7 +383,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
 
       if (buyerError) {
         await markEventFailed(eventKey, `DB upsert error: ${buyerError.message}`);
-        await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 500, responseMessage: 'Failed to register buyer' });
+        await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 500, responseMessage: 'Failed to register buyer', ...audit, isSuccess: false, errorDetails: buyerError.message });
         return jsonResponse({ error: 'Failed to register buyer' }, 500);
       }
 
@@ -402,11 +419,11 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
         course_id: linkedCourseId,
       });
 
-      await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: linkedCourseId ? 'Buyer approved and enrolled' : 'Buyer approved' });
+      await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: linkedCourseId ? 'Buyer approved and enrolled' : 'Buyer approved', ...audit, internalCourseId: linkedCourseId || resolvedCourseId, isSuccess: true });
       return jsonResponse({ success: true, course_id: linkedCourseId });
     } catch (processErr: any) {
       await markEventFailed(eventKey, processErr.message || 'Unknown processing error');
-      await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 500, responseMessage: processErr.message || 'Processing failed' });
+      await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 500, responseMessage: processErr.message || 'Processing failed', ...audit, isSuccess: false, errorDetails: processErr.message });
       return jsonResponse({ error: 'Processing failed' }, 500);
     }
   }
@@ -414,7 +431,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
   // ─── ACTION: pending (pagamento_pendente) ───
   // Regra: NÃO libera acesso. Apenas registra o evento no log.
   if (pendingStatuses.includes(status)) {
-    await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: 'Payment pending — no access granted' });
+    await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: 'Payment pending — no access granted', ...audit, isSuccess: true });
     return jsonResponse({ success: true, message: 'Payment pending — no access granted' });
   }
 
@@ -443,7 +460,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
         .eq('status', 'active');
     }
 
-    await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Access revoked: ${status}` });
+    await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Access revoked: ${status}`, ...audit, isSuccess: true });
     return jsonResponse({ success: true, message: `Access revoked: ${status}` });
   }
 
@@ -470,11 +487,11 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
         .eq('status', 'active');
     }
 
-    await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Access expired: ${status}` });
+    await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Access expired: ${status}`, ...audit, isSuccess: true });
     return jsonResponse({ success: true, message: `Access expired: ${status}` });
   }
 
   // ─── Status não reconhecido ───
-  await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Unrecognized status — no action: ${status}` });
+  await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Unrecognized status — no action: ${status}`, ...audit, isSuccess: true });
   return jsonResponse({ success: true, message: `Unrecognized status — no action: ${status}` });
 }
