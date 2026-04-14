@@ -250,7 +250,10 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progre
                     href={item.file_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onTrackDownload?.(item.id);
+                    }}
                     className="inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.1em] uppercase text-gold/45 hover:text-gold/70 transition-colors duration-500"
                   >
                     <Download className="h-3 w-3" />
@@ -262,7 +265,10 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progre
                     href={item.video_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onTrackView?.(item.id);
+                    }}
                     className="inline-flex items-center gap-1.5 text-[11px] font-semibold tracking-[0.1em] uppercase text-gold/45 hover:text-gold/70 transition-colors duration-500"
                   >
                     <Play className="h-3 w-3" />
