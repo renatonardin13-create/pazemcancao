@@ -377,6 +377,26 @@ function ContentPage() {
                 />
               )}
 
+              {/* Top da semana */}
+              <TopRankingSection
+                items={items}
+                hasAccess={hasAccess}
+                popularityMap={data?.weeklyPopularityMap || {}}
+                progressMap={progressMap}
+                lastAccessedId={lastAccessedId}
+                mode="weekly"
+              />
+
+              {/* Mais acessados (all time) */}
+              <TopRankingSection
+                items={items}
+                hasAccess={hasAccess}
+                popularityMap={data?.popularityMap || {}}
+                progressMap={progressMap}
+                lastAccessedId={lastAccessedId}
+                mode="all_time"
+              />
+
               {/* Categorias em Destaque */}
               {featuredCategories.map(([cat, catItems]: [string, any[]]) => {
                 const label =
