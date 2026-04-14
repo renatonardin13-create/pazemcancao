@@ -435,8 +435,8 @@ function ContentPage() {
               {newItems.length > 0 && (
                 <ContentShelf
                   icon={<Clock className="h-4 w-4 text-emerald-400/70" />}
-                  title="Novos conteúdos"
-                  subtitle="Adicionados recentemente"
+                  title="Chegou para abençoar"
+                  subtitle="Conteúdos fresquinhos para sua alma"
                   items={newItems}
                   hasAccess={hasAccess}
                   progressMap={progressMap}
