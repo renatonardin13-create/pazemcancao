@@ -277,6 +277,84 @@ function MeusCoursosPage() {
             </motion.div>
           )}
 
+          {/* Mais acessados */}
+          {!isLoading && trending.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.22 }}
+              className="mb-10"
+            >
+              <div className="flex items-center gap-3 mb-5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
+                  <TrendingUp className="h-4 w-4 text-primary/70" />
+                </div>
+                <div>
+                  <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
+                    Mais acessados
+                  </h2>
+                  <p className="text-[11px] text-muted-foreground/40 mt-0.5 italic">
+                    Os cursos mais populares da plataforma
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide -mx-1 px-1">
+                {trending.map((course: any, idx: number) => (
+                  <motion.div
+                    key={`trend-${course.id}`}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.5, delay: 0.06 * idx }}
+                    className="flex-shrink-0 w-[220px] sm:w-[240px]"
+                  >
+                    <Link
+                      to="/cursos/$courseId"
+                      params={{ courseId: course.id }}
+                      className="group block rounded-xl border border-border/20 bg-card/10 overflow-hidden transition-all duration-500 hover:border-gold/25 hover:bg-card/20 hover:shadow-lg hover:shadow-gold/5 relative"
+                    >
+                      {/* Rank badge */}
+                      <div className={`absolute top-2 left-2 z-10 flex h-7 w-7 items-center justify-center rounded-full border text-xs font-black tabular-nums ${
+                        idx === 0
+                          ? "bg-gold/90 border-gold text-background"
+                          : idx === 1
+                            ? "bg-muted/60 border-muted-foreground/20 text-foreground/70"
+                            : idx === 2
+                              ? "bg-amber-800/40 border-amber-700/30 text-amber-200/80"
+                              : "bg-background/60 backdrop-blur-sm border-border/30 text-muted-foreground/60"
+                      }`}>
+                        {idx + 1}
+                      </div>
+
+                      <div className="relative aspect-video overflow-hidden">
+                        {course.cover_image_url ? (
+                          <img
+                            src={course.cover_image_url}
+                            alt={course.title}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-muted/15 flex items-center justify-center">
+                            <BookOpen className="h-6 w-6 text-muted-foreground/30" />
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-60" />
+                      </div>
+                      <div className="p-3">
+                        <h3 className="text-sm font-bold text-foreground/80 line-clamp-2 leading-snug group-hover:text-gold transition-colors duration-300">
+                          {course.title}
+                        </h3>
+                        <p className="text-[10px] text-muted-foreground/40 mt-1">
+                          {course.access_count} {course.access_count === 1 ? "aluno" : "alunos"}
+                        </p>
+                      </div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
           <motion.div
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
