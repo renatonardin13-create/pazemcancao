@@ -351,7 +351,7 @@ function ContinueWatchingShelf({ courses }: { courses: any[] }) {
       transition={{ duration: 0.6, delay: 0.05 }}
       className="mb-16"
     >
-      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-3.5">
           <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold/[0.08] border border-gold/10">
             <PlayCircle className="h-4.5 w-4.5 text-gold" />
@@ -363,6 +363,9 @@ function ContinueWatchingShelf({ courses }: { courses: any[] }) {
             <p className="text-[11px] text-muted-foreground/40 mt-0.5 tracking-wide">Retome de onde parou</p>
           </div>
         </div>
+        <Link to="/cursos" className="text-[11px] font-bold text-gold/50 uppercase tracking-widest hover:text-gold/80 transition-colors duration-300 flex items-center gap-1">
+          Ver todos <ArrowRight className="h-3 w-3" />
+        </Link>
       </div>
 
       <div ref={dragRef} className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth cursor-grab select-none">
@@ -467,9 +470,9 @@ function ShelfSection({ shelf, delay, promoBanners, shelfIndex }: {
             {shelf.name}
           </h2>
           {(shelf.courses?.length ?? 0) > 3 && (
-            <span className="text-[11px] font-bold text-gold/50 uppercase tracking-widest hover:text-gold/80 transition-colors duration-300 cursor-pointer flex items-center gap-1">
+            <Link to="/cursos" className="text-[11px] font-bold text-gold/50 uppercase tracking-widest hover:text-gold/80 transition-colors duration-300 flex items-center gap-1">
               Ver todos <ArrowRight className="h-3 w-3" />
-            </span>
+            </Link>
           )}
         </div>
 
