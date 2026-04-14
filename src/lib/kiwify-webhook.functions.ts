@@ -429,6 +429,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
               console.error('[webhook] Enrollment insert error:', enrollmentError.message);
             }
           }
+          linkedCourseId = resolvedCourseId;
         }
       }
 
