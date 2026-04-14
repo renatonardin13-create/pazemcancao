@@ -104,7 +104,8 @@ function CourseDetailPage() {
 
   const { course, lessons, progress, enrollment, integration, access } = data;
   const canAccessCourse = access?.canAccessCourse;
-  const hasCheckout = access?.hasCheckout && integration?.checkout_url;
+  const checkoutUrl = integration?.checkout_url ?? undefined;
+  const hasCheckout = access?.hasCheckout && !!checkoutUrl;
 
   // Group lessons by module
   const modules = data.modules || [];
@@ -351,7 +352,7 @@ function CourseDetailPage() {
 
                 {!canAccessCourse && hasCheckout && (
                   <a
-                    href={integration.checkout_url}
+                    href={checkoutUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-border/15 bg-background/55 px-6 text-xs font-semibold uppercase tracking-[0.18em] text-foreground/70 backdrop-blur transition-all duration-300 hover:border-gold/20 hover:text-gold/80"
@@ -456,7 +457,7 @@ function CourseDetailPage() {
 
                 {hasCheckout ? (
                   <a
-                    href={integration.checkout_url}
+                    href={checkoutUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-gold/12 bg-gold/15 px-6 text-xs font-semibold uppercase tracking-[0.18em] text-gold/75 transition-all duration-300 hover:bg-gold/22"
