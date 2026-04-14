@@ -535,15 +535,32 @@ function LessonDetailPage() {
           {/* No content fallback */}
           {!accessRestricted && !hasVideo && !hasContentUrl && (
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
               className="flex items-center justify-center min-h-[45vh] p-8"
             >
-              <div className="text-center space-y-4">
-                <BookOpen className="mx-auto h-8 w-8 text-muted-foreground/20" />
-                <p className="text-sm text-muted-foreground/35">
-                  Conteúdo em breve.
-                </p>
+              <div className="max-w-sm text-center space-y-5">
+                <div className="mx-auto h-16 w-16 rounded-2xl bg-muted/8 border border-border/12 flex items-center justify-center">
+                  <BookOpen className="h-7 w-7 text-muted-foreground/25" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-foreground/70">
+                    Esta aula ainda não possui conteúdo disponível
+                  </h3>
+                  <p className="text-[12px] text-muted-foreground/35 mt-1.5 leading-relaxed">
+                    O conteúdo desta aula está sendo preparado. Tente novamente mais tarde.
+                  </p>
+                </div>
+                {nextLesson && (
+                  <Link
+                    to="/cursos/$courseId/aula/$lessonId"
+                    params={{ courseId, lessonId: nextLesson.id }}
+                    className="inline-flex items-center gap-2 rounded-xl bg-gold/10 border border-gold/15 px-5 py-3 text-[11px] font-semibold text-gold/75 hover:bg-gold/18 transition-all"
+                  >
+                    <Play className="h-3.5 w-3.5 fill-current" />
+                    Ir para próxima aula
+                  </Link>
+                )}
               </div>
             </motion.div>
           )}
