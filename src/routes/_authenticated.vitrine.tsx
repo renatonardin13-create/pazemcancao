@@ -35,20 +35,22 @@ function VitrinePage() {
             >
               <img
                 src={featuredCourse.banner_image_url || featuredCourse.cover_image_url}
-                alt={featuredCourse.title}
-                className="w-full h-full object-cover"
+                alt={featuredCourse.display_title || featuredCourse.title}
+                className={`w-full h-full object-${featuredCourse.banner_fit || 'cover'}`}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
               <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
                 <h2 className="font-display text-2xl sm:text-4xl font-bold text-foreground/90 tracking-tight mb-2">
-                  {featuredCourse.title}
+                  {featuredCourse.display_title || featuredCourse.title}
                 </h2>
-                {featuredCourse.short_description && (
+                {(featuredCourse.display_subtitle || featuredCourse.short_description) && (
                   <p className="text-[13px] text-muted-foreground/50 mb-4 max-w-lg">
-                    {featuredCourse.short_description}
+                    {featuredCourse.display_subtitle || featuredCourse.short_description}
                   </p>
                 )}
-                <CourseActionButton course={featuredCourse} />
+                {featuredCourse.id !== '__custom_banner__' && (
+                  <CourseActionButton course={featuredCourse} />
+                )}
               </div>
             </motion.div>
           )}

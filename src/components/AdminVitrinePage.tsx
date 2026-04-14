@@ -67,6 +67,7 @@ import {
   updatePromoBanner,
   deletePromoBanner,
 } from "@/lib/admin-promo-banners.functions";
+import { getPlatformSettings, updatePlatformSetting } from "@/lib/platform-settings.functions";
 
 /* ── Generic drag-and-drop hook ── */
 
@@ -220,6 +221,29 @@ export default function AdminVitrinePage() {
     queryFn: () => listPromoBanners(),
   });
 
+  // Load banner settings from platform_settings
+  const { data: settingsData } = useQuery({
+    queryKey: ["platform-settings"],
+    queryFn: () => getPlatformSettings(),
+  });
+
+  // Hydrate banner state from saved settings
+  const bannerSettingsLoaded = useRef(false);
+  if (settingsData?.settings?.hero_banner && !bannerSettingsLoaded.current) {
+    const saved = settingsData.settings.hero_banner;
+    bannerSettingsLoaded.current = true;
+    // Use setTimeout to avoid setting state during render
+    setTimeout(() => {
+      if (saved.enabled !== undefined) setBannerEnabled(saved.enabled);
+      if (saved.title) setBannerTitle(saved.title);
+      if (saved.subtitle) setBannerSubtitle(saved.subtitle);
+      if (saved.image_url) setBannerImageUrl(saved.image_url);
+      if (saved.course_id) setBannerCourseId(saved.course_id);
+      if (saved.fit) setBannerFit(saved.fit);
+      if (saved.aspect) setBannerAspect(saved.aspect);
+    }, 0);
+  }
+
   const shelves = data?.shelves ?? [];
   const courses = coursesData?.courses ?? [];
   const promoBanners = promoBannersData?.banners ?? [];
@@ -230,6 +254,29 @@ export default function AdminVitrinePage() {
   const featuredCourse = bannerCourseId
     ? courses.find((c: any) => c.id === bannerCourseId)
     : courses.find((c: any) => c.banner_image_url || c.cover_image_url);
+
+  // Save banner config mutation
+  const saveBannerMut = useMutation({
+    mutationFn: () => updatePlatformSetting({
+      data: {
+        key: 'hero_banner',
+        value: {
+          enabled: bannerEnabled,
+          title: bannerTitle,
+          subtitle: bannerSubtitle,
+          image_url: bannerImageUrl,
+          course_id: bannerCourseId,
+          fit: bannerFit,
+          aspect: bannerAspect,
+        },
+      },
+    }),
+    onSuccess: () => {
+      toast.success("Banner salvo com sucesso!");
+      queryClient.invalidateQueries({ queryKey: ["platform-settings"] });
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
 
   // ── Mutations ──
 
@@ -671,10 +718,16 @@ export default function AdminVitrinePage() {
                   </Button>
                 </div>
 
-                {/* Auto-save warning */}
-                <p className="text-[10px] text-amber-400/50 flex items-center gap-1.5">
-                  <span>⚠</span> As alterações são salvas automaticamente no banco de dados
-                </p>
+                {/* Save button */}
+                <Button
+                  size="sm"
+                  className="gap-1.5 bg-gold/80 text-gold-foreground hover:bg-gold"
+                  onClick={() => saveBannerMut.mutate()}
+                  disabled={saveBannerMut.isPending}
+                >
+                  {saveBannerMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+                  Salvar Banner
+                </Button>
               </div>
             </TabsContent>
             <TabsContent value="cards" className="mt-6 space-y-6">
