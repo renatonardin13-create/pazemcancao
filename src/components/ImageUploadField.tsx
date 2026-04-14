@@ -234,6 +234,16 @@ export function ImageUploadField({
           </button>
         )}
       </div>
+
+      {expectedRatio && recommendedSize && (
+        <ImageFieldHint
+          ratio={expectedRatio}
+          recommendedSize={recommendedSize}
+          file={lastFile}
+          previewUrl={displaySrc || undefined}
+          autoCrop
+        />
+      )}
     </div>
   );
 }
