@@ -498,10 +498,10 @@ function ContentPage() {
                 <section className="space-y-8">
                   <div>
                     <h2 className="font-display text-xl font-bold text-foreground/85 tracking-tight">
-                      ✨ Sua Jornada
+                      ✨ Sua Jornada Espiritual
                     </h2>
-                    <p className="mt-1 text-xs text-muted-foreground/60">
-                      Trilhas guiadas para acompanhar seu momento
+                    <p className="mt-1 text-xs text-muted-foreground/60 italic">
+                      Trilhas guiadas para nutrir sua alma, no seu ritmo
                     </p>
                   </div>
                   {Object.entries(journeyGroups).map(([jg, jgItems]) => {
