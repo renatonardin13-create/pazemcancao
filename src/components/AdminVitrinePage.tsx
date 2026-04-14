@@ -718,10 +718,16 @@ export default function AdminVitrinePage() {
                   </Button>
                 </div>
 
-                {/* Auto-save warning */}
-                <p className="text-[10px] text-amber-400/50 flex items-center gap-1.5">
-                  <span>⚠</span> As alterações são salvas automaticamente no banco de dados
-                </p>
+                {/* Save button */}
+                <Button
+                  size="sm"
+                  className="gap-1.5 bg-gold/80 text-gold-foreground hover:bg-gold"
+                  onClick={() => saveBannerMut.mutate()}
+                  disabled={saveBannerMut.isPending}
+                >
+                  {saveBannerMut.isPending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+                  Salvar Banner
+                </Button>
               </div>
             </TabsContent>
             <TabsContent value="cards" className="mt-6 space-y-6">
