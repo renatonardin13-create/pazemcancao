@@ -137,14 +137,14 @@ function MeusCoursosPage() {
           <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12">
             <SectionHeader title={`Resultados para "${search}"`} subtitle={`${searchResults.length} curso(s) encontrado(s)`} />
             {searchResults.length > 0 ? (
-              <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
+              <div className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
                 {searchResults.map((course: any, idx: number) => (
                   <motion.div
                     key={`search-${course.id}`}
                     initial={{ opacity: 0, x: 30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
-                    className="flex-shrink-0 snap-start w-[260px] sm:w-[300px] md:w-[320px]"
+                    className="flex-shrink-0 snap-start w-[280px] sm:w-[340px] md:w-[400px] lg:w-[440px]"
                   >
                     <CourseShelfCard course={course} showProgress />
                   </motion.div>
@@ -238,14 +238,14 @@ function MyCoursesShelf({ courses }: { courses: any[] }) {
         </div>
       </div>
 
-      <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
+      <div className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
         {courses.map((course: any, idx: number) => (
           <motion.div
             key={`mc-${course.id}`}
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
-            className="flex-shrink-0 snap-start w-[260px] sm:w-[300px] md:w-[320px]"
+            className="flex-shrink-0 snap-start w-[280px] sm:w-[340px] md:w-[400px] lg:w-[440px]"
           >
             <MyCoursesCard course={course} />
           </motion.div>
@@ -353,14 +353,14 @@ function ContinueWatchingShelf({ courses }: { courses: any[] }) {
         </div>
       </div>
 
-      <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
+      <div className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
         {courses.map((course: any, idx: number) => (
           <motion.div
             key={`cw-${course.id}`}
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
-            className="flex-shrink-0 snap-start w-[260px] sm:w-[300px] md:w-[320px]"
+            className="flex-shrink-0 snap-start w-[280px] sm:w-[340px] md:w-[400px] lg:w-[440px]"
           >
             <ContinueWatchingCard course={course} />
           </motion.div>
@@ -462,14 +462,14 @@ function ShelfSection({ shelf, delay, promoBanners, shelfIndex }: {
         </div>
 
         {/* Horizontal scroll row */}
-        <div className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
+        <div className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
           {(shelf.courses || []).map((course: any, idx: number) => (
             <motion.div
               key={`${shelf.id}-${course.id}`}
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
-              className="flex-shrink-0 snap-start w-[260px] sm:w-[300px] md:w-[320px]"
+              className="flex-shrink-0 snap-start w-[280px] sm:w-[340px] md:w-[400px] lg:w-[440px]"
             >
               <CourseShelfCard
                 course={course}
