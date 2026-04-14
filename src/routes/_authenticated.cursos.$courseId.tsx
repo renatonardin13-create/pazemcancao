@@ -128,10 +128,10 @@ function CourseDetailPage() {
 
   const getLessonIcon = (lesson: any) => {
     const ct = lesson.content_type || "video";
-    if (ct === "pdf") return <FileText className="h-3.5 w-3.5 text-muted-foreground/60" />;
-    if (ct === "file") return <FileIcon className="h-3.5 w-3.5 text-muted-foreground/60" />;
-    if (ct === "link") return <Link2 className="h-3.5 w-3.5 text-muted-foreground/60" />;
-    return <Video className="h-3.5 w-3.5 text-muted-foreground/60" />;
+    if (ct === "pdf") return <FileText className="h-4 w-4" />;
+    if (ct === "file") return <FileIcon className="h-4 w-4" />;
+    if (ct === "link") return <Link2 className="h-4 w-4" />;
+    return <Video className="h-4 w-4" />;
   };
 
   const renderLesson = (lesson: any, index: number) => {
