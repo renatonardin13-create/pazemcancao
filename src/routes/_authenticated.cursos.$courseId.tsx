@@ -137,80 +137,101 @@ function CourseDetailPage() {
   const renderLesson = (lesson: any, index: number) => {
     const completed = isLessonCompleted(lesson.id);
     const canOpenLesson = canAccessCourse || lesson.is_free_preview;
-    const lessonTitleClasses = `text-sm font-medium truncate block transition-colors ${
-      completed
-        ? "text-muted-foreground/70 line-through"
-        : canOpenLesson
-          ? "text-foreground/70 hover:text-gold/70"
-          : "text-muted-foreground/60"
-    }`;
 
-    return (
+    const content = (
       <div
-        key={lesson.id}
-        className="flex items-center gap-4 px-5 py-4 border-b border-border/20 last:border-0 transition-colors hover:bg-card/20"
+        className={`group/lesson flex items-center gap-3 sm:gap-4 px-4 sm:px-5 py-3.5 sm:py-4 border-b border-border/10 last:border-0 transition-all duration-300 ${
+          canOpenLesson ? "hover:bg-gold/[0.03] cursor-pointer" : ""
+        } ${completed ? "opacity-60" : ""}`}
       >
-        <div className="shrink-0">
+        {/* Number circle */}
+        <div className={`shrink-0 flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold tabular-nums transition-colors duration-300 ${
+          completed
+            ? "bg-emerald-500/15 text-emerald-400/80 border border-emerald-500/20"
+            : canOpenLesson
+              ? "bg-gold/[0.06] text-gold/60 border border-gold/10 group-hover/lesson:bg-gold/10 group-hover/lesson:text-gold/80"
+              : "bg-muted/10 text-muted-foreground/40 border border-border/15"
+        }`}>
           {completed ? (
-            <CheckCircle2 className="h-5 w-5 text-emerald-400/60" />
+            <CheckCircle2 className="h-4 w-4" />
           ) : (
-            <Circle className="h-5 w-5 text-muted-foreground/50" />
+            String(index + 1).padStart(2, "0")
           )}
         </div>
 
-        <span className="text-xs font-bold text-muted-foreground/50 tabular-nums shrink-0 w-6 text-center">
-          {String(index + 1).padStart(2, "0")}
-        </span>
-
+        {/* Content */}
         <div className="flex-1 min-w-0">
-          {canOpenLesson ? (
-            <Link
-              to="/cursos/$courseId/aula/$lessonId"
-              params={{ courseId, lessonId: lesson.id }}
-              className={lessonTitleClasses}
-            >
-              {lesson.title}
-            </Link>
-          ) : (
-            <span className={lessonTitleClasses}>{lesson.title}</span>
-          )}
-          <div className="flex items-center gap-3 mt-1">
-            {getLessonIcon(lesson)}
+          <span className={`text-[13px] sm:text-sm font-medium block transition-colors duration-300 ${
+            completed
+              ? "text-muted-foreground/50 line-through"
+              : canOpenLesson
+                ? "text-foreground/75 group-hover/lesson:text-gold/80"
+                : "text-muted-foreground/50"
+          }`}>
+            {lesson.title}
+          </span>
+          <div className="flex items-center gap-2.5 mt-1">
+            <span className={`${completed ? "text-muted-foreground/30" : "text-muted-foreground/40"}`}>
+              {getLessonIcon(lesson)}
+            </span>
             {lesson.duration && lesson.duration !== "0:00" && (
-              <span className="text-xs text-muted-foreground/60">
+              <span className="text-[11px] text-muted-foreground/40 tabular-nums">
                 {lesson.duration}
               </span>
             )}
-            {lesson.is_free_preview && (
-              <span className="text-[11px] uppercase tracking-wider text-gold/40 font-semibold">
-                Preview
+            {lesson.is_free_preview && !canAccessCourse && (
+              <span className="text-[10px] font-bold uppercase tracking-wider text-gold/50 bg-gold/[0.06] px-1.5 py-0.5 rounded">
+                Prévia
               </span>
             )}
             {!canOpenLesson && (
-              <span className="inline-flex items-center gap-1 text-[11px] uppercase tracking-wider text-muted-foreground/60 font-semibold">
-                <Lock className="h-3 w-3" />
-                Bloqueada
-              </span>
+              <Lock className="h-3 w-3 text-muted-foreground/30" />
             )}
           </div>
         </div>
 
+        {/* Actions */}
+        {canOpenLesson && !completed && (
+          <div className="shrink-0 opacity-0 group-hover/lesson:opacity-100 transition-opacity duration-300">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gold/10 text-gold/60">
+              <Play className="h-3.5 w-3.5 fill-current ml-0.5" />
+            </div>
+          </div>
+        )}
+
         {!completed && enrollment && (
           <button
-            onClick={() =>
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
               progressMutation.mutate({
                 lessonId: lesson.id,
                 watchedSeconds: 0,
                 completed: true,
-              })
-            }
-            className="shrink-0 text-[11px] uppercase tracking-wider text-muted-foreground/50 hover:text-emerald-400/50 transition-colors font-semibold"
+              });
+            }}
+            className="shrink-0 text-[10px] uppercase tracking-wider text-muted-foreground/30 hover:text-emerald-400/60 transition-colors font-bold"
           >
             Concluir
           </button>
         )}
       </div>
     );
+
+    if (canOpenLesson) {
+      return (
+        <Link
+          key={lesson.id}
+          to="/cursos/$courseId/aula/$lessonId"
+          params={{ courseId, lessonId: lesson.id }}
+          className="block"
+        >
+          {content}
+        </Link>
+      );
+    }
+
+    return <div key={lesson.id}>{content}</div>;
   };
 
   return (
