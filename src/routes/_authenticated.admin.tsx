@@ -79,6 +79,16 @@ function AdminLayout() {
               Painel Administrativo
             </span>
             <div className="ml-auto flex items-center gap-3">
+              <button
+                onClick={handleRefresh}
+                disabled={refreshing}
+                className="flex items-center gap-1.5 text-xs text-muted-foreground/60 hover:text-gold/70 transition-colors disabled:opacity-50"
+                title="Atualizar dados"
+              >
+                <RefreshCw className={`h-3.5 w-3.5 ${refreshing ? 'animate-spin' : ''}`} />
+                <span className="hidden sm:inline">Atualizar</span>
+              </button>
+              <div className="h-4 w-px bg-border/20" />
               <span className="text-xs text-muted-foreground/60 hidden sm:inline">
                 {user?.email}
               </span>
