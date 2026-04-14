@@ -261,7 +261,7 @@ function MeusCoursosPage() {
               <SectionHeader icon={Sparkles} title="Recomendado para você" subtitle="Cursos selecionados com base no seu perfil" />
               <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-hide -mx-1 px-1">
                 {recommendations.slice(0, 8).map((course: any, idx: number) => (
-                  <motion.div key={`rec-${course.id}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.06 * idx }} className="flex-shrink-0 w-[200px] sm:w-[220px]">
+                  <motion.div key={`rec-${course.id}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.06 * idx }} className="flex-shrink-0 w-[160px] sm:w-[180px]">
                     <CourseShelfCard
                       course={course}
                       badge={course.enrollment_count > 0 ? (
@@ -306,7 +306,7 @@ function MeusCoursosPage() {
               <SectionHeader icon={TrendingUp} title="Mais acessados" subtitle="Os cursos mais populares da plataforma" />
               <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-hide -mx-1 px-1">
                 {trending.map((course: any, idx: number) => (
-                  <motion.div key={`trend-${course.id}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.06 * idx }} className="flex-shrink-0 w-[200px] sm:w-[220px]">
+                  <motion.div key={`trend-${course.id}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.06 * idx }} className="flex-shrink-0 w-[160px] sm:w-[180px]">
                     <CourseShelfCard
                       course={course}
                       showDescription={false}
@@ -334,7 +334,7 @@ function MeusCoursosPage() {
               <SectionHeader icon={Zap} title="Novos conteúdos" subtitle="Adicionados recentemente à plataforma" />
               <div className="flex gap-4 overflow-x-auto pb-3 scrollbar-hide -mx-1 px-1">
                 {newCourses.slice(0, 8).map((course: any, idx: number) => (
-                  <motion.div key={`new-${course.id}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.06 * idx }} className="flex-shrink-0 w-[200px] sm:w-[220px]">
+                  <motion.div key={`new-${course.id}`} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.06 * idx }} className="flex-shrink-0 w-[160px] sm:w-[180px]">
                     <CourseShelfCard
                       course={course}
                       badge={
