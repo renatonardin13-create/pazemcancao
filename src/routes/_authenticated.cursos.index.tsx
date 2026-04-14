@@ -6,8 +6,8 @@ import { getMyCoursesData } from "@/lib/my-courses.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { motion } from "framer-motion";
-import { BookOpen, Search, ArrowRight, Layers, Clock } from "lucide-react";
-import { useState } from "react";
+import { BookOpen, Search, ArrowRight, Layers, Clock, PlayCircle } from "lucide-react";
+import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -35,6 +35,14 @@ function MeusCoursosPage() {
 
   const courses = data?.courses || [];
   const stats = data?.stats || { total: 0, inProgress: 0, completed: 0 };
+
+  // "Continue de onde parou" — recently accessed, in progress, max 5
+  const continueItems = useMemo(() => {
+    return courses
+      .filter((c: any) => c.last_accessed_at && c.progress_pct > 0 && c.progress_pct < 100)
+      .sort((a: any, b: any) => new Date(b.last_accessed_at).getTime() - new Date(a.last_accessed_at).getTime())
+      .slice(0, 5);
+  }, [courses]);
 
   const filtered = courses.filter((c: any) => {
     const matchSearch = !search || c.title?.toLowerCase().includes(search.toLowerCase());
