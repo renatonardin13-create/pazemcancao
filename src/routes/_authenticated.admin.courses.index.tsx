@@ -1,3 +1,4 @@
+import { toastError } from "@/lib/toast-utils";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listAdminCourses, deleteCourse, updateCourse } from "@/lib/admin-courses.functions";
@@ -67,7 +68,7 @@ function AdminCoursesPage() {
       queryClient.invalidateQueries({ queryKey: ["student-shelves"] });
       toast.success("Curso excluído com sucesso");
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const toggleStatusM = useMutation({
@@ -79,7 +80,7 @@ function AdminCoursesPage() {
       queryClient.invalidateQueries({ queryKey: ["my-courses"] });
       toast.success("Status atualizado");
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const allCourses = data?.courses || [];

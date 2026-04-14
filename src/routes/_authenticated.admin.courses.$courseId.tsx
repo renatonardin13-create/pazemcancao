@@ -1,3 +1,4 @@
+import { toastError } from "@/lib/toast-utils";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { CourseForm } from "@/components/CourseForm";
 import { CourseIntegrationSection } from "@/components/CourseIntegrationSection";
@@ -39,7 +40,7 @@ function EditCoursePage() {
       toast.success("Curso atualizado com sucesso!");
       navigate({ to: "/admin/courses" });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   if (isLoading) {

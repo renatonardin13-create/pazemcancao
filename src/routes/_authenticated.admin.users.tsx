@@ -1,3 +1,4 @@
+import { toastError } from "@/lib/toast-utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Users, ShieldCheck, Ban, Activity, UserPlus, Clock, Pencil, ToggleLeft, ToggleRight, Trash2, Copy, KeyRound, BookOpen, Check, Search, MoreHorizontal, ChevronLeft, ChevronRight, TrendingUp, Eye, Mail, Calendar, ShieldAlert } from "lucide-react";
@@ -116,7 +117,7 @@ function AdminUsersPage() {
       toast.success(vars.grant ? "Acesso liberado!" : "Acesso removido!");
       queryClient.invalidateQueries({ queryKey: ["student-detail"] });
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const createTrial = useMutation({
@@ -131,7 +132,7 @@ function AdminUsersPage() {
       setTrialDays(7);
     },
     onError: (err: any) => {
-      toast.error(err.message || "Erro ao cadastrar cliente de teste");
+      toastError(err, "Erro ao cadastrar cliente");
     },
   });
 
@@ -144,7 +145,7 @@ function AdminUsersPage() {
       setAddPassword(result.generatedPassword || null);
     },
     onError: (err: any) => {
-      toast.error(err.message || "Erro ao adicionar aluno");
+      toastError(err, "Erro ao adicionar aluno");
     },
   });
 
@@ -158,7 +159,7 @@ function AdminUsersPage() {
       setEditBuyer(null);
     },
     onError: (err: any) => {
-      toast.error(err.message || "Erro ao atualizar");
+      toastError(err, "Erro ao atualizar");
     },
   });
 
@@ -170,7 +171,7 @@ function AdminUsersPage() {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     },
     onError: (err: any) => {
-      toast.error(err.message || "Erro ao alterar acesso");
+      toastError(err, "Erro ao alterar acesso");
     },
   });
 
@@ -181,7 +182,7 @@ function AdminUsersPage() {
       queryClient.invalidateQueries({ queryKey: ["admin-users"] });
     },
     onError: (err: any) => {
-      toast.error(err.message || "Erro ao excluir");
+      toastError(err, "Erro ao excluir");
     },
   });
 

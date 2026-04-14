@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { toastError } from "@/lib/toast-utils";
 import { ImageUploadField } from "@/components/ImageUploadField";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { toast } from "sonner";
@@ -285,7 +286,7 @@ export default function AdminVitrinePage() {
       queryClient.invalidateQueries({ queryKey: ["student-shelves-preview"] });
       queryClient.invalidateQueries({ queryKey: ["student-shelves"] });
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const saveCardsMut = useMutation({
@@ -298,7 +299,7 @@ export default function AdminVitrinePage() {
       queryClient.invalidateQueries({ queryKey: ["student-shelves-preview"] });
       queryClient.invalidateQueries({ queryKey: ["student-shelves"] });
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   // ── Mutations ──
@@ -317,7 +318,7 @@ export default function AdminVitrinePage() {
       invalidatePreview();
       closeDialog();
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const updateMut = useMutation({
@@ -328,7 +329,7 @@ export default function AdminVitrinePage() {
       invalidatePreview();
       closeDialog();
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const deleteMut = useMutation({
@@ -338,7 +339,7 @@ export default function AdminVitrinePage() {
       queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
       invalidatePreview();
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const setCoursesMut = useMutation({
@@ -350,7 +351,7 @@ export default function AdminVitrinePage() {
       invalidatePreview();
       setCoursesDialogShelf(null);
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const reorderShelvesMut = useMutation({
@@ -361,7 +362,7 @@ export default function AdminVitrinePage() {
       queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
       invalidatePreview();
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const reorderCoursesMut = useMutation({
@@ -372,7 +373,7 @@ export default function AdminVitrinePage() {
       queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
       invalidatePreview();
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   // ── Promo banner mutations ──
@@ -384,7 +385,7 @@ export default function AdminVitrinePage() {
       queryClient.invalidateQueries({ queryKey: ["admin-promo-banners"] });
       closePromoDialog();
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const updatePromoMut = useMutation({
@@ -394,7 +395,7 @@ export default function AdminVitrinePage() {
       queryClient.invalidateQueries({ queryKey: ["admin-promo-banners"] });
       closePromoDialog();
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const deletePromoMut = useMutation({
@@ -403,7 +404,7 @@ export default function AdminVitrinePage() {
       toast.success("Banner promo excluído!");
       queryClient.invalidateQueries({ queryKey: ["admin-promo-banners"] });
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
 

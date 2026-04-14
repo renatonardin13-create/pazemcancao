@@ -1,3 +1,4 @@
+import { toastError } from "@/lib/toast-utils";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { CourseForm } from "@/components/CourseForm";
 import { createCourse } from "@/lib/admin-courses.functions";
@@ -26,7 +27,7 @@ function NewCoursePage() {
       toast.success("Curso criado com sucesso!");
       navigate({ to: "/admin/courses" });
     },
-    onError: (e: Error) => toast.error(e.message),
+    onError: (e: Error) => toastError(e),
   });
 
   const handleSave = () => {

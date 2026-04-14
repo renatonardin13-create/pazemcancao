@@ -1,3 +1,4 @@
+import { toastError } from "@/lib/toast-utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -73,7 +74,7 @@ function AdminCategoriesPage() {
       setShowCatForm(false);
       setNewCat({ name: "", slug: "", description: "", icon: "", color: PICKER_COLORS[0] });
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const updateCatMutation = useMutation({
@@ -85,7 +86,7 @@ function AdminCategoriesPage() {
       toast.success("Categoria atualizada");
       setEditingCat(null);
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const deleteCatMutation = useMutation({
@@ -95,7 +96,7 @@ function AdminCategoriesPage() {
       invalidateStudentCaches();
       toast.success("Categoria removida");
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const reorderMutation = useMutation({
@@ -104,7 +105,7 @@ function AdminCategoriesPage() {
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
       invalidateStudentCaches();
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   // ─── Tags queries/mutations ───
@@ -122,7 +123,7 @@ function AdminCategoriesPage() {
       setShowTagForm(false);
       setNewTag({ name: "", slug: "", description: "", color: PICKER_COLORS[0] });
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const updateTagMutation = useMutation({
@@ -133,7 +134,7 @@ function AdminCategoriesPage() {
       toast.success("Tag atualizada");
       setEditingTag(null);
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const deleteTagMutation = useMutation({
@@ -142,7 +143,7 @@ function AdminCategoriesPage() {
       queryClient.invalidateQueries({ queryKey: ["admin-tags"] });
       toast.success("Tag removida");
     },
-    onError: (err: any) => toast.error(err.message),
+    onError: (err: any) => toastError(err),
   });
 
   const categories = catData?.categories || [];

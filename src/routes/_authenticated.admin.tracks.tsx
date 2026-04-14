@@ -1,3 +1,4 @@
+import { toastError } from "@/lib/toast-utils";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listAdminTracks, listAdminTrackCategories, deleteTrack, updateTrack, regenerateCover } from "@/lib/admin-tracks.functions";
@@ -74,7 +75,7 @@ function AdminTracksPage() {
       toast.success("Capa gerada com sucesso!");
     },
     onError: (err: Error) => {
-      toast.error("Erro ao gerar capa: " + err.message);
+      toastError(err, "Erro ao gerar capa");
     },
   });
 
@@ -85,7 +86,7 @@ function AdminTracksPage() {
       toast.success(`Notificação enviada para ${result.sent} clientes!`);
     },
     onError: (err: Error) => {
-      toast.error("Erro ao notificar: " + err.message);
+      toastError(err, "Erro ao notificar");
     },
   });
 

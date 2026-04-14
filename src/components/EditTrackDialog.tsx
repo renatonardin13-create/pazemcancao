@@ -1,3 +1,4 @@
+import { toastError } from "@/lib/toast-utils";
 import { useState, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -146,7 +147,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
       console.error("[EditTrackDialog] Falha ao salvar:", err);
       setStatusType("error");
       setStatusMessage(err.message || "Falha ao salvar a capa.");
-      toast.error(err.message);
+      toastError(err);
     },
   });
 
