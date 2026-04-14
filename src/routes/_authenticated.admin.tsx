@@ -2,7 +2,9 @@ import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/AdminSidebar";
-import { LogOut, ShieldAlert, ArrowLeft } from "lucide-react";
+import { LogOut, ShieldAlert, ArrowLeft, RefreshCw } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
