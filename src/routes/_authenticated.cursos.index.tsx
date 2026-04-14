@@ -94,23 +94,23 @@ function MeusCoursosPage() {
     <StudentLayout>
     <div className="min-h-screen bg-background flex flex-col">
 
-      <main className="flex-1 w-full pb-28">
+      <main className="flex-1 w-full pb-32">
 
         {/* ═══ SAUDAÇÃO + BUSCA ═══ */}
-        <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 pt-8 sm:pt-10">
+        <div className="w-full max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-14 pt-10 sm:pt-12">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-6"
+            className="mb-8"
           >
-            <div className="flex items-start gap-1.5 mb-1">
-              <Heart className="h-4 w-4 text-gold/50 mt-1 flex-shrink-0" />
-              <h1 className="font-display text-xl sm:text-2xl font-bold text-foreground/90 tracking-tight">
+            <div className="flex items-start gap-2 mb-1">
+              <Heart className="h-4 w-4 text-gold/40 mt-1.5 flex-shrink-0" />
+              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight leading-tight">
                 Olá, {firstName}.
               </h1>
             </div>
-            <p className="text-[12px] sm:text-[13px] text-muted-foreground/50 mt-0.5 ml-[22px] italic leading-relaxed max-w-md">
+            <p className="text-[12px] sm:text-[13px] text-muted-foreground/40 mt-1 ml-[26px] italic leading-relaxed max-w-md">
               Que sua jornada hoje seja leve, profunda e cheia de paz.
             </p>
           </motion.div>
@@ -119,15 +119,15 @@ function MeusCoursosPage() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-6"
+            className="mb-8"
           >
-            <div className="relative max-w-md">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
+            <div className="relative max-w-lg">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30" />
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Buscar cursos..."
-                className="pl-10 h-11 bg-card/15 border-border/20 rounded-xl text-sm placeholder:text-muted-foreground/30 focus:border-gold/30 focus:ring-gold/10"
+                className="pl-11 h-12 bg-card/10 border-border/15 rounded-2xl text-sm placeholder:text-muted-foreground/25 focus:border-gold/25 focus:ring-gold/10 transition-all duration-300"
               />
             </div>
           </motion.div>
@@ -135,17 +135,17 @@ function MeusCoursosPage() {
 
         {/* ═══ SEARCH RESULTS ═══ */}
         {searchResults !== null ? (
-          <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12">
+          <div className="w-full max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-14">
             <SectionHeader title={`Resultados para "${search}"`} subtitle={`${searchResults.length} curso(s) encontrado(s)`} />
             {searchResults.length > 0 ? (
-              <div className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
+              <div className="flex gap-5 sm:gap-6 lg:gap-7 overflow-x-auto pb-6 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth">
                 {searchResults.map((course: any, idx: number) => (
                   <motion.div
                     key={`search-${course.id}`}
                     initial={{ opacity: 0, x: 30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
-                    className="flex-shrink-0 snap-start w-[280px] sm:w-[340px] md:w-[400px] lg:w-[440px]"
+                    className="flex-shrink-0 snap-start w-[300px] sm:w-[360px] md:w-[420px] lg:w-[480px]"
                   >
                     <CourseShelfCard course={course} showProgress />
                   </motion.div>
@@ -162,7 +162,7 @@ function MeusCoursosPage() {
               <HeroBanner course={featuredCourse} />
             )}
 
-            <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 pt-8">
+            <div className="w-full max-w-[1440px] mx-auto px-5 sm:px-10 lg:px-14 pt-10">
 
               {isLoading ? (
                 <CardGridSkeleton count={6} />
@@ -184,14 +184,14 @@ function MeusCoursosPage() {
                   ))}
 
                   {/* ═══ BIBLIOTECA RESUMO ═══ */}
-                  <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} className="mb-16 rounded-2xl border border-border/20 bg-card/8 p-5 sm:p-6">
-                    <div className="flex items-center gap-3 mb-4">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
-                        <Layers className="h-4 w-4 text-primary/70" />
+                  <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} className="mb-20 rounded-2xl border border-border/10 bg-card/5 p-6 sm:p-8 backdrop-blur-sm">
+                    <div className="flex items-center gap-3.5 mb-5">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
+                        <Layers className="h-4 w-4 text-primary/60" />
                       </div>
-                      <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">Minha biblioteca</h2>
+                      <h2 className="font-display text-xl font-bold text-foreground/80 tracking-tight">Minha biblioteca</h2>
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                       <StatCard label="Cursos" value={stats.total} />
                       <StatCard label="Em andamento" value={stats.inProgress} />
                       <StatCard label="Concluídos" value={stats.completed} />
@@ -227,33 +227,33 @@ function MyCoursesShelf({ courses }: { courses: any[] }) {
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.1 }}
-      className="mb-16"
+      className="mb-20"
     >
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-3.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold/[0.08] border border-gold/10">
-            <GraduationCap className="h-4.5 w-4.5 text-gold" />
+      <div className="flex items-center justify-between mb-10">
+        <div className="flex items-center gap-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold/[0.07] border border-gold/10">
+            <GraduationCap className="h-5 w-5 text-gold" />
           </div>
           <div>
-            <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+            <h2 className="font-display text-2xl sm:text-[28px] font-extrabold text-foreground tracking-tight leading-none">
               Meus cursos
             </h2>
-            <p className="text-[11px] text-muted-foreground/40 mt-0.5 tracking-wide">Seus cursos matriculados</p>
+            <p className="text-[11px] text-muted-foreground/35 mt-1 tracking-wide">Seus cursos matriculados</p>
           </div>
         </div>
-        <Link to="/cursos" className="text-[11px] font-bold text-gold/50 uppercase tracking-widest hover:text-gold/80 transition-colors duration-300 flex items-center gap-1">
+        <Link to="/cursos" className="text-[11px] font-bold text-gold/40 uppercase tracking-[0.15em] hover:text-gold/70 transition-colors duration-300 flex items-center gap-1.5">
           Ver todos <ArrowRight className="h-3 w-3" />
         </Link>
       </div>
 
-      <div ref={dragRef} className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth cursor-grab select-none">
+      <div ref={dragRef} className="flex gap-5 sm:gap-6 lg:gap-7 overflow-x-auto pb-6 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth cursor-grab select-none">
         {courses.map((course: any, idx: number) => (
           <motion.div
             key={`mc-${course.id}`}
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
-            className="flex-shrink-0 snap-start w-[280px] sm:w-[340px] md:w-[400px] lg:w-[440px]"
+            className="flex-shrink-0 snap-start w-[300px] sm:w-[360px] md:w-[420px] lg:w-[480px]"
           >
             <MyCoursesCard course={course} />
           </motion.div>
@@ -272,27 +272,27 @@ function MyCoursesCard({ course }: { course: any }) {
     <Link
       to="/cursos/$courseId"
       params={{ courseId: course.id }}
-      className="group relative block rounded-xl overflow-hidden cursor-pointer"
+      className="group relative block rounded-2xl overflow-hidden cursor-pointer"
     >
-      <div className="relative aspect-video overflow-hidden bg-card/10">
+      <div className="relative aspect-video overflow-hidden bg-card/5 shadow-lg shadow-black/20 group-hover:shadow-2xl group-hover:shadow-black/40 transition-shadow duration-500 rounded-2xl">
         {course.cover_image_url ? (
           <img
             src={course.cover_image_url}
             alt={course.title}
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+            className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-[1.12]"
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-card/30 via-muted/10 to-background flex items-center justify-center">
-            <BookOpen className="h-8 w-8 text-muted-foreground/15" />
+          <div className="w-full h-full bg-gradient-to-br from-card/40 via-muted/10 to-background flex items-center justify-center">
+            <BookOpen className="h-10 w-10 text-muted-foreground/10" />
           </div>
         )}
 
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-500" />
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent" />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-500" />
+        <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
         {/* Status badge — top left */}
-        <div className="absolute top-2.5 left-2.5 z-10">
+        <div className="absolute top-3 left-3 z-10">
           {isCompleted ? (
             <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-500/90 px-2.5 py-1 text-[10px] font-bold text-white uppercase tracking-wider backdrop-blur-sm">
               <CheckCircle2 className="h-3 w-3" /> Concluído
@@ -302,25 +302,25 @@ function MyCoursesCard({ course }: { course: any }) {
               <Play className="h-3 w-3 fill-current" /> Em andamento
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 rounded-lg bg-white/15 px-2.5 py-1 text-[10px] font-bold text-white uppercase tracking-wider backdrop-blur-sm">
+            <span className="inline-flex items-center gap-1 rounded-lg bg-white/10 px-2.5 py-1 text-[10px] font-bold text-white uppercase tracking-wider backdrop-blur-sm">
               Novo
             </span>
           )}
         </div>
 
-        {/* Play / Continue button on hover */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-400 z-10">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/90 shadow-2xl shadow-gold/40 backdrop-blur-sm scale-75 group-hover:scale-100 transition-transform duration-500 ease-out">
-            <Play className="h-6 w-6 text-gold-foreground fill-gold-foreground ml-0.5" />
+        {/* Play button on hover */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 z-10">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gold shadow-2xl shadow-gold/30 backdrop-blur-sm scale-[0.6] group-hover:scale-100 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
+            <Play className="h-7 w-7 text-gold-foreground fill-gold-foreground ml-0.5" />
           </div>
         </div>
 
         {/* Title + progress */}
-        <div className="absolute inset-x-0 bottom-0 p-4 z-10 translate-y-2 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-          <h3 className="text-sm font-bold text-white line-clamp-2 leading-snug drop-shadow-lg">
+        <div className="absolute inset-x-0 bottom-0 p-5 z-10 translate-y-1 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+          <h3 className="text-[15px] font-bold text-white line-clamp-2 leading-[1.3] drop-shadow-xl tracking-tight">
             {course.title}
           </h3>
-          <p className="text-[11px] text-white/50 mt-1">
+          <p className="text-[11px] text-white/40 mt-1.5">
             {course.completed_lessons}/{course.lesson_count || course.total_lessons} aulas
             {isInProgress && ` • ${progress}%`}
           </p>
@@ -328,16 +328,16 @@ function MyCoursesCard({ course }: { course: any }) {
 
         {/* Progress bar */}
         {(isInProgress || isCompleted) && (
-          <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/10 z-20">
+          <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/[0.06] z-20">
             <div
-              className={`h-full rounded-r-full transition-all duration-700 ${isCompleted ? "bg-emerald-400" : "bg-gold"}`}
+              className={`h-full rounded-r-full transition-all duration-700 ${isCompleted ? "bg-player-completed" : "bg-gold"}`}
               style={{ width: `${Math.min(progress, 100)}%` }}
             />
           </div>
         )}
       </div>
 
-      <div className="absolute inset-0 rounded-xl border border-transparent group-hover:border-gold/30 transition-colors duration-500 pointer-events-none z-20" />
+      <div className="absolute inset-0 rounded-2xl border border-transparent group-hover:border-gold/20 transition-colors duration-500 pointer-events-none z-20" />
     </Link>
   );
 }
@@ -349,33 +349,33 @@ function ContinueWatchingShelf({ courses }: { courses: any[] }) {
       initial={{ opacity: 0, y: 14 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay: 0.05 }}
-      className="mb-16"
+      className="mb-20"
     >
-        <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center gap-3.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold/[0.08] border border-gold/10">
-            <PlayCircle className="h-4.5 w-4.5 text-gold" />
+      <div className="flex items-center justify-between mb-10">
+        <div className="flex items-center gap-4">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold/[0.07] border border-gold/10">
+            <PlayCircle className="h-5 w-5 text-gold" />
           </div>
           <div>
-            <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+            <h2 className="font-display text-2xl sm:text-[28px] font-extrabold text-foreground tracking-tight leading-none">
               Continue assistindo
             </h2>
-            <p className="text-[11px] text-muted-foreground/40 mt-0.5 tracking-wide">Retome de onde parou</p>
+            <p className="text-[11px] text-muted-foreground/35 mt-1 tracking-wide">Retome de onde parou</p>
           </div>
         </div>
-        <Link to="/cursos" className="text-[11px] font-bold text-gold/50 uppercase tracking-widest hover:text-gold/80 transition-colors duration-300 flex items-center gap-1">
+        <Link to="/cursos" className="text-[11px] font-bold text-gold/40 uppercase tracking-[0.15em] hover:text-gold/70 transition-colors duration-300 flex items-center gap-1.5">
           Ver todos <ArrowRight className="h-3 w-3" />
         </Link>
       </div>
 
-      <div ref={dragRef} className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth cursor-grab select-none">
+      <div ref={dragRef} className="flex gap-5 sm:gap-6 lg:gap-7 overflow-x-auto pb-6 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth cursor-grab select-none">
         {courses.map((course: any, idx: number) => (
           <motion.div
             key={`cw-${course.id}`}
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
-            className="flex-shrink-0 snap-start w-[280px] sm:w-[340px] md:w-[400px] lg:w-[440px]"
+            className="flex-shrink-0 snap-start w-[300px] sm:w-[360px] md:w-[420px] lg:w-[480px]"
           >
             <ContinueWatchingCard course={course} />
           </motion.div>
@@ -398,44 +398,44 @@ function ContinueWatchingCard({ course }: { course: any }) {
     <Link
       to={linkTo as any}
       params={linkParams as any}
-      className="group relative block rounded-xl overflow-hidden cursor-pointer"
+      className="group relative block rounded-2xl overflow-hidden cursor-pointer"
     >
-      <div className="relative aspect-video overflow-hidden bg-card/10">
+      <div className="relative aspect-video overflow-hidden bg-card/5 shadow-lg shadow-black/20 group-hover:shadow-2xl group-hover:shadow-black/40 transition-shadow duration-500 rounded-2xl">
         {course.cover_image_url ? (
           <img
             src={course.cover_image_url}
             alt={course.title}
-            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+            className="w-full h-full object-cover transition-transform duration-[800ms] ease-out group-hover:scale-[1.12]"
             loading="lazy"
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-card/30 via-muted/10 to-background flex items-center justify-center">
-            <BookOpen className="h-8 w-8 text-muted-foreground/15" />
+          <div className="w-full h-full bg-gradient-to-br from-card/40 via-muted/10 to-background flex items-center justify-center">
+            <BookOpen className="h-10 w-10 text-muted-foreground/10" />
           </div>
         )}
 
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-500" />
-        <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent" />
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-500" />
+        <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
 
         {/* Play button */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-400 z-10">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/90 shadow-2xl shadow-gold/40 backdrop-blur-sm scale-75 group-hover:scale-100 transition-transform duration-500 ease-out">
-            <Play className="h-6 w-6 text-gold-foreground fill-gold-foreground ml-0.5" />
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 z-10">
+          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gold shadow-2xl shadow-gold/30 backdrop-blur-sm scale-[0.6] group-hover:scale-100 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
+            <Play className="h-7 w-7 text-gold-foreground fill-gold-foreground ml-0.5" />
           </div>
         </div>
 
         {/* Title + progress info */}
-        <div className="absolute inset-x-0 bottom-0 p-4 z-10 translate-y-2 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-          <h3 className="text-sm font-bold text-white line-clamp-2 leading-snug drop-shadow-lg">
+        <div className="absolute inset-x-0 bottom-0 p-5 z-10 translate-y-1 group-hover:translate-y-0 transition-transform duration-500 ease-out">
+          <h3 className="text-[15px] font-bold text-white line-clamp-2 leading-[1.3] drop-shadow-xl tracking-tight">
             {course.title}
           </h3>
-          <p className="text-[11px] text-white/50 mt-1">
+          <p className="text-[11px] text-white/40 mt-1.5">
             {course.completed_lessons}/{course.total_lessons} aulas • {progress}%
           </p>
         </div>
 
         {/* Progress bar */}
-        <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/10 z-20">
+        <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/[0.06] z-20">
           <div
             className="h-full rounded-r-full bg-gold transition-all duration-700"
             style={{ width: `${Math.min(progress, 100)}%` }}
@@ -443,7 +443,7 @@ function ContinueWatchingCard({ course }: { course: any }) {
         </div>
       </div>
 
-      <div className="absolute inset-0 rounded-xl border border-transparent group-hover:border-gold/30 transition-colors duration-500 pointer-events-none z-20" />
+      <div className="absolute inset-0 rounded-2xl border border-transparent group-hover:border-gold/20 transition-colors duration-500 pointer-events-none z-20" />
     </Link>
   );
 }
@@ -463,28 +463,28 @@ function ShelfSection({ shelf, delay, promoBanners, shelfIndex }: {
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay }}
-        className="mb-16"
+        className="mb-20"
       >
-        <div className="flex items-center justify-between mb-8">
-          <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight">
+        <div className="flex items-center justify-between mb-10">
+          <h2 className="font-display text-2xl sm:text-[28px] font-extrabold text-foreground tracking-tight leading-none">
             {shelf.name}
           </h2>
           {(shelf.courses?.length ?? 0) > 3 && (
-            <Link to="/cursos" className="text-[11px] font-bold text-gold/50 uppercase tracking-widest hover:text-gold/80 transition-colors duration-300 flex items-center gap-1">
+            <Link to="/cursos" className="text-[11px] font-bold text-gold/40 uppercase tracking-[0.15em] hover:text-gold/70 transition-colors duration-300 flex items-center gap-1.5">
               Ver todos <ArrowRight className="h-3 w-3" />
             </Link>
           )}
         </div>
 
         {/* Horizontal scroll row */}
-        <div ref={dragRef} className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-4 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth cursor-grab select-none">
+        <div ref={dragRef} className="flex gap-5 sm:gap-6 lg:gap-7 overflow-x-auto pb-6 scrollbar-hide -mx-1 px-1 snap-x snap-mandatory scroll-smooth cursor-grab select-none">
           {(shelf.courses || []).map((course: any, idx: number) => (
             <motion.div
               key={`${shelf.id}-${course.id}`}
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5, delay: 0.04 * Math.min(idx, 10) }}
-              className="flex-shrink-0 snap-start w-[280px] sm:w-[340px] md:w-[400px] lg:w-[440px]"
+              className="flex-shrink-0 snap-start w-[300px] sm:w-[360px] md:w-[420px] lg:w-[480px]"
             >
               <CourseShelfCard
                 course={course}
@@ -502,14 +502,14 @@ function ShelfSection({ shelf, delay, promoBanners, shelfIndex }: {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: delay + 0.1 }}
-          className="mb-16"
+          className="mb-20"
         >
           {banner.link_url ? (
-            <a href={banner.link_url} target="_blank" rel="noopener noreferrer" className="block rounded-2xl overflow-hidden border border-border/15 hover:border-gold/20 transition-all duration-300">
+            <a href={banner.link_url} target="_blank" rel="noopener noreferrer" className="block rounded-2xl overflow-hidden border border-border/10 hover:border-gold/15 transition-all duration-300">
               <img src={banner.image_url} alt={banner.title} className="w-full h-auto object-cover" />
             </a>
           ) : (
-            <div className="rounded-2xl overflow-hidden border border-border/15">
+            <div className="rounded-2xl overflow-hidden border border-border/10">
               <img src={banner.image_url} alt={banner.title} className="w-full h-auto object-cover" />
             </div>
           )}
@@ -578,13 +578,13 @@ function HeroBanner({ course }: { course: any }) {
 
 function SectionHeader({ title, subtitle }: { title: string; subtitle: string }) {
   return (
-    <div className="flex items-center gap-3 mb-5">
-      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
-        <BookOpen className="h-4 w-4 text-primary/70" />
+    <div className="flex items-center gap-3.5 mb-6">
+      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
+        <BookOpen className="h-4 w-4 text-primary/60" />
       </div>
       <div>
-        <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">{title}</h2>
-        {subtitle && <p className="text-[11px] text-muted-foreground/40 mt-0.5 italic">{subtitle}</p>}
+        <h2 className="font-display text-xl font-bold text-foreground/80 tracking-tight">{title}</h2>
+        {subtitle && <p className="text-[11px] text-muted-foreground/35 mt-0.5 italic">{subtitle}</p>}
       </div>
     </div>
   );
@@ -592,9 +592,9 @@ function SectionHeader({ title, subtitle }: { title: string; subtitle: string })
 
 function StatCard({ label, value, icon }: { label: string; value: number | string; icon?: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-border/15 bg-background/30 p-4 text-center">
-      <p className="font-display text-2xl font-bold text-gold">{value}</p>
-      <p className="text-[10px] text-muted-foreground/45 mt-1 uppercase tracking-wider flex items-center justify-center gap-1">
+    <div className="rounded-2xl border border-border/10 bg-card/5 p-5 text-center backdrop-blur-sm">
+      <p className="font-display text-3xl font-bold text-gold">{value}</p>
+      <p className="text-[10px] text-muted-foreground/40 mt-1.5 uppercase tracking-[0.15em] flex items-center justify-center gap-1">
         {icon} {label}
       </p>
     </div>
