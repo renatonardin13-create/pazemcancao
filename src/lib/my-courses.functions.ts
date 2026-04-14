@@ -6,14 +6,24 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
 
-    // Get only active enrollments for the authenticated user
+    // Get all enrollments for the authenticated user (not just active — we filter below)
     const { data: enrollments } = await supabase
       .from('enrollments')
-      .select('course_id, progress_percentage, status, enrolled_at, access_origin, granted_at')
+      .select('course_id, progress_percentage, status, enrolled_at, access_origin, granted_at, expires_at')
       .eq('user_id', userId)
-      .eq('status', 'active')
       .order('granted_at', { ascending: false })
       .order('enrolled_at', { ascending: false });
+
+    if (!enrollments || enrollments.length === 0) {
+      return { courses: [], stats: { total: 0, inProgress: 0, completed: 0 } };
+    }
+
+    // Filter: only active enrollments that haven't expired
+    const activeEnrollments = enrollments.filter((e: any) => {
+      if (e.status !== 'active') return false;
+      if (e.expires_at && new Date(e.expires_at) < new Date()) return false;
+      return true;
+    });
 
     if (!enrollments || enrollments.length === 0) {
       return { courses: [], stats: { total: 0, inProgress: 0, completed: 0 } };
