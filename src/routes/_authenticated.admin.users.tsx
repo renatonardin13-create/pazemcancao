@@ -532,8 +532,8 @@ function AdminUsersPage() {
           title="Nenhum aluno encontrado"
           description="Quando novos alunos se cadastrarem ou forem adicionados, eles aparecerão aqui."
           actionLabel="Adicionar Aluno"
-          onAction={() => setShowAddDialog(true)}
-          actionIcon={Plus}
+          onAction={() => setAddOpen(true)}
+          actionIcon={UserPlus}
         />
       ) : (
         <div className="rounded-xl border border-border/30 overflow-hidden">

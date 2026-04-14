@@ -568,7 +568,7 @@ function AdminContentPage() {
           title="Nenhum conteúdo cadastrado"
           description="Crie seu primeiro conteúdo para disponibilizá-lo aos alunos."
           actionLabel="Novo Conteúdo"
-          onAction={() => setShowCreateDialog(true)}
+          onAction={() => setFormOpen(true)}
           actionIcon={Plus}
         />
       ) : (
