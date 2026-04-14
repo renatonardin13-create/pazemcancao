@@ -287,6 +287,19 @@ export default function AdminVitrinePage() {
     onError: (err: any) => toast.error(err.message),
   });
 
+  const saveCardsMut = useMutation({
+    mutationFn: (value: Record<string, any>) => updatePlatformSetting({
+      data: { key: 'cards_config', value },
+    }),
+    onSuccess: () => {
+      toast.success("Configuração dos cards salva!");
+      queryClient.invalidateQueries({ queryKey: ["platform-settings"] });
+      queryClient.invalidateQueries({ queryKey: ["student-shelves-preview"] });
+      queryClient.invalidateQueries({ queryKey: ["student-shelves"] });
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
   // ── Mutations ──
 
   const invalidatePreview = () => {
