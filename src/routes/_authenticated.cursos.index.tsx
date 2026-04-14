@@ -2,7 +2,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CardGridSkeleton } from "@/components/LoadingSkeletons";
 import { useQuery } from "@tanstack/react-query";
-import { getMyCoursesData, getRecommendedCourses, getMostAccessedCourses } from "@/lib/my-courses.functions";
+import { getMyCoursesData, getRecommendedCourses, getMostAccessedCourses, getFeaturedContent } from "@/lib/my-courses.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { motion } from "framer-motion";
