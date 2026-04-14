@@ -35,7 +35,7 @@ import {
   Sparkles,
   Search,
   Share2,
-} from "lucide-react";
+  List,
 
 export const Route = createFileRoute(
   "/_authenticated/cursos/$courseId/aula/$lessonId"
