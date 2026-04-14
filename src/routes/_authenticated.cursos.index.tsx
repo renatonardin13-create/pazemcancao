@@ -130,7 +130,7 @@ function MeusCoursosPage() {
           {isLoading ? (
             <CardGridSkeleton count={6} />
           ) : filtered.length === 0 ? (
-            {courses.length === 0 ? (
+            courses.length === 0 ? (
               <EmptyState
                 icon={BookOpen}
                 title="Você ainda não possui cursos"
@@ -145,7 +145,7 @@ function MeusCoursosPage() {
                 title="Nenhum curso encontrado"
                 description="Tente ajustar os filtros para encontrar o que procura."
               />
-            )}
+            )
           ) : (
             <div className="space-y-4">
               {filtered.map((course: any, idx: number) => (
