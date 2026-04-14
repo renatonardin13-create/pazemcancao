@@ -4,7 +4,9 @@ import { getStudentShelves } from "@/lib/shelves.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { motion } from "framer-motion";
-import { Store, Lock, Play, ArrowRight, ShoppingCart } from "lucide-react";
+import { Store, Lock, Play, ArrowRight, ShoppingCart, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { useState, useMemo } from "react";
 
 export const Route = createFileRoute("/_authenticated/vitrine")({
   component: VitrinePage,
