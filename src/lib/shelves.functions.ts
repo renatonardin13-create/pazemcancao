@@ -195,7 +195,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
         }
       }
 
-      courses = courses.map(enrichCourse).filter((c: any) => c.access_state !== 'hidden');
+      courses = courses.map(enrichCourse);
 
       if (courses.length > 0) {
         result.push({
