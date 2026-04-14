@@ -469,16 +469,13 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       .eq('email', customerEmail);
 
     if (resolvedCourseId) {
-      const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
-      const authUser = authUsers.users.find((user) => user.email?.toLowerCase() === customerEmail);
-      if (authUser) {
-        await supabaseAdmin
-          .from('enrollments')
-          .update({ status })
-          .eq('user_id', authUser.id)
-          .eq('course_id', resolvedCourseId)
-          .eq('status', 'active');
-      }
+      // Update all active enrollments for this email + course (by email since user may not be resolved)
+      await supabaseAdmin
+        .from('enrollments')
+        .update({ status })
+        .eq('course_id', resolvedCourseId)
+        .eq('email', customerEmail)
+        .eq('status', 'active');
     }
 
     await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Access revoked: ${status}` });
