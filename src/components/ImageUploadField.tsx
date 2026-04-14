@@ -5,6 +5,7 @@ import { Upload, X, Loader2, CheckCircle, AlertCircle, RefreshCw } from "lucide-
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-utils";
 import { Progress } from "@/components/ui/progress";
+import { ImageFieldHint } from "@/components/ImageFieldHint";
 
 interface ImageUploadFieldProps {
   label: string;
@@ -16,6 +17,10 @@ interface ImageUploadFieldProps {
   aspectRatio?: string;
   aspectClass?: string;
   uploadLabel?: string;
+  /** Expected ratio e.g. "16:9", "3:1" */
+  expectedRatio?: string;
+  /** Recommended size e.g. "1280x720" */
+  recommendedSize?: string;
 }
 
 const labelClass = "text-sm font-semibold text-foreground/80";
@@ -32,11 +37,14 @@ export function ImageUploadField({
   aspectRatio,
   aspectClass = "aspect-video",
   uploadLabel = "Clique para fazer upload",
+  expectedRatio,
+  recommendedSize,
 }: ImageUploadFieldProps) {
   const [uploadState, setUploadState] = useState<UploadState>("idle");
   const [progress, setProgress] = useState(0);
   const [errorMsg, setErrorMsg] = useState("");
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [lastFile, setLastFile] = useState<File | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = useCallback(
@@ -53,6 +61,7 @@ export function ImageUploadField({
       // Show local preview immediately
       const localUrl = URL.createObjectURL(file);
       setPreviewUrl(localUrl);
+      setLastFile(file);
       setErrorMsg("");
       setUploadState("reading");
       setProgress(10);
@@ -225,6 +234,16 @@ export function ImageUploadField({
           </button>
         )}
       </div>
+
+      {expectedRatio && recommendedSize && (
+        <ImageFieldHint
+          ratio={expectedRatio}
+          recommendedSize={recommendedSize}
+          file={lastFile}
+          previewUrl={displaySrc || undefined}
+          autoCrop
+        />
+      )}
     </div>
   );
 }

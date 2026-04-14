@@ -734,6 +734,8 @@ export default function AdminVitrinePage() {
                   folder="banners"
                   aspectClass="aspect-[3/1]"
                   uploadLabel="Clique para enviar o banner"
+                  expectedRatio="3:1"
+                  recommendedSize="1920x600"
                 />
 
                 {/* Save button */}
@@ -1303,6 +1305,8 @@ export default function AdminVitrinePage() {
                   folder="promo-banners"
                   aspectClass="aspect-[3/1]"
                   uploadLabel="Clique para enviar imagem"
+                  expectedRatio="3:1"
+                  recommendedSize="1200x400"
                 />
               </div>
 
