@@ -115,7 +115,7 @@ export function AdminDashboard() {
               <button
                 key={opt.value}
                 onClick={() => setDays(opt.value)}
-                className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                className={`flex-1 sm:flex-none px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 text-center ${
                   days === opt.value
                     ? "bg-gold/15 text-gold border border-gold/25 shadow-sm shadow-gold/10"
                     : "text-muted-foreground/70 hover:text-muted-foreground/70 border border-transparent"
@@ -135,7 +135,7 @@ export function AdminDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.05 }}
-          className="relative rounded-2xl border border-emerald-400/25 bg-gradient-to-br from-emerald-400/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-400/10 hover:border-emerald-400/35 group overflow-hidden shadow-lg shadow-black/10">
+          className="relative rounded-2xl border border-emerald-400/25 bg-gradient-to-br from-emerald-400/[0.08] via-card to-card p-4 sm:p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-400/10 hover:border-emerald-400/35 group overflow-hidden shadow-lg shadow-black/10">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-emerald-400/[0.07] blur-[50px] group-hover:bg-emerald-400/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -145,7 +145,7 @@ export function AdminDashboard() {
               <DollarSign className="h-7 w-7 text-emerald-400" />
             </div>
           </div>
-          <p className="font-display text-4xl font-black text-foreground tracking-tight leading-none">
+          <p className="font-display text-2xl sm:text-4xl font-black text-foreground tracking-tight leading-none">
             {isLoading ? (
               <span className="inline-block h-11 w-36 animate-pulse rounded-xl bg-muted/20" />
             ) : (data?.totalRevenue ?? 0) > 0 ? (
@@ -174,7 +174,7 @@ export function AdminDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="relative rounded-2xl border border-gold/25 bg-gradient-to-br from-gold/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-gold/10 hover:border-gold/35 group overflow-hidden shadow-lg shadow-black/10">
+          className="relative rounded-2xl border border-gold/25 bg-gradient-to-br from-gold/[0.08] via-card to-card p-4 sm:p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-gold/10 hover:border-gold/35 group overflow-hidden shadow-lg shadow-black/10">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-gold/[0.07] blur-[50px] group-hover:bg-gold/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -184,7 +184,7 @@ export function AdminDashboard() {
               <GraduationCap className="h-7 w-7 text-gold" />
             </div>
           </div>
-          <p className="font-display text-4xl font-black text-foreground tracking-tight leading-none">
+          <p className="font-display text-2xl sm:text-4xl font-black text-foreground tracking-tight leading-none">
             {isLoading ? (
               <span className="inline-block h-11 w-24 animate-pulse rounded-xl bg-muted/20" />
             ) : (data?.totalStudents ?? 0) > 0 ? (
@@ -213,7 +213,7 @@ export function AdminDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.15 }}
-          className="relative rounded-2xl border border-blue-400/25 bg-gradient-to-br from-blue-400/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-400/10 hover:border-blue-400/35 group overflow-hidden shadow-lg shadow-black/10">
+          className="relative rounded-2xl border border-blue-400/25 bg-gradient-to-br from-blue-400/[0.08] via-card to-card p-4 sm:p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-400/10 hover:border-blue-400/35 group overflow-hidden shadow-lg shadow-black/10">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-blue-400/[0.07] blur-[50px] group-hover:bg-blue-400/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -223,7 +223,7 @@ export function AdminDashboard() {
               <BookOpen className="h-7 w-7 text-blue-400" />
             </div>
           </div>
-          <p className="font-display text-4xl font-black text-foreground tracking-tight leading-none">
+          <p className="font-display text-2xl sm:text-4xl font-black text-foreground tracking-tight leading-none">
             {isLoading ? (
               <span className="inline-block h-11 w-16 animate-pulse rounded-xl bg-muted/20" />
             ) : (data?.activeCourses ?? 0) > 0 ? (
@@ -254,7 +254,7 @@ export function AdminDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
-          className="relative rounded-2xl border border-amber-400/25 bg-gradient-to-br from-amber-400/[0.08] via-card to-card p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-400/10 hover:border-amber-400/35 group overflow-hidden shadow-lg shadow-black/10">
+          className="relative rounded-2xl border border-amber-400/25 bg-gradient-to-br from-amber-400/[0.08] via-card to-card p-4 sm:p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-400/10 hover:border-amber-400/35 group overflow-hidden shadow-lg shadow-black/10">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-amber-400/[0.07] blur-[50px] group-hover:bg-amber-400/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -264,7 +264,7 @@ export function AdminDashboard() {
               <Clock className="h-7 w-7 text-amber-400" />
             </div>
           </div>
-          <p className="font-display text-4xl font-black text-foreground tracking-tight leading-none">
+          <p className="font-display text-2xl sm:text-4xl font-black text-foreground tracking-tight leading-none">
             {isLoading ? (
               <span className="inline-block h-11 w-16 animate-pulse rounded-xl bg-muted/20" />
             ) : data?.pendingEnrollments ?? 0}
