@@ -24,7 +24,8 @@ function MeusCoursosPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["my-courses"],
     queryFn: () => getMyCoursesData(),
-    staleTime: 60_000,
+    staleTime: 5_000,
+    refetchOnWindowFocus: true,
   });
 
   const [search, setSearch] = useState("");
