@@ -456,24 +456,31 @@ function AdminUsersPage() {
       </div>
 
       {/* Stat Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {[
-          { label: "Ativos", value: enabledUsers, color: "text-gold" },
-          { label: "Inativos", value: inactiveUsers, color: "text-muted-foreground/60" },
-          { label: "Bloqueados", value: blockedUsers, color: "text-destructive/70" },
-          { label: "Progresso Médio", value: "0%", color: "text-gold", isProgress: true },
-        ].map((stat) => (
-          <div
-            key={stat.label}
-            className="rounded-xl border border-border/15 bg-card/8 p-5"
-          >
-            <p className="text-[11px] text-muted-foreground/45 mb-1">{stat.label}</p>
-            <p className={`font-display text-2xl font-bold ${stat.color}`}>
-              {isLoading ? "—" : stat.value}
-            </p>
+      {(() => {
+        const avgProgress = buyers.length > 0
+          ? Math.round(buyers.reduce((sum: number, b: any) => sum + (b.progress_pct || 0), 0) / buyers.length)
+          : 0;
+        return (
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { label: "Ativos", value: enabledUsers, color: "text-gold" },
+              { label: "Inativos", value: inactiveUsers, color: "text-muted-foreground/60" },
+              { label: "Bloqueados", value: blockedUsers, color: "text-destructive/70" },
+              { label: "Progresso Médio", value: `${avgProgress}%`, color: "text-gold" },
+            ].map((stat) => (
+              <div
+                key={stat.label}
+                className="rounded-xl border border-border/15 bg-card/8 p-5"
+              >
+                <p className="text-[11px] text-muted-foreground/45 mb-1">{stat.label}</p>
+                <p className={`font-display text-2xl font-bold ${stat.color}`}>
+                  {isLoading ? "—" : stat.value}
+                </p>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        );
+      })()}
 
       {/* Search & Filters */}
       <div className="flex items-center gap-3">
