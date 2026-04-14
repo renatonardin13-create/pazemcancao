@@ -431,7 +431,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
   // ─── ACTION: pending (pagamento_pendente) ───
   // Regra: NÃO libera acesso. Apenas registra o evento no log.
   if (pendingStatuses.includes(status)) {
-    await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: 'Payment pending — no access granted' });
+    await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: 'Payment pending — no access granted', ...audit, isSuccess: true });
     return jsonResponse({ success: true, message: 'Payment pending — no access granted' });
   }
 
