@@ -282,13 +282,18 @@ export default function AdminVitrinePage() {
       toast.success("Banner salvo com sucesso!");
       queryClient.invalidateQueries({ queryKey: ["platform-settings"] });
       queryClient.invalidateQueries({ queryKey: ["student-shelves-preview"] });
+      queryClient.invalidateQueries({ queryKey: ["student-shelves"] });
     },
     onError: (err: any) => toast.error(err.message),
   });
 
   // ── Mutations ──
 
-  const invalidatePreview = () => queryClient.invalidateQueries({ queryKey: ["student-shelves-preview"] });
+  const invalidatePreview = () => {
+    queryClient.invalidateQueries({ queryKey: ["student-shelves-preview"] });
+    queryClient.invalidateQueries({ queryKey: ["student-shelves"] });
+    queryClient.invalidateQueries({ queryKey: ["my-courses"] });
+  };
 
   const createMut = useMutation({
     mutationFn: (input: any) => createShelf({ data: input }),

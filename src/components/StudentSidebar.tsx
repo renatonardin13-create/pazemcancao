@@ -35,19 +35,21 @@ export function StudentSidebar() {
   const { data: shelvesData } = useQuery({
     queryKey: ["student-shelves"],
     queryFn: () => getStudentShelves(),
-    staleTime: 60_000,
+    staleTime: 10_000,
+    refetchOnWindowFocus: true,
   });
 
   const { data: myCoursesData } = useQuery({
     queryKey: ["my-courses"],
     queryFn: () => getMyCoursesData(),
-    staleTime: 60_000,
+    staleTime: 10_000,
+    refetchOnWindowFocus: true,
   });
 
   const { data: tracksData } = useQuery({
     queryKey: ["tracks-active"],
     queryFn: () => listActiveTracks(),
-    staleTime: 60_000,
+    staleTime: 30_000,
   });
 
   const allTracks = tracksData?.tracks || [];

@@ -22,6 +22,7 @@ function NewCoursePage() {
     mutationFn: (values: any) => createCourse({ data: values }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
+      queryClient.invalidateQueries({ queryKey: ["student-shelves"] });
       toast.success("Curso criado com sucesso!");
       navigate({ to: "/admin/courses" });
     },
