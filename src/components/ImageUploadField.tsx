@@ -61,6 +61,7 @@ export function ImageUploadField({
       // Show local preview immediately
       const localUrl = URL.createObjectURL(file);
       setPreviewUrl(localUrl);
+      setLastFile(file);
       setErrorMsg("");
       setUploadState("reading");
       setProgress(10);
