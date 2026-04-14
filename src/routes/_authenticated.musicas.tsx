@@ -192,19 +192,19 @@ function MusicLibraryPage() {
     <StudentLayout>
     <div className="min-h-screen bg-background flex flex-col">
 
-      <main className="flex-1 mx-auto w-full max-w-6xl px-4 sm:px-6 py-8 pb-28">
+      <main className="flex-1 mx-auto w-full max-w-6xl px-5 sm:px-8 py-8 sm:py-12 pb-28">
         {/* Header */}
         <motion.div initial="hidden" animate="visible" className="mb-10">
           <motion.div variants={fadeUp} custom={0} className="flex items-center gap-3 mb-2">
-            <Headphones className="h-6 w-6 text-gold/40" />
-            <h1 className="font-display text-3xl sm:text-4xl font-bold text-foreground/90 tracking-tight">
+            <Headphones className="h-5 w-5 text-gold/35" />
+            <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/85 tracking-tight">
               Músicas
             </h1>
           </motion.div>
           <motion.p
             variants={fadeUp}
             custom={0.1}
-            className="mt-2 text-[14px] text-muted-foreground/50 font-light"
+            className="mt-2 text-[13px] text-muted-foreground/40 font-light"
           >
             Ouça e baixe os louvores exclusivos
           </motion.p>
