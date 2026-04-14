@@ -115,14 +115,14 @@ function AdminCoursesPage() {
               Gerencie seu catálogo e conteúdo de cursos.
             </p>
           </div>
-          <div className="flex items-center gap-2.5">
-            <div className="relative hidden sm:block">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
+            <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/70" />
               <Input
                 placeholder="Buscar por nome..."
                 value={search}
                 onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-                className="pl-9 h-10 w-52 bg-background/40 border-border/20 rounded-xl text-sm placeholder:text-muted-foreground/70"
+                className="pl-9 h-10 w-full sm:w-52 bg-background/40 border-border/20 rounded-xl text-sm placeholder:text-muted-foreground/70"
               />
             </div>
             <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
@@ -181,16 +181,16 @@ function AdminCoursesPage() {
                 <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/60">
                   Nome do Curso
                 </TableHead>
-                <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/60 w-[90px]">
+                <TableHead className="hidden sm:table-cell text-xs uppercase tracking-widest text-muted-foreground/60 w-[90px]">
                   Tipo
                 </TableHead>
                 <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/60 w-[100px]">
                   Status
                 </TableHead>
-                <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/60 w-[80px] text-center">
+                <TableHead className="hidden md:table-cell text-xs uppercase tracking-widest text-muted-foreground/60 w-[80px] text-center">
                   Módulos
                 </TableHead>
-                <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/60 w-[80px] text-center">
+                <TableHead className="hidden md:table-cell text-xs uppercase tracking-widest text-muted-foreground/60 w-[80px] text-center">
                   Aulas
                 </TableHead>
                 <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/60 w-[60px] text-right">
@@ -237,8 +237,8 @@ function AdminCoursesPage() {
                     )}
                   </TableCell>
 
-                  {/* Type */}
-                  <TableCell>
+                  {/* Type - hidden on small */}
+                  <TableCell className="hidden sm:table-cell">
                     <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground/70">
                       {course.course_type === "video" ? (
                         <Video className="h-3 w-3" />
@@ -254,15 +254,15 @@ function AdminCoursesPage() {
                     <StatusBadge status={course.status} />
                   </TableCell>
 
-                  {/* Modules */}
-                  <TableCell className="text-center">
+                  {/* Modules - hidden on small */}
+                  <TableCell className="hidden md:table-cell text-center">
                     <span className="text-xs text-muted-foreground/50">
                       {course.modules_count ?? 0}
                     </span>
                   </TableCell>
 
-                  {/* Lessons */}
-                  <TableCell className="text-center">
+                  {/* Lessons - hidden on small */}
+                  <TableCell className="hidden md:table-cell text-center">
                     <span className="text-xs text-muted-foreground/50">
                       {course.lessons_count ?? 0}
                     </span>

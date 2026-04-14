@@ -189,52 +189,53 @@ function AdminTracksPage() {
             {tracks.map((track: any) => (
               <div
                 key={track.id}
-                className="flex items-center gap-4 px-5 py-4 border-b border-border/20 last:border-0 hover:bg-card/20 transition-colors"
+                className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4 px-4 sm:px-5 py-4 border-b border-border/20 last:border-0 hover:bg-card/20 transition-colors"
               >
-                {track.cover_url ? (
-                  <img
-                    src={track.cover_url}
-                    alt={track.title}
-                    className="h-10 w-10 rounded-lg object-cover shrink-0"
-                  />
-                ) : (
-                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted/15 shrink-0">
-                    <Music className="h-4 w-4 text-gold/40" />
-                  </div>
-                )}
-
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-foreground/75 truncate">
-                    {track.title}
-                  </p>
-                  <p className="text-xs text-muted-foreground/60">
-                    {track.category} · {track.duration}
-                  </p>
-                </div>
-
-                <div className="flex items-center gap-1.5">
-                  <Badge
-                    variant="outline"
-                    className={`text-[11px] rounded-full px-2 border ${
-                      track.is_active
-                        ? "text-emerald-400/60 border-emerald-500/15 bg-emerald-500/8"
-                        : "text-muted-foreground/60 border-border/20"
-                    }`}
-                  >
-                    {track.is_active ? "Ativo" : "Inativo"}
-                  </Badge>
-                  {track.is_bonus && (
-                    <Badge
-                      variant="outline"
-                      className="text-[11px] rounded-full px-2 border text-amber-400/60 border-amber-500/15 bg-amber-500/8"
-                    >
-                      <Gift className="h-2.5 w-2.5 mr-1" />
-                      Bônus{track.bonus_release_date ? ` · ${new Date(track.bonus_release_date + 'T00:00:00').toLocaleDateString('pt-BR')}` : ''}
-                    </Badge>
+                <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                  {track.cover_url ? (
+                    <img
+                      src={track.cover_url}
+                      alt={track.title}
+                      className="h-10 w-10 rounded-lg object-cover shrink-0"
+                    />
+                  ) : (
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted/15 shrink-0">
+                      <Music className="h-4 w-4 text-gold/40" />
+                    </div>
                   )}
+
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground/75 truncate">
+                      {track.title}
+                    </p>
+                    <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                      <span className="text-xs text-muted-foreground/60">
+                        {track.category} · {track.duration}
+                      </span>
+                      <Badge
+                        variant="outline"
+                        className={`text-[11px] rounded-full px-2 border ${
+                          track.is_active
+                            ? "text-emerald-400/60 border-emerald-500/15 bg-emerald-500/8"
+                            : "text-muted-foreground/60 border-border/20"
+                        }`}
+                      >
+                        {track.is_active ? "Ativo" : "Inativo"}
+                      </Badge>
+                      {track.is_bonus && (
+                        <Badge
+                          variant="outline"
+                          className="text-[11px] rounded-full px-2 border text-amber-400/60 border-amber-500/15 bg-amber-500/8"
+                        >
+                          <Gift className="h-2.5 w-2.5 mr-1" />
+                          Bônus{track.bonus_release_date ? ` · ${new Date(track.bonus_release_date + 'T00:00:00').toLocaleDateString('pt-BR')}` : ''}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 self-end sm:self-center shrink-0">
                   <button
                     onClick={() => setEditingTrack(track)}
                     className="p-2 text-muted-foreground hover:text-gold transition-colors"

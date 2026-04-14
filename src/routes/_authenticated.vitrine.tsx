@@ -206,7 +206,7 @@ function CourseCard({ course }: { course: any }) {
   };
 
   const cardContent = (
-    <div className="group relative w-[240px] sm:w-[280px] shrink-0 snap-start">
+    <div className="group relative w-[200px] sm:w-[240px] md:w-[280px] shrink-0 snap-start">
       <div className="relative aspect-[2/3] rounded-2xl overflow-hidden border border-border/25 transition-all duration-500 group-hover:border-gold/30 group-hover:shadow-xl group-hover:shadow-gold/5 group-hover:scale-[1.03]">
         {/* Image */}
         {course.cover_image_url ? (
