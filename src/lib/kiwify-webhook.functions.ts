@@ -84,11 +84,11 @@ async function markEventFailed(uniqueEventId: string, errorMessage: string) {
 
 // ─── User provisioning ───
 
-async function provisionUserAccess(email: string): Promise<{ userCreated: boolean; userFound: boolean }> {
+async function provisionUserAccess(email: string): Promise<{ userCreated: boolean; userFound: boolean; userId: string | null }> {
   const url = process.env.SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const publicKey = process.env.SUPABASE_PUBLISHABLE_KEY;
-  if (!url || !serviceKey) return { userCreated: false, userFound: false };
+  if (!url || !serviceKey) return { userCreated: false, userFound: false, userId: null };
 
   const admin = createClient(url, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
@@ -100,19 +100,21 @@ async function provisionUserAccess(email: string): Promise<{ userCreated: boolea
   );
 
   let userCreated = false;
+  let userId: string | null = existingUser?.id || null;
 
   if (!existingUser) {
     const tempPassword = crypto.randomUUID() + crypto.randomUUID();
-    const { error: createError } = await admin.auth.admin.createUser({
+    const { data: newUser, error: createError } = await admin.auth.admin.createUser({
       email,
       password: tempPassword,
       email_confirm: true,
     });
     if (createError) {
       console.error('Error creating user:', createError);
-      return { userCreated: false, userFound: false };
+      return { userCreated: false, userFound: false, userId: null };
     }
     userCreated = true;
+    userId = newUser?.user?.id || null;
   }
 
   if (publicKey) {
@@ -124,7 +126,7 @@ async function provisionUserAccess(email: string): Promise<{ userCreated: boolea
     });
   }
 
-  return { userCreated, userFound: !!existingUser };
+  return { userCreated, userFound: !!existingUser, userId };
 }
 
 // ─── Content unlock calculation ───
@@ -396,41 +398,38 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       const unlocksCreated = await calculateContentUnlocks(customerEmail, orderId);
 
       let linkedCourseId: string | null = null;
-      if (resolvedCourseId) {
-        const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
-        const authUser = authUsers.users.find((user) => user.email?.toLowerCase() === customerEmail);
+      if (resolvedCourseId && userResult.userId) {
+        const authUserId = userResult.userId;
 
-        if (authUser) {
-          // Check if enrollment already exists
-          const { data: existingEnrollment } = await supabaseAdmin
+        // Check if enrollment already exists
+        const { data: existingEnrollment } = await supabaseAdmin
+          .from('enrollments')
+          .select('id')
+          .eq('user_id', authUserId)
+          .eq('course_id', resolvedCourseId)
+          .maybeSingle();
+
+        if (existingEnrollment) {
+          await supabaseAdmin
             .from('enrollments')
-            .select('id')
-            .eq('user_id', authUser.id)
-            .eq('course_id', resolvedCourseId)
-            .maybeSingle();
-
-          if (existingEnrollment) {
-            await supabaseAdmin
-              .from('enrollments')
-              .update({ status: 'active', access_origin: 'webhook', granted_at: new Date().toISOString() })
-              .eq('id', existingEnrollment.id);
-          } else {
-            const { error: enrollmentError } = await supabaseAdmin
-              .from('enrollments')
-              .insert({
-                user_id: authUser.id,
-                course_id: resolvedCourseId,
-                email: customerEmail,
-                access_origin: 'webhook',
-                status: 'active',
-                granted_at: new Date().toISOString(),
-              });
-            if (enrollmentError) {
-              console.error('[webhook] Enrollment insert error:', enrollmentError.message);
-            }
+            .update({ status: 'active', access_origin: 'webhook', granted_at: new Date().toISOString() })
+            .eq('id', existingEnrollment.id);
+        } else {
+          const { error: enrollmentError } = await supabaseAdmin
+            .from('enrollments')
+            .insert({
+              user_id: authUserId,
+              course_id: resolvedCourseId,
+              email: customerEmail,
+              access_origin: 'webhook',
+              status: 'active',
+              granted_at: new Date().toISOString(),
+            });
+          if (enrollmentError) {
+            console.error('[webhook] Enrollment insert error:', enrollmentError.message);
           }
-          linkedCourseId = resolvedCourseId;
         }
+        linkedCourseId = resolvedCourseId;
       } else if (externalProductId) {
         // Product ID was in payload but no matching integration found
         console.warn(`[webhook] PRODUCT_NOT_FOUND: product_id="${externalProductId}", platform="${payloadPlatform}", email="${customerEmail}"`);
@@ -470,16 +469,13 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       .eq('email', customerEmail);
 
     if (resolvedCourseId) {
-      const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers();
-      const authUser = authUsers.users.find((user) => user.email?.toLowerCase() === customerEmail);
-      if (authUser) {
-        await supabaseAdmin
-          .from('enrollments')
-          .update({ status })
-          .eq('user_id', authUser.id)
-          .eq('course_id', resolvedCourseId)
-          .eq('status', 'active');
-      }
+      // Update all active enrollments for this email + course (by email since user may not be resolved)
+      await supabaseAdmin
+        .from('enrollments')
+        .update({ status })
+        .eq('course_id', resolvedCourseId)
+        .eq('email', customerEmail)
+        .eq('status', 'active');
     }
 
     await logWebhookEvent({ eventType: status, email: customerEmail, orderId, payload: rawBody, responseStatus: 200, responseMessage: `Access revoked: ${status}` });
