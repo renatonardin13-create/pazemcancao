@@ -75,7 +75,7 @@ function MeusCoursosPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="grid grid-cols-3 gap-4 mb-8"
+            className="grid grid-cols-1 xs:grid-cols-3 gap-3 sm:gap-4 mb-8"
           >
             <div className="rounded-xl border border-border/30 bg-card/8 p-5">
               <p className="text-xs text-muted-foreground/50 mb-1">Total</p>
@@ -102,7 +102,7 @@ function MeusCoursosPage() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="flex items-center gap-3 mb-6"
+            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mb-6"
           >
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />

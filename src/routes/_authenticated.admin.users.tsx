@@ -491,7 +491,7 @@ function AdminUsersPage() {
       })()}
 
       {/* Search & Filters */}
-      <div className="flex items-center gap-3">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
         <div className="flex-1 relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
           <Input
@@ -501,19 +501,20 @@ function AdminUsersPage() {
             className="pl-10 bg-card/20 border-border/30"
           />
         </div>
-        <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
-          <SelectTrigger className="w-[140px] bg-card/20 border-border/30">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">Todos</SelectItem>
-            <SelectItem value="active">Ativos</SelectItem>
-            <SelectItem value="trial">Em teste</SelectItem>
-            <SelectItem value="blocked">Bloqueados</SelectItem>
-          </SelectContent>
-        </Select>
-        <Select value={courseFilter} onValueChange={(v) => { setCourseFilter(v); setCurrentPage(1); }}>
-           <SelectTrigger className="w-[180px] bg-card/20 border-border/30">
+        <div className="flex items-center gap-3">
+          <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
+            <SelectTrigger className="w-full sm:w-[140px] bg-card/20 border-border/30">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="active">Ativos</SelectItem>
+              <SelectItem value="trial">Em teste</SelectItem>
+              <SelectItem value="blocked">Bloqueados</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={courseFilter} onValueChange={(v) => { setCourseFilter(v); setCurrentPage(1); }}>
+            <SelectTrigger className="w-full sm:w-[180px] bg-card/20 border-border/30">
               <SelectValue placeholder="Todos os cursos" />
             </SelectTrigger>
             <SelectContent>
@@ -522,6 +523,7 @@ function AdminUsersPage() {
               <SelectItem value="no_courses">Sem cursos</SelectItem>
             </SelectContent>
           </Select>
+        </div>
       </div>
 
       {/* Table */}
@@ -538,8 +540,8 @@ function AdminUsersPage() {
         />
       ) : (
         <div className="rounded-xl border border-border/30 overflow-hidden">
-          {/* Table header */}
-           <div className="grid grid-cols-[1fr_1fr_100px_80px_140px_120px_50px] gap-4 px-5 py-3 border-b border-border/25 bg-muted/8">
+          {/* Desktop Table header - hidden on mobile */}
+          <div className="hidden lg:grid grid-cols-[1fr_1fr_100px_80px_140px_120px_50px] gap-4 px-5 py-3 border-b border-border/25 bg-muted/8">
             <span className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">Aluno</span>
             <span className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">Email</span>
             <span className="text-xs font-semibold text-muted-foreground/80 uppercase tracking-wider">Status</span>
@@ -559,25 +561,89 @@ function AdminUsersPage() {
             return (
               <div
                 key={buyer.id}
-                className="grid grid-cols-[1fr_1fr_100px_80px_140px_120px_50px] gap-4 items-center px-5 py-4 border-b border-border/15 hover:bg-muted/15 transition-colors last:border-0"
+                className="flex flex-col gap-2 px-4 py-4 border-b border-border/15 hover:bg-muted/15 transition-colors last:border-0 lg:grid lg:grid-cols-[1fr_1fr_100px_80px_140px_120px_50px] lg:gap-4 lg:items-center lg:px-5"
               >
-                {/* Aluno */}
+                {/* Top row on mobile: avatar + name + status + actions */}
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gold/15 text-sm font-bold text-gold shrink-0">
                     {(buyer.nome || buyer.email).slice(0, 1).toUpperCase()}
                   </div>
-                  <span className="text-sm font-bold text-foreground truncate">
-                    {buyer.nome || "Sem nome"}
-                  </span>
+                  <div className="flex-1 min-w-0">
+                    <span className="text-sm font-bold text-foreground truncate block">
+                      {buyer.nome || "Sem nome"}
+                    </span>
+                    <span className="text-xs text-muted-foreground truncate block lg:hidden">
+                      {buyer.email}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 lg:hidden shrink-0">
+                    {!isEnabledBuyer ? (
+                      <Badge className="bg-destructive/15 text-destructive/80 border-0 text-xs font-semibold">
+                        Bloqueado
+                      </Badge>
+                    ) : isTrial && expired ? (
+                      <Badge className="bg-amber-500/15 text-amber-400/80 border-0 text-xs font-semibold">
+                        Expirado
+                      </Badge>
+                    ) : (
+                      <Badge className="bg-emerald-500/15 text-emerald-400/80 border-0 text-xs font-semibold">
+                        Ativo
+                      </Badge>
+                    )}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <button className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-all">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem onClick={() => { setDetailBuyer(buyer); setDetailTab("info"); }} className="gap-2">
+                          <Eye className="h-3.5 w-3.5" />
+                          Ver Detalhes
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => openEditDialog(buyer)} className="gap-2">
+                          <Pencil className="h-3.5 w-3.5" />
+                          Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setAccessBuyer(buyer)} className="gap-2">
+                          <BookOpen className="h-3.5 w-3.5" />
+                          Gerenciar Acessos
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onClick={() => toggleAccess.mutate({ buyerId: buyer.id, access_enabled: !isEnabledBuyer })}
+                          className="gap-2"
+                        >
+                          {isEnabledBuyer ? <ShieldAlert className="h-3.5 w-3.5" /> : <ToggleRight className="h-3.5 w-3.5" />}
+                          {isEnabledBuyer ? "Bloquear" : "Liberar acesso"}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => setDeleteTarget(buyer)}
+                          className="gap-2 text-destructive focus:text-destructive"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                          Excluir
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
                 </div>
 
-                {/* Email */}
-                <span className="text-sm text-muted-foreground truncate">
+                {/* Mobile bottom info row */}
+                <div className="flex items-center gap-3 text-xs text-muted-foreground/60 lg:hidden pl-12">
+                  <span>{buyer.course_count ?? 0} curso(s)</span>
+                  <span>·</span>
+                  <span>{buyer.progress_pct ?? 0}%</span>
+                  <span>·</span>
+                  <span>{buyer.last_login_at ? formatDate(buyer.last_login_at) : "Nunca"}</span>
+                </div>
+
+                {/* Desktop-only columns */}
+                <span className="hidden lg:block text-sm text-muted-foreground truncate">
                   {buyer.email}
                 </span>
 
-                {/* Status */}
-                <div>
+                <div className="hidden lg:block">
                   {!isEnabledBuyer ? (
                     <Badge className="bg-destructive/15 text-destructive/80 border-0 text-xs font-semibold">
                       Bloqueado
@@ -593,22 +659,18 @@ function AdminUsersPage() {
                   )}
                 </div>
 
-                {/* Cursos */}
-                <span className="text-sm text-foreground/60 text-center font-medium">{buyer.course_count ?? 0}</span>
+                <span className="hidden lg:block text-sm text-foreground/60 text-center font-medium">{buyer.course_count ?? 0}</span>
 
-                {/* Progresso */}
-                <div className="flex items-center gap-2">
+                <div className="hidden lg:flex items-center gap-2">
                   <Progress value={buyer.progress_pct ?? 0} className="h-1.5 flex-1 bg-muted/20" />
                   <span className="text-xs text-muted-foreground/70 tabular-nums w-8 text-right">{buyer.progress_pct ?? 0}%</span>
                 </div>
 
-                {/* Último Acesso */}
-                <span className="text-[12px] text-muted-foreground/70">
+                <span className="hidden lg:block text-[12px] text-muted-foreground/70">
                   {buyer.last_login_at ? formatDate(buyer.last_login_at) : "Nunca"}
                 </span>
 
-                {/* Ações */}
-                <div className="flex justify-center">
+                <div className="hidden lg:flex justify-center">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-all">
