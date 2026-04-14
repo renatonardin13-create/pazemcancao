@@ -356,6 +356,8 @@ function ContentPage() {
                   hasAccess={hasAccess}
                   progressMap={progressMap}
                   lastAccessedId={lastAccessedId}
+                  onTrackView={handleTrackView}
+                  onTrackDownload={handleTrackDownload}
                 />
               )}
 
@@ -369,6 +371,8 @@ function ContentPage() {
                   hasAccess={hasAccess}
                   progressMap={progressMap}
                   lastAccessedId={lastAccessedId}
+                  onTrackView={handleTrackView}
+                  onTrackDownload={handleTrackDownload}
                 />
               )}
 
@@ -388,6 +392,8 @@ function ContentPage() {
                       config={config}
                       progressMap={progressMap}
                       lastAccessedId={lastAccessedId}
+                      onTrackView={handleTrackView}
+                      onTrackDownload={handleTrackDownload}
                     />
                   </section>
                 );
@@ -451,6 +457,8 @@ function ContentPage() {
                       config={config}
                       progressMap={progressMap}
                       lastAccessedId={lastAccessedId}
+                      onTrackView={handleTrackView}
+                      onTrackDownload={handleTrackDownload}
                     />
                   </section>
                 );
@@ -481,6 +489,8 @@ function ContentPage() {
                       config={config}
                       progressMap={progressMap}
                       lastAccessedId={lastAccessedId}
+                      onTrackView={handleTrackView}
+                      onTrackDownload={handleTrackDownload}
                     />
                   </section>
                 );
