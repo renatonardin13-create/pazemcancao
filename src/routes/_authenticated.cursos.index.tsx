@@ -578,13 +578,13 @@ function HeroBanner({ course }: { course: any }) {
 
 function SectionHeader({ title, subtitle }: { title: string; subtitle: string }) {
   return (
-    <div className="flex items-center gap-3 mb-5">
-      <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
-        <BookOpen className="h-4 w-4 text-primary/70" />
+    <div className="flex items-center gap-3.5 mb-6">
+      <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
+        <BookOpen className="h-4 w-4 text-primary/60" />
       </div>
       <div>
-        <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">{title}</h2>
-        {subtitle && <p className="text-[11px] text-muted-foreground/40 mt-0.5 italic">{subtitle}</p>}
+        <h2 className="font-display text-xl font-bold text-foreground/80 tracking-tight">{title}</h2>
+        {subtitle && <p className="text-[11px] text-muted-foreground/35 mt-0.5 italic">{subtitle}</p>}
       </div>
     </div>
   );
@@ -592,9 +592,9 @@ function SectionHeader({ title, subtitle }: { title: string; subtitle: string })
 
 function StatCard({ label, value, icon }: { label: string; value: number | string; icon?: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-border/15 bg-background/30 p-4 text-center">
-      <p className="font-display text-2xl font-bold text-gold">{value}</p>
-      <p className="text-[10px] text-muted-foreground/45 mt-1 uppercase tracking-wider flex items-center justify-center gap-1">
+    <div className="rounded-2xl border border-border/10 bg-card/5 p-5 text-center backdrop-blur-sm">
+      <p className="font-display text-3xl font-bold text-gold">{value}</p>
+      <p className="text-[10px] text-muted-foreground/40 mt-1.5 uppercase tracking-[0.15em] flex items-center justify-center gap-1">
         {icon} {label}
       </p>
     </div>
