@@ -7,6 +7,7 @@ import { getNewCourses } from "@/lib/new-content.functions";
 import { getUserFavoritesCount } from "@/lib/user-library.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
+import { CourseShelfCard } from "@/components/CourseShelfCard";
 import { motion } from "framer-motion";
 import { BookOpen, Search, ArrowRight, Layers, Clock, PlayCircle, Sparkles, TrendingUp, CheckCircle2, Play, Heart, Star, Zap } from "lucide-react";
 import { useState, useMemo } from "react";
