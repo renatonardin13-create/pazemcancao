@@ -191,14 +191,12 @@ function LessonDetailPage() {
             <p className="text-foreground/60 text-sm font-semibold">Erro ao carregar</p>
             <p className="text-muted-foreground/35 text-xs mt-1">Não foi possível carregar esta aula.</p>
           </div>
-          <Link
-            to="/cursos/$courseId"
-            params={{ courseId }}
-            className="inline-flex items-center gap-2 text-gold/60 hover:text-gold text-xs font-medium transition-colors"
-          >
-            <ChevronLeft className="h-3.5 w-3.5" />
-            Voltar ao curso
-          </Link>
+          <Button variant="premiumOutline" size="sm" asChild>
+            <Link to="/cursos/$courseId" params={{ courseId }}>
+              <ChevronLeft className="h-3.5 w-3.5" />
+              Voltar ao curso
+            </Link>
+          </Button>
         </div>
       </div>
     );
@@ -315,13 +313,12 @@ function LessonDetailPage() {
       {/* ═══ HEADER — cinematic, minimal ═══ */}
       <header className="sticky top-0 z-30 border-b border-border/10 bg-background/90 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-[1800px] items-center gap-4 px-5 py-3.5 sm:px-8">
-          <Link
-            to="/vitrine"
-            className="flex shrink-0 items-center gap-1.5 rounded-xl px-2.5 py-1.5 text-muted-foreground/40 transition-all hover:text-foreground/65 hover:bg-card/10"
-          >
-            <ChevronLeft className="h-4 w-4" />
-            <span className="text-[11px] font-medium hidden sm:inline">Voltar à vitrine</span>
-          </Link>
+          <Button variant="premiumOutline" size="sm" asChild className="shrink-0">
+            <Link to="/vitrine">
+              <ChevronLeft className="h-4 w-4" />
+              <span className="hidden sm:inline">Voltar à vitrine</span>
+            </Link>
+          </Button>
 
           <div className="hidden h-6 w-px bg-border/10 sm:block" />
 
@@ -416,14 +413,12 @@ function LessonDetailPage() {
                       Desbloquear acesso
                     </a>
                   )}
-                  <Link
-                    to="/cursos/$courseId"
-                    params={{ courseId }}
-                    className="inline-flex items-center gap-2 rounded-xl border border-border/15 bg-card/8 px-5 py-3 text-[11px] font-medium text-muted-foreground/45 hover:text-foreground/60 transition-all"
-                  >
-                    <ChevronLeft className="h-3.5 w-3.5" />
-                    Voltar
-                  </Link>
+                  <Button variant="premiumOutline" size="sm" asChild>
+                    <Link to="/cursos/$courseId" params={{ courseId }}>
+                      <ChevronLeft className="h-3.5 w-3.5" />
+                      Voltar
+                    </Link>
+                  </Button>
                 </div>
               </div>
             </motion.div>
