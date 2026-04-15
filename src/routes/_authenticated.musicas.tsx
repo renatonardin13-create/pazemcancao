@@ -12,6 +12,7 @@ import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { usePlayer } from "@/hooks/use-player";
 import { motion, AnimatePresence } from "framer-motion";
+import { FunnelBanner } from "@/components/FunnelBanner";
 import type { Track } from "@/lib/sample-tracks";
 import { toast } from "sonner";
 
@@ -470,6 +471,11 @@ function MusicLibraryPage() {
             })}
           </div>
         )}
+
+        {/* Funnel Upsell */}
+        <div className="mt-10">
+          <FunnelBanner context="musicas" limit={6} variant="compact" />
+        </div>
       </main>
 
       <FooterLinks />
