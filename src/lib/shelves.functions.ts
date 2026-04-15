@@ -22,8 +22,8 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
 
     const isAdmin = !!adminRole || email === 'renatonardin13@gmail.com';
 
-    // Get active shelves
-    const { data: shelves, error: shelvesErr } = await supabase
+    // Get active shelves — use admin client to ensure all active shelves are returned
+    const { data: shelves, error: shelvesErr } = await supabaseAdmin
       .from('shelves')
       .select('id, name, mode, auto_criteria, sort_order')
       .eq('is_active', true)
