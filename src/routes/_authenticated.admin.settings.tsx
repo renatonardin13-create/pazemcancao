@@ -94,6 +94,9 @@ function SettingsPage() {
           <TabsTrigger value="advanced" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
             <Wrench className="h-3.5 w-3.5" /> Avançado
           </TabsTrigger>
+          <TabsTrigger value="modules" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
+            <LayoutGrid className="h-3.5 w-3.5" /> Módulos
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="branding" className="mt-4">
