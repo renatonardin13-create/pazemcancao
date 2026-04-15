@@ -477,17 +477,17 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       </div>
 
       {/* ═══ AUDIO PLAYER BAR ═══ */}
-      {ebookAudio.available && (
-        <div className="flex items-center gap-2 px-3 sm:px-6 py-2 border-t border-border/8 bg-background/95 backdrop-blur-xl z-30">
+      {ebookAudio.available && !immersive && (
+        <div className="flex items-center gap-2 px-3 sm:px-6 py-2 border-t border-stone-800/30 bg-[#1a1814]/95 backdrop-blur-xl z-30">
           <Headphones className="h-3.5 w-3.5 text-gold/50 shrink-0" />
-          <span className="text-[9px] uppercase tracking-widest text-muted-foreground/40 hidden sm:inline">
+          <span className="text-[9px] uppercase tracking-widest text-stone-500/40 hidden sm:inline">
             {ebookAudio.isFileMode ? "Áudio" : "Leitura em voz"}
           </span>
           <Button
             variant="ghost"
             size="sm"
             onClick={ebookAudio.toggle}
-            className={`h-7 w-7 p-0 transition-colors ${ebookAudio.isPlaying ? "text-gold" : "text-muted-foreground/50 hover:text-gold"}`}
+            className={`h-7 w-7 p-0 transition-colors ${ebookAudio.isPlaying ? "text-gold" : "text-stone-500/50 hover:text-gold"}`}
           >
             {ebookAudio.isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
           </Button>
@@ -496,13 +496,13 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
               variant="ghost"
               size="sm"
               onClick={ebookAudio.stop}
-              className="h-7 w-7 p-0 text-muted-foreground/40 hover:text-red-400"
+              className="h-7 w-7 p-0 text-stone-500/40 hover:text-red-400"
             >
               <Square className="h-3 w-3" />
             </Button>
           )}
           {ebookAudio.isFileMode && ebookAudio.duration > 0 && (
-            <div className="flex-1 max-w-[200px] h-1 rounded-full bg-border/10 overflow-hidden">
+            <div className="flex-1 max-w-[200px] h-1 rounded-full bg-stone-700/20 overflow-hidden">
               <div
                 className="h-full rounded-full bg-gold/50 transition-all duration-300"
                 style={{ width: `${(ebookAudio.progress / ebookAudio.duration) * 100}%` }}
@@ -513,22 +513,22 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       )}
 
       {/* ═══ BOTTOM BAR ═══ */}
-      <div className="flex items-center justify-between px-3 sm:px-6 py-2.5 border-t border-border/8 bg-background/95 backdrop-blur-xl z-30">
+      <div className={`flex items-center justify-between px-3 sm:px-6 py-2.5 border-t border-stone-800/30 bg-[#1a1814]/95 backdrop-blur-xl z-30 transition-all duration-300 ${immersive ? "opacity-0 pointer-events-none h-0 overflow-hidden py-0 border-0" : ""}`}>
         <Button variant="premiumOutline" size="sm" onClick={prevSpread} disabled={spread <= 0} className="gap-1.5">
           <ChevronLeft className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Anterior</span>
         </Button>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 rounded-xl border border-border/10 bg-card/6 px-3 py-1.5">
+          <div className="flex items-center gap-2 rounded-xl border border-stone-700/15 bg-stone-900/30 px-3 py-1.5">
             <BookOpen className="h-3 w-3 text-gold/50" />
-            <span className="text-[10px] sm:text-xs tabular-nums text-foreground/60">
-              <span className="font-bold text-foreground/80">{pageLabel}</span>
-              <span className="mx-1 text-muted-foreground/30">/</span>
-              <span className="text-muted-foreground/50">{numPages}</span>
+            <span className="text-[10px] sm:text-xs tabular-nums text-stone-400/60">
+              <span className="font-bold text-stone-300/80">{pageLabel}</span>
+              <span className="mx-1 text-stone-600/30">/</span>
+              <span className="text-stone-500/50">{numPages}</span>
             </span>
           </div>
-          <div className="hidden sm:block w-28 h-1 rounded-full bg-border/10 overflow-hidden">
+          <div className="hidden sm:block w-28 h-1 rounded-full bg-stone-700/20 overflow-hidden">
             <motion.div
               className="h-full rounded-full bg-gold/50"
               initial={{ width: 0 }}
