@@ -20,7 +20,7 @@ export type ModuleKey = (typeof MODULE_KEYS)[number];
 /** Default enabled state per project mode */
 const MODE_DEFAULTS: Record<ProjectMode, Record<ModuleKey, boolean>> = {
   hibrido: { vitrine: true, louvores: true, cursos: true, ebooks: true, trilhas: true, perfil: true, comunidade: false, bonus: true, lancamentos: true },
-  somente_musica: { vitrine: false, louvores: true, cursos: false, ebooks: false, trilhas: true, perfil: true, comunidade: false, bonus: true, lancamentos: true },
+  somente_musica: { vitrine: true, louvores: true, cursos: false, ebooks: false, trilhas: true, perfil: true, comunidade: false, bonus: true, lancamentos: true },
   somente_cursos: { vitrine: true, louvores: false, cursos: true, ebooks: true, trilhas: false, perfil: true, comunidade: false, bonus: false, lancamentos: true },
 };
 
