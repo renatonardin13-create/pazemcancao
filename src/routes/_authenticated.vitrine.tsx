@@ -195,6 +195,14 @@ function ShelfCarousel({ courses }: { courses: any[] }) {
     setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
   }, []);
 
+  useEffect(() => {
+    const timer = setTimeout(checkScroll, 150);
+    const el = scrollRef.current;
+    const ro = el ? new ResizeObserver(checkScroll) : null;
+    if (el && ro) ro.observe(el);
+    return () => { clearTimeout(timer); ro?.disconnect(); };
+  }, [checkScroll]);
+
   const scroll = useCallback((dir: 'left' | 'right') => {
     const el = scrollRef.current;
     if (!el) return;
@@ -204,21 +212,21 @@ function ShelfCarousel({ courses }: { courses: any[] }) {
 
   return (
     <div className="relative group/shelf -mx-4 sm:-mx-8">
-      {/* Left arrow */}
       {canScrollLeft && (
         <button
           onClick={() => scroll('left')}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-background/90 border border-border/30 shadow-lg backdrop-blur-sm text-foreground/60 hover:text-gold hover:border-gold/30 transition-all opacity-0 group-hover/shelf:opacity-100"
+          aria-label="Anterior"
+          className="absolute left-1 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-background/90 border border-border/30 shadow-lg backdrop-blur-sm text-foreground/60 hover:text-gold hover:border-gold/30 transition-all sm:opacity-0 sm:group-hover/shelf:opacity-100"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
       )}
 
-      {/* Right arrow */}
       {canScrollRight && (
         <button
           onClick={() => scroll('right')}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-background/90 border border-border/30 shadow-lg backdrop-blur-sm text-foreground/60 hover:text-gold hover:border-gold/30 transition-all opacity-0 group-hover/shelf:opacity-100"
+          aria-label="Próximo"
+          className="absolute right-1 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-background/90 border border-border/30 shadow-lg backdrop-blur-sm text-foreground/60 hover:text-gold hover:border-gold/30 transition-all sm:opacity-0 sm:group-hover/shelf:opacity-100"
         >
           <ChevronRight className="h-5 w-5" />
         </button>
@@ -227,27 +235,15 @@ function ShelfCarousel({ courses }: { courses: any[] }) {
       <div
         ref={scrollRef}
         onScroll={checkScroll}
-        onLoad={checkScroll}
-        className="flex gap-5 overflow-x-auto pb-4 px-4 sm:px-8 scrollbar-hide snap-x snap-mandatory"
-        style={{ scrollbarWidth: 'none' }}
+        className="flex gap-5 overflow-x-auto pb-4 px-4 sm:px-8 scrollbar-hide snap-x snap-mandatory touch-pan-x"
+        style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
       >
         {courses.map((course: any) => (
           <CourseCard key={course.id} course={course} />
         ))}
       </div>
-
-      {/* Check scroll on mount */}
-      <ScrollCheck scrollRef={scrollRef} onCheck={checkScroll} />
     </div>
   );
-}
-
-function ScrollCheck({ scrollRef, onCheck }: { scrollRef: React.RefObject<HTMLDivElement | null>; onCheck: () => void }) {
-  useEffect(() => {
-    const timer = setTimeout(onCheck, 100);
-    return () => clearTimeout(timer);
-  }, [onCheck]);
-  return null;
 }
 
 /* ── Fixed-size Course Card ── */

@@ -417,8 +417,11 @@ function ScrollableCarousel({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    const timer = setTimeout(checkScroll, 100);
-    return () => clearTimeout(timer);
+    const timer = setTimeout(checkScroll, 150);
+    const el = scrollRef.current;
+    const ro = el ? new ResizeObserver(checkScroll) : null;
+    if (el && ro) ro.observe(el);
+    return () => { clearTimeout(timer); ro?.disconnect(); };
   }, [checkScroll]);
 
   const scroll = useCallback((dir: 'left' | 'right') => {
@@ -433,7 +436,8 @@ function ScrollableCarousel({ children }: { children: React.ReactNode }) {
       {canScrollLeft && (
         <button
           onClick={() => scroll('left')}
-          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-background/90 border border-border/30 shadow-lg backdrop-blur-sm text-foreground/60 hover:text-gold hover:border-gold/30 transition-all opacity-0 group-hover/carousel:opacity-100"
+          aria-label="Anterior"
+          className="absolute left-1 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-background/90 border border-border/30 shadow-lg backdrop-blur-sm text-foreground/60 hover:text-gold hover:border-gold/30 transition-all sm:opacity-0 sm:group-hover/carousel:opacity-100"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -441,7 +445,8 @@ function ScrollableCarousel({ children }: { children: React.ReactNode }) {
       {canScrollRight && (
         <button
           onClick={() => scroll('right')}
-          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-background/90 border border-border/30 shadow-lg backdrop-blur-sm text-foreground/60 hover:text-gold hover:border-gold/30 transition-all opacity-0 group-hover/carousel:opacity-100"
+          aria-label="Próximo"
+          className="absolute right-1 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-background/90 border border-border/30 shadow-lg backdrop-blur-sm text-foreground/60 hover:text-gold hover:border-gold/30 transition-all sm:opacity-0 sm:group-hover/carousel:opacity-100"
         >
           <ChevronRight className="h-5 w-5" />
         </button>
@@ -449,8 +454,8 @@ function ScrollableCarousel({ children }: { children: React.ReactNode }) {
       <div
         ref={scrollRef}
         onScroll={checkScroll}
-        className="flex gap-4 overflow-x-auto pb-4 px-4 sm:px-6 scrollbar-hide snap-x snap-mandatory"
-        style={{ scrollbarWidth: 'none' }}
+        className="flex gap-4 overflow-x-auto pb-4 px-4 sm:px-6 scrollbar-hide snap-x snap-mandatory touch-pan-x"
+        style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
       >
         {children}
       </div>
