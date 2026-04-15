@@ -281,23 +281,23 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   // Track whether narration should auto-continue to next page
   const autoNarrationRef = useRef(false);
   const [ttsOverlayVisible, setTtsOverlayVisible] = useState(false);
+  const playPageTurnSoundRef = useRef<() => void>(() => {});
 
   // Audio player hook
   const ebookAudio = useEbookAudio({
     audioUrl,
     pageText: currentPageText || undefined,
     onPageNarrationEnd: useCallback(() => {
-      // Auto-advance to next page and continue narration
       if (autoNarrationRef.current && spread < totalSpreads - 1 && !(hasPaywall && spread + 1 > maxAllowedSpread)) {
-        autoNarrationRef.current = true; // keep flag on
+        autoNarrationRef.current = true;
         setDirection("right");
-        playPageTurnSound();
+        playPageTurnSoundRef.current();
         setSpread((prev) => prev + 1);
       } else {
         autoNarrationRef.current = false;
         setTtsOverlayVisible(false);
       }
-    }, [spread, totalSpreads, hasPaywall, maxAllowedSpread, playPageTurnSound]),
+    }, [spread, totalSpreads, hasPaywall, maxAllowedSpread]),
   });
 
   // Auto-start narration when page changes if auto-narration is active
