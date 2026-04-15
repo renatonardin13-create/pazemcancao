@@ -58,6 +58,13 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
     : 0;
 
   const handleLockedClick = () => {
+    if (isLaunchContent) {
+      if (launchMode === 'bloqueado_para_venda' && item.sales_page_url) {
+        window.open(item.sales_page_url, "_blank");
+      }
+      // em_breve and lancamento_especial: no action (just show message)
+      return;
+    }
     if (isLocked && item.sales_page_url) {
       window.open(item.sales_page_url, "_blank");
     }
