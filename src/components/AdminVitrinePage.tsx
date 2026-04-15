@@ -990,11 +990,12 @@ export default function AdminVitrinePage() {
 
         {/* Right: Preview panel */}
         {showPreview && (
-          <div className="w-[340px] shrink-0 hidden lg:block">
-            <div className="sticky top-4 space-y-4">
+          <div className={`shrink-0 hidden lg:block transition-all duration-300 ${previewDevice === "mobile" ? "w-[220px]" : previewDevice === "tablet" ? "w-[300px]" : "w-[380px]"}`}>
+            <div className="sticky top-4 space-y-3">
+              {/* Header */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <Monitor className="h-4 w-4 text-muted-foreground/70" />
+                  {previewDevice === "mobile" ? <Smartphone className="h-4 w-4 text-muted-foreground/70" /> : previewDevice === "tablet" ? <Tablet className="h-4 w-4 text-muted-foreground/70" /> : <Monitor className="h-4 w-4 text-muted-foreground/70" />}
                   <span className="text-[12px] font-semibold text-foreground/60">
                     Pré-visualização
                   </span>
@@ -1014,72 +1015,118 @@ export default function AdminVitrinePage() {
                 </Button>
               </div>
 
-              {/* Mini preview — uses same data as student vitrine */}
-              {(() => {
-                const previewShelves = studentShelvesData?.shelves || [];
-                const previewFeatured = studentShelvesData?.featuredCourse;
-                return (
-                  <div className="rounded-xl border border-border/30 bg-background/50 overflow-hidden">
-                    {/* Mini banner */}
-                    {previewFeatured && (
-                      <div className={`relative w-full ${(previewFeatured.banner_aspect || bannerAspect) === "21:9" ? "aspect-[21/9]" : (previewFeatured.banner_aspect || bannerAspect) === "16:9" ? "aspect-[16/9]" : "aspect-[1920/500]"} bg-card/20`}>
-                        {(previewFeatured.banner_image_url || previewFeatured.cover_image_url) ? (
-                          <img
-                            src={previewFeatured.banner_image_url || previewFeatured.cover_image_url}
-                            alt=""
-                            className={`w-full h-full ${(previewFeatured.banner_fit || "cover") === "cover" ? "object-cover" : (previewFeatured.banner_fit || "cover") === "contain" ? "object-contain" : "object-fill"}`}
-                          />
-                        ) : (
-                          <div className="w-full h-full bg-gradient-to-br from-card/20 to-card/5" />
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
-                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-                        <div className="absolute bottom-2 left-3">
-                          <p className="text-[7px] font-bold uppercase tracking-[0.3em] text-gold/40">Em destaque</p>
-                          <p className="text-xs font-bold text-foreground/80 leading-tight mt-0.5 line-clamp-1">
-                            {previewFeatured.display_title || previewFeatured.title || "Banner Principal"}
-                          </p>
-                        </div>
-                      </div>
-                    )}
+              {/* Device selector */}
+              <div className="flex rounded-lg border border-border/25 bg-card/15 p-0.5 gap-0.5">
+                {([
+                  { key: "desktop" as const, icon: Monitor, label: "Desktop" },
+                  { key: "tablet" as const, icon: Tablet, label: "Tablet" },
+                  { key: "mobile" as const, icon: Smartphone, label: "Mobile" },
+                ] as const).map(({ key, icon: DevIcon, label }) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setPreviewDevice(key)}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-[11px] font-semibold transition-all ${
+                      previewDevice === key
+                        ? "bg-gold/15 text-gold border border-gold/20 shadow-sm"
+                        : "text-muted-foreground/50 hover:text-muted-foreground/70"
+                    }`}
+                  >
+                    <DevIcon className="h-3 w-3" />
+                    {label}
+                  </button>
+                ))}
+              </div>
 
-                    {/* Mini shelves — from student data */}
-                    <div className="p-3 space-y-3">
-                      {previewShelves.length === 0 ? (
-                        <p className="text-[11px] text-muted-foreground/60 text-center py-4">
-                          Nenhuma prateleira ativa
-                        </p>
-                      ) : (
-                        previewShelves.slice(0, 3).map((shelf: any) => (
-                          <div key={shelf.id}>
-                            <p className="text-[11px] font-bold text-foreground/50 mb-1.5 truncate">
-                              {shelf.name}
-                            </p>
-                            <div className="flex gap-1.5 overflow-hidden">
-                              {shelf.courses.slice(0, 4).map((c: any) => (
-                                <div key={c.id} className="shrink-0 w-[48px]">
-                                  <div className="aspect-[2/3] rounded-md overflow-hidden border border-border/20 bg-card/20">
-                                    {c.cover_image_url ? (
-                                      <img src={c.cover_image_url} alt="" className="w-full h-full object-cover" />
-                                    ) : (
-                                      <div className="w-full h-full bg-gradient-to-br from-card/20 to-card/5" />
-                                    )}
-                                  </div>
-                                </div>
-                              ))}
+              {/* Mini preview container with device frame */}
+              <div className={`mx-auto transition-all duration-300 ${previewDevice === "mobile" ? "max-w-[200px]" : previewDevice === "tablet" ? "max-w-[280px]" : "w-full"}`}>
+                <div className={`rounded-xl border-2 overflow-hidden transition-all duration-300 ${previewDevice === "mobile" ? "border-border/40 rounded-[20px]" : previewDevice === "tablet" ? "border-border/35 rounded-2xl" : "border-border/30"} bg-background/50`}>
+                  {/* Device notch for mobile */}
+                  {previewDevice === "mobile" && (
+                    <div className="flex justify-center py-1 bg-background/80">
+                      <div className="w-12 h-1 rounded-full bg-border/40" />
+                    </div>
+                  )}
+
+                  {(() => {
+                    const previewShelves = studentShelvesData?.shelves || [];
+                    const previewFeatured = studentShelvesData?.featuredCourse;
+                    const cardsPerRow = previewDevice === "mobile" ? 2 : previewDevice === "tablet" ? 3 : 4;
+                    const cardWidth = previewDevice === "mobile" ? "w-[42px]" : previewDevice === "tablet" ? "w-[45px]" : "w-[48px]";
+                    const textSize = previewDevice === "mobile" ? "text-[6px]" : "text-[7px]";
+                    const padding = previewDevice === "mobile" ? "p-2" : "p-3";
+
+                    return (
+                      <>
+                        {/* Mini banner */}
+                        {previewFeatured && (
+                          <div className={`relative w-full ${previewDevice === "mobile" ? "aspect-[16/9]" : "aspect-[1920/500]"} bg-card/20`}>
+                            {(previewFeatured.banner_image_url || previewFeatured.cover_image_url) ? (
+                              <img
+                                src={previewFeatured.banner_image_url || previewFeatured.cover_image_url}
+                                alt=""
+                                className={`w-full h-full ${(previewFeatured.banner_fit || "cover") === "cover" ? "object-cover" : "object-contain"}`}
+                              />
+                            ) : (
+                              <div className="w-full h-full bg-gradient-to-br from-card/20 to-card/5" />
+                            )}
+                            <div className="absolute inset-0 bg-gradient-to-r from-background via-background/60 to-transparent" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+                            <div className={`absolute bottom-2 ${previewDevice === "mobile" ? "left-2" : "left-3"}`}>
+                              <p className={`${textSize} font-bold uppercase tracking-[0.3em] text-gold/40`}>Em destaque</p>
+                              <p className={`${previewDevice === "mobile" ? "text-[9px]" : "text-xs"} font-bold text-foreground/80 leading-tight mt-0.5 line-clamp-1`}>
+                                {previewFeatured.display_title || previewFeatured.title || "Banner Principal"}
+                              </p>
                             </div>
                           </div>
-                        ))
-                      )}
-                      {previewShelves.length > 3 && (
-                        <p className="text-[11px] text-muted-foreground/50 text-center">
-                          +{previewShelves.length - 3} prateleira(s)
-                        </p>
-                      )}
+                        )}
+
+                        {/* Mini shelves */}
+                        <div className={`${padding} space-y-3`}>
+                          {previewShelves.length === 0 ? (
+                            <p className="text-[11px] text-muted-foreground/60 text-center py-4">
+                              Nenhuma prateleira ativa
+                            </p>
+                          ) : (
+                            previewShelves.slice(0, previewDevice === "mobile" ? 2 : 3).map((shelf: any) => (
+                              <div key={shelf.id}>
+                                <p className={`${previewDevice === "mobile" ? "text-[9px]" : "text-[11px]"} font-bold text-foreground/50 mb-1.5 truncate`}>
+                                  {shelf.name}
+                                </p>
+                                <div className={`flex gap-1.5 overflow-hidden ${previewDevice === "mobile" ? "gap-1" : ""}`}>
+                                  {shelf.courses.slice(0, cardsPerRow).map((c: any) => (
+                                    <div key={c.id} className={`shrink-0 ${cardWidth}`}>
+                                      <div className="aspect-[2/3] rounded-md overflow-hidden border border-border/20 bg-card/20">
+                                        {c.cover_image_url ? (
+                                          <img src={c.cover_image_url} alt="" className="w-full h-full object-cover" />
+                                        ) : (
+                                          <div className="w-full h-full bg-gradient-to-br from-card/20 to-card/5" />
+                                        )}
+                                      </div>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            ))
+                          )}
+                          {previewShelves.length > (previewDevice === "mobile" ? 2 : 3) && (
+                            <p className="text-[11px] text-muted-foreground/50 text-center">
+                              +{previewShelves.length - (previewDevice === "mobile" ? 2 : 3)} prateleira(s)
+                            </p>
+                          )}
+                        </div>
+                      </>
+                    );
+                  })()}
+
+                  {/* Mobile home indicator */}
+                  {previewDevice === "mobile" && (
+                    <div className="flex justify-center py-1.5 bg-background/80">
+                      <div className="w-16 h-1 rounded-full bg-border/30" />
                     </div>
-                  </div>
-                );
-              })()}
+                  )}
+                </div>
+              </div>
 
               {/* Link to student area */}
               <a
