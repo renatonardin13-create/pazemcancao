@@ -48,6 +48,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   // `spread` tracks the current spread index (0-based).
   // Spread 0 = cover (page 1 alone). Spread 1 = pages 2-3. Spread 2 = pages 4-5, etc.
   const [spread, setSpread] = useState(0);
+  const [resumedFrom, setResumedFrom] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [direction, setDirection] = useState<"left" | "right">("right");
@@ -133,7 +134,27 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
         if (cancelled) return;
         pdfDocRef.current = pdf;
         setNumPages(pdf.numPages);
-        setSpread(0);
+        // Restore saved reading position
+        const progressKey = `ebook-progress-${pdfUrl}`;
+        try {
+          const saved = localStorage.getItem(progressKey);
+          if (saved) {
+            const savedSpread = parseInt(saved, 10);
+            const maxSpread = isMobile ? pdf.numPages - 1 : Math.ceil(pdf.numPages / 2) - 1;
+            if (savedSpread > 0 && savedSpread <= maxSpread) {
+              setSpread(savedSpread);
+              setResumedFrom(savedSpread);
+              // Auto-dismiss resume indicator
+              setTimeout(() => setResumedFrom(null), 3000);
+            } else {
+              setSpread(0);
+            }
+          } else {
+            setSpread(0);
+          }
+        } catch {
+          setSpread(0);
+        }
         setPageImages({});
         setLoading(false);
       } catch (err) {
