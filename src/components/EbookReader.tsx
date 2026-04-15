@@ -18,6 +18,8 @@ import {
   Settings,
   Sun,
   Moon,
+  SkipBack,
+  SkipForward,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -25,6 +27,12 @@ import { useEbookAudio } from "@/hooks/use-ebook-audio";
 import * as pdfjsLib from "pdfjs-dist";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+
+const formatTime = (s: number) => {
+  const m = Math.floor(s / 60);
+  const sec = Math.floor(s % 60);
+  return `${m}:${sec.toString().padStart(2, "0")}`;
+};
 
 interface EbookReaderProps {
   pdfUrl: string;
@@ -656,38 +664,67 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
         </AnimatePresence>
       </div>
 
-      {/* ═══ AUDIO PLAYER BAR ═══ */}
+      {/* ═══ AUDIOBOOK PLAYER ═══ */}
       {ebookAudio.available && controlsVisible && (
-        <div className="flex items-center gap-2 px-3 sm:px-6 py-2 border-t border-stone-800/30 bg-[#1a1814]/95 backdrop-blur-xl z-30">
+        <div className="flex items-center gap-3 px-3 sm:px-6 py-2.5 border-t border-stone-800/30 bg-[#1a1814]/95 backdrop-blur-xl z-30">
           <Headphones className="h-3.5 w-3.5 text-gold/50 shrink-0" />
-          <span className="text-[9px] uppercase tracking-widest text-stone-500/40 hidden sm:inline">
-            {ebookAudio.isFileMode ? "Áudio" : "Leitura em voz"}
-          </span>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={ebookAudio.toggle}
-            className={`h-7 w-7 p-0 transition-colors ${ebookAudio.isPlaying ? "text-gold" : "text-stone-500/50 hover:text-gold"}`}
-          >
-            {ebookAudio.isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
-          </Button>
-          {ebookAudio.isPlaying && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={ebookAudio.stop}
-              className="h-7 w-7 p-0 text-stone-500/40 hover:text-red-400"
-            >
-              <Square className="h-3 w-3" />
-            </Button>
+
+          {ebookAudio.isFileMode && (
+            <button onClick={() => ebookAudio.skipBack(15)} className="h-7 w-7 flex items-center justify-center rounded-full text-stone-400/60 hover:text-gold transition-colors" title="-15s">
+              <SkipBack className="h-3.5 w-3.5" />
+            </button>
           )}
+
+          <button
+            onClick={ebookAudio.toggle}
+            className={`h-9 w-9 flex items-center justify-center rounded-full border transition-all ${
+              ebookAudio.isPlaying
+                ? "bg-gold/15 border-gold/30 text-gold"
+                : "bg-stone-800/40 border-stone-700/20 text-stone-400/70 hover:text-gold hover:border-gold/25"
+            }`}
+          >
+            {ebookAudio.isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 ml-0.5" />}
+          </button>
+
+          {ebookAudio.isFileMode && (
+            <button onClick={() => ebookAudio.skipForward(15)} className="h-7 w-7 flex items-center justify-center rounded-full text-stone-400/60 hover:text-gold transition-colors" title="+15s">
+              <SkipForward className="h-3.5 w-3.5" />
+            </button>
+          )}
+
+          {ebookAudio.isPlaying && (
+            <button onClick={ebookAudio.stop} className="h-7 w-7 flex items-center justify-center rounded-full text-stone-500/40 hover:text-red-400 transition-colors">
+              <Square className="h-3 w-3" />
+            </button>
+          )}
+
           {ebookAudio.isFileMode && ebookAudio.duration > 0 && (
-            <div className="flex-1 max-w-[200px] h-1 rounded-full bg-stone-700/20 overflow-hidden">
+            <div className="flex-1 flex items-center gap-2 min-w-0">
+              <span className="text-[10px] tabular-nums text-stone-500/50 shrink-0 min-w-[2.5rem] text-right">
+                {formatTime(ebookAudio.progress)}
+              </span>
               <div
-                className="h-full rounded-full bg-gold/50 transition-all duration-300"
-                style={{ width: `${(ebookAudio.progress / ebookAudio.duration) * 100}%` }}
-              />
+                className="flex-1 h-1.5 rounded-full bg-stone-700/25 overflow-hidden cursor-pointer relative group"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                  ebookAudio.seek(pct * ebookAudio.duration);
+                }}
+              >
+                <div
+                  className="h-full rounded-full bg-gold/60 transition-all duration-150 group-hover:bg-gold/80"
+                  style={{ width: `${(ebookAudio.progress / ebookAudio.duration) * 100}%` }}
+                />
+              </div>
+              <span className="text-[10px] tabular-nums text-stone-500/35 shrink-0 min-w-[2.5rem]">
+                {formatTime(ebookAudio.duration)}
+              </span>
             </div>
+          )}
+
+          {!ebookAudio.isFileMode && (
+            <span className="text-[9px] uppercase tracking-widest text-stone-500/40">Leitura em voz</span>
           )}
         </div>
       )}

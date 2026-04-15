@@ -134,6 +134,22 @@ export function useEbookAudio({ audioUrl, pageText, lang = "pt-BR" }: UseEbookAu
     }
   }, [mode]);
 
+  const skipForward = useCallback((seconds = 15) => {
+    if (mode === "file" && fileAudioRef.current) {
+      const t = Math.min(fileAudioRef.current.currentTime + seconds, fileAudioRef.current.duration || 0);
+      fileAudioRef.current.currentTime = t;
+      setProgress(t);
+    }
+  }, [mode]);
+
+  const skipBack = useCallback((seconds = 15) => {
+    if (mode === "file" && fileAudioRef.current) {
+      const t = Math.max(fileAudioRef.current.currentTime - seconds, 0);
+      fileAudioRef.current.currentTime = t;
+      setProgress(t);
+    }
+  }, [mode]);
+
   const available = mode !== "none";
   const isFileMode = mode === "file";
 
@@ -146,6 +162,8 @@ export function useEbookAudio({ audioUrl, pageText, lang = "pt-BR" }: UseEbookAu
     toggle,
     stop,
     seek,
+    skipForward,
+    skipBack,
     mode,
   };
 }
