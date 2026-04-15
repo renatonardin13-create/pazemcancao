@@ -516,8 +516,9 @@ function TrackCard({
       // Redirect to sales page for locked content
       window.open(SALES_URL, "_blank");
     }
+  };
 
-  return (
+
     <div ref={isThis ? activeTrackRef : undefined}>
       <Wrapper
         {...(wrapperProps as any)}
