@@ -2,11 +2,12 @@ import { createFileRoute, Link, useSearch } from "@tanstack/react-router"; // re
 import { ListSkeleton } from "@/components/LoadingSkeletons";
 import { logDownload } from "@/lib/analytics.functions";
 import { ModuleGuard } from "@/components/ModuleGuard";
-import { Music, Play, Pause, Download, Search, Headphones, Lock, Gift, ChevronLeft, ChevronRight, Clock, ListMusic, PlayCircle } from "lucide-react";
+import { Music, Play, Pause, Download, Search, Headphones, Lock, Gift, ChevronLeft, ChevronRight, Clock, ListMusic, PlayCircle, Disc3 } from "lucide-react";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { useQuery } from "@tanstack/react-query";
 import { listAllTracks, listCategories } from "@/lib/tracks.functions";
+import { listPlaylistsWithCounts, getPlaylistWithTracks } from "@/lib/playlists.functions";
 import { checkBuyerAccess } from "@/lib/access.functions";
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Input } from "@/components/ui/input";
