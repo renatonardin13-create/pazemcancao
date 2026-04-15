@@ -827,6 +827,48 @@ export type Database = {
         }
         Relationships: []
       }
+      product_upsells: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          sort_order: number
+          source_id: string
+          source_type: string
+          target_id: string
+          target_type: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          source_id: string
+          source_type: string
+          target_id: string
+          target_type: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          sort_order?: number
+          source_id?: string
+          source_type?: string
+          target_id?: string
+          target_type?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
