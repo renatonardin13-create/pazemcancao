@@ -22,7 +22,7 @@ function VitrinePage() {
   const { data, isLoading } = useQuery({
     queryKey: ["student-shelves"],
     queryFn: () => getStudentShelves(),
-    staleTime: 10_000,
+    staleTime: 60_000,
     refetchOnWindowFocus: true,
   });
 
@@ -60,12 +60,7 @@ function VitrinePage() {
           <div className="relative z-10 -mt-16 sm:-mt-24">
             {!featuredCourse && (
               <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 pt-10">
-                <motion.div
-                  initial={{ opacity: 0, y: 16 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6 }}
-                  className="flex items-center gap-3 mb-8"
-                >
+                <div className="flex items-center gap-3 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-600">
                   <Store className="h-7 w-7 text-gold" />
                   <div>
                     <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
@@ -75,7 +70,7 @@ function VitrinePage() {
                       Explore nossos cursos e conteúdos
                     </p>
                   </div>
-                </motion.div>
+                </div>
               </div>
             )}
 
@@ -112,11 +107,10 @@ function VitrinePage() {
                   if (isAdminShelf) adminShelfIndex++;
 
                   return (
-                    <motion.section
+                    <section
                       key={shelf.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: shelfIdx * 0.06 }}
+                      className="animate-in fade-in slide-in-from-bottom-4 duration-500"
+                      style={{ animationDelay: `${shelfIdx * 60}ms`, animationFillMode: 'both' }}
                     >
                       {/* Shelf title */}
                       <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mb-3 sm:mb-4">
@@ -141,18 +135,16 @@ function VitrinePage() {
                       {isAdminShelf && promoBanners
                         .filter((b: any) => b.position_after_shelf === adminShelfIndex)
                         .map((banner: any) => (
-                          <motion.div
+                          <div
                             key={banner.id}
-                            initial={{ opacity: 0, y: 12 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5, delay: 0.3 }}
-                            className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mt-6"
+                            className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mt-6 animate-in fade-in slide-in-from-bottom-3 duration-500"
                           >
                             {banner.link_url ? (
                               <a href={banner.link_url} target="_blank" rel="noopener noreferrer">
                                 <img
                                   src={banner.image_url}
                                   alt={banner.title}
+                                  loading="lazy"
                                   className="w-full rounded-xl border border-border/25 hover:border-gold/20 transition-colors"
                                 />
                               </a>
@@ -160,12 +152,13 @@ function VitrinePage() {
                               <img
                                 src={banner.image_url}
                                 alt={banner.title}
+                                loading="lazy"
                                 className="w-full rounded-xl border border-border/25"
                               />
                             )}
-                          </motion.div>
+                          </div>
                         ))}
-                    </motion.section>
+                    </section>
                   );
                 })}
               </div>
@@ -187,20 +180,14 @@ function HeroBanner({ course }: { course: any }) {
   const isEnrolled = ['enrolled', 'in_progress', 'completed'].includes(course.access_state);
 
   const content = (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1.2 }}
-      className={`relative w-full h-[60vh] sm:h-[70vh] lg:h-[75vh] min-h-[360px] max-h-[720px] overflow-hidden ${bannerLinkUrl ? 'cursor-pointer' : ''}`}
+    <div
+      className={`relative w-full h-[60vh] sm:h-[70vh] lg:h-[75vh] min-h-[360px] max-h-[720px] overflow-hidden animate-in fade-in duration-1000 ${bannerLinkUrl ? 'cursor-pointer' : ''}`}
     >
-      {/* Background image with Ken Burns */}
+      {/* Background image */}
       {imageUrl && (
-        <motion.img
+        <img
           src={imageUrl}
           alt={course.display_title || course.title}
-          initial={{ scale: 1.05 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 8, ease: 'easeOut' }}
           className="absolute inset-0 w-full h-full object-cover"
         />
       )}
@@ -216,59 +203,46 @@ function HeroBanner({ course }: { course: any }) {
         <div className="w-full px-4 sm:px-8 lg:px-12 pb-20 sm:pb-28 lg:pb-32">
           <div className="mx-auto w-full max-w-[1400px]">
             {/* Featured badge */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="mb-4"
-            >
+            <div className="mb-4 animate-in fade-in slide-in-from-left-4 duration-600" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
               <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gold/20 border border-gold/30 text-gold text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] backdrop-blur-sm">
                 <Sparkles className="h-3 w-3" />
                 {isEnrolled ? 'Seu destaque' : isLocked ? 'Destaque Premium' : 'Em destaque'}
               </span>
-            </motion.div>
+            </div>
 
             {/* Title */}
-            <motion.h1
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.35 }}
-              className="font-display text-3xl sm:text-5xl lg:text-[3.5rem] xl:text-6xl font-black text-foreground tracking-tight mb-3 sm:mb-4 max-w-2xl leading-[1.08] drop-shadow-[0_4px_20px_rgba(0,0,0,0.7)]"
+            <h1
+              className="font-display text-3xl sm:text-5xl lg:text-[3.5rem] xl:text-6xl font-black text-foreground tracking-tight mb-3 sm:mb-4 max-w-2xl leading-[1.08] drop-shadow-[0_4px_20px_rgba(0,0,0,0.7)] animate-in fade-in slide-in-from-bottom-6 duration-700"
+              style={{ animationDelay: '350ms', animationFillMode: 'both' }}
             >
               {course.display_title || course.title}
-            </motion.h1>
+            </h1>
 
             {/* Subtitle */}
             {(course.display_subtitle || course.short_description) && (
-              <motion.p
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-                className="text-sm sm:text-base lg:text-lg text-foreground/50 mb-6 sm:mb-8 max-w-xl leading-relaxed line-clamp-3"
+              <p
+                className="text-sm sm:text-base lg:text-lg text-foreground/50 mb-6 sm:mb-8 max-w-xl leading-relaxed line-clamp-3 animate-in fade-in slide-in-from-bottom-6 duration-700"
+                style={{ animationDelay: '500ms', animationFillMode: 'both' }}
               >
                 {course.display_subtitle || course.short_description}
-              </motion.p>
+              </p>
             )}
 
             {/* CTA */}
             {course.id !== '__custom_banner__' && (
-              <motion.div
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.65 }}
-                className="flex flex-wrap items-center gap-3 sm:gap-4"
+              <div
+                className="flex flex-wrap items-center gap-3 sm:gap-4 animate-in fade-in slide-in-from-bottom-6 duration-700"
+                style={{ animationDelay: '650ms', animationFillMode: 'both' }}
               >
                 <HeroCTA course={course} />
-              </motion.div>
+              </div>
             )}
 
             {/* Meta info */}
             {course.total_lessons > 0 && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.9 }}
-                className="mt-5 flex items-center gap-4 text-[11px] sm:text-xs text-foreground/30 uppercase tracking-wider"
+              <div
+                className="mt-5 flex items-center gap-4 text-[11px] sm:text-xs text-foreground/30 uppercase tracking-wider animate-in fade-in duration-600"
+                style={{ animationDelay: '900ms', animationFillMode: 'both' }}
               >
                 <span>{course.total_lessons} aula{course.total_lessons !== 1 ? 's' : ''}</span>
                 {course.progress_pct > 0 && course.progress_pct < 100 && (
@@ -277,12 +251,12 @@ function HeroBanner({ course }: { course: any }) {
                     <span className="text-gold/60">{course.progress_pct}% concluído</span>
                   </>
                 )}
-              </motion.div>
+              </div>
             )}
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 
   return bannerLinkUrl ? (
@@ -411,4 +385,3 @@ function HeroCTA({ course }: { course: any }) {
 
   return null;
 }
-
