@@ -27,7 +27,6 @@ function VitrinePage() {
   const promoBanners = data?.promoBanners || [];
   const featuredCourse = data?.featuredCourse;
 
-  // Filter shelves by search term — filter courses within each shelf
   const filteredShelves = useMemo(() => {
     if (!searchTerm.trim()) return shelves;
     const term = searchTerm.toLowerCase();
@@ -44,76 +43,45 @@ function VitrinePage() {
 
   return (
     <StudentLayout>
-      <div className="min-h-screen flex flex-col">
+      <div className="min-h-screen flex flex-col bg-background">
         <div className="flex-1 w-full pb-28">
-          {/* Hero Banner */}
-          {featuredCourse && (() => {
-            const bannerLinkUrl = featuredCourse.banner_link_url || featuredCourse.sales_page_url || featuredCourse.checkout_url;
-            const heroContent = (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.8 }}
-                className={`relative w-full h-[280px] sm:h-[380px] overflow-hidden ${bannerLinkUrl ? 'cursor-pointer' : ''}`}
-              >
-                <img
-                  src={featuredCourse.banner_image_url || featuredCourse.cover_image_url}
-                  alt={featuredCourse.display_title || featuredCourse.title}
-                  className={`w-full h-full object-${featuredCourse.banner_fit || 'cover'}`}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
-                  <h2 className="font-display text-2xl sm:text-4xl font-bold text-foreground/90 tracking-tight mb-2">
-                    {featuredCourse.display_title || featuredCourse.title}
-                  </h2>
-                  {(featuredCourse.display_subtitle || featuredCourse.short_description) && (
-                    <p className="text-[13px] text-muted-foreground/50 mb-4 max-w-lg">
-                      {featuredCourse.display_subtitle || featuredCourse.short_description}
-                    </p>
-                  )}
-                  {featuredCourse.id !== '__custom_banner__' && (
-                    <CourseActionButton course={featuredCourse} />
-                  )}
-                </div>
-              </motion.div>
-            );
+          {/* ── Netflix-style Hero Banner ── */}
+          {featuredCourse && <HeroBanner course={featuredCourse} />}
 
-            return bannerLinkUrl ? (
-              <a href={bannerLinkUrl} target="_blank" rel="noopener noreferrer">
-                {heroContent}
-              </a>
-            ) : heroContent;
-          })()}
-
-          <div className="mx-auto w-full max-w-[1100px] px-4 sm:px-8 lg:px-12 pt-8">
+          {/* ── Content area ── */}
+          <div className="relative z-10 -mt-16 sm:-mt-24">
             {!featuredCourse && (
-              <motion.div
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="flex items-center gap-3 mb-8"
-              >
-                <Store className="h-7 w-7 text-gold" />
-                <div>
-                  <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
-                    Vitrine
-                  </h1>
-                  <p className="text-[13px] text-muted-foreground/50 mt-0.5">
-                    Explore nossos cursos e conteúdos
-                  </p>
-                </div>
-              </motion.div>
+              <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 pt-10">
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6 }}
+                  className="flex items-center gap-3 mb-8"
+                >
+                  <Store className="h-7 w-7 text-gold" />
+                  <div>
+                    <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
+                      Vitrine
+                    </h1>
+                    <p className="text-[13px] text-muted-foreground/50 mt-0.5">
+                      Explore nossos cursos e conteúdos
+                    </p>
+                  </div>
+                </motion.div>
+              </div>
             )}
 
             {/* Search bar */}
-            <div className="relative max-w-sm mb-8">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/60" />
-              <Input
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Buscar cursos..."
-                className="pl-9 bg-card/20 border-border/30 text-sm h-10"
-              />
+            <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12">
+              <div className="relative max-w-sm mb-6">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/60" />
+                <Input
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Buscar cursos..."
+                  className="pl-9 bg-card/20 border-border/30 text-sm h-10 backdrop-blur-sm"
+                />
+              </div>
             </div>
 
             {isLoading ? (
@@ -130,26 +98,29 @@ function VitrinePage() {
                 </p>
               </div>
             ) : (
-              <div className="space-y-10">
+              <div className="space-y-8 sm:space-y-12">
                 {filteredShelves.map((shelf: any, shelfIdx: number) => (
                   <motion.section
                     key={shelf.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: shelfIdx * 0.1 }}
+                    transition={{ duration: 0.6, delay: shelfIdx * 0.08 }}
                   >
-                    <div className="flex items-center gap-3 mb-5">
-                      <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
-                        {shelf.name}
-                      </h2>
-                      <div className="flex-1 h-px bg-gradient-to-r from-border/15 to-transparent" />
-                      <span className="text-xs text-muted-foreground/60">
-                        {shelf.courses.length} curso{shelf.courses.length !== 1 ? "s" : ""}
-                      </span>
+                    {/* Shelf title */}
+                    <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mb-3 sm:mb-4">
+                      <div className="flex items-center gap-3">
+                        <h2 className="font-display text-lg sm:text-xl font-bold text-foreground/90 tracking-tight">
+                          {shelf.name}
+                        </h2>
+                        <div className="flex-1 h-px bg-gradient-to-r from-gold/10 to-transparent" />
+                        <span className="text-[10px] sm:text-xs text-muted-foreground/40 uppercase tracking-wider font-medium">
+                          {shelf.courses.length} título{shelf.courses.length !== 1 ? "s" : ""}
+                        </span>
+                      </div>
                     </div>
 
-                    {/* Horizontal scroll with arrows */}
-                    <ShelfCarousel courses={shelf.courses} />
+                    {/* Netflix carousel */}
+                    <NetflixCarousel courses={shelf.courses} />
 
                     {/* Promo banner after shelf */}
                     {promoBanners
@@ -160,7 +131,7 @@ function VitrinePage() {
                           initial={{ opacity: 0, y: 12 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.5, delay: 0.3 }}
-                          className="mt-6"
+                          className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mt-6"
                         >
                           {banner.link_url ? (
                             <a href={banner.link_url} target="_blank" rel="noopener noreferrer">
@@ -192,8 +163,77 @@ function VitrinePage() {
   );
 }
 
-/* ── Shelf Carousel with arrow navigation ── */
-function ShelfCarousel({ courses }: { courses: any[] }) {
+/* ── Netflix Hero Banner ── */
+function HeroBanner({ course }: { course: any }) {
+  const bannerLinkUrl = course.banner_link_url || course.sales_page_url || course.checkout_url;
+  const imageUrl = course.banner_image_url || course.cover_image_url;
+
+  const content = (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+      className={`relative w-full h-[55vh] sm:h-[65vh] min-h-[320px] max-h-[600px] overflow-hidden ${bannerLinkUrl ? 'cursor-pointer' : ''}`}
+    >
+      {/* Background image */}
+      <img
+        src={imageUrl}
+        alt={course.display_title || course.title}
+        className={`w-full h-full object-${course.banner_fit || 'cover'}`}
+      />
+
+      {/* Gradient overlays for Netflix depth */}
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
+
+      {/* Content */}
+      <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-8 lg:px-12 pb-24 sm:pb-32">
+        <div className="mx-auto w-full max-w-[1400px]">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="font-display text-3xl sm:text-5xl lg:text-6xl font-black text-foreground tracking-tight mb-3 max-w-2xl leading-[1.1] drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]"
+          >
+            {course.display_title || course.title}
+          </motion.h1>
+
+          {(course.display_subtitle || course.short_description) && (
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.5 }}
+              className="text-sm sm:text-base text-muted-foreground/60 mb-6 max-w-lg leading-relaxed"
+            >
+              {course.display_subtitle || course.short_description}
+            </motion.p>
+          )}
+
+          {course.id !== '__custom_banner__' && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.7 }}
+            >
+              <CourseActionButton course={course} />
+            </motion.div>
+          )}
+        </div>
+      </div>
+    </motion.div>
+  );
+
+  return bannerLinkUrl ? (
+    <a href={bannerLinkUrl} target="_blank" rel="noopener noreferrer">
+      {content}
+    </a>
+  ) : content;
+}
+
+
+/* ── Netflix-style Carousel ── */
+function NetflixCarousel({ courses }: { courses: any[] }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -216,43 +256,52 @@ function ShelfCarousel({ courses }: { courses: any[] }) {
   const scroll = useCallback((dir: 'left' | 'right') => {
     const el = scrollRef.current;
     if (!el) return;
-    const amount = el.clientWidth * 0.75;
+    const amount = el.clientWidth * 0.8;
     el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
   }, []);
 
   return (
-    <div className="relative group/shelf -mx-4 sm:-mx-8">
+    <div className="relative group/shelf">
+      {/* Left arrow */}
       {canScrollLeft && (
         <button
           onClick={() => scroll('left')}
           aria-label="Anterior"
-          className="absolute left-1 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-background/90 border border-border/30 shadow-lg backdrop-blur-sm text-foreground/60 hover:text-gold hover:border-gold/30 transition-all sm:opacity-0 sm:group-hover/shelf:opacity-100"
+          className="absolute left-0 top-0 bottom-0 z-20 w-12 sm:w-16 flex items-center justify-center bg-gradient-to-r from-background/95 via-background/60 to-transparent text-foreground/50 hover:text-gold transition-colors sm:opacity-0 sm:group-hover/shelf:opacity-100"
         >
-          <ChevronLeft className="h-5 w-5" />
+          <ChevronLeft className="h-7 w-7 sm:h-8 sm:w-8" />
         </button>
       )}
 
+      {/* Right arrow */}
       {canScrollRight && (
         <button
           onClick={() => scroll('right')}
           aria-label="Próximo"
-          className="absolute right-1 top-1/2 -translate-y-1/2 z-20 flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-background/90 border border-border/30 shadow-lg backdrop-blur-sm text-foreground/60 hover:text-gold hover:border-gold/30 transition-all sm:opacity-0 sm:group-hover/shelf:opacity-100"
+          className="absolute right-0 top-0 bottom-0 z-20 w-12 sm:w-16 flex items-center justify-center bg-gradient-to-l from-background/95 via-background/60 to-transparent text-foreground/50 hover:text-gold transition-colors sm:opacity-0 sm:group-hover/shelf:opacity-100"
         >
-          <ChevronRight className="h-5 w-5" />
+          <ChevronRight className="h-7 w-7 sm:h-8 sm:w-8" />
         </button>
       )}
 
+      {/* Scrollable track */}
       <div
         ref={scrollRef}
         onScroll={checkScroll}
-        className="flex gap-5 overflow-x-auto pb-4 px-4 sm:px-8 scrollbar-hide snap-x snap-mandatory touch-pan-x"
+        className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 px-4 sm:px-8 lg:px-12 scrollbar-hide snap-x snap-mandatory touch-pan-x"
         style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
       >
+        {/* Left spacer for max-width alignment */}
+        <div className="shrink-0 w-0 lg:w-[calc((100vw-1400px)/2)]" />
+
         {courses.map((course: any, idx: number) => (
-          <div key={course.id} className="w-[200px] sm:w-[220px] shrink-0 snap-start">
+          <div key={course.id} className="w-[180px] sm:w-[200px] md:w-[220px] shrink-0 snap-start">
             <CourseShelfCard course={course} index={idx} showProgress />
           </div>
         ))}
+
+        {/* Right spacer */}
+        <div className="shrink-0 w-0 lg:w-[calc((100vw-1400px)/2)]" />
       </div>
     </div>
   );
@@ -268,9 +317,9 @@ function CourseActionButton({ course }: { course: any }) {
       <Link
         to="/cursos/$courseId"
         params={{ courseId: course.id }}
-        className="inline-flex items-center gap-2 rounded-xl bg-gold/90 text-gold-foreground px-6 py-3 text-[12px] font-bold uppercase tracking-wider hover:bg-gold transition-colors"
+        className="inline-flex items-center gap-2.5 rounded-lg bg-gold text-gold-foreground px-7 py-3.5 text-sm font-bold uppercase tracking-wider hover:bg-gold/90 transition-colors shadow-lg shadow-gold/20"
       >
-        Acessar Curso <ArrowRight className="h-3.5 w-3.5" />
+        <Play className="h-4 w-4 fill-current" /> Assistir Agora
       </Link>
     );
   }
@@ -282,9 +331,9 @@ function CourseActionButton({ course }: { course: any }) {
         href={salesUrl}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 rounded-xl bg-gold/15 text-gold/70 border border-gold/20 px-6 py-3 text-[12px] font-bold uppercase tracking-wider hover:bg-gold/25 hover:text-gold/90 transition-all"
+        className="inline-flex items-center gap-2.5 rounded-lg bg-white/10 text-foreground/80 border border-white/15 px-7 py-3.5 text-sm font-bold uppercase tracking-wider hover:bg-white/20 hover:text-gold transition-all backdrop-blur-sm"
       >
-        <ShoppingCart className="h-3.5 w-3.5" /> Adquirir Agora
+        <ShoppingCart className="h-4 w-4" /> Adquirir Agora
       </a>
     );
   }
