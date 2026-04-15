@@ -62,8 +62,8 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
 
     const enrolledCourseIds = activeEnrollmentIds;
 
-    // Get all published courses
-    const { data: allCourses } = await supabase
+    // Get all published courses — use admin client to bypass RLS and ensure all published courses are visible
+    const { data: allCourses } = await supabaseAdmin
       .from('courses')
       .select('id, title, short_description, cover_image_url, banner_image_url, status, sort_order, created_at, price')
       .eq('status', 'published')
@@ -193,7 +193,8 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       let courses: any[] = [];
 
       if (shelf.mode === 'manual') {
-        const { data: shelfCourses } = await supabase
+        // Use admin client to ensure all shelf_courses links are fetched
+        const { data: shelfCourses } = await supabaseAdmin
           .from('shelf_courses')
           .select('course_id, sort_order')
           .eq('shelf_id', shelf.id)
