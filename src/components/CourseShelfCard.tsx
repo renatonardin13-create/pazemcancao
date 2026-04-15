@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { BookOpen, Play, Lock, Clock, Gift, BookOpenCheck } from "lucide-react";
+import { BookOpen, Play, Lock, Clock, Gift, BookOpenCheck, ShoppingCart } from "lucide-react";
 import { resolveCourseLesson } from "@/lib/resolve-course-lesson.functions";
 import { useState, useCallback, memo } from "react";
 import { OptimizedImage } from "@/components/OptimizedImage";
@@ -165,12 +165,24 @@ export const CourseShelfCard = memo(function CourseShelfCard({
             </span>
           )}
 
-          {/* Lock overlay center */}
+          {/* Premium lock overlay center */}
           {isLocked && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center z-10 gap-2">
-              <div className="flex h-14 w-14 rounded-2xl items-center justify-center backdrop-blur-sm bg-black/30 border border-white/10">
-                <Lock className="h-6 w-6 text-white/50" />
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center z-10 gap-2.5">
+              <div className="relative">
+                <div className="absolute -inset-3 rounded-full bg-gold/10 blur-xl animate-pulse" />
+                <div className="relative flex h-14 w-14 rounded-2xl items-center justify-center bg-gradient-to-br from-gold/20 to-amber-600/10 border border-gold/25 shadow-lg shadow-gold/10">
+                  <Lock className="h-6 w-6 text-gold/70" />
+                </div>
               </div>
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold/60">
+                Conteúdo Premium
+              </span>
+              {salesUrl && (
+                <span className="text-[9px] font-medium text-gold/35 flex items-center gap-1 mt-0.5">
+                  <ShoppingCart className="h-2.5 w-2.5" />
+                  Toque para desbloquear
+                </span>
+              )}
             </div>
           )}
 
@@ -201,7 +213,7 @@ export const CourseShelfCard = memo(function CourseShelfCard({
               {isLocked && (
                 <span className="text-[9px] sm:text-[10px] font-semibold tracking-[0.15em] uppercase text-gold/55">
                   <Lock className="inline h-2.5 w-2.5 mr-0.5" />
-                  Bloqueado
+                  Premium
                 </span>
               )}
               {!isLocked && hasProgress && (

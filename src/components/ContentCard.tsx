@@ -149,17 +149,20 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
             </div>
           )}
 
-          {/* Lock overlay */}
+          {/* Premium lock overlay */}
           {isLocked && !isPendingRelease && !isRuleLocked && (
-            <div className="absolute inset-0 bg-black/50 backdrop-blur-[1px] flex flex-col items-center justify-center gap-2.5 z-10">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gold/10 border border-gold/20 shadow-lg shadow-gold/5">
-                <Lock className="h-5 w-5 text-gold/60" />
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex flex-col items-center justify-center gap-3 z-10">
+              <div className="relative">
+                <div className="absolute -inset-3 rounded-full bg-gold/10 blur-xl animate-pulse" />
+                <div className="relative flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br from-gold/15 to-amber-600/10 border border-gold/25 shadow-lg shadow-gold/10">
+                  <Lock className="h-6 w-6 text-gold/65" />
+                </div>
               </div>
-              <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-gold/55">
-                Desbloqueie agora
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold/60">
+                Acesso Exclusivo
               </span>
               {item.sales_page_url && (
-                <span className="text-[9px] font-medium text-gold/35 flex items-center gap-1">
+                <span className="text-[9px] font-medium text-gold/40 flex items-center gap-1.5 bg-gold/[0.06] border border-gold/12 rounded-full px-3 py-1">
                   <ShoppingCart className="h-2.5 w-2.5" />
                   Toque para garantir
                 </span>
