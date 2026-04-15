@@ -34,6 +34,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { EbookReader } from "@/components/EbookReader";
+import { UpsellSection } from "@/components/UpsellSection";
 
 export const Route = createFileRoute(
   "/_authenticated/cursos/$courseId/aula/$lessonId"
