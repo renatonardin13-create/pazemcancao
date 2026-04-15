@@ -319,38 +319,76 @@ function ColorsTab({ settings, onSave, saving }: { settings: any; onSave: (v: an
 }
 
 /* ─── General ─── */
+const PROJECT_MODES = [
+  { value: "hibrido", label: "Híbrido", desc: "Música + Cursos + Ebooks + Outros" },
+  { value: "somente_musica", label: "Somente Música", desc: "Louvores, categorias e player" },
+  { value: "somente_cursos", label: "Somente Cursos", desc: "Cursos, módulos, aulas e ebooks" },
+] as const;
+
 function GeneralTab({ settings, onSave, saving }: { settings: any; onSave: (v: any) => void; saving: boolean }) {
   const [welcome, setWelcome] = useState(settings.welcome_message || "");
   const [footer, setFooter] = useState(settings.footer_text || "");
   const [email, setEmail] = useState(settings.support_email || "");
+  const [projectMode, setProjectMode] = useState(settings.project_mode || "hibrido");
 
   return (
-    <Card className="bg-card border-border/30">
-      <CardContent className="p-6 space-y-5">
-        <div>
-          <h3 className="text-lg font-semibold text-foreground">Configurações Gerais</h3>
-          <p className="text-sm text-muted-foreground">Configure mensagens e informações da plataforma</p>
-        </div>
-        <div className="space-y-4">
+    <div className="space-y-6">
+      {/* Project Mode */}
+      <Card className="bg-card border-gold/20">
+        <CardContent className="p-6 space-y-5">
           <div>
-            <Label className="text-sm font-semibold">Mensagem de Boas-vindas</Label>
-            <Textarea value={welcome} onChange={(e) => setWelcome(e.target.value)} className="mt-1.5 min-h-[80px]" />
+            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <Settings className="h-5 w-5 text-gold" /> Modo do Projeto
+            </h3>
+            <p className="text-sm text-muted-foreground">Define quais módulos ficam visíveis para os alunos</p>
           </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {PROJECT_MODES.map((m) => (
+              <button
+                key={m.value}
+                type="button"
+                onClick={() => setProjectMode(m.value)}
+                className={`p-4 rounded-xl border-2 text-left transition-all duration-200 ${
+                  projectMode === m.value
+                    ? "border-gold bg-gold/10 ring-1 ring-gold/20"
+                    : "border-border/20 hover:border-border/40 bg-card/50"
+                }`}
+              >
+                <p className={`text-sm font-bold ${projectMode === m.value ? "text-gold" : "text-foreground"}`}>{m.label}</p>
+                <p className="text-xs text-muted-foreground mt-1">{m.desc}</p>
+              </button>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* General settings */}
+      <Card className="bg-card border-border/30">
+        <CardContent className="p-6 space-y-5">
           <div>
-            <Label className="text-sm font-semibold">Texto do Rodapé</Label>
-            <Input value={footer} onChange={(e) => setFooter(e.target.value)} className="mt-1.5" />
+            <h3 className="text-lg font-semibold text-foreground">Configurações Gerais</h3>
+            <p className="text-sm text-muted-foreground">Configure mensagens e informações da plataforma</p>
           </div>
-          <div>
-            <Label className="text-sm font-semibold">E-mail de Suporte</Label>
-            <Input value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1.5" type="email" />
+          <div className="space-y-4">
+            <div>
+              <Label className="text-sm font-semibold">Mensagem de Boas-vindas</Label>
+              <Textarea value={welcome} onChange={(e) => setWelcome(e.target.value)} className="mt-1.5 min-h-[80px]" />
+            </div>
+            <div>
+              <Label className="text-sm font-semibold">Texto do Rodapé</Label>
+              <Input value={footer} onChange={(e) => setFooter(e.target.value)} className="mt-1.5" />
+            </div>
+            <div>
+              <Label className="text-sm font-semibold">E-mail de Suporte</Label>
+              <Input value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1.5" type="email" />
+            </div>
           </div>
-        </div>
-        <Button onClick={() => {
-          if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-            toast.error("E-mail de suporte inválido");
-            return;
-          }
-          onSave({ welcome_message: welcome, footer_text: footer, support_email: email });
+          <Button onClick={() => {
+            if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+              toast.error("E-mail de suporte inválido");
+              return;
+            }
+            onSave({ welcome_message: welcome, footer_text: footer, support_email: email, project_mode: projectMode });
         }} disabled={saving} className="w-full gap-2">
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Salvar Configurações
         </Button>
