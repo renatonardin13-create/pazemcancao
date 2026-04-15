@@ -285,10 +285,11 @@ export const createTrialUser = createServerFn({ method: 'POST' })
     const generatedPassword = 'Paz' + Math.random().toString(36).slice(2, 8) + '!';
 
     // Create auth user if doesn't exist
-    const { data: userList } = await supabaseAdmin.auth.admin.listUsers();
-    const existingUser = userList?.users?.find(
-      (u) => u.email?.toLowerCase() === email
-    );
+    let existingUser = null;
+    try {
+      const { data: userList } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+      existingUser = userList?.users?.find((u) => u.email?.toLowerCase() === email) ?? null;
+    } catch { /* ignore */ }
 
     let authUserId: string;
     if (!existingUser) {
@@ -296,17 +297,33 @@ export const createTrialUser = createServerFn({ method: 'POST' })
         email,
         password: generatedPassword,
         email_confirm: true,
+        user_metadata: { full_name: data.nome },
       });
-      if (authErr) throw new Error(`Erro ao criar conta: ${authErr.message}`);
-      authUserId = created.user.id;
-    } else {
-      // Update password for existing user
-      await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
+      if (authErr) {
+        if (authErr.message?.includes('already been registered') || authErr.message?.includes('already exists')) {
+          const { data: retryList } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+          existingUser = retryList?.users?.find((u) => u.email?.toLowerCase() === email) ?? null;
+          if (!existingUser) throw new Error(`Erro ao criar conta: ${authErr.message}`);
+        } else {
+          throw new Error(`Erro ao criar conta: ${authErr.message}`);
+        }
+      } else {
+        authUserId = created.user.id;
+      }
+    }
+
+    if (existingUser) {
+      const { error: updateErr } = await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
         password: generatedPassword,
         email_confirm: true,
+        ban_duration: 'none',
+        user_metadata: { full_name: data.nome },
       });
+      if (updateErr) console.error('Error updating auth user:', updateErr);
       authUserId = existingUser.id;
     }
+
+    authUserId = authUserId!;
 
     // Ensure profile exists
     await supabaseAdmin
