@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listAdminTracks, listAdminTrackCategories, deleteTrack, updateTrack, regenerateCover } from "@/lib/admin-tracks.functions";
 import { sendBonusNotification } from "@/lib/notifications.functions";
 import { Music, Plus, Trash2, ToggleLeft, ToggleRight, ExternalLink, ImageIcon, Loader2, Pencil, Gift, Bell, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { AdminActionButtons } from "@/components/AdminActionButtons";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { AddTrackForm } from "@/components/AddTrackForm";

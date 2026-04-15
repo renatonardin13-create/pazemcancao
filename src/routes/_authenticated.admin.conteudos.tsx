@@ -15,6 +15,7 @@ import {
   BookOpen, Video, GraduationCap, FileText, Plus, Trash2,
   ToggleLeft, ToggleRight, Pencil, Loader2, ExternalLink,
 } from "lucide-react";
+import { AdminActionButtons } from "@/components/AdminActionButtons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
