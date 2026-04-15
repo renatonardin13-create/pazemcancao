@@ -688,37 +688,65 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="absolute inset-0 z-20 flex items-end justify-center rounded-md overflow-hidden"
+                transition={{ duration: 0.8 }}
+                className="absolute inset-0 z-20 flex items-center justify-center rounded-md overflow-hidden"
               >
-                {/* Gradient fade from transparent to solid */}
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1a1814]/70 to-[#1a1814]/98" />
+                {/* Gradient fade — cinematic */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1a1814]/60 to-[#1a1814]" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1a1814] via-transparent to-transparent opacity-40" />
                 
-                <div className="relative z-10 flex flex-col items-center gap-5 pb-12 px-6 text-center max-w-md">
-                  <div className="h-16 w-16 rounded-2xl bg-gold/10 border border-gold/20 flex items-center justify-center shadow-lg shadow-gold/5">
-                    <Lock className="h-7 w-7 text-gold/70" />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <h3 className="text-lg font-serif font-bold text-stone-200">
-                      Continue lendo para acessar o conteúdo completo
-                    </h3>
-                    <p className="text-sm text-stone-400/70">
-                      Você leu as primeiras {freePageLimit} páginas gratuitamente. Desbloqueie o ebook completo para continuar sua jornada.
-                    </p>
-                  </div>
-
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      if (salesPageUrl) {
-                        window.open(salesPageUrl, "_blank", "noopener");
-                      }
-                    }}
-                    className="flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-gold text-gold-foreground font-bold text-sm uppercase tracking-wider shadow-lg shadow-gold/25 hover:brightness-110 hover:shadow-xl hover:shadow-gold/35 hover:scale-[1.02] transition-all"
+                <div className="relative z-10 flex flex-col items-center gap-6 px-8 text-center max-w-lg">
+                  {/* Glow ring */}
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 0.3, duration: 0.6, ease: "easeOut" }}
+                    className="relative"
                   >
-                    <ShoppingCart className="h-4 w-4" />
-                    Desbloquear agora
-                  </button>
+                    <div className="absolute -inset-4 rounded-full bg-gold/5 blur-2xl" />
+                    <div className="h-20 w-20 rounded-full bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/25 flex items-center justify-center shadow-2xl shadow-gold/10">
+                      <BookOpen className="h-8 w-8 text-gold/80" />
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ y: 16, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.5, duration: 0.6 }}
+                    className="space-y-3"
+                  >
+                    <h3 className="text-xl sm:text-2xl font-serif font-bold text-stone-100 leading-tight">
+                      Esse conteúdo pode transformar sua vida espiritual
+                    </h3>
+                    <p className="text-sm sm:text-base text-stone-400/80 leading-relaxed max-w-sm mx-auto">
+                      Você experimentou as primeiras {freePageLimit} páginas. O melhor ainda está por vir — continue essa jornada de fé e cura.
+                    </p>
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ y: 12, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.7, duration: 0.5 }}
+                    className="flex flex-col items-center gap-3 w-full"
+                  >
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (salesPageUrl) {
+                          window.open(salesPageUrl, "_blank", "noopener");
+                        }
+                      }}
+                      className="group relative flex items-center justify-center gap-3 w-full max-w-xs px-8 py-4 rounded-2xl bg-gradient-to-r from-gold to-amber-500 text-[#1a1814] font-bold text-sm uppercase tracking-[0.15em] shadow-xl shadow-gold/30 hover:shadow-2xl hover:shadow-gold/40 hover:scale-[1.03] active:scale-[0.98] transition-all duration-300"
+                    >
+                      <div className="absolute inset-0 rounded-2xl bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <BookOpen className="h-4.5 w-4.5 relative z-10" />
+                      <span className="relative z-10">Quero continuar lendo</span>
+                    </button>
+                    
+                    <span className="text-[10px] text-stone-500/40 tracking-wider uppercase">
+                      Acesso completo e imediato
+                    </span>
+                  </motion.div>
                 </div>
               </motion.div>
             )}
