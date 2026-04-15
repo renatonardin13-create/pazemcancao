@@ -42,6 +42,11 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
     ? Math.max(0, Math.ceil((new Date(item.unlockDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : item.release_days || null;
 
+  // Dynamic conversion badges
+  const isNew = (Date.now() - new Date(item.created_at).getTime()) < 14 * 24 * 60 * 60 * 1000;
+  const popularity = item._popularity || 0; // injected from parent if available
+  const isBestSeller = popularity >= 10;
+
   const contentState = getContentState(item, hasAccess, progress);
 
   const progressPercent = contentState === 'completed' ? 100
@@ -117,10 +122,18 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
              "Material"}
           </span>
 
-          {/* Badge text / free badge — top left */}
+          {/* Badge text / dynamic badges — top left */}
           {item.badge_text ? (
             <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold/15 backdrop-blur-md border border-gold/20 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] text-gold/70">
               {item.badge_text}
+            </span>
+          ) : isBestSeller ? (
+            <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/15 backdrop-blur-md border border-amber-400/20 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] text-amber-400/70">
+              🔥 Mais vendido
+            </span>
+          ) : isNew && !item.is_free ? (
+            <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/15 backdrop-blur-md border border-emerald-400/20 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] text-emerald-400/70">
+              ✨ Novo
             </span>
           ) : item.is_free ? (
             <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-player-completed/15 backdrop-blur-md border border-player-completed/20 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] text-player-completed/70">
@@ -143,8 +156,14 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
                 <Lock className="h-5 w-5 text-gold/60" />
               </div>
               <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-gold/55">
-                Conteúdo Especial
+                Desbloqueie agora
               </span>
+              {item.sales_page_url && (
+                <span className="text-[9px] font-medium text-gold/35 flex items-center gap-1">
+                  <ShoppingCart className="h-2.5 w-2.5" />
+                  Toque para garantir
+                </span>
+              )}
             </div>
           )}
 
