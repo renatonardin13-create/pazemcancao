@@ -481,12 +481,16 @@ function TrackCard({
   const isThis = currentTrack?.id === track.id;
   const isPlaying = isThis && playing;
   const gradient = categoryGradients[track.category] || "from-sky-900/40 via-blue-950/30 to-slate-950/50";
+  // Track is not yet active (future/coming soon) — not the same as user-locked
+  const isInactive = !track.is_active;
 
   // Check if bonus track is still locked (release date in the future or no date set)
   const isBonusLocked = track.is_bonus && (
     !track.bonus_release_date || new Date(track.bonus_release_date + 'T00:00:00') > new Date()
   );
-  const effectiveLocked = isLocked || isBonusLocked;
+
+  // Future track (inactive) or bonus not yet released or user blocked
+  const effectiveLocked = isLocked || isBonusLocked || isInactive;
 
   const bonusCountdown = (() => {
     if (!track.bonus_release_date) return null;
@@ -507,7 +511,9 @@ function TrackCard({
     : { to: "/musicas/$trackId" as const, params: { trackId: track.id } };
 
   const handleLockedClick = () => {
-    if (isBonusLocked) {
+    if (isInactive) {
+      toast.info("🕐 Este louvor estará disponível em breve!");
+    } else if (isBonusLocked) {
       toast.info(bonusCountdown
         ? `🎁 ${bonusCountdown}`
         : "🎁 Este bônus ainda não tem data de liberação definida"
