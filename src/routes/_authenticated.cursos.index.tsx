@@ -10,7 +10,7 @@ import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { CourseShelfCard } from "@/components/CourseShelfCard";
 import { motion } from "framer-motion";
-import { BookOpen, Search, ArrowRight, PlayCircle, Heart, Play, Layers, CheckCircle2, GraduationCap, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { BookOpen, Search, ArrowRight, PlayCircle, Heart, Play, Layers, Unlock, Clock, Gift, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useMemo, useRef, useCallback } from "react";
 import { useDragScroll } from "@/hooks/use-drag-scroll";
 import { Input } from "@/components/ui/input";
@@ -44,9 +44,9 @@ function MeusCoursosPage() {
     staleTime: 5_000,
   });
 
-  const { data: favData } = useQuery({
-    queryKey: ["user-favorites-count"],
-    queryFn: () => getUserFavoritesCount(),
+  const { data: libStats } = useQuery({
+    queryKey: ["library-stats"],
+    queryFn: () => getLibraryStats(),
     staleTime: 30_000,
   });
 
@@ -225,10 +225,10 @@ function MeusCoursosPage() {
                   <ShelfSection delay={0.3}>
                     <ShelfHeader title="Minha biblioteca" />
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                      <StatCard label="Cursos" value={stats.total} />
-                      <StatCard label="Em andamento" value={stats.inProgress} />
-                      <StatCard label="Concluídos" value={stats.completed} />
-                      <StatCard label="Favoritos" value={favData?.count ?? 0} icon={<Heart className="h-3 w-3" />} />
+                      <StatCard label="Liberados" value={libStats?.unlocked ?? 0} icon={<Unlock className="h-3 w-3" />} />
+                      <StatCard label="Em Breve" value={libStats?.upcoming ?? 0} icon={<Clock className="h-3 w-3" />} />
+                      <StatCard label="Favoritos" value={libStats?.favorites ?? 0} icon={<Heart className="h-3 w-3" />} />
+                      <StatCard label="Bônus" value={libStats?.bonus ?? 0} icon={<Gift className="h-3 w-3" />} />
                     </div>
                   </ShelfSection>
 
