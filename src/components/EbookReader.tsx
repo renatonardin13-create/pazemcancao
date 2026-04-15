@@ -10,6 +10,10 @@ import {
   Loader2,
   ZoomIn,
   ZoomOut,
+  Play,
+  Pause,
+  Square,
+  Headphones,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
