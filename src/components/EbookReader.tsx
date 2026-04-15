@@ -568,6 +568,20 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
           background: "radial-gradient(ellipse at center, #221f1a 0%, #1a1814 60%, #141210 100%)",
         }}
       >
+        {/* Resume indicator */}
+        <AnimatePresence>
+          {resumedFrom !== null && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 rounded-xl border border-gold/20 bg-stone-900/80 backdrop-blur-xl px-4 py-2 shadow-lg"
+            >
+              <BookOpen className="h-3.5 w-3.5 text-gold/70" />
+              <span className="text-[11px] text-stone-300/80 font-medium">Continuando de onde você parou</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Book spread */}
         <AnimatePresence mode="wait" custom={direction}>
