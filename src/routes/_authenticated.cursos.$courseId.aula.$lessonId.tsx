@@ -33,6 +33,7 @@ import {
   List,
   ChevronUp,
 } from "lucide-react";
+import { EbookReader } from "@/components/EbookReader";
 
 export const Route = createFileRoute(
   "/_authenticated/cursos/$courseId/aula/$lessonId"
@@ -477,35 +478,11 @@ function LessonDetailPage() {
               animate={{ opacity: 1 }}
               className="w-full"
             >
-              <div className="bg-card/3">
-                <iframe
-                  src={contentUrl}
-                  className="w-full h-[75vh]"
-                  title={lesson.title}
-                />
-                <div className="flex items-center justify-center gap-3 p-4 border-t border-border/8">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-2 text-xs border-border/15"
-                    onClick={() => window.open(contentUrl, "_blank")}
-                  >
-                    <ExternalLink className="h-3.5 w-3.5" />
-                    Abrir em nova aba
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-2 text-xs border-border/15"
-                    onClick={() =>
-                      handleDownload(contentUrl, `${lesson.title}.pdf`)
-                    }
-                  >
-                    <Download className="h-3.5 w-3.5" />
-                    Baixar
-                  </Button>
-                </div>
-              </div>
+              <EbookReader
+                pdfUrl={contentUrl}
+                title={lesson.title}
+                onBack={() => navigate({ to: "/cursos/$courseId", params: { courseId } })}
+              />
             </motion.div>
           )}
 
