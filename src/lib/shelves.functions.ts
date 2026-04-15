@@ -2,140 +2,260 @@ import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
+type ShelfRecord = {
+  id: string;
+  name: string;
+  is_active: boolean;
+  mode: string;
+  auto_criteria: string | null;
+  sort_order: number;
+  exibir_na_vitrine?: boolean;
+};
+
+type ShelfCourseLink = {
+  shelf_id: string;
+  course_id: string;
+  sort_order: number;
+};
+
+type CourseRecord = {
+  id: string;
+  title: string;
+  short_description: string | null;
+  cover_image_url: string | null;
+  banner_image_url: string | null;
+  status: string;
+  sort_order: number;
+  created_at: string;
+  price: number;
+};
+
+function resolveAutoShelfCourses(
+  shelf: ShelfRecord,
+  publishedCourses: CourseRecord[],
+  enrichCourse: (course: CourseRecord) => any,
+  salesCountMap: Map<string, number>,
+  enrolledCourseIds: Set<string>,
+) {
+  switch (shelf.auto_criteria) {
+    case 'recent':
+      return [...publishedCourses]
+        .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+        .slice(0, 20)
+        .map(enrichCourse);
+    case 'best_selling':
+      return [...publishedCourses]
+        .sort((a, b) => {
+          const salesDiff = (salesCountMap.get(b.id) || 0) - (salesCountMap.get(a.id) || 0);
+          if (salesDiff !== 0) return salesDiff;
+          return (a.sort_order || 0) - (b.sort_order || 0);
+        })
+        .slice(0, 20)
+        .map(enrichCourse);
+    case 'featured':
+      return publishedCourses
+        .filter((course) => (course.sort_order || 0) <= 5)
+        .slice(0, 20)
+        .map(enrichCourse);
+    case 'enrolled':
+      return publishedCourses
+        .filter((course) => enrolledCourseIds.has(course.id))
+        .map(enrichCourse);
+    default:
+      return publishedCourses.slice(0, 20).map(enrichCourse);
+  }
+}
+
 // ── Get shelves, promo banners, and banner config for the student area ──
 export const getStudentShelves = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
 
-    // Get user email
     const { data: userData } = await supabase.auth.getUser();
     const email = userData?.user?.email?.toLowerCase();
 
-    // Check if admin
-    const { data: adminRole } = await supabase
+    const { data: adminRole, error: adminRoleError } = await supabase
       .from('user_roles')
       .select('role')
       .eq('user_id', userId)
       .eq('role', 'admin')
       .maybeSingle();
 
+    if (adminRoleError) throw new Error(adminRoleError.message);
+
     const isAdmin = !!adminRole || email === 'renatonardin13@gmail.com';
 
-    // Get active shelves — use admin client to ensure all active shelves are returned
-    const { data: shelves, error: shelvesErr } = await supabaseAdmin
+    const { data: shelfRows, error: shelvesErr } = await supabaseAdmin
       .from('shelves')
-      .select('id, name, mode, auto_criteria, sort_order')
+      .select('*')
       .eq('is_active', true)
       .order('sort_order', { ascending: true });
 
     if (shelvesErr) throw new Error(shelvesErr.message);
 
-    // Get active promo banners
-    const { data: promoBanners } = await supabase
+    const shelves = (shelfRows || []).filter(
+      (shelf: ShelfRecord) => shelf.exibir_na_vitrine !== false,
+    ) as ShelfRecord[];
+
+    const shelfIds = shelves.map((shelf) => shelf.id);
+    let shelfCourseLinks: ShelfCourseLink[] = [];
+
+    if (shelfIds.length > 0) {
+      const { data: shelfCourseRows, error: shelfCoursesErr } = await supabaseAdmin
+        .from('shelf_courses')
+        .select('shelf_id, course_id, sort_order')
+        .in('shelf_id', shelfIds)
+        .order('sort_order', { ascending: true });
+
+      if (shelfCoursesErr) throw new Error(shelfCoursesErr.message);
+      shelfCourseLinks = (shelfCourseRows || []) as ShelfCourseLink[];
+    }
+
+    const linkedCourseIds = Array.from(new Set(shelfCourseLinks.map((link) => link.course_id)));
+    const hasAutoShelves = shelves.some((shelf) => shelf.mode === 'auto');
+
+    let publishedCourses: CourseRecord[] = [];
+    if (hasAutoShelves || linkedCourseIds.length > 0) {
+      let coursesQuery = supabaseAdmin
+        .from('courses')
+        .select('id, title, short_description, cover_image_url, banner_image_url, status, sort_order, created_at, price')
+        .eq('status', 'published')
+        .order('sort_order', { ascending: true });
+
+      if (!hasAutoShelves) {
+        coursesQuery = coursesQuery.in('id', linkedCourseIds);
+      }
+
+      const { data: allCourses, error: coursesErr } = await coursesQuery;
+      if (coursesErr) throw new Error(coursesErr.message);
+      publishedCourses = (allCourses || []) as CourseRecord[];
+    }
+
+    const publishedCourseIds = publishedCourses.map((course) => course.id);
+
+    const { data: promoBanners, error: promoBannersError } = await supabase
       .from('promo_banners')
       .select('id, title, image_url, link_url, position_after_shelf, sort_order, is_active')
       .eq('is_active', true)
       .order('sort_order', { ascending: true });
 
-    // Get user enrollments with status and expiration info
-    const { data: enrollments } = await supabase
+    if (promoBannersError) throw new Error(promoBannersError.message);
+
+    const { data: enrollments, error: enrollmentsError } = await supabase
       .from('enrollments')
       .select('course_id, status, expires_at')
       .eq('user_id', userId);
 
-    // Active enrollments: status = active AND not expired
+    if (enrollmentsError) throw new Error(enrollmentsError.message);
+
     const activeEnrollmentIds = new Set<string>();
     const blockedEnrollmentIds = new Set<string>();
     const expiredEnrollmentIds = new Set<string>();
 
-    for (const e of enrollments || []) {
-      const isExpired = e.expires_at && new Date(e.expires_at) < new Date();
-      if (e.status === 'active' && !isExpired) {
-        activeEnrollmentIds.add(e.course_id);
-      } else if (e.status === 'blocked') {
-        blockedEnrollmentIds.add(e.course_id);
-      } else if (isExpired || e.status === 'expired') {
-        expiredEnrollmentIds.add(e.course_id);
+    for (const enrollment of enrollments || []) {
+      const isExpired = !!enrollment.expires_at && new Date(enrollment.expires_at) < new Date();
+
+      if (enrollment.status === 'active' && !isExpired) {
+        activeEnrollmentIds.add(enrollment.course_id);
+      } else if (enrollment.status === 'blocked') {
+        blockedEnrollmentIds.add(enrollment.course_id);
+      } else if (isExpired || enrollment.status === 'expired') {
+        expiredEnrollmentIds.add(enrollment.course_id);
       }
     }
 
     const enrolledCourseIds = activeEnrollmentIds;
 
-    // Get all published courses — use admin client to bypass RLS and ensure all published courses are visible
-    const { data: allCourses } = await supabaseAdmin
-      .from('courses')
-      .select('id, title, short_description, cover_image_url, banner_image_url, status, sort_order, created_at, price')
-      .eq('status', 'published')
-      .order('sort_order', { ascending: true });
+    let lessonCounts: Array<{ course_id: string }> = [];
+    if (publishedCourseIds.length > 0) {
+      const { data, error } = await supabaseAdmin
+        .from('lessons')
+        .select('course_id')
+        .in('course_id', publishedCourseIds);
 
-    const publishedCourseIds = (allCourses || []).map((c: any) => c.id);
+      if (error) throw new Error(error.message);
+      lessonCounts = data || [];
+    }
 
-    // Get lesson counts per course
-    const { data: lessonCounts } = await supabaseAdmin
-      .from('lessons')
-      .select('course_id')
-      .in('course_id', publishedCourseIds.length > 0 ? publishedCourseIds : ['__none__']);
+    let previewLessons: Array<{ course_id: string }> = [];
+    if (publishedCourseIds.length > 0) {
+      const { data, error } = await supabase
+        .from('lessons')
+        .select('course_id')
+        .in('course_id', publishedCourseIds)
+        .eq('is_free_preview', true);
 
-    // Show ALL published courses (even without lessons yet)
-    const publishedCourses = allCourses || [];
+      if (error) throw new Error(error.message);
+      previewLessons = data || [];
+    }
 
-    // Courses with free preview lessons
-    const { data: previewLessons } = await supabase
-      .from('lessons')
-      .select('course_id')
-      .eq('is_free_preview', true);
+    const previewCourseIds = new Set(previewLessons.map((lesson) => lesson.course_id));
 
-    const previewCourseIds = new Set((previewLessons || []).map((lesson: any) => lesson.course_id));
+    let integrations: Array<{ course_id: string; checkout_url: string | null }> = [];
+    if (publishedCourseIds.length > 0) {
+      const { data, error } = await supabaseAdmin
+        .from('course_integrations')
+        .select('course_id, checkout_url')
+        .eq('is_enabled', true)
+        .in('course_id', publishedCourseIds);
 
-    // Courses with sales strategy configured
-    const { data: integrations } = await supabaseAdmin
-      .from('course_integrations')
-      .select('course_id, is_enabled, checkout_url')
-      .eq('is_enabled', true);
+      if (error) throw new Error(error.message);
+      integrations = data || [];
+    }
 
     const integrationMap = new Map(
-      (integrations || [])
-        .filter((item: any) => !!item.checkout_url)
-        .map((item: any) => [item.course_id, item.checkout_url])
+      integrations
+        .filter((item) => !!item.checkout_url)
+        .map((item) => [item.course_id, item.checkout_url]),
     );
 
-    // Best-selling criteria based on released/enrolled students
-    const { data: allActiveEnrollments } = await supabaseAdmin
-      .from('enrollments')
-      .select('course_id')
-      .eq('status', 'active');
+    let allActiveEnrollments: Array<{ course_id: string }> = [];
+    if (publishedCourseIds.length > 0) {
+      const { data, error } = await supabaseAdmin
+        .from('enrollments')
+        .select('course_id')
+        .eq('status', 'active')
+        .in('course_id', publishedCourseIds);
+
+      if (error) throw new Error(error.message);
+      allActiveEnrollments = data || [];
+    }
 
     const salesCountMap = new Map<string, number>();
-    for (const enrollment of allActiveEnrollments || []) {
+    for (const enrollment of allActiveEnrollments) {
       const current = salesCountMap.get(enrollment.course_id) || 0;
       salesCountMap.set(enrollment.course_id, current + 1);
     }
 
-    // Get lesson counts per course for progress calculation
     const lessonCountMap = new Map<string, number>();
-    for (const l of lessonCounts || []) {
-      lessonCountMap.set(l.course_id, (lessonCountMap.get(l.course_id) || 0) + 1);
+    for (const lesson of lessonCounts) {
+      lessonCountMap.set(lesson.course_id, (lessonCountMap.get(lesson.course_id) || 0) + 1);
     }
 
-    // Get user's lesson progress for enrolled courses
     const enrolledIds = Array.from(activeEnrollmentIds);
     const completedLessonsMap = new Map<string, number>();
+
     if (enrolledIds.length > 0) {
-      const { data: progressData } = await supabase
+      const { data: progressData, error: progressError } = await supabase
         .from('lesson_progress')
         .select('course_id, completed')
         .eq('user_id', userId)
         .in('course_id', enrolledIds);
 
-      for (const p of progressData || []) {
-        if (p.completed) {
-          completedLessonsMap.set(p.course_id, (completedLessonsMap.get(p.course_id) || 0) + 1);
+      if (progressError) throw new Error(progressError.message);
+
+      for (const progress of progressData || []) {
+        if (progress.completed) {
+          completedLessonsMap.set(
+            progress.course_id,
+            (completedLessonsMap.get(progress.course_id) || 0) + 1,
+          );
         }
       }
     }
 
-    const enrichCourse = (course: any) => {
+    const enrichCourse = (course: CourseRecord) => {
       const isEnrolled = enrolledCourseIds.has(course.id) || isAdmin;
       const isBlocked = blockedEnrollmentIds.has(course.id);
       const isExpired = expiredEnrollmentIds.has(course.id);
@@ -143,12 +263,10 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       const checkoutUrl = integrationMap.get(course.id) || null;
       const hasCheckout = !!checkoutUrl;
 
-      // Progress calculation
       const totalLessons = lessonCountMap.get(course.id) || 0;
       const completedLessons = completedLessonsMap.get(course.id) || 0;
       const progressPct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
-      // Determine access state
       let accessState: string;
       if (isEnrolled) {
         if (progressPct >= 100 && totalLessons > 0) {
@@ -184,51 +302,33 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       };
     };
 
-    const courseMap = new Map(publishedCourses.map((course: any) => [course.id, enrichCourse(course)]));
+    const courseMap = new Map(
+      publishedCourses.map((course) => [course.id, enrichCourse(course)]),
+    );
 
-    // For each shelf, resolve courses — allow same course in multiple shelves
+    const shelfCourseMap = new Map<string, ShelfCourseLink[]>();
+    for (const link of shelfCourseLinks) {
+      const existing = shelfCourseMap.get(link.shelf_id) || [];
+      existing.push(link);
+      shelfCourseMap.set(link.shelf_id, existing);
+    }
+
+    for (const links of shelfCourseMap.values()) {
+      links.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
+    }
+
     const result = [];
 
-    for (const shelf of shelves || []) {
-      let courses: any[] = [];
+    for (const shelf of shelves) {
+      const linkedCourses = (shelfCourseMap.get(shelf.id) || [])
+        .map((link) => courseMap.get(link.course_id))
+        .filter(Boolean);
 
-      if (shelf.mode === 'manual') {
-        // Use admin client to ensure all shelf_courses links are fetched
-        const { data: shelfCourses } = await supabaseAdmin
-          .from('shelf_courses')
-          .select('course_id, sort_order')
-          .eq('shelf_id', shelf.id)
-          .order('sort_order', { ascending: true });
-
-        courses = (shelfCourses || [])
-          .map((sc: any) => courseMap.get(sc.course_id))
-          .filter(Boolean);
-      } else {
-        switch (shelf.auto_criteria) {
-          case 'recent':
-            courses = [...publishedCourses].sort(
-              (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-            ).slice(0, 20).map(enrichCourse);
-            break;
-          case 'best_selling':
-            courses = [...publishedCourses]
-              .sort((a: any, b: any) => {
-                const salesDiff = (salesCountMap.get(b.id) || 0) - (salesCountMap.get(a.id) || 0);
-                if (salesDiff !== 0) return salesDiff;
-                return a.sort_order - b.sort_order;
-              })
-              .slice(0, 20).map(enrichCourse);
-            break;
-          case 'featured':
-            courses = publishedCourses.filter((c: any) => c.sort_order <= 5).slice(0, 20).map(enrichCourse);
-            break;
-          case 'enrolled':
-            courses = publishedCourses.filter((c: any) => enrolledCourseIds.has(c.id)).map(enrichCourse);
-            break;
-          default:
-            courses = publishedCourses.slice(0, 20).map(enrichCourse);
-        }
-      }
+      const courses = linkedCourses.length > 0
+        ? linkedCourses
+        : shelf.mode === 'auto'
+          ? resolveAutoShelfCourses(shelf, publishedCourses, enrichCourse, salesCountMap, enrolledCourseIds)
+          : [];
 
       if (courses.length > 0) {
         result.push({
@@ -240,24 +340,23 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       }
     }
 
-    // Load hero banner config from platform_settings
-    const { data: bannerSetting } = await supabaseAdmin
+    const { data: bannerSetting, error: bannerError } = await supabaseAdmin
       .from('platform_settings')
       .select('value')
       .eq('key', 'hero_banner')
       .maybeSingle();
+
+    if (bannerError) throw new Error(bannerError.message);
 
     const bannerConfig = bannerSetting?.value as any;
     let featuredCourse: any = null;
 
     if (bannerConfig?.enabled !== false) {
       if (bannerConfig?.course_id) {
-        // Use the configured course
         const configured = courseMap.get(bannerConfig.course_id);
         if (configured) {
           featuredCourse = {
             ...configured,
-            // Override with admin-configured values if present
             ...(bannerConfig.title ? { display_title: bannerConfig.title } : {}),
             ...(bannerConfig.subtitle ? { display_subtitle: bannerConfig.subtitle } : {}),
             ...(bannerConfig.image_url ? { banner_image_url: bannerConfig.image_url } : {}),
@@ -266,7 +365,6 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
           };
         }
       } else if (bannerConfig?.image_url) {
-        // Custom image without course link
         featuredCourse = {
           id: '__custom_banner__',
           title: bannerConfig.title || '',
@@ -277,11 +375,8 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
           access_state: 'available',
         };
       } else {
-        // Fallback: first shelf course with an image
         featuredCourse = result.length > 0
-          ? result[0].courses.find(
-              (c: any) => c.banner_image_url || c.cover_image_url
-            ) || null
+          ? result[0].courses.find((course: any) => course.banner_image_url || course.cover_image_url) || null
           : null;
       }
     }
