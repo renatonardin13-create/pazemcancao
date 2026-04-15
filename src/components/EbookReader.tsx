@@ -15,6 +15,9 @@ import {
   Square,
   Headphones,
   CheckCircle2,
+  Settings,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -51,7 +54,32 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   const [scale, setScale] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [controlsVisible, setControlsVisible] = useState(true);
+  const [showSettings, setShowSettings] = useState(false);
   const [pageTexts, setPageTexts] = useState<Record<number, string>>({});
+
+  // Reading preferences (persisted in localStorage)
+  type ReadingTheme = "light" | "dark";
+  type FontSize = "small" | "medium" | "large";
+
+  const loadPrefs = () => {
+    try {
+      const saved = localStorage.getItem("ebook-reader-prefs");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return { theme: "light", fontSize: "medium" };
+  };
+  const savedPrefs = loadPrefs();
+  const [readingTheme, setReadingTheme] = useState<ReadingTheme>(savedPrefs.theme || "light");
+  const [fontSize, setFontSize] = useState<FontSize>(savedPrefs.fontSize || "medium");
+
+  // Save prefs whenever they change
+  useEffect(() => {
+    localStorage.setItem("ebook-reader-prefs", JSON.stringify({ theme: readingTheme, fontSize }));
+  }, [readingTheme, fontSize]);
+
+  // Map fontSize to scale multiplier
+  const fontScaleMap: Record<FontSize, number> = { small: 0.85, medium: 1, large: 1.25 };
+  const effectiveScale = scale * fontScaleMap[fontSize];
 
   // Page image cache: pageNum → dataURL
   const [pageImages, setPageImages] = useState<Record<number, string>>({});
