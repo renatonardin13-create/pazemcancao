@@ -8,7 +8,7 @@ import { FooterLinks } from "@/components/FooterLinks";
 import { CourseShelfCard } from "@/components/CourseShelfCard";
 import { useProjectMode } from "@/hooks/use-project-mode";
 import { Store, Lock, Play, ArrowRight, ShoppingCart, Search, ChevronLeft, ChevronRight, Clock, Sparkles } from "lucide-react";
-import { FunnelBanner } from "@/components/FunnelBanner";
+import { InvisibleFunnelShelves } from "@/components/InvisibleFunnelShelves";
 import { Input } from "@/components/ui/input";
 import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 
