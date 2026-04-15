@@ -682,6 +682,46 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
                 currentPages.length > 0 && renderPageImage(currentPages[0], "single")
               )}
             </div>
+
+            {/* ═══ PAYWALL OVERLAY ═══ */}
+            {isAtPaywall && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="absolute inset-0 z-20 flex items-end justify-center rounded-md overflow-hidden"
+              >
+                {/* Gradient fade from transparent to solid */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1a1814]/70 to-[#1a1814]/98" />
+                
+                <div className="relative z-10 flex flex-col items-center gap-5 pb-12 px-6 text-center max-w-md">
+                  <div className="h-16 w-16 rounded-2xl bg-gold/10 border border-gold/20 flex items-center justify-center shadow-lg shadow-gold/5">
+                    <Lock className="h-7 w-7 text-gold/70" />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-serif font-bold text-stone-200">
+                      Continue lendo para acessar o conteúdo completo
+                    </h3>
+                    <p className="text-sm text-stone-400/70">
+                      Você leu as primeiras {freePageLimit} páginas gratuitamente. Desbloqueie o ebook completo para continuar sua jornada.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (salesPageUrl) {
+                        window.open(salesPageUrl, "_blank", "noopener");
+                      }
+                    }}
+                    className="flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-gold text-gold-foreground font-bold text-sm uppercase tracking-wider shadow-lg shadow-gold/25 hover:brightness-110 hover:shadow-xl hover:shadow-gold/35 hover:scale-[1.02] transition-all"
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                    Desbloquear agora
+                  </button>
+                </div>
+              </motion.div>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>
