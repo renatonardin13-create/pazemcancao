@@ -484,13 +484,20 @@ function TrackCard({
   // Track is not yet active (future/coming soon) — not the same as user-locked
   const isInactive = !track.is_active;
 
-  // Check if bonus track is still locked (release date in the future or no date set)
-  const isBonusLocked = track.is_bonus && (
+  // Bonus track with release date in the future (or no date yet)
+  const isBonusNotYetReleased = track.is_bonus && (
     !track.bonus_release_date || new Date(track.bonus_release_date + 'T00:00:00') > new Date()
   );
 
-  // Future track (inactive) or bonus not yet released or user blocked
-  const effectiveLocked = isLocked || isBonusLocked || isInactive;
+  // Released bonus tracks are FREE — never locked by buyer access
+  const isBonusReleased = track.is_bonus && !isBonusNotYetReleased;
+
+  // Determine effective lock state:
+  // - Inactive tracks are always locked (coming soon)
+  // - Bonus not yet released → locked with countdown
+  // - Released bonus → always accessible (free)
+  // - Regular tracks → locked if user has no buyer access
+  const effectiveLocked = isInactive || isBonusNotYetReleased || (!isBonusReleased && isLocked);
 
   const bonusCountdown = (() => {
     if (!track.bonus_release_date) return null;
