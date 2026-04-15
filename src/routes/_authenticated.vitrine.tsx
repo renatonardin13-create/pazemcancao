@@ -46,34 +46,43 @@ function VitrinePage() {
       <div className="min-h-screen flex flex-col">
         <div className="flex-1 w-full pb-28">
           {/* Hero Banner */}
-          {featuredCourse && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
-              className="relative w-full h-[280px] sm:h-[380px] overflow-hidden"
-            >
-              <img
-                src={featuredCourse.banner_image_url || featuredCourse.cover_image_url}
-                alt={featuredCourse.display_title || featuredCourse.title}
-                className={`w-full h-full object-${featuredCourse.banner_fit || 'cover'}`}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
-                <h2 className="font-display text-2xl sm:text-4xl font-bold text-foreground/90 tracking-tight mb-2">
-                  {featuredCourse.display_title || featuredCourse.title}
-                </h2>
-                {(featuredCourse.display_subtitle || featuredCourse.short_description) && (
-                  <p className="text-[13px] text-muted-foreground/50 mb-4 max-w-lg">
-                    {featuredCourse.display_subtitle || featuredCourse.short_description}
-                  </p>
-                )}
-                {featuredCourse.id !== '__custom_banner__' && (
-                  <CourseActionButton course={featuredCourse} />
-                )}
-              </div>
-            </motion.div>
-          )}
+          {featuredCourse && (() => {
+            const bannerLinkUrl = featuredCourse.banner_link_url || featuredCourse.sales_page_url || featuredCourse.checkout_url;
+            const heroContent = (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.8 }}
+                className={`relative w-full h-[280px] sm:h-[380px] overflow-hidden ${bannerLinkUrl ? 'cursor-pointer' : ''}`}
+              >
+                <img
+                  src={featuredCourse.banner_image_url || featuredCourse.cover_image_url}
+                  alt={featuredCourse.display_title || featuredCourse.title}
+                  className={`w-full h-full object-${featuredCourse.banner_fit || 'cover'}`}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
+                  <h2 className="font-display text-2xl sm:text-4xl font-bold text-foreground/90 tracking-tight mb-2">
+                    {featuredCourse.display_title || featuredCourse.title}
+                  </h2>
+                  {(featuredCourse.display_subtitle || featuredCourse.short_description) && (
+                    <p className="text-[13px] text-muted-foreground/50 mb-4 max-w-lg">
+                      {featuredCourse.display_subtitle || featuredCourse.short_description}
+                    </p>
+                  )}
+                  {featuredCourse.id !== '__custom_banner__' && (
+                    <CourseActionButton course={featuredCourse} />
+                  )}
+                </div>
+              </motion.div>
+            );
+
+            return bannerLinkUrl ? (
+              <a href={bannerLinkUrl} target="_blank" rel="noopener noreferrer">
+                {heroContent}
+              </a>
+            ) : heroContent;
+          })()}
 
           <div className="mx-auto w-full max-w-[1100px] px-4 sm:px-8 lg:px-12 pt-8">
             {!featuredCourse && (
