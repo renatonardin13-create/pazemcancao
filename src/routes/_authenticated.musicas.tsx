@@ -182,17 +182,6 @@ function MusicLibraryPage() {
   const { currentTrack, playing, progress, toggle, setQueue, queue } = usePlayer();
 
   useEffect(() => {
-    console.log(MUSIC_ROUTE_DEBUG, "render", {
-      isLoading,
-      tracksError,
-      tracksCount: tracks.length,
-      filteredCount: filteredTracks.length,
-      playlistsCount: playlists.length,
-      activePlaylistId,
-    });
-  }, [isLoading, tracksError, tracks.length, filteredTracks.length, playlists.length, activePlaylistId]);
-
-  useEffect(() => {
     if (tracksError) {
       console.error(MUSIC_ROUTE_DEBUG, "tracks query error", tracksErrorMsg);
     }
@@ -292,6 +281,17 @@ function MusicLibraryPage() {
     });
     return Object.entries(grouped).sort(([a], [b]) => a.localeCompare(b));
   }, [regularTracks]);
+
+  useEffect(() => {
+    console.log(MUSIC_ROUTE_DEBUG, "render", {
+      isLoading,
+      tracksError,
+      tracksCount: tracks.length,
+      filteredCount: filteredTracks.length,
+      playlistsCount: playlists.length,
+      activePlaylistId,
+    });
+  }, [isLoading, tracksError, tracks.length, filteredTracks.length, playlists.length, activePlaylistId]);
 
   return (
     <ModuleGuard moduleKey="louvores">
@@ -1045,7 +1045,7 @@ function TrackCard({
   const Wrapper = effectiveLocked ? 'div' : Link;
   const wrapperProps = effectiveLocked
     ? {}
-    : { to: "/musicas/$trackId" as const, params: { trackId: track.id } };
+      : { to: "/louvor/$trackId" as const, params: { trackId: String(track.id) } };
 
   const handleLockedClick = () => {
     if (isInactive) {
