@@ -65,7 +65,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
         throw new Error("O ID do produto externo é obrigatório quando a integração está habilitada");
       }
       if (checkoutUrl.trim() && !/^https?:\/\/.+/.test(checkoutUrl.trim())) {
-        throw new Error("A URL do checkout deve ser um link válido (começando com http:// ou https://)");
+        throw new Error("A URL da página de vendas deve ser um link válido (começando com http:// ou https://)");
       }
       return upsertCourseIntegration({
         data: {
@@ -194,11 +194,11 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                 </p>
               </div>
 
-              {/* Checkout URL */}
+              {/* Sales Page URL */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <LinkIcon className="h-3.5 w-3.5 text-muted-foreground/70" />
-                  <Label className="text-sm font-medium">URL do Checkout</Label>
+                  <Label className="text-sm font-medium">URL da Página de Vendas</Label>
                 </div>
                 <Input
                   value={checkoutUrl}
@@ -207,7 +207,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                   className="bg-card/20 border-border/30 font-mono text-sm"
                 />
                 <p className="text-xs text-muted-foreground/70">
-                  Link de compra onde os alunos serão redirecionados
+                  Página de vendas onde os alunos serão redirecionados ao clicar no produto bloqueado
                 </p>
               </div>
 
