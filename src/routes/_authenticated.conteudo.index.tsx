@@ -135,13 +135,17 @@ function ContentPage() {
 
   // CRITICAL: Only show items that are active AND (unlocked OR free OR user has full access)
   // This ensures "published ≠ released" — only truly accessible content appears
+  const popMap = data?.popularityMap || {};
   const items = useMemo(() => {
     return allItems.filter((item: any) => {
       if (!item.is_active) return false;
       if (item.show_as_card === false) return false;
-      return true; // Server already handles access logic via `unlocked` field
+      return true;
+    }).map((item: any) => {
+      const pop = popMap[item.id];
+      return { ...item, _popularity: pop ? pop.plays + pop.downloads : 0 };
     });
-  }, [allItems]);
+  }, [allItems, popMap]);
 
   // Compute stats for the library
   const stats = useMemo(() => {
