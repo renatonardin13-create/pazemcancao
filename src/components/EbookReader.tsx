@@ -21,7 +21,6 @@ import {
   SkipBack,
   SkipForward,
   Lock,
-  ShoppingCart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
