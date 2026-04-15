@@ -326,25 +326,47 @@ function MusicLibraryPage() {
                     </div>
                   </div>
 
-                  <ScrollableCarousel>
-                    {bonusTracks.map((track: any, idx: number) => (
-                      <TrackCard
-                        key={track.id}
-                        track={track}
-                        idx={idx}
-                        icon="🎁"
-                        catTracks={bonusTracks}
-                        isCarousel={true}
-                        activeTrackRef={activeTrackRef}
-                        currentTrack={currentTrack}
-                        playing={playing}
-                        progress={progress}
-                        handlePlayWithQueue={handlePlayWithQueue}
-                        canDownload={canDownload}
-                        isLocked={isLocked}
-                      />
-                    ))}
-                  </ScrollableCarousel>
+                  {expandedCategory === '__bonus__' ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+                      {bonusTracks.map((track: any, idx: number) => (
+                        <TrackCard
+                          key={track.id}
+                          track={track}
+                          idx={idx}
+                          icon="🎁"
+                          catTracks={bonusTracks}
+                          isCarousel={false}
+                          activeTrackRef={activeTrackRef}
+                          currentTrack={currentTrack}
+                          playing={playing}
+                          progress={progress}
+                          handlePlayWithQueue={handlePlayWithQueue}
+                          canDownload={canDownload}
+                          isLocked={isLocked}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <ScrollableCarousel>
+                      {bonusTracks.map((track: any, idx: number) => (
+                        <TrackCard
+                          key={track.id}
+                          track={track}
+                          idx={idx}
+                          icon="🎁"
+                          catTracks={bonusTracks}
+                          isCarousel={true}
+                          activeTrackRef={activeTrackRef}
+                          currentTrack={currentTrack}
+                          playing={playing}
+                          progress={progress}
+                          handlePlayWithQueue={handlePlayWithQueue}
+                          canDownload={canDownload}
+                          isLocked={isLocked}
+                        />
+                      ))}
+                    </ScrollableCarousel>
+                  )}
                 </div>
               </motion.section>
             )}
