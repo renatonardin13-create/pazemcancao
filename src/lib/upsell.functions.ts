@@ -85,6 +85,35 @@ export const getUpsellsForProduct = createServerFn({ method: 'POST' })
     return { upsells: enriched };
   });
 
+/** Admin: list products by type for selector */
+export const listProductsByType = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { type: string }) => input)
+  .handler(async ({ data }) => {
+    if (data.type === 'course') {
+      const { data: courses } = await supabaseAdmin
+        .from('courses')
+        .select('id, title, status, cover_image_url')
+        .order('title', { ascending: true });
+      return { products: (courses || []).map(c => ({ id: c.id, title: c.title, active: c.status === 'published', cover: c.cover_image_url })) };
+    }
+    if (data.type === 'content') {
+      const { data: items } = await supabaseAdmin
+        .from('content_items')
+        .select('id, title, is_active, content_type, cover_url')
+        .order('title', { ascending: true });
+      return { products: (items || []).map(c => ({ id: c.id, title: `${c.title} (${c.content_type})`, active: c.is_active, cover: c.cover_url })) };
+    }
+    if (data.type === 'track') {
+      const { data: tracks } = await supabaseAdmin
+        .from('tracks')
+        .select('id, title, is_active, cover_url, category')
+        .order('title', { ascending: true });
+      return { products: (tracks || []).map(t => ({ id: t.id, title: `${t.title} (${t.category})`, active: t.is_active, cover: t.cover_url })) };
+    }
+    return { products: [] };
+  });
+
 /** Admin: list all upsells */
 export const listAllUpsells = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
@@ -96,7 +125,20 @@ export const listAllUpsells = createServerFn({ method: 'POST' })
       .limit(200);
 
     if (error) throw new Error(error.message);
-    return { upsells: data || [] };
+
+    // Enrich with source and target names
+    const enriched = [];
+    for (const u of data || []) {
+      const srcInfo = await validateProduct(u.source_type, u.source_id);
+      const tgtInfo = await validateProduct(u.target_type, u.target_id);
+      enriched.push({
+        ...u,
+        source_title: srcInfo.title || u.source_id.slice(0, 8),
+        target_title: tgtInfo.title || u.target_id.slice(0, 8),
+      });
+    }
+
+    return { upsells: enriched };
   });
 
 /** Admin: create upsell */
