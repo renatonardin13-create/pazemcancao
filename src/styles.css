@@ -209,3 +209,69 @@ div:has(a[href*="lovable"]) {
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* ═══ PREMIUM MICRO-INTERACTIONS ═══ */
+
+/* Smooth page transitions */
+main {
+  animation: pageEnter 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Button press feedback */
+button,
+[role="button"],
+[role="link"],
+a[class*="rounded"] {
+  transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, opacity 0.2s ease;
+}
+
+button:active:not(:disabled),
+[role="button"]:active:not(:disabled),
+[role="link"]:active {
+  transform: scale(0.97);
+}
+
+/* Premium skeleton shimmer */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-pulse {
+  animation: shimmer 2s ease-in-out infinite !important;
+  background: linear-gradient(
+    90deg,
+    var(--card) 0%,
+    color-mix(in oklab, var(--card) 85%, var(--gold)) 50%,
+    var(--card) 100%
+  ) !important;
+  background-size: 200% 100% !important;
+}
+
+/* Smooth carousel scroll */
+.snap-x {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Sidebar nav item glow on active */
+nav a[class*="text-gold"],
+nav button[class*="text-gold"] {
+  text-shadow: 0 0 20px color-mix(in oklab, var(--gold) 25%, transparent);
+}
+
