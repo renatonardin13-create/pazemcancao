@@ -53,25 +53,32 @@ export const resolveCourseLesson = createServerFn({ method: 'POST' })
       .eq('user_id', userId);
 
     if (progress && progress.length > 0) {
-      // Find the first incomplete lesson, or the last one with progress
       const progressMap = new Map(progress.map(p => [p.lesson_id, p]));
       
-      // Find first non-completed lesson that has progress (continue where left off)
-      const lastWatched = progress
+      // 1. Find the most recently updated incomplete lesson (continue where left off)
+      const lastIncomplete = progress
         .filter(p => !p.completed)
         .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())[0];
 
-      if (lastWatched) {
-        return { lessonId: lastWatched.lesson_id };
+      if (lastIncomplete) {
+        return { lessonId: lastIncomplete.lesson_id };
       }
 
-      // All watched lessons are completed - find first uncompleted lesson
-      const firstUncompleted = sortedLessons.find(l => !progressMap.has(l.id) || !progressMap.get(l.id)?.completed);
-      if (firstUncompleted) {
-        return { lessonId: firstUncompleted.id };
+      // 2. Find first lesson that has no progress at all (next unwatched)
+      const firstUntouched = sortedLessons.find(l => !progressMap.has(l.id));
+      if (firstUntouched) {
+        return { lessonId: firstUntouched.id };
       }
 
-      // All lessons completed - return first lesson
+      // 3. All lessons completed — return last completed (by completed_at)
+      const lastCompleted = progress
+        .filter(p => p.completed)
+        .sort((a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime())[0];
+
+      if (lastCompleted) {
+        return { lessonId: lastCompleted.lesson_id };
+      }
+
       return { lessonId: sortedLessons[0].id };
     }
 
