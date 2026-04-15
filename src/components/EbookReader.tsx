@@ -27,6 +27,9 @@ interface EbookReaderProps {
   pdfUrl: string;
   title: string;
   audioUrl?: string;
+  isCompleted?: boolean;
+  isCompletePending?: boolean;
+  onComplete?: () => void;
   onBack?: () => void;
 }
 
