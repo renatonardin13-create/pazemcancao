@@ -428,6 +428,33 @@ function AdminUsersPage() {
                   </div>
                   <Switch checked={addEnabled} onCheckedChange={setAddEnabled} />
                 </div>
+                <div className="flex items-center justify-between rounded-xl bg-muted/10 border border-border/25 px-4 py-3">
+                  <div>
+                    <p className="text-sm font-medium text-foreground/70">Período de Teste</p>
+                    <p className="text-xs text-muted-foreground/70">
+                      {addIsTrial ? `Teste por ${addTrialDays} dia(s) — sem download` : "Acesso completo — sem limitação"}
+                    </p>
+                  </div>
+                  <Switch checked={addIsTrial} onCheckedChange={setAddIsTrial} />
+                </div>
+                {addIsTrial && (
+                  <div className="space-y-2">
+                    <Label htmlFor="add-trial-days">Dias de Teste</Label>
+                    <Select value={String(addTrialDays)} onValueChange={(v) => setAddTrialDays(Number(v))}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="3">3 dias</SelectItem>
+                        <SelectItem value="7">7 dias</SelectItem>
+                        <SelectItem value="14">14 dias</SelectItem>
+                        <SelectItem value="30">30 dias</SelectItem>
+                        <SelectItem value="60">60 dias</SelectItem>
+                        <SelectItem value="90">90 dias</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
                 <div className="space-y-2">
                   <Label className="flex items-center gap-2">
                     <BookOpen className="h-4 w-4 text-gold/60" />
