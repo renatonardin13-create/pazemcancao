@@ -50,6 +50,12 @@ function MeusCoursosPage() {
     staleTime: 30_000,
   });
 
+  const { data: libSections } = useQuery({
+    queryKey: ["library-sections"],
+    queryFn: () => getLibrarySections(),
+    staleTime: 30_000,
+  });
+
   const { data: continueData } = useQuery({
     queryKey: ["continue-watching"],
     queryFn: () => getContinueWatching(),
