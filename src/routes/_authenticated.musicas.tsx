@@ -372,80 +372,154 @@ function MusicLibraryPage() {
 
         {/* Playlists Section */}
         {playlists.length > 0 && (
-          <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0.25} className="mb-8">
-            <div className="flex items-center gap-3 mb-4">
-              <Disc3 className="h-4 w-4 text-gold/40" />
-              <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">Playlists</h2>
-              <div className="flex-1 h-px bg-gradient-to-r from-border/15 to-transparent" />
+          <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0.25} className="mb-10">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/10 border border-gold/15">
+                <Disc3 className="h-4 w-4 text-gold/60" />
+              </div>
+              <div>
+                <h2 className="font-display text-lg sm:text-xl font-bold text-foreground/85 tracking-tight">Playlists</h2>
+                <p className="text-[11px] text-muted-foreground/40 mt-0.5">Coleções especiais para cada momento</p>
+              </div>
+              <div className="flex-1 h-px bg-gradient-to-r from-gold/10 to-transparent" />
+              <span className="text-[10px] text-muted-foreground/35 uppercase tracking-wider font-medium">
+                {playlists.length} playlist{playlists.length !== 1 ? "s" : ""}
+              </span>
             </div>
+
             <ScrollableCarousel>
-              {playlists.map((pl: any) => (
-                <button
-                  key={pl.id}
-                  onClick={() => setActivePlaylistId(activePlaylistId === pl.id ? null : pl.id)}
-                  className={`snap-start shrink-0 w-[180px] sm:w-[210px] rounded-2xl border overflow-hidden transition-all duration-500 text-left ${
-                    activePlaylistId === pl.id
-                      ? "border-gold/30 shadow-[0_8px_40px_-10px] shadow-gold/15 ring-1 ring-gold/10"
-                      : "border-border/20 hover:border-gold/15 shadow-[0_4px_20px_-8px] shadow-black/20"
-                  }`}
-                >
-                  <div className="relative h-[120px] sm:h-[140px] bg-gradient-to-br from-violet-900/30 via-indigo-950/20 to-slate-950/40 overflow-hidden">
-                    {pl.cover_url ? (
-                      <img src={pl.cover_url} alt={pl.name} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <Disc3 className={`h-10 w-10 transition-colors duration-500 ${activePlaylistId === pl.id ? "text-gold/60" : "text-white/20"}`} />
+              {playlists.map((pl: any) => {
+                const isActive = activePlaylistId === pl.id;
+                return (
+                  <button
+                    key={pl.id}
+                    onClick={() => setActivePlaylistId(isActive ? null : pl.id)}
+                    className={`group/plcard snap-start shrink-0 w-[200px] sm:w-[230px] md:w-[250px] rounded-2xl border overflow-hidden transition-all duration-500 text-left ${
+                      isActive
+                        ? "border-gold/30 shadow-[0_8px_40px_-10px] shadow-gold/15 ring-1 ring-gold/10 scale-[1.02]"
+                        : "border-border/15 hover:border-gold/15 shadow-[0_4px_24px_-8px] shadow-black/25 hover:shadow-[0_8px_32px_-8px] hover:shadow-black/30"
+                    }`}
+                  >
+                    {/* Cover area */}
+                    <div className="relative h-[130px] sm:h-[150px] md:h-[160px] bg-gradient-to-br from-violet-900/25 via-indigo-950/15 to-slate-950/40 overflow-hidden">
+                      {pl.cover_url ? (
+                        <img
+                          src={pl.cover_url}
+                          alt={pl.name}
+                          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover/plcard:scale-[1.06]"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-gold/5 via-transparent to-violet-500/5">
+                          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white/[0.03] border border-white/[0.06] backdrop-blur-sm">
+                            <Disc3 className={`h-7 w-7 transition-all duration-500 ${isActive ? "text-gold/70 animate-spin" : "text-white/20"}`} style={isActive ? { animationDuration: '3s' } : {}} />
+                          </div>
+                        </div>
+                      )}
+                      {/* Gradient overlays */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                      <div className="absolute inset-0 shadow-[inset_0_0_30px_rgba(0,0,0,0.2)] pointer-events-none" />
+
+                      {/* Play overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover/plcard:opacity-100 transition-opacity duration-400 z-10">
+                        <div className={`flex h-11 w-11 items-center justify-center rounded-full shadow-lg transition-all duration-500 ${
+                          isActive ? "bg-gold/90 scale-100" : "bg-gold/80 scale-90 group-hover/plcard:scale-100"
+                        }`}>
+                          <Play className="h-5 w-5 text-gold-foreground fill-gold-foreground ml-0.5" />
+                        </div>
                       </div>
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                    <div className="absolute bottom-2 right-2">
-                      <span className="text-[10px] font-semibold tracking-wider uppercase rounded-full bg-black/40 backdrop-blur-sm border border-white/10 px-2 py-0.5 text-white/50">
-                        {pl.track_count} música{pl.track_count !== 1 ? "s" : ""}
-                      </span>
+
+                      {/* Track count badge */}
+                      <div className="absolute bottom-2.5 right-2.5 z-10">
+                        <span className="flex items-center gap-1 text-[10px] font-semibold tracking-wide rounded-full bg-black/50 backdrop-blur-md border border-white/10 px-2.5 py-1 text-white/60">
+                          <Music className="h-2.5 w-2.5" />
+                          {pl.track_count}
+                        </span>
+                      </div>
+
+                      {/* Active indicator */}
+                      {isActive && (
+                        <div className="absolute top-2.5 left-2.5 z-10">
+                          <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold/90 text-[9px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg">
+                            <NowPlayingBars />
+                            Aberta
+                          </span>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                  <div className="p-3">
-                    <h3 className={`font-display text-[13px] font-bold tracking-tight leading-snug line-clamp-1 transition-colors duration-500 ${
-                      activePlaylistId === pl.id ? "text-gold" : "text-foreground/85"
-                    }`}>{pl.name}</h3>
-                    {pl.description && (
-                      <p className="text-[11px] text-muted-foreground/50 mt-1 line-clamp-1">{pl.description}</p>
-                    )}
-                  </div>
-                </button>
-              ))}
+
+                    {/* Info */}
+                    <div className="p-3.5 bg-gradient-to-b from-card/20 to-card/5">
+                      <h3 className={`font-display text-[13px] sm:text-sm font-bold tracking-tight leading-snug line-clamp-1 transition-colors duration-500 ${
+                        isActive ? "text-gold" : "text-foreground/85 group-hover/plcard:text-foreground"
+                      }`}>{pl.name}</h3>
+                      {pl.description ? (
+                        <p className="text-[11px] text-muted-foreground/45 mt-1 line-clamp-2 leading-relaxed">{pl.description}</p>
+                      ) : (
+                        <p className="text-[11px] text-muted-foreground/30 mt-1">
+                          {pl.track_count} música{pl.track_count !== 1 ? "s" : ""}
+                        </p>
+                      )}
+                    </div>
+                  </button>
+                );
+              })}
             </ScrollableCarousel>
 
-            {/* Active playlist tracks */}
+            {/* Expanded playlist tracks */}
             <AnimatePresence>
               {activePlaylistId && activePlaylistTracks.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: "auto" }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="mt-5 overflow-hidden"
+                  transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                  className="mt-6 overflow-hidden"
                 >
-                  <div className="rounded-2xl border border-gold/10 bg-card/10 p-4 sm:p-5">
-                    <div className="flex items-center justify-between mb-4">
-                      <h3 className="font-display text-sm font-bold text-foreground/75">
-                        {activePlaylistData?.playlist?.name}
-                      </h3>
-                      {!isLocked && activePlaylistTracks.length > 0 && (
-                        <button
-                          onClick={() => {
-                            const playable = activePlaylistTracks.filter((t: any) => t.is_active);
-                            if (playable.length > 0) {
-                              setQueue(playable.map(dbTrackToPlayerTrack), 0);
-                              toast.success(`▶ Tocando playlist "${activePlaylistData?.playlist?.name}"`);
-                            }
-                          }}
-                          className="flex items-center gap-1.5 text-[11px] font-semibold text-gold/60 hover:text-gold/90 transition-colors duration-300 rounded-full border border-gold/15 hover:border-gold/30 px-3 py-1.5 bg-gold/5 hover:bg-gold/10"
-                        >
-                          <PlayCircle className="h-3 w-3" />
-                          <span>Tocar todas</span>
-                        </button>
+                  <div className="rounded-2xl border border-gold/10 bg-gradient-to-b from-card/15 to-card/5 p-4 sm:p-6">
+                    {/* Playlist header */}
+                    <div className="flex items-center gap-3 mb-5 flex-wrap">
+                      {activePlaylistData?.playlist?.cover_url && (
+                        <img
+                          src={activePlaylistData.playlist.cover_url}
+                          alt=""
+                          className="h-12 w-12 rounded-xl object-cover shadow-lg ring-1 ring-white/10"
+                        />
                       )}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-display text-base sm:text-lg font-bold text-foreground/85 truncate">
+                          {activePlaylistData?.playlist?.name}
+                        </h3>
+                        <p className="text-[11px] text-muted-foreground/40 mt-0.5">
+                          {activePlaylistTracks.length} música{activePlaylistTracks.length !== 1 ? "s" : ""} · Reprodução contínua
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => setActivePlaylistId(null)}
+                          className="text-[11px] font-medium text-muted-foreground/50 hover:text-foreground/70 transition-colors rounded-full border border-border/20 hover:border-border/40 px-3 py-1.5"
+                        >
+                          Fechar
+                        </button>
+                        {!isLocked && activePlaylistTracks.length > 0 && (
+                          <button
+                            onClick={() => {
+                              const playable = activePlaylistTracks.filter((t: any) => t.is_active);
+                              if (playable.length > 0) {
+                                setQueue(playable.map(dbTrackToPlayerTrack), 0);
+                                toast.success(`▶ Tocando playlist "${activePlaylistData?.playlist?.name}"`);
+                              }
+                            }}
+                            className="flex items-center gap-1.5 text-[11px] font-semibold text-gold-foreground bg-gold/90 hover:bg-gold transition-all duration-300 rounded-full px-4 py-2 shadow-lg shadow-gold/20"
+                          >
+                            <Play className="h-3 w-3 fill-current" />
+                            <span>Tocar todas</span>
+                          </button>
+                        )}
+                      </div>
                     </div>
+
+                    {/* Track list */}
                     <ScrollableCarousel>
                       {activePlaylistTracks.map((track: any, idx: number) => (
                         <TrackCard
