@@ -7,17 +7,24 @@ interface UseEbookAudioOptions {
   /** Text extracted from current pages for TTS fallback */
   pageText?: string;
   lang?: string;
+  /** Called when TTS finishes reading the current page text */
+  onPageNarrationEnd?: () => void;
 }
 
-export function useEbookAudio({ audioUrl, pageText, lang = "pt-BR" }: UseEbookAudioOptions) {
+export function useEbookAudio({ audioUrl, pageText, lang = "pt-BR", onPageNarrationEnd }: UseEbookAudioOptions) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [mode, setMode] = useState<AudioMode>("none");
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
+  /** Character index of the word currently being spoken (TTS mode) */
+  const [charIndex, setCharIndex] = useState(-1);
+  /** Length of the word currently being spoken */
+  const [charLength, setCharLength] = useState(0);
 
   const fileAudioRef = useRef<HTMLAudioElement | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
-  const progressIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const onPageEndRef = useRef(onPageNarrationEnd);
+  onPageEndRef.current = onPageNarrationEnd;
 
   // Determine mode
   useEffect(() => {
@@ -75,10 +82,24 @@ export function useEbookAudio({ audioUrl, pageText, lang = "pt-BR" }: UseEbookAu
       const utt = new SpeechSynthesisUtterance(pageText);
       utt.lang = lang;
       utt.rate = 0.95;
-      utt.onend = () => { setIsPlaying(false); setProgress(0); };
+      utt.onboundary = (e) => {
+        if (e.name === "word") {
+          setCharIndex(e.charIndex);
+          setCharLength(e.charLength ?? 0);
+        }
+      };
+      utt.onend = () => {
+        setIsPlaying(false);
+        setProgress(0);
+        setCharIndex(-1);
+        setCharLength(0);
+        onPageEndRef.current?.();
+      };
       utteranceRef.current = utt;
       window.speechSynthesis.speak(utt);
       setIsPlaying(true);
+      setCharIndex(0);
+      setCharLength(0);
     }
   }, [mode, pageText, lang]);
 
@@ -125,6 +146,8 @@ export function useEbookAudio({ audioUrl, pageText, lang = "pt-BR" }: UseEbookAu
     }
     setIsPlaying(false);
     setProgress(0);
+    setCharIndex(-1);
+    setCharLength(0);
   }, [mode]);
 
   const seek = useCallback((time: number) => {
@@ -165,5 +188,8 @@ export function useEbookAudio({ audioUrl, pageText, lang = "pt-BR" }: UseEbookAu
     skipForward,
     skipBack,
     mode,
+    /** TTS boundary tracking */
+    charIndex,
+    charLength,
   };
 }
