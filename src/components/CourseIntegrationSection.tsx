@@ -215,6 +215,51 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                 </p>
               </div>
 
+              {/* Integration Token */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <KeyRound className="h-3.5 w-3.5 text-muted-foreground/70" />
+                  <Label className="text-sm font-medium">Token de Integração</Label>
+                </div>
+                <div className="flex gap-2 min-w-0">
+                  <Input
+                    type={showToken ? "text" : "password"}
+                    value={integrationToken}
+                    onChange={(e) => setIntegrationToken(e.target.value)}
+                    placeholder="Cole o token da plataforma aqui"
+                    className="bg-card/20 border-border/30 font-mono text-sm min-w-0"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setShowToken(!showToken)}
+                    className="shrink-0"
+                    title={showToken ? "Ocultar token" : "Mostrar token"}
+                  >
+                    {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => {
+                      navigator.clipboard.writeText(integrationToken);
+                      setCopiedToken(true);
+                      toast.success("Token copiado!");
+                      setTimeout(() => setCopiedToken(false), 2000);
+                    }}
+                    className="shrink-0"
+                    disabled={!integrationToken}
+                  >
+                    {copiedToken ? <Check className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground/70">
+                  Token de autenticação fornecido pela plataforma de pagamento para validar webhooks
+                </p>
+              </div>
+
               {/* Notes */}
               <div className="space-y-2">
                 <Label className="text-sm font-medium">
