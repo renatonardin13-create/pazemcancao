@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useSearch } from "@tanstack/react-router"; // rebuild
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { ListSkeleton } from "@/components/LoadingSkeletons";
 import { logDownload } from "@/lib/analytics.functions";
 import { ModuleGuard } from "@/components/ModuleGuard";
@@ -20,11 +20,33 @@ import { StrategicMusicShelves } from "@/components/StrategicMusicShelves";
 import type { Track } from "@/lib/sample-tracks";
 import { toast } from "sonner";
 
+function MusicLibraryErrorComponent({ error }: { error: Error; reset: () => void }) {
+  const router = useRouter();
+  return (
+    <StudentLayout>
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="text-center px-8 max-w-sm">
+          <Music className="h-8 w-8 text-muted-foreground/40 mx-auto mb-4" />
+          <h2 className="font-display text-lg font-bold text-foreground/80 mb-2">Erro ao carregar músicas</h2>
+          <p className="text-sm text-muted-foreground/60 mb-6">{error?.message || "Ocorreu um erro inesperado."}</p>
+          <button
+            onClick={() => router.invalidate()}
+            className="rounded-full bg-gold/15 text-gold/70 border border-gold/20 px-6 py-2.5 text-xs font-semibold tracking-wider uppercase hover:bg-gold/25 transition-all"
+          >
+            Tentar novamente
+          </button>
+        </div>
+      </div>
+    </StudentLayout>
+  );
+}
+
 export const Route = createFileRoute("/_authenticated/musicas")({
   validateSearch: (search: Record<string, unknown>): { categoria?: string } => ({
     categoria: typeof search.categoria === 'string' ? search.categoria : undefined,
   }),
   component: MusicLibraryPage,
+  errorComponent: MusicLibraryErrorComponent,
 });
 
 const fadeUp = {
@@ -107,10 +129,11 @@ function MusicLibraryPage() {
     staleTime: 60_000,
   });
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError: tracksError, error: tracksErrorMsg } = useQuery({
     queryKey: ["all-tracks"],
     queryFn: () => listAllTracks(),
     staleTime: 30_000,
+    retry: 2,
   });
 
   const { data: playlistsData } = useQuery({
@@ -561,12 +584,36 @@ function MusicLibraryPage() {
         {/* Content */}
         {isLoading ? (
           <ListSkeleton rows={6} />
+        ) : tracksError ? (
+          <div className="text-center py-24">
+            <Music className="h-10 w-10 text-muted-foreground/50 mx-auto mb-5" />
+            <p className="text-sm text-muted-foreground/70 mb-2">
+              Erro ao carregar músicas.
+            </p>
+            <p className="text-xs text-muted-foreground/40 mb-4">{(tracksErrorMsg as Error)?.message || "Tente novamente."}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="text-xs text-gold/60 hover:text-gold/80 underline transition-colors"
+            >
+              Recarregar página
+            </button>
+          </div>
         ) : filteredTracks.length === 0 ? (
           <div className="text-center py-24">
             <Music className="h-10 w-10 text-muted-foreground/50 mx-auto mb-5" />
             <p className="text-sm text-muted-foreground/70">
-              Nenhuma música encontrada.
+              {searchTerm || activeCategory
+                ? "Nenhuma música encontrada para este filtro."
+                : "Nenhuma música disponível no momento."}
             </p>
+            {(searchTerm || activeCategory) && (
+              <button
+                onClick={() => { setSearchTerm(""); setActiveCategory(null); }}
+                className="mt-3 text-xs text-gold/60 hover:text-gold/80 underline transition-colors"
+              >
+                Limpar filtros
+              </button>
+            )}
           </div>
         ) : (
           <div className="space-y-10">
