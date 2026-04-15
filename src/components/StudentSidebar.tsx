@@ -133,7 +133,7 @@ export function StudentSidebar() {
         )}
 
         {/* Meus Cursos */}
-        {hasCourses && (
+        {hasCourses && showCourses && (
           <Link
             to="/cursos"
             onClick={() => setMobileOpen(false)}
