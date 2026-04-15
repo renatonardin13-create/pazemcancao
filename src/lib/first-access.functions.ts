@@ -68,7 +68,7 @@ export const requestFirstAccess = createServerFn({ method: 'POST' })
     }
 
     // 2. Check if user already exists in auth
-    const { data: userList } = await admin.auth.admin.listUsers();
+    const { data: userList } = await admin.auth.admin.listUsers({ perPage: 1000 });
     const existingUser = userList?.users?.find(
       (u) => u.email?.toLowerCase() === email
     );
@@ -83,11 +83,14 @@ export const requestFirstAccess = createServerFn({ method: 'POST' })
       });
 
       if (createError) {
-        console.error('Error creating user:', createError);
-        return {
-          success: false,
-          message: 'Erro ao processar sua solicitação. Tente novamente em alguns instantes.',
-        };
+        // If already exists (race condition), continue to password reset
+        if (!createError.message?.includes('already') && !createError.message?.includes('exists')) {
+          console.error('Error creating user:', createError);
+          return {
+            success: false,
+            message: 'Erro ao processar sua solicitação. Tente novamente em alguns instantes.',
+          };
+        }
       }
     }
 
