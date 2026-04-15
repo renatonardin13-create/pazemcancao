@@ -93,7 +93,7 @@ function AdminPlaylistsPage() {
         <div className="text-center py-16 text-muted-foreground/50 text-sm">Carregando...</div>
       ) : playlists.length === 0 ? (
         <EmptyState
-          icon={<Disc3 className="h-10 w-10 text-muted-foreground/30" />}
+          icon={Disc3}
           title="Nenhuma playlist"
           description="Crie playlists para organizar seus louvores"
         />

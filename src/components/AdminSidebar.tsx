@@ -13,6 +13,7 @@ import {
   DollarSign,
   ArrowLeft,
   Sparkles,
+  Disc3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useProjectMode } from "@/hooks/use-project-mode";
