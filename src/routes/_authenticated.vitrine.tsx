@@ -71,6 +71,7 @@ function VitrinePage() {
   let adminShelfIndex = 0;
 
   return (
+    <ModuleGuard moduleKey="vitrine">
     <StudentLayout>
       <div className="min-h-screen flex flex-col bg-background">
         <div className="flex-1 w-full pb-28">
@@ -192,6 +193,7 @@ function VitrinePage() {
         <FooterLinks />
       </div>
     </StudentLayout>
+    </ModuleGuard>
   );
 }
 
