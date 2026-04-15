@@ -48,7 +48,7 @@ function StrategicShelf({ playlist, shelfIdx }: { playlist: StrategicPlaylist; s
   useEffect(() => {
     const timer = setTimeout(checkScroll, 150);
     const el = scrollRef.current;
-    const ro = el ? new ResizeObserver(checkScroll) : null;
+    const ro = el && typeof ResizeObserver !== "undefined" ? new ResizeObserver(checkScroll) : null;
     if (el && ro) ro.observe(el);
     return () => { clearTimeout(timer); ro?.disconnect(); };
   }, [checkScroll]);
