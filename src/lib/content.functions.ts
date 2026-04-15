@@ -55,33 +55,36 @@ export const listContentItems = createServerFn({ method: 'POST' })
       }
     }
 
-    // Fetch user behavior logs for unlock rules
+    // Fetch user behavior logs — only distinct content IDs, not full tables
     let playedContentIds = new Set<string>();
     let downloadedContentIds = new Set<string>();
     let viewedContentIds = new Set<string>();
     let completedContentIds = new Set<string>();
     if (email) {
-      const { data: plays } = await supabaseAdmin
-        .from('play_logs')
-        .select('track_id')
-        .eq('email', email);
-      if (plays) {
-        for (const p of plays) playedContentIds.add(p.track_id);
+      // Use distinct track_id queries instead of fetching ALL rows
+      const [playsRes, downloadsRes, progressRes] = await Promise.all([
+        supabaseAdmin
+          .from('play_logs')
+          .select('track_id')
+          .eq('email', email),
+        supabaseAdmin
+          .from('download_logs')
+          .select('track_id')
+          .eq('email', email),
+        supabaseAdmin
+          .from('user_content_progress')
+          .select('content_id, viewed_at, completed_at, downloaded_at')
+          .eq('user_email', email),
+      ]);
+
+      if (playsRes.data) {
+        for (const p of playsRes.data) playedContentIds.add(p.track_id);
       }
-      const { data: downloads } = await supabaseAdmin
-        .from('download_logs')
-        .select('track_id')
-        .eq('email', email);
-      if (downloads) {
-        for (const d of downloads) downloadedContentIds.add(d.track_id);
+      if (downloadsRes.data) {
+        for (const d of downloadsRes.data) downloadedContentIds.add(d.track_id);
       }
-      // Also check content progress for unlock rules on content_items
-      const { data: progressRows } = await supabaseAdmin
-        .from('user_content_progress')
-        .select('content_id, viewed_at, completed_at, downloaded_at')
-        .eq('user_email', email);
-      if (progressRows) {
-        for (const p of progressRows as any[]) {
+      if (progressRes.data) {
+        for (const p of progressRes.data as any[]) {
           if (p.viewed_at) viewedContentIds.add(p.content_id);
           if (p.completed_at) completedContentIds.add(p.content_id);
         }
@@ -101,7 +104,6 @@ export const listContentItems = createServerFn({ method: 'POST' })
 
       const accessMode = item.access_mode || (item.is_free ? 'gratuito' : 'pago');
 
-      // First, determine base unlock status from access mode
       let baseUnlocked = false;
       let effectiveAccessMode = accessMode;
       let unlockDate: string | undefined;
@@ -129,12 +131,10 @@ export const listContentItems = createServerFn({ method: 'POST' })
           }
         }
       } else {
-        // pago
         effectiveAccessMode = 'pago';
         baseUnlocked = isBuyer;
       }
 
-      // Then, apply unlock rule (complementary layer)
       const ruleType = item.unlock_rule_type || 'none';
       const ruleContentId = item.unlock_rule_content_id;
       let ruleMet = true;
@@ -154,8 +154,6 @@ export const listContentItems = createServerFn({ method: 'POST' })
       }
 
       const finalUnlocked = baseUnlocked && ruleMet;
-
-      // Resolve prerequisite content info for the card
       const prerequisiteTitle = ruleContentId ? titleMap.get(ruleContentId) : undefined;
 
       return {
@@ -182,45 +180,75 @@ export const listContentItems = createServerFn({ method: 'POST' })
       }
     }
 
-    // Fetch popularity data for recommendations (play + download counts per content)
+    // Fetch popularity data using aggregated counts instead of all rows
+    // Use RPC or limited queries to get counts per content
+    const contentIds = (data || []).map((d: any) => d.id);
+
+    // Batch count queries — fetch only counts, not all rows
     const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-    const { data: playCountsRaw } = await supabaseAdmin
-      .from('play_logs')
-      .select('track_id, played_at');
-    const { data: dlCountsRaw } = await supabaseAdmin
-      .from('download_logs')
-      .select('track_id, downloaded_at');
+
+    const [playCountsRes, dlCountsRes, weeklyPlayRes, weeklyDlRes] = await Promise.all([
+      supabaseAdmin
+        .from('play_logs')
+        .select('track_id')
+        .in('track_id', contentIds),
+      supabaseAdmin
+        .from('download_logs')
+        .select('track_id')
+        .in('track_id', contentIds),
+      supabaseAdmin
+        .from('play_logs')
+        .select('track_id')
+        .in('track_id', contentIds)
+        .gte('played_at', sevenDaysAgo),
+      supabaseAdmin
+        .from('download_logs')
+        .select('track_id')
+        .in('track_id', contentIds)
+        .gte('downloaded_at', sevenDaysAgo),
+    ]);
 
     const popularityMap: Record<string, { plays: number; downloads: number }> = {};
     const weeklyPopularityMap: Record<string, { plays: number; downloads: number }> = {};
-    if (playCountsRaw) {
-      for (const r of playCountsRaw) {
+
+    if (playCountsRes.data) {
+      for (const r of playCountsRes.data) {
         if (!popularityMap[r.track_id]) popularityMap[r.track_id] = { plays: 0, downloads: 0 };
         popularityMap[r.track_id].plays++;
-        if (r.played_at >= sevenDaysAgo) {
-          if (!weeklyPopularityMap[r.track_id]) weeklyPopularityMap[r.track_id] = { plays: 0, downloads: 0 };
-          weeklyPopularityMap[r.track_id].plays++;
-        }
       }
     }
-    if (dlCountsRaw) {
-      for (const r of dlCountsRaw) {
+    if (dlCountsRes.data) {
+      for (const r of dlCountsRes.data) {
         if (!popularityMap[r.track_id]) popularityMap[r.track_id] = { plays: 0, downloads: 0 };
         popularityMap[r.track_id].downloads++;
-        if (r.downloaded_at >= sevenDaysAgo) {
-          if (!weeklyPopularityMap[r.track_id]) weeklyPopularityMap[r.track_id] = { plays: 0, downloads: 0 };
-          weeklyPopularityMap[r.track_id].downloads++;
-        }
+      }
+    }
+    if (weeklyPlayRes.data) {
+      for (const r of weeklyPlayRes.data) {
+        if (!weeklyPopularityMap[r.track_id]) weeklyPopularityMap[r.track_id] = { plays: 0, downloads: 0 };
+        weeklyPopularityMap[r.track_id].plays++;
+      }
+    }
+    if (weeklyDlRes.data) {
+      for (const r of weeklyDlRes.data) {
+        if (!weeklyPopularityMap[r.track_id]) weeklyPopularityMap[r.track_id] = { plays: 0, downloads: 0 };
+        weeklyPopularityMap[r.track_id].downloads++;
       }
     }
 
     // Fetch active categories for dynamic rendering
-    const { data: categoriesData } = await supabaseAdmin
-      .from('categories')
-      .select('id, name, slug, icon, sort_order, is_featured')
-      .order('sort_order', { ascending: true });
+    const [categoriesRes, journeysRes] = await Promise.all([
+      supabaseAdmin
+        .from('categories')
+        .select('id, name, slug, icon, sort_order, is_featured')
+        .order('sort_order', { ascending: true }),
+      supabaseAdmin
+        .from('journeys')
+        .select('id, name, slug, icon, sort_order')
+        .order('sort_order', { ascending: true }),
+    ]);
 
-    const categories = (categoriesData || []).map((c: any) => ({
+    const categories = (categoriesRes.data || []).map((c: any) => ({
       id: c.id,
       name: c.name,
       slug: c.slug,
@@ -229,13 +257,7 @@ export const listContentItems = createServerFn({ method: 'POST' })
       isFeatured: c.is_featured,
     }));
 
-    // Fetch journeys for dynamic rendering
-    const { data: journeysData } = await supabaseAdmin
-      .from('journeys')
-      .select('id, name, slug, icon, sort_order')
-      .order('sort_order', { ascending: true });
-
-    const journeys = (journeysData || []).map((j: any) => ({
+    const journeys = (journeysRes.data || []).map((j: any) => ({
       id: j.id,
       name: j.name,
       slug: j.slug,

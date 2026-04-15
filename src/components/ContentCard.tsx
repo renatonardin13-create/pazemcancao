@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { memo } from "react";
 import { Lock, Download, Play, ShoppingCart, Clock, ArrowRight, CheckCircle2, Eye, Heart } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
@@ -31,7 +31,7 @@ function getContentState(item: any, hasAccess: boolean, progress: ContentCardPro
   return 'not_started';
 }
 
-export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progress, isLastAccessed, onTrackView, onTrackDownload, isFavorite, onToggleFavorite }: ContentCardProps) {
+export const ContentCard = memo(function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progress, isLastAccessed, onTrackView, onTrackDownload, isFavorite, onToggleFavorite }: ContentCardProps) {
   const accessMode = item.effectiveAccessMode || (item.is_free ? 'gratuito' : 'pago');
   const isUnlocked = item.unlocked !== undefined ? item.unlocked : (item.is_free || hasAccess);
   const isLocked = !isUnlocked;
@@ -56,12 +56,10 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progre
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, delay: index * 0.06, ease: [0.22, 1, 0.36, 1] }}
+    <div
       onClick={isLocked ? handleLockedClick : undefined}
-      className={`group/card relative block ${isLocked ? 'cursor-pointer' : ''}`}
+      className={`group/card relative block animate-in fade-in slide-in-from-bottom-3 duration-500 ${isLocked ? 'cursor-pointer' : ''}`}
+      style={{ animationDelay: `${Math.min(index * 60, 300)}ms`, animationFillMode: 'both' }}
     >
       {/* Last accessed indicator */}
       {isLastAccessed && (
@@ -90,6 +88,7 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progre
               alt={item.title}
               className={`w-full h-full object-cover md:transition-transform md:duration-[900ms] md:ease-out md:group-hover/card:scale-[1.08] ${isLocked ? 'saturate-[0.45] brightness-[0.85]' : ''}`}
               loading="lazy"
+              decoding="async"
             />
           )}
 
@@ -297,6 +296,6 @@ export function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progre
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
-}
+});
