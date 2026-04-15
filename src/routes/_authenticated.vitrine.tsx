@@ -5,13 +5,19 @@ import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { CourseShelfCard } from "@/components/CourseShelfCard";
 import { motion } from "framer-motion";
-import { Store, Lock, Play, ArrowRight, ShoppingCart, Search, ChevronLeft, ChevronRight } from "lucide-react";
+import { Store, Lock, Play, ArrowRight, ShoppingCart, Search, ChevronLeft, ChevronRight, Clock, Sparkles, ShieldCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 
 export const Route = createFileRoute("/_authenticated/vitrine")({
   component: VitrinePage,
 });
+
+const SHELF_ICONS: Record<string, React.ReactNode> = {
+  '__continue__': <Play className="h-4 w-4 text-gold fill-gold" />,
+  '__available__': <ShoppingCart className="h-4 w-4 text-gold" />,
+  '__coming_soon__': <Clock className="h-4 w-4 text-gold" />,
+};
 
 function VitrinePage() {
   const { data, isLoading } = useQuery({
@@ -40,6 +46,9 @@ function VitrinePage() {
       }))
       .filter((shelf: any) => shelf.courses.length > 0);
   }, [shelves, searchTerm]);
+
+  // Count admin shelves for promo banner positioning
+  let adminShelfIndex = 0;
 
   return (
     <StudentLayout>
@@ -99,59 +108,67 @@ function VitrinePage() {
               </div>
             ) : (
               <div className="space-y-8 sm:space-y-12">
-                {filteredShelves.map((shelf: any, shelfIdx: number) => (
-                  <motion.section
-                    key={shelf.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: shelfIdx * 0.08 }}
-                  >
-                    {/* Shelf title */}
-                    <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mb-3 sm:mb-4">
-                      <div className="flex items-center gap-3">
-                        <h2 className="font-display text-lg sm:text-xl font-bold text-foreground/90 tracking-tight">
-                          {shelf.name}
-                        </h2>
-                        <div className="flex-1 h-px bg-gradient-to-r from-gold/10 to-transparent" />
-                        <span className="text-[10px] sm:text-xs text-muted-foreground/40 uppercase tracking-wider font-medium">
-                          {shelf.courses.length} título{shelf.courses.length !== 1 ? "s" : ""}
-                        </span>
+                {filteredShelves.map((shelf: any, shelfIdx: number) => {
+                  const isAdminShelf = shelf.shelf_type !== 'smart';
+                  if (isAdminShelf) adminShelfIndex++;
+
+                  return (
+                    <motion.section
+                      key={shelf.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: shelfIdx * 0.06 }}
+                    >
+                      {/* Shelf title */}
+                      <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mb-3 sm:mb-4">
+                        <div className="flex items-center gap-2.5">
+                          {SHELF_ICONS[shelf.id] && (
+                            <span className="flex-shrink-0">{SHELF_ICONS[shelf.id]}</span>
+                          )}
+                          <h2 className="font-display text-lg sm:text-xl font-bold text-foreground/90 tracking-tight">
+                            {shelf.name}
+                          </h2>
+                          <div className="flex-1 h-px bg-gradient-to-r from-gold/10 to-transparent" />
+                          <span className="text-[10px] sm:text-xs text-muted-foreground/40 uppercase tracking-wider font-medium">
+                            {shelf.courses.length} título{shelf.courses.length !== 1 ? "s" : ""}
+                          </span>
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Netflix carousel */}
-                    <NetflixCarousel courses={shelf.courses} />
+                      {/* Netflix carousel */}
+                      <NetflixCarousel courses={shelf.courses} shelfId={shelf.id} />
 
-                    {/* Promo banner after shelf */}
-                    {promoBanners
-                      .filter((b: any) => b.position_after_shelf === shelfIdx + 1)
-                      .map((banner: any) => (
-                        <motion.div
-                          key={banner.id}
-                          initial={{ opacity: 0, y: 12 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.5, delay: 0.3 }}
-                          className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mt-6"
-                        >
-                          {banner.link_url ? (
-                            <a href={banner.link_url} target="_blank" rel="noopener noreferrer">
+                      {/* Promo banner after admin shelf */}
+                      {isAdminShelf && promoBanners
+                        .filter((b: any) => b.position_after_shelf === adminShelfIndex)
+                        .map((banner: any) => (
+                          <motion.div
+                            key={banner.id}
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: 0.3 }}
+                            className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mt-6"
+                          >
+                            {banner.link_url ? (
+                              <a href={banner.link_url} target="_blank" rel="noopener noreferrer">
+                                <img
+                                  src={banner.image_url}
+                                  alt={banner.title}
+                                  className="w-full rounded-xl border border-border/25 hover:border-gold/20 transition-colors"
+                                />
+                              </a>
+                            ) : (
                               <img
                                 src={banner.image_url}
                                 alt={banner.title}
-                                className="w-full rounded-xl border border-border/25 hover:border-gold/20 transition-colors"
+                                className="w-full rounded-xl border border-border/25"
                               />
-                            </a>
-                          ) : (
-                            <img
-                              src={banner.image_url}
-                              alt={banner.title}
-                              className="w-full rounded-xl border border-border/25"
-                            />
-                          )}
-                        </motion.div>
-                      ))}
-                  </motion.section>
-                ))}
+                            )}
+                          </motion.div>
+                        ))}
+                    </motion.section>
+                  );
+                })}
               </div>
             )}
           </div>
@@ -175,19 +192,16 @@ function HeroBanner({ course }: { course: any }) {
       transition={{ duration: 1 }}
       className={`relative w-full h-[55vh] sm:h-[65vh] min-h-[320px] max-h-[600px] overflow-hidden ${bannerLinkUrl ? 'cursor-pointer' : ''}`}
     >
-      {/* Background image */}
       <img
         src={imageUrl}
         alt={course.display_title || course.title}
         className={`w-full h-full object-${course.banner_fit || 'cover'}`}
       />
 
-      {/* Gradient overlays for Netflix depth */}
       <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
 
-      {/* Content */}
       <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-8 lg:px-12 pb-24 sm:pb-32">
         <div className="mx-auto w-full max-w-[1400px]">
           <motion.h1
@@ -233,7 +247,7 @@ function HeroBanner({ course }: { course: any }) {
 
 
 /* ── Netflix-style Carousel ── */
-function NetflixCarousel({ courses }: { courses: any[] }) {
+function NetflixCarousel({ courses, shelfId }: { courses: any[]; shelfId?: string }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
@@ -260,9 +274,11 @@ function NetflixCarousel({ courses }: { courses: any[] }) {
     el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
   }, []);
 
+  // For "coming soon" shelf, render a special badge
+  const isComingSoon = shelfId === '__coming_soon__';
+
   return (
     <div className="relative group/shelf">
-      {/* Left arrow */}
       {canScrollLeft && (
         <button
           onClick={() => scroll('left')}
@@ -273,7 +289,6 @@ function NetflixCarousel({ courses }: { courses: any[] }) {
         </button>
       )}
 
-      {/* Right arrow */}
       {canScrollRight && (
         <button
           onClick={() => scroll('right')}
@@ -284,23 +299,32 @@ function NetflixCarousel({ courses }: { courses: any[] }) {
         </button>
       )}
 
-      {/* Scrollable track */}
       <div
         ref={scrollRef}
         onScroll={checkScroll}
         className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 px-4 sm:px-8 lg:px-12 scrollbar-hide snap-x snap-mandatory touch-pan-x"
         style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
       >
-        {/* Left spacer for max-width alignment */}
         <div className="shrink-0 w-0 lg:w-[calc((100vw-1400px)/2)]" />
 
         {courses.map((course: any, idx: number) => (
           <div key={course.id} className="w-[180px] sm:w-[200px] md:w-[220px] shrink-0 snap-start">
-            <CourseShelfCard course={course} index={idx} showProgress />
+            <CourseShelfCard
+              course={course}
+              index={idx}
+              showProgress
+              badge={
+                isComingSoon && course.badge_text ? (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-purple-500/90 text-[9px] sm:text-[10px] font-bold text-white uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm">
+                    <Clock className="h-2.5 w-2.5" />
+                    {course.badge_text}
+                  </span>
+                ) : undefined
+              }
+            />
           </div>
         ))}
 
-        {/* Right spacer */}
         <div className="shrink-0 w-0 lg:w-[calc((100vw-1400px)/2)]" />
       </div>
     </div>
