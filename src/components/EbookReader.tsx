@@ -358,7 +358,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   return (
     <div className="flex flex-col w-full min-h-screen" style={{ backgroundColor: "#1a1814" }}>
       {/* ═══ TOP BAR — Kindle-style minimal ═══ */}
-      <div className={`flex items-center justify-between px-3 sm:px-6 py-2 border-b border-stone-800/40 bg-[#1a1814]/95 backdrop-blur-xl z-30 transition-all duration-300 ${immersive ? "opacity-0 pointer-events-none h-0 overflow-hidden py-0 border-0" : ""}`}>
+      <div className={`flex items-center justify-between px-3 sm:px-6 py-2 border-b border-stone-800/40 bg-[#1a1814]/95 backdrop-blur-xl z-30 transition-all duration-300 ${!controlsVisible ? "opacity-0 pointer-events-none h-0 overflow-hidden py-0 border-0" : ""}`}>
         <div className="flex items-center gap-3 min-w-0">
           {onBack && (
             <Button variant="premiumOutline" size="sm" onClick={onBack} className="shrink-0">
@@ -395,7 +395,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setImmersive(!immersive)}
+            onClick={() => setControlsVisible(!controlsVisible)}
             className="h-7 w-7 p-0 text-stone-500/40 hover:text-gold"
             title="Modo imersivo"
           >
@@ -471,7 +471,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       </div>
 
       {/* ═══ AUDIO PLAYER BAR ═══ */}
-      {ebookAudio.available && !immersive && (
+      {ebookAudio.available && controlsVisible && (
         <div className="flex items-center gap-2 px-3 sm:px-6 py-2 border-t border-stone-800/30 bg-[#1a1814]/95 backdrop-blur-xl z-30">
           <Headphones className="h-3.5 w-3.5 text-gold/50 shrink-0" />
           <span className="text-[9px] uppercase tracking-widest text-stone-500/40 hidden sm:inline">
@@ -507,7 +507,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       )}
 
       {/* ═══ BOTTOM BAR ═══ */}
-      <div className={`flex items-center justify-between px-3 sm:px-6 py-2.5 border-t border-stone-800/30 bg-[#1a1814]/95 backdrop-blur-xl z-30 transition-all duration-300 ${immersive ? "opacity-0 pointer-events-none h-0 overflow-hidden py-0 border-0" : ""}`}>
+      <div className={`flex items-center justify-between px-3 sm:px-6 py-2.5 border-t border-stone-800/30 bg-[#1a1814]/95 backdrop-blur-xl z-30 transition-all duration-300 ${!controlsVisible ? "opacity-0 pointer-events-none h-0 overflow-hidden py-0 border-0" : ""}`}>
         <Button variant="premiumOutline" size="sm" onClick={prevSpread} disabled={spread <= 0} className="gap-1.5">
           <ChevronLeft className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Anterior</span>
@@ -539,7 +539,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       </div>
 
       {/* ═══ MARK COMPLETE BAR ═══ */}
-      {onComplete && !immersive && (
+      {onComplete && controlsVisible && (
         <div className="flex items-center justify-center px-3 sm:px-6 py-3 border-t border-stone-800/30 bg-[#1a1814]/95 backdrop-blur-xl z-30">
           <Button
             onClick={() => {
