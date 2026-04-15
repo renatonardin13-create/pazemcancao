@@ -162,6 +162,44 @@ export function EbookReader({ pdfUrl, title, audioUrl, onBack }: EbookReaderProp
     allPages.forEach((p) => renderPage(p));
   }, [spread, loading, numPages, getSpreadPages, totalSpreads, renderPage]);
 
+  // Extract text from current pages for TTS
+  useEffect(() => {
+    if (loading || numPages === 0) return;
+    const pdf = pdfDocRef.current;
+    if (!pdf) return;
+    currentPages.forEach(async (pageNum) => {
+      if (pageTexts[pageNum]) return;
+      try {
+        const page = await pdf.getPage(pageNum);
+        const textContent = await page.getTextContent();
+        const text = textContent.items
+          .map((item: any) => item.str)
+          .join(" ")
+          .trim();
+        if (text) {
+          setPageTexts((prev) => ({ ...prev, [pageNum]: text }));
+        }
+      } catch { /* ignore */ }
+    });
+  }, [spread, loading, numPages, currentPages]);
+
+  // Combine current page texts for audio
+  const currentPageText = currentPages
+    .map((p) => pageTexts[p] || "")
+    .filter(Boolean)
+    .join(". ");
+
+  // Audio player hook
+  const ebookAudio = useEbookAudio({
+    audioUrl,
+    pageText: currentPageText || undefined,
+  });
+
+  // Stop TTS when page changes
+  useEffect(() => {
+    ebookAudio.stop();
+  }, [spread]);
+
   // Re-render on scale change
   useEffect(() => {
     if (loading || numPages === 0) return;
