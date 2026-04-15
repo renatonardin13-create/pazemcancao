@@ -115,19 +115,15 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
     const linkedCourseIds = Array.from(new Set(shelfCourseLinks.map((link) => link.course_id)));
     const hasAutoShelves = shelves.some((shelf) => shelf.mode === 'auto');
 
+    // Always fetch all published courses to build smart shelves
     let publishedCourses: CourseRecord[] = [];
-    if (hasAutoShelves || linkedCourseIds.length > 0) {
-      let coursesQuery = supabaseAdmin
+    {
+      const { data: allCourses, error: coursesErr } = await supabaseAdmin
         .from('courses')
         .select('id, title, short_description, cover_image_url, banner_image_url, status, sort_order, created_at, price')
         .eq('status', 'published')
         .order('sort_order', { ascending: true });
 
-      if (!hasAutoShelves) {
-        coursesQuery = coursesQuery.in('id', linkedCourseIds);
-      }
-
-      const { data: allCourses, error: coursesErr } = await coursesQuery;
       if (coursesErr) throw new Error(coursesErr.message);
       publishedCourses = (allCourses || []) as CourseRecord[];
     }
@@ -235,17 +231,20 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
 
     const enrolledIds = Array.from(activeEnrollmentIds);
     const completedLessonsMap = new Map<string, number>();
+    let userProgressData: Array<{ course_id: string; lesson_id: string; completed: boolean; updated_at: string }> = [];
 
     if (enrolledIds.length > 0) {
       const { data: progressData, error: progressError } = await supabase
         .from('lesson_progress')
-        .select('course_id, completed')
+        .select('course_id, lesson_id, completed, updated_at')
         .eq('user_id', userId)
-        .in('course_id', enrolledIds);
+        .in('course_id', enrolledIds)
+        .order('updated_at', { ascending: false });
 
       if (progressError) throw new Error(progressError.message);
+      userProgressData = progressData || [];
 
-      for (const progress of progressData || []) {
+      for (const progress of userProgressData) {
         if (progress.completed) {
           completedLessonsMap.set(
             progress.course_id,
@@ -317,7 +316,8 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       links.sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
     }
 
-    const result = [];
+    // ── Build admin-defined shelves ──
+    const adminShelves = [];
 
     for (const shelf of shelves) {
       const linkedCourses = (shelfCourseMap.get(shelf.id) || [])
@@ -331,15 +331,110 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
           : [];
 
       if (courses.length > 0) {
-        result.push({
+        adminShelves.push({
           id: shelf.id,
           name: shelf.name,
           sort_order: shelf.sort_order,
+          shelf_type: 'admin' as const,
           courses,
         });
       }
     }
 
+    // ── Build smart shelves ──
+
+    // 1. "Continue sua experiência" — in-progress courses sorted by last activity
+    const continueShelf: any[] = [];
+    const courseProgressMap = new Map<string, { lastAccess: string }>();
+    for (const p of userProgressData) {
+      if (!courseProgressMap.has(p.course_id)) {
+        courseProgressMap.set(p.course_id, { lastAccess: p.updated_at });
+      }
+    }
+    for (const [courseId, info] of courseProgressMap) {
+      const enriched = courseMap.get(courseId);
+      if (enriched && enriched.access_state === 'in_progress') {
+        continueShelf.push({ ...enriched, last_accessed_at: info.lastAccess });
+      }
+    }
+    continueShelf.sort((a, b) => new Date(b.last_accessed_at).getTime() - new Date(a.last_accessed_at).getTime());
+
+    // 2. "Disponível para você" — locked courses with checkout URL
+    const availableForYou = Array.from(courseMap.values())
+      .filter((c: any) => ['locked', 'blocked', 'expired'].includes(c.access_state) && c.checkout_url)
+      .slice(0, 20);
+
+    // 3. "Em breve" — courses with future launch_date (need to fetch)
+    let comingSoonCourses: any[] = [];
+    {
+      const { data: upcomingCourses } = await supabaseAdmin
+        .from('courses')
+        .select('id, title, short_description, cover_image_url, banner_image_url, status, sort_order, created_at, price, launch_date')
+        .eq('status', 'draft')
+        .not('launch_date', 'is', null)
+        .gt('launch_date', new Date().toISOString().split('T')[0])
+        .order('launch_date', { ascending: true })
+        .limit(20);
+
+      if (upcomingCourses && upcomingCourses.length > 0) {
+        const now = new Date();
+        comingSoonCourses = upcomingCourses.map((c: any) => {
+          const launchDate = new Date(c.launch_date);
+          const diffDays = Math.ceil((launchDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+          return {
+            ...c,
+            access_state: 'coming_soon',
+            coming_soon_days: diffDays,
+            badge_text: diffDays <= 7 ? `Em ${diffDays} dia${diffDays !== 1 ? 's' : ''}` : 'Em breve',
+            total_lessons: 0,
+            progress_pct: 0,
+          };
+        });
+      }
+    }
+
+    // ── Assemble final ordered result ──
+    const result: any[] = [];
+
+    // Smart shelf: Continue
+    if (continueShelf.length > 0) {
+      result.push({
+        id: '__continue__',
+        name: 'Continue sua experiência',
+        sort_order: -100,
+        shelf_type: 'smart',
+        courses: continueShelf.slice(0, 15),
+      });
+    }
+
+    // Admin shelves in their original order
+    for (const shelf of adminShelves) {
+      result.push(shelf);
+    }
+
+    // Smart shelf: Disponível para você
+    if (availableForYou.length > 0) {
+      result.push({
+        id: '__available__',
+        name: 'Disponível para você',
+        sort_order: 900,
+        shelf_type: 'smart',
+        courses: availableForYou,
+      });
+    }
+
+    // Smart shelf: Em breve
+    if (comingSoonCourses.length > 0) {
+      result.push({
+        id: '__coming_soon__',
+        name: 'Em breve',
+        sort_order: 950,
+        shelf_type: 'smart',
+        courses: comingSoonCourses,
+      });
+    }
+
+    // ── Banner config ──
     const { data: bannerSetting, error: bannerError } = await supabaseAdmin
       .from('platform_settings')
       .select('value')
