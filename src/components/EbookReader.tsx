@@ -21,6 +21,8 @@ import {
   SkipBack,
   SkipForward,
   Lock,
+  Maximize,
+  Minimize,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -72,6 +74,8 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   const [controlsVisible, setControlsVisible] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const [pageTexts, setPageTexts] = useState<Record<number, string>>({});
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const readerContainerRef = useRef<HTMLDivElement>(null);
 
   // Reading preferences (persisted in localStorage)
   type ReadingTheme = "light" | "dark";
@@ -411,10 +415,28 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
       if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); nextSpread(); }
       else if (e.key === "ArrowLeft") { e.preventDefault(); prevSpread(); }
+      else if (e.key === "F11") { e.preventDefault(); toggleFullscreen(); }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [nextSpread, prevSpread]);
+
+  // Fullscreen
+  const toggleFullscreen = useCallback(() => {
+    const el = readerContainerRef.current;
+    if (!el) return;
+    if (!document.fullscreenElement) {
+      el.requestFullscreen?.().catch(() => {});
+    } else {
+      document.exitFullscreen?.().catch(() => {});
+    }
+  }, []);
+
+  useEffect(() => {
+    const onChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
 
   // Touch/swipe
   const handleTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
@@ -592,7 +614,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   };
 
   return (
-    <div className="flex flex-col w-full min-h-screen" style={{ backgroundColor: "#1a1814" }}>
+    <div ref={readerContainerRef} className="flex flex-col w-full min-h-screen" style={{ backgroundColor: "#1a1814" }}>
       {/* ═══ TOP BAR — Kindle-style minimal ═══ */}
       <div className={`flex items-center justify-between px-3 sm:px-6 py-2 border-b border-stone-800/40 bg-[#1a1814]/95 backdrop-blur-xl z-30 transition-all duration-300 ${!controlsVisible ? "opacity-0 pointer-events-none h-0 overflow-hidden py-0 border-0" : ""}`}>
         <div className="flex items-center gap-3 min-w-0">
@@ -636,6 +658,16 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
             title={readingTheme === "dark" ? "Modo claro" : "Modo escuro"}
           >
             {readingTheme === "dark" ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+          </Button>
+          <div className="h-4 w-px bg-stone-700/20 mx-1" />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleFullscreen}
+            className="h-7 w-7 p-0 text-stone-500/40 hover:text-gold transition-colors"
+            title={isFullscreen ? "Sair da tela cheia (F11)" : "Tela cheia (F11)"}
+          >
+            {isFullscreen ? <Minimize className="h-3.5 w-3.5" /> : <Maximize className="h-3.5 w-3.5" />}
           </Button>
           <div className="h-4 w-px bg-stone-700/20 mx-1" />
           <div className="relative">
