@@ -236,90 +236,70 @@ function AdminTracksPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1 self-end sm:self-center shrink-0">
-                  <button
-                    onClick={() => setEditingTrack(track)}
-                    className="p-2 text-muted-foreground hover:text-gold transition-colors"
-                    title="Editar"
-                  >
-                    <Pencil className="h-3.5 w-3.5" />
-                  </button>
-                  {track.is_bonus && (
-                    <button
-                      onClick={() => {
-                        if (confirm(`Enviar notificação de bônus para todos os clientes sobre "${track.title}"?`)) {
-                          notifyMutation.mutate({
-                            trackTitle: track.title,
-                            releaseDate: track.bonus_release_date || undefined,
-                          });
-                        }
-                      }}
-                      disabled={notifyMutation.isPending}
-                      className="p-2 text-muted-foreground/60 hover:text-amber-400/60 transition-colors"
-                      title="Notificar clientes sobre este bônus"
-                    >
-                      {notifyMutation.isPending && notifyMutation.variables?.trackTitle === track.title ? (
-                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                      ) : (
-                        <Bell className="h-3.5 w-3.5" />
-                      )}
-                    </button>
-                  )}
-                  {!track.cover_url && (
-                    <button
-                      onClick={() =>
-                        coverMutation.mutate({ trackId: track.id, title: track.title })
-                      }
-                      disabled={coverMutation.isPending}
-                      className="p-2 text-muted-foreground hover:text-gold transition-colors"
-                      title="Gerar capa com IA"
-                    >
-                      {coverMutation.isPending && coverMutation.variables?.trackId === track.id ? (
-                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                      ) : (
-                        <ImageIcon className="h-3.5 w-3.5" />
-                      )}
-                    </button>
-                  )}
-                  {track.download_url && (
-                    <a
-                      href={track.download_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="p-2 text-muted-foreground hover:text-gold transition-colors"
-                      title="Abrir link de download"
-                    >
-                      <ExternalLink className="h-3.5 w-3.5" />
-                    </a>
-                  )}
-                  <button
-                    onClick={() =>
-                      toggleMutation.mutate({
-                        id: track.id,
-                        is_active: !track.is_active,
-                      })
+                <AdminActionButtons
+                  onEdit={() => setEditingTrack(track)}
+                  isActive={track.is_active}
+                  onToggle={(newState) => toggleMutation.mutate({ id: track.id, is_active: newState })}
+                  toggling={toggleMutation.isPending && toggleMutation.variables?.id === track.id}
+                  onDelete={() => {
+                    if (confirm("Remover esta música?")) {
+                      deleteMutation.mutate(track.id);
                     }
-                    className="p-2 text-muted-foreground hover:text-gold transition-colors"
-                    title={track.is_active ? "Desativar" : "Ativar"}
-                  >
-                    {track.is_active ? (
-                      <ToggleRight className="h-4 w-4" />
-                    ) : (
-                      <ToggleLeft className="h-4 w-4" />
-                    )}
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (confirm("Remover esta música?")) {
-                        deleteMutation.mutate(track.id);
-                      }
-                    }}
-                    className="p-2 text-muted-foreground/60 hover:text-destructive/60 transition-colors"
-                    title="Remover"
-                  >
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
-                </div>
+                  }}
+                  extraBefore={
+                    <>
+                      {track.is_bonus && (
+                        <button
+                          onClick={() => {
+                            if (confirm(`Enviar notificação de bônus para todos os clientes sobre "${track.title}"?`)) {
+                              notifyMutation.mutate({
+                                trackTitle: track.title,
+                                releaseDate: track.bonus_release_date || undefined,
+                              });
+                            }
+                          }}
+                          disabled={notifyMutation.isPending}
+                          className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-amber-500/20 bg-amber-500/[0.06] text-amber-400/70 text-xs font-semibold hover:bg-amber-500/10 transition-all"
+                          title="Notificar clientes sobre este bônus"
+                        >
+                          {notifyMutation.isPending && notifyMutation.variables?.trackTitle === track.title ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          ) : (
+                            <Bell className="h-3.5 w-3.5" />
+                          )}
+                          <span>Notificar</span>
+                        </button>
+                      )}
+                      {!track.cover_url && (
+                        <button
+                          onClick={() => coverMutation.mutate({ trackId: track.id, title: track.title })}
+                          disabled={coverMutation.isPending}
+                          className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border/25 bg-card/20 text-muted-foreground/70 text-xs font-semibold hover:text-gold hover:border-gold/25 transition-all"
+                          title="Gerar capa com IA"
+                        >
+                          {coverMutation.isPending && coverMutation.variables?.trackId === track.id ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          ) : (
+                            <ImageIcon className="h-3.5 w-3.5" />
+                          )}
+                          <span>Capa IA</span>
+                        </button>
+                      )}
+                      {track.download_url && (
+                        <a
+                          href={track.download_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border/25 bg-card/20 text-muted-foreground/70 text-xs font-semibold hover:text-gold hover:border-gold/25 transition-all"
+                          title="Abrir link de download"
+                        >
+                          <ExternalLink className="h-3.5 w-3.5" />
+                          <span>Link</span>
+                        </a>
+                      )}
+                    </>
+                  }
+                />
               </div>
             ))}
           </div>
