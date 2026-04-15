@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { CrossSellSection } from "@/components/CrossSellSection";
 import { PageLoading } from "@/components/LoadingSkeletons";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -653,6 +654,14 @@ function CourseDetailPage() {
             )}
           </AnimatePresence>
         </div>
+
+        {/* Cross-sell related products */}
+        <CrossSellSection
+          currentType="course"
+          currentId={courseId}
+          category={course.category_id || undefined}
+          className="mt-8 px-4 sm:px-6 pb-8"
+        />
       </div>
     </StudentLayout>
   );
