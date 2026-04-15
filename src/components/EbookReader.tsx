@@ -74,6 +74,8 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   const [controlsVisible, setControlsVisible] = useState(true);
   const [showSettings, setShowSettings] = useState(false);
   const [pageTexts, setPageTexts] = useState<Record<number, string>>({});
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const readerContainerRef = useRef<HTMLDivElement>(null);
 
   // Reading preferences (persisted in localStorage)
   type ReadingTheme = "light" | "dark";
