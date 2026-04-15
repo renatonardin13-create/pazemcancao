@@ -193,6 +193,7 @@ function VitrinePage() {
             <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mt-8 sm:mt-12">
               <FunnelBanner context="vitrine" limit={8} />
             </div>
+          </div>
         </div>
 
         <FooterLinks />
