@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getStudentShelves } from "@/lib/shelves.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
+import { CourseShelfCard } from "@/components/CourseShelfCard";
 import { motion } from "framer-motion";
 import { Store, Lock, Play, ArrowRight, ShoppingCart, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
