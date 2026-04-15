@@ -95,29 +95,29 @@ export function StudentSidebar() {
 
   const navItemClass = (active: boolean) =>
     cn(
-      "flex items-center gap-3.5 rounded-xl px-4 py-3.5 text-[15px] font-semibold tracking-tight transition-all duration-500",
+      "flex items-center gap-4 rounded-2xl px-5 py-4 text-[16px] font-semibold tracking-tight transition-all duration-400 group/navitem",
       active
-        ? "text-gold bg-gold/[0.08] border border-gold/15 shadow-sm shadow-gold/5"
-        : "text-foreground/50 hover:text-foreground/75 hover:bg-muted/8 border border-transparent"
+        ? "text-gold bg-gold/[0.10] ring-1 ring-gold/15 shadow-[0_0_20px_-4px] shadow-gold/10"
+        : "text-foreground/50 hover:text-foreground/80 hover:bg-white/[0.03] ring-1 ring-transparent hover:ring-white/[0.04]"
     );
 
   const subItemClass = (active: boolean) =>
     cn(
-      "flex items-center gap-3 rounded-lg px-4 py-2.5 ml-6 text-[13px] font-medium tracking-tight transition-all duration-500",
+      "flex items-center gap-3 rounded-xl px-4 py-2.5 ml-8 text-[13.5px] font-medium tracking-tight transition-all duration-400",
       active
-        ? "text-gold/85 bg-gold/[0.06] border-l-2 border-gold/35"
-        : "text-muted-foreground/50 hover:text-foreground/60 hover:bg-muted/6 border-l-2 border-transparent"
+        ? "text-gold/90 bg-gold/[0.07] border-l-2 border-gold/40"
+        : "text-muted-foreground/45 hover:text-foreground/60 hover:bg-white/[0.03] border-l-2 border-transparent hover:border-white/[0.06]"
     );
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
-      {/* Logo — larger and more prominent */}
-      <div className="px-6 py-6 border-b border-border/15">
+      {/* Logo — prominent with generous spacing */}
+      <div className="px-7 pt-8 pb-6 border-b border-white/[0.06]">
         <LogoBrand size="lg" showSubtitle />
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-4 py-5 space-y-1.5">
+      <nav className="flex-1 overflow-y-auto px-5 pt-6 pb-4 space-y-2">
         {/* Vitrine */}
         {hasVitrine && (
           <Link
@@ -125,7 +125,7 @@ export function StudentSidebar() {
             onClick={() => setMobileOpen(false)}
             className={navItemClass(isActive("/vitrine"))}
           >
-            <Store className="h-5 w-5 shrink-0" />
+            <Store className="h-[22px] w-[22px] shrink-0" />
             Vitrine
           </Link>
         )}
@@ -137,7 +137,7 @@ export function StudentSidebar() {
             onClick={() => setMobileOpen(false)}
             className={navItemClass(isActive("/cursos") || isActivePrefix("/cursos/"))}
           >
-            <GraduationCap className="h-5 w-5 shrink-0" />
+            <GraduationCap className="h-[22px] w-[22px] shrink-0" />
             Meus Cursos
           </Link>
         )}
@@ -152,19 +152,19 @@ export function StudentSidebar() {
                 "w-full justify-between"
               )}
             >
-              <span className="flex items-center gap-3.5">
-                <Music2 className="h-5 w-5 shrink-0" />
+              <span className="flex items-center gap-4">
+                <Music2 className="h-[22px] w-[22px] shrink-0" />
                 Louvores
               </span>
               {louvoresOpen ? (
-                <ChevronDown className="h-4 w-4 text-muted-foreground/45 transition-transform" />
+                <ChevronDown className="h-4.5 w-4.5 text-muted-foreground/40 transition-transform duration-300" />
               ) : (
-                <ChevronRight className="h-4 w-4 text-muted-foreground/45 transition-transform" />
+                <ChevronRight className="h-4.5 w-4.5 text-muted-foreground/40 transition-transform duration-300" />
               )}
             </button>
 
             {louvoresOpen && (
-              <div className="mt-2 space-y-1">
+              <div className="mt-2.5 space-y-1.5">
                 <Link
                   to="/musicas"
                   search={{}}
@@ -173,7 +173,7 @@ export function StudentSidebar() {
                     isActive("/musicas") && !(location.search as any)?.categoria
                   )}
                 >
-                  <span className="text-[13px]">⭐</span>
+                  <span className="text-sm">⭐</span>
                   Destaques (Top 10)
                 </Link>
                 {visibleCategories
@@ -194,7 +194,7 @@ export function StudentSidebar() {
                         onClick={() => setMobileOpen(false)}
                         className={subItemClass(isActiveCat)}
                       >
-                        <span className="text-[13px]">{cat.icon || "🎵"}</span>
+                        <span className="text-sm">{cat.icon || "🎵"}</span>
                         {cat.name.replace(/^[^\w\s]+\s*/u, "")}
                       </Link>
                     );
@@ -205,7 +205,7 @@ export function StudentSidebar() {
         )}
 
         {/* Separator */}
-        <div className="my-3 h-px bg-gradient-to-r from-transparent via-border/25 to-transparent" />
+        <div className="my-4 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
         {/* Perfil */}
         <Link
@@ -213,33 +213,33 @@ export function StudentSidebar() {
           onClick={() => setMobileOpen(false)}
           className={navItemClass(isActive("/perfil"))}
         >
-          <UserCircle className="h-5 w-5 shrink-0" />
+          <UserCircle className="h-[22px] w-[22px] shrink-0" />
           Perfil
         </Link>
 
         {/* Admin */}
         {!adminLoading && isAdmin && (
           <>
-            <div className="my-3 h-px bg-gradient-to-r from-transparent via-border/25 to-transparent" />
+            <div className="my-4 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
             <Link
               to="/admin"
               onClick={() => setMobileOpen(false)}
               className={navItemClass(isActivePrefix("/admin"))}
             >
-              <Settings className="h-5 w-5 shrink-0" />
+              <Settings className="h-[22px] w-[22px] shrink-0" />
               Admin
             </Link>
           </>
         )}
       </nav>
 
-      {/* Logout */}
-      <div className="px-4 py-5 border-t border-border/15">
+      {/* Logout — bottom */}
+      <div className="px-5 py-6 border-t border-white/[0.06]">
         <button
           onClick={() => { logout(); setMobileOpen(false); }}
-          className="flex items-center gap-3.5 rounded-xl px-4 py-3 w-full text-[13px] font-semibold text-muted-foreground/45 hover:text-foreground/65 hover:bg-muted/10 transition-all duration-300"
+          className="flex items-center gap-4 rounded-2xl px-5 py-3.5 w-full text-[14px] font-semibold text-muted-foreground/40 hover:text-foreground/60 hover:bg-white/[0.04] transition-all duration-300"
         >
-          <LogOut className="h-5 w-5 shrink-0" />
+          <LogOut className="h-[20px] w-[20px] shrink-0" />
           Sair
         </button>
       </div>
@@ -249,11 +249,11 @@ export function StudentSidebar() {
   return (
     <>
       {/* Mobile trigger */}
-      <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-background/90 backdrop-blur-2xl border-b border-border/20 md:hidden">
+      <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-3 bg-background/90 backdrop-blur-2xl border-b border-white/[0.06] md:hidden">
         <LogoBrand size="sm" />
         <button
           onClick={() => setMobileOpen(!mobileOpen)}
-          className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground/60 hover:text-foreground hover:bg-muted/15 transition-colors"
+          className="flex h-10 w-10 items-center justify-center rounded-xl text-muted-foreground/60 hover:text-foreground hover:bg-white/[0.06] transition-colors"
         >
           {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
@@ -270,7 +270,7 @@ export function StudentSidebar() {
       {/* Mobile sidebar */}
       <div
         className={cn(
-          "fixed top-0 left-0 z-50 h-full w-[300px] bg-sidebar border-r border-sidebar-border transform transition-transform duration-300 md:hidden",
+          "fixed top-0 left-0 z-50 h-full w-[320px] bg-sidebar border-r border-sidebar-border transform transition-transform duration-300 md:hidden",
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -278,7 +278,7 @@ export function StudentSidebar() {
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex md:flex-col md:w-[290px] md:min-h-screen bg-sidebar border-r border-sidebar-border shrink-0">
+      <aside className="hidden md:flex md:flex-col md:w-[310px] md:min-h-screen bg-sidebar border-r border-white/[0.05] shrink-0">
         {sidebarContent}
       </aside>
     </>
