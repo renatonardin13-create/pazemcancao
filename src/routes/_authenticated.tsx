@@ -4,6 +4,7 @@ import { RestrictedAccessCard } from "@/components/RestrictedAccessCard";
 import { checkBuyerAccess } from "@/lib/access.functions";
 import { useEffect, useState, useRef } from "react";
 import { LogOut, ShieldAlert } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthenticatedLayout,
@@ -16,6 +17,7 @@ function AuthenticatedLayout() {
   const [accessData, setAccessData] = useState<{ hasAccess: boolean; buyer: any; isTrial?: boolean; trialExpired?: boolean; canDownload?: boolean; trialExpiresAt?: string | null } | null>(null);
   const [accessLoading, setAccessLoading] = useState(true);
   const lastCheckedEmail = useRef<string | null>(null);
+  const welcomeShown = useRef(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -70,6 +72,23 @@ function AuthenticatedLayout() {
       navigate({ to: "/login" });
     }
   }, [loading, isAuthenticated, blocked, navigate]);
+
+  // Welcome toast for first-time buyers after purchase
+  useEffect(() => {
+    if (welcomeShown.current) return;
+    if (!accessData?.hasAccess || !accessData?.buyer) return;
+    if (isAdmin) return;
+
+    const buyer = accessData.buyer;
+    // Show welcome toast if buyer has never logged in before (first_login_at is null)
+    if (buyer.first_login_at === null || buyer.first_login_at === undefined) {
+      welcomeShown.current = true;
+      toast.success("🎉 Seu conteúdo foi liberado!", {
+        description: "Sua compra foi aprovada. Aproveite sua jornada espiritual!",
+        duration: 6000,
+      });
+    }
+  }, [accessData, isAdmin]);
 
   if (loading || adminLoading || (isAuthenticated && !isAdmin && accessLoading)) {
     return (

@@ -411,6 +411,20 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
         }
       }
 
+      // Create welcome notification for the buyer
+      try {
+        await supabaseAdmin.from('notifications').insert({
+          email: customerEmail,
+          title: '🎉 Seu conteúdo foi liberado!',
+          message: linkedCourseId
+            ? 'Sua compra foi aprovada e seu curso já está disponível. Aproveite sua jornada!'
+            : 'Sua compra foi aprovada e todos os conteúdos já estão disponíveis para você. Que Deus abençoe sua caminhada!',
+          type: 'purchase',
+        });
+      } catch (notifErr) {
+        console.error('Failed to create welcome notification:', notifErr);
+      }
+
       await markEventCompleted(eventKey, {
         user_created: userResult.userCreated,
         user_found: userResult.userFound,
