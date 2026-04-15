@@ -25,6 +25,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs
 interface EbookReaderProps {
   pdfUrl: string;
   title: string;
+  audioUrl?: string;
   onBack?: () => void;
 }
 
