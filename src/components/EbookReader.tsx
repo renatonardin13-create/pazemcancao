@@ -291,18 +291,31 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
     return `${currentPages[0]}–${currentPages[1]}`;
   })();
 
-  // 3D flip variants
+  // Page-flip animation variants — realistic curl effect
   const flipVariants = {
     enter: (dir: "left" | "right") => ({
-      rotateY: dir === "right" ? 60 : -60,
+      rotateY: dir === "right" ? 45 : -45,
+      skewY: dir === "right" ? -2 : 2,
+      x: dir === "right" ? 80 : -80,
       opacity: 0,
-      scale: 0.92,
+      scale: 0.96,
+      filter: "brightness(0.85)",
     }),
-    center: { rotateY: 0, opacity: 1, scale: 1 },
+    center: {
+      rotateY: 0,
+      skewY: 0,
+      x: 0,
+      opacity: 1,
+      scale: 1,
+      filter: "brightness(1)",
+    },
     exit: (dir: "left" | "right") => ({
-      rotateY: dir === "right" ? -60 : 60,
+      rotateY: dir === "right" ? -45 : 45,
+      skewY: dir === "right" ? 2 : -2,
+      x: dir === "right" ? -80 : 80,
       opacity: 0,
-      scale: 0.92,
+      scale: 0.96,
+      filter: "brightness(0.85)",
     }),
   };
 
@@ -549,12 +562,30 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            style={{ transformStyle: "preserve-3d" }}
+            transition={{
+              duration: 0.65,
+              ease: [0.25, 0.46, 0.45, 0.94],
+              opacity: { duration: 0.4 },
+              filter: { duration: 0.5 },
+            }}
+            style={{
+              transformStyle: "preserve-3d",
+              transformOrigin: direction === "right" ? "left center" : "right center",
+            }}
             className={`relative flex ${dualPage ? "max-w-[88vw] lg:max-w-[78vw] xl:max-w-[68vw]" : "max-w-[92vw] sm:max-w-[65vw] md:max-w-[50vw]"} w-full`}
           >
             {/* Ambient warm glow */}
             <div className="absolute -inset-6 rounded-3xl bg-amber-900/[0.06] blur-3xl pointer-events-none" />
+
+            {/* Fold shadow — simulates page curl shadow */}
+            <div
+              className="absolute inset-0 pointer-events-none z-10 rounded-md transition-opacity duration-500"
+              style={{
+                background: direction === "right"
+                  ? "linear-gradient(to right, transparent 40%, rgba(0,0,0,0.06) 48%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.06) 52%, transparent 60%)"
+                  : "linear-gradient(to left, transparent 40%, rgba(0,0,0,0.06) 48%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.06) 52%, transparent 60%)",
+              }}
+            />
 
             {/* Book shadow — deeper, warmer */}
             <div className="absolute -inset-3 rounded-xl shadow-[0_25px_100px_-20px_rgba(0,0,0,0.8)] pointer-events-none" />
