@@ -35,6 +35,7 @@ import {
 } from "lucide-react";
 import { EbookReader } from "@/components/EbookReader";
 import { UpsellSection } from "@/components/UpsellSection";
+import { CrossSellSection } from "@/components/CrossSellSection";
 
 export const Route = createFileRoute(
   "/_authenticated/cursos/$courseId/aula/$lessonId"
@@ -770,7 +771,8 @@ function LessonDetailPage() {
 
           {/* Upsell suggestions */}
           <div className="px-5 sm:px-8">
-            <UpsellSection sourceType="course" sourceId={courseId} className="mt-6 mb-4" />
+            <UpsellSection sourceType="course" sourceId={courseId} className="mt-6 mb-2" />
+            <CrossSellSection currentType="course" currentId={courseId} title="Relacionados" className="mt-4 mb-4" />
           </div>
 
           {/* ═══ NEXT UP CARD — Netflix-style with countdown ═══ */}
