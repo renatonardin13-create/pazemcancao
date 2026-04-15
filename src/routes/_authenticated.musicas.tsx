@@ -110,6 +110,22 @@ function MusicLibraryPage() {
     staleTime: 30_000,
   });
 
+  const { data: playlistsData } = useQuery({
+    queryKey: ["playlists-with-counts"],
+    queryFn: () => listPlaylistsWithCounts(),
+    staleTime: 60_000,
+  });
+
+  const { data: activePlaylistData } = useQuery({
+    queryKey: ["playlist-tracks", activePlaylistId],
+    queryFn: () => getPlaylistWithTracks({ data: { playlistId: activePlaylistId! } }),
+    enabled: !!activePlaylistId,
+    staleTime: 30_000,
+  });
+
+  const playlists = playlistsData?.playlists || [];
+  const activePlaylistTracks = activePlaylistData?.tracks || [];
+
   const { currentTrack, playing, progress, toggle, setQueue } = usePlayer();
 
   const handlePlayWithQueue = useCallback((track: any, trackList: any[]) => {
