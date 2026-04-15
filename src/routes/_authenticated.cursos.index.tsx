@@ -99,7 +99,7 @@ function MeusCoursosPage() {
     <StudentLayout>
       <div className="min-h-screen bg-background flex flex-col">
 
-        <main className="flex-1 mx-auto w-full max-w-6xl px-5 sm:px-8 pt-6 sm:pt-8 pb-28">
+        <main className="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10 xl:px-12 pt-6 sm:pt-8 pb-28">
 
           {/* ═══ HERO BANNER (first, for maximum impact) ═══ */}
           {!isLoading && featuredCourse && !searchResults && (
@@ -383,7 +383,7 @@ function ShelfRow({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="group/shelf relative -mx-5 sm:-mx-8">
+    <div className="group/shelf relative -mx-4 sm:-mx-6 lg:-mx-10 xl:-mx-12">
       {/* Fade edges */}
       <div className={`absolute left-0 top-0 bottom-3 w-8 sm:w-12 z-10 pointer-events-none bg-gradient-to-r from-background to-transparent transition-opacity duration-500 ${canScrollLeft ? 'opacity-100' : 'opacity-0'}`} />
       <div className={`absolute right-0 top-0 bottom-3 w-8 sm:w-12 z-10 pointer-events-none bg-gradient-to-l from-background to-transparent transition-opacity duration-500 ${canScrollRight ? 'opacity-100' : 'opacity-0'}`} />
@@ -411,7 +411,7 @@ function ShelfRow({ children }: { children: React.ReactNode }) {
         }}
         onScroll={updateScrollState}
         onMouseEnter={updateScrollState}
-        className="flex gap-4 sm:gap-[18px] lg:gap-5 overflow-x-auto pb-3 scrollbar-hide px-5 sm:px-8 snap-x snap-mandatory scroll-smooth cursor-grab select-none will-change-scroll"
+        className="flex gap-3.5 sm:gap-4 lg:gap-5 overflow-x-auto pb-3 scrollbar-hide px-4 sm:px-6 lg:px-8 snap-x snap-mandatory scroll-smooth cursor-grab select-none will-change-scroll"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {children}
@@ -426,7 +426,7 @@ function ShelfItem({ children, index }: { children: React.ReactNode; index: numb
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5, delay: 0.04 * Math.min(index, 10), ease: [0.22, 1, 0.36, 1] }}
-      className="flex-shrink-0 snap-start w-[200px] sm:w-[220px]"
+      className="flex-shrink-0 snap-start w-[170px] sm:w-[200px] md:w-[210px] lg:w-[220px] xl:w-[240px]"
     >
       {children}
     </motion.div>
