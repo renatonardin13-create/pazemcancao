@@ -78,6 +78,8 @@ function AdminUsersPage() {
   const [addEnabled, setAddEnabled] = useState(true);
   const [addCourseIds, setAddCourseIds] = useState<string[]>([]);
   const [addPassword, setAddPassword] = useState<string | null>(null);
+  const [addIsTrial, setAddIsTrial] = useState(false);
+  const [addTrialDays, setAddTrialDays] = useState(7);
 
   // Edit form state
   const [editNome, setEditNome] = useState("");
