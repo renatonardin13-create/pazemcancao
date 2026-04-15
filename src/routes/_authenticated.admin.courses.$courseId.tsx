@@ -56,11 +56,10 @@ function EditCoursePage() {
   );
 
   const mutation = useMutation({
-    mutationFn: (values: any) => {
+    mutationFn: async (values: any) => {
       const diff = getChangedFields(values);
       if (!diff) {
-        // Nothing changed — skip network call
-        return Promise.resolve({ course: data?.course });
+        return { course: data?.course } as any;
       }
       return updateCourse({ data: { id: courseId, ...diff } });
     },
