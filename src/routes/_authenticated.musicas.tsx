@@ -195,7 +195,7 @@ function MusicLibraryPage() {
     <StudentLayout>
     <div className="min-h-screen bg-background flex flex-col">
 
-      <main className="flex-1 mx-auto w-full max-w-6xl px-5 sm:px-8 py-8 sm:py-12 pb-28">
+      <main className="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10 xl:px-12 py-6 sm:py-10 pb-28">
         {/* Header */}
         <motion.div initial="hidden" animate="visible" className="mb-10">
           <motion.div variants={fadeUp} custom={0} className="flex items-center gap-3 mb-2">
@@ -328,7 +328,7 @@ function MusicLibraryPage() {
                   </div>
 
                   {expandedCategory === '__bonus__' ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
                       {bonusTracks.map((track: any, idx: number) => (
                         <TrackCard
                           key={track.id}
@@ -426,7 +426,7 @@ function MusicLibraryPage() {
                   </div>
 
                   {expandedCategory === category ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
                       {catTracks.map((track: any, idx: number) => (
                         <TrackCard
                           key={track.id}
@@ -514,7 +514,7 @@ function ScrollableCarousel({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="relative group/carousel -mx-4 sm:-mx-6">
+    <div className="relative group/carousel -mx-4 sm:-mx-6 lg:-mx-10 xl:-mx-12">
       {canScrollLeft && (
         <button
           onClick={() => scroll('left')}
@@ -536,7 +536,7 @@ function ScrollableCarousel({ children }: { children: React.ReactNode }) {
       <div
         ref={scrollRef}
         onScroll={checkScroll}
-        className="flex gap-4 overflow-x-auto pb-4 px-4 sm:px-6 scrollbar-hide snap-x snap-mandatory touch-pan-x"
+        className="flex gap-3.5 sm:gap-4 overflow-x-auto pb-4 px-4 sm:px-6 lg:px-10 xl:px-12 scrollbar-hide snap-x snap-mandatory touch-pan-x"
         style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
       >
         {children}
@@ -624,7 +624,7 @@ function TrackCard({
         {...(wrapperProps as any)}
         onClick={effectiveLocked ? handleLockedClick : undefined}
         className={`group relative cursor-pointer block ${
-          isCarousel ? "snap-start shrink-0 w-[200px] sm:w-[220px]" : ""
+          isCarousel ? "snap-start shrink-0 w-[165px] sm:w-[200px] md:w-[210px] lg:w-[220px]" : ""
         }`}
       >
         <motion.div
@@ -634,7 +634,7 @@ function TrackCard({
           transition={{ duration: isCarousel ? 0.5 : 0.4, delay: idx * (isCarousel ? 0.06 : 0.03), ease: "easeOut" }}
           whileHover={{ scale: 1.04, y: -4 }}
           whileTap={{ scale: 0.97 }}
-          className={`relative rounded-2xl border transition-all duration-500 overflow-hidden h-[300px] sm:h-[320px] flex flex-col ${
+          className={`relative rounded-2xl border transition-all duration-500 overflow-hidden h-[280px] sm:h-[310px] lg:h-[320px] flex flex-col ${
             effectiveLocked
               ? "border-border/25 shadow-[0_4px_30px_-10px] shadow-black/20 opacity-70 grayscale-[30%]"
               : isPlaying
@@ -645,7 +645,7 @@ function TrackCard({
           } bg-card/20`}
         >
           {/* Cover area — fixed height */}
-          <div className={`relative h-[200px] sm:h-[220px] w-full bg-gradient-to-br ${gradient} overflow-hidden shrink-0`}>
+          <div className={`relative h-[185px] sm:h-[210px] lg:h-[220px] w-full bg-gradient-to-br ${gradient} overflow-hidden shrink-0`}>
             {track.cover_url && (
               <img
                 src={track.cover_url}
