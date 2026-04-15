@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Lock, Download, Play, ShoppingCart, Clock, ArrowRight, CheckCircle2, Eye, Heart } from "lucide-react";
+import { Lock, Download, Play, ShoppingCart, Clock, ArrowRight, CheckCircle2, Eye, Heart, Star, Sparkles } from "lucide-react";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { Link } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";

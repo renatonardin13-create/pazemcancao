@@ -756,6 +756,11 @@ function AdminContentPage() {
                           trilha: {item.journey_group.replace(/_/g, " ")}
                         </Badge>
                       )}
+                      {item.launch_mode && item.launch_mode !== 'none' && (
+                        <Badge variant="outline" className="text-[11px] px-1.5 py-0 text-orange-400/70 border-orange-500/20 bg-orange-500/10">
+                          {item.launch_mode === 'lancamento_especial' ? '🌟 Lançamento' : item.launch_mode === 'em_breve' ? '⏳ Em breve' : '🔒 Venda'}
+                        </Badge>
+                      )}
                       <span className="text-[11px] text-muted-foreground/50">#{item.sort_order}</span>
                     </div>
                   </div>
