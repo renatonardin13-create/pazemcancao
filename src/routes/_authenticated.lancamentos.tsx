@@ -96,11 +96,14 @@ function LancamentosPage() {
                 </div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                  {launchItems.map((item: any) => (
+                  {launchItems.map((item: any, idx: number) => (
                     <ContentCard
                       key={item.id}
                       item={item}
+                      index={idx}
                       hasAccess={hasAccess}
+                      gradient="from-purple-900/40 via-purple-950/30 to-slate-950/50"
+                      TypeIcon={Rocket}
                       progress={progressMap[item.id]}
                       isFavorite={favoriteIds.has(item.id)}
                       onToggleFavorite={handleToggleFavorite}

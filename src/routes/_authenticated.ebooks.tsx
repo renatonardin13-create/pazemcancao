@@ -95,11 +95,14 @@ function EbooksPage() {
                 </div>
               ) : (
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                  {ebookItems.map((item: any) => (
+                  {ebookItems.map((item: any, idx: number) => (
                     <ContentCard
                       key={item.id}
                       item={item}
+                      index={idx}
                       hasAccess={hasAccess}
+                      gradient="from-blue-900/40 via-blue-950/30 to-slate-950/50"
+                      TypeIcon={BookOpen}
                       progress={progressMap[item.id]}
                       isFavorite={favoriteIds.has(item.id)}
                       onToggleFavorite={handleToggleFavorite}
