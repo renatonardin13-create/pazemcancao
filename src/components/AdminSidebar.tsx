@@ -51,6 +51,12 @@ export function AdminSidebar() {
   const collapsed = state === "collapsed";
   const location = useLocation();
   const currentPath = location.pathname;
+  const { modules } = useProjectMode();
+
+  const contentItems = useMemo(
+    () => allContentItems.filter((item) => modules[item.module]),
+    [modules]
+  );
 
   const isActive = (path: string) =>
     path === "/admin"
