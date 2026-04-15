@@ -20,6 +20,8 @@ import {
   Loader2,
   Sparkles,
   Monitor,
+  Tablet,
+  Smartphone,
   Info,
   ImageIcon,
 } from "lucide-react";
