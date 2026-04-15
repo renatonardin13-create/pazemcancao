@@ -6,12 +6,36 @@ interface UseEbookAudioOptions {
   audioUrl?: string;
   /** Text extracted from current pages for TTS fallback */
   pageText?: string;
+  /** Text of the next page(s) — used to pre-warm TTS */
+  nextPageText?: string;
   lang?: string;
   /** Called when TTS finishes reading the current page text */
   onPageNarrationEnd?: () => void;
 }
 
-export function useEbookAudio({ audioUrl, pageText, lang = "pt-BR", onPageNarrationEnd }: UseEbookAudioOptions) {
+/**
+ * Chrome/Edge pause speechSynthesis after ~15 s of continuous speech.
+ * A periodic resume() call keeps it alive.
+ */
+function startKeepAlive(intervalRef: React.MutableRefObject<ReturnType<typeof setInterval> | null>) {
+  stopKeepAlive(intervalRef);
+  intervalRef.current = setInterval(() => {
+    const synth = window.speechSynthesis;
+    if (synth.speaking && !synth.paused) {
+      synth.pause();
+      synth.resume();
+    }
+  }, 10_000);
+}
+
+function stopKeepAlive(intervalRef: React.MutableRefObject<ReturnType<typeof setInterval> | null>) {
+  if (intervalRef.current) {
+    clearInterval(intervalRef.current);
+    intervalRef.current = null;
+  }
+}
+
+export function useEbookAudio({ audioUrl, pageText, nextPageText, lang = "pt-BR", onPageNarrationEnd }: UseEbookAudioOptions) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [mode, setMode] = useState<AudioMode>("none");
   const [progress, setProgress] = useState(0);
@@ -25,6 +49,7 @@ export function useEbookAudio({ audioUrl, pageText, lang = "pt-BR", onPageNarrat
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const onPageEndRef = useRef(onPageNarrationEnd);
   onPageEndRef.current = onPageNarrationEnd;
+  const keepAliveRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   // Determine mode
   useEffect(() => {
@@ -37,39 +62,54 @@ export function useEbookAudio({ audioUrl, pageText, lang = "pt-BR", onPageNarrat
     }
   }, [audioUrl]);
 
-  // Setup file audio
+  // Setup file audio with preloading
   useEffect(() => {
     if (mode !== "file" || !audioUrl) return;
 
-    const audio = new Audio(audioUrl);
+    const audio = new Audio();
+    audio.preload = "auto";        // buffer ahead aggressively
     audio.volume = 0.8;
+    audio.src = audioUrl;
     fileAudioRef.current = audio;
 
     const onLoadedMetadata = () => setDuration(audio.duration);
     const onEnded = () => { setIsPlaying(false); setProgress(0); };
-    const onTimeUpdate = () => {
-      setProgress(audio.currentTime);
+    const onTimeUpdate = () => setProgress(audio.currentTime);
+    const onWaiting = () => {
+      // Audio is buffering — keep state as playing so UI doesn't flash
     };
 
     audio.addEventListener("loadedmetadata", onLoadedMetadata);
     audio.addEventListener("ended", onEnded);
     audio.addEventListener("timeupdate", onTimeUpdate);
+    audio.addEventListener("waiting", onWaiting);
 
     return () => {
       audio.pause();
+      audio.removeAttribute("src");
+      audio.load(); // release network resources
       audio.removeEventListener("loadedmetadata", onLoadedMetadata);
       audio.removeEventListener("ended", onEnded);
       audio.removeEventListener("timeupdate", onTimeUpdate);
+      audio.removeEventListener("waiting", onWaiting);
       fileAudioRef.current = null;
     };
   }, [mode, audioUrl]);
 
-  // Stop TTS when component unmounts or mode changes
+  // Pre-warm TTS voices so first utterance doesn't lag
+  useEffect(() => {
+    if (mode !== "tts") return;
+    // getVoices() is async on some browsers — calling it early caches the list
+    window.speechSynthesis.getVoices();
+  }, [mode]);
+
+  // Stop TTS + keep-alive when component unmounts or mode changes
   useEffect(() => {
     return () => {
       if (mode === "tts") {
         window.speechSynthesis?.cancel();
       }
+      stopKeepAlive(keepAliveRef);
     };
   }, [mode]);
 
@@ -79,9 +119,18 @@ export function useEbookAudio({ audioUrl, pageText, lang = "pt-BR", onPageNarrat
       setIsPlaying(true);
     } else if (mode === "tts" && pageText) {
       window.speechSynthesis.cancel();
+
       const utt = new SpeechSynthesisUtterance(pageText);
       utt.lang = lang;
       utt.rate = 0.95;
+
+      // Pick a voice that matches the language for better quality
+      const voices = window.speechSynthesis.getVoices();
+      const preferred = voices.find(
+        (v) => v.lang.startsWith(lang.split("-")[0]) && v.localService
+      ) || voices.find((v) => v.lang.startsWith(lang.split("-")[0]));
+      if (preferred) utt.voice = preferred;
+
       utt.onboundary = (e) => {
         if (e.name === "word") {
           setCharIndex(e.charIndex);
@@ -93,10 +142,21 @@ export function useEbookAudio({ audioUrl, pageText, lang = "pt-BR", onPageNarrat
         setProgress(0);
         setCharIndex(-1);
         setCharLength(0);
+        stopKeepAlive(keepAliveRef);
         onPageEndRef.current?.();
       };
+      utt.onerror = (e) => {
+        // "interrupted" is expected when we cancel for page change
+        if (e.error !== "interrupted") {
+          console.warn("[EbookAudio] TTS error:", e.error);
+        }
+        setIsPlaying(false);
+        stopKeepAlive(keepAliveRef);
+      };
+
       utteranceRef.current = utt;
       window.speechSynthesis.speak(utt);
+      startKeepAlive(keepAliveRef);
       setIsPlaying(true);
       setCharIndex(0);
       setCharLength(0);
@@ -108,6 +168,7 @@ export function useEbookAudio({ audioUrl, pageText, lang = "pt-BR", onPageNarrat
       fileAudioRef.current.pause();
     } else if (mode === "tts") {
       window.speechSynthesis.pause();
+      stopKeepAlive(keepAliveRef);
     }
     setIsPlaying(false);
   }, [mode]);
@@ -118,6 +179,7 @@ export function useEbookAudio({ audioUrl, pageText, lang = "pt-BR", onPageNarrat
       setIsPlaying(true);
     } else if (mode === "tts") {
       window.speechSynthesis.resume();
+      startKeepAlive(keepAliveRef);
       setIsPlaying(true);
     }
   }, [mode]);
@@ -143,6 +205,7 @@ export function useEbookAudio({ audioUrl, pageText, lang = "pt-BR", onPageNarrat
       fileAudioRef.current.currentTime = 0;
     } else if (mode === "tts") {
       window.speechSynthesis.cancel();
+      stopKeepAlive(keepAliveRef);
     }
     setIsPlaying(false);
     setProgress(0);
