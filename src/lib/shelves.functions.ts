@@ -65,7 +65,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
     // Get all published courses
     const { data: allCourses } = await supabase
       .from('courses')
-      .select('id, title, short_description, cover_image_url, banner_image_url, status, sort_order, created_at')
+      .select('id, title, short_description, cover_image_url, banner_image_url, status, sort_order, created_at, price')
       .eq('status', 'published')
       .order('sort_order', { ascending: true });
 
