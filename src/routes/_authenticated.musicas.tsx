@@ -518,7 +518,7 @@ function TrackCard({
     }
   };
 
-
+  return (
     <div ref={isThis ? activeTrackRef : undefined}>
       <Wrapper
         {...(wrapperProps as any)}
