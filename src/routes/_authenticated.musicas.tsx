@@ -99,11 +99,13 @@ function MusicLibraryPage() {
   const { data: catData } = useQuery({
     queryKey: ["categories"],
     queryFn: () => listCategories(),
+    staleTime: 60_000,
   });
 
   const { data, isLoading } = useQuery({
     queryKey: ["all-tracks"],
     queryFn: () => listAllTracks(),
+    staleTime: 30_000,
   });
 
   const { currentTrack, playing, progress, toggle, setQueue } = usePlayer();

@@ -63,12 +63,13 @@ export function StudentSidebar() {
   const { data: catData } = useQuery({
     queryKey: ["categories"],
     queryFn: () => listCategories(),
+    staleTime: 60_000,
   });
 
   const { data: tracksData } = useQuery({
     queryKey: ["tracks-active"],
     queryFn: () => listActiveTracks(),
-    staleTime: 30_000,
+    staleTime: 60_000,
   });
 
   const allTracks = tracksData?.tracks || [];
