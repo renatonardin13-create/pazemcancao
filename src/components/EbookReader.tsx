@@ -50,7 +50,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   const [direction, setDirection] = useState<"left" | "right">("right");
   const [scale, setScale] = useState(1);
   const [error, setError] = useState<string | null>(null);
-  const [immersive, setImmersive] = useState(false);
+  const [controlsVisible, setControlsVisible] = useState(true);
   const [pageTexts, setPageTexts] = useState<Record<number, string>>({});
 
   // Page image cache: pageNum → dataURL
@@ -358,7 +358,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   return (
     <div className="flex flex-col w-full min-h-screen" style={{ backgroundColor: "#1a1814" }}>
       {/* ═══ TOP BAR — Kindle-style minimal ═══ */}
-      <div className={`flex items-center justify-between px-3 sm:px-6 py-2 border-b border-stone-800/40 bg-[#1a1814]/95 backdrop-blur-xl z-30 transition-all duration-300 ${immersive ? "opacity-0 pointer-events-none h-0 overflow-hidden py-0 border-0" : ""}`}>
+      <div className={`flex items-center justify-between px-3 sm:px-6 py-2 border-b border-stone-800/40 bg-[#1a1814]/95 backdrop-blur-xl z-30 transition-all duration-300 ${!controlsVisible ? "opacity-0 pointer-events-none h-0 overflow-hidden py-0 border-0" : ""}`}>
         <div className="flex items-center gap-3 min-w-0">
           {onBack && (
             <Button variant="premiumOutline" size="sm" onClick={onBack} className="shrink-0">
@@ -395,7 +395,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setImmersive(!immersive)}
+            onClick={() => setControlsVisible(!controlsVisible)}
             className="h-7 w-7 p-0 text-stone-500/40 hover:text-gold"
             title="Modo imersivo"
           >
@@ -406,33 +406,27 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
 
       {/* ═══ BOOK AREA — Kindle premium ═══ */}
       <div
-        className="relative flex-1 flex items-center justify-center py-6 sm:py-8 px-3 sm:px-8 lg:px-14 overflow-hidden cursor-pointer"
-        onClick={() => immersive && setImmersive(false)}
+        className="relative flex-1 flex items-center justify-center py-6 sm:py-8 px-3 sm:px-8 lg:px-14 overflow-hidden cursor-pointer select-none"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
+        onClick={(e) => {
+          const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const w = rect.width;
+          const zone = x / w;
+          if (zone < 0.25) {
+            prevSpread();
+          } else if (zone > 0.75) {
+            nextSpread();
+          } else {
+            setControlsVisible((v) => !v);
+          }
+        }}
         style={{
           perspective: "1800px",
           background: "radial-gradient(ellipse at center, #221f1a 0%, #1a1814 60%, #141210 100%)",
         }}
       >
-        {/* Left arrow */}
-        {spread > 0 && !immersive && (
-          <button
-            onClick={(e) => { e.stopPropagation(); prevSpread(); }}
-            className="absolute left-1 sm:left-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-900/60 border border-stone-700/20 shadow-lg backdrop-blur-md text-stone-400/50 hover:text-gold hover:border-gold/25 transition-all active:scale-90"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-        )}
-        {/* Right arrow */}
-        {spread < totalSpreads - 1 && !immersive && (
-          <button
-            onClick={(e) => { e.stopPropagation(); nextSpread(); }}
-            className="absolute right-1 sm:right-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-900/60 border border-stone-700/20 shadow-lg backdrop-blur-md text-stone-400/50 hover:text-gold hover:border-gold/25 transition-all active:scale-90"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-        )}
 
         {/* Book spread */}
         <AnimatePresence mode="wait" custom={direction}>
@@ -477,7 +471,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       </div>
 
       {/* ═══ AUDIO PLAYER BAR ═══ */}
-      {ebookAudio.available && !immersive && (
+      {ebookAudio.available && controlsVisible && (
         <div className="flex items-center gap-2 px-3 sm:px-6 py-2 border-t border-stone-800/30 bg-[#1a1814]/95 backdrop-blur-xl z-30">
           <Headphones className="h-3.5 w-3.5 text-gold/50 shrink-0" />
           <span className="text-[9px] uppercase tracking-widest text-stone-500/40 hidden sm:inline">
@@ -513,7 +507,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       )}
 
       {/* ═══ BOTTOM BAR ═══ */}
-      <div className={`flex items-center justify-between px-3 sm:px-6 py-2.5 border-t border-stone-800/30 bg-[#1a1814]/95 backdrop-blur-xl z-30 transition-all duration-300 ${immersive ? "opacity-0 pointer-events-none h-0 overflow-hidden py-0 border-0" : ""}`}>
+      <div className={`flex items-center justify-between px-3 sm:px-6 py-2.5 border-t border-stone-800/30 bg-[#1a1814]/95 backdrop-blur-xl z-30 transition-all duration-300 ${!controlsVisible ? "opacity-0 pointer-events-none h-0 overflow-hidden py-0 border-0" : ""}`}>
         <Button variant="premiumOutline" size="sm" onClick={prevSpread} disabled={spread <= 0} className="gap-1.5">
           <ChevronLeft className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Anterior</span>
@@ -526,6 +520,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
               <span className="font-bold text-stone-300/80">{pageLabel}</span>
               <span className="mx-1 text-stone-600/30">/</span>
               <span className="text-stone-500/50">{numPages}</span>
+              <span className="ml-1.5 text-gold/50 font-medium">{totalSpreads > 0 ? Math.round(((spread + 1) / totalSpreads) * 100) : 0}%</span>
             </span>
           </div>
           <div className="hidden sm:block w-28 h-1 rounded-full bg-stone-700/20 overflow-hidden">
@@ -545,7 +540,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       </div>
 
       {/* ═══ MARK COMPLETE BAR ═══ */}
-      {onComplete && !immersive && (
+      {onComplete && controlsVisible && (
         <div className="flex items-center justify-center px-3 sm:px-6 py-3 border-t border-stone-800/30 bg-[#1a1814]/95 backdrop-blur-xl z-30">
           <Button
             onClick={() => {
