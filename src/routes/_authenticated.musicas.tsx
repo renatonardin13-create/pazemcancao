@@ -75,6 +75,17 @@ function getStoragePublicUrl(storagePath: string): string {
   return `${supabaseUrl}/storage/v1/object/public/tracks/${storagePath}`;
 }
 
+function safeCategoryName(category: unknown): string {
+  if (typeof category !== "string" || category.trim().length === 0) return "Sem categoria";
+  return category.replace(/^[^\w\s]+\s*/, "") || "Sem categoria";
+}
+
+function hasHoverSupport(): boolean {
+  return typeof window !== "undefined" && typeof window.matchMedia === "function"
+    ? window.matchMedia("(hover: hover)").matches
+    : false;
+}
+
 function dbTrackToPlayerTrack(track: any): Track {
   const audioUrl = getStoragePublicUrl(track.storage_path);
   return {
@@ -746,7 +757,7 @@ function MusicLibraryPage() {
             {tracksByCategory.map(([category, catTracks], catIdx) => {
               const dbCat = dbCategories.find((c: any) => c.name === category);
               const icon = dbCat?.icon || "🎵";
-              const displayName = category.replace(/^[^\w\s]+\s*/, '');
+              const displayName = safeCategoryName(category);
 
               return (
                 <motion.section
@@ -943,7 +954,7 @@ function ScrollableCarousel({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const timer = setTimeout(checkScroll, 150);
     const el = scrollRef.current;
-    const ro = el ? new ResizeObserver(checkScroll) : null;
+    const ro = el && typeof ResizeObserver !== 'undefined' ? new ResizeObserver(checkScroll) : null;
     if (el && ro) ro.observe(el);
     return () => { clearTimeout(timer); ro?.disconnect(); };
   }, [checkScroll]);
@@ -1040,7 +1051,7 @@ function TrackCard({
   })();
 
   const SALES_URL = "https://pazemcancao-oficial.lovable.app";
-  const canUseHoverEffects = typeof window !== "undefined" && window.matchMedia("(hover: hover)").matches;
+  const canUseHoverEffects = hasHoverSupport();
 
   const Wrapper = effectiveLocked ? 'div' : Link;
   const wrapperProps = effectiveLocked
@@ -1188,7 +1199,7 @@ function TrackCard({
 
             {/* Category badge */}
             <span className="absolute top-3 right-3 text-[10px] font-medium tracking-[0.15em] uppercase rounded-full bg-black/30 backdrop-blur-sm border border-white/[0.08] px-2 py-0.5 text-white/40">
-              {icon} {track.category.replace(/^[^\w\s]+\s*/, '')}
+              {icon} {safeCategoryName(track.category)}
             </span>
 
             {/* Progress bar on card */}
