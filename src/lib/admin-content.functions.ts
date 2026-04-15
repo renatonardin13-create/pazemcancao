@@ -57,6 +57,7 @@ export const createContentItem = createServerFn({ method: 'POST' })
     initial_free_count?: number;
     locked_final_count?: number;
     locked_label?: string | null;
+    launch_mode?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
@@ -99,6 +100,7 @@ export const createContentItem = createServerFn({ method: 'POST' })
         initial_free_count: data.initial_free_count ?? 0,
         locked_final_count: data.locked_final_count ?? 0,
         locked_label: data.locked_label || null,
+        launch_mode: data.launch_mode || 'none',
       } as any)
       .select()
       .single();
@@ -137,6 +139,7 @@ export const updateContentItem = createServerFn({ method: 'POST' })
     initial_free_count?: number;
     locked_final_count?: number;
     locked_label?: string | null;
+    launch_mode?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
