@@ -186,9 +186,8 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
 
     const courseMap = new Map(publishedCourses.map((course: any) => [course.id, enrichCourse(course)]));
 
-    // For each shelf, resolve courses — with CROSS-SHELF dedup
+    // For each shelf, resolve courses — allow same course in multiple shelves
     const result = [];
-    const globalSeenCourseIds = new Set<string>();
 
     for (const shelf of shelves || []) {
       let courses: any[] = [];
@@ -229,13 +228,6 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
             courses = publishedCourses.slice(0, 20).map(enrichCourse);
         }
       }
-
-      // Deduplicate within shelf AND across shelves
-      courses = courses.filter((c: any) => {
-        if (globalSeenCourseIds.has(c.id)) return false;
-        globalSeenCourseIds.add(c.id);
-        return true;
-      });
 
       if (courses.length > 0) {
         result.push({
