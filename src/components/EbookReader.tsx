@@ -521,6 +521,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onClick={(e) => {
+          if (showSettings) { setShowSettings(false); return; }
           const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
           const x = e.clientX - rect.left;
           const w = rect.width;
