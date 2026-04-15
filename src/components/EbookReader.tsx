@@ -312,11 +312,13 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   const goToSpread = useCallback(
     (s: number, dir: "left" | "right") => {
       if (s < 0 || s >= totalSpreads) return;
+      // Block navigation past paywall
+      if (hasPaywall && s > maxAllowedSpread) return;
       setDirection(dir);
       playPageTurnSound();
       setSpread(s);
     },
-    [totalSpreads, playPageTurnSound]
+    [totalSpreads, playPageTurnSound, hasPaywall, maxAllowedSpread]
   );
 
   const nextSpread = useCallback(() => goToSpread(spread + 1, "right"), [spread, goToSpread]);
