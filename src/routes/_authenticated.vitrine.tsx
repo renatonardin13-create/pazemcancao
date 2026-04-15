@@ -6,7 +6,7 @@ import { FooterLinks } from "@/components/FooterLinks";
 import { CourseShelfCard } from "@/components/CourseShelfCard";
 import { Store, Lock, Play, ArrowRight, ShoppingCart, Search, ChevronLeft, ChevronRight, Clock, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useState, useMemo, useRef, useCallback, useEffect } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect, memo } from "react";
 
 export const Route = createFileRoute("/_authenticated/vitrine")({
   component: VitrinePage,
@@ -107,58 +107,16 @@ function VitrinePage() {
                   if (isAdminShelf) adminShelfIndex++;
 
                   return (
-                    <section
+                    <LazyShelf
                       key={shelf.id}
-                      className="animate-in fade-in slide-in-from-bottom-4 duration-500"
-                      style={{ animationDelay: `${shelfIdx * 60}ms`, animationFillMode: 'both' }}
-                    >
-                      {/* Shelf title */}
-                      <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mb-3 sm:mb-4">
-                        <div className="flex items-center gap-2.5">
-                          {SHELF_ICONS[shelf.id] && (
-                            <span className="flex-shrink-0">{SHELF_ICONS[shelf.id]}</span>
-                          )}
-                          <h2 className="font-display text-lg sm:text-xl font-bold text-foreground/90 tracking-tight">
-                            {shelf.name}
-                          </h2>
-                          <div className="flex-1 h-px bg-gradient-to-r from-gold/10 to-transparent" />
-                          <span className="text-[10px] sm:text-xs text-muted-foreground/40 uppercase tracking-wider font-medium">
-                            {shelf.courses.length} título{shelf.courses.length !== 1 ? "s" : ""}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Netflix carousel */}
-                      <NetflixCarousel courses={shelf.courses} shelfId={shelf.id} />
-
-                      {/* Promo banner after admin shelf */}
-                      {isAdminShelf && promoBanners
-                        .filter((b: any) => b.position_after_shelf === adminShelfIndex)
-                        .map((banner: any) => (
-                          <div
-                            key={banner.id}
-                            className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mt-6 animate-in fade-in slide-in-from-bottom-3 duration-500"
-                          >
-                            {banner.link_url ? (
-                              <a href={banner.link_url} target="_blank" rel="noopener noreferrer">
-                                <img
-                                  src={banner.image_url}
-                                  alt={banner.title}
-                                  loading="lazy"
-                                  className="w-full rounded-xl border border-border/25 hover:border-gold/20 transition-colors"
-                                />
-                              </a>
-                            ) : (
-                              <img
-                                src={banner.image_url}
-                                alt={banner.title}
-                                loading="lazy"
-                                className="w-full rounded-xl border border-border/25"
-                              />
-                            )}
-                          </div>
-                        ))}
-                    </section>
+                      shelf={shelf}
+                      shelfIdx={shelfIdx}
+                      isAdminShelf={isAdminShelf}
+                      adminShelfIndex={adminShelfIndex}
+                      promoBanners={promoBanners}
+                      // First 2 shelves render immediately
+                      eager={shelfIdx < 2}
+                    />
                   );
                 })}
               </div>
