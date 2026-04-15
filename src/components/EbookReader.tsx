@@ -21,6 +21,8 @@ import {
   SkipBack,
   SkipForward,
   Lock,
+  Maximize,
+  Minimize,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
