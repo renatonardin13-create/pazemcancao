@@ -4,7 +4,7 @@ import { getStudentShelves } from "@/lib/shelves.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { CourseShelfCard } from "@/components/CourseShelfCard";
-import { motion } from "framer-motion";
+import { Store, Lock, Play, ArrowRight, ShoppingCart, Search, ChevronLeft, ChevronRight, Clock, Sparkles } from "lucide-react";
 import { Store, Lock, Play, ArrowRight, ShoppingCart, Search, ChevronLeft, ChevronRight, Clock, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState, useMemo, useRef, useCallback, useEffect } from "react";
