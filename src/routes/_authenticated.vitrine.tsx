@@ -327,36 +327,38 @@ function NetflixCarousel({ courses, shelfId }: { courses: any[]; shelfId?: strin
 
   return (
     <div className="relative group/shelf">
+      {/* Left arrow — always visible on mobile, hover on desktop */}
       {canScrollLeft && (
         <button
           onClick={() => scroll('left')}
           aria-label="Anterior"
-          className="absolute left-0 top-0 bottom-0 z-20 w-12 sm:w-16 flex items-center justify-center bg-gradient-to-r from-background/95 via-background/60 to-transparent text-foreground/50 hover:text-gold transition-colors sm:opacity-0 sm:group-hover/shelf:opacity-100"
+          className="absolute left-0 top-0 bottom-0 z-20 w-10 sm:w-14 lg:w-16 flex items-center justify-center bg-gradient-to-r from-background/95 via-background/70 to-transparent text-foreground/60 active:text-gold sm:text-foreground/50 sm:hover:text-gold transition-colors lg:opacity-0 lg:group-hover/shelf:opacity-100"
         >
-          <ChevronLeft className="h-7 w-7 sm:h-8 sm:w-8" />
+          <ChevronLeft className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8" />
         </button>
       )}
 
+      {/* Right arrow */}
       {canScrollRight && (
         <button
           onClick={() => scroll('right')}
           aria-label="Próximo"
-          className="absolute right-0 top-0 bottom-0 z-20 w-12 sm:w-16 flex items-center justify-center bg-gradient-to-l from-background/95 via-background/60 to-transparent text-foreground/50 hover:text-gold transition-colors sm:opacity-0 sm:group-hover/shelf:opacity-100"
+          className="absolute right-0 top-0 bottom-0 z-20 w-10 sm:w-14 lg:w-16 flex items-center justify-center bg-gradient-to-l from-background/95 via-background/70 to-transparent text-foreground/60 active:text-gold sm:text-foreground/50 sm:hover:text-gold transition-colors lg:opacity-0 lg:group-hover/shelf:opacity-100"
         >
-          <ChevronRight className="h-7 w-7 sm:h-8 sm:w-8" />
+          <ChevronRight className="h-6 w-6 sm:h-7 sm:w-7 lg:h-8 lg:w-8" />
         </button>
       )}
 
       <div
         ref={scrollRef}
         onScroll={checkScroll}
-        className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 px-4 sm:px-8 lg:px-12 scrollbar-hide snap-x snap-mandatory touch-pan-x"
+        className="flex gap-2.5 sm:gap-3.5 lg:gap-4 overflow-x-auto pb-4 px-3 sm:px-6 lg:px-12 scrollbar-hide snap-x snap-mandatory touch-pan-x"
         style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
       >
         <div className="shrink-0 w-0 lg:w-[calc((100vw-1400px)/2)]" />
 
         {courses.map((course: any, idx: number) => (
-          <div key={course.id} className="w-[185px] sm:w-[210px] md:w-[230px] lg:w-[240px] shrink-0 snap-start">
+          <div key={course.id} className="w-[150px] sm:w-[190px] md:w-[220px] lg:w-[240px] shrink-0 snap-start">
             <CourseShelfCard
               course={course}
               index={idx}
