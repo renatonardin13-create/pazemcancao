@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 
 export function StudentSidebar() {
   const { logout, isAdmin, adminLoading } = useAuth();
-  const { showMusic, showCourses } = useProjectMode();
+  const { showMusic, showCourses, showVitrine, showPerfil } = useProjectMode();
   const location = useLocation();
   const [louvoresOpen, setLouvoresOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
