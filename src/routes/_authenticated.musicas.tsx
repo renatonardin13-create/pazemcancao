@@ -129,10 +129,11 @@ function MusicLibraryPage() {
     staleTime: 60_000,
   });
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError: tracksError, error: tracksErrorMsg } = useQuery({
     queryKey: ["all-tracks"],
     queryFn: () => listAllTracks(),
     staleTime: 30_000,
+    retry: 2,
   });
 
   const { data: playlistsData } = useQuery({
