@@ -184,11 +184,12 @@ function HeroBanner({ course }: { course: any }) {
     <div
       className={`relative w-full h-[60vh] sm:h-[70vh] lg:h-[75vh] min-h-[360px] max-h-[720px] overflow-hidden animate-in fade-in duration-1000 ${bannerLinkUrl ? 'cursor-pointer' : ''}`}
     >
-      {/* Background image */}
       {imageUrl && (
-        <img
+        <OptimizedImage
           src={imageUrl}
           alt={course.display_title || course.title}
+          context="hero"
+          priority
           className="absolute inset-0 w-full h-full object-cover"
         />
       )}
