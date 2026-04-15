@@ -282,51 +282,68 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   const autoNarrationRef = useRef(false);
   const [ttsOverlayVisible, setTtsOverlayVisible] = useState(false);
   const playPageTurnSoundRef = useRef<() => void>(() => {});
+  const spreadRef = useRef(spread);
+  spreadRef.current = spread;
+  const totalSpreadsRef = useRef(totalSpreads);
+  totalSpreadsRef.current = totalSpreads;
+  const maxAllowedSpreadRef = useRef(maxAllowedSpread);
+  maxAllowedSpreadRef.current = maxAllowedSpread;
+  const hasPaywallRef = useRef(hasPaywall);
+  hasPaywallRef.current = hasPaywall;
+
+  // Stable callback that reads from refs — never goes stale
+  const handlePageNarrationEnd = useCallback(() => {
+    const s = spreadRef.current;
+    const total = totalSpreadsRef.current;
+    const maxAllowed = maxAllowedSpreadRef.current;
+    const pw = hasPaywallRef.current;
+
+    if (autoNarrationRef.current && s < total - 1 && !(pw && s + 1 > maxAllowed)) {
+      setDirection("right");
+      playPageTurnSoundRef.current();
+      setSpread(s + 1);
+    } else {
+      // Last page or paywall — finish narration cleanly
+      autoNarrationRef.current = false;
+      setTtsOverlayVisible(false);
+    }
+  }, []);
 
   // Audio player hook
   const ebookAudio = useEbookAudio({
     audioUrl,
     pageText: currentPageText || undefined,
-    onPageNarrationEnd: useCallback(() => {
-      if (autoNarrationRef.current && spread < totalSpreads - 1 && !(hasPaywall && spread + 1 > maxAllowedSpread)) {
-        autoNarrationRef.current = true;
-        setDirection("right");
-        playPageTurnSoundRef.current();
-        setSpread((prev) => prev + 1);
-      } else {
-        autoNarrationRef.current = false;
-        setTtsOverlayVisible(false);
-      }
-    }, [spread, totalSpreads, hasPaywall, maxAllowedSpread]),
+    onPageNarrationEnd: handlePageNarrationEnd,
   });
 
-  // Auto-start narration when page changes if auto-narration is active
+  // When spread changes: if auto-narration is active, start reading new page; otherwise stop
+  const prevSpreadForAudio = useRef(spread);
   useEffect(() => {
+    if (prevSpreadForAudio.current === spread) return;
+    prevSpreadForAudio.current = spread;
+
+    // Always stop current TTS first
+    ebookAudio.stop();
+
     if (autoNarrationRef.current && currentPageText) {
-      // Small delay to let text extract settle
+      // Delay to let text extraction settle, then start narration
       const t = setTimeout(() => {
         ebookAudio.toggle();
-      }, 400);
+      }, 500);
       return () => clearTimeout(t);
-    }
-  }, [spread]);
-
-  // Stop TTS when page changes manually (not auto-narration)
-  useEffect(() => {
-    if (!autoNarrationRef.current) {
-      ebookAudio.stop();
+    } else {
       setTtsOverlayVisible(false);
     }
-  }, [spread]);
+  }, [spread, currentPageText]);
 
-  // Show/hide TTS overlay based on playback
+  // Show TTS overlay when playing in TTS mode
   useEffect(() => {
     if (ebookAudio.isPlaying && ebookAudio.mode === "tts") {
       setTtsOverlayVisible(true);
       autoNarrationRef.current = true;
     } else if (!ebookAudio.isPlaying && ebookAudio.charIndex === -1) {
       setTtsOverlayVisible(false);
-      autoNarrationRef.current = false;
+      // Don't reset autoNarrationRef here — it's managed by handlePageNarrationEnd
     }
   }, [ebookAudio.isPlaying, ebookAudio.mode, ebookAudio.charIndex]);
 
