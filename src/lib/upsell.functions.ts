@@ -111,6 +111,52 @@ export const createUpsell = createServerFn({ method: 'POST' })
     description?: string;
   }) => input)
   .handler(async ({ data }) => {
+    // Validate UUIDs
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(data.source_id)) {
+      throw new Error('O ID do produto de origem é inválido. Use um UUID válido.');
+    }
+    if (!uuidRegex.test(data.target_id)) {
+      throw new Error('O ID do produto sugerido é inválido. Use um UUID válido.');
+    }
+
+    // Cannot upsell to itself
+    if (data.source_id === data.target_id && data.source_type === data.target_type) {
+      throw new Error('O produto de origem e o produto sugerido não podem ser o mesmo.');
+    }
+
+    // Validate source exists
+    const sourceResult = await validateProduct(data.source_type, data.source_id);
+    if (!sourceResult.exists) {
+      throw new Error(`Produto de origem não encontrado (${data.source_type}: ${data.source_id}).`);
+    }
+    if (!sourceResult.active) {
+      throw new Error(`O produto de origem "${sourceResult.title}" não está publicado/ativo.`);
+    }
+
+    // Validate target exists
+    const targetResult = await validateProduct(data.target_type, data.target_id);
+    if (!targetResult.exists) {
+      throw new Error(`Produto sugerido não encontrado (${data.target_type}: ${data.target_id}).`);
+    }
+    if (!targetResult.active) {
+      throw new Error(`O produto sugerido "${targetResult.title}" não está publicado/ativo.`);
+    }
+
+    // Check duplicate
+    const { data: existing } = await supabaseAdmin
+      .from('product_upsells')
+      .select('id')
+      .eq('source_type', data.source_type)
+      .eq('source_id', data.source_id)
+      .eq('target_type', data.target_type)
+      .eq('target_id', data.target_id)
+      .maybeSingle();
+
+    if (existing) {
+      throw new Error('Este upsell já existe. Não é possível criar duplicatas.');
+    }
+
     const { error } = await supabaseAdmin
       .from('product_upsells')
       .insert({
@@ -125,6 +171,25 @@ export const createUpsell = createServerFn({ method: 'POST' })
     if (error) throw new Error(error.message);
     return { success: true };
   });
+
+async function validateProduct(type: string, id: string): Promise<{ exists: boolean; active: boolean; title: string }> {
+  if (type === 'course') {
+    const { data } = await supabaseAdmin.from('courses').select('title, status').eq('id', id).maybeSingle();
+    if (!data) return { exists: false, active: false, title: '' };
+    return { exists: true, active: data.status === 'published', title: data.title };
+  }
+  if (type === 'content') {
+    const { data } = await supabaseAdmin.from('content_items').select('title, is_active').eq('id', id).maybeSingle();
+    if (!data) return { exists: false, active: false, title: '' };
+    return { exists: true, active: data.is_active, title: data.title };
+  }
+  if (type === 'track') {
+    const { data } = await supabaseAdmin.from('tracks').select('title, is_active').eq('id', id).maybeSingle();
+    if (!data) return { exists: false, active: false, title: '' };
+    return { exists: true, active: data.is_active, title: data.title };
+  }
+  return { exists: false, active: false, title: '' };
+}
 
 /** Admin: delete upsell */
 export const deleteUpsell = createServerFn({ method: 'POST' })

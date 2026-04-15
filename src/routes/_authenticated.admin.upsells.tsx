@@ -156,6 +156,34 @@ function CreateUpsellForm({ onCreated }: { onCreated: () => void }) {
   const [targetId, setTargetId] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+  const validateForm = (): boolean => {
+    const errors: Record<string, string> = {};
+    const src = sourceId.trim();
+    const tgt = targetId.trim();
+
+    if (!src) {
+      errors.sourceId = "Informe o ID do produto de origem.";
+    } else if (!uuidRegex.test(src)) {
+      errors.sourceId = "ID inválido. Use um UUID válido (ex: 550e8400-e29b-...).";
+    }
+
+    if (!tgt) {
+      errors.targetId = "Informe o ID do produto sugerido.";
+    } else if (!uuidRegex.test(tgt)) {
+      errors.targetId = "ID inválido. Use um UUID válido (ex: 550e8400-e29b-...).";
+    }
+
+    if (src && tgt && src === tgt && sourceType === targetType) {
+      errors.targetId = "O produto de origem e o produto sugerido não podem ser o mesmo.";
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const createMut = useMutation({
     mutationFn: () =>
@@ -173,8 +201,29 @@ function CreateUpsellForm({ onCreated }: { onCreated: () => void }) {
       toast.success("Upsell criado!");
       onCreated();
     },
-    onError: (err: any) => toastError(err),
+    onError: (err: any) => {
+      const msg = err?.message || '';
+      // Map server errors to field-level feedback
+      if (msg.includes('produto de origem') && msg.includes('não encontrado')) {
+        setFieldErrors(prev => ({ ...prev, sourceId: msg }));
+      } else if (msg.includes('produto sugerido') && msg.includes('não encontrado')) {
+        setFieldErrors(prev => ({ ...prev, targetId: msg }));
+      } else if (msg.includes('produto de origem') && msg.includes('publicado')) {
+        setFieldErrors(prev => ({ ...prev, sourceId: msg }));
+      } else if (msg.includes('produto sugerido') && msg.includes('publicado')) {
+        setFieldErrors(prev => ({ ...prev, targetId: msg }));
+      } else if (msg.includes('não podem ser o mesmo')) {
+        setFieldErrors(prev => ({ ...prev, targetId: msg }));
+      } else {
+        toastError(err);
+      }
+    },
   });
+
+  const handleSubmit = () => {
+    if (!validateForm()) return;
+    createMut.mutate();
+  };
 
   return (
     <Card className="bg-card border-gold/15">
@@ -186,7 +235,7 @@ function CreateUpsellForm({ onCreated }: { onCreated: () => void }) {
             <h4 className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider">Produto de Origem</h4>
             <div>
               <Label className="text-xs">Tipo</Label>
-              <Select value={sourceType} onValueChange={setSourceType}>
+              <Select value={sourceType} onValueChange={(v) => { setSourceType(v); setFieldErrors(prev => ({ ...prev, sourceId: '' })); }}>
                 <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="course">Curso</SelectItem>
@@ -197,7 +246,15 @@ function CreateUpsellForm({ onCreated }: { onCreated: () => void }) {
             </div>
             <div>
               <Label className="text-xs">ID do Produto</Label>
-              <Input value={sourceId} onChange={(e) => setSourceId(e.target.value)} placeholder="UUID do produto" className="mt-1 font-mono text-xs" />
+              <Input
+                value={sourceId}
+                onChange={(e) => { setSourceId(e.target.value); setFieldErrors(prev => ({ ...prev, sourceId: '' })); }}
+                placeholder="UUID do produto"
+                className={`mt-1 font-mono text-xs ${fieldErrors.sourceId ? 'border-destructive' : ''}`}
+              />
+              {fieldErrors.sourceId && (
+                <p className="text-[11px] text-destructive mt-1">{fieldErrors.sourceId}</p>
+              )}
             </div>
           </div>
 
@@ -205,7 +262,7 @@ function CreateUpsellForm({ onCreated }: { onCreated: () => void }) {
             <h4 className="text-xs font-bold text-muted-foreground/60 uppercase tracking-wider">Produto Sugerido (Upsell)</h4>
             <div>
               <Label className="text-xs">Tipo</Label>
-              <Select value={targetType} onValueChange={setTargetType}>
+              <Select value={targetType} onValueChange={(v) => { setTargetType(v); setFieldErrors(prev => ({ ...prev, targetId: '' })); }}>
                 <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="course">Curso</SelectItem>
@@ -216,7 +273,15 @@ function CreateUpsellForm({ onCreated }: { onCreated: () => void }) {
             </div>
             <div>
               <Label className="text-xs">ID do Produto</Label>
-              <Input value={targetId} onChange={(e) => setTargetId(e.target.value)} placeholder="UUID do produto" className="mt-1 font-mono text-xs" />
+              <Input
+                value={targetId}
+                onChange={(e) => { setTargetId(e.target.value); setFieldErrors(prev => ({ ...prev, targetId: '' })); }}
+                placeholder="UUID do produto"
+                className={`mt-1 font-mono text-xs ${fieldErrors.targetId ? 'border-destructive' : ''}`}
+              />
+              {fieldErrors.targetId && (
+                <p className="text-[11px] text-destructive mt-1">{fieldErrors.targetId}</p>
+              )}
             </div>
           </div>
         </div>
@@ -233,7 +298,7 @@ function CreateUpsellForm({ onCreated }: { onCreated: () => void }) {
         </div>
 
         <Button
-          onClick={() => createMut.mutate()}
+          onClick={handleSubmit}
           disabled={!sourceId.trim() || !targetId.trim() || createMut.isPending}
           className="gap-2"
         >
