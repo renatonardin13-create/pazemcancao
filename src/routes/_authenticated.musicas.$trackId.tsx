@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import type { Track } from "@/lib/sample-tracks";
 import { StudentLayout } from "@/components/StudentLayout";
 import { UpsellSection } from "@/components/UpsellSection";
+import { CrossSellSection } from "@/components/CrossSellSection";
 
 export const Route = createFileRoute("/_authenticated/musicas/$trackId")({
   component: MusicDetailPage,
