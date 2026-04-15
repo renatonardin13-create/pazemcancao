@@ -392,8 +392,9 @@ function GeneralTab({ settings, onSave, saving }: { settings: any; onSave: (v: a
         }} disabled={saving} className="w-full gap-2">
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Salvar Configurações
         </Button>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
 
