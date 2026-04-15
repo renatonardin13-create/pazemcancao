@@ -20,11 +20,33 @@ import { StrategicMusicShelves } from "@/components/StrategicMusicShelves";
 import type { Track } from "@/lib/sample-tracks";
 import { toast } from "sonner";
 
+function MusicLibraryErrorComponent({ error }: { error: Error; reset: () => void }) {
+  const router = useRouter();
+  return (
+    <StudentLayout>
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <div className="text-center px-8 max-w-sm">
+          <Music className="h-8 w-8 text-muted-foreground/40 mx-auto mb-4" />
+          <h2 className="font-display text-lg font-bold text-foreground/80 mb-2">Erro ao carregar músicas</h2>
+          <p className="text-sm text-muted-foreground/60 mb-6">{error?.message || "Ocorreu um erro inesperado."}</p>
+          <button
+            onClick={() => router.invalidate()}
+            className="rounded-full bg-gold/15 text-gold/70 border border-gold/20 px-6 py-2.5 text-xs font-semibold tracking-wider uppercase hover:bg-gold/25 transition-all"
+          >
+            Tentar novamente
+          </button>
+        </div>
+      </div>
+    </StudentLayout>
+  );
+}
+
 export const Route = createFileRoute("/_authenticated/musicas")({
   validateSearch: (search: Record<string, unknown>): { categoria?: string } => ({
     categoria: typeof search.categoria === 'string' ? search.categoria : undefined,
   }),
   component: MusicLibraryPage,
+  errorComponent: MusicLibraryErrorComponent,
 });
 
 const fadeUp = {
