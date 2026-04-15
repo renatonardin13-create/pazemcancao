@@ -168,7 +168,15 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
     return () => { cancelled = true; };
   }, [pdfUrl]);
 
-  // Render a single page to a data URL
+  // Auto-save reading progress
+  useEffect(() => {
+    if (numPages === 0) return;
+    try {
+      localStorage.setItem(`ebook-progress-${pdfUrl}`, String(spread));
+    } catch {}
+  }, [spread, pdfUrl, numPages]);
+
+
   const renderPage = useCallback(
     async (pageNum: number) => {
       const pdf = pdfDocRef.current;
