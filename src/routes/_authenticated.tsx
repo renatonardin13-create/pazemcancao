@@ -73,6 +73,23 @@ function AuthenticatedLayout() {
     }
   }, [loading, isAuthenticated, blocked, navigate]);
 
+  // Welcome toast for first-time buyers after purchase
+  useEffect(() => {
+    if (welcomeShown.current) return;
+    if (!accessData?.hasAccess || !accessData?.buyer) return;
+    if (isAdmin) return;
+
+    const buyer = accessData.buyer;
+    // Show welcome toast if buyer has never logged in before (first_login_at is null)
+    if (buyer.first_login_at === null || buyer.first_login_at === undefined) {
+      welcomeShown.current = true;
+      toast.success("🎉 Seu conteúdo foi liberado!", {
+        description: "Sua compra foi aprovada. Aproveite sua jornada espiritual!",
+        duration: 6000,
+      });
+    }
+  }, [accessData, isAdmin]);
+
   if (loading || adminLoading || (isAuthenticated && !isAdmin && accessLoading)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background relative overflow-hidden">
