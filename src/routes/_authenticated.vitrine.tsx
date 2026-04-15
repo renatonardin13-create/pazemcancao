@@ -180,59 +180,107 @@ function VitrinePage() {
   );
 }
 
-/* ── Netflix Hero Banner ── */
+/* ── Netflix Premium Hero Banner ── */
 function HeroBanner({ course }: { course: any }) {
   const bannerLinkUrl = course.banner_link_url || course.sales_page_url || course.checkout_url;
   const imageUrl = course.banner_image_url || course.cover_image_url;
+  const isLocked = ['locked', 'blocked', 'expired'].includes(course.access_state);
+  const isEnrolled = ['enrolled', 'in_progress', 'completed'].includes(course.access_state);
 
   const content = (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 1 }}
-      className={`relative w-full h-[55vh] sm:h-[65vh] min-h-[320px] max-h-[600px] overflow-hidden ${bannerLinkUrl ? 'cursor-pointer' : ''}`}
+      transition={{ duration: 1.2 }}
+      className={`relative w-full h-[60vh] sm:h-[70vh] lg:h-[75vh] min-h-[360px] max-h-[720px] overflow-hidden ${bannerLinkUrl ? 'cursor-pointer' : ''}`}
     >
-      <img
-        src={imageUrl}
-        alt={course.display_title || course.title}
-        className={`w-full h-full object-${course.banner_fit || 'cover'}`}
-      />
+      {/* Background image with Ken Burns */}
+      {imageUrl && (
+        <motion.img
+          src={imageUrl}
+          alt={course.display_title || course.title}
+          initial={{ scale: 1.05 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 8, ease: 'easeOut' }}
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+      )}
 
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/70 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent" />
+      {/* Cinematic overlays */}
+      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/10" />
+      <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/40 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-background via-background/95 to-transparent" />
+      <div className="absolute inset-0 shadow-[inset_0_0_120px_40px_rgba(0,0,0,0.35)] pointer-events-none" />
 
-      <div className="absolute bottom-0 left-0 right-0 px-4 sm:px-8 lg:px-12 pb-24 sm:pb-32">
-        <div className="mx-auto w-full max-w-[1400px]">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="font-display text-3xl sm:text-5xl lg:text-6xl font-black text-foreground tracking-tight mb-3 max-w-2xl leading-[1.1] drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]"
-          >
-            {course.display_title || course.title}
-          </motion.h1>
-
-          {(course.display_subtitle || course.short_description) && (
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
-              className="text-sm sm:text-base text-muted-foreground/60 mb-6 max-w-lg leading-relaxed"
-            >
-              {course.display_subtitle || course.short_description}
-            </motion.p>
-          )}
-
-          {course.id !== '__custom_banner__' && (
+      {/* Content */}
+      <div className="absolute inset-0 flex items-end">
+        <div className="w-full px-4 sm:px-8 lg:px-12 pb-20 sm:pb-28 lg:pb-32">
+          <div className="mx-auto w-full max-w-[1400px]">
+            {/* Featured badge */}
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.7 }}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="mb-4"
             >
-              <CourseActionButton course={course} />
+              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gold/20 border border-gold/30 text-gold text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] backdrop-blur-sm">
+                <Sparkles className="h-3 w-3" />
+                {isEnrolled ? 'Seu destaque' : isLocked ? 'Destaque Premium' : 'Em destaque'}
+              </span>
             </motion.div>
-          )}
+
+            {/* Title */}
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.35 }}
+              className="font-display text-3xl sm:text-5xl lg:text-[3.5rem] xl:text-6xl font-black text-foreground tracking-tight mb-3 sm:mb-4 max-w-2xl leading-[1.08] drop-shadow-[0_4px_20px_rgba(0,0,0,0.7)]"
+            >
+              {course.display_title || course.title}
+            </motion.h1>
+
+            {/* Subtitle */}
+            {(course.display_subtitle || course.short_description) && (
+              <motion.p
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+                className="text-sm sm:text-base lg:text-lg text-foreground/50 mb-6 sm:mb-8 max-w-xl leading-relaxed line-clamp-3"
+              >
+                {course.display_subtitle || course.short_description}
+              </motion.p>
+            )}
+
+            {/* CTA */}
+            {course.id !== '__custom_banner__' && (
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.65 }}
+                className="flex flex-wrap items-center gap-3 sm:gap-4"
+              >
+                <HeroCTA course={course} />
+              </motion.div>
+            )}
+
+            {/* Meta info */}
+            {course.total_lessons > 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.9 }}
+                className="mt-5 flex items-center gap-4 text-[11px] sm:text-xs text-foreground/30 uppercase tracking-wider"
+              >
+                <span>{course.total_lessons} aula{course.total_lessons !== 1 ? 's' : ''}</span>
+                {course.progress_pct > 0 && course.progress_pct < 100 && (
+                  <>
+                    <span className="h-1 w-1 rounded-full bg-gold/40" />
+                    <span className="text-gold/60">{course.progress_pct}% concluído</span>
+                  </>
+                )}
+              </motion.div>
+            )}
+          </div>
         </div>
       </div>
     </motion.div>
