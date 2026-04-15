@@ -334,11 +334,8 @@ function ContentPage() {
 
             {/* Stats bar with progress */}
             {stats.unlocked > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="space-y-3"
+              <div
+                className="space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-500"
               >
                 <div className="flex flex-wrap gap-4 sm:gap-6">
                   <StatPill icon={Library} label="Para você" value={stats.unlocked} color="text-gold/60" />
