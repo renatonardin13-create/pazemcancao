@@ -135,6 +135,18 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
     return Math.ceil(numPages / 2);
   })();
 
+  // Paywall logic
+  const hasPaywall = freePageLimit > 0 && !isUnlocked;
+  
+  // Compute max allowed spread based on free page limit
+  const maxAllowedSpread = useMemo(() => {
+    if (!hasPaywall || numPages === 0) return totalSpreads - 1;
+    if (!dualPage) return Math.min(freePageLimit - 1, totalSpreads - 1);
+    return Math.min(Math.ceil(freePageLimit / 2) - 1, totalSpreads - 1);
+  }, [hasPaywall, freePageLimit, numPages, dualPage, totalSpreads]);
+
+  const isAtPaywall = hasPaywall && spread >= maxAllowedSpread;
+
   // Current pages to show
   const currentPages = getSpreadPages(spread);
 
