@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Zap, Link as LinkIcon, Copy, Check, Loader2, FlaskConical } from "lucide-react";
+import { Zap, Link as LinkIcon, Copy, Check, Loader2, FlaskConical, Eye, EyeOff, KeyRound } from "lucide-react";
 
 const PLATFORMS = [
   { value: "hotmart", label: "Hotmart", color: "text-orange-400" },
@@ -31,7 +31,8 @@ interface CourseIntegrationSectionProps {
 export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionProps) {
   const queryClient = useQueryClient();
   const [copied, setCopied] = useState(false);
-
+  const [copiedToken, setCopiedToken] = useState(false);
+  const [showToken, setShowToken] = useState(false);
   const { data, isLoading } = useQuery({
     queryKey: ["course-integration", courseId],
     queryFn: () => getCourseIntegration({ data: { courseId } }),
@@ -46,6 +47,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
   const [checkoutUrl, setCheckoutUrl] = useState("");
   const [notes, setNotes] = useState("");
   const [webhookActive, setWebhookActive] = useState(false);
+  const [integrationToken, setIntegrationToken] = useState("");
 
   useEffect(() => {
     if (integration) {
@@ -56,6 +58,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
       setCheckoutUrl(integration.checkout_url || "");
       setNotes(integration.notes || "");
       setWebhookActive(integration.webhook_active);
+      setIntegrationToken((integration as any).integration_token || "");
     }
   }, [integration]);
 
@@ -77,6 +80,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
           checkout_url: checkoutUrl || undefined,
           notes: notes || undefined,
           webhook_active: webhookActive,
+          integration_token: integrationToken || undefined,
         },
       });
     },
