@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { OptimizedImage } from "@/components/OptimizedImage";
 import { useQuery } from "@tanstack/react-query";
 import { getStudentShelves } from "@/lib/shelves.functions";
 import { StudentLayout } from "@/components/StudentLayout";
@@ -141,18 +142,18 @@ function VitrinePage() {
                           >
                             {banner.link_url ? (
                               <a href={banner.link_url} target="_blank" rel="noopener noreferrer">
-                                <img
+                                <OptimizedImage
                                   src={banner.image_url}
                                   alt={banner.title}
-                                  loading="lazy"
+                                  context="banner"
                                   className="w-full rounded-xl border border-border/25 hover:border-gold/20 transition-colors"
                                 />
                               </a>
                             ) : (
-                              <img
+                              <OptimizedImage
                                 src={banner.image_url}
                                 alt={banner.title}
-                                loading="lazy"
+                                context="banner"
                                 className="w-full rounded-xl border border-border/25"
                               />
                             )}
@@ -183,11 +184,12 @@ function HeroBanner({ course }: { course: any }) {
     <div
       className={`relative w-full h-[60vh] sm:h-[70vh] lg:h-[75vh] min-h-[360px] max-h-[720px] overflow-hidden animate-in fade-in duration-1000 ${bannerLinkUrl ? 'cursor-pointer' : ''}`}
     >
-      {/* Background image */}
       {imageUrl && (
-        <img
+        <OptimizedImage
           src={imageUrl}
           alt={course.display_title || course.title}
+          context="hero"
+          priority
           className="absolute inset-0 w-full h-full object-cover"
         />
       )}

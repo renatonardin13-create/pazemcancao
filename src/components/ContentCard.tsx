@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { Lock, Download, Play, ShoppingCart, Clock, ArrowRight, CheckCircle2, Eye, Heart } from "lucide-react";
+import { OptimizedImage } from "@/components/OptimizedImage";
 import { Link } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 
@@ -83,12 +84,11 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
         {/* Image — vertical poster 9:13 */}
         <div className={`relative aspect-[9/13] overflow-hidden bg-gradient-to-br ${gradient}`}>
           {(item.card_cover_url || item.cover_url) && (
-            <img
+            <OptimizedImage
               src={item.card_cover_url || item.cover_url}
               alt={item.title}
+              context="card"
               className={`w-full h-full object-cover md:transition-transform md:duration-[900ms] md:ease-out md:group-hover/card:scale-[1.08] ${isLocked ? 'saturate-[0.45] brightness-[0.85]' : ''}`}
-              loading="lazy"
-              decoding="async"
             />
           )}
 

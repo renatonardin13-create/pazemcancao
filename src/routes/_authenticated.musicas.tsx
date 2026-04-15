@@ -572,6 +572,7 @@ function TrackCard({
                   effectiveLocked ? "brightness-50" : isPlaying ? "scale-105 brightness-90" : "group-hover:scale-110"
                 }`}
                 loading="lazy"
+                decoding="async"
               />
             )}
             <div className={`absolute inset-0 transition-all duration-500 ${
