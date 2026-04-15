@@ -15,7 +15,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Zap, Link as LinkIcon, Copy, Check, Loader2, FlaskConical } from "lucide-react";
+import { Zap, Link as LinkIcon, Copy, Check, Loader2, FlaskConical, Eye, EyeOff, KeyRound } from "lucide-react";
 
 const PLATFORMS = [
   { value: "hotmart", label: "Hotmart", color: "text-orange-400" },
@@ -31,7 +31,8 @@ interface CourseIntegrationSectionProps {
 export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionProps) {
   const queryClient = useQueryClient();
   const [copied, setCopied] = useState(false);
-
+  const [copiedToken, setCopiedToken] = useState(false);
+  const [showToken, setShowToken] = useState(false);
   const { data, isLoading } = useQuery({
     queryKey: ["course-integration", courseId],
     queryFn: () => getCourseIntegration({ data: { courseId } }),
@@ -46,6 +47,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
   const [checkoutUrl, setCheckoutUrl] = useState("");
   const [notes, setNotes] = useState("");
   const [webhookActive, setWebhookActive] = useState(false);
+  const [integrationToken, setIntegrationToken] = useState("");
 
   useEffect(() => {
     if (integration) {
@@ -56,6 +58,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
       setCheckoutUrl(integration.checkout_url || "");
       setNotes(integration.notes || "");
       setWebhookActive(integration.webhook_active);
+      setIntegrationToken((integration as any).integration_token || "");
     }
   }, [integration]);
 
@@ -77,6 +80,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
           checkout_url: checkoutUrl || undefined,
           notes: notes || undefined,
           webhook_active: webhookActive,
+          integration_token: integrationToken || undefined,
         },
       });
     },
@@ -208,6 +212,51 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                 />
                 <p className="text-xs text-muted-foreground/70">
                   Página de vendas onde os alunos serão redirecionados ao clicar no produto bloqueado
+                </p>
+              </div>
+
+              {/* Integration Token */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <KeyRound className="h-3.5 w-3.5 text-muted-foreground/70" />
+                  <Label className="text-sm font-medium">Token de Integração</Label>
+                </div>
+                <div className="flex gap-2 min-w-0">
+                  <Input
+                    type={showToken ? "text" : "password"}
+                    value={integrationToken}
+                    onChange={(e) => setIntegrationToken(e.target.value)}
+                    placeholder="Cole o token da plataforma aqui"
+                    className="bg-card/20 border-border/30 font-mono text-sm min-w-0"
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => setShowToken(!showToken)}
+                    className="shrink-0"
+                    title={showToken ? "Ocultar token" : "Mostrar token"}
+                  >
+                    {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="icon"
+                    onClick={() => {
+                      navigator.clipboard.writeText(integrationToken);
+                      setCopiedToken(true);
+                      toast.success("Token copiado!");
+                      setTimeout(() => setCopiedToken(false), 2000);
+                    }}
+                    className="shrink-0"
+                    disabled={!integrationToken}
+                  >
+                    {copiedToken ? <Check className="h-4 w-4 text-primary" /> : <Copy className="h-4 w-4" />}
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground/70">
+                  Token de autenticação fornecido pela plataforma de pagamento para validar webhooks
                 </p>
               </div>
 

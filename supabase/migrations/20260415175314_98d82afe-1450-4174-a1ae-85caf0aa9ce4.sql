@@ -1,0 +1,1 @@
+ALTER TABLE public.course_integrations ADD COLUMN integration_token text DEFAULT NULL;

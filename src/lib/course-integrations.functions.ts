@@ -43,6 +43,7 @@ export const upsertCourseIntegration = createServerFn({ method: 'POST' })
     checkout_url?: string;
     notes?: string;
     webhook_active: boolean;
+    integration_token?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
@@ -59,6 +60,7 @@ export const upsertCourseIntegration = createServerFn({ method: 'POST' })
           checkout_url: data.checkout_url || null,
           notes: data.notes || null,
           webhook_active: data.webhook_active,
+          integration_token: data.integration_token || null,
         },
         { onConflict: 'course_id' }
       );
