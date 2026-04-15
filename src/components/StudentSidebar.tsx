@@ -25,33 +25,18 @@ import {
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 
-/** Configuration for each module's menu entry */
-interface ModuleMenuConfig {
-  key: ModuleKey;
-  label: string;
-  icon: LucideIcon;
-  to: string;
-  /** If true, match prefix for active state */
-  matchPrefix?: boolean;
-  /** If true, render louvores submenu with categories */
-  hasSubmenu?: boolean;
-}
-
-/**
- * Static mapping from module slug to menu config.
- * Order here determines display order in the sidebar.
- */
-const MODULE_MENU_CONFIG: ModuleMenuConfig[] = [
-  { key: "vitrine", label: "Vitrine", icon: Store, to: "/vitrine" },
-  { key: "cursos", label: "Meus Cursos", icon: GraduationCap, to: "/cursos", matchPrefix: true },
-  { key: "louvores", label: "Louvores", icon: Music2, to: "/musicas", matchPrefix: true, hasSubmenu: true },
-  { key: "ebooks", label: "Ebooks", icon: BookOpen, to: "/conteudo" },
-  { key: "trilhas", label: "Trilhas", icon: RouteIcon, to: "/conteudo" },
-  { key: "bonus", label: "Bônus", icon: Gift, to: "/conteudo" },
-  { key: "lancamentos", label: "Lançamentos", icon: Rocket, to: "/vitrine" },
-  { key: "comunidade", label: "Comunidade", icon: Users, to: "/vitrine" },
-  { key: "perfil", label: "Perfil", icon: UserCircle, to: "/perfil" },
-];
+/** Static lookup: slug → icon, route, prefix-match, submenu flag */
+const SLUG_META: Record<string, { icon: LucideIcon; to: string; matchPrefix?: boolean; hasSubmenu?: boolean }> = {
+  vitrine:     { icon: Store,          to: "/vitrine" },
+  cursos:      { icon: GraduationCap,  to: "/cursos",   matchPrefix: true },
+  louvores:    { icon: Music2,         to: "/musicas",  matchPrefix: true, hasSubmenu: true },
+  ebooks:      { icon: BookOpen,       to: "/conteudo" },
+  trilhas:     { icon: RouteIcon,      to: "/conteudo" },
+  bonus:       { icon: Gift,           to: "/conteudo" },
+  lancamentos: { icon: Rocket,         to: "/vitrine" },
+  comunidade:  { icon: Users,          to: "/vitrine" },
+  perfil:      { icon: UserCircle,     to: "/perfil" },
+};
 
 export function StudentSidebar() {
   const { logout, isAdmin, adminLoading } = useAuth();
