@@ -490,6 +490,17 @@ function LessonDetailPage() {
               <EbookReader
                 pdfUrl={contentUrl}
                 title={lesson.title}
+                isCompleted={isCompleted}
+                isCompletePending={progressMutation.isPending}
+                onComplete={() => {
+                  if (!isCompleted && enrollment) {
+                    progressMutation.mutate({
+                      lessonId,
+                      watchedSeconds: 0,
+                      completed: true,
+                    });
+                  }
+                }}
                 onBack={() => navigate({ to: "/cursos/$courseId", params: { courseId } })}
               />
             </motion.div>
