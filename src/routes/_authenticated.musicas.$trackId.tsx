@@ -359,6 +359,7 @@ function MusicDetailPage() {
                 )}
               </div>
             </motion.div>
+            </>
           )}
         </motion.div>
       </div>
