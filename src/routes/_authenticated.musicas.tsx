@@ -385,23 +385,43 @@ function MusicLibraryPage() {
                   variants={fadeUp}
                   custom={0.3 + catIdx * 0.1}
                 >
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-3 mb-4 flex-wrap">
                     <span className="text-lg">{icon}</span>
                     <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
                       {displayName}
                     </h2>
                     <div className="flex-1 h-px bg-gradient-to-r from-border/15 to-transparent" />
-                    <span className="text-xs text-muted-foreground/60">
+                    <span className="text-xs text-muted-foreground/60 hidden sm:inline">
                       {catTracks.length} música{catTracks.length !== 1 ? "s" : ""}
                     </span>
-                    {catTracks.length > 1 && (
-                      <button
-                        onClick={() => setExpandedCategory(expandedCategory === category ? null : category)}
-                        className="text-xs font-medium text-gold/70 hover:text-gold/80 transition-colors duration-300 whitespace-nowrap"
-                      >
-                        {expandedCategory === category ? "← Voltar" : "Ver todas →"}
-                      </button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {catTracks.length > 1 && (
+                        <button
+                          onClick={() => setExpandedCategory(expandedCategory === category ? null : category)}
+                          className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground/60 hover:text-gold/70 transition-colors duration-300 rounded-full border border-border/20 hover:border-gold/20 px-3 py-1.5 bg-card/10 hover:bg-gold/5"
+                        >
+                          <ListMusic className="h-3 w-3" />
+                          <span className="hidden sm:inline">{expandedCategory === category ? 'Carrossel' : 'Ver todas'}</span>
+                          <span className="sm:hidden">{expandedCategory === category ? '←' : 'Todas'}</span>
+                        </button>
+                      )}
+                      {!isLocked && catTracks.filter((t: any) => t.is_active).length > 0 && (
+                        <button
+                          onClick={() => {
+                            const playable = catTracks.filter((t: any) => t.is_active);
+                            if (playable.length > 0) {
+                              setQueue(playable.map(dbTrackToPlayerTrack), 0);
+                              toast.success(`▶ Tocando ${playable.length} músicas de ${displayName}`);
+                            }
+                          }}
+                          className="flex items-center gap-1.5 text-[11px] font-semibold text-gold/60 hover:text-gold/90 transition-colors duration-300 rounded-full border border-gold/15 hover:border-gold/30 px-3 py-1.5 bg-gold/5 hover:bg-gold/10"
+                        >
+                          <PlayCircle className="h-3 w-3" />
+                          <span className="hidden sm:inline">Tocar playlist</span>
+                          <span className="sm:hidden">▶ Play</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   {expandedCategory === category ? (
