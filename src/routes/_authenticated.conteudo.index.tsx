@@ -10,7 +10,7 @@ import { getMyProfile } from "@/lib/profile.functions";
 import { useAuth } from "@/hooks/use-auth";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
-import { FunnelBanner } from "@/components/FunnelBanner";
+import { InvisibleFunnelShelves } from "@/components/InvisibleFunnelShelves";
 import { ContentCard } from "@/components/ContentCard";
 import { RecommendedSection } from "@/components/RecommendedSection";
 import { TopRankingSection } from "@/components/TopRankingSection";
