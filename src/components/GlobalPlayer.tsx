@@ -1,9 +1,10 @@
 import { Play, Pause, X, Download, SkipBack, SkipForward, Music } from "lucide-react";
+import { memo } from "react";
 import { usePlayer } from "@/hooks/use-player";
 import { useQuery } from "@tanstack/react-query";
 import { checkBuyerAccess } from "@/lib/access.functions";
 
-export function GlobalPlayer() {
+export const GlobalPlayer = memo(function GlobalPlayer() {
   const {
     currentTrack, playing, progress, currentTime, duration,
     queue, queueIndex,
@@ -143,4 +144,4 @@ export function GlobalPlayer() {
       </div>
     </div>
   );
-}
+});
