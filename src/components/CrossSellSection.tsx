@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getCrossSellItems, type CrossSellItem } from "@/lib/cross-sell.functions";
+import { logFunnelClick } from "@/lib/funnel-analytics.functions";
 import { Link } from "@tanstack/react-router";
 import { Lock, Play, Sparkles, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
@@ -102,14 +103,14 @@ export function CrossSellSection({
         className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory"
       >
         {items.map((item) => (
-          <CrossSellCard key={`${item.type}-${item.id}`} item={item} />
+          <CrossSellCard key={`${item.type}-${item.id}`} item={item} context={currentType} />
         ))}
       </div>
     </motion.div>
   );
 }
 
-function CrossSellCard({ item }: { item: CrossSellItem }) {
+function CrossSellCard({ item, context }: { item: CrossSellItem; context?: string }) {
   const isLocked = item.is_locked;
   const hasSalesPage = !!item.sales_page_url;
 
@@ -186,10 +187,22 @@ function CrossSellCard({ item }: { item: CrossSellItem }) {
     </div>
   );
 
+  const trackClick = () => {
+    logFunnelClick({
+      data: {
+        itemId: item.id,
+        itemType: item.type,
+        context: context ? `cross-sell-${context}` : 'cross-sell',
+        shelfTitle: 'Relacionados',
+        isLocked,
+      },
+    }).catch(() => {});
+  };
+
   // Locked with sales page → external link
   if (isLocked && hasSalesPage) {
     return (
-      <a href={item.sales_page_url!} target="_blank" rel="noopener noreferrer">
+      <a href={item.sales_page_url!} target="_blank" rel="noopener noreferrer" onClick={trackClick}>
         {cardContent}
       </a>
     );
@@ -197,9 +210,9 @@ function CrossSellCard({ item }: { item: CrossSellItem }) {
 
   // Locked without sales page → no navigation
   if (isLocked) {
-    return cardContent;
+    return <div onClick={trackClick}>{cardContent}</div>;
   }
 
   // Unlocked → internal navigation
-  return <Link to={linkTo as any}>{cardContent}</Link>;
+  return <Link to={linkTo as any} onClick={trackClick}>{cardContent}</Link>;
 }

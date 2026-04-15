@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getFunnelSuggestions, type FunnelSuggestion } from "@/lib/funnel.functions";
+import { logFunnelClick } from "@/lib/funnel-analytics.functions";
 import { Link } from "@tanstack/react-router";
 import { Lock, Sparkles, ExternalLink, Heart, ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { useRef, useState, useCallback, useEffect, memo } from "react";
@@ -61,7 +62,7 @@ export function InvisibleFunnelShelves({ context, insertAfterIndex }: InvisibleF
   return (
     <>
       {shelves.map((shelf, idx) => (
-        <FunnelShelf key={idx} title={shelf.title} subtitle={shelf.subtitle} items={shelf.items} shelfIdx={idx} />
+        <FunnelShelf key={idx} title={shelf.title} subtitle={shelf.subtitle} items={shelf.items} shelfIdx={idx} context={context} />
       ))}
     </>
   );
@@ -72,11 +73,13 @@ function FunnelShelf({
   subtitle,
   items,
   shelfIdx,
+  context,
 }: {
   title: string;
   subtitle: string;
   items: FunnelSuggestion[];
   shelfIdx: number;
+  context?: string;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -153,7 +156,7 @@ function FunnelShelf({
           <div className="shrink-0 w-0 lg:w-[calc((100vw-1400px)/2)]" />
           {items.map((item, idx) => (
             <div key={`${item.type}-${item.id}`} className="w-[150px] sm:w-[190px] md:w-[220px] lg:w-[240px] shrink-0 snap-start">
-              <FunnelPosterCard item={item} index={idx} />
+              <FunnelPosterCard item={item} index={idx} context={context} shelfTitle={title} />
             </div>
           ))}
           <div className="shrink-0 w-0 lg:w-[calc((100vw-1400px)/2)]" />
@@ -164,7 +167,7 @@ function FunnelShelf({
 }
 
 /** Poster card matching CourseShelfCard visual style (9:13 aspect ratio) */
-const FunnelPosterCard = memo(function FunnelPosterCard({ item, index }: { item: FunnelSuggestion; index: number }) {
+const FunnelPosterCard = memo(function FunnelPosterCard({ item, index, context, shelfTitle }: { item: FunnelSuggestion; index: number; context?: string; shelfTitle?: string }) {
   const isLocked = item.is_locked;
   const salesUrl = item.sales_page_url;
 
@@ -279,20 +282,32 @@ const FunnelPosterCard = memo(function FunnelPosterCard({ item, index }: { item:
     </div>
   );
 
+  const trackClick = () => {
+    logFunnelClick({
+      data: {
+        itemId: item.id,
+        itemType: item.type,
+        context,
+        shelfTitle,
+        isLocked: isLocked,
+      },
+    }).catch(() => {});
+  };
+
   if (isLocked && salesUrl) {
     return (
-      <a href={salesUrl} target="_blank" rel="noopener noreferrer" className="group/card relative block cursor-pointer">
+      <a href={salesUrl} target="_blank" rel="noopener noreferrer" className="group/card relative block cursor-pointer" onClick={trackClick}>
         {card}
       </a>
     );
   }
 
   if (isLocked) {
-    return <div className="group/card relative block">{card}</div>;
+    return <div className="group/card relative block" onClick={trackClick}>{card}</div>;
   }
 
   return (
-    <Link to={linkTo as any} className="group/card relative block cursor-pointer">
+    <Link to={linkTo as any} className="group/card relative block cursor-pointer" onClick={trackClick}>
       {card}
     </Link>
   );

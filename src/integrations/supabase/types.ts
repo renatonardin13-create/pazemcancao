@@ -430,6 +430,39 @@ export type Database = {
           },
         ]
       }
+      funnel_click_logs: {
+        Row: {
+          clicked_at: string
+          email: string
+          funnel_context: string | null
+          id: string
+          is_locked: boolean
+          item_id: string
+          item_type: string
+          shelf_title: string | null
+        }
+        Insert: {
+          clicked_at?: string
+          email: string
+          funnel_context?: string | null
+          id?: string
+          is_locked?: boolean
+          item_id: string
+          item_type?: string
+          shelf_title?: string | null
+        }
+        Update: {
+          clicked_at?: string
+          email?: string
+          funnel_context?: string | null
+          id?: string
+          is_locked?: boolean
+          item_id?: string
+          item_type?: string
+          shelf_title?: string | null
+        }
+        Relationships: []
+      }
       journeys: {
         Row: {
           created_at: string
