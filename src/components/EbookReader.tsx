@@ -50,6 +50,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   const [direction, setDirection] = useState<"left" | "right">("right");
   const [scale, setScale] = useState(1);
   const [error, setError] = useState<string | null>(null);
+  const [immersive, setImmersive] = useState(false);
   const [pageTexts, setPageTexts] = useState<Record<number, string>>({});
 
   // Page image cache: pageNum → dataURL
@@ -318,31 +319,36 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
     const img = pageImages[pageNum];
     const isRendering = renderingPages.has(pageNum);
     const roundedClass =
-      side === "left" ? "rounded-l-lg" :
-      side === "right" ? "rounded-r-lg" :
-      "rounded-lg";
+      side === "left" ? "rounded-l-md" :
+      side === "right" ? "rounded-r-md" :
+      "rounded-md";
 
     return (
       <div
         key={pageNum}
-        className={`relative flex-1 bg-white ${roundedClass} overflow-hidden flex items-center justify-center`}
-        style={{ minHeight: isMobile ? "55vh" : "70vh" }}
+        className={`relative flex-1 ${roundedClass} overflow-hidden flex items-center justify-center`}
+        style={{
+          minHeight: isMobile ? "60vh" : "75vh",
+          backgroundColor: "#f8f5f0",
+          padding: isMobile ? "12px" : "24px 32px",
+        }}
       >
         {img ? (
           <img
             src={img}
             alt={`Página ${pageNum}`}
-            className="w-full h-full object-contain"
+            className="w-full h-full object-contain drop-shadow-sm"
+            style={{ maxWidth: "100%", borderRadius: "2px" }}
           />
         ) : isRendering ? (
-          <Loader2 className="h-6 w-6 text-gold/40 animate-spin" />
+          <Loader2 className="h-6 w-6 text-amber-700/30 animate-spin" />
         ) : (
           <div className="flex items-center justify-center h-full w-full">
-            <Loader2 className="h-6 w-6 text-gold/30 animate-spin" />
+            <Loader2 className="h-6 w-6 text-amber-700/20 animate-spin" />
           </div>
         )}
-        {/* Page number watermark */}
-        <span className="absolute bottom-2 inset-x-0 text-center text-[9px] text-black/20 font-medium select-none pointer-events-none">
+        {/* Page number — subtle serif */}
+        <span className="absolute bottom-3 inset-x-0 text-center text-[10px] text-stone-400/60 font-serif select-none pointer-events-none tracking-wide">
           {pageNum}
         </span>
       </div>
@@ -350,9 +356,9 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   };
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-background">
-      {/* ═══ TOP BAR ═══ */}
-      <div className="flex items-center justify-between px-3 sm:px-6 py-2.5 border-b border-border/8 bg-background/95 backdrop-blur-xl z-30">
+    <div className="flex flex-col w-full min-h-screen" style={{ backgroundColor: "#1a1814" }}>
+      {/* ═══ TOP BAR — Kindle-style minimal ═══ */}
+      <div className={`flex items-center justify-between px-3 sm:px-6 py-2 border-b border-stone-800/40 bg-[#1a1814]/95 backdrop-blur-xl z-30 transition-all duration-300 ${immersive ? "opacity-0 pointer-events-none h-0 overflow-hidden py-0 border-0" : ""}`}>
         <div className="flex items-center gap-3 min-w-0">
           {onBack && (
             <Button variant="premiumOutline" size="sm" onClick={onBack} className="shrink-0">
@@ -360,57 +366,71 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
               <span className="hidden sm:inline">Voltar</span>
             </Button>
           )}
-          <div className="hidden sm:block h-5 w-px bg-border/10" />
-          <h2 className="text-xs sm:text-sm font-bold text-foreground/70 truncate">
+          <div className="hidden sm:block h-5 w-px bg-stone-700/20" />
+          <h2 className="text-xs sm:text-sm font-serif font-medium text-stone-400/70 truncate">
             {title}
           </h2>
         </div>
 
         <div className="flex items-center gap-1.5">
-          <Button variant="ghost" size="sm" onClick={() => setScale((s) => Math.max(0.5, s - 0.25))} disabled={scale <= 0.5} className="h-7 w-7 p-0 text-muted-foreground/50 hover:text-gold">
+          <Button variant="ghost" size="sm" onClick={() => setScale((s) => Math.max(0.5, s - 0.25))} disabled={scale <= 0.5} className="h-7 w-7 p-0 text-stone-500/50 hover:text-gold">
             <ZoomOut className="h-3.5 w-3.5" />
           </Button>
-          <span className="text-[10px] tabular-nums text-muted-foreground/40 min-w-[2rem] text-center">
+          <span className="text-[10px] tabular-nums text-stone-500/40 min-w-[2rem] text-center">
             {Math.round(scale * 100)}%
           </span>
-          <Button variant="ghost" size="sm" onClick={() => setScale((s) => Math.min(3, s + 0.25))} disabled={scale >= 3} className="h-7 w-7 p-0 text-muted-foreground/50 hover:text-gold">
+          <Button variant="ghost" size="sm" onClick={() => setScale((s) => Math.min(3, s + 0.25))} disabled={scale >= 3} className="h-7 w-7 p-0 text-stone-500/50 hover:text-gold">
             <ZoomIn className="h-3.5 w-3.5" />
           </Button>
-          <div className="h-4 w-px bg-border/10 mx-1" />
+          <div className="h-4 w-px bg-stone-700/20 mx-1" />
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setSoundEnabled(!soundEnabled)}
-            className={`h-7 w-7 p-0 transition-colors ${soundEnabled ? "text-gold" : "text-muted-foreground/40"}`}
+            className={`h-7 w-7 p-0 transition-colors ${soundEnabled ? "text-gold" : "text-stone-500/40"}`}
           >
             {soundEnabled ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeOff className="h-3.5 w-3.5" />}
+          </Button>
+          <div className="h-4 w-px bg-stone-700/20 mx-1" />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setImmersive(!immersive)}
+            className="h-7 w-7 p-0 text-stone-500/40 hover:text-gold"
+            title="Modo imersivo"
+          >
+            <BookOpen className="h-3.5 w-3.5" />
           </Button>
         </div>
       </div>
 
-      {/* ═══ BOOK AREA ═══ */}
+      {/* ═══ BOOK AREA — Kindle premium ═══ */}
       <div
-        className="relative flex-1 flex items-center justify-center py-4 sm:py-6 px-2 sm:px-6 lg:px-10 bg-gradient-to-b from-background via-card/3 to-background overflow-hidden"
+        className="relative flex-1 flex items-center justify-center py-6 sm:py-8 px-3 sm:px-8 lg:px-14 overflow-hidden cursor-pointer"
+        onClick={() => immersive && setImmersive(false)}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        style={{ perspective: "1800px" }}
+        style={{
+          perspective: "1800px",
+          background: "radial-gradient(ellipse at center, #221f1a 0%, #1a1814 60%, #141210 100%)",
+        }}
       >
         {/* Left arrow */}
-        {spread > 0 && (
+        {spread > 0 && !immersive && (
           <button
-            onClick={prevSpread}
-            className="absolute left-1 sm:left-3 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-background/80 border border-border/15 shadow-lg backdrop-blur-md text-foreground/40 hover:text-gold hover:border-gold/25 transition-all active:scale-90"
+            onClick={(e) => { e.stopPropagation(); prevSpread(); }}
+            className="absolute left-1 sm:left-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-900/60 border border-stone-700/20 shadow-lg backdrop-blur-md text-stone-400/50 hover:text-gold hover:border-gold/25 transition-all active:scale-90"
           >
-            <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+            <ChevronLeft className="h-5 w-5" />
           </button>
         )}
         {/* Right arrow */}
-        {spread < totalSpreads - 1 && (
+        {spread < totalSpreads - 1 && !immersive && (
           <button
-            onClick={nextSpread}
-            className="absolute right-1 sm:right-3 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-background/80 border border-border/15 shadow-lg backdrop-blur-md text-foreground/40 hover:text-gold hover:border-gold/25 transition-all active:scale-90"
+            onClick={(e) => { e.stopPropagation(); nextSpread(); }}
+            className="absolute right-1 sm:right-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-900/60 border border-stone-700/20 shadow-lg backdrop-blur-md text-stone-400/50 hover:text-gold hover:border-gold/25 transition-all active:scale-90"
           >
-            <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+            <ChevronRight className="h-5 w-5" />
           </button>
         )}
 
@@ -425,27 +445,28 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
             exit="exit"
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             style={{ transformStyle: "preserve-3d" }}
-            className={`relative flex ${dualPage ? "max-w-[90vw] lg:max-w-[80vw] xl:max-w-[72vw]" : "max-w-[92vw] sm:max-w-[70vw] md:max-w-[55vw]"} w-full`}
+            className={`relative flex ${dualPage ? "max-w-[88vw] lg:max-w-[78vw] xl:max-w-[68vw]" : "max-w-[92vw] sm:max-w-[65vw] md:max-w-[50vw]"} w-full`}
           >
-            {/* Ambient glow behind the book */}
-            <div className="absolute -inset-4 rounded-2xl bg-gold/[0.03] blur-2xl pointer-events-none" />
+            {/* Ambient warm glow */}
+            <div className="absolute -inset-6 rounded-3xl bg-amber-900/[0.06] blur-3xl pointer-events-none" />
 
-            {/* Book shadow */}
-            <div className="absolute -inset-2 rounded-xl shadow-[0_20px_80px_-15px_rgba(0,0,0,0.7)] pointer-events-none" />
+            {/* Book shadow — deeper, warmer */}
+            <div className="absolute -inset-3 rounded-xl shadow-[0_25px_100px_-20px_rgba(0,0,0,0.8)] pointer-events-none" />
 
             {/* Pages container */}
-            <div className={`relative flex w-full ${dualPage ? "gap-0" : ""} rounded-lg overflow-hidden border border-border/10 shadow-2xl shadow-black/40`}>
+            <div className={`relative flex w-full ${dualPage ? "gap-0" : ""} rounded-md overflow-hidden border border-stone-700/15 shadow-2xl`}>
               {dualPage && currentPages.length === 2 ? (
                 <>
                   {renderPageImage(currentPages[0], "left")}
-                  <div className="w-px bg-gradient-to-b from-black/20 via-black/40 to-black/20 shadow-[2px_0_8px_rgba(0,0,0,0.3),-2px_0_8px_rgba(0,0,0,0.3)]" />
+                  {/* Spine — book binding effect */}
+                  <div className="w-[3px] bg-gradient-to-b from-stone-600/30 via-stone-800/50 to-stone-600/30 shadow-[3px_0_12px_rgba(0,0,0,0.4),-3px_0_12px_rgba(0,0,0,0.4)]" />
                   {renderPageImage(currentPages[1], "right")}
                 </>
               ) : dualPage && currentPages.length === 1 ? (
                 <>
                   {renderPageImage(currentPages[0], "left")}
-                  <div className="w-px bg-gradient-to-b from-black/20 via-black/40 to-black/20" />
-                  <div className="flex-1 bg-card/5 rounded-r-lg" style={{ minHeight: "70vh" }} />
+                  <div className="w-[3px] bg-gradient-to-b from-stone-600/30 via-stone-800/50 to-stone-600/30" />
+                  <div className="flex-1 rounded-r-md" style={{ minHeight: "75vh", backgroundColor: "#f0ebe4" }} />
                 </>
               ) : (
                 currentPages.length > 0 && renderPageImage(currentPages[0], "single")
@@ -456,17 +477,17 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       </div>
 
       {/* ═══ AUDIO PLAYER BAR ═══ */}
-      {ebookAudio.available && (
-        <div className="flex items-center gap-2 px-3 sm:px-6 py-2 border-t border-border/8 bg-background/95 backdrop-blur-xl z-30">
+      {ebookAudio.available && !immersive && (
+        <div className="flex items-center gap-2 px-3 sm:px-6 py-2 border-t border-stone-800/30 bg-[#1a1814]/95 backdrop-blur-xl z-30">
           <Headphones className="h-3.5 w-3.5 text-gold/50 shrink-0" />
-          <span className="text-[9px] uppercase tracking-widest text-muted-foreground/40 hidden sm:inline">
+          <span className="text-[9px] uppercase tracking-widest text-stone-500/40 hidden sm:inline">
             {ebookAudio.isFileMode ? "Áudio" : "Leitura em voz"}
           </span>
           <Button
             variant="ghost"
             size="sm"
             onClick={ebookAudio.toggle}
-            className={`h-7 w-7 p-0 transition-colors ${ebookAudio.isPlaying ? "text-gold" : "text-muted-foreground/50 hover:text-gold"}`}
+            className={`h-7 w-7 p-0 transition-colors ${ebookAudio.isPlaying ? "text-gold" : "text-stone-500/50 hover:text-gold"}`}
           >
             {ebookAudio.isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
           </Button>
@@ -475,13 +496,13 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
               variant="ghost"
               size="sm"
               onClick={ebookAudio.stop}
-              className="h-7 w-7 p-0 text-muted-foreground/40 hover:text-red-400"
+              className="h-7 w-7 p-0 text-stone-500/40 hover:text-red-400"
             >
               <Square className="h-3 w-3" />
             </Button>
           )}
           {ebookAudio.isFileMode && ebookAudio.duration > 0 && (
-            <div className="flex-1 max-w-[200px] h-1 rounded-full bg-border/10 overflow-hidden">
+            <div className="flex-1 max-w-[200px] h-1 rounded-full bg-stone-700/20 overflow-hidden">
               <div
                 className="h-full rounded-full bg-gold/50 transition-all duration-300"
                 style={{ width: `${(ebookAudio.progress / ebookAudio.duration) * 100}%` }}
@@ -492,22 +513,22 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       )}
 
       {/* ═══ BOTTOM BAR ═══ */}
-      <div className="flex items-center justify-between px-3 sm:px-6 py-2.5 border-t border-border/8 bg-background/95 backdrop-blur-xl z-30">
+      <div className={`flex items-center justify-between px-3 sm:px-6 py-2.5 border-t border-stone-800/30 bg-[#1a1814]/95 backdrop-blur-xl z-30 transition-all duration-300 ${immersive ? "opacity-0 pointer-events-none h-0 overflow-hidden py-0 border-0" : ""}`}>
         <Button variant="premiumOutline" size="sm" onClick={prevSpread} disabled={spread <= 0} className="gap-1.5">
           <ChevronLeft className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Anterior</span>
         </Button>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 rounded-xl border border-border/10 bg-card/6 px-3 py-1.5">
+          <div className="flex items-center gap-2 rounded-xl border border-stone-700/15 bg-stone-900/30 px-3 py-1.5">
             <BookOpen className="h-3 w-3 text-gold/50" />
-            <span className="text-[10px] sm:text-xs tabular-nums text-foreground/60">
-              <span className="font-bold text-foreground/80">{pageLabel}</span>
-              <span className="mx-1 text-muted-foreground/30">/</span>
-              <span className="text-muted-foreground/50">{numPages}</span>
+            <span className="text-[10px] sm:text-xs tabular-nums text-stone-400/60">
+              <span className="font-bold text-stone-300/80">{pageLabel}</span>
+              <span className="mx-1 text-stone-600/30">/</span>
+              <span className="text-stone-500/50">{numPages}</span>
             </span>
           </div>
-          <div className="hidden sm:block w-28 h-1 rounded-full bg-border/10 overflow-hidden">
+          <div className="hidden sm:block w-28 h-1 rounded-full bg-stone-700/20 overflow-hidden">
             <motion.div
               className="h-full rounded-full bg-gold/50"
               initial={{ width: 0 }}
@@ -524,8 +545,8 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       </div>
 
       {/* ═══ MARK COMPLETE BAR ═══ */}
-      {onComplete && (
-        <div className="flex items-center justify-center px-3 sm:px-6 py-3 border-t border-border/8 bg-background/95 backdrop-blur-xl z-30">
+      {onComplete && !immersive && (
+        <div className="flex items-center justify-center px-3 sm:px-6 py-3 border-t border-stone-800/30 bg-[#1a1814]/95 backdrop-blur-xl z-30">
           <Button
             onClick={() => {
               if (!isCompleted) onComplete();
