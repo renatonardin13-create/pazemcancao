@@ -136,6 +136,12 @@ export const updateCourse = createServerFn({ method: 'POST' })
     if (!role) throw new Error('Não autorizado');
 
     const { id, ...updates } = data;
+    
+    // Sanitize fields to avoid constraint violations
+    if ('category_id' in updates && !updates.category_id) {
+      updates.category_id = null;
+    }
+    
     const normalizedUpdates = {
       ...updates,
       ...(updates.course_type !== undefined
