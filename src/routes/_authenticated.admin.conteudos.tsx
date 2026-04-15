@@ -538,6 +538,83 @@ function AdminContentPage() {
               <Switch checked={showAsCard} onCheckedChange={setShowAsCard} disabled={isSubmitting} />
             </div>
 
+            {/* Release Mode */}
+            <div className="space-y-2 rounded-xl border border-border/25 bg-card/15 p-4">
+              <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">Modo de Liberação do Conteúdo</Label>
+              <Select value={releaseMode} onValueChange={setReleaseMode} disabled={isSubmitting}>
+                <SelectTrigger className="bg-card/15 border-border/30 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="liberar_tudo">🔓 Liberar tudo de uma vez</SelectItem>
+                  <SelectItem value="liberar_progressivo">⏳ Liberação progressiva (por tempo)</SelectItem>
+                  <SelectItem value="liberar_com_bloqueio_final">🔒 Liberar com bloqueio final</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-[11px] text-muted-foreground/60">
+                {releaseMode === "liberar_tudo" && "Todas as músicas/conteúdos serão liberados imediatamente ao comprador."}
+                {releaseMode === "liberar_progressivo" && "Libera parte inicial e o restante é desbloqueado ao longo do tempo (use 'Dias para liberar' no modo de acesso)."}
+                {releaseMode === "liberar_com_bloqueio_final" && "Libera a maioria do conteúdo, mas mantém as últimas músicas bloqueadas como lançamento especial."}
+              </p>
+
+              {(releaseMode === "liberar_progressivo" || releaseMode === "liberar_com_bloqueio_final") && (
+                <div className="space-y-3 mt-3 pt-3 border-t border-border/15">
+                  <div className="space-y-2">
+                    <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
+                      Quantidade liberada no início
+                    </Label>
+                    <Input
+                      type="number" min="0"
+                      value={initialFreeCount}
+                      onChange={(e) => setInitialFreeCount(e.target.value)}
+                      placeholder="Ex: 5"
+                      className="bg-card/15 border-border/30 text-sm"
+                      disabled={isSubmitting}
+                    />
+                    <p className="text-[11px] text-muted-foreground/60">
+                      Primeiros itens liberados imediatamente (0 = nenhum liberado de início).
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {releaseMode === "liberar_com_bloqueio_final" && (
+                <div className="space-y-3 mt-3 pt-3 border-t border-border/15">
+                  <div className="space-y-2">
+                    <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
+                      Quantidade bloqueada no final
+                    </Label>
+                    <Input
+                      type="number" min="0"
+                      value={lockedFinalCount}
+                      onChange={(e) => setLockedFinalCount(e.target.value)}
+                      placeholder="Ex: 3"
+                      className="bg-card/15 border-border/30 text-sm"
+                      disabled={isSubmitting}
+                    />
+                    <p className="text-[11px] text-muted-foreground/60">
+                      Últimos itens que permanecerão bloqueados com visual premium.
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
+                      Texto do bloqueio (opcional)
+                    </Label>
+                    <Input
+                      value={lockedLabel}
+                      onChange={(e) => setLockedLabel(e.target.value)}
+                      placeholder="Ex: Lançamento especial, Nova coleção chegando"
+                      className="bg-card/15 border-border/30 text-sm"
+                      disabled={isSubmitting}
+                    />
+                    <p className="text-[11px] text-muted-foreground/60">
+                      Texto exibido sobre os conteúdos bloqueados. Se vazio, mostrará "Lançamento especial".
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="ghost" onClick={() => { setFormOpen(false); resetForm(); }} disabled={isSubmitting} className="text-xs text-muted-foreground/70">
                 Cancelar
