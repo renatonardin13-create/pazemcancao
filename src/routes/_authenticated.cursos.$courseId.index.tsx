@@ -1,10 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { PageLoading } from "@/components/LoadingSkeletons";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getCourseDetail,
   updateLessonProgress,
 } from "@/lib/courses.functions";
+import { resolveCourseLesson } from "@/lib/resolve-course-lesson.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import {
   ArrowLeft,
@@ -28,7 +29,7 @@ import {
   X,
   List,
 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 
@@ -51,7 +52,24 @@ export const Route = createFileRoute("/_authenticated/cursos/$courseId/")({
 
 function CourseDetailPage() {
   const { courseId } = Route.useParams();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  // Auto-redirect to the appropriate lesson
+  const { data: resolvedLesson, isLoading: isResolving } = useQuery({
+    queryKey: ["resolve-course-lesson", courseId],
+    queryFn: () => resolveCourseLesson({ data: { courseId } }),
+  });
+
+  useEffect(() => {
+    if (resolvedLesson?.lessonId) {
+      navigate({
+        to: "/cursos/$courseId/aula/$lessonId",
+        params: { courseId, lessonId: resolvedLesson.lessonId },
+        replace: true,
+      });
+    }
+  }, [resolvedLesson, courseId, navigate]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["course-detail", courseId],
