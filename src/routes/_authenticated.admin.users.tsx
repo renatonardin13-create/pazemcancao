@@ -284,6 +284,8 @@ function AdminUsersPage() {
     setAddEnabled(true);
     setAddCourseIds([]);
     setAddPassword(null);
+    setAddIsTrial(false);
+    setAddTrialDays(7);
   };
 
   const toggleCourseSelection = (courseId: string) => {
