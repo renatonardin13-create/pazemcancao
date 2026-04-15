@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { useQuery } from "@tanstack/react-query";
+import { ModuleGuard } from "@/components/ModuleGuard";
 import { getStudentShelves } from "@/lib/shelves.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
@@ -70,6 +71,7 @@ function VitrinePage() {
   let adminShelfIndex = 0;
 
   return (
+    <ModuleGuard moduleKey="vitrine">
     <StudentLayout>
       <div className="min-h-screen flex flex-col bg-background">
         <div className="flex-1 w-full pb-28">
@@ -191,6 +193,7 @@ function VitrinePage() {
         <FooterLinks />
       </div>
     </StudentLayout>
+    </ModuleGuard>
   );
 }
 

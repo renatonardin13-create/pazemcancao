@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { ModuleGuard } from "@/components/ModuleGuard";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getMyProfile, updateMyProfile, changePassword } from "@/lib/profile.functions";
 import { StudentLayout } from "@/components/StudentLayout";
@@ -101,6 +102,7 @@ function ProfilePage() {
     : "";
 
   return (
+    <ModuleGuard moduleKey="perfil">
     <StudentLayout>
     <div className="min-h-screen bg-background flex flex-col">
 
@@ -359,5 +361,6 @@ function ProfilePage() {
       <FooterLinks />
     </div>
     </StudentLayout>
+    </ModuleGuard>
   );
 }
