@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPlatformSettings, updatePlatformSetting, uploadPlatformAsset } from "@/lib/platform-settings.functions";
+import { getPlatformModules, updatePlatformModule, type PlatformModule } from "@/lib/platform-modules.functions";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
