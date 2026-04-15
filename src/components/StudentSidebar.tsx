@@ -145,7 +145,7 @@ export function StudentSidebar() {
         )}
 
         {/* Louvores with subcategories */}
-        {hasTracks && (
+        {hasTracks && showMusic && (
           <div>
             <button
               onClick={() => setLouvoresOpen(!louvoresOpen)}
