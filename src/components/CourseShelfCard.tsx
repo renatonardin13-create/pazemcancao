@@ -69,16 +69,16 @@ export function CourseShelfCard({
   const isExternalLink = isLocked && course.checkout_url;
 
   const cardContent = (
-    <div className="relative rounded-xl sm:rounded-2xl overflow-visible md:transition-all md:duration-[600ms] md:ease-[cubic-bezier(0.22,1,0.36,1)] md:group-hover/card:scale-[1.04] md:group-hover/card:z-30">
+    <div className="relative rounded-[14px] sm:rounded-[16px] overflow-visible md:transition-all md:duration-[600ms] md:ease-[cubic-bezier(0.22,1,0.36,1)] md:group-hover/card:scale-[1.04] md:group-hover/card:z-30">
 
       {/* Ambient glow */}
       <div className="absolute -inset-4 rounded-3xl bg-gold/0 md:group-hover/card:bg-gold/[0.05] md:transition-all md:duration-700 blur-3xl pointer-events-none" />
 
       {/* Card body */}
-      <div className="relative rounded-xl sm:rounded-2xl overflow-hidden bg-card/5 shadow-md shadow-black/25 ring-1 ring-white/[0.04] md:group-hover/card:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.6)] md:group-hover/card:ring-gold/15 md:transition-all md:duration-500">
+      <div className="relative rounded-[14px] sm:rounded-[16px] overflow-hidden bg-card/5 shadow-md shadow-black/25 ring-1 ring-white/[0.04] md:group-hover/card:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.6)] md:group-hover/card:ring-gold/15 md:transition-all md:duration-500">
 
         {/* Image — vertical poster 2:3 */}
-        <div className="relative aspect-[2/3] overflow-hidden">
+        <div className="relative aspect-[9/13] overflow-hidden">
           {course.cover_image_url ? (
             <img
               src={course.cover_image_url}
