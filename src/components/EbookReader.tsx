@@ -826,14 +826,9 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
             animate="center"
             exit="exit"
             transition={{
-              duration: 0.65,
+              duration: 0.35,
               ease: [0.25, 0.46, 0.45, 0.94],
-              opacity: { duration: 0.4 },
-              filter: { duration: 0.5 },
-            }}
-            style={{
-              transformStyle: "preserve-3d",
-              transformOrigin: direction === "right" ? "left center" : "right center",
+              opacity: { duration: 0.25 },
             }}
             className={`relative flex ${dualPage ? "max-w-[88vw] lg:max-w-[78vw] xl:max-w-[68vw]" : "max-w-[92vw] sm:max-w-[65vw] md:max-w-[50vw]"} w-full`}
           >
