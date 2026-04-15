@@ -421,11 +421,19 @@ function ShelfRow({ children }: { children: React.ReactNode }) {
 }
 
 function ShelfItem({ children, index }: { children: React.ReactNode; index: number }) {
+  // Only animate the first 6 items for performance
+  if (index > 5) {
+    return (
+      <div className="flex-shrink-0 snap-start w-[170px] sm:w-[200px] md:w-[210px] lg:w-[220px] xl:w-[240px]">
+        {children}
+      </div>
+    );
+  }
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5, delay: 0.04 * Math.min(index, 10), ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.4, delay: 0.04 * index, ease: [0.22, 1, 0.36, 1] }}
       className="flex-shrink-0 snap-start w-[170px] sm:w-[200px] md:w-[210px] lg:w-[220px] xl:w-[240px]"
     >
       {children}
