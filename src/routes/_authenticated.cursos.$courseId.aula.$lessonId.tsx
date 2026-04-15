@@ -768,6 +768,11 @@ function LessonDetailPage() {
             </div>
           )}
 
+          {/* Upsell suggestions */}
+          <div className="px-5 sm:px-8">
+            <UpsellSection sourceType="course" sourceId={courseId} className="mt-6 mb-4" />
+          </div>
+
           {/* ═══ NEXT UP CARD — Netflix-style with countdown ═══ */}
           <AnimatePresence>
             {(isCompleted || showNextUp) && nextLesson && !accessRestricted && (
