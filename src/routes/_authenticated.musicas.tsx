@@ -154,22 +154,38 @@ function MusicLibraryPage() {
     staleTime: 5 * 60_000,
   });
 
-  const { currentTrack, playing, progress, toggle, setQueue } = usePlayer();
+  const { currentTrack, playing, progress, toggle, setQueue, queue } = usePlayer();
 
   const handlePlayWithQueue = useCallback((track: any, trackList: any[]) => {
     const playerTracks = trackList.map(dbTrackToPlayerTrack);
     const playerTrack = dbTrackToPlayerTrack(track);
     const idx = playerTracks.findIndex(t => t.id === playerTrack.id);
+
     if (currentTrack?.id === track.id) {
-      // Same track — just toggle play/pause but keep queue intact
-      toggle(playerTrack);
+      // Same track playing — check if queue changed
+      const queueChanged = queue.length !== playerTracks.length ||
+        queue.some((q, i) => q.id !== playerTracks[i]?.id);
+
+      if (queueChanged && idx >= 0) {
+        // Update queue silently without restarting, then toggle
+        // We need setQueue which restarts — so just toggle if playing
+        if (playing) {
+          toggle(playerTrack);
+        } else {
+          // Paused on same track but new queue context — set new queue
+          setQueue(playerTracks, idx);
+        }
+      } else {
+        toggle(playerTrack);
+      }
     } else if (idx >= 0) {
-      // Always set full queue so auto-next works through entire playlist
+      // Different track — set full queue so auto-next works
       setQueue(playerTracks, idx);
     } else {
       toggle(playerTrack);
     }
-  }, [currentTrack?.id, toggle, setQueue]);
+  }, [currentTrack?.id, playing, queue, toggle, setQueue]);
+  
 
   const dbCategories = catData?.categories || [];
   const tracks = data?.tracks || [];
