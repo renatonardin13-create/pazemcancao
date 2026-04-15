@@ -160,7 +160,12 @@ function MeusCoursosPage() {
                       <ShelfRow>
                         {continueWatchingCourses.map((course: any, idx: number) => (
                           <ShelfItem key={`cw-${course.id}`} index={idx}>
-                            <ContinueWatchingCard course={course} />
+                            <CourseShelfCard
+                              course={course}
+                              showProgress
+                              showStatusBadge
+                              subtitle={`${course.completed_lessons || 0}/${course.total_lessons || 0} aulas`}
+                            />
                           </ShelfItem>
                         ))}
                       </ShelfRow>
@@ -174,7 +179,12 @@ function MeusCoursosPage() {
                       <ShelfRow>
                         {myCourses.map((course: any, idx: number) => (
                           <ShelfItem key={`mc-${course.id}`} index={idx}>
-                            <MyCoursesCard course={course} />
+                            <CourseShelfCard
+                              course={course}
+                              showProgress
+                              showStatusBadge
+                              subtitle={`${course.completed_lessons || 0}/${course.lesson_count || course.total_lessons || 0} aulas`}
+                            />
                           </ShelfItem>
                         ))}
                       </ShelfRow>
