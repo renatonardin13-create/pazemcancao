@@ -83,7 +83,6 @@ export function StudentSidebar() {
 
       if (!hasTrack) return false;
 
-      // Deduplicate by normalized name to avoid similar categories
       const dedupeKey = normalizedName || normalizedSlug;
       if (seen.has(dedupeKey)) return false;
       seen.add(dedupeKey);
@@ -96,29 +95,29 @@ export function StudentSidebar() {
 
   const navItemClass = (active: boolean) =>
     cn(
-      "flex items-center gap-3 rounded-xl px-4 py-2.5 text-[13px] font-medium transition-all duration-500",
+      "flex items-center gap-3.5 rounded-xl px-4 py-3.5 text-[15px] font-semibold tracking-tight transition-all duration-500",
       active
-        ? "text-gold bg-gold/[0.06] border border-gold/12"
-        : "text-foreground/45 hover:text-foreground/65 hover:bg-muted/6 border border-transparent"
+        ? "text-gold bg-gold/[0.08] border border-gold/15 shadow-sm shadow-gold/5"
+        : "text-foreground/50 hover:text-foreground/75 hover:bg-muted/8 border border-transparent"
     );
 
   const subItemClass = (active: boolean) =>
     cn(
-      "flex items-center gap-2.5 rounded-lg px-3.5 py-2 ml-5 text-[12px] font-medium transition-all duration-500",
+      "flex items-center gap-3 rounded-lg px-4 py-2.5 ml-6 text-[13px] font-medium tracking-tight transition-all duration-500",
       active
-        ? "text-gold/80 bg-gold/[0.04] border-l-2 border-gold/30"
-        : "text-muted-foreground/45 hover:text-foreground/55 hover:bg-muted/5 border-l-2 border-transparent"
+        ? "text-gold/85 bg-gold/[0.06] border-l-2 border-gold/35"
+        : "text-muted-foreground/50 hover:text-foreground/60 hover:bg-muted/6 border-l-2 border-transparent"
     );
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
-      {/* Logo */}
-      <div className="px-5 py-5 border-b border-border/20">
-        <LogoBrand size="md" showSubtitle />
+      {/* Logo — larger and more prominent */}
+      <div className="px-6 py-6 border-b border-border/15">
+        <LogoBrand size="lg" showSubtitle />
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+      <nav className="flex-1 overflow-y-auto px-4 py-5 space-y-1.5">
         {/* Vitrine */}
         {hasVitrine && (
           <Link
@@ -126,7 +125,7 @@ export function StudentSidebar() {
             onClick={() => setMobileOpen(false)}
             className={navItemClass(isActive("/vitrine"))}
           >
-            <Store className="h-4 w-4 shrink-0" />
+            <Store className="h-5 w-5 shrink-0" />
             Vitrine
           </Link>
         )}
@@ -138,7 +137,7 @@ export function StudentSidebar() {
             onClick={() => setMobileOpen(false)}
             className={navItemClass(isActive("/cursos") || isActivePrefix("/cursos/"))}
           >
-            <GraduationCap className="h-4 w-4 shrink-0" />
+            <GraduationCap className="h-5 w-5 shrink-0" />
             Meus Cursos
           </Link>
         )}
@@ -153,19 +152,19 @@ export function StudentSidebar() {
                 "w-full justify-between"
               )}
             >
-              <span className="flex items-center gap-3">
-                <Music2 className="h-4 w-4 shrink-0" />
+              <span className="flex items-center gap-3.5">
+                <Music2 className="h-5 w-5 shrink-0" />
                 Louvores
               </span>
               {louvoresOpen ? (
-                <ChevronDown className="h-3.5 w-3.5 text-muted-foreground/50 transition-transform" />
+                <ChevronDown className="h-4 w-4 text-muted-foreground/45 transition-transform" />
               ) : (
-                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground/50 transition-transform" />
+                <ChevronRight className="h-4 w-4 text-muted-foreground/45 transition-transform" />
               )}
             </button>
 
             {louvoresOpen && (
-              <div className="mt-1.5 space-y-0.5">
+              <div className="mt-2 space-y-1">
                 <Link
                   to="/musicas"
                   search={{}}
@@ -174,7 +173,7 @@ export function StudentSidebar() {
                     isActive("/musicas") && !(location.search as any)?.categoria
                   )}
                 >
-                  <span className="text-[11px]">⭐</span>
+                  <span className="text-[13px]">⭐</span>
                   Destaques (Top 10)
                 </Link>
                 {visibleCategories
@@ -195,7 +194,7 @@ export function StudentSidebar() {
                         onClick={() => setMobileOpen(false)}
                         className={subItemClass(isActiveCat)}
                       >
-                        <span className="text-[11px]">{cat.icon || "🎵"}</span>
+                        <span className="text-[13px]">{cat.icon || "🎵"}</span>
                         {cat.name.replace(/^[^\w\s]+\s*/u, "")}
                       </Link>
                     );
@@ -206,7 +205,7 @@ export function StudentSidebar() {
         )}
 
         {/* Separator */}
-        <div className="my-2 h-px bg-gradient-to-r from-transparent via-border/20 to-transparent" />
+        <div className="my-3 h-px bg-gradient-to-r from-transparent via-border/25 to-transparent" />
 
         {/* Perfil */}
         <Link
@@ -214,20 +213,20 @@ export function StudentSidebar() {
           onClick={() => setMobileOpen(false)}
           className={navItemClass(isActive("/perfil"))}
         >
-          <UserCircle className="h-4 w-4 shrink-0" />
+          <UserCircle className="h-5 w-5 shrink-0" />
           Perfil
         </Link>
 
         {/* Admin */}
         {!adminLoading && isAdmin && (
           <>
-            <div className="my-2 h-px bg-gradient-to-r from-transparent via-border/20 to-transparent" />
+            <div className="my-3 h-px bg-gradient-to-r from-transparent via-border/25 to-transparent" />
             <Link
               to="/admin"
               onClick={() => setMobileOpen(false)}
               className={navItemClass(isActivePrefix("/admin"))}
             >
-              <Settings className="h-4 w-4 shrink-0" />
+              <Settings className="h-5 w-5 shrink-0" />
               Admin
             </Link>
           </>
@@ -235,12 +234,12 @@ export function StudentSidebar() {
       </nav>
 
       {/* Logout */}
-      <div className="px-3 py-4 border-t border-border/20">
+      <div className="px-4 py-5 border-t border-border/15">
         <button
           onClick={() => { logout(); setMobileOpen(false); }}
-          className="flex items-center gap-3 rounded-xl px-4 py-2.5 w-full text-[12px] font-semibold text-muted-foreground/50 hover:text-foreground/60 hover:bg-muted/10 transition-all duration-200"
+          className="flex items-center gap-3.5 rounded-xl px-4 py-3 w-full text-[13px] font-semibold text-muted-foreground/45 hover:text-foreground/65 hover:bg-muted/10 transition-all duration-300"
         >
-          <LogOut className="h-4 w-4 shrink-0" />
+          <LogOut className="h-5 w-5 shrink-0" />
           Sair
         </button>
       </div>
@@ -271,7 +270,7 @@ export function StudentSidebar() {
       {/* Mobile sidebar */}
       <div
         className={cn(
-          "fixed top-0 left-0 z-50 h-full w-[280px] bg-sidebar border-r border-sidebar-border transform transition-transform duration-300 md:hidden",
+          "fixed top-0 left-0 z-50 h-full w-[300px] bg-sidebar border-r border-sidebar-border transform transition-transform duration-300 md:hidden",
           mobileOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
@@ -279,7 +278,7 @@ export function StudentSidebar() {
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex md:flex-col md:w-[260px] md:min-h-screen bg-sidebar border-r border-sidebar-border shrink-0">
+      <aside className="hidden md:flex md:flex-col md:w-[290px] md:min-h-screen bg-sidebar border-r border-sidebar-border shrink-0">
         {sidebarContent}
       </aside>
     </>
