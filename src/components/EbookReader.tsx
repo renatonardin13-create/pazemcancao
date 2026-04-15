@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
@@ -20,6 +20,8 @@ import {
   Moon,
   SkipBack,
   SkipForward,
+  Lock,
+  ShoppingCart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -42,6 +44,12 @@ interface EbookReaderProps {
   isCompletePending?: boolean;
   onComplete?: () => void;
   onBack?: () => void;
+  /** Number of free pages before paywall (0 = all free) */
+  freePageLimit?: number;
+  /** Whether user has full access (purchased) */
+  isUnlocked?: boolean;
+  /** URL to redirect when user clicks "Unlock" */
+  salesPageUrl?: string;
 }
 
 /**
@@ -50,7 +58,7 @@ interface EbookReaderProps {
  * Mobile: single page with swipe.
  * Page-flip 3D animation on navigation.
  */
-export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePending, onComplete, onBack }: EbookReaderProps) {
+export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePending, onComplete, onBack, freePageLimit = 0, isUnlocked = true, salesPageUrl }: EbookReaderProps) {
   const isMobile = useIsMobile();
   const [numPages, setNumPages] = useState(0);
   // `spread` tracks the current spread index (0-based).
