@@ -25,33 +25,18 @@ import {
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 
-/** Configuration for each module's menu entry */
-interface ModuleMenuConfig {
-  key: ModuleKey;
-  label: string;
-  icon: LucideIcon;
-  to: string;
-  /** If true, match prefix for active state */
-  matchPrefix?: boolean;
-  /** If true, render louvores submenu with categories */
-  hasSubmenu?: boolean;
-}
-
-/**
- * Static mapping from module slug to menu config.
- * Order here determines display order in the sidebar.
- */
-const MODULE_MENU_CONFIG: ModuleMenuConfig[] = [
-  { key: "vitrine", label: "Vitrine", icon: Store, to: "/vitrine" },
-  { key: "cursos", label: "Meus Cursos", icon: GraduationCap, to: "/cursos", matchPrefix: true },
-  { key: "louvores", label: "Louvores", icon: Music2, to: "/musicas", matchPrefix: true, hasSubmenu: true },
-  { key: "ebooks", label: "Ebooks", icon: BookOpen, to: "/conteudo" },
-  { key: "trilhas", label: "Trilhas", icon: RouteIcon, to: "/conteudo" },
-  { key: "bonus", label: "Bônus", icon: Gift, to: "/conteudo" },
-  { key: "lancamentos", label: "Lançamentos", icon: Rocket, to: "/vitrine" },
-  { key: "comunidade", label: "Comunidade", icon: Users, to: "/vitrine" },
-  { key: "perfil", label: "Perfil", icon: UserCircle, to: "/perfil" },
-];
+/** Static lookup: slug → icon, route, prefix-match, submenu flag */
+const SLUG_META: Record<string, { icon: LucideIcon; to: string; matchPrefix?: boolean; hasSubmenu?: boolean }> = {
+  vitrine:     { icon: Store,          to: "/vitrine" },
+  cursos:      { icon: GraduationCap,  to: "/cursos",   matchPrefix: true },
+  louvores:    { icon: Music2,         to: "/musicas",  matchPrefix: true, hasSubmenu: true },
+  ebooks:      { icon: BookOpen,       to: "/conteudo" },
+  trilhas:     { icon: RouteIcon,      to: "/conteudo" },
+  bonus:       { icon: Gift,           to: "/conteudo" },
+  lancamentos: { icon: Rocket,         to: "/vitrine" },
+  comunidade:  { icon: Users,          to: "/vitrine" },
+  perfil:      { icon: UserCircle,     to: "/perfil" },
+};
 
 export function StudentSidebar() {
   const { logout, isAdmin, adminLoading } = useAuth();
@@ -108,19 +93,25 @@ export function StudentSidebar() {
     });
   }, [categories, categoriesWithTracks]);
 
-  // Build the ordered list of visible menu items dynamically
-  // If DB modules exist, use their sort_order; otherwise use static config order
+  // Build the ordered list of visible menu items dynamically from DB modules
   const visibleMenuItems = useMemo(() => {
-    const dbMap = new Map(dbModules.map((m) => [m.slug, m]));
+    if (dbModules.length === 0) return [];
 
-    return MODULE_MENU_CONFIG
-      .filter((cfg) => moduleInfo[cfg.key]?.visibleInMenu)
-      .sort((a, b) => {
-        const aOrder = dbMap.get(a.key)?.sort_order ?? MODULE_MENU_CONFIG.indexOf(a);
-        const bOrder = dbMap.get(b.key)?.sort_order ?? MODULE_MENU_CONFIG.indexOf(b);
-        return aOrder - bOrder;
+    return dbModules
+      .filter((mod) => mod.enabled && mod.visible_in_menu)
+      .sort((a, b) => a.sort_order - b.sort_order)
+      .map((mod) => {
+        const meta = SLUG_META[mod.slug];
+        return {
+          key: mod.slug,
+          label: mod.name,
+          icon: meta?.icon || Store,
+          to: meta?.to || "/vitrine",
+          matchPrefix: meta?.matchPrefix || false,
+          hasSubmenu: meta?.hasSubmenu || false,
+        };
       });
-  }, [moduleInfo, dbModules]);
+  }, [dbModules]);
 
   const isActive = (path: string) => location.pathname === path;
   const isActivePrefix = (path: string) => location.pathname.startsWith(path);
@@ -204,7 +195,7 @@ export function StudentSidebar() {
   );
 
   /** Render a standard menu item */
-  const renderMenuItem = (cfg: ModuleMenuConfig) => {
+  const renderMenuItem = (cfg: { key: string; label: string; icon: LucideIcon; to: string; matchPrefix: boolean }) => {
     const Icon = cfg.icon;
     const active = cfg.matchPrefix ? isActivePrefix(cfg.to) : isActive(cfg.to);
 
