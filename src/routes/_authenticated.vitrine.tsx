@@ -6,7 +6,7 @@ import { FooterLinks } from "@/components/FooterLinks";
 import { motion } from "framer-motion";
 import { Store, Lock, Play, ArrowRight, ShoppingCart, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useState, useMemo, useRef, useCallback } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 
 export const Route = createFileRoute("/_authenticated/vitrine")({
   component: VitrinePage,
@@ -243,10 +243,10 @@ function ShelfCarousel({ courses }: { courses: any[] }) {
 }
 
 function ScrollCheck({ scrollRef, onCheck }: { scrollRef: React.RefObject<HTMLDivElement | null>; onCheck: () => void }) {
-  // Check after render
-  useState(() => {
-    setTimeout(onCheck, 100);
-  });
+  useEffect(() => {
+    const timer = setTimeout(onCheck, 100);
+    return () => clearTimeout(timer);
+  }, [onCheck]);
   return null;
 }
 
