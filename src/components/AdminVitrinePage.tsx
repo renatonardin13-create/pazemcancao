@@ -193,6 +193,7 @@ export default function AdminVitrinePage() {
   const [bannerEnabled, setBannerEnabled] = useState(true);
   const [bannerFit, setBannerFit] = useState<string>("cover");
   const [bannerAspect, setBannerAspect] = useState<string>("auto");
+  const [bannerLinkUrl, setBannerLinkUrl] = useState("");
   const [bannerImgDims, setBannerImgDims] = useState<{ w: number; h: number } | null>(null);
 
   // Promo banner state
@@ -251,6 +252,7 @@ export default function AdminVitrinePage() {
       if (saved.course_id) setBannerCourseId(saved.course_id);
       if (saved.fit) setBannerFit(saved.fit);
       if (saved.aspect) setBannerAspect(saved.aspect);
+      if (saved.link_url) setBannerLinkUrl(saved.link_url);
     }
   }, [settingsData]);
 
@@ -278,6 +280,7 @@ export default function AdminVitrinePage() {
           course_id: bannerCourseId,
           fit: bannerFit,
           aspect: bannerAspect,
+          link_url: bannerLinkUrl,
         },
       },
     }),
@@ -741,6 +744,20 @@ export default function AdminVitrinePage() {
                   expectedRatio="3:1"
                   recommendedSize="1920x600"
                 />
+
+                {/* Link URL */}
+                <div className="space-y-2">
+                  <Label className="text-sm text-foreground/60 font-medium">URL de destino (link clicável)</Label>
+                  <Input
+                    value={bannerLinkUrl}
+                    onChange={(e) => setBannerLinkUrl(e.target.value)}
+                    placeholder="https://exemplo.com/pagina-de-vendas"
+                    className="bg-card/20 border-border/30 text-sm"
+                  />
+                  <p className="text-[10px] text-muted-foreground/50">
+                    Se preenchido, o banner será clicável e redirecionará para esta URL
+                  </p>
+                </div>
 
                 {/* Save button */}
                 <Button

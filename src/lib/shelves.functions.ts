@@ -362,6 +362,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
             ...(bannerConfig.image_url ? { banner_image_url: bannerConfig.image_url } : {}),
             banner_fit: bannerConfig.fit || 'cover',
             banner_aspect: bannerConfig.aspect || 'auto',
+            banner_link_url: bannerConfig.link_url || null,
           };
         }
       } else if (bannerConfig?.image_url) {
@@ -372,6 +373,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
           banner_image_url: bannerConfig.image_url,
           banner_fit: bannerConfig.fit || 'cover',
           banner_aspect: bannerConfig.aspect || 'auto',
+          banner_link_url: bannerConfig.link_url || null,
           access_state: 'available',
         };
       } else {

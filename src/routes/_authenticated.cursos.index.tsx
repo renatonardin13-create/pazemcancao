@@ -428,14 +428,15 @@ function ShelfItem({ children, index }: { children: React.ReactNode; index: numb
 function HeroBanner({ course }: { course: any }) {
   const bannerImg = course.banner_image_url || course.cover_image_url;
   const isCustomBanner = course.id === '__custom_banner__';
+  const bannerLinkUrl = course.banner_link_url || course.sales_page_url || course.checkout_url;
 
-  return (
+  const bannerContent = (
     <div className="px-5 sm:px-10 lg:px-14 xl:px-20 pt-2 sm:pt-4 mb-16 sm:mb-24">
       <motion.div
         initial={{ opacity: 0, scale: 0.97 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        className="relative w-full h-[280px] sm:h-[380px] md:h-[460px] lg:h-[520px] xl:h-[560px] rounded-3xl sm:rounded-[28px] overflow-hidden shadow-[0_8px_60px_-12px_rgba(0,0,0,0.7)] ring-1 ring-white/[0.04]"
+        className={`relative w-full h-[280px] sm:h-[380px] md:h-[460px] lg:h-[520px] xl:h-[560px] rounded-3xl sm:rounded-[28px] overflow-hidden shadow-[0_8px_60px_-12px_rgba(0,0,0,0.7)] ring-1 ring-white/[0.04] ${bannerLinkUrl && isCustomBanner ? 'cursor-pointer' : ''}`}
       >
         {/* Background image */}
         {bannerImg ? (
@@ -511,6 +512,16 @@ function HeroBanner({ course }: { course: any }) {
       </motion.div>
     </div>
   );
+
+  if (isCustomBanner && bannerLinkUrl) {
+    return (
+      <a href={bannerLinkUrl} target="_blank" rel="noopener noreferrer">
+        {bannerContent}
+      </a>
+    );
+  }
+
+  return bannerContent;
 }
 
 /* ══════════════════════════════════════════════════════════════
