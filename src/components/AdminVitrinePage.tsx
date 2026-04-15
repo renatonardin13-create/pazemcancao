@@ -193,6 +193,7 @@ export default function AdminVitrinePage() {
   const [bannerEnabled, setBannerEnabled] = useState(true);
   const [bannerFit, setBannerFit] = useState<string>("cover");
   const [bannerAspect, setBannerAspect] = useState<string>("auto");
+  const [bannerLinkUrl, setBannerLinkUrl] = useState("");
   const [bannerImgDims, setBannerImgDims] = useState<{ w: number; h: number } | null>(null);
 
   // Promo banner state
@@ -251,6 +252,7 @@ export default function AdminVitrinePage() {
       if (saved.course_id) setBannerCourseId(saved.course_id);
       if (saved.fit) setBannerFit(saved.fit);
       if (saved.aspect) setBannerAspect(saved.aspect);
+      if (saved.link_url) setBannerLinkUrl(saved.link_url);
     }
   }, [settingsData]);
 
@@ -278,6 +280,7 @@ export default function AdminVitrinePage() {
           course_id: bannerCourseId,
           fit: bannerFit,
           aspect: bannerAspect,
+          link_url: bannerLinkUrl,
         },
       },
     }),
