@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { usePlayer } from "@/hooks/use-player";
 import { motion, AnimatePresence } from "framer-motion";
 import { InvisibleFunnelShelves } from "@/components/InvisibleFunnelShelves";
+import { StrategicMusicShelves } from "@/components/StrategicMusicShelves";
 import type { Track } from "@/lib/sample-tracks";
 import { toast } from "sonner";
 
