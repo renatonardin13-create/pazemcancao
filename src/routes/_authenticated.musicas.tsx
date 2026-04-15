@@ -515,7 +515,7 @@ function TrackCard({
           );
         } : undefined}
         className={`group relative cursor-pointer block ${
-          isCarousel ? "snap-start shrink-0 w-[260px] sm:w-[280px]" : ""
+          isCarousel ? "snap-start shrink-0 w-[200px] sm:w-[220px]" : ""
         }`}
       >
         <motion.div
@@ -525,9 +525,7 @@ function TrackCard({
           transition={{ duration: isCarousel ? 0.5 : 0.4, delay: idx * (isCarousel ? 0.06 : 0.03), ease: "easeOut" }}
           whileHover={{ scale: 1.04, y: -4 }}
           whileTap={{ scale: 0.97 }}
-          className={`relative rounded-2xl border transition-all duration-500 overflow-hidden ${
-            isCarousel ? "h-full flex flex-col" : ""
-          } ${
+          className={`relative rounded-2xl border transition-all duration-500 overflow-hidden h-[300px] sm:h-[320px] flex flex-col ${
             effectiveLocked
               ? "border-border/25 shadow-[0_4px_30px_-10px] shadow-black/20 opacity-70 grayscale-[30%]"
               : isPlaying
@@ -537,8 +535,8 @@ function TrackCard({
                   : "border-border/20 shadow-[0_4px_30px_-10px] shadow-black/20 hover:border-gold/15"
           } bg-card/20`}
         >
-          {/* Cover area */}
-          <div className={`relative ${isCarousel ? "aspect-square" : "aspect-square"} w-full bg-gradient-to-br ${gradient} overflow-hidden`}>
+          {/* Cover area — fixed height */}
+          <div className={`relative h-[200px] sm:h-[220px] w-full bg-gradient-to-br ${gradient} overflow-hidden shrink-0`}>
             {track.cover_url && (
               <img
                 src={track.cover_url}
@@ -560,11 +558,11 @@ function TrackCard({
             {/* Locked padlock overlay */}
             {effectiveLocked && (
               <div className="absolute inset-0 flex flex-col items-center justify-center z-10 gap-2">
-                <div className={`flex ${isCarousel ? "h-16 w-16 rounded-2xl" : "h-12 w-12 rounded-xl"} items-center justify-center backdrop-blur-sm bg-black/30 border border-white/10`}>
+                <div className="flex h-14 w-14 rounded-2xl items-center justify-center backdrop-blur-sm bg-black/30 border border-white/10">
                   {isBonusLocked ? (
-                    <Gift className={`${isCarousel ? "h-7 w-7" : "h-5 w-5"} text-amber-400/70`} />
+                    <Gift className="h-6 w-6 text-amber-400/70" />
                   ) : (
-                    <Lock className={`${isCarousel ? "h-7 w-7" : "h-5 w-5"} text-white/50`} />
+                    <Lock className="h-6 w-6 text-white/50" />
                   )}
                 </div>
                 {isBonusLocked && bonusCountdown && (
@@ -579,13 +577,13 @@ function TrackCard({
 
             {!effectiveLocked && !track.cover_url && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className={`flex ${isCarousel ? "h-16 w-16 rounded-2xl" : "h-12 w-12 rounded-xl"} items-center justify-center backdrop-blur-sm transition-all duration-700 ${
+                <div className={`flex h-14 w-14 rounded-2xl items-center justify-center backdrop-blur-sm transition-all duration-700 ${
                   isPlaying ? "bg-gold/15 border border-gold/25 scale-110" : "bg-white/[0.04] border border-white/[0.06] group-hover:scale-105"
                 }`}>
                   {isPlaying ? (
                     <NowPlayingBars />
                   ) : (
-                    <Music className={`${isCarousel ? "h-7 w-7" : "h-5 w-5"} transition-colors duration-500 ${isThis ? "text-gold/70" : "text-white/25 group-hover:text-white/40"}`} />
+                    <Music className="h-6 w-6 transition-colors duration-500 text-white/25 group-hover:text-white/40" />
                   )}
                 </div>
               </div>
@@ -607,7 +605,7 @@ function TrackCard({
               </AnimatePresence>
             )}
 
-            {/* Play button overlay — hidden when locked */}
+            {/* Play button overlay */}
             {!effectiveLocked && (
               <div className={`absolute inset-0 flex items-center justify-center transition-opacity duration-300 ${
                 isPlaying ? "opacity-100" : "opacity-0 group-hover:opacity-100"
@@ -615,23 +613,21 @@ function TrackCard({
                 <motion.button
                   whileTap={{ scale: 0.9 }}
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); handlePlayWithQueue(track, catTracks); }}
-                  className={`flex ${isCarousel ? "h-14 w-14" : "h-12 w-12"} items-center justify-center rounded-full transition-all duration-300 ${
+                  className={`flex h-12 w-12 items-center justify-center rounded-full transition-all duration-300 ${
                     isPlaying
                       ? "bg-gold/90 text-background shadow-xl shadow-gold/30"
                       : "bg-gold/80 text-background shadow-xl shadow-gold/20 hover:bg-gold hover:scale-110"
                   }`}
                 >
-                  {isPlaying ? <Pause className={`${isCarousel ? "h-6 w-6" : "h-5 w-5"}`} /> : <Play className={`${isCarousel ? "h-6 w-6" : "h-5 w-5"} ml-0.5`} />}
+                  {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 ml-0.5" />}
                 </motion.button>
               </div>
             )}
 
             {/* Category badge */}
-            {isCarousel && (
-              <span className="absolute top-3 right-3 text-[11px] font-medium tracking-[0.15em] uppercase rounded-full bg-black/30 backdrop-blur-sm border border-white/[0.08] px-2.5 py-0.5 text-white/40">
-                {icon} {track.category.replace(/^[^\w\s]+\s*/, '')}
-              </span>
-            )}
+            <span className="absolute top-3 right-3 text-[10px] font-medium tracking-[0.15em] uppercase rounded-full bg-black/30 backdrop-blur-sm border border-white/[0.08] px-2 py-0.5 text-white/40">
+              {icon} {track.category.replace(/^[^\w\s]+\s*/, '')}
+            </span>
 
             {/* Progress bar on card */}
             {!effectiveLocked && (
@@ -654,14 +650,14 @@ function TrackCard({
             )}
           </div>
 
-          {/* Info section */}
-          <div className={`${isCarousel ? "p-4" : "p-3"}`}>
-            <h3 className={`font-display ${isCarousel ? "text-[14px]" : "text-[13px]"} font-bold tracking-tight leading-snug truncate transition-colors duration-500 ${
+          {/* Info section — fixed height */}
+          <div className="p-3.5 flex flex-col flex-1 min-h-0">
+            <h3 className={`font-display text-[13px] font-bold tracking-tight leading-snug line-clamp-2 transition-colors duration-500 ${
               effectiveLocked ? "text-muted-foreground/70" : isPlaying ? "text-gold" : isThis ? "text-gold/70" : "text-foreground/85 group-hover:text-foreground"
             }`}>
               {track.title}
             </h3>
-            <div className="flex items-center justify-between mt-2">
+            <div className="flex items-center justify-between mt-auto pt-1.5">
               <div className="flex items-center gap-2">
                 <p className={`text-xs tracking-[0.1em] font-medium transition-colors duration-500 ${
                   isPlaying ? "text-gold/70" : "text-muted-foreground/60"
@@ -669,7 +665,7 @@ function TrackCard({
                   {track.duration}
                 </p>
                 {effectiveLocked && (
-                  <span className={`text-[11px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded-full ${
+                  <span className={`text-[10px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded-full ${
                     isBonusLocked ? "text-amber-400/60 bg-amber-400/10" : "text-destructive/40 bg-destructive/8"
                   }`}>
                     {isBonusLocked ? "🎁 Bônus" : "Bloqueado"}
@@ -679,7 +675,7 @@ function TrackCard({
                   <motion.span
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="text-[11px] font-semibold tracking-wider uppercase text-gold/70 bg-gold/8 px-1.5 py-0.5 rounded-full"
+                    className="text-[10px] font-semibold tracking-wider uppercase text-gold/70 bg-gold/8 px-1.5 py-0.5 rounded-full"
                   >
                     Tocando
                   </motion.span>
