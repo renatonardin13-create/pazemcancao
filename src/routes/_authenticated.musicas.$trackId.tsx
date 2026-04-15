@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import type { Track } from "@/lib/sample-tracks";
 import { StudentLayout } from "@/components/StudentLayout";
 import { UpsellSection } from "@/components/UpsellSection";
+import { CrossSellSection } from "@/components/CrossSellSection";
 
 export const Route = createFileRoute("/_authenticated/musicas/$trackId")({
   component: MusicDetailPage,
@@ -321,6 +322,15 @@ function MusicDetailPage() {
             <>
             {/* Upsell suggestions */}
             <UpsellSection sourceType="track" sourceId={trackId} className="mt-12 w-full max-w-lg" />
+
+            {/* Cross-sell related */}
+            <CrossSellSection
+              currentType="track"
+              currentId={trackId}
+              category={track?.category}
+              title="Relacionados"
+              className="mt-8 w-full max-w-lg"
+            />
 
             <motion.div variants={fadeUp} custom={1} className="mt-20 w-full max-w-md">
               <div className="mx-auto h-px w-full bg-gradient-to-r from-transparent via-border/8 to-transparent mb-8" />
