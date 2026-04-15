@@ -493,7 +493,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
                 <>
                   {renderPageImage(currentPages[0], "left")}
                   <div className="w-[3px] bg-gradient-to-b from-stone-600/30 via-stone-800/50 to-stone-600/30" />
-                  <div className="flex-1 rounded-r-md" style={{ minHeight: "75vh", backgroundColor: "#f0ebe4" }} />
+                  <div className="flex-1 rounded-r-md transition-colors duration-300" style={{ minHeight: "75vh", backgroundColor: emptyPageBg }} />
                 </>
               ) : (
                 currentPages.length > 0 && renderPageImage(currentPages[0], "single")
