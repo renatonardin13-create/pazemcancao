@@ -154,7 +154,7 @@ function MusicLibraryPage() {
     staleTime: 5 * 60_000,
   });
 
-  const { currentTrack, playing, progress, toggle, setQueue } = usePlayer();
+  const { currentTrack, playing, progress, toggle, setQueue, queue } = usePlayer();
 
   const handlePlayWithQueue = useCallback((track: any, trackList: any[]) => {
     const playerTracks = trackList.map(dbTrackToPlayerTrack);
