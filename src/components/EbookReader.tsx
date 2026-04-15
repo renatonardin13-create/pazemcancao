@@ -577,6 +577,16 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
             {/* Ambient warm glow */}
             <div className="absolute -inset-6 rounded-3xl bg-amber-900/[0.06] blur-3xl pointer-events-none" />
 
+            {/* Fold shadow — simulates page curl shadow */}
+            <div
+              className="absolute inset-0 pointer-events-none z-10 rounded-md transition-opacity duration-500"
+              style={{
+                background: direction === "right"
+                  ? "linear-gradient(to right, transparent 40%, rgba(0,0,0,0.06) 48%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.06) 52%, transparent 60%)"
+                  : "linear-gradient(to left, transparent 40%, rgba(0,0,0,0.06) 48%, rgba(0,0,0,0.12) 50%, rgba(0,0,0,0.06) 52%, transparent 60%)",
+              }}
+            />
+
             {/* Book shadow — deeper, warmer */}
             <div className="absolute -inset-3 rounded-xl shadow-[0_25px_100px_-20px_rgba(0,0,0,0.8)] pointer-events-none" />
 
