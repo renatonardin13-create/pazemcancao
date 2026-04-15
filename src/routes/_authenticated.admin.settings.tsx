@@ -621,14 +621,14 @@ function AdvancedTab({ settings, onSave, saving }: { settings: any; onSave: (v: 
                 <p className="text-sm font-semibold">Modo Manutenção</p>
                 <p className="text-xs text-muted-foreground">Quando ativo, apenas administradores podem acessar a plataforma</p>
               </div>
-              <Switch checked={maintenance} onCheckedChange={setMaintenance} />
+              <Switch checked={maintenance} onCheckedChange={(v) => { setMaintenance(v); toast.success(v ? "Modo Manutenção ativado!" : "Modo Manutenção desativado!"); }} />
             </div>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold">Permitir Novos Cadastros</p>
                 <p className="text-xs text-muted-foreground">Permite que novos usuários se registrem na plataforma</p>
               </div>
-              <Switch checked={allowSignups} onCheckedChange={setAllowSignups} />
+              <Switch checked={allowSignups} onCheckedChange={(v) => { setAllowSignups(v); toast.success(v ? "Novos cadastros habilitados!" : "Novos cadastros desabilitados!"); }} />
             </div>
           </div>
           <Button onClick={() => onSave({ ...settings, maintenance_mode: maintenance, allow_signups: allowSignups })} disabled={saving} className="w-full gap-2">
