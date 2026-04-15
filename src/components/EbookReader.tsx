@@ -50,7 +50,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   const [direction, setDirection] = useState<"left" | "right">("right");
   const [scale, setScale] = useState(1);
   const [error, setError] = useState<string | null>(null);
-  const [immersive, setImmersive] = useState(false);
+  const [controlsVisible, setControlsVisible] = useState(true);
   const [pageTexts, setPageTexts] = useState<Record<number, string>>({});
 
   // Page image cache: pageNum → dataURL
@@ -406,33 +406,27 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
 
       {/* ═══ BOOK AREA — Kindle premium ═══ */}
       <div
-        className="relative flex-1 flex items-center justify-center py-6 sm:py-8 px-3 sm:px-8 lg:px-14 overflow-hidden cursor-pointer"
-        onClick={() => immersive && setImmersive(false)}
+        className="relative flex-1 flex items-center justify-center py-6 sm:py-8 px-3 sm:px-8 lg:px-14 overflow-hidden cursor-pointer select-none"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
+        onClick={(e) => {
+          const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const w = rect.width;
+          const zone = x / w;
+          if (zone < 0.25) {
+            prevSpread();
+          } else if (zone > 0.75) {
+            nextSpread();
+          } else {
+            setControlsVisible((v) => !v);
+          }
+        }}
         style={{
           perspective: "1800px",
           background: "radial-gradient(ellipse at center, #221f1a 0%, #1a1814 60%, #141210 100%)",
         }}
       >
-        {/* Left arrow */}
-        {spread > 0 && !immersive && (
-          <button
-            onClick={(e) => { e.stopPropagation(); prevSpread(); }}
-            className="absolute left-1 sm:left-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-900/60 border border-stone-700/20 shadow-lg backdrop-blur-md text-stone-400/50 hover:text-gold hover:border-gold/25 transition-all active:scale-90"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </button>
-        )}
-        {/* Right arrow */}
-        {spread < totalSpreads - 1 && !immersive && (
-          <button
-            onClick={(e) => { e.stopPropagation(); nextSpread(); }}
-            className="absolute right-1 sm:right-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-900/60 border border-stone-700/20 shadow-lg backdrop-blur-md text-stone-400/50 hover:text-gold hover:border-gold/25 transition-all active:scale-90"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </button>
-        )}
 
         {/* Book spread */}
         <AnimatePresence mode="wait" custom={direction}>
