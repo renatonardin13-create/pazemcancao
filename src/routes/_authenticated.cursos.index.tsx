@@ -272,8 +272,8 @@ function ShelfHeader({ title, subtitle, icon, linkTo, linkLabel }: {
   linkLabel?: string;
 }) {
   return (
-    <div className="flex items-baseline justify-between mb-4 sm:mb-[18px] mt-1">
-      <h2 className="font-display text-[22px] sm:text-[26px] md:text-[30px] font-extrabold text-foreground/90 tracking-[-0.02em] leading-none">
+    <div className="flex items-baseline justify-between mb-3.5 sm:mb-4">
+      <h2 className="font-display text-[22px] sm:text-[26px] md:text-[28px] font-bold text-foreground/95 tracking-[-0.01em] leading-none">
         {title}
       </h2>
       {linkTo && linkLabel && (
