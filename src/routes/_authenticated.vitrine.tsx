@@ -5,6 +5,7 @@ import { getStudentShelves } from "@/lib/shelves.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { CourseShelfCard } from "@/components/CourseShelfCard";
+import { useProjectMode } from "@/hooks/use-project-mode";
 import { Store, Lock, Play, ArrowRight, ShoppingCart, Search, ChevronLeft, ChevronRight, Clock, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState, useMemo, useRef, useCallback, useEffect } from "react";
@@ -19,6 +20,9 @@ const SHELF_ICONS: Record<string, React.ReactNode> = {
   '__coming_soon__': <Clock className="h-4 w-4 text-gold" />,
 };
 
+/** Smart shelf IDs that are course-specific */
+const COURSE_SMART_SHELVES = new Set(['__continue__', '__available__', '__coming_soon__']);
+
 function VitrinePage() {
   const { data, isLoading } = useQuery({
     queryKey: ["student-shelves"],
@@ -27,16 +31,31 @@ function VitrinePage() {
     refetchOnWindowFocus: true,
   });
 
+  const { mode, showCourses, showMusic, showLancamentos } = useProjectMode();
   const [searchTerm, setSearchTerm] = useState("");
 
   const shelves = data?.shelves || [];
   const promoBanners = data?.promoBanners || [];
   const featuredCourse = data?.featuredCourse;
 
+  const modeShelves = useMemo(() => {
+    return shelves.filter((shelf: any) => {
+      // In somente_musica: hide course-specific smart shelves
+      if (mode === "somente_musica" && COURSE_SMART_SHELVES.has(shelf.id)) return false;
+      // In somente_cursos: show all course shelves (they're already course-based)
+      // In hibrido: show courses shelves only if courses module enabled
+      if (mode === "hibrido" && !showCourses && COURSE_SMART_SHELVES.has(shelf.id)) return false;
+      // Hide "Em breve" if lancamentos disabled
+      if (shelf.id === "__coming_soon__" && !showLancamentos) return false;
+      // Filter out empty shelves
+      return (shelf.courses?.length || 0) > 0;
+    });
+  }, [shelves, mode, showCourses, showLancamentos]);
+
   const filteredShelves = useMemo(() => {
-    if (!searchTerm.trim()) return shelves;
+    if (!searchTerm.trim()) return modeShelves;
     const term = searchTerm.toLowerCase();
-    return shelves
+    return modeShelves
       .map((shelf: any) => ({
         ...shelf,
         courses: shelf.courses.filter((c: any) =>
@@ -45,7 +64,7 @@ function VitrinePage() {
         ),
       }))
       .filter((shelf: any) => shelf.courses.length > 0);
-  }, [shelves, searchTerm]);
+  }, [modeShelves, searchTerm]);
 
   // Count admin shelves for promo banner positioning
   let adminShelfIndex = 0;
