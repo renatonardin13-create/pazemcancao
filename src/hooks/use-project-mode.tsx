@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getPlatformSettings } from "@/lib/platform-settings.functions";
+import { getPlatformModules, type PlatformModule } from "@/lib/platform-modules.functions";
 
 export type ProjectMode = "somente_musica" | "somente_cursos" | "hibrido";
 
@@ -17,7 +18,7 @@ export const MODULE_KEYS = [
 
 export type ModuleKey = (typeof MODULE_KEYS)[number];
 
-/** Default enabled state per project mode */
+/** Default enabled state per project mode (fallback when DB has no rows) */
 const MODE_DEFAULTS: Record<ProjectMode, Record<ModuleKey, boolean>> = {
   hibrido: { vitrine: true, louvores: true, cursos: true, ebooks: true, trilhas: true, perfil: true, comunidade: false, bonus: true, lancamentos: true },
   somente_musica: { vitrine: true, louvores: true, cursos: false, ebooks: false, trilhas: true, perfil: true, comunidade: false, bonus: true, lancamentos: true },
@@ -27,31 +28,43 @@ const MODE_DEFAULTS: Record<ProjectMode, Record<ModuleKey, boolean>> = {
 export type PlatformModules = Record<ModuleKey, boolean>;
 
 export function useProjectMode() {
-  const { data, isLoading } = useQuery({
+  const { data: settingsData, isLoading: settingsLoading } = useQuery({
     queryKey: ["platform-settings"],
     queryFn: () => getPlatformSettings(),
     staleTime: 5 * 60_000,
     refetchOnWindowFocus: false,
   });
 
-  const settings = data?.settings || {};
-  const mode: ProjectMode = (settings.general?.project_mode as ProjectMode) || "hibrido";
+  const { data: modulesData, isLoading: modulesLoading } = useQuery({
+    queryKey: ["platform-modules"],
+    queryFn: () => getPlatformModules(),
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
+  });
 
-  // Merge: mode defaults ← admin overrides
-  const savedModules: Partial<PlatformModules> = settings.modules || {};
+  const settings = settingsData?.settings || {};
+  const mode: ProjectMode = (settings.general?.project_mode as ProjectMode) || "hibrido";
+  const dbModules: PlatformModule[] = modulesData?.modules || [];
+
+  // Build modules map: DB rows take priority, then mode defaults
   const defaults = MODE_DEFAULTS[mode];
   const modules: PlatformModules = { ...defaults };
-  for (const key of MODULE_KEYS) {
-    if (key in savedModules) {
-      modules[key] = !!savedModules[key];
+
+  if (dbModules.length > 0) {
+    for (const mod of dbModules) {
+      const key = mod.slug as ModuleKey;
+      if (MODULE_KEYS.includes(key)) {
+        modules[key] = mod.enabled;
+      }
     }
   }
 
   return {
     mode,
-    isLoading,
+    isLoading: settingsLoading || modulesLoading,
     modules,
-    // convenience shortcuts (combine mode + module toggles)
+    dbModules,
+    // convenience shortcuts
     showMusic: modules.louvores,
     showCourses: modules.cursos,
     showVitrine: modules.vitrine,
