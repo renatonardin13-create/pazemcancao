@@ -52,7 +52,24 @@ export const Route = createFileRoute("/_authenticated/cursos/$courseId/")({
 
 function CourseDetailPage() {
   const { courseId } = Route.useParams();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
+
+  // Auto-redirect to the appropriate lesson
+  const { data: resolvedLesson, isLoading: isResolving } = useQuery({
+    queryKey: ["resolve-course-lesson", courseId],
+    queryFn: () => resolveCourseLesson({ data: { courseId } }),
+  });
+
+  useEffect(() => {
+    if (resolvedLesson?.lessonId) {
+      navigate({
+        to: "/cursos/$courseId/aula/$lessonId",
+        params: { courseId, lessonId: resolvedLesson.lessonId },
+        replace: true,
+      });
+    }
+  }, [resolvedLesson, courseId, navigate]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["course-detail", courseId],
