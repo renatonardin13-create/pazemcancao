@@ -157,7 +157,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       setRenderingPages((prev) => new Set(prev).add(pageNum));
       try {
         const page = await pdf.getPage(pageNum);
-        const viewport = page.getViewport({ scale: 2 * scale });
+        const viewport = page.getViewport({ scale: 2 * effectiveScale });
 
         if (!offscreenCanvas.current) {
           offscreenCanvas.current = document.createElement("canvas");
@@ -182,7 +182,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
         });
       }
     },
-    [scale, pageImages]
+    [effectiveScale, pageImages]
   );
 
   // Render current spread pages + prefetch next spread
@@ -237,7 +237,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   useEffect(() => {
     if (loading || numPages === 0) return;
     setPageImages({});
-  }, [scale]);
+  }, [scale, fontSize]);
 
   // Sound
   const playPageTurnSound = useCallback(() => {
