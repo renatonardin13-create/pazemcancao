@@ -14,6 +14,7 @@ import {
   Pause,
   Square,
   Headphones,
+  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
