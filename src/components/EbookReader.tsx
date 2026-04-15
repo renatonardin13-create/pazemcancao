@@ -50,6 +50,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   const [direction, setDirection] = useState<"left" | "right">("right");
   const [scale, setScale] = useState(1);
   const [error, setError] = useState<string | null>(null);
+  const [immersive, setImmersive] = useState(false);
   const [pageTexts, setPageTexts] = useState<Record<number, string>>({});
 
   // Page image cache: pageNum → dataURL
