@@ -370,6 +370,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       audioRef.current.play().catch(() => {});
     } catch { /* ignore */ }
   }, [soundEnabled]);
+  playPageTurnSoundRef.current = playPageTurnSound;
 
   const goToSpread = useCallback(
     (s: number, dir: "left" | "right") => {
