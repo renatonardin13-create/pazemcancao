@@ -687,6 +687,153 @@ const MODULE_META: Record<string, { icon: React.ElementType; desc: string }> = {
   lancamentos: { icon: Rocket, desc: "Novidades e lançamentos em destaque" },
 };
 
+const PREVIEW_MENU_ITEMS: { slug: string; label: string; icon: React.ElementType }[] = [
+  { slug: "vitrine", label: "Vitrine", icon: Store },
+  { slug: "cursos", label: "Meus Cursos", icon: GraduationCap },
+  { slug: "louvores", label: "Louvores", icon: Music },
+  { slug: "ebooks", label: "Ebooks", icon: BookOpen },
+  { slug: "trilhas", label: "Trilhas", icon: Compass },
+  { slug: "perfil", label: "Perfil", icon: User },
+  { slug: "comunidade", label: "Comunidade", icon: MessageCircle },
+  { slug: "bonus", label: "Bônus", icon: Gift },
+  { slug: "lancamentos", label: "Lançamentos", icon: Rocket },
+];
+
+function AppPreview({ modules }: { modules: PlatformModule[] }) {
+  const enabledSlugs = new Set(modules.filter((m) => m.enabled).map((m) => m.slug));
+  const visibleMenu = PREVIEW_MENU_ITEMS.filter((item) => enabledSlugs.has(item.slug));
+
+  // Determine which content blocks to show in the "main area"
+  const showVitrine = enabledSlugs.has("vitrine");
+  const showCourses = enabledSlugs.has("cursos");
+  const showMusic = enabledSlugs.has("louvores");
+  const showEbooks = enabledSlugs.has("ebooks");
+  const showBonus = enabledSlugs.has("bonus");
+  const showLancamentos = enabledSlugs.has("lancamentos");
+
+  return (
+    <Card className="bg-card border-gold/15 overflow-hidden">
+      <CardContent className="p-0">
+        <div className="px-4 py-3 border-b border-border/20 flex items-center gap-2">
+          <div className="flex gap-1.5">
+            <span className="h-2.5 w-2.5 rounded-full bg-red-500/60" />
+            <span className="h-2.5 w-2.5 rounded-full bg-yellow-500/60" />
+            <span className="h-2.5 w-2.5 rounded-full bg-green-500/60" />
+          </div>
+          <span className="text-[10px] text-muted-foreground/50 ml-2 font-mono">preview — visão do aluno</span>
+        </div>
+
+        <div className="flex min-h-[340px]">
+          {/* Mini sidebar */}
+          <div className="w-[140px] shrink-0 bg-background/60 border-r border-border/10 py-3 px-2 space-y-1">
+            <div className="px-2 mb-3">
+              <div className="h-4 w-16 rounded bg-gold/20" />
+            </div>
+            {visibleMenu.map((item) => {
+              const Icon = item.icon;
+              return (
+                <div key={item.slug} className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-[10px] font-semibold text-foreground/60 hover:bg-white/[0.04] transition-colors">
+                  <Icon className="h-3 w-3 shrink-0 text-gold/60" />
+                  <span className="truncate">{item.label}</span>
+                </div>
+              );
+            })}
+            {visibleMenu.length === 0 && (
+              <p className="text-[9px] text-muted-foreground/40 px-2 italic">Nenhum item no menu</p>
+            )}
+          </div>
+
+          {/* Main content area */}
+          <div className="flex-1 p-3 space-y-3 overflow-hidden">
+            {/* Hero banner placeholder */}
+            {showVitrine && (
+              <div className="rounded-lg bg-gradient-to-r from-gold/10 to-gold/[0.03] border border-gold/10 p-3 h-16 flex items-end">
+                <div className="space-y-1">
+                  <div className="h-2.5 w-20 rounded bg-foreground/20" />
+                  <div className="h-2 w-32 rounded bg-foreground/10" />
+                </div>
+              </div>
+            )}
+
+            {/* Shelves */}
+            {showCourses && (
+              <div className="space-y-1.5">
+                <div className="h-2 w-16 rounded bg-foreground/15" />
+                <div className="flex gap-2">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-14 w-[60px] rounded-lg bg-emerald-500/10 border border-emerald-500/10 shrink-0 flex items-center justify-center">
+                      <GraduationCap className="h-3 w-3 text-emerald-400/40" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {showMusic && (
+              <div className="space-y-1.5">
+                <div className="h-2 w-12 rounded bg-foreground/15" />
+                <div className="flex gap-2">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div key={i} className="h-10 w-10 rounded-lg bg-sky-500/10 border border-sky-500/10 shrink-0 flex items-center justify-center">
+                      <Music className="h-2.5 w-2.5 text-sky-400/40" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {showEbooks && (
+              <div className="space-y-1.5">
+                <div className="h-2 w-10 rounded bg-foreground/15" />
+                <div className="flex gap-2">
+                  {[1, 2].map((i) => (
+                    <div key={i} className="h-14 w-[44px] rounded bg-purple-500/10 border border-purple-500/10 shrink-0 flex items-center justify-center">
+                      <BookOpen className="h-2.5 w-2.5 text-purple-400/40" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {showBonus && (
+              <div className="space-y-1.5">
+                <div className="h-2 w-8 rounded bg-foreground/15" />
+                <div className="flex gap-2">
+                  {[1, 2].map((i) => (
+                    <div key={i} className="h-10 w-10 rounded-lg bg-amber-500/10 border border-amber-500/10 shrink-0 flex items-center justify-center">
+                      <Gift className="h-2.5 w-2.5 text-amber-400/40" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {showLancamentos && (
+              <div className="space-y-1.5">
+                <div className="h-2 w-14 rounded bg-foreground/15" />
+                <div className="flex gap-2">
+                  {[1, 2, 3].map((i) => (
+                    <div key={i} className="h-10 w-[50px] rounded-lg bg-rose-500/10 border border-rose-500/10 shrink-0 flex items-center justify-center">
+                      <Rocket className="h-2.5 w-2.5 text-rose-400/40" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {!showVitrine && !showCourses && !showMusic && !showEbooks && !showBonus && !showLancamentos && (
+              <div className="flex flex-col items-center justify-center h-full text-center py-8">
+                <LayoutGrid className="h-6 w-6 text-muted-foreground/20 mb-2" />
+                <p className="text-[10px] text-muted-foreground/40">Nenhum módulo habilitado</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 function ModulesTab() {
   const queryClient = useQueryClient();
 
@@ -717,69 +864,91 @@ function ModulesTab() {
   }
 
   return (
-    <Card className="bg-card border-border/30">
-      <CardContent className="p-6 space-y-5">
-        <div>
-          <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-            <LayoutGrid className="h-5 w-5 text-gold" /> Módulos da Plataforma
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            Habilite ou desabilite seções do app. Módulos desabilitados ficam ocultos no menu e na vitrine.
-          </p>
-          <p className="text-xs text-muted-foreground/50 mt-1">
-            {enabledCount} de {modules.length} módulos habilitados
-          </p>
-        </div>
+    <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
+      {/* Module toggles — 3 cols */}
+      <div className="xl:col-span-3">
+        <Card className="bg-card border-border/30">
+          <CardContent className="p-6 space-y-5">
+            <div>
+              <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                <LayoutGrid className="h-5 w-5 text-gold" /> Módulos da Plataforma
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                Habilite ou desabilite seções do app. Módulos desabilitados ficam ocultos no menu e na vitrine.
+              </p>
+              <p className="text-xs text-muted-foreground/50 mt-1">
+                {enabledCount} de {modules.length} módulos habilitados
+              </p>
+            </div>
 
-        <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-3 flex items-start gap-2">
-          <AlertTriangle className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
-          <p className="text-xs text-muted-foreground">
-            Alterações são aplicadas em tempo real. Menu lateral e vitrine serão atualizados automaticamente.
-          </p>
-        </div>
+            <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-3 flex items-start gap-2">
+              <AlertTriangle className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
+              <p className="text-xs text-muted-foreground">
+                Alterações são aplicadas em tempo real. Menu lateral e vitrine serão atualizados automaticamente.
+              </p>
+            </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {modules.map((mod) => {
-            const meta = MODULE_META[mod.slug] || { icon: LayoutGrid, desc: "Módulo da plataforma" };
-            const IconComp = meta.icon;
-            return (
-              <div
-                key={mod.id}
-                className={`group relative p-4 rounded-xl border-2 transition-all duration-200 ${
-                  mod.enabled
-                    ? "border-gold/30 bg-gold/[0.06]"
-                    : "border-border/15 bg-card/30 opacity-60"
-                }`}
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <div className={`flex items-center justify-center h-9 w-9 rounded-lg ${
-                    mod.enabled ? "bg-gold/15 text-gold" : "bg-muted/10 text-muted-foreground/50"
-                  }`}>
-                    <IconComp className="h-4.5 w-4.5" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {modules.map((mod) => {
+                const meta = MODULE_META[mod.slug] || { icon: LayoutGrid, desc: "Módulo da plataforma" };
+                const IconComp = meta.icon;
+                return (
+                  <div
+                    key={mod.id}
+                    className={`group relative p-4 rounded-xl border-2 transition-all duration-200 ${
+                      mod.enabled
+                        ? "border-gold/30 bg-gold/[0.06]"
+                        : "border-border/15 bg-card/30 opacity-60"
+                    }`}
+                  >
+                    <div className="flex items-start justify-between mb-2">
+                      <div className={`flex items-center justify-center h-9 w-9 rounded-lg ${
+                        mod.enabled ? "bg-gold/15 text-gold" : "bg-muted/10 text-muted-foreground/50"
+                      }`}>
+                        <IconComp className="h-4.5 w-4.5" />
+                      </div>
+                      <Switch
+                        checked={mod.enabled}
+                        onCheckedChange={() => toggleMutation.mutate({ id: mod.id, enabled: !mod.enabled })}
+                        disabled={toggleMutation.isPending}
+                      />
+                    </div>
+                    <p className={`text-sm font-bold ${mod.enabled ? "text-foreground" : "text-muted-foreground"}`}>
+                      {mod.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground/70 mt-0.5 leading-relaxed">
+                      {meta.desc}
+                    </p>
+                    <div className="flex items-center gap-1.5 mt-2">
+                      <span className={`inline-block h-1.5 w-1.5 rounded-full ${mod.enabled ? "bg-emerald-400" : "bg-muted-foreground/30"}`} />
+                      <span className="text-[10px] text-muted-foreground/50 uppercase tracking-wider font-medium">
+                        {mod.enabled ? "Ativo" : "Desativado"}
+                      </span>
+                    </div>
                   </div>
-                  <Switch
-                    checked={mod.enabled}
-                    onCheckedChange={() => toggleMutation.mutate({ id: mod.id, enabled: !mod.enabled })}
-                    disabled={toggleMutation.isPending}
-                  />
-                </div>
-                <p className={`text-sm font-bold ${mod.enabled ? "text-foreground" : "text-muted-foreground"}`}>
-                  {mod.name}
-                </p>
-                <p className="text-xs text-muted-foreground/70 mt-0.5 leading-relaxed">
-                  {meta.desc}
-                </p>
-                <div className="flex items-center gap-1.5 mt-2">
-                  <span className={`inline-block h-1.5 w-1.5 rounded-full ${mod.enabled ? "bg-emerald-400" : "bg-muted-foreground/30"}`} />
-                  <span className="text-[10px] text-muted-foreground/50 uppercase tracking-wider font-medium">
-                    {mod.enabled ? "Ativo" : "Desativado"}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Live Preview — 2 cols */}
+      <div className="xl:col-span-2">
+        <div className="sticky top-4 space-y-3">
+          <h4 className="text-sm font-bold text-foreground/80 flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            Preview em Tempo Real
+          </h4>
+          <AppPreview modules={modules} />
+          <p className="text-[10px] text-muted-foreground/40 text-center">
+            Visão simplificada de como o aluno verá o app
+          </p>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
