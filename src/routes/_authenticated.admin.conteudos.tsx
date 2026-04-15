@@ -244,6 +244,7 @@ function AdminContentPage() {
         initial_free_count: initialFreeCount.trim() !== "" ? parseInt(initialFreeCount, 10) : 0,
         locked_final_count: lockedFinalCount.trim() !== "" ? parseInt(lockedFinalCount, 10) : 0,
         locked_label: lockedLabel.trim() || null,
+        launch_mode: launchMode,
       };
 
       if (editItem) {
