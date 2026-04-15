@@ -522,6 +522,31 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
           <ChevronRight className="h-3.5 w-3.5" />
         </Button>
       </div>
+
+      {/* ═══ MARK COMPLETE BAR ═══ */}
+      {onComplete && (
+        <div className="flex items-center justify-center px-3 sm:px-6 py-3 border-t border-border/8 bg-background/95 backdrop-blur-xl z-30">
+          <Button
+            onClick={() => {
+              if (!isCompleted) onComplete();
+            }}
+            disabled={isCompletePending || isCompleted}
+            className={`gap-2.5 px-8 sm:px-10 py-3 text-[12px] font-bold uppercase tracking-[0.14em] transition-all rounded-xl w-full sm:w-auto ${
+              isCompleted
+                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/15 hover:bg-emerald-500/15 shadow-none"
+                : "bg-gold text-gold-foreground hover:brightness-110 shadow-lg shadow-gold/25 hover:shadow-xl hover:shadow-gold/35 scale-100 hover:scale-[1.02]"
+            }`}
+            variant={isCompleted ? "outline" : "default"}
+          >
+            <CheckCircle2 className="h-4 w-4" />
+            {isCompleted
+              ? "Concluída ✓"
+              : isCompletePending
+                ? "Salvando..."
+                : "Marcar como concluído"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
