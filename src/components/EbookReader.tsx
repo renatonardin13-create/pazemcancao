@@ -492,6 +492,18 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       side === "right" ? "rounded-r-md" :
       "rounded-md";
 
+    // Determine if this page's text contains the currently highlighted char
+    const pageTextStr = pageTexts[pageNum] || "";
+    // Calculate offset of this page's text within the combined currentPageText
+    let pageTextOffset = 0;
+    for (const p of currentPages) {
+      if (p === pageNum) break;
+      const t = pageTexts[p] || "";
+      if (t) pageTextOffset += t.length + 2; // ". " separator
+    }
+
+    const showTextOverlay = ttsOverlayVisible && ebookAudio.mode === "tts" && pageTextStr.length > 0;
+
     return (
       <div
         key={pageNum}
@@ -506,7 +518,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
           <img
             src={img}
             alt={`Página ${pageNum}`}
-            className="w-full h-full object-contain drop-shadow-sm transition-all duration-300"
+            className={`w-full h-full object-contain drop-shadow-sm transition-all duration-300 ${showTextOverlay ? "opacity-15" : ""}`}
             style={{ maxWidth: "100%", borderRadius: "2px", filter: pageFilter }}
           />
         ) : isRendering ? (
@@ -516,7 +528,46 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
             <Loader2 className="h-6 w-6 text-amber-700/20 animate-spin" />
           </div>
         )}
-        <span className="absolute bottom-3 inset-x-0 text-center text-[10px] font-serif select-none pointer-events-none tracking-wide" style={{ color: pageNumColor }}>
+
+        {/* TTS Text Overlay with sentence highlighting */}
+        {showTextOverlay && (
+          <div
+            className="absolute inset-0 overflow-y-auto p-4 sm:p-8 flex flex-col justify-start"
+            style={{ zIndex: 5 }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="space-y-1 text-sm sm:text-base leading-relaxed font-serif">
+              {splitIntoSentences(pageTextStr).map((sentence, idx) => {
+                // Map sentence start/end to combined text charIndex
+                const globalStart = pageTextOffset + sentence.start;
+                const globalEnd = pageTextOffset + sentence.end;
+                const ci = ebookAudio.charIndex;
+                const isActive = ci >= globalStart && ci < globalEnd;
+                const isPast = ci >= globalEnd;
+
+                return (
+                  <span
+                    key={idx}
+                    className={`inline transition-all duration-300 ${
+                      isActive
+                        ? "text-gold font-semibold"
+                        : isPast
+                          ? (readingTheme === "dark" ? "text-stone-400/70" : "text-stone-600/70")
+                          : (readingTheme === "dark" ? "text-stone-300/50" : "text-stone-500/50")
+                    }`}
+                    style={isActive ? {
+                      textShadow: "0 0 20px rgba(255,165,0,0.3)",
+                    } : undefined}
+                  >
+                    {sentence.text}{" "}
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        <span className="absolute bottom-3 inset-x-0 text-center text-[10px] font-serif select-none pointer-events-none tracking-wide" style={{ color: pageNumColor, zIndex: 6 }}>
           {pageNum}
         </span>
       </div>
