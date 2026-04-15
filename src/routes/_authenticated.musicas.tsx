@@ -20,6 +20,8 @@ import { StrategicMusicShelves } from "@/components/StrategicMusicShelves";
 import type { Track } from "@/lib/sample-tracks";
 import { toast } from "sonner";
 
+const MUSIC_ROUTE_DEBUG = "[musicas-route]";
+
 function MusicLibraryErrorComponent({ error }: { error: Error; reset: () => void }) {
   const router = useRouter();
   return (
@@ -179,6 +181,23 @@ function MusicLibraryPage() {
 
   const { currentTrack, playing, progress, toggle, setQueue, queue } = usePlayer();
 
+  useEffect(() => {
+    console.log(MUSIC_ROUTE_DEBUG, "render", {
+      isLoading,
+      tracksError,
+      tracksCount: tracks.length,
+      filteredCount: filteredTracks.length,
+      playlistsCount: playlists.length,
+      activePlaylistId,
+    });
+  }, [isLoading, tracksError, tracks.length, filteredTracks.length, playlists.length, activePlaylistId]);
+
+  useEffect(() => {
+    if (tracksError) {
+      console.error(MUSIC_ROUTE_DEBUG, "tracks query error", tracksErrorMsg);
+    }
+  }, [tracksError, tracksErrorMsg]);
+
   const handlePlayWithQueue = useCallback((track: any, trackList: any[]) => {
     const playerTracks = trackList.map(dbTrackToPlayerTrack);
     const playerTrack = dbTrackToPlayerTrack(track);
@@ -276,8 +295,8 @@ function MusicLibraryPage() {
 
   return (
     <ModuleGuard moduleKey="louvores">
-    <StudentLayout>
-    <div className="min-h-screen bg-background flex flex-col">
+      <StudentLayout>
+        <div className="min-h-screen bg-background flex flex-col">
 
       <main className="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10 xl:px-12 py-6 sm:py-10 pb-28">
         {/* Header */}
@@ -583,16 +602,22 @@ function MusicLibraryPage() {
 
         {/* Content */}
         {isLoading ? (
-          <ListSkeleton rows={6} />
+          <div className="py-10">
+            <div className="text-center py-8">
+              <p className="text-sm text-muted-foreground/70">Carregando músicas...</p>
+            </div>
+            <ListSkeleton rows={6} />
+          </div>
         ) : tracksError ? (
           <div className="text-center py-24">
             <Music className="h-10 w-10 text-muted-foreground/50 mx-auto mb-5" />
-            <p className="text-sm text-muted-foreground/70 mb-2">
-              Erro ao carregar músicas.
-            </p>
+            <p className="text-sm text-muted-foreground/70 mb-2">Erro ao carregar músicas</p>
             <p className="text-xs text-muted-foreground/40 mb-4">{(tracksErrorMsg as Error)?.message || "Tente novamente."}</p>
             <button
-              onClick={() => window.location.reload()}
+              onClick={() => {
+                console.log(MUSIC_ROUTE_DEBUG, "manual reload requested");
+                window.location.reload();
+              }}
               className="text-xs text-gold/60 hover:text-gold/80 underline transition-colors"
             >
               Recarregar página
@@ -603,8 +628,8 @@ function MusicLibraryPage() {
             <Music className="h-10 w-10 text-muted-foreground/50 mx-auto mb-5" />
             <p className="text-sm text-muted-foreground/70">
               {searchTerm || activeCategory
-                ? "Nenhuma música encontrada para este filtro."
-                : "Nenhuma música disponível no momento."}
+                ? "Nenhuma música disponível"
+                : "Nenhuma música disponível"}
             </p>
             {(searchTerm || activeCategory) && (
               <button
@@ -828,7 +853,7 @@ function MusicLibraryPage() {
 
       <FooterLinks />
     </div>
-    </StudentLayout>
+      </StudentLayout>
     </ModuleGuard>
   );
 }
@@ -851,7 +876,9 @@ function AutoPlaylistShelf({
   isLocked: boolean;
   setQueue: (tracks: Track[], startIndex?: number) => void;
 }) {
-  if (!tracks || tracks.length === 0) return null;
+  if (!tracks || tracks.length === 0) {
+    return <div className="hidden" aria-hidden="true" />;
+  }
 
   return (
     <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={delay} className="mb-8">
@@ -1013,6 +1040,7 @@ function TrackCard({
   })();
 
   const SALES_URL = "https://pazemcancao-oficial.lovable.app";
+  const canUseHoverEffects = typeof window !== "undefined" && window.matchMedia("(hover: hover)").matches;
 
   const Wrapper = effectiveLocked ? 'div' : Link;
   const wrapperProps = effectiveLocked
@@ -1047,7 +1075,7 @@ function TrackCard({
           initial={isCarousel ? { opacity: 0, x: 30 } : { opacity: 0, scale: 0.95 }}
           animate={isCarousel ? { opacity: 1, x: 0 } : { opacity: 1, scale: 1 }}
           transition={{ duration: isCarousel ? 0.4 : 0.3, delay: Math.min(idx * (isCarousel ? 0.04 : 0.02), 0.3), ease: "easeOut" }}
-          whileHover={window.matchMedia('(hover: hover)').matches ? { scale: 1.04, y: -4 } : undefined}
+          whileHover={canUseHoverEffects ? { scale: 1.04, y: -4 } : undefined}
           whileTap={{ scale: 0.97 }}
           className={`relative rounded-2xl border transition-all duration-500 overflow-hidden h-[280px] sm:h-[310px] lg:h-[320px] flex flex-col ${
             effectiveLocked
