@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toastError } from "@/lib/toast-utils";
+import { AdminActionButtons } from "@/components/AdminActionButtons";
 import { ImageUploadField } from "@/components/ImageUploadField";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { toast } from "sonner";
