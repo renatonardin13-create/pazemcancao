@@ -73,11 +73,13 @@ function FunnelShelf({
   subtitle,
   items,
   shelfIdx,
+  context,
 }: {
   title: string;
   subtitle: string;
   items: FunnelSuggestion[];
   shelfIdx: number;
+  context?: string;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
