@@ -187,6 +187,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
         } catch {
           setSpread(0);
         }
+        pageImagesRef.current = {};
         setPageImages({});
         setLoading(false);
       } catch (err) {
