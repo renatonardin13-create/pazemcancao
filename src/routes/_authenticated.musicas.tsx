@@ -308,6 +308,67 @@ function MusicLibraryPage() {
           </div>
         </motion.div>
 
+        {/* ── Auto Playlists ── */}
+        <AutoPlaylistShelf
+          title="Continue Ouvindo"
+          icon={<History className="h-4 w-4 text-gold/40" />}
+          tracks={continueData?.tracks || []}
+          delay={0.25}
+          activeTrackRef={activeTrackRef}
+          currentTrack={currentTrack}
+          playing={playing}
+          progress={progress}
+          handlePlayWithQueue={handlePlayWithQueue}
+          canDownload={canDownload}
+          isLocked={isLocked}
+          setQueue={setQueue}
+        />
+
+        <AutoPlaylistShelf
+          title="Recomendado para Você"
+          icon={<Sparkles className="h-4 w-4 text-gold/40" />}
+          tracks={recommendedData?.tracks || []}
+          delay={0.3}
+          activeTrackRef={activeTrackRef}
+          currentTrack={currentTrack}
+          playing={playing}
+          progress={progress}
+          handlePlayWithQueue={handlePlayWithQueue}
+          canDownload={canDownload}
+          isLocked={isLocked}
+          setQueue={setQueue}
+        />
+
+        <AutoPlaylistShelf
+          title="Mais Acessadas"
+          icon={<TrendingUp className="h-4 w-4 text-gold/40" />}
+          tracks={mostPlayedData?.tracks || []}
+          delay={0.35}
+          activeTrackRef={activeTrackRef}
+          currentTrack={currentTrack}
+          playing={playing}
+          progress={progress}
+          handlePlayWithQueue={handlePlayWithQueue}
+          canDownload={canDownload}
+          isLocked={isLocked}
+          setQueue={setQueue}
+        />
+
+        <AutoPlaylistShelf
+          title="Novidades"
+          icon={<Flame className="h-4 w-4 text-amber-400/50" />}
+          tracks={newTracksData?.tracks || []}
+          delay={0.4}
+          activeTrackRef={activeTrackRef}
+          currentTrack={currentTrack}
+          playing={playing}
+          progress={progress}
+          handlePlayWithQueue={handlePlayWithQueue}
+          canDownload={canDownload}
+          isLocked={isLocked}
+          setQueue={setQueue}
+        />
+
         {/* Playlists Section */}
         {playlists.length > 0 && (
           <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0.25} className="mb-8">
