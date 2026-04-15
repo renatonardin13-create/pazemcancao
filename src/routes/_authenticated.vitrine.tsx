@@ -33,7 +33,7 @@ function VitrinePage() {
     refetchOnWindowFocus: true,
   });
 
-  const { mode, showCourses, showMusic, showLancamentos } = useProjectMode();
+  const { mode, showCoursesInVitrine, showMusicInVitrine, showLancamentos } = useProjectMode();
   const [searchTerm, setSearchTerm] = useState("");
 
   const shelves = data?.shelves || [];
@@ -46,13 +46,13 @@ function VitrinePage() {
       if (mode === "somente_musica" && COURSE_SMART_SHELVES.has(shelf.id)) return false;
       // In somente_cursos: show all course shelves (they're already course-based)
       // In hibrido: show courses shelves only if courses module enabled
-      if (mode === "hibrido" && !showCourses && COURSE_SMART_SHELVES.has(shelf.id)) return false;
+      if (mode === "hibrido" && !showCoursesInVitrine && COURSE_SMART_SHELVES.has(shelf.id)) return false;
       // Hide "Em breve" if lancamentos disabled
       if (shelf.id === "__coming_soon__" && !showLancamentos) return false;
       // Filter out empty shelves
       return (shelf.courses?.length || 0) > 0;
     });
-  }, [shelves, mode, showCourses, showLancamentos]);
+  }, [shelves, mode, showCoursesInVitrine, showLancamentos]);
 
   const filteredShelves = useMemo(() => {
     if (!searchTerm.trim()) return modeShelves;

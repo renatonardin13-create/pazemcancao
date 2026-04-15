@@ -18,6 +18,13 @@ export const MODULE_KEYS = [
 
 export type ModuleKey = (typeof MODULE_KEYS)[number];
 
+/** Per-module visibility info */
+export interface ModuleInfo {
+  enabled: boolean;
+  visibleInMenu: boolean;
+  visibleInVitrine: boolean;
+}
+
 /** Default enabled state per project mode (fallback when DB has no rows) */
 const MODE_DEFAULTS: Record<ProjectMode, Record<ModuleKey, boolean>> = {
   hibrido: { vitrine: true, louvores: true, cursos: true, ebooks: true, trilhas: true, perfil: true, comunidade: false, bonus: true, lancamentos: true },
@@ -26,6 +33,7 @@ const MODE_DEFAULTS: Record<ProjectMode, Record<ModuleKey, boolean>> = {
 };
 
 export type PlatformModules = Record<ModuleKey, boolean>;
+export type PlatformModuleInfoMap = Record<ModuleKey, ModuleInfo>;
 
 export function useProjectMode() {
   const { data: settingsData, isLoading: settingsLoading } = useQuery({
@@ -49,12 +57,28 @@ export function useProjectMode() {
   // Build modules map: DB rows take priority, then mode defaults
   const defaults = MODE_DEFAULTS[mode];
   const modules: PlatformModules = { ...defaults };
+  const moduleInfo: PlatformModuleInfoMap = {} as PlatformModuleInfoMap;
 
+  // Initialize with defaults
+  for (const key of MODULE_KEYS) {
+    moduleInfo[key] = {
+      enabled: defaults[key],
+      visibleInMenu: defaults[key],
+      visibleInVitrine: defaults[key],
+    };
+  }
+
+  // Override with DB values
   if (dbModules.length > 0) {
     for (const mod of dbModules) {
       const key = mod.slug as ModuleKey;
       if (MODULE_KEYS.includes(key)) {
         modules[key] = mod.enabled;
+        moduleInfo[key] = {
+          enabled: mod.enabled,
+          visibleInMenu: mod.enabled && mod.visible_in_menu,
+          visibleInVitrine: mod.enabled && mod.visible_in_vitrine,
+        };
       }
     }
   }
@@ -63,8 +87,9 @@ export function useProjectMode() {
     mode,
     isLoading: settingsLoading || modulesLoading,
     modules,
+    moduleInfo,
     dbModules,
-    // convenience shortcuts
+    // convenience shortcuts (enabled = module active)
     showMusic: modules.louvores,
     showCourses: modules.cursos,
     showVitrine: modules.vitrine,
@@ -74,5 +99,13 @@ export function useProjectMode() {
     showComunidade: modules.comunidade,
     showBonus: modules.bonus,
     showLancamentos: modules.lancamentos,
+    // menu-specific shortcuts
+    showMusicInMenu: moduleInfo.louvores.visibleInMenu,
+    showCoursesInMenu: moduleInfo.cursos.visibleInMenu,
+    showVitrineInMenu: moduleInfo.vitrine.visibleInMenu,
+    showPerfilInMenu: moduleInfo.perfil.visibleInMenu,
+    // vitrine-specific shortcuts
+    showMusicInVitrine: moduleInfo.louvores.visibleInVitrine,
+    showCoursesInVitrine: moduleInfo.cursos.visibleInVitrine,
   };
 }
