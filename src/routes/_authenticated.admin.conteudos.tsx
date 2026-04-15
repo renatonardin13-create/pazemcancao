@@ -710,6 +710,11 @@ function AdminContentPage() {
                           ⭐ Destaque
                         </Badge>
                       )}
+                      {item.release_mode && item.release_mode !== 'liberar_tudo' && (
+                        <Badge variant="outline" className="text-[11px] px-1.5 py-0 text-cyan-400/60 border-cyan-500/15 bg-cyan-500/8">
+                          {item.release_mode === 'liberar_progressivo' ? '⏳ Progressivo' : '🔒 Bloqueio final'}
+                        </Badge>
+                      )}
                       {item.display_category && (
                         <Badge variant="outline" className="text-[11px] px-1.5 py-0 text-muted-foreground/70 border-border/30">
                           {item.display_category.replace(/_/g, " ")}
