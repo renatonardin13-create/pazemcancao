@@ -48,6 +48,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   // `spread` tracks the current spread index (0-based).
   // Spread 0 = cover (page 1 alone). Spread 1 = pages 2-3. Spread 2 = pages 4-5, etc.
   const [spread, setSpread] = useState(0);
+  const [resumedFrom, setResumedFrom] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [direction, setDirection] = useState<"left" | "right">("right");
@@ -133,7 +134,27 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
         if (cancelled) return;
         pdfDocRef.current = pdf;
         setNumPages(pdf.numPages);
-        setSpread(0);
+        // Restore saved reading position
+        const progressKey = `ebook-progress-${pdfUrl}`;
+        try {
+          const saved = localStorage.getItem(progressKey);
+          if (saved) {
+            const savedSpread = parseInt(saved, 10);
+            const maxSpread = isMobile ? pdf.numPages - 1 : Math.ceil(pdf.numPages / 2) - 1;
+            if (savedSpread > 0 && savedSpread <= maxSpread) {
+              setSpread(savedSpread);
+              setResumedFrom(savedSpread);
+              // Auto-dismiss resume indicator
+              setTimeout(() => setResumedFrom(null), 3000);
+            } else {
+              setSpread(0);
+            }
+          } else {
+            setSpread(0);
+          }
+        } catch {
+          setSpread(0);
+        }
         setPageImages({});
         setLoading(false);
       } catch (err) {
@@ -147,7 +168,15 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
     return () => { cancelled = true; };
   }, [pdfUrl]);
 
-  // Render a single page to a data URL
+  // Auto-save reading progress
+  useEffect(() => {
+    if (numPages === 0) return;
+    try {
+      localStorage.setItem(`ebook-progress-${pdfUrl}`, String(spread));
+    } catch {}
+  }, [spread, pdfUrl, numPages]);
+
+
   const renderPage = useCallback(
     async (pageNum: number) => {
       const pdf = pdfDocRef.current;
@@ -552,6 +581,20 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
           background: "radial-gradient(ellipse at center, #221f1a 0%, #1a1814 60%, #141210 100%)",
         }}
       >
+        {/* Resume indicator */}
+        <AnimatePresence>
+          {resumedFrom !== null && (
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="absolute top-3 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2 rounded-xl border border-gold/20 bg-stone-900/80 backdrop-blur-xl px-4 py-2 shadow-lg"
+            >
+              <BookOpen className="h-3.5 w-3.5 text-gold/70" />
+              <span className="text-[11px] text-stone-300/80 font-medium">Continuando de onde você parou</span>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Book spread */}
         <AnimatePresence mode="wait" custom={direction}>
