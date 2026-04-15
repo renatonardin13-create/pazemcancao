@@ -10,7 +10,7 @@ import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { CourseShelfCard } from "@/components/CourseShelfCard";
 import { motion } from "framer-motion";
-import { BookOpen, Search, ArrowRight, PlayCircle, Heart, Play, Layers, Unlock, Clock, Gift, ChevronLeft, ChevronRight } from "lucide-react";
+import { BookOpen, Search, ArrowRight, PlayCircle, Heart, Play, Layers, CheckCircle2, Unlock, Clock, Gift, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useMemo, useRef, useCallback } from "react";
 import { useDragScroll } from "@/hooks/use-drag-scroll";
 import { Input } from "@/components/ui/input";
