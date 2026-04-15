@@ -191,12 +191,13 @@ function LessonDetailPage() {
             <p className="text-foreground/60 text-sm font-semibold">Erro ao carregar</p>
             <p className="text-muted-foreground/35 text-xs mt-1">Não foi possível carregar esta aula.</p>
           </div>
-            <Button variant="premiumOutline" size="sm" asChild>
-              <Link to="/cursos/$courseId" params={{ courseId }}>
-                <ChevronLeft className="h-3.5 w-3.5" />
-                Voltar ao curso
-              </Link>
-            </Button>
+          <Button variant="premiumOutline" size="sm" asChild>
+            <Link to="/cursos/$courseId" params={{ courseId }}>
+              <ChevronLeft className="h-3.5 w-3.5" />
+              Voltar ao curso
+            </Link>
+          </Button>
+        </div>
       </div>
     );
   }
