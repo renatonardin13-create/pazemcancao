@@ -230,7 +230,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
         if (!ctx) return;
 
         await page.render({ canvasContext: ctx, viewport }).promise;
-        const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
         setPageImages((prev) => ({ ...prev, [pageNum]: dataUrl }));
       } catch (err) {
         console.error("Failed to render page:", pageNum, err);
