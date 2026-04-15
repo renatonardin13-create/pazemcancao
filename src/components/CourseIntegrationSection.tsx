@@ -35,6 +35,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
   const { data, isLoading } = useQuery({
     queryKey: ["course-integration", courseId],
     queryFn: () => getCourseIntegration({ data: { courseId } }),
+    staleTime: 30_000,
   });
 
   const integration = data?.integration;
