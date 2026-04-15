@@ -71,16 +71,14 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
 
     const publishedCourseIds = (allCourses || []).map((c: any) => c.id);
 
-    // Check which published courses have at least 1 lesson (eligible for consumption)
+    // Get lesson counts per course
     const { data: lessonCounts } = await supabaseAdmin
       .from('lessons')
       .select('course_id')
       .in('course_id', publishedCourseIds.length > 0 ? publishedCourseIds : ['__none__']);
 
-    const coursesWithLessons = new Set((lessonCounts || []).map((l: any) => l.course_id));
-
-    // Only show courses that have at least 1 lesson
-    const publishedCourses = (allCourses || []).filter((c: any) => coursesWithLessons.has(c.id));
+    // Show ALL published courses (even without lessons yet)
+    const publishedCourses = allCourses || [];
 
     // Courses with free preview lessons
     const { data: previewLessons } = await supabase
