@@ -415,10 +415,28 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
       if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); nextSpread(); }
       else if (e.key === "ArrowLeft") { e.preventDefault(); prevSpread(); }
+      else if (e.key === "F11") { e.preventDefault(); toggleFullscreen(); }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [nextSpread, prevSpread]);
+
+  // Fullscreen
+  const toggleFullscreen = useCallback(() => {
+    const el = readerContainerRef.current;
+    if (!el) return;
+    if (!document.fullscreenElement) {
+      el.requestFullscreen?.().catch(() => {});
+    } else {
+      document.exitFullscreen?.().catch(() => {});
+    }
+  }, []);
+
+  useEffect(() => {
+    const onChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener("fullscreenchange", onChange);
+    return () => document.removeEventListener("fullscreenchange", onChange);
+  }, []);
 
   // Touch/swipe
   const handleTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
