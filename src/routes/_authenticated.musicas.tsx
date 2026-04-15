@@ -588,12 +588,36 @@ function MusicLibraryPage() {
         {/* Content */}
         {isLoading ? (
           <ListSkeleton rows={6} />
+        ) : tracksError ? (
+          <div className="text-center py-24">
+            <Music className="h-10 w-10 text-muted-foreground/50 mx-auto mb-5" />
+            <p className="text-sm text-muted-foreground/70 mb-2">
+              Erro ao carregar músicas.
+            </p>
+            <p className="text-xs text-muted-foreground/40 mb-4">{(tracksErrorMsg as Error)?.message || "Tente novamente."}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="text-xs text-gold/60 hover:text-gold/80 underline transition-colors"
+            >
+              Recarregar página
+            </button>
+          </div>
         ) : filteredTracks.length === 0 ? (
           <div className="text-center py-24">
             <Music className="h-10 w-10 text-muted-foreground/50 mx-auto mb-5" />
             <p className="text-sm text-muted-foreground/70">
-              Nenhuma música encontrada.
+              {searchTerm || activeCategory
+                ? "Nenhuma música encontrada para este filtro."
+                : "Nenhuma música disponível no momento."}
             </p>
+            {(searchTerm || activeCategory) && (
+              <button
+                onClick={() => { setSearchTerm(""); setActiveCategory(null); }}
+                className="mt-3 text-xs text-gold/60 hover:text-gold/80 underline transition-colors"
+              >
+                Limpar filtros
+              </button>
+            )}
           </div>
         ) : (
           <div className="space-y-10">
