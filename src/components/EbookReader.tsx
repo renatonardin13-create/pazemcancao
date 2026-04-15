@@ -614,7 +614,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   };
 
   return (
-    <div className="flex flex-col w-full min-h-screen" style={{ backgroundColor: "#1a1814" }}>
+    <div ref={readerContainerRef} className="flex flex-col w-full min-h-screen" style={{ backgroundColor: "#1a1814" }}>
       {/* ═══ TOP BAR — Kindle-style minimal ═══ */}
       <div className={`flex items-center justify-between px-3 sm:px-6 py-2 border-b border-stone-800/40 bg-[#1a1814]/95 backdrop-blur-xl z-30 transition-all duration-300 ${!controlsVisible ? "opacity-0 pointer-events-none h-0 overflow-hidden py-0 border-0" : ""}`}>
         <div className="flex items-center gap-3 min-w-0">
