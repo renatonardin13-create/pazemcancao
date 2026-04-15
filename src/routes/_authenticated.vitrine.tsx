@@ -8,7 +8,7 @@ import { FooterLinks } from "@/components/FooterLinks";
 import { CourseShelfCard } from "@/components/CourseShelfCard";
 import { useProjectMode } from "@/hooks/use-project-mode";
 import { Store, Lock, Play, ArrowRight, ShoppingCart, Search, ChevronLeft, ChevronRight, Clock, Sparkles } from "lucide-react";
-import { FunnelBanner } from "@/components/FunnelBanner";
+import { InvisibleFunnelShelves } from "@/components/InvisibleFunnelShelves";
 import { Input } from "@/components/ui/input";
 import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 
@@ -186,13 +186,11 @@ function VitrinePage() {
                     </section>
                   );
                 })}
+
+                {/* Invisible funnel shelves — blended naturally after real shelves */}
+                <InvisibleFunnelShelves context="vitrine" />
               </div>
             )}
-
-            {/* Funnel Upsell Banner */}
-            <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mt-8 sm:mt-12">
-              <FunnelBanner context="vitrine" limit={8} />
-            </div>
           </div>
         </div>
 

@@ -10,7 +10,7 @@ import { getMyProfile } from "@/lib/profile.functions";
 import { useAuth } from "@/hooks/use-auth";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
-import { FunnelBanner } from "@/components/FunnelBanner";
+import { InvisibleFunnelShelves } from "@/components/InvisibleFunnelShelves";
 import { ContentCard } from "@/components/ContentCard";
 import { RecommendedSection } from "@/components/RecommendedSection";
 import { TopRankingSection } from "@/components/TopRankingSection";
@@ -610,9 +610,9 @@ function ContentPage() {
           )}
         </div>
 
-        {/* Funnel Upsell */}
+        {/* Invisible funnel shelves */}
         <div className="max-w-6xl mx-auto px-5 sm:px-8 mt-10 mb-8">
-          <FunnelBanner context="conteudo" limit={6} />
+          <InvisibleFunnelShelves context="conteudo" />
         </div>
 
         <FooterLinks />
