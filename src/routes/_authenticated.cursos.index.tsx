@@ -4,13 +4,13 @@ import { CardGridSkeleton } from "@/components/LoadingSkeletons";
 import { useQuery } from "@tanstack/react-query";
 import { getStudentShelves } from "@/lib/shelves.functions";
 import { getMyCoursesData } from "@/lib/my-courses.functions";
-import { getLibraryStats } from "@/lib/user-library.functions";
+import { getLibraryStats, getLibrarySections } from "@/lib/user-library.functions";
 import { getContinueWatching } from "@/lib/continue-watching.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { CourseShelfCard } from "@/components/CourseShelfCard";
 import { motion } from "framer-motion";
-import { BookOpen, Search, ArrowRight, PlayCircle, Heart, Play, Layers, CheckCircle2, Unlock, Clock, Gift, ChevronLeft, ChevronRight } from "lucide-react";
+import { BookOpen, Search, ArrowRight, PlayCircle, Heart, Play, Layers, CheckCircle2, Unlock, Clock, Gift, Lock, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useMemo, useRef, useCallback } from "react";
 import { useDragScroll } from "@/hooks/use-drag-scroll";
 import { Input } from "@/components/ui/input";
@@ -47,6 +47,12 @@ function MeusCoursosPage() {
   const { data: libStats } = useQuery({
     queryKey: ["library-stats"],
     queryFn: () => getLibraryStats(),
+    staleTime: 30_000,
+  });
+
+  const { data: libSections } = useQuery({
+    queryKey: ["library-sections"],
+    queryFn: () => getLibrarySections(),
     staleTime: 30_000,
   });
 
@@ -221,16 +227,75 @@ function MeusCoursosPage() {
                     );
                   })}
 
-                  {/* ═══ BIBLIOTECA RESUMO ═══ */}
-                  <ShelfSection delay={0.3}>
-                    <ShelfHeader title="Minha biblioteca" />
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                      <StatCard label="Liberados" value={libStats?.unlocked ?? 0} icon={<Unlock className="h-3 w-3" />} />
-                      <StatCard label="Em Breve" value={libStats?.upcoming ?? 0} icon={<Clock className="h-3 w-3" />} />
-                      <StatCard label="Favoritos" value={libStats?.favorites ?? 0} icon={<Heart className="h-3 w-3" />} />
-                      <StatCard label="Bônus" value={libStats?.bonus ?? 0} icon={<Gift className="h-3 w-3" />} />
-                    </div>
-                  </ShelfSection>
+                  {/* ═══ SEUS ACESSOS ═══ */}
+                  {(libSections?.unlocked?.length ?? 0) > 0 && (
+                    <ShelfSection delay={0.3}>
+                      <ShelfHeader title="Seus Acessos" />
+                      <ShelfRow>
+                        {(libSections?.unlocked || []).map((item: any, idx: number) => (
+                          <ShelfItem key={`unlocked-${item.id}`} index={idx}>
+                            <LibraryContentCard item={item} />
+                          </ShelfItem>
+                        ))}
+                      </ShelfRow>
+                    </ShelfSection>
+                  )}
+
+                  {/* ═══ DISPONÍVEL PARA VOCÊ (BLOQUEADO) ═══ */}
+                  {(libSections?.locked?.length ?? 0) > 0 && (
+                    <ShelfSection delay={0.35}>
+                      <ShelfHeader title="Disponível para você" />
+                      <ShelfRow>
+                        {(libSections?.locked || []).map((item: any, idx: number) => (
+                          <ShelfItem key={`locked-${item.id}`} index={idx}>
+                            <LockedContentCard item={item} />
+                          </ShelfItem>
+                        ))}
+                      </ShelfRow>
+                    </ShelfSection>
+                  )}
+
+                  {/* ═══ EM BREVE ═══ */}
+                  {(libSections?.upcoming?.length ?? 0) > 0 && (
+                    <ShelfSection delay={0.4}>
+                      <ShelfHeader title="Novidades chegando" />
+                      <ShelfRow>
+                        {(libSections?.upcoming || []).map((item: any, idx: number) => (
+                          <ShelfItem key={`upcoming-${item.id}`} index={idx}>
+                            <UpcomingContentCard item={item} />
+                          </ShelfItem>
+                        ))}
+                      </ShelfRow>
+                    </ShelfSection>
+                  )}
+
+                  {/* ═══ FAVORITOS ═══ */}
+                  {(libSections?.favorites?.length ?? 0) > 0 && (
+                    <ShelfSection delay={0.45}>
+                      <ShelfHeader title="Seus Favoritos" />
+                      <ShelfRow>
+                        {(libSections?.favorites || []).map((item: any, idx: number) => (
+                          <ShelfItem key={`fav-${item.id}`} index={idx}>
+                            <LibraryContentCard item={item} />
+                          </ShelfItem>
+                        ))}
+                      </ShelfRow>
+                    </ShelfSection>
+                  )}
+
+                  {/* ═══ BÔNUS ═══ */}
+                  {(libSections?.bonus?.length ?? 0) > 0 && (
+                    <ShelfSection delay={0.5}>
+                      <ShelfHeader title="Bônus Exclusivos" />
+                      <ShelfRow>
+                        {(libSections?.bonus || []).map((item: any, idx: number) => (
+                          <ShelfItem key={`bonus-${item.id}`} index={idx}>
+                            <LibraryContentCard item={item} isFree />
+                          </ShelfItem>
+                        ))}
+                      </ShelfRow>
+                    </ShelfSection>
+                  )}
 
                   {shelves.length === 0 && (
                     <EmptyState icon={BookOpen} title="Nenhum conteúdo disponível" description="Em breve novos cursos serão adicionados." />
@@ -563,16 +628,144 @@ function MyCoursesCard({ course }: { course: any }) {
 }
 
 /* ══════════════════════════════════════════════════════════════
-   STAT CARD
+   LIBRARY CONTENT CARD (unlocked / favorites / bonus)
    ══════════════════════════════════════════════════════════════ */
 
-function StatCard({ label, value, icon }: { label: string; value: number | string; icon?: React.ReactNode }) {
+function LibraryContentCard({ item, isFree }: { item: any; isFree?: boolean }) {
   return (
-    <div className="rounded-xl border border-border/8 bg-card/5 p-4 sm:p-5 text-center backdrop-blur-sm">
-      <p className="font-display text-2xl sm:text-3xl font-bold text-gold">{value}</p>
-      <p className="text-[9px] text-muted-foreground/35 mt-1 uppercase tracking-[0.15em] flex items-center justify-center gap-1">
-        {icon} {label}
-      </p>
+    <Link
+      to="/conteudo/$trackId"
+      params={{ trackId: item.id }}
+      className="group relative flex-shrink-0 w-[160px] sm:w-[190px] rounded-2xl overflow-hidden border border-border/8 bg-card/5 hover:border-gold/20 transition-all duration-300"
+    >
+      <div className="relative aspect-[3/4] overflow-hidden">
+        <img
+          src={item.card_cover_url || item.cover_url || "/placeholder.svg"}
+          alt={item.title}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
+        {isFree && (
+          <div className="absolute top-2.5 right-2.5">
+            <span className="inline-flex items-center gap-1 rounded-lg bg-gold/90 px-2 py-0.5 text-[8px] font-bold text-background uppercase tracking-wider">
+              <Gift className="h-2.5 w-2.5" /> Grátis
+            </span>
+          </div>
+        )}
+        {item.badge_text && (
+          <div className="absolute top-2.5 left-2.5">
+            <span className="inline-flex items-center rounded-lg bg-gold/20 border border-gold/30 px-2 py-0.5 text-[8px] font-bold text-gold uppercase tracking-wider backdrop-blur-sm">
+              {item.badge_text}
+            </span>
+          </div>
+        )}
+      </div>
+      <div className="p-3">
+        <p className="text-xs font-semibold text-foreground/80 line-clamp-2 leading-tight">{item.title}</p>
+        <p className="text-[9px] text-muted-foreground/40 mt-1 uppercase tracking-wider">{item.content_type}</p>
+      </div>
+    </Link>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
+   LOCKED CONTENT CARD (premium / with padlock)
+   ══════════════════════════════════════════════════════════════ */
+
+function LockedContentCard({ item }: { item: any }) {
+  const handleClick = () => {
+    if (item.sales_page_url) {
+      window.open(item.sales_page_url, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  return (
+    <button
+      onClick={handleClick}
+      className="group relative flex-shrink-0 w-[160px] sm:w-[190px] rounded-2xl overflow-hidden border border-gold/15 bg-card/5 hover:border-gold/40 transition-all duration-300 text-left cursor-pointer"
+    >
+      <div className="relative aspect-[3/4] overflow-hidden">
+        <img
+          src={item.card_cover_url || item.cover_url || "/placeholder.svg"}
+          alt={item.title}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 brightness-50 group-hover:brightness-[0.6]"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/20" />
+
+        {/* Lock overlay */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+          <div className="h-12 w-12 rounded-full bg-gold/15 border border-gold/30 flex items-center justify-center backdrop-blur-md group-hover:bg-gold/25 group-hover:border-gold/50 transition-all duration-300">
+            <Lock className="h-5 w-5 text-gold" />
+          </div>
+          <span className="text-[9px] font-bold text-gold/80 uppercase tracking-[0.2em]">
+            Desbloquear
+          </span>
+        </div>
+
+        {item.badge_text && (
+          <div className="absolute top-2.5 left-2.5">
+            <span className="inline-flex items-center rounded-lg bg-gold/20 border border-gold/30 px-2 py-0.5 text-[8px] font-bold text-gold uppercase tracking-wider backdrop-blur-sm">
+              {item.badge_text}
+            </span>
+          </div>
+        )}
+      </div>
+      <div className="p-3">
+        <p className="text-xs font-semibold text-foreground/60 line-clamp-2 leading-tight">{item.title}</p>
+        <p className="text-[9px] text-gold/50 mt-1 uppercase tracking-wider font-medium">Saiba mais →</p>
+      </div>
+    </button>
+  );
+}
+
+/* ══════════════════════════════════════════════════════════════
+   UPCOMING CONTENT CARD (countdown)
+   ══════════════════════════════════════════════════════════════ */
+
+function UpcomingContentCard({ item }: { item: any }) {
+  const unlockAt = item.unlock_at ? new Date(item.unlock_at) : null;
+  const now = new Date();
+  let countdownLabel = "Em breve";
+
+  if (unlockAt && unlockAt > now) {
+    const diffMs = unlockAt.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    if (diffDays <= 0) {
+      countdownLabel = "Hoje!";
+    } else if (diffDays === 1) {
+      countdownLabel = "Amanhã";
+    } else {
+      countdownLabel = `Em ${diffDays} dias`;
+    }
+  }
+
+  return (
+    <div className="group relative flex-shrink-0 w-[160px] sm:w-[190px] rounded-2xl overflow-hidden border border-border/10 bg-card/5 transition-all duration-300">
+      <div className="relative aspect-[3/4] overflow-hidden">
+        <img
+          src={item.card_cover_url || item.cover_url || "/placeholder.svg"}
+          alt={item.title}
+          className="w-full h-full object-cover brightness-[0.4] saturate-50"
+          loading="lazy"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+
+        {/* Countdown badge */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
+          <div className="h-12 w-12 rounded-full bg-card/20 border border-border/20 flex items-center justify-center backdrop-blur-md">
+            <Clock className="h-5 w-5 text-gold/60" />
+          </div>
+          <span className="text-[10px] font-bold text-gold/70 uppercase tracking-[0.15em]">
+            {countdownLabel}
+          </span>
+        </div>
+      </div>
+      <div className="p-3">
+        <p className="text-xs font-semibold text-foreground/50 line-clamp-2 leading-tight">{item.title}</p>
+        <p className="text-[9px] text-muted-foreground/30 mt-1 uppercase tracking-wider">{item.content_type}</p>
+      </div>
     </div>
   );
 }
