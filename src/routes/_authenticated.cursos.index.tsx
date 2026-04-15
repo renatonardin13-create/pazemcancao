@@ -463,7 +463,7 @@ function HeroBanner({ course }: { course: any }) {
 
         {/* Premium vignette + glow */}
         <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.4)]" />
-        <div className="absolute inset-0 rounded-3xl sm:rounded-[28px] ring-1 ring-inset ring-white/[0.06]" />
+        <div className="absolute inset-0 rounded-2xl sm:rounded-3xl ring-1 ring-inset ring-white/[0.06]" />
 
         {/* Content — bottom left */}
         <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 md:p-12 lg:p-14">
