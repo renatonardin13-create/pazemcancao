@@ -904,6 +904,7 @@ export type Database = {
           is_active: boolean
           mode: string
           name: string
+          show_in_vitrine: boolean
           sort_order: number
           updated_at: string
         }
@@ -914,6 +915,7 @@ export type Database = {
           is_active?: boolean
           mode?: string
           name: string
+          show_in_vitrine?: boolean
           sort_order?: number
           updated_at?: string
         }
@@ -924,6 +926,7 @@ export type Database = {
           is_active?: boolean
           mode?: string
           name?: string
+          show_in_vitrine?: boolean
           sort_order?: number
           updated_at?: string
         }
