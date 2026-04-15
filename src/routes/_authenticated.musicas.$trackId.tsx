@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { logDownload } from "@/lib/analytics.functions";
 import { ArrowLeft, Download, Play, Pause, Music, Heart, Lock } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
 import { getTrackById, listActiveTracks } from "@/lib/tracks.functions";
 import { checkBuyerAccess } from "@/lib/access.functions";
@@ -15,9 +16,12 @@ export const Route = createFileRoute("/_authenticated/musicas/$trackId")({
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="text-center">
         <p className="text-muted-foreground/50">Música não encontrada.</p>
-        <Link to="/musicas" search={{}} className="mt-4 inline-block text-gold/70 hover:text-gold/80 text-sm">
-          Voltar à biblioteca
-        </Link>
+        <Button variant="premiumOutline" size="sm" asChild>
+          <Link to="/musicas" search={{}}>
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Voltar à biblioteca
+          </Link>
+        </Button>
       </div>
     </div>
   ),
@@ -106,9 +110,12 @@ function MusicDetailPage() {
         <div className="flex min-h-screen items-center justify-center bg-background">
           <div className="text-center">
             <p className="text-muted-foreground/50">Música não encontrada.</p>
-            <Link to="/musicas" search={{}} className="mt-4 inline-block text-gold/70 hover:text-gold/80 text-sm">
-              Voltar à biblioteca
-            </Link>
+            <Button variant="premiumOutline" size="sm" asChild>
+              <Link to="/musicas" search={{}}>
+                <ArrowLeft className="h-3.5 w-3.5" />
+                Voltar à biblioteca
+              </Link>
+            </Button>
           </div>
         </div>
       </StudentLayout>
@@ -142,9 +149,12 @@ function MusicDetailPage() {
               Adquira aqui
             </a>
             <div>
-              <Link to="/musicas" search={{}} className="text-xs text-muted-foreground/40 hover:text-gold/60 transition-colors">
-                ← Voltar às músicas
-              </Link>
+              <Button variant="premiumOutline" size="sm" asChild>
+                <Link to="/musicas" search={{}}>
+                  <ArrowLeft className="h-3.5 w-3.5" />
+                  Voltar às músicas
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
