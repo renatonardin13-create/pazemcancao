@@ -86,7 +86,7 @@ export const checkBuyerAccess = createServerFn({ method: 'POST' })
 
     return {
       hasAccess: true,
-      buyer: { nome: buyer.nome, product_name: buyer.product_name },
+      buyer: { nome: buyer.nome, product_name: buyer.product_name, first_login_at: buyer.first_login_at },
       isTrial,
       trialExpired: false,
       isBlocked: false,
