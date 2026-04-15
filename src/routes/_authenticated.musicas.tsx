@@ -280,7 +280,7 @@ function MusicLibraryPage() {
                 custom={0.3}
               >
                 <div className="rounded-2xl border border-amber-500/15 bg-gradient-to-br from-amber-900/10 via-amber-950/5 to-transparent p-5 sm:p-6">
-                  <div className="flex items-center gap-3 mb-5">
+                  <div className="flex items-center gap-3 mb-5 flex-wrap">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/15 border border-amber-500/20">
                       <Gift className="h-4.5 w-4.5 text-amber-400/70" />
                     </div>
@@ -293,6 +293,37 @@ function MusicLibraryPage() {
                       </p>
                     </div>
                     <div className="flex-1 h-px bg-gradient-to-r from-amber-500/15 to-transparent" />
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setExpandedCategory(expandedCategory === '__bonus__' ? null : '__bonus__')}
+                        className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground/60 hover:text-gold/70 transition-colors duration-300 rounded-full border border-border/20 hover:border-gold/20 px-3 py-1.5 bg-card/10 hover:bg-gold/5"
+                      >
+                        <ListMusic className="h-3 w-3" />
+                        <span className="hidden sm:inline">{expandedCategory === '__bonus__' ? 'Carrossel' : 'Ver todas'}</span>
+                        <span className="sm:hidden">{expandedCategory === '__bonus__' ? '←' : 'Todas'}</span>
+                      </button>
+                      {!isLocked && bonusTracks.filter((t: any) => !t.is_bonus || !(
+                        !t.bonus_release_date || new Date(t.bonus_release_date + 'T00:00:00') > new Date()
+                      )).length > 0 && (
+                        <button
+                          onClick={() => {
+                            const playable = bonusTracks.filter((t: any) => {
+                              const notReleased = t.is_bonus && (!t.bonus_release_date || new Date(t.bonus_release_date + 'T00:00:00') > new Date());
+                              return !notReleased && t.is_active;
+                            });
+                            if (playable.length > 0) {
+                              setQueue(playable.map(dbTrackToPlayerTrack), 0);
+                              toast.success(`▶ Tocando ${playable.length} músicas bônus`);
+                            }
+                          }}
+                          className="flex items-center gap-1.5 text-[11px] font-semibold text-gold/60 hover:text-gold/90 transition-colors duration-300 rounded-full border border-gold/15 hover:border-gold/30 px-3 py-1.5 bg-gold/5 hover:bg-gold/10"
+                        >
+                          <PlayCircle className="h-3 w-3" />
+                          <span className="hidden sm:inline">Tocar playlist</span>
+                          <span className="sm:hidden">▶ Play</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   <ScrollableCarousel>
