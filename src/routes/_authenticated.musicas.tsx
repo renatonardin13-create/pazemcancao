@@ -628,11 +628,11 @@ function TrackCard({
         }`}
       >
         <motion.div
-          layout
+          layout={false}
           initial={isCarousel ? { opacity: 0, x: 30 } : { opacity: 0, scale: 0.95 }}
           animate={isCarousel ? { opacity: 1, x: 0 } : { opacity: 1, scale: 1 }}
-          transition={{ duration: isCarousel ? 0.5 : 0.4, delay: idx * (isCarousel ? 0.06 : 0.03), ease: "easeOut" }}
-          whileHover={{ scale: 1.04, y: -4 }}
+          transition={{ duration: isCarousel ? 0.4 : 0.3, delay: Math.min(idx * (isCarousel ? 0.04 : 0.02), 0.3), ease: "easeOut" }}
+          whileHover={window.matchMedia('(hover: hover)').matches ? { scale: 1.04, y: -4 } : undefined}
           whileTap={{ scale: 0.97 }}
           className={`relative rounded-2xl border transition-all duration-500 overflow-hidden h-[280px] sm:h-[310px] lg:h-[320px] flex flex-col ${
             effectiveLocked
