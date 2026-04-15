@@ -403,6 +403,61 @@ function MusicLibraryPage() {
   );
 }
 
+/* ── Scrollable Carousel with arrows ── */
+function ScrollableCarousel({ children }: { children: React.ReactNode }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(checkScroll, 100);
+    return () => clearTimeout(timer);
+  }, [checkScroll]);
+
+  const scroll = useCallback((dir: 'left' | 'right') => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const amount = el.clientWidth * 0.75;
+    el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
+  }, []);
+
+  return (
+    <div className="relative group/carousel -mx-4 sm:-mx-6">
+      {canScrollLeft && (
+        <button
+          onClick={() => scroll('left')}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-background/90 border border-border/30 shadow-lg backdrop-blur-sm text-foreground/60 hover:text-gold hover:border-gold/30 transition-all opacity-0 group-hover/carousel:opacity-100"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+      )}
+      {canScrollRight && (
+        <button
+          onClick={() => scroll('right')}
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-background/90 border border-border/30 shadow-lg backdrop-blur-sm text-foreground/60 hover:text-gold hover:border-gold/30 transition-all opacity-0 group-hover/carousel:opacity-100"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
+      )}
+      <div
+        ref={scrollRef}
+        onScroll={checkScroll}
+        className="flex gap-4 overflow-x-auto pb-4 px-4 sm:px-6 scrollbar-hide snap-x snap-mandatory"
+        style={{ scrollbarWidth: 'none' }}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}
+
 /* ── Track Card Component ── */
 interface TrackCardProps {
   track: any;
