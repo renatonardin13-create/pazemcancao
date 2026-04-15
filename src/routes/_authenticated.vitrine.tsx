@@ -355,13 +355,13 @@ function NetflixCarousel({ courses, shelfId }: { courses: any[]; shelfId?: strin
       <div
         ref={scrollRef}
         onScroll={checkScroll}
-        className="flex gap-2.5 sm:gap-3.5 lg:gap-4 overflow-x-auto pb-4 px-3 sm:px-6 lg:px-12 scrollbar-hide snap-x snap-mandatory touch-pan-x"
+        className="flex gap-2.5 sm:gap-3 lg:gap-4 overflow-x-auto pb-4 px-4 sm:px-6 lg:px-12 scrollbar-hide snap-x snap-mandatory touch-pan-x"
         style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
       >
         <div className="shrink-0 w-0 lg:w-[calc((100vw-1400px)/2)]" />
 
         {courses.map((course: any, idx: number) => (
-          <div key={course.id} className="w-[150px] sm:w-[190px] md:w-[220px] lg:w-[240px] shrink-0 snap-start">
+          <div key={course.id} className="w-[155px] sm:w-[185px] md:w-[210px] lg:w-[230px] xl:w-[250px] shrink-0 snap-start">
             <CourseShelfCard
               course={course}
               index={idx}
