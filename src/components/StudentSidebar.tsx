@@ -195,7 +195,7 @@ export function StudentSidebar() {
   );
 
   /** Render a standard menu item */
-  const renderMenuItem = (cfg: ModuleMenuConfig) => {
+  const renderMenuItem = (cfg: { key: string; label: string; icon: LucideIcon; to: string; matchPrefix: boolean }) => {
     const Icon = cfg.icon;
     const active = cfg.matchPrefix ? isActivePrefix(cfg.to) : isActive(cfg.to);
 
