@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { OptimizedImage } from "@/components/OptimizedImage";
 import { useQuery } from "@tanstack/react-query";
 import { getStudentShelves } from "@/lib/shelves.functions";
 import { StudentLayout } from "@/components/StudentLayout";
