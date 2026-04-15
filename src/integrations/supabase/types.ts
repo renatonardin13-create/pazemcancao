@@ -698,6 +698,42 @@ export type Database = {
         }
         Relationships: []
       }
+      platform_modules: {
+        Row: {
+          created_at: string
+          enabled: boolean
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+          visible_in_menu: boolean
+          visible_in_vitrine: boolean
+        }
+        Insert: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+          visible_in_menu?: boolean
+          visible_in_vitrine?: boolean
+        }
+        Update: {
+          created_at?: string
+          enabled?: boolean
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
+          visible_in_menu?: boolean
+          visible_in_vitrine?: boolean
+        }
+        Relationships: []
+      }
       platform_settings: {
         Row: {
           created_at: string

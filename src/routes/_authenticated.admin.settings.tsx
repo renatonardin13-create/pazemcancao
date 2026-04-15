@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getPlatformSettings, updatePlatformSetting, uploadPlatformAsset } from "@/lib/platform-settings.functions";
+import { getPlatformModules, updatePlatformModule, type PlatformModule } from "@/lib/platform-modules.functions";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -118,7 +119,7 @@ function SettingsPage() {
           <AdvancedTab settings={settings.advanced || {}} onSave={(v) => mutation.mutate({ key: "advanced", value: v })} saving={mutation.isPending} />
         </TabsContent>
         <TabsContent value="modules" className="mt-4">
-          <ModulesTab settings={settings.modules || {}} onSave={(v) => mutation.mutate({ key: "modules", value: v })} saving={mutation.isPending} />
+          <ModulesTab />
         </TabsContent>
       </Tabs>
     </div>
@@ -643,34 +644,40 @@ function AdvancedTab({ settings, onSave, saving }: { settings: any; onSave: (v: 
   );
 }
 
-/* ─── Modules ─── */
-const MODULE_LABELS: Record<ModuleKey, { label: string; desc: string; icon: string }> = {
-  vitrine: { label: "Vitrine", desc: "Página principal com prateleiras de cursos", icon: "🏪" },
-  louvores: { label: "Louvores", desc: "Catálogo de músicas e player de áudio", icon: "🎵" },
-  cursos: { label: "Cursos", desc: "Cursos com módulos, aulas e progresso", icon: "🎓" },
-  ebooks: { label: "Ebooks", desc: "Leitor de ebooks e materiais em PDF", icon: "📖" },
-  trilhas: { label: "Trilhas", desc: "Jornadas emocionais e categorias musicais", icon: "🛤️" },
-  perfil: { label: "Perfil", desc: "Página de perfil do aluno", icon: "👤" },
-  comunidade: { label: "Comunidade", desc: "Espaço de interação entre alunos", icon: "💬" },
-  bonus: { label: "Bônus", desc: "Conteúdos bônus e extras", icon: "🎁" },
-  lancamentos: { label: "Lançamentos", desc: "Novos conteúdos e pré-lançamentos", icon: "🚀" },
+/* ─── Modules (reads from platform_modules table) ─── */
+const MODULE_ICONS: Record<string, string> = {
+  vitrine: "🏪", louvores: "🎵", cursos: "🎓", ebooks: "📖", trilhas: "🛤️",
+  perfil: "👤", comunidade: "💬", bonus: "🎁", lancamentos: "🚀",
 };
 
-function ModulesTab({ settings, onSave, saving }: { settings: any; onSave: (v: any) => void; saving: boolean }) {
-  const [modules, setModules] = useState<Partial<PlatformModules>>(() => {
-    const initial: Partial<PlatformModules> = {};
-    for (const key of MODULE_KEYS) {
-      if (key in settings) initial[key] = !!settings[key];
-    }
-    return initial;
+function ModulesTab() {
+  const queryClient = useQueryClient();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["platform-modules"],
+    queryFn: () => getPlatformModules(),
   });
 
-  const toggle = (key: ModuleKey) => {
-    setModules((prev) => ({ ...prev, [key]: !prev[key] }));
-  };
+  const toggleMutation = useMutation({
+    mutationFn: (vars: { id: string; enabled: boolean }) =>
+      updatePlatformModule({ data: { id: vars.id, updates: { enabled: vars.enabled } } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["platform-modules"] });
+      toast.success("Módulo atualizado!");
+    },
+    onError: (err: any) => toastError(err),
+  });
 
-  // Count enabled
-  const enabledCount = MODULE_KEYS.filter((k) => modules[k] !== false).length;
+  const modules: PlatformModule[] = data?.modules || [];
+  const enabledCount = modules.filter((m) => m.enabled).length;
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-16 text-muted-foreground">
+        <Loader2 className="h-5 w-5 animate-spin mr-2" /> Carregando módulos...
+      </div>
+    );
+  }
 
   return (
     <Card className="bg-card border-border/30">
@@ -683,41 +690,39 @@ function ModulesTab({ settings, onSave, saving }: { settings: any; onSave: (v: a
             Habilite ou desabilite seções do app. Módulos desabilitados ficam ocultos no menu e na vitrine.
           </p>
           <p className="text-xs text-muted-foreground/50 mt-1">
-            {enabledCount} de {MODULE_KEYS.length} módulos habilitados
+            {enabledCount} de {modules.length} módulos habilitados
           </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-          {MODULE_KEYS.map((key) => {
-            const info = MODULE_LABELS[key];
-            const enabled = modules[key] !== false;
+          {modules.map((mod) => {
+            const icon = MODULE_ICONS[mod.slug] || "📦";
             return (
               <button
-                key={key}
+                key={mod.id}
                 type="button"
-                onClick={() => toggle(key)}
+                onClick={() => toggleMutation.mutate({ id: mod.id, enabled: !mod.enabled })}
+                disabled={toggleMutation.isPending}
                 className={`p-4 rounded-xl border-2 text-left transition-all duration-200 ${
-                  enabled
+                  mod.enabled
                     ? "border-gold/30 bg-gold/[0.06]"
                     : "border-border/15 bg-card/30 opacity-60"
                 }`}
               >
                 <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-lg">{info.icon}</span>
-                  <Switch checked={enabled} onCheckedChange={() => toggle(key)} />
+                  <span className="text-lg">{icon}</span>
+                  <Switch checked={mod.enabled} onCheckedChange={() => toggleMutation.mutate({ id: mod.id, enabled: !mod.enabled })} />
                 </div>
-                <p className={`text-sm font-bold ${enabled ? "text-foreground" : "text-muted-foreground"}`}>
-                  {info.label}
+                <p className={`text-sm font-bold ${mod.enabled ? "text-foreground" : "text-muted-foreground"}`}>
+                  {mod.name}
                 </p>
-                <p className="text-xs text-muted-foreground/70 mt-0.5">{info.desc}</p>
+                <p className="text-xs text-muted-foreground/70 mt-0.5">
+                  {mod.visible_in_menu && mod.visible_in_vitrine ? "Menu + Vitrine" : mod.visible_in_menu ? "Apenas Menu" : mod.visible_in_vitrine ? "Apenas Vitrine" : "Oculto"}
+                </p>
               </button>
             );
           })}
         </div>
-
-        <Button onClick={() => onSave(modules)} disabled={saving} className="w-full gap-2">
-          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Salvar Módulos
-        </Button>
       </CardContent>
     </Card>
   );
