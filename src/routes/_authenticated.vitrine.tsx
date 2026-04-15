@@ -73,8 +73,10 @@ function VitrinePage() {
     <StudentLayout>
       <div className="min-h-screen flex flex-col bg-background">
         <div className="flex-1 w-full pb-28">
-          {/* ── Netflix-style Hero Banner ── */}
-          {featuredCourse && <HeroBanner course={featuredCourse} />}
+          {/* ── Netflix-style Hero Banner (hide in music-only mode unless custom) ── */}
+          {featuredCourse && !(mode === "somente_musica" && featuredCourse.id !== "__custom_banner__") && (
+            <HeroBanner course={featuredCourse} />
+          )}
 
           {/* ── Content area ── */}
           <div className="relative z-10 -mt-16 sm:-mt-24">
