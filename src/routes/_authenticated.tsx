@@ -110,7 +110,7 @@ function AuthenticatedLayout() {
     }
   }, [accessData, isAdmin]);
 
-  if (loading || (isAuthenticated && !isAdmin && accessLoading)) {
+  if (loading || (isAuthenticated && !isAdmin && accessLoading && !isMusicExperience)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_40%,var(--color-gold)/0.025,transparent_70%)]" />
@@ -173,7 +173,7 @@ function AuthenticatedLayout() {
     return <RestrictedAccessCard />;
   }
 
-  if (!isAdmin && !accessData?.hasAccess) {
+  if (!isMusicExperience && !isAdmin && !accessData?.hasAccess) {
     const handleLogout = async () => {
       await logout();
       navigate({ to: "/login" });
