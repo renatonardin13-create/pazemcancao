@@ -356,7 +356,7 @@ function NetflixCarousel({ courses, shelfId }: { courses: any[]; shelfId?: strin
         <div className="shrink-0 w-0 lg:w-[calc((100vw-1400px)/2)]" />
 
         {courses.map((course: any, idx: number) => (
-          <div key={course.id} className="w-[180px] sm:w-[200px] md:w-[220px] shrink-0 snap-start">
+          <div key={course.id} className="w-[185px] sm:w-[210px] md:w-[230px] lg:w-[240px] shrink-0 snap-start">
             <CourseShelfCard
               course={course}
               index={idx}
@@ -405,7 +405,7 @@ function HeroCTA({ course }: { course: any }) {
         rel="noopener noreferrer"
         className="inline-flex items-center gap-2.5 rounded-lg bg-gold/15 text-gold border border-gold/30 px-8 py-4 text-sm font-bold uppercase tracking-wider hover:bg-gold/25 hover:border-gold/50 transition-all backdrop-blur-sm shadow-lg"
       >
-        <ShoppingCart className="h-4.5 w-4.5" /> Adquirir Agora
+        <ShoppingCart className="h-[18px] w-[18px]" /> Adquirir Agora
       </a>
     );
   }
@@ -413,35 +413,3 @@ function HeroCTA({ course }: { course: any }) {
   return null;
 }
 
-function CourseActionButton({ course }: { course: any }) {
-  const isEnrolled = course.access_state === "enrolled";
-  const isLocked = course.access_state === "locked";
-
-  if (isEnrolled) {
-    return (
-      <Link
-        to="/cursos/$courseId"
-        params={{ courseId: course.id }}
-        className="inline-flex items-center gap-2.5 rounded-lg bg-gold text-gold-foreground px-7 py-3.5 text-sm font-bold uppercase tracking-wider hover:bg-gold/90 transition-colors shadow-lg shadow-gold/20"
-      >
-        <Play className="h-4 w-4 fill-current" /> Assistir Agora
-      </Link>
-    );
-  }
-
-  if (isLocked && (course.sales_page_url || course.checkout_url)) {
-    const salesUrl = course.sales_page_url || course.checkout_url;
-    return (
-      <a
-        href={salesUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center gap-2.5 rounded-lg bg-white/10 text-foreground/80 border border-white/15 px-7 py-3.5 text-sm font-bold uppercase tracking-wider hover:bg-white/20 hover:text-gold transition-all backdrop-blur-sm"
-      >
-        <ShoppingCart className="h-4 w-4" /> Adquirir Agora
-      </a>
-    );
-  }
-
-  return null;
-}
