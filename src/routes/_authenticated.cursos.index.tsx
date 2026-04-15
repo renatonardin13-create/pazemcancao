@@ -683,38 +683,54 @@ function LockedContentCard({ item }: { item: any }) {
   return (
     <button
       onClick={handleClick}
-      className="group relative flex-shrink-0 w-[160px] sm:w-[190px] rounded-2xl overflow-hidden border border-gold/15 bg-card/5 hover:border-gold/40 transition-all duration-300 text-left cursor-pointer"
+      className="group relative flex-shrink-0 w-[200px] sm:w-[240px] rounded-2xl overflow-hidden border border-gold/20 bg-card/5 hover:border-gold/50 transition-all duration-500 text-left cursor-pointer shadow-lg shadow-black/20 hover:shadow-gold/10"
     >
       <div className="relative aspect-[3/4] overflow-hidden">
         <img
           src={item.card_cover_url || item.cover_url || "/placeholder.svg"}
           alt={item.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 brightness-50 group-hover:brightness-[0.6]"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 brightness-[0.35] group-hover:brightness-[0.45]"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-black/20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/10" />
 
-        {/* Lock overlay */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-          <div className="h-12 w-12 rounded-full bg-gold/15 border border-gold/30 flex items-center justify-center backdrop-blur-md group-hover:bg-gold/25 group-hover:border-gold/50 transition-all duration-300">
-            <Lock className="h-5 w-5 text-gold" />
+        {/* Content overlay */}
+        <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-5 gap-3">
+          {/* Title */}
+          <h3 className="font-display text-base sm:text-lg font-black text-foreground/90 leading-tight tracking-tight uppercase line-clamp-3">
+            {item.title}
+          </h3>
+
+          {/* Subtitle / description */}
+          {item.description && (
+            <p className="text-[11px] sm:text-xs text-foreground/50 leading-snug line-clamp-2 italic">
+              {item.description}
+            </p>
+          )}
+
+          {/* Lock badge */}
+          <div className="flex items-center gap-2 mt-1">
+            <div className="h-7 w-7 rounded-full bg-gold/15 border border-gold/30 flex items-center justify-center backdrop-blur-md group-hover:bg-gold/25 group-hover:border-gold/50 transition-all duration-300">
+              <Lock className="h-3 w-3 text-gold" />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[9px] font-bold text-gold uppercase tracking-[0.15em]">
+                Acesso exclusivo
+              </span>
+              <span className="text-[8px] text-muted-foreground/40">
+                Libera após a compra
+              </span>
+            </div>
           </div>
-          <span className="text-[9px] font-bold text-gold/80 uppercase tracking-[0.2em]">
-            Desbloquear
-          </span>
         </div>
 
         {item.badge_text && (
-          <div className="absolute top-2.5 left-2.5">
-            <span className="inline-flex items-center rounded-lg bg-gold/20 border border-gold/30 px-2 py-0.5 text-[8px] font-bold text-gold uppercase tracking-wider backdrop-blur-sm">
+          <div className="absolute top-3 left-3">
+            <span className="inline-flex items-center rounded-lg bg-gold/20 border border-gold/30 px-2.5 py-1 text-[8px] font-bold text-gold uppercase tracking-wider backdrop-blur-sm">
               {item.badge_text}
             </span>
           </div>
         )}
-      </div>
-      <div className="p-3">
-        <p className="text-xs font-semibold text-foreground/60 line-clamp-2 leading-tight">{item.title}</p>
-        <p className="text-[9px] text-gold/50 mt-1 uppercase tracking-wider font-medium">Saiba mais →</p>
       </div>
     </button>
   );
