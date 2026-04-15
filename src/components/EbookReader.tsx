@@ -388,33 +388,17 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
             <div className={`relative flex w-full ${dualPage ? "gap-0" : ""} rounded-lg overflow-hidden border border-border/10 shadow-2xl shadow-black/40`}>
               {dualPage && currentPages.length === 2 ? (
                 <>
-                  {/* Left page */}
                   {renderPageImage(currentPages[0], "left")}
-                  {/* Spine shadow */}
                   <div className="w-px bg-gradient-to-b from-black/20 via-black/40 to-black/20 shadow-[2px_0_8px_rgba(0,0,0,0.3),-2px_0_8px_rgba(0,0,0,0.3)]" />
-                  {/* Right page */}
                   {renderPageImage(currentPages[1], "right")}
-                </>
-              ) : dualPage && currentPages.length === 1 && spread === 0 ? (
-                <>
-                  {/* Cover centered — show as single "right" page with blank left */}
-                  <div className="flex-1 bg-gradient-to-br from-card/20 via-card/10 to-card/5 rounded-l-lg flex items-center justify-center" style={{ minHeight: "70vh" }}>
-                    <BookOpen className="h-10 w-10 text-muted-foreground/8" />
-                  </div>
-                  <div className="w-px bg-gradient-to-b from-black/20 via-black/40 to-black/20 shadow-[2px_0_8px_rgba(0,0,0,0.3),-2px_0_8px_rgba(0,0,0,0.3)]" />
-                  {renderPageImage(currentPages[0], "right")}
                 </>
               ) : dualPage && currentPages.length === 1 ? (
                 <>
-                  {/* Last page alone on left */}
                   {renderPageImage(currentPages[0], "left")}
                   <div className="w-px bg-gradient-to-b from-black/20 via-black/40 to-black/20" />
-                  <div className="flex-1 bg-gradient-to-br from-card/20 via-card/10 to-card/5 rounded-r-lg flex items-center justify-center" style={{ minHeight: "70vh" }}>
-                    <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/20 font-medium">Fim</p>
-                  </div>
+                  <div className="flex-1 bg-card/5 rounded-r-lg" style={{ minHeight: "70vh" }} />
                 </>
               ) : (
-                /* Mobile — single page */
                 currentPages.length > 0 && renderPageImage(currentPages[0], "single")
               )}
             </div>
