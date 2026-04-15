@@ -130,7 +130,77 @@ function VitrinePage() {
   );
 }
 
-/* ── Netflix Premium Hero Banner ── */
+/* ── Lazy Shelf — renders on-demand via IntersectionObserver ── */
+const LazyShelf = memo(function LazyShelf({
+  shelf, shelfIdx, isAdminShelf, adminShelfIndex, promoBanners, eager,
+}: {
+  shelf: any; shelfIdx: number; isAdminShelf: boolean; adminShelfIndex: number;
+  promoBanners: any[]; eager: boolean;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(eager);
+
+  useEffect(() => {
+    if (eager) return;
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect(); } },
+      { rootMargin: '300px 0px' },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [eager]);
+
+  return (
+    <section
+      ref={ref}
+      className="animate-in fade-in slide-in-from-bottom-4 duration-500"
+      style={{ animationDelay: eager ? `${shelfIdx * 60}ms` : '0ms', animationFillMode: 'both' }}
+    >
+      {visible ? (
+        <>
+          {/* Shelf title */}
+          <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mb-3 sm:mb-4">
+            <div className="flex items-center gap-2.5">
+              {SHELF_ICONS[shelf.id] && (
+                <span className="flex-shrink-0">{SHELF_ICONS[shelf.id]}</span>
+              )}
+              <h2 className="font-display text-lg sm:text-xl font-bold text-foreground/90 tracking-tight">
+                {shelf.name}
+              </h2>
+              <div className="flex-1 h-px bg-gradient-to-r from-gold/10 to-transparent" />
+              <span className="text-[10px] sm:text-xs text-muted-foreground/40 uppercase tracking-wider font-medium">
+                {shelf.courses.length} título{shelf.courses.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+          </div>
+
+          <NetflixCarousel courses={shelf.courses} shelfId={shelf.id} />
+
+          {isAdminShelf && promoBanners
+            .filter((b: any) => b.position_after_shelf === adminShelfIndex)
+            .map((banner: any) => (
+              <div key={banner.id} className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mt-6 animate-in fade-in slide-in-from-bottom-3 duration-500">
+                {banner.link_url ? (
+                  <a href={banner.link_url} target="_blank" rel="noopener noreferrer">
+                    <img src={banner.image_url} alt={banner.title} loading="lazy" className="w-full rounded-xl border border-border/25 hover:border-gold/20 transition-colors" />
+                  </a>
+                ) : (
+                  <img src={banner.image_url} alt={banner.title} loading="lazy" className="w-full rounded-xl border border-border/25" />
+                )}
+              </div>
+            ))}
+        </>
+      ) : (
+        /* Placeholder height to prevent layout shift */
+        <div className="h-[280px] sm:h-[320px]" />
+      )}
+    </section>
+  );
+});
+
+
 function HeroBanner({ course }: { course: any }) {
   const bannerLinkUrl = course.banner_link_url || course.sales_page_url || course.checkout_url;
   const imageUrl = course.banner_image_url || course.cover_image_url;
