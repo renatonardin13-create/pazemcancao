@@ -15,6 +15,19 @@ export const listActiveTracks = createServerFn({ method: 'POST' })
     return { tracks: tracks || [] };
 });
 
+/** Returns ALL tracks regardless of is_active — used for the full catalog view */
+export const listAllTracks = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .handler(async () => {
+    const { data: tracks, error } = await supabaseAdmin
+      .from('tracks')
+      .select('*')
+      .order('sort_order', { ascending: true });
+
+    if (error) throw new Error(error.message);
+    return { tracks: tracks || [] };
+});
+
 export const listCategories = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .handler(async () => {
