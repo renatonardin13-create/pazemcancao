@@ -28,6 +28,7 @@ export function CourseShelfCard({
   const hasProgress = showProgress && progress > 0;
   const isLocked = course.access_state === 'locked' || course.access_state === 'blocked' || course.access_state === 'expired';
   const hasFreePreview = course.access_state === 'preview';
+  const isPaidCourse = !isLocked && (course.price > 0 || course.has_checkout) && !['enrolled', 'in_progress', 'completed'].includes(course.access_state);
 
   const handleClick = useCallback(async (e: React.MouseEvent) => {
     // If locked with checkout, let the <a> handle it
@@ -106,8 +107,8 @@ export function CourseShelfCard({
             <div className="absolute top-2.5 left-2.5 z-10">{badge}</div>
           )}
 
-          {/* Premium badge for paid/locked courses */}
-          {!badge && isLocked && !hasFreePreview && (
+          {/* Premium badge for paid/locked courses OR courses with price/checkout */}
+          {!badge && (isLocked || isPaidCourse) && !hasFreePreview && (
             <div className="absolute top-2.5 left-2.5 z-10">
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-gold/95 to-amber-500/90 text-[9px] sm:text-[10px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm border border-gold/20">
                 <Lock className="h-2.5 w-2.5" />
@@ -117,7 +118,7 @@ export function CourseShelfCard({
           )}
 
           {/* Free preview badge */}
-          {!badge && hasFreePreview && !isLocked && (
+          {!badge && hasFreePreview && !isLocked && !isPaidCourse && (
             <div className="absolute top-2.5 left-2.5 z-10">
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold/90 text-[9px] sm:text-[10px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm">
                 <Play className="h-2.5 w-2.5 fill-current" />
