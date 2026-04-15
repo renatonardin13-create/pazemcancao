@@ -84,6 +84,7 @@ function AdminContentPage() {
   const [initialFreeCount, setInitialFreeCount] = useState<string>("");
   const [lockedFinalCount, setLockedFinalCount] = useState<string>("");
   const [lockedLabel, setLockedLabel] = useState("");
+  const [launchMode, setLaunchMode] = useState("none");
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [contentFile, setContentFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -150,6 +151,7 @@ function AdminContentPage() {
     setInitialFreeCount("");
     setLockedFinalCount("");
     setLockedLabel("");
+    setLaunchMode("none");
     setCoverFile(null);
     setContentFile(null);
     setEditItem(null);
@@ -178,6 +180,7 @@ function AdminContentPage() {
     setInitialFreeCount(item.initial_free_count != null ? String(item.initial_free_count) : "");
     setLockedFinalCount(item.locked_final_count != null ? String(item.locked_final_count) : "");
     setLockedLabel(item.locked_label || "");
+    setLaunchMode(item.launch_mode || "none");
     setCoverFile(null);
     setContentFile(null);
     setFormOpen(true);
