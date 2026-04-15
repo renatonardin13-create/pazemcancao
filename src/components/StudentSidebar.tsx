@@ -28,13 +28,13 @@ import { cn } from "@/lib/utils";
 /** Static lookup: slug → icon, route, prefix-match, submenu flag */
 const SLUG_META: Record<string, { icon: LucideIcon; to: string; matchPrefix?: boolean; hasSubmenu?: boolean }> = {
   vitrine:     { icon: Store,          to: "/vitrine" },
-  cursos:      { icon: GraduationCap,  to: "/cursos",   matchPrefix: true },
-  louvores:    { icon: Music2,         to: "/musicas",  matchPrefix: true, hasSubmenu: true },
-  ebooks:      { icon: BookOpen,       to: "/conteudo" },
-  trilhas:     { icon: RouteIcon,      to: "/conteudo" },
-  bonus:       { icon: Gift,           to: "/conteudo" },
-  lancamentos: { icon: Rocket,         to: "/vitrine" },
-  comunidade:  { icon: Users,          to: "/vitrine" },
+  cursos:      { icon: GraduationCap,  to: "/cursos",      matchPrefix: true },
+  louvores:    { icon: Music2,         to: "/musicas",     matchPrefix: true, hasSubmenu: true },
+  ebooks:      { icon: BookOpen,       to: "/ebooks" },
+  trilhas:     { icon: RouteIcon,      to: "/trilhas" },
+  bonus:       { icon: Gift,           to: "/bonus" },
+  lancamentos: { icon: Rocket,         to: "/lancamentos" },
+  comunidade:  { icon: Users,          to: "/comunidade" },
   perfil:      { icon: UserCircle,     to: "/perfil" },
 };
 

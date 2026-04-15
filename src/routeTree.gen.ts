@@ -16,11 +16,16 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedVitrineRouteImport } from './routes/_authenticated.vitrine'
+import { Route as AuthenticatedTrilhasRouteImport } from './routes/_authenticated.trilhas'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated.perfil'
 import { Route as AuthenticatedMusicasRouteImport } from './routes/_authenticated.musicas'
+import { Route as AuthenticatedLancamentosRouteImport } from './routes/_authenticated.lancamentos'
+import { Route as AuthenticatedEbooksRouteImport } from './routes/_authenticated.ebooks'
 import { Route as AuthenticatedDownloadsRouteImport } from './routes/_authenticated.downloads'
 import { Route as AuthenticatedCursosRouteImport } from './routes/_authenticated.cursos'
 import { Route as AuthenticatedConteudoRouteImport } from './routes/_authenticated.conteudo'
+import { Route as AuthenticatedComunidadeRouteImport } from './routes/_authenticated.comunidade'
+import { Route as AuthenticatedBonusRouteImport } from './routes/_authenticated.bonus'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
 import { Route as AuthenticatedCursosIndexRouteImport } from './routes/_authenticated.cursos.index'
 import { Route as AuthenticatedConteudoIndexRouteImport } from './routes/_authenticated.conteudo.index'
@@ -82,6 +87,11 @@ const AuthenticatedVitrineRoute = AuthenticatedVitrineRouteImport.update({
   path: '/vitrine',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedTrilhasRoute = AuthenticatedTrilhasRouteImport.update({
+  id: '/trilhas',
+  path: '/trilhas',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
@@ -90,6 +100,17 @@ const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
 const AuthenticatedMusicasRoute = AuthenticatedMusicasRouteImport.update({
   id: '/musicas',
   path: '/musicas',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedLancamentosRoute =
+  AuthenticatedLancamentosRouteImport.update({
+    id: '/lancamentos',
+    path: '/lancamentos',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedEbooksRoute = AuthenticatedEbooksRouteImport.update({
+  id: '/ebooks',
+  path: '/ebooks',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedDownloadsRoute = AuthenticatedDownloadsRouteImport.update({
@@ -105,6 +126,16 @@ const AuthenticatedCursosRoute = AuthenticatedCursosRouteImport.update({
 const AuthenticatedConteudoRoute = AuthenticatedConteudoRouteImport.update({
   id: '/conteudo',
   path: '/conteudo',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedComunidadeRoute = AuthenticatedComunidadeRouteImport.update({
+  id: '/comunidade',
+  path: '/comunidade',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedBonusRoute = AuthenticatedBonusRouteImport.update({
+  id: '/bonus',
+  path: '/bonus',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -267,11 +298,16 @@ export interface FileRoutesByFullPath {
   '/termos': typeof TermosRoute
   '/webhook': typeof WebhookRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/bonus': typeof AuthenticatedBonusRoute
+  '/comunidade': typeof AuthenticatedComunidadeRoute
   '/conteudo': typeof AuthenticatedConteudoRouteWithChildren
   '/cursos': typeof AuthenticatedCursosRouteWithChildren
   '/downloads': typeof AuthenticatedDownloadsRoute
+  '/ebooks': typeof AuthenticatedEbooksRoute
+  '/lancamentos': typeof AuthenticatedLancamentosRoute
   '/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/perfil': typeof AuthenticatedPerfilRoute
+  '/trilhas': typeof AuthenticatedTrilhasRoute
   '/vitrine': typeof AuthenticatedVitrineRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
@@ -305,9 +341,14 @@ export interface FileRoutesByTo {
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
   '/webhook': typeof WebhookRoute
+  '/bonus': typeof AuthenticatedBonusRoute
+  '/comunidade': typeof AuthenticatedComunidadeRoute
   '/downloads': typeof AuthenticatedDownloadsRoute
+  '/ebooks': typeof AuthenticatedEbooksRoute
+  '/lancamentos': typeof AuthenticatedLancamentosRoute
   '/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/perfil': typeof AuthenticatedPerfilRoute
+  '/trilhas': typeof AuthenticatedTrilhasRoute
   '/vitrine': typeof AuthenticatedVitrineRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
@@ -342,11 +383,16 @@ export interface FileRoutesById {
   '/termos': typeof TermosRoute
   '/webhook': typeof WebhookRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/bonus': typeof AuthenticatedBonusRoute
+  '/_authenticated/comunidade': typeof AuthenticatedComunidadeRoute
   '/_authenticated/conteudo': typeof AuthenticatedConteudoRouteWithChildren
   '/_authenticated/cursos': typeof AuthenticatedCursosRouteWithChildren
   '/_authenticated/downloads': typeof AuthenticatedDownloadsRoute
+  '/_authenticated/ebooks': typeof AuthenticatedEbooksRoute
+  '/_authenticated/lancamentos': typeof AuthenticatedLancamentosRoute
   '/_authenticated/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
+  '/_authenticated/trilhas': typeof AuthenticatedTrilhasRoute
   '/_authenticated/vitrine': typeof AuthenticatedVitrineRoute
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/_authenticated/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
@@ -383,11 +429,16 @@ export interface FileRouteTypes {
     | '/termos'
     | '/webhook'
     | '/admin'
+    | '/bonus'
+    | '/comunidade'
     | '/conteudo'
     | '/cursos'
     | '/downloads'
+    | '/ebooks'
+    | '/lancamentos'
     | '/musicas'
     | '/perfil'
+    | '/trilhas'
     | '/vitrine'
     | '/admin/categories'
     | '/admin/conteudos'
@@ -421,9 +472,14 @@ export interface FileRouteTypes {
     | '/privacidade'
     | '/termos'
     | '/webhook'
+    | '/bonus'
+    | '/comunidade'
     | '/downloads'
+    | '/ebooks'
+    | '/lancamentos'
     | '/musicas'
     | '/perfil'
+    | '/trilhas'
     | '/vitrine'
     | '/admin/categories'
     | '/admin/conteudos'
@@ -457,11 +513,16 @@ export interface FileRouteTypes {
     | '/termos'
     | '/webhook'
     | '/_authenticated/admin'
+    | '/_authenticated/bonus'
+    | '/_authenticated/comunidade'
     | '/_authenticated/conteudo'
     | '/_authenticated/cursos'
     | '/_authenticated/downloads'
+    | '/_authenticated/ebooks'
+    | '/_authenticated/lancamentos'
     | '/_authenticated/musicas'
     | '/_authenticated/perfil'
+    | '/_authenticated/trilhas'
     | '/_authenticated/vitrine'
     | '/_authenticated/admin/categories'
     | '/_authenticated/admin/conteudos'
@@ -551,6 +612,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedVitrineRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/trilhas': {
+      id: '/_authenticated/trilhas'
+      path: '/trilhas'
+      fullPath: '/trilhas'
+      preLoaderRoute: typeof AuthenticatedTrilhasRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/perfil': {
       id: '/_authenticated/perfil'
       path: '/perfil'
@@ -563,6 +631,20 @@ declare module '@tanstack/react-router' {
       path: '/musicas'
       fullPath: '/musicas'
       preLoaderRoute: typeof AuthenticatedMusicasRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/lancamentos': {
+      id: '/_authenticated/lancamentos'
+      path: '/lancamentos'
+      fullPath: '/lancamentos'
+      preLoaderRoute: typeof AuthenticatedLancamentosRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/ebooks': {
+      id: '/_authenticated/ebooks'
+      path: '/ebooks'
+      fullPath: '/ebooks'
+      preLoaderRoute: typeof AuthenticatedEbooksRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/downloads': {
@@ -584,6 +666,20 @@ declare module '@tanstack/react-router' {
       path: '/conteudo'
       fullPath: '/conteudo'
       preLoaderRoute: typeof AuthenticatedConteudoRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/comunidade': {
+      id: '/_authenticated/comunidade'
+      path: '/comunidade'
+      fullPath: '/comunidade'
+      preLoaderRoute: typeof AuthenticatedComunidadeRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/bonus': {
+      id: '/_authenticated/bonus'
+      path: '/bonus'
+      fullPath: '/bonus'
+      preLoaderRoute: typeof AuthenticatedBonusRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/admin': {
@@ -885,22 +981,32 @@ const AuthenticatedMusicasRouteWithChildren =
 
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+  AuthenticatedBonusRoute: typeof AuthenticatedBonusRoute
+  AuthenticatedComunidadeRoute: typeof AuthenticatedComunidadeRoute
   AuthenticatedConteudoRoute: typeof AuthenticatedConteudoRouteWithChildren
   AuthenticatedCursosRoute: typeof AuthenticatedCursosRouteWithChildren
   AuthenticatedDownloadsRoute: typeof AuthenticatedDownloadsRoute
+  AuthenticatedEbooksRoute: typeof AuthenticatedEbooksRoute
+  AuthenticatedLancamentosRoute: typeof AuthenticatedLancamentosRoute
   AuthenticatedMusicasRoute: typeof AuthenticatedMusicasRouteWithChildren
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
+  AuthenticatedTrilhasRoute: typeof AuthenticatedTrilhasRoute
   AuthenticatedVitrineRoute: typeof AuthenticatedVitrineRoute
   AuthenticatedLouvorTrackIdRoute: typeof AuthenticatedLouvorTrackIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+  AuthenticatedBonusRoute: AuthenticatedBonusRoute,
+  AuthenticatedComunidadeRoute: AuthenticatedComunidadeRoute,
   AuthenticatedConteudoRoute: AuthenticatedConteudoRouteWithChildren,
   AuthenticatedCursosRoute: AuthenticatedCursosRouteWithChildren,
   AuthenticatedDownloadsRoute: AuthenticatedDownloadsRoute,
+  AuthenticatedEbooksRoute: AuthenticatedEbooksRoute,
+  AuthenticatedLancamentosRoute: AuthenticatedLancamentosRoute,
   AuthenticatedMusicasRoute: AuthenticatedMusicasRouteWithChildren,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
+  AuthenticatedTrilhasRoute: AuthenticatedTrilhasRoute,
   AuthenticatedVitrineRoute: AuthenticatedVitrineRoute,
   AuthenticatedLouvorTrackIdRoute: AuthenticatedLouvorTrackIdRoute,
 }
