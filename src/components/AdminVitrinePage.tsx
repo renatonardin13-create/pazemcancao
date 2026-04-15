@@ -745,6 +745,20 @@ export default function AdminVitrinePage() {
                   recommendedSize="1920x600"
                 />
 
+                {/* Link URL */}
+                <div className="space-y-2">
+                  <Label className="text-sm text-foreground/60 font-medium">URL de destino (link clicável)</Label>
+                  <Input
+                    value={bannerLinkUrl}
+                    onChange={(e) => setBannerLinkUrl(e.target.value)}
+                    placeholder="https://exemplo.com/pagina-de-vendas"
+                    className="bg-card/20 border-border/30 text-sm"
+                  />
+                  <p className="text-[10px] text-muted-foreground/50">
+                    Se preenchido, o banner será clicável e redirecionará para esta URL
+                  </p>
+                </div>
+
                 {/* Save button */}
                 <Button
                   size="sm"
