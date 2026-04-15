@@ -46,6 +46,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, onBack }: EbookReaderProp
   const [direction, setDirection] = useState<"left" | "right">("right");
   const [scale, setScale] = useState(1);
   const [error, setError] = useState<string | null>(null);
+  const [pageTexts, setPageTexts] = useState<Record<number, string>>({});
 
   // Page image cache: pageNum → dataURL
   const [pageImages, setPageImages] = useState<Record<number, string>>({});
