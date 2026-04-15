@@ -4,8 +4,9 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 export const getPlatformSettings = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { data, error } = await context.supabase
+  .handler(async () => {
+    // Use admin client — platform settings are global config, not user-specific
+    const { data, error } = await supabaseAdmin
       .from('platform_settings')
       .select('key, value');
 
