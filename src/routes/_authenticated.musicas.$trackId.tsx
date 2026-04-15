@@ -1,11 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { logDownload } from "@/lib/analytics.functions";
-import { ArrowLeft, Download, Play, Pause, Music, Heart } from "lucide-react";
+import { ArrowLeft, Download, Play, Pause, Music, Heart, Lock } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getTrackById, listActiveTracks } from "@/lib/tracks.functions";
+import { checkBuyerAccess } from "@/lib/access.functions";
 import { usePlayer } from "@/hooks/use-player";
 import { motion } from "framer-motion";
 import type { Track } from "@/lib/sample-tracks";
+import { StudentLayout } from "@/components/StudentLayout";
 
 export const Route = createFileRoute("/_authenticated/musicas/$trackId")({
   component: MusicDetailPage,
@@ -62,6 +64,17 @@ function dbTrackToPlayerTrack(track: any): Track {
 function MusicDetailPage() {
   const { trackId } = Route.useParams();
 
+  const { data: accessData, isLoading: accessLoading } = useQuery({
+    queryKey: ["buyer-access"],
+    queryFn: () => checkBuyerAccess(),
+    staleTime: 5 * 60 * 1000,
+  });
+
+  const isBlocked = accessData?.isBlocked === true;
+  const isLocked = accessData?.trialExpired === true || isBlocked;
+  const hasAccess = accessData?.hasAccess === true && !isLocked;
+  const canDownload = accessData?.canDownload !== false;
+
   const { data, isLoading } = useQuery({
     queryKey: ["track", trackId],
     queryFn: () => getTrackById({ data: { id: trackId } }),
@@ -77,24 +90,65 @@ function MusicDetailPage() {
   const track = data?.track;
   const allTracks = allTracksData?.tracks || [];
 
-  if (isLoading) {
+  if (isLoading || accessLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="w-px h-12 mx-auto bg-gradient-to-b from-transparent via-gold/15 to-transparent animate-breathe mb-6" />
-      </div>
+      <StudentLayout>
+        <div className="flex min-h-screen items-center justify-center bg-background">
+          <div className="w-px h-12 mx-auto bg-gradient-to-b from-transparent via-gold/15 to-transparent animate-breathe mb-6" />
+        </div>
+      </StudentLayout>
     );
   }
 
   if (!track) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="text-center">
-          <p className="text-muted-foreground/50">Música não encontrada.</p>
-          <Link to="/musicas" search={{}} className="mt-4 inline-block text-gold/70 hover:text-gold/80 text-sm">
-            Voltar à biblioteca
-          </Link>
+      <StudentLayout>
+        <div className="flex min-h-screen items-center justify-center bg-background">
+          <div className="text-center">
+            <p className="text-muted-foreground/50">Música não encontrada.</p>
+            <Link to="/musicas" search={{}} className="mt-4 inline-block text-gold/70 hover:text-gold/80 text-sm">
+              Voltar à biblioteca
+            </Link>
+          </div>
         </div>
-      </div>
+      </StudentLayout>
+    );
+  }
+
+  // Block access if user doesn't have permission
+  if (!hasAccess) {
+    const salesUrl = "https://pazemcancao-oficial.lovable.app";
+    return (
+      <StudentLayout>
+        <div className="flex min-h-screen items-center justify-center bg-background">
+          <div className="text-center max-w-sm mx-auto px-6 space-y-6">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-2xl bg-gold/5 border border-gold/15">
+              <Lock className="h-8 w-8 text-gold/50" />
+            </div>
+            <h2 className="font-display text-xl font-bold text-foreground/80">
+              Conteúdo restrito
+            </h2>
+            <p className="text-sm text-muted-foreground/50">
+              {isBlocked
+                ? "Seu acesso foi desativado. Adquira o acesso completo para ouvir este louvor."
+                : "Você precisa ter acesso para ouvir este louvor."}
+            </p>
+            <a
+              href={salesUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-gold/15 text-gold/70 border border-gold/20 px-6 py-2.5 text-[12px] font-semibold tracking-wider uppercase hover:bg-gold/25 hover:text-gold/90 transition-all duration-500"
+            >
+              Adquira aqui
+            </a>
+            <div>
+              <Link to="/musicas" search={{}} className="text-xs text-muted-foreground/40 hover:text-gold/60 transition-colors">
+                ← Voltar às músicas
+              </Link>
+            </div>
+          </div>
+        </div>
+      </StudentLayout>
     );
   }
 
@@ -117,6 +171,7 @@ function MusicDetailPage() {
   };
 
   return (
+    <StudentLayout>
     <div className="min-h-screen bg-background pb-32 relative">
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_60%_50%_at_50%_30%,var(--color-gold)/0.03,transparent_70%)]" />
 
