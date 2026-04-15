@@ -210,14 +210,16 @@ export function StudentSidebar() {
         <div className="my-4 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
         {/* Perfil */}
-        <Link
-          to="/perfil"
-          onClick={() => setMobileOpen(false)}
-          className={navItemClass(isActive("/perfil"))}
-        >
-          <UserCircle className="h-[22px] w-[22px] shrink-0" />
-          Perfil
-        </Link>
+        {showPerfil && (
+          <Link
+            to="/perfil"
+            onClick={() => setMobileOpen(false)}
+            className={navItemClass(isActive("/perfil"))}
+          >
+            <UserCircle className="h-[22px] w-[22px] shrink-0" />
+            Perfil
+          </Link>
+        )}
 
         {/* Admin */}
         {!adminLoading && isAdmin && (
