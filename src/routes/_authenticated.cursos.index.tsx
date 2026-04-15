@@ -10,7 +10,7 @@ import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { CourseShelfCard } from "@/components/CourseShelfCard";
 import { motion } from "framer-motion";
-import { BookOpen, Search, ArrowRight, PlayCircle, Heart, Play, Layers, CheckCircle2, Unlock, Clock, Gift, Lock, ChevronLeft, ChevronRight } from "lucide-react";
+import { BookOpen, Search, ArrowRight, Play, Clock, Gift, Lock, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState, useMemo, useRef, useCallback } from "react";
 import { useDragScroll } from "@/hooks/use-drag-scroll";
 import { Input } from "@/components/ui/input";
@@ -160,7 +160,12 @@ function MeusCoursosPage() {
                       <ShelfRow>
                         {continueWatchingCourses.map((course: any, idx: number) => (
                           <ShelfItem key={`cw-${course.id}`} index={idx}>
-                            <ContinueWatchingCard course={course} />
+                            <CourseShelfCard
+                              course={course}
+                              showProgress
+                              showStatusBadge
+                              subtitle={`${course.completed_lessons || 0}/${course.total_lessons || 0} aulas`}
+                            />
                           </ShelfItem>
                         ))}
                       </ShelfRow>
@@ -174,7 +179,12 @@ function MeusCoursosPage() {
                       <ShelfRow>
                         {myCourses.map((course: any, idx: number) => (
                           <ShelfItem key={`mc-${course.id}`} index={idx}>
-                            <MyCoursesCard course={course} />
+                            <CourseShelfCard
+                              course={course}
+                              showProgress
+                              showStatusBadge
+                              subtitle={`${course.completed_lessons || 0}/${course.lesson_count || course.total_lessons || 0} aulas`}
+                            />
                           </ShelfItem>
                         ))}
                       </ShelfRow>
@@ -524,119 +534,7 @@ function HeroBanner({ course }: { course: any }) {
   return bannerContent;
 }
 
-/* ══════════════════════════════════════════════════════════════
-   CONTINUE WATCHING CARD
-   ══════════════════════════════════════════════════════════════ */
 
-function ContinueWatchingCard({ course }: { course: any }) {
-  const progress = course.progress_pct ?? 0;
-  const linkTo = course.resume_lesson_id ? "/cursos/$courseId/aula/$lessonId" : "/cursos/$courseId";
-  const linkParams = course.resume_lesson_id
-    ? { courseId: course.id, lessonId: course.resume_lesson_id }
-    : { courseId: course.id };
-
-  return (
-    <Link to={linkTo as any} params={linkParams as any} className="group relative block rounded-2xl overflow-hidden cursor-pointer">
-      <div className="relative aspect-[2/3] overflow-hidden bg-card/5 shadow-lg shadow-black/20 md:group-hover:shadow-2xl md:group-hover:shadow-black/40 transition-shadow duration-500 rounded-2xl">
-        {course.cover_image_url ? (
-          <img src={course.cover_image_url} alt={course.title} className="w-full h-full object-cover md:transition-transform md:duration-[800ms] md:ease-out md:group-hover:scale-[1.08]" loading="lazy" />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-card/40 via-muted/10 to-background flex items-center justify-center">
-            <BookOpen className="h-10 w-10 text-muted-foreground/10" />
-          </div>
-        )}
-
-        <div className="absolute inset-0 bg-black/0 md:group-hover:bg-black/45 transition-all duration-500" />
-        <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-
-        {/* Play button */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 md:group-hover:opacity-100 transition-all duration-500 z-10">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gold shadow-2xl shadow-gold/30 scale-[0.6] md:group-hover:scale-100 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
-            <Play className="h-6 w-6 text-gold-foreground fill-gold-foreground ml-0.5" />
-          </div>
-        </div>
-
-        {/* Title + progress */}
-        <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 z-10">
-          <h3 className="text-[14px] font-bold text-white line-clamp-2 leading-[1.3] drop-shadow-xl tracking-tight">{course.title}</h3>
-          <p className="text-[10px] text-white/40 mt-1">
-            {course.completed_lessons}/{course.total_lessons} aulas • {progress}%
-          </p>
-        </div>
-
-        {/* Progress bar */}
-        <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/[0.06] z-20">
-          <div className="h-full rounded-r-full bg-gold transition-all duration-700" style={{ width: `${Math.min(progress, 100)}%` }} />
-        </div>
-      </div>
-      <div className="absolute inset-0 rounded-2xl border border-transparent md:group-hover:border-gold/15 transition-colors duration-500 pointer-events-none z-20" />
-    </Link>
-  );
-}
-
-/* ══════════════════════════════════════════════════════════════
-   MY COURSES CARD
-   ══════════════════════════════════════════════════════════════ */
-
-function MyCoursesCard({ course }: { course: any }) {
-  const progress = course.progress_pct ?? 0;
-  const isCompleted = progress >= 100;
-  const isInProgress = progress > 0 && progress < 100;
-
-  return (
-    <Link to="/cursos/$courseId" params={{ courseId: course.id }} className="group relative block rounded-2xl overflow-hidden cursor-pointer">
-      <div className="relative aspect-[2/3] overflow-hidden bg-card/5 shadow-lg shadow-black/20 md:group-hover:shadow-2xl md:group-hover:shadow-black/40 transition-shadow duration-500 rounded-2xl">
-        {course.cover_image_url ? (
-          <img src={course.cover_image_url} alt={course.title} className="w-full h-full object-cover md:transition-transform md:duration-[800ms] md:ease-out md:group-hover:scale-[1.08]" loading="lazy" />
-        ) : (
-          <div className="w-full h-full bg-gradient-to-br from-card/40 via-muted/10 to-background flex items-center justify-center">
-            <BookOpen className="h-10 w-10 text-muted-foreground/10" />
-          </div>
-        )}
-
-        <div className="absolute inset-0 bg-black/0 md:group-hover:bg-black/45 transition-all duration-500" />
-        <div className="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
-
-        {/* Status badge */}
-        <div className="absolute top-3 left-3 z-10">
-          {isCompleted ? (
-            <span className="inline-flex items-center gap-1 rounded-lg bg-emerald-500/90 px-2 py-0.5 text-[9px] font-bold text-white uppercase tracking-wider backdrop-blur-sm">
-              <CheckCircle2 className="h-2.5 w-2.5" /> Concluído
-            </span>
-          ) : isInProgress ? (
-            <span className="inline-flex items-center gap-1 rounded-lg bg-gold/90 px-2 py-0.5 text-[9px] font-bold text-background uppercase tracking-wider backdrop-blur-sm">
-              <Play className="h-2.5 w-2.5 fill-current" /> Em andamento
-            </span>
-          ) : null}
-        </div>
-
-        {/* Play button */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 md:group-hover:opacity-100 transition-all duration-500 z-10">
-          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gold shadow-2xl shadow-gold/30 scale-[0.6] md:group-hover:scale-100 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]">
-            <Play className="h-6 w-6 text-gold-foreground fill-gold-foreground ml-0.5" />
-          </div>
-        </div>
-
-        {/* Title */}
-        <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5 z-10">
-          <h3 className="text-[14px] font-bold text-white line-clamp-2 leading-[1.3] drop-shadow-xl tracking-tight">{course.title}</h3>
-          <p className="text-[10px] text-white/40 mt-1">
-            {course.completed_lessons}/{course.lesson_count || course.total_lessons} aulas
-            {isInProgress && ` • ${progress}%`}
-          </p>
-        </div>
-
-        {/* Progress bar */}
-        {(isInProgress || isCompleted) && (
-          <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-white/[0.06] z-20">
-            <div className={`h-full rounded-r-full transition-all duration-700 ${isCompleted ? "bg-emerald-400" : "bg-gold"}`} style={{ width: `${Math.min(progress, 100)}%` }} />
-          </div>
-        )}
-      </div>
-      <div className="absolute inset-0 rounded-2xl border border-transparent md:group-hover:border-gold/15 transition-colors duration-500 pointer-events-none z-20" />
-    </Link>
-  );
-}
 
 /* ══════════════════════════════════════════════════════════════
    LIBRARY CONTENT CARD (unlocked / favorites / bonus)
