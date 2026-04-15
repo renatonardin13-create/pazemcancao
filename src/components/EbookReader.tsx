@@ -365,6 +365,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   const ebookAudio = useEbookAudio({
     audioUrl,
     pageText: currentPageText || undefined,
+    nextPageText: nextPageText || undefined,
     onPageNarrationEnd: handlePageNarrationEnd,
   });
 
