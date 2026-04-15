@@ -177,6 +177,7 @@ export default function AdminVitrinePage() {
   // Form state
   const [formName, setFormName] = useState("");
   const [formActive, setFormActive] = useState(true);
+  const [formShowInVitrine, setFormShowInVitrine] = useState(true);
   const [formMode, setFormMode] = useState<string>("manual");
   const [formCriteria, setFormCriteria] = useState("recent");
   const [formOrder, setFormOrder] = useState(0);
@@ -418,6 +419,7 @@ export default function AdminVitrinePage() {
     setEditingShelf(null);
     setFormName("");
     setFormActive(true);
+    setFormShowInVitrine(true);
     setFormMode("manual");
     setFormCriteria("recent");
     setFormOrder(shelves.length);
@@ -428,6 +430,7 @@ export default function AdminVitrinePage() {
     setEditingShelf(shelf);
     setFormName(shelf.name);
     setFormActive(shelf.is_active);
+    setFormShowInVitrine(shelf.show_in_vitrine !== false);
     setFormMode(shelf.mode);
     setFormCriteria(shelf.auto_criteria || "recent");
     setFormOrder(shelf.sort_order);
@@ -516,6 +519,7 @@ export default function AdminVitrinePage() {
     const payload = {
       name: formName,
       is_active: formActive,
+      show_in_vitrine: formShowInVitrine,
       mode: formMode,
       auto_criteria: formMode === "auto" ? formCriteria : undefined,
       sort_order: formOrder,
@@ -1107,6 +1111,7 @@ export default function AdminVitrinePage() {
               const payload = {
                 name: formName,
                 is_active: formActive,
+                show_in_vitrine: formShowInVitrine,
                 mode: formMode,
                 auto_criteria: formMode === "auto" ? formCriteria : undefined,
                 sort_order: formOrder,
@@ -1203,9 +1208,19 @@ export default function AdminVitrinePage() {
                 </div>
               )}
 
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-foreground/60">Exibir na vitrine</span>
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <span className="text-sm font-medium text-foreground/60">Prateleira ativa</span>
+                  <p className="text-[10px] text-muted-foreground/50">Habilita ou desabilita a prateleira no sistema</p>
+                </div>
                 <Switch checked={formActive} onCheckedChange={setFormActive} />
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <span className="text-sm font-medium text-foreground/60">Exibir na vitrine</span>
+                  <p className="text-[10px] text-muted-foreground/50">Controla se aparece na vitrine do aluno</p>
+                </div>
+                <Switch checked={formShowInVitrine} onCheckedChange={setFormShowInVitrine} />
               </div>
             </div>
 
