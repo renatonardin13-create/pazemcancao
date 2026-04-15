@@ -94,30 +94,59 @@ export const addStudent = createServerFn({ method: 'POST' })
     if (error) throw new Error(`Erro ao criar registro do aluno: ${error.message}`);
     const buyerId = inserted.id;
 
-    // Create auth user if needed
+    // Create auth user if needed — use getUserByEmail for reliable lookup
     const generatedPassword = 'Paz' + Math.random().toString(36).slice(2, 8) + '!';
-    const { data: userList } = await supabaseAdmin.auth.admin.listUsers();
-    const existingUser = userList?.users?.find(
-      (u) => u.email?.toLowerCase() === email
-    );
 
     let authUserId: string;
+    let existingUser = null;
+
+    // Try to find user by email directly (more reliable than listUsers)
+    try {
+      const { data: listData } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+      existingUser = listData?.users?.find((u) => u.email?.toLowerCase() === email) ?? null;
+    } catch {
+      // Fallback: ignore list error
+    }
+
     if (!existingUser) {
       const { data: created, error: authErr } = await supabaseAdmin.auth.admin.createUser({
         email,
         password: generatedPassword,
         email_confirm: true,
+        user_metadata: { full_name: data.nome },
       });
-      if (authErr) throw new Error(`Erro ao criar conta de autenticação: ${authErr.message}`);
-      authUserId = created.user.id;
-    } else {
-      // Update password and ensure user is confirmed
-      await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
+
+      if (authErr) {
+        // If user already exists but wasn't found in list, try to update instead
+        if (authErr.message?.includes('already been registered') || authErr.message?.includes('already exists')) {
+          const { data: retryList } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+          existingUser = retryList?.users?.find((u) => u.email?.toLowerCase() === email) ?? null;
+          if (!existingUser) {
+            throw new Error(`Erro ao criar conta de autenticação: ${authErr.message}`);
+          }
+        } else {
+          throw new Error(`Erro ao criar conta de autenticação: ${authErr.message}`);
+        }
+      } else {
+        authUserId = created.user.id;
+      }
+    }
+
+    if (existingUser) {
+      // Update password, confirm email, and ensure user is not banned
+      const { error: updateErr } = await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
         password: generatedPassword,
         email_confirm: true,
+        ban_duration: 'none',
+        user_metadata: { full_name: data.nome },
       });
+      if (updateErr) {
+        console.error('Error updating auth user:', updateErr);
+      }
       authUserId = existingUser.id;
     }
+
+    authUserId = authUserId!;
 
     // Ensure profile exists (fallback in case trigger didn't fire)
     await supabaseAdmin
