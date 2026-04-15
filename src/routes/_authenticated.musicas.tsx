@@ -293,27 +293,25 @@ function MusicLibraryPage() {
                     <div className="flex-1 h-px bg-gradient-to-r from-amber-500/15 to-transparent" />
                   </div>
 
-                  <div className="relative -mx-1">
-                    <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory px-1">
-                      {bonusTracks.map((track: any, idx: number) => (
-                        <TrackCard
-                          key={track.id}
-                          track={track}
-                          idx={idx}
-                          icon="🎁"
-                          catTracks={bonusTracks}
-                          isCarousel={true}
-                          activeTrackRef={activeTrackRef}
-                          currentTrack={currentTrack}
-                          playing={playing}
-                          progress={progress}
-                          handlePlayWithQueue={handlePlayWithQueue}
-                          canDownload={canDownload}
-                          isLocked={isLocked}
-                        />
-                      ))}
-                    </div>
-                  </div>
+                  <ScrollableCarousel>
+                    {bonusTracks.map((track: any, idx: number) => (
+                      <TrackCard
+                        key={track.id}
+                        track={track}
+                        idx={idx}
+                        icon="🎁"
+                        catTracks={bonusTracks}
+                        isCarousel={true}
+                        activeTrackRef={activeTrackRef}
+                        currentTrack={currentTrack}
+                        playing={playing}
+                        progress={progress}
+                        handlePlayWithQueue={handlePlayWithQueue}
+                        canDownload={canDownload}
+                        isLocked={isLocked}
+                      />
+                    ))}
+                  </ScrollableCarousel>
                 </div>
               </motion.section>
             )}
