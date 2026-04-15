@@ -516,7 +516,12 @@ function TrackCard({
       // Redirect to sales page for locked content
       window.open(SALES_URL, "_blank");
     }
-  };
+
+  return (
+    <div ref={isThis ? activeTrackRef : undefined}>
+      <Wrapper
+        {...(wrapperProps as any)}
+        onClick={effectiveLocked ? handleLockedClick : undefined}
         className={`group relative cursor-pointer block ${
           isCarousel ? "snap-start shrink-0 w-[200px] sm:w-[220px]" : ""
         }`}
