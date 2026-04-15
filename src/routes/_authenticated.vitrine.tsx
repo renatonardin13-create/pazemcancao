@@ -4,9 +4,9 @@ import { getStudentShelves } from "@/lib/shelves.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { motion } from "framer-motion";
-import { Store, Lock, Play, ArrowRight, ShoppingCart, Search } from "lucide-react";
+import { Store, Lock, Play, ArrowRight, ShoppingCart, Search, ChevronLeft, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef, useCallback } from "react";
 
 export const Route = createFileRoute("/_authenticated/vitrine")({
   component: VitrinePage,
@@ -138,14 +138,8 @@ function VitrinePage() {
                       </span>
                     </div>
 
-                    {/* Horizontal scroll */}
-                    <div className="relative -mx-4 sm:-mx-8 px-4 sm:px-8">
-                      <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
-                        {shelf.courses.map((course: any) => (
-                          <CourseCard key={course.id} course={course} />
-                        ))}
-                      </div>
-                    </div>
+                    {/* Horizontal scroll with arrows */}
+                    <ShelfCarousel courses={shelf.courses} />
 
                     {/* Promo banner after shelf */}
                     {promoBanners
@@ -188,6 +182,75 @@ function VitrinePage() {
   );
 }
 
+/* ── Shelf Carousel with arrow navigation ── */
+function ShelfCarousel({ courses }: { courses: any[] }) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 4);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+  }, []);
+
+  const scroll = useCallback((dir: 'left' | 'right') => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const amount = el.clientWidth * 0.75;
+    el.scrollBy({ left: dir === 'left' ? -amount : amount, behavior: 'smooth' });
+  }, []);
+
+  return (
+    <div className="relative group/shelf -mx-4 sm:-mx-8">
+      {/* Left arrow */}
+      {canScrollLeft && (
+        <button
+          onClick={() => scroll('left')}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-background/90 border border-border/30 shadow-lg backdrop-blur-sm text-foreground/60 hover:text-gold hover:border-gold/30 transition-all opacity-0 group-hover/shelf:opacity-100"
+        >
+          <ChevronLeft className="h-5 w-5" />
+        </button>
+      )}
+
+      {/* Right arrow */}
+      {canScrollRight && (
+        <button
+          onClick={() => scroll('right')}
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-background/90 border border-border/30 shadow-lg backdrop-blur-sm text-foreground/60 hover:text-gold hover:border-gold/30 transition-all opacity-0 group-hover/shelf:opacity-100"
+        >
+          <ChevronRight className="h-5 w-5" />
+        </button>
+      )}
+
+      <div
+        ref={scrollRef}
+        onScroll={checkScroll}
+        onLoad={checkScroll}
+        className="flex gap-5 overflow-x-auto pb-4 px-4 sm:px-8 scrollbar-hide snap-x snap-mandatory"
+        style={{ scrollbarWidth: 'none' }}
+      >
+        {courses.map((course: any) => (
+          <CourseCard key={course.id} course={course} />
+        ))}
+      </div>
+
+      {/* Check scroll on mount */}
+      <ScrollCheck scrollRef={scrollRef} onCheck={checkScroll} />
+    </div>
+  );
+}
+
+function ScrollCheck({ scrollRef, onCheck }: { scrollRef: React.RefObject<HTMLDivElement | null>; onCheck: () => void }) {
+  // Check after render
+  useState(() => {
+    setTimeout(onCheck, 100);
+  });
+  return null;
+}
+
+/* ── Fixed-size Course Card ── */
 function CourseCard({ course }: { course: any }) {
   const isEnrolled = course.access_state === "enrolled" || course.access_state === "in_progress" || course.access_state === "completed";
   const isInProgress = course.access_state === "in_progress";
@@ -206,8 +269,9 @@ function CourseCard({ course }: { course: any }) {
   };
 
   const cardContent = (
-    <div className="group relative w-[200px] sm:w-[240px] md:w-[280px] shrink-0 snap-start">
-      <div className="relative aspect-[2/3] rounded-2xl overflow-hidden border border-border/25 transition-all duration-500 group-hover:border-gold/30 group-hover:shadow-xl group-hover:shadow-gold/5 group-hover:scale-[1.03]">
+    <div className="group relative w-[180px] sm:w-[200px] md:w-[220px] shrink-0 snap-start">
+      {/* Fixed height card */}
+      <div className="relative w-full h-[270px] sm:h-[300px] md:h-[330px] rounded-2xl overflow-hidden border border-border/25 transition-all duration-500 group-hover:border-gold/30 group-hover:shadow-xl group-hover:shadow-gold/5 group-hover:scale-[1.03]">
         {/* Image */}
         {course.cover_image_url ? (
           <img
@@ -227,10 +291,10 @@ function CourseCard({ course }: { course: any }) {
         {/* Lock overlay for locked/blocked */}
         {isDimmed && (
           <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-            <div className="w-16 h-16 rounded-full bg-black/60 backdrop-blur-lg border border-gold/25 flex items-center justify-center mb-3 shadow-lg shadow-black/30">
-              <Lock className="h-7 w-7 text-gold/80" />
+            <div className="w-14 h-14 rounded-full bg-black/60 backdrop-blur-lg border border-gold/25 flex items-center justify-center mb-2 shadow-lg shadow-black/30">
+              <Lock className="h-6 w-6 text-gold/80" />
             </div>
-            <span className="text-xs font-bold uppercase tracking-widest text-gold/80">
+            <span className="text-[10px] font-bold uppercase tracking-widest text-gold/80">
               {isBlocked ? "Bloqueado" : isExpired ? "Expirado" : "Premium"}
             </span>
           </div>
@@ -238,18 +302,18 @@ function CourseCard({ course }: { course: any }) {
 
         {/* Top badges */}
         {isLocked && !isBlocked && !isExpired && (
-          <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 rounded-full bg-gold/20 backdrop-blur-md px-3 py-1.5 border border-gold/30 shadow-lg">
-            <ShoppingCart className="h-3 w-3 text-gold" />
-            <span className="text-[11px] font-bold uppercase tracking-wider text-gold">
+          <div className="absolute top-2.5 right-2.5 z-20 flex items-center gap-1 rounded-full bg-gold/20 backdrop-blur-md px-2.5 py-1 border border-gold/30 shadow-lg">
+            <ShoppingCart className="h-2.5 w-2.5 text-gold" />
+            <span className="text-[10px] font-bold uppercase tracking-wider text-gold">
               Adquirir
             </span>
           </div>
         )}
 
         {hasPreview && !isLocked && (
-          <div className="absolute top-3 right-3 z-20 flex items-center gap-1.5 rounded-full bg-emerald-500/25 backdrop-blur-md px-3 py-1.5 border border-emerald-500/30">
-            <Play className="h-3 w-3 text-emerald-400" />
-            <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-400">
+          <div className="absolute top-2.5 right-2.5 z-20 flex items-center gap-1 rounded-full bg-emerald-500/25 backdrop-blur-md px-2.5 py-1 border border-emerald-500/30">
+            <Play className="h-2.5 w-2.5 text-emerald-400" />
+            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-400">
               Preview
             </span>
           </div>
@@ -266,49 +330,44 @@ function CourseCard({ course }: { course: any }) {
         )}
 
         {/* Bottom info */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 z-10">
-          <h3 className={`font-display text-base font-bold leading-snug line-clamp-2 transition-colors duration-300 ${isDimmed ? "text-foreground/50" : "text-foreground group-hover:text-gold"}`}>
+        <div className="absolute bottom-0 left-0 right-0 p-4 z-10">
+          <h3 className={`font-display text-sm font-bold leading-snug line-clamp-2 transition-colors duration-300 ${isDimmed ? "text-foreground/50" : "text-foreground group-hover:text-gold"}`}>
             {course.title}
           </h3>
-          {course.short_description && !isDimmed && (
-            <p className="text-xs text-muted-foreground mt-1.5 line-clamp-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              {course.short_description}
-            </p>
-          )}
 
           {/* Status / CTA */}
-          <div className="mt-3">
+          <div className="mt-2">
             {isCompleted ? (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-400">
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400">
                 ✓ Concluído
               </span>
             ) : isInProgress ? (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold">
-                {course.progress_pct}% · Continuar <ArrowRight className="h-3 w-3" />
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-gold">
+                {course.progress_pct}% · Continuar <ArrowRight className="h-2.5 w-2.5" />
               </span>
             ) : isEnrolled ? (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold group-hover:gap-2.5 transition-all">
-                Acessar <ArrowRight className="h-3 w-3" />
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-gold group-hover:gap-2 transition-all">
+                Acessar <ArrowRight className="h-2.5 w-2.5" />
               </span>
             ) : isLocked ? (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold/80">
-                <ShoppingCart className="h-3 w-3" /> Comprar
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-gold/80">
+                <ShoppingCart className="h-2.5 w-2.5" /> Comprar
               </span>
             ) : isBlocked ? (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-red-400/70">
-                <Lock className="h-3 w-3" /> Bloqueado
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-red-400/70">
+                <Lock className="h-2.5 w-2.5" /> Bloqueado
               </span>
             ) : isExpired ? (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-orange-400/70">
-                <Lock className="h-3 w-3" /> Expirado
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-orange-400/70">
+                <Lock className="h-2.5 w-2.5" /> Expirado
               </span>
             ) : hasPreview ? (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-emerald-400">
-                <Play className="h-3 w-3" /> Pré-visualizar
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400">
+                <Play className="h-2.5 w-2.5" /> Pré-visualizar
               </span>
             ) : isAvailable ? (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gold group-hover:gap-2.5 transition-all">
-                Ver Detalhes <ArrowRight className="h-3 w-3" />
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-gold group-hover:gap-2 transition-all">
+                Ver Detalhes <ArrowRight className="h-2.5 w-2.5" />
               </span>
             ) : null}
           </div>
