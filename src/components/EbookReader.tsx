@@ -408,9 +408,10 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
 
   const currentSentences = useMemo(() => splitIntoSentences(currentPageText), [currentPageText, splitIntoSentences]);
 
-  // Re-render on scale change
+  // Re-render on scale/font change — clear cache including ref
   useEffect(() => {
     if (loading || numPages === 0) return;
+    pageImagesRef.current = {};
     setPageImages({});
   }, [scale, fontSize]);
 
@@ -487,31 +488,22 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
     return `${currentPages[0]}–${currentPages[1]}`;
   })();
 
-  // Page-flip animation variants — realistic curl effect
+  // Page-flip animation — lightweight (no filter/brightness for GPU perf)
   const flipVariants = {
     enter: (dir: "left" | "right") => ({
-      rotateY: dir === "right" ? 45 : -45,
-      skewY: dir === "right" ? -2 : 2,
-      x: dir === "right" ? 80 : -80,
+      x: dir === "right" ? 60 : -60,
       opacity: 0,
-      scale: 0.96,
-      filter: "brightness(0.85)",
+      scale: 0.98,
     }),
     center: {
-      rotateY: 0,
-      skewY: 0,
       x: 0,
       opacity: 1,
       scale: 1,
-      filter: "brightness(1)",
     },
     exit: (dir: "left" | "right") => ({
-      rotateY: dir === "right" ? -45 : 45,
-      skewY: dir === "right" ? 2 : -2,
-      x: dir === "right" ? -80 : 80,
+      x: dir === "right" ? -60 : 60,
       opacity: 0,
-      scale: 0.96,
-      filter: "brightness(0.85)",
+      scale: 0.98,
     }),
   };
 
