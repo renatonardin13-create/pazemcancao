@@ -2,8 +2,9 @@ import { LogoBrand } from "./LogoBrand";
 import { LogOut, Settings, UserCircle, Headphones, GraduationCap, Menu, X } from "lucide-react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
+import { useProjectMode } from "@/hooks/use-project-mode";
 import { NotificationBell } from "./NotificationBell";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 
 interface AppHeaderProps {
@@ -12,14 +13,17 @@ interface AppHeaderProps {
 
 export function AppHeader({ showLogout = true }: AppHeaderProps) {
   const { logout, isAdmin, adminLoading } = useAuth();
+  const { showMusic, showCourses, showPerfil } = useProjectMode();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
-  const navItems = [
-    { to: "/musicas" as const, icon: Headphones, label: "Músicas" },
-    { to: "/cursos" as const, icon: GraduationCap, label: "Cursos" },
-    { to: "/perfil" as const, icon: UserCircle, label: "Perfil" },
-  ];
+  const navItems = useMemo(() => {
+    const items: { to: string; icon: typeof Headphones; label: string }[] = [];
+    if (showMusic) items.push({ to: "/musicas", icon: Headphones, label: "Músicas" });
+    if (showCourses) items.push({ to: "/cursos", icon: GraduationCap, label: "Cursos" });
+    if (showPerfil) items.push({ to: "/perfil", icon: UserCircle, label: "Perfil" });
+    return items;
+  }, [showMusic, showCourses, showPerfil]);
 
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + "/");
 
