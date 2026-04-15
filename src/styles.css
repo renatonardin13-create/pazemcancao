@@ -263,7 +263,7 @@ button:active:not(:disabled),
   background-size: 200% 100% !important;
 }
 
-/* Smooth carousel scroll */
+/* Smooth carousel scroll — use GPU compositing */
 .snap-x {
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
@@ -273,5 +273,30 @@ button:active:not(:disabled),
 nav a[class*="text-gold"],
 nav button[class*="text-gold"] {
   text-shadow: 0 0 20px color-mix(in oklab, var(--gold) 25%, transparent);
+}
+
+/* ═══ PERFORMANCE OPTIMIZATIONS ═══ */
+
+/* Off-screen shelf sections load lazily */
+section[class*="animate-in"] {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 400px;
+}
+
+/* Reduce GPU paint for images in scroll containers */
+.snap-x img,
+.scrollbar-hide img {
+  will-change: auto;
+  contain: layout style paint;
+}
+
+/* Reduce layout thrash for fixed elements */
+.fixed {
+  contain: layout style;
+}
+
+/* Safe area for notch devices */
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0px);
 }
 

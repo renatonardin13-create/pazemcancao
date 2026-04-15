@@ -213,11 +213,13 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       const pdf = pdfDocRef.current;
       if (!pdf || pageNum < 1 || pageNum > pdf.numPages) return;
       if (pageImages[pageNum] && scale === 1) return; // Already cached at default scale
+      if (renderingPages.has(pageNum)) return; // Already rendering
 
       setRenderingPages((prev) => new Set(prev).add(pageNum));
       try {
         const page = await pdf.getPage(pageNum);
-        const baseScale = window.innerWidth < 640 ? 1.5 : 2;
+        // Use lower render scale on mobile for performance
+        const baseScale = window.innerWidth < 640 ? 1.2 : 1.8;
         const viewport = page.getViewport({ scale: baseScale * effectiveScale });
 
         if (!offscreenCanvas.current) {
@@ -231,7 +233,8 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
         if (!ctx) return;
 
         await page.render({ canvasContext: ctx, viewport }).promise;
-        const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+        // Use lower quality JPEG for faster encoding
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.75);
         setPageImages((prev) => ({ ...prev, [pageNum]: dataUrl }));
       } catch (err) {
         console.error("Failed to render page:", pageNum, err);
@@ -243,17 +246,20 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
         });
       }
     },
-    [effectiveScale, pageImages]
+    [effectiveScale, pageImages, renderingPages]
   );
 
-  // Render current spread pages + prefetch next spread
+  // Render current spread pages + prefetch only the next spread (not previous)
   useEffect(() => {
     if (loading || numPages === 0) return;
     const pages = getSpreadPages(spread);
     const nextPages = spread < totalSpreads - 1 ? getSpreadPages(spread + 1) : [];
-    const prevPages = spread > 0 ? getSpreadPages(spread - 1) : [];
-    const allPages = [...pages, ...nextPages, ...prevPages];
-    allPages.forEach((p) => renderPage(p));
+    // Render current first, then next (deferred)
+    pages.forEach((p) => renderPage(p));
+    if (nextPages.length > 0) {
+      const timer = setTimeout(() => nextPages.forEach((p) => renderPage(p)), 300);
+      return () => clearTimeout(timer);
+    }
   }, [spread, loading, numPages, getSpreadPages, totalSpreads, renderPage]);
 
   // Extract text from current pages for TTS
