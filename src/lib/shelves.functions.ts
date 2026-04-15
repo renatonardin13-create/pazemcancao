@@ -71,16 +71,14 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
 
     const publishedCourseIds = (allCourses || []).map((c: any) => c.id);
 
-    // Check which published courses have at least 1 lesson (eligible for consumption)
+    // Get lesson counts per course
     const { data: lessonCounts } = await supabaseAdmin
       .from('lessons')
       .select('course_id')
       .in('course_id', publishedCourseIds.length > 0 ? publishedCourseIds : ['__none__']);
 
-    const coursesWithLessons = new Set((lessonCounts || []).map((l: any) => l.course_id));
-
-    // Only show courses that have at least 1 lesson
-    const publishedCourses = (allCourses || []).filter((c: any) => coursesWithLessons.has(c.id));
+    // Show ALL published courses (even without lessons yet)
+    const publishedCourses = allCourses || [];
 
     // Courses with free preview lessons
     const { data: previewLessons } = await supabase
@@ -188,9 +186,8 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
 
     const courseMap = new Map(publishedCourses.map((course: any) => [course.id, enrichCourse(course)]));
 
-    // For each shelf, resolve courses — with CROSS-SHELF dedup
+    // For each shelf, resolve courses — allow same course in multiple shelves
     const result = [];
-    const globalSeenCourseIds = new Set<string>();
 
     for (const shelf of shelves || []) {
       let courses: any[] = [];
@@ -231,13 +228,6 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
             courses = publishedCourses.slice(0, 20).map(enrichCourse);
         }
       }
-
-      // Deduplicate within shelf AND across shelves
-      courses = courses.filter((c: any) => {
-        if (globalSeenCourseIds.has(c.id)) return false;
-        globalSeenCourseIds.add(c.id);
-        return true;
-      });
 
       if (courses.length > 0) {
         result.push({
