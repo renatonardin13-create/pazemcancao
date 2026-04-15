@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useSearch } from "@tanstack/react-router"; // rebuild
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { ListSkeleton } from "@/components/LoadingSkeletons";
 import { logDownload } from "@/lib/analytics.functions";
 import { ModuleGuard } from "@/components/ModuleGuard";
