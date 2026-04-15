@@ -99,38 +99,43 @@ function MeusCoursosPage() {
     <StudentLayout>
       <div className="min-h-screen bg-background flex flex-col">
 
-        <main className="flex-1 mx-auto w-full max-w-6xl px-5 sm:px-8 py-8 sm:py-10 pb-28">
+        <main className="flex-1 mx-auto w-full max-w-6xl px-5 sm:px-8 pt-6 sm:pt-8 pb-28">
 
-          {/* ═══ TOP BAR — greeting + search ═══ */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="flex items-center justify-between gap-4 mb-6"
-          >
-            <h1 className="font-display text-lg sm:text-xl font-bold text-foreground/80 tracking-tight whitespace-nowrap">
-              Olá, {firstName}
-            </h1>
-
-            <div className="relative w-full max-w-xs">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/25" />
-              <Input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Buscar cursos..."
-                className="pl-10 h-9 bg-card/6 border-border/8 rounded-xl text-xs placeholder:text-muted-foreground/20 focus:border-gold/20 focus:ring-gold/8 transition-all duration-300"
-              />
-            </div>
-          </motion.div>
-
-          {/* ═══ HERO BANNER ═══ */}
+          {/* ═══ HERO BANNER (first, for maximum impact) ═══ */}
           {!isLoading && featuredCourse && !searchResults && (
             <HeroBanner course={featuredCourse} />
           )}
 
+          {/* ═══ GREETING + SEARCH ═══ */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="mb-8 sm:mb-10"
+          >
+            <div className="mb-4">
+              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
+                Olá, {firstName}
+              </h1>
+              <p className="text-[13px] sm:text-sm text-muted-foreground/40 mt-1 leading-relaxed">
+                Continue sua jornada de aprendizado
+              </p>
+            </div>
+
+            <div className="relative w-full max-w-sm">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/25" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Buscar cursos, ebooks..."
+                className="pl-10 h-10 bg-card/8 border-border/10 rounded-xl text-sm placeholder:text-muted-foreground/20 focus:border-gold/25 focus:ring-gold/10 transition-all duration-300"
+              />
+            </div>
+          </motion.div>
+
           {/* ═══ SHELVES CONTENT ═══ */}
           {searchResults !== null ? (
-            <div className="pt-4 pb-8">
+            <div className="pb-8">
               <ShelfHeader title={`Resultados para "${search}"`} />
               {searchResults.length > 0 ? (
                 <ShelfRow>
@@ -145,7 +150,7 @@ function MeusCoursosPage() {
               )}
             </div>
           ) : (
-            <div className="pt-6 sm:pt-8">
+            <div>
               {isLoading ? (
                 <CardGridSkeleton count={6} />
               ) : (
