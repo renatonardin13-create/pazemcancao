@@ -380,6 +380,39 @@ function NetflixCarousel({ courses, shelfId }: { courses: any[]; shelfId?: strin
 }
 
 
+function HeroCTA({ course }: { course: any }) {
+  const isEnrolled = ['enrolled', 'in_progress'].includes(course.access_state);
+  const isLocked = ['locked', 'blocked', 'expired'].includes(course.access_state);
+
+  if (isEnrolled) {
+    return (
+      <Link
+        to="/cursos/$courseId"
+        params={{ courseId: course.id }}
+        className="inline-flex items-center gap-2.5 rounded-lg bg-gold text-gold-foreground px-8 py-4 text-sm font-bold uppercase tracking-wider hover:bg-gold/90 transition-all shadow-xl shadow-gold/25 hover:shadow-gold/35"
+      >
+        <Play className="h-5 w-5 fill-current" /> Assistir Agora
+      </Link>
+    );
+  }
+
+  if (isLocked && (course.sales_page_url || course.checkout_url)) {
+    const salesUrl = course.sales_page_url || course.checkout_url;
+    return (
+      <a
+        href={salesUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-2.5 rounded-lg bg-gold/15 text-gold border border-gold/30 px-8 py-4 text-sm font-bold uppercase tracking-wider hover:bg-gold/25 hover:border-gold/50 transition-all backdrop-blur-sm shadow-lg"
+      >
+        <ShoppingCart className="h-4.5 w-4.5" /> Adquirir Agora
+      </a>
+    );
+  }
+
+  return null;
+}
+
 function CourseActionButton({ course }: { course: any }) {
   const isEnrolled = course.access_state === "enrolled";
   const isLocked = course.access_state === "locked";
