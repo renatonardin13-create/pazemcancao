@@ -278,16 +278,79 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
     .filter(Boolean)
     .join(". ");
 
+  // Track whether narration should auto-continue to next page
+  const autoNarrationRef = useRef(false);
+  const [ttsOverlayVisible, setTtsOverlayVisible] = useState(false);
+
   // Audio player hook
   const ebookAudio = useEbookAudio({
     audioUrl,
     pageText: currentPageText || undefined,
+    onPageNarrationEnd: useCallback(() => {
+      // Auto-advance to next page and continue narration
+      if (autoNarrationRef.current && spread < totalSpreads - 1 && !(hasPaywall && spread + 1 > maxAllowedSpread)) {
+        autoNarrationRef.current = true; // keep flag on
+        setDirection("right");
+        playPageTurnSound();
+        setSpread((prev) => prev + 1);
+      } else {
+        autoNarrationRef.current = false;
+        setTtsOverlayVisible(false);
+      }
+    }, [spread, totalSpreads, hasPaywall, maxAllowedSpread, playPageTurnSound]),
   });
 
-  // Stop TTS when page changes
+  // Auto-start narration when page changes if auto-narration is active
   useEffect(() => {
-    ebookAudio.stop();
+    if (autoNarrationRef.current && currentPageText) {
+      // Small delay to let text extract settle
+      const t = setTimeout(() => {
+        ebookAudio.toggle();
+      }, 400);
+      return () => clearTimeout(t);
+    }
   }, [spread]);
+
+  // Stop TTS when page changes manually (not auto-narration)
+  useEffect(() => {
+    if (!autoNarrationRef.current) {
+      ebookAudio.stop();
+      setTtsOverlayVisible(false);
+    }
+  }, [spread]);
+
+  // Show/hide TTS overlay based on playback
+  useEffect(() => {
+    if (ebookAudio.isPlaying && ebookAudio.mode === "tts") {
+      setTtsOverlayVisible(true);
+      autoNarrationRef.current = true;
+    } else if (!ebookAudio.isPlaying && ebookAudio.charIndex === -1) {
+      setTtsOverlayVisible(false);
+      autoNarrationRef.current = false;
+    }
+  }, [ebookAudio.isPlaying, ebookAudio.mode, ebookAudio.charIndex]);
+
+  // Split text into sentences for highlighting
+  const splitIntoSentences = useCallback((text: string): { text: string; start: number; end: number }[] => {
+    if (!text) return [];
+    const sentences: { text: string; start: number; end: number }[] = [];
+    // Split by sentence-ending punctuation, keeping them attached
+    const regex = /[^.!?]+[.!?]*\s*/g;
+    let match;
+    while ((match = regex.exec(text)) !== null) {
+      const trimmed = match[0].trim();
+      if (trimmed) {
+        sentences.push({
+          text: trimmed,
+          start: match.index,
+          end: match.index + match[0].length,
+        });
+      }
+    }
+    return sentences;
+  }, []);
+
+  const currentSentences = useMemo(() => splitIntoSentences(currentPageText), [currentPageText, splitIntoSentences]);
 
   // Re-render on scale change
   useEffect(() => {
