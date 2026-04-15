@@ -1,10 +1,11 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { PageLoading } from "@/components/LoadingSkeletons";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getCourseDetail,
   updateLessonProgress,
 } from "@/lib/courses.functions";
+import { resolveCourseLesson } from "@/lib/resolve-course-lesson.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import {
   ArrowLeft,
