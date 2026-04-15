@@ -133,11 +133,12 @@ function MusicLibraryPage() {
     const playerTrack = dbTrackToPlayerTrack(track);
     const idx = playerTracks.findIndex(t => t.id === playerTrack.id);
     if (currentTrack?.id === track.id) {
+      // Same track — just toggle play/pause but keep queue intact
       toggle(playerTrack);
     } else if (idx >= 0) {
+      // Always set full queue so auto-next works through entire playlist
       setQueue(playerTracks, idx);
     } else {
-      // Track not found in list — play it individually
       toggle(playerTrack);
     }
   }, [currentTrack?.id, toggle, setQueue]);
