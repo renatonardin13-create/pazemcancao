@@ -61,9 +61,9 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
         const p = s + 1;
         return p <= numPages ? [p] : [];
       }
-      if (s === 0) return [1]; // Cover alone
-      const left = s * 2;
-      const right = s * 2 + 1;
+      // Desktop: always two pages per spread
+      const left = s * 2 + 1;
+      const right = s * 2 + 2;
       const pages: number[] = [];
       if (left <= numPages) pages.push(left);
       if (right <= numPages) pages.push(right);
@@ -75,7 +75,6 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
   const totalSpreads = (() => {
     if (numPages === 0) return 0;
     if (!dualPage) return numPages;
-    // Cover is spread 0 (1 page). Then pairs: 2-3, 4-5, ...
     return Math.ceil(numPages / 2);
   })();
 
