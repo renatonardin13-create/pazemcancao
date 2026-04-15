@@ -178,6 +178,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const { data: authData, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
+      const msg = error.message?.toLowerCase() || '';
+      if (msg.includes('invalid login') || msg.includes('invalid_credentials')) {
+        return { error: "E-mail ou senha incorretos. Verifique seus dados e tente novamente." };
+      }
+      if (msg.includes('email not confirmed')) {
+        return { error: "Seu e-mail ainda não foi confirmado. Verifique sua caixa de entrada." };
+      }
+      if (msg.includes('user not found')) {
+        return { error: "Nenhuma conta encontrada com este e-mail." };
+      }
       return { error: "Não foi possível acessar. Verifique seu e-mail e senha e tente novamente." };
     }
 
