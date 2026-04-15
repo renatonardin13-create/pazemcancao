@@ -428,6 +428,84 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
           <Button
             variant="ghost"
             size="sm"
+            onClick={() => setReadingTheme(readingTheme === "dark" ? "light" : "dark")}
+            className={`h-7 w-7 p-0 transition-colors ${readingTheme === "dark" ? "text-gold" : "text-stone-500/40 hover:text-gold"}`}
+            title={readingTheme === "dark" ? "Modo claro" : "Modo escuro"}
+          >
+            {readingTheme === "dark" ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+          </Button>
+          <div className="h-4 w-px bg-stone-700/20 mx-1" />
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowSettings(!showSettings)}
+              className={`h-7 w-7 p-0 transition-colors ${showSettings ? "text-gold" : "text-stone-500/40 hover:text-gold"}`}
+              title="Personalizar leitura"
+            >
+              <Settings className="h-3.5 w-3.5" />
+            </Button>
+            {/* Settings dropdown */}
+            {showSettings && (
+              <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-stone-700/30 bg-[#1e1b16]/95 backdrop-blur-xl shadow-2xl z-50 p-3 space-y-3"
+                onClick={(e) => e.stopPropagation()}>
+                {/* Font size */}
+                <div>
+                  <label className="text-[9px] uppercase tracking-widest text-stone-500/50 mb-1.5 block">Tamanho</label>
+                  <div className="flex gap-1">
+                    {(["small", "medium", "large"] as FontSize[]).map((s) => (
+                      <button
+                        key={s}
+                        onClick={() => setFontSize(s)}
+                        className={`flex-1 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
+                          fontSize === s
+                            ? "bg-gold/20 text-gold border border-gold/30"
+                            : "bg-stone-800/40 text-stone-400/60 border border-stone-700/20 hover:border-stone-600/30"
+                        }`}
+                      >
+                        {s === "small" ? "Aa" : s === "medium" ? "Aa" : "Aa"}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex justify-between px-1 mt-0.5">
+                    <span className="text-[8px] text-stone-600/40">Pequena</span>
+                    <span className="text-[8px] text-stone-600/40">Média</span>
+                    <span className="text-[8px] text-stone-600/40">Grande</span>
+                  </div>
+                </div>
+                {/* Theme */}
+                <div>
+                  <label className="text-[9px] uppercase tracking-widest text-stone-500/50 mb-1.5 block">Tema</label>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => setReadingTheme("light")}
+                      className={`flex-1 py-1.5 rounded-lg text-[11px] font-medium transition-all flex items-center justify-center gap-1 ${
+                        readingTheme === "light"
+                          ? "bg-gold/20 text-gold border border-gold/30"
+                          : "bg-stone-800/40 text-stone-400/60 border border-stone-700/20 hover:border-stone-600/30"
+                      }`}
+                    >
+                      <Sun className="h-3 w-3" /> Claro
+                    </button>
+                    <button
+                      onClick={() => setReadingTheme("dark")}
+                      className={`flex-1 py-1.5 rounded-lg text-[11px] font-medium transition-all flex items-center justify-center gap-1 ${
+                        readingTheme === "dark"
+                          ? "bg-gold/20 text-gold border border-gold/30"
+                          : "bg-stone-800/40 text-stone-400/60 border border-stone-700/20 hover:border-stone-600/30"
+                      }`}
+                    >
+                      <Moon className="h-3 w-3" /> Escuro
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="h-4 w-px bg-stone-700/20 mx-1" />
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setControlsVisible(!controlsVisible)}
             className="h-7 w-7 p-0 text-stone-500/40 hover:text-gold"
             title="Modo imersivo"
