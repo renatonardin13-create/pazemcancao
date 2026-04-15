@@ -9,6 +9,8 @@ import { useQuery } from "@tanstack/react-query";
 import { listAllTracks, listCategories } from "@/lib/tracks.functions";
 import { listPlaylistsWithCounts, getPlaylistWithTracks } from "@/lib/playlists.functions";
 import { checkBuyerAccess } from "@/lib/access.functions";
+import { getNewTracks, getMostPlayedTracks, getContinueListening, getRecommendedTracks } from "@/lib/auto-playlists.functions";
+import { Flame, Sparkles, History, TrendingUp } from "lucide-react";
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { usePlayer } from "@/hooks/use-player";
