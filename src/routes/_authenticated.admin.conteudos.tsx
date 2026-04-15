@@ -237,6 +237,10 @@ function AdminContentPage() {
         unlock_rule_content_id: unlockRuleType !== "none" && unlockRuleContentId ? unlockRuleContentId : null,
         is_featured: isFeatured,
         featured_priority: featuredPriority.trim() !== "" ? parseInt(featuredPriority, 10) : 0,
+        release_mode: releaseMode,
+        initial_free_count: initialFreeCount.trim() !== "" ? parseInt(initialFreeCount, 10) : 0,
+        locked_final_count: lockedFinalCount.trim() !== "" ? parseInt(lockedFinalCount, 10) : 0,
+        locked_label: lockedLabel.trim() || null,
       };
 
       if (editItem) {
