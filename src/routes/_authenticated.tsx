@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { RestrictedAccessCard } from "@/components/RestrictedAccessCard";
 import { checkBuyerAccess } from "@/lib/access.functions";
@@ -13,11 +13,14 @@ export const Route = createFileRoute("/_authenticated")({
 function AuthenticatedLayout() {
   const { isAuthenticated, loading, adminLoading, isAdmin, logout, user, blocked, blockMessage } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [accessData, setAccessData] = useState<{ hasAccess: boolean; buyer: any; isTrial?: boolean; trialExpired?: boolean; canDownload?: boolean; trialExpiresAt?: string | null } | null>(null);
   const [accessLoading, setAccessLoading] = useState(true);
+  const [accessCheckFailed, setAccessCheckFailed] = useState(false);
   const lastCheckedEmail = useRef<string | null>(null);
   const welcomeShown = useRef(false);
+  const isMusicExperience = location.pathname === "/musicas" || location.pathname.startsWith("/louvor/");
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -27,14 +30,10 @@ function AuthenticatedLayout() {
       return;
     }
 
-    if (adminLoading) {
-      setAccessLoading(true);
-      return;
-    }
-
     if (isAdmin) {
       setAccessData({ hasAccess: true, buyer: { nome: "Administrador", product_name: null } });
       setAccessLoading(false);
+      setAccessCheckFailed(false);
       lastCheckedEmail.current = user?.email ?? null;
       return;
     }
@@ -47,24 +46,45 @@ function AuthenticatedLayout() {
 
     let cancelled = false;
     setAccessLoading(true);
+    setAccessCheckFailed(false);
+
+    const timeout = setTimeout(() => {
+      if (cancelled) return;
+      console.error("Access check timeout:", currentEmail);
+      setAccessCheckFailed(true);
+      setAccessLoading(false);
+      if (isMusicExperience) {
+        setAccessData({ hasAccess: true, buyer: null, canDownload: false, isTrial: false, trialExpired: false, trialExpiresAt: null });
+      }
+    }, 8000);
 
     checkBuyerAccess().then((result) => {
+      clearTimeout(timeout);
       if (!cancelled) {
         setAccessData(result);
         setAccessLoading(false);
+        setAccessCheckFailed(false);
         lastCheckedEmail.current = currentEmail;
       }
     }).catch((err) => {
+      clearTimeout(timeout);
       console.error("Access check failed:", err);
       if (!cancelled) {
-        // On error, don't block — retry will happen on next render
-        setAccessData(null);
+        setAccessCheckFailed(true);
+        if (isMusicExperience) {
+          setAccessData({ hasAccess: true, buyer: null, canDownload: false, isTrial: false, trialExpired: false, trialExpiresAt: null });
+        } else {
+          setAccessData(null);
+        }
         setAccessLoading(false);
       }
     });
 
-    return () => { cancelled = true; };
-  }, [isAuthenticated, adminLoading, isAdmin, user?.email]);
+    return () => {
+      cancelled = true;
+      clearTimeout(timeout);
+    };
+  }, [isAuthenticated, isAdmin, user?.email, isMusicExperience]);
 
   // Redirect to login if not authenticated (after loading completes)
   useEffect(() => {
@@ -90,7 +110,7 @@ function AuthenticatedLayout() {
     }
   }, [accessData, isAdmin]);
 
-  if (loading || adminLoading || (isAuthenticated && !isAdmin && accessLoading)) {
+  if (loading || (isAuthenticated && !isAdmin && accessLoading && !isMusicExperience)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_40%,var(--color-gold)/0.025,transparent_70%)]" />
@@ -102,6 +122,10 @@ function AuthenticatedLayout() {
         </div>
       </div>
     );
+  }
+
+  if (accessCheckFailed && !isMusicExperience) {
+    return <RestrictedAccessCard />;
   }
 
   if (!isAuthenticated || blocked) {
@@ -149,7 +173,7 @@ function AuthenticatedLayout() {
     return <RestrictedAccessCard />;
   }
 
-  if (!isAdmin && !accessData?.hasAccess) {
+  if (!isMusicExperience && !isAdmin && !accessData?.hasAccess) {
     const handleLogout = async () => {
       await logout();
       navigate({ to: "/login" });

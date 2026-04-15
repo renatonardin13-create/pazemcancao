@@ -30,7 +30,9 @@ export function InvisibleFunnelShelves({ context, insertAfterIndex }: InvisibleF
     refetchOnWindowFocus: false,
   });
 
-  if (isLoading || !data?.suggestions?.length) return null;
+  if (isLoading || !data?.suggestions?.length) {
+    return <div className="hidden" aria-hidden="true" />;
+  }
 
   const all = data.suggestions;
 
@@ -57,7 +59,9 @@ export function InvisibleFunnelShelves({ context, insertAfterIndex }: InvisibleF
     shelves.push({ ...SHELF_LABELS[2], items: remaining.slice(0, 6) });
   }
 
-  if (shelves.length === 0) return null;
+  if (shelves.length === 0) {
+    return <div className="hidden" aria-hidden="true" />;
+  }
 
   return (
     <>

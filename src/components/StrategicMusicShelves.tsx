@@ -19,7 +19,9 @@ export function StrategicMusicShelves() {
     refetchOnWindowFocus: false,
   });
 
-  if (isLoading || !data?.playlists?.length) return null;
+  if (isLoading || !data?.playlists?.length) {
+    return <div className="hidden" aria-hidden="true" />;
+  }
 
   return (
     <div className="space-y-8 mt-8">

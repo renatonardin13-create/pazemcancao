@@ -77,6 +77,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const doCheck = async () => {
       setAdminLoading(true);
+      const timeout = setTimeout(() => {
+        if (!cancelled) {
+          console.error("Admin check timeout for user:", user.id);
+          setIsAdmin(false);
+          setAdminLoading(false);
+        }
+      }, 8000);
+
       try {
         const result = await checkIsAdmin();
         if (cancelled) return;
@@ -88,6 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setIsAdmin(false);
         }
       } finally {
+        clearTimeout(timeout);
         if (!cancelled) setAdminLoading(false);
       }
     };
