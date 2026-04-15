@@ -545,8 +545,8 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       </div>
 
       {/* ═══ MARK COMPLETE BAR ═══ */}
-      {onComplete && (
-        <div className="flex items-center justify-center px-3 sm:px-6 py-3 border-t border-border/8 bg-background/95 backdrop-blur-xl z-30">
+      {onComplete && !immersive && (
+        <div className="flex items-center justify-center px-3 sm:px-6 py-3 border-t border-stone-800/30 bg-[#1a1814]/95 backdrop-blur-xl z-30">
           <Button
             onClick={() => {
               if (!isCompleted) onComplete();
