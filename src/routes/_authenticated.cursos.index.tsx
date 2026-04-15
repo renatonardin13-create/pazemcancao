@@ -142,7 +142,7 @@ function MeusCoursosPage() {
               )}
             </div>
           ) : (
-            <div className="pt-10 sm:pt-14 pb-28">
+            <div className="pt-12 sm:pt-14 pb-28">
               {isLoading ? (
                 <CardGridSkeleton count={6} />
               ) : (
@@ -257,7 +257,7 @@ function ShelfSection({ children, delay = 0 }: { children: React.ReactNode; dela
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay }}
-      className="mb-20 sm:mb-24"
+      className="mb-10 sm:mb-12"
     >
       {children}
     </motion.section>
@@ -272,7 +272,7 @@ function ShelfHeader({ title, subtitle, icon, linkTo, linkLabel }: {
   linkLabel?: string;
 }) {
   return (
-    <div className="flex items-baseline justify-between mb-7 sm:mb-9 mt-2">
+    <div className="flex items-baseline justify-between mb-4 sm:mb-[18px] mt-1">
       <h2 className="font-display text-[22px] sm:text-[26px] md:text-[30px] font-extrabold text-foreground/90 tracking-[-0.02em] leading-none">
         {title}
       </h2>
@@ -334,7 +334,7 @@ function ShelfRow({ children }: { children: React.ReactNode }) {
         }}
         onScroll={updateScrollState}
         onMouseEnter={updateScrollState}
-        className="flex gap-5 sm:gap-6 lg:gap-7 overflow-x-auto pb-3 scrollbar-hide px-8 sm:px-12 lg:px-20 snap-x snap-mandatory scroll-smooth cursor-grab select-none will-change-scroll"
+        className="flex gap-4 sm:gap-[18px] lg:gap-5 overflow-x-auto pb-3 scrollbar-hide px-8 sm:px-12 lg:px-20 snap-x snap-mandatory scroll-smooth cursor-grab select-none will-change-scroll"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {children}
