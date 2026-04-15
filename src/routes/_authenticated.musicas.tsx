@@ -499,21 +499,24 @@ function TrackCard({
     return `Libera em ${diffDays} dias`;
   })();
 
+  const SALES_URL = "https://pazemcancao-oficial.lovable.app";
+
   const Wrapper = effectiveLocked ? 'div' : Link;
   const wrapperProps = effectiveLocked
     ? {}
     : { to: "/musicas/$trackId" as const, params: { trackId: track.id } };
 
-  return (
-    <div ref={isThis ? activeTrackRef : undefined}>
-      <Wrapper
-        {...(wrapperProps as any)}
-        onClick={isBonusLocked ? () => {
-          toast.info(bonusCountdown
-            ? `🎁 ${bonusCountdown}`
-            : "🎁 Este bônus ainda não tem data de liberação definida"
-          );
-        } : undefined}
+  const handleLockedClick = () => {
+    if (isBonusLocked) {
+      toast.info(bonusCountdown
+        ? `🎁 ${bonusCountdown}`
+        : "🎁 Este bônus ainda não tem data de liberação definida"
+      );
+    } else {
+      // Redirect to sales page for locked content
+      window.open(SALES_URL, "_blank");
+    }
+  };
         className={`group relative cursor-pointer block ${
           isCarousel ? "snap-start shrink-0 w-[200px] sm:w-[220px]" : ""
         }`}
