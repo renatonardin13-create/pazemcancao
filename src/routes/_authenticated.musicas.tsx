@@ -84,6 +84,7 @@ function MusicLibraryPage() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [initialized, setInitialized] = useState(false);
+  const [activePlaylistId, setActivePlaylistId] = useState<string | null>(null);
   const activeTrackRef = useRef<HTMLDivElement>(null);
   const prevTrackId = useRef<string | number | null>(null);
 
