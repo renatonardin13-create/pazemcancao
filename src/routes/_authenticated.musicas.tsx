@@ -200,13 +200,9 @@ function MusicLibraryPage() {
         return;
       }
     }
+    // No categoria param = show all tracks (no filter)
     if (!initialized && dbCategories.length > 0) {
-      const destaques = dbCategories.find((c: any) =>
-        c.slug === "destaques" || c.slug === "top-10-mais-fortes" || c.name.toLowerCase().includes("destaque")
-      );
-      if (destaques) {
-        setActiveCategory(destaques.name);
-      }
+      setActiveCategory(null);
       setInitialized(true);
     }
   }, [dbCategories, initialized, searchParams.categoria]);
