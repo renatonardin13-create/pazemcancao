@@ -2,7 +2,7 @@ import { createFileRoute, Link, useSearch } from "@tanstack/react-router"; // re
 import { ListSkeleton } from "@/components/LoadingSkeletons";
 import { logDownload } from "@/lib/analytics.functions";
 import { ModuleGuard } from "@/components/ModuleGuard";
-import { Music, Play, Pause, Download, Search, Headphones, Lock, Gift, ChevronLeft, ChevronRight, Clock } from "lucide-react";
+import { Music, Play, Pause, Download, Search, Headphones, Lock, Gift, ChevronLeft, ChevronRight, Clock, ListMusic, PlayCircle } from "lucide-react";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { useQuery } from "@tanstack/react-query";
@@ -280,7 +280,7 @@ function MusicLibraryPage() {
                 custom={0.3}
               >
                 <div className="rounded-2xl border border-amber-500/15 bg-gradient-to-br from-amber-900/10 via-amber-950/5 to-transparent p-5 sm:p-6">
-                  <div className="flex items-center gap-3 mb-5">
+                  <div className="flex items-center gap-3 mb-5 flex-wrap">
                     <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500/15 border border-amber-500/20">
                       <Gift className="h-4.5 w-4.5 text-amber-400/70" />
                     </div>
@@ -293,27 +293,80 @@ function MusicLibraryPage() {
                       </p>
                     </div>
                     <div className="flex-1 h-px bg-gradient-to-r from-amber-500/15 to-transparent" />
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => setExpandedCategory(expandedCategory === '__bonus__' ? null : '__bonus__')}
+                        className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground/60 hover:text-gold/70 transition-colors duration-300 rounded-full border border-border/20 hover:border-gold/20 px-3 py-1.5 bg-card/10 hover:bg-gold/5"
+                      >
+                        <ListMusic className="h-3 w-3" />
+                        <span className="hidden sm:inline">{expandedCategory === '__bonus__' ? 'Carrossel' : 'Ver todas'}</span>
+                        <span className="sm:hidden">{expandedCategory === '__bonus__' ? '←' : 'Todas'}</span>
+                      </button>
+                      {!isLocked && bonusTracks.filter((t: any) => !t.is_bonus || !(
+                        !t.bonus_release_date || new Date(t.bonus_release_date + 'T00:00:00') > new Date()
+                      )).length > 0 && (
+                        <button
+                          onClick={() => {
+                            const playable = bonusTracks.filter((t: any) => {
+                              const notReleased = t.is_bonus && (!t.bonus_release_date || new Date(t.bonus_release_date + 'T00:00:00') > new Date());
+                              return !notReleased && t.is_active;
+                            });
+                            if (playable.length > 0) {
+                              setQueue(playable.map(dbTrackToPlayerTrack), 0);
+                              toast.success(`▶ Tocando ${playable.length} músicas bônus`);
+                            }
+                          }}
+                          className="flex items-center gap-1.5 text-[11px] font-semibold text-gold/60 hover:text-gold/90 transition-colors duration-300 rounded-full border border-gold/15 hover:border-gold/30 px-3 py-1.5 bg-gold/5 hover:bg-gold/10"
+                        >
+                          <PlayCircle className="h-3 w-3" />
+                          <span className="hidden sm:inline">Tocar playlist</span>
+                          <span className="sm:hidden">▶ Play</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
 
-                  <ScrollableCarousel>
-                    {bonusTracks.map((track: any, idx: number) => (
-                      <TrackCard
-                        key={track.id}
-                        track={track}
-                        idx={idx}
-                        icon="🎁"
-                        catTracks={bonusTracks}
-                        isCarousel={true}
-                        activeTrackRef={activeTrackRef}
-                        currentTrack={currentTrack}
-                        playing={playing}
-                        progress={progress}
-                        handlePlayWithQueue={handlePlayWithQueue}
-                        canDownload={canDownload}
-                        isLocked={isLocked}
-                      />
-                    ))}
-                  </ScrollableCarousel>
+                  {expandedCategory === '__bonus__' ? (
+                    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5 sm:gap-6">
+                      {bonusTracks.map((track: any, idx: number) => (
+                        <TrackCard
+                          key={track.id}
+                          track={track}
+                          idx={idx}
+                          icon="🎁"
+                          catTracks={bonusTracks}
+                          isCarousel={false}
+                          activeTrackRef={activeTrackRef}
+                          currentTrack={currentTrack}
+                          playing={playing}
+                          progress={progress}
+                          handlePlayWithQueue={handlePlayWithQueue}
+                          canDownload={canDownload}
+                          isLocked={isLocked}
+                        />
+                      ))}
+                    </div>
+                  ) : (
+                    <ScrollableCarousel>
+                      {bonusTracks.map((track: any, idx: number) => (
+                        <TrackCard
+                          key={track.id}
+                          track={track}
+                          idx={idx}
+                          icon="🎁"
+                          catTracks={bonusTracks}
+                          isCarousel={true}
+                          activeTrackRef={activeTrackRef}
+                          currentTrack={currentTrack}
+                          playing={playing}
+                          progress={progress}
+                          handlePlayWithQueue={handlePlayWithQueue}
+                          canDownload={canDownload}
+                          isLocked={isLocked}
+                        />
+                      ))}
+                    </ScrollableCarousel>
+                  )}
                 </div>
               </motion.section>
             )}
@@ -332,23 +385,43 @@ function MusicLibraryPage() {
                   variants={fadeUp}
                   custom={0.3 + catIdx * 0.1}
                 >
-                  <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center gap-3 mb-4 flex-wrap">
                     <span className="text-lg">{icon}</span>
                     <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
                       {displayName}
                     </h2>
                     <div className="flex-1 h-px bg-gradient-to-r from-border/15 to-transparent" />
-                    <span className="text-xs text-muted-foreground/60">
+                    <span className="text-xs text-muted-foreground/60 hidden sm:inline">
                       {catTracks.length} música{catTracks.length !== 1 ? "s" : ""}
                     </span>
-                    {catTracks.length > 1 && (
-                      <button
-                        onClick={() => setExpandedCategory(expandedCategory === category ? null : category)}
-                        className="text-xs font-medium text-gold/70 hover:text-gold/80 transition-colors duration-300 whitespace-nowrap"
-                      >
-                        {expandedCategory === category ? "← Voltar" : "Ver todas →"}
-                      </button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {catTracks.length > 1 && (
+                        <button
+                          onClick={() => setExpandedCategory(expandedCategory === category ? null : category)}
+                          className="flex items-center gap-1.5 text-[11px] font-semibold text-muted-foreground/60 hover:text-gold/70 transition-colors duration-300 rounded-full border border-border/20 hover:border-gold/20 px-3 py-1.5 bg-card/10 hover:bg-gold/5"
+                        >
+                          <ListMusic className="h-3 w-3" />
+                          <span className="hidden sm:inline">{expandedCategory === category ? 'Carrossel' : 'Ver todas'}</span>
+                          <span className="sm:hidden">{expandedCategory === category ? '←' : 'Todas'}</span>
+                        </button>
+                      )}
+                      {!isLocked && catTracks.filter((t: any) => t.is_active).length > 0 && (
+                        <button
+                          onClick={() => {
+                            const playable = catTracks.filter((t: any) => t.is_active);
+                            if (playable.length > 0) {
+                              setQueue(playable.map(dbTrackToPlayerTrack), 0);
+                              toast.success(`▶ Tocando ${playable.length} músicas de ${displayName}`);
+                            }
+                          }}
+                          className="flex items-center gap-1.5 text-[11px] font-semibold text-gold/60 hover:text-gold/90 transition-colors duration-300 rounded-full border border-gold/15 hover:border-gold/30 px-3 py-1.5 bg-gold/5 hover:bg-gold/10"
+                        >
+                          <PlayCircle className="h-3 w-3" />
+                          <span className="hidden sm:inline">Tocar playlist</span>
+                          <span className="sm:hidden">▶ Play</span>
+                        </button>
+                      )}
+                    </div>
                   </div>
 
                   {expandedCategory === category ? (
