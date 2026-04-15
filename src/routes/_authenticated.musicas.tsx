@@ -2,11 +2,12 @@ import { createFileRoute, Link, useSearch } from "@tanstack/react-router"; // re
 import { ListSkeleton } from "@/components/LoadingSkeletons";
 import { logDownload } from "@/lib/analytics.functions";
 import { ModuleGuard } from "@/components/ModuleGuard";
-import { Music, Play, Pause, Download, Search, Headphones, Lock, Gift, ChevronLeft, ChevronRight, Clock, ListMusic, PlayCircle } from "lucide-react";
+import { Music, Play, Pause, Download, Search, Headphones, Lock, Gift, ChevronLeft, ChevronRight, Clock, ListMusic, PlayCircle, Disc3 } from "lucide-react";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { useQuery } from "@tanstack/react-query";
 import { listAllTracks, listCategories } from "@/lib/tracks.functions";
+import { listPlaylistsWithCounts, getPlaylistWithTracks } from "@/lib/playlists.functions";
 import { checkBuyerAccess } from "@/lib/access.functions";
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Input } from "@/components/ui/input";
@@ -83,6 +84,7 @@ function MusicLibraryPage() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
   const [initialized, setInitialized] = useState(false);
+  const [activePlaylistId, setActivePlaylistId] = useState<string | null>(null);
   const activeTrackRef = useRef<HTMLDivElement>(null);
   const prevTrackId = useRef<string | number | null>(null);
 
@@ -107,6 +109,22 @@ function MusicLibraryPage() {
     queryFn: () => listAllTracks(),
     staleTime: 30_000,
   });
+
+  const { data: playlistsData } = useQuery({
+    queryKey: ["playlists-with-counts"],
+    queryFn: () => listPlaylistsWithCounts(),
+    staleTime: 60_000,
+  });
+
+  const { data: activePlaylistData } = useQuery({
+    queryKey: ["playlist-tracks", activePlaylistId],
+    queryFn: () => getPlaylistWithTracks({ data: { playlistId: activePlaylistId! } }),
+    enabled: !!activePlaylistId,
+    staleTime: 30_000,
+  });
+
+  const playlists = playlistsData?.playlists || [];
+  const activePlaylistTracks = activePlaylistData?.tracks || [];
 
   const { currentTrack, playing, progress, toggle, setQueue } = usePlayer();
 
@@ -261,6 +279,108 @@ function MusicLibraryPage() {
             />
           </div>
         </motion.div>
+
+        {/* Playlists Section */}
+        {playlists.length > 0 && (
+          <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0.25} className="mb-8">
+            <div className="flex items-center gap-3 mb-4">
+              <Disc3 className="h-4 w-4 text-gold/40" />
+              <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">Playlists</h2>
+              <div className="flex-1 h-px bg-gradient-to-r from-border/15 to-transparent" />
+            </div>
+            <ScrollableCarousel>
+              {playlists.map((pl: any) => (
+                <button
+                  key={pl.id}
+                  onClick={() => setActivePlaylistId(activePlaylistId === pl.id ? null : pl.id)}
+                  className={`snap-start shrink-0 w-[180px] sm:w-[210px] rounded-2xl border overflow-hidden transition-all duration-500 text-left ${
+                    activePlaylistId === pl.id
+                      ? "border-gold/30 shadow-[0_8px_40px_-10px] shadow-gold/15 ring-1 ring-gold/10"
+                      : "border-border/20 hover:border-gold/15 shadow-[0_4px_20px_-8px] shadow-black/20"
+                  }`}
+                >
+                  <div className="relative h-[120px] sm:h-[140px] bg-gradient-to-br from-violet-900/30 via-indigo-950/20 to-slate-950/40 overflow-hidden">
+                    {pl.cover_url ? (
+                      <img src={pl.cover_url} alt={pl.name} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Disc3 className={`h-10 w-10 transition-colors duration-500 ${activePlaylistId === pl.id ? "text-gold/60" : "text-white/20"}`} />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+                    <div className="absolute bottom-2 right-2">
+                      <span className="text-[10px] font-semibold tracking-wider uppercase rounded-full bg-black/40 backdrop-blur-sm border border-white/10 px-2 py-0.5 text-white/50">
+                        {pl.track_count} música{pl.track_count !== 1 ? "s" : ""}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-3">
+                    <h3 className={`font-display text-[13px] font-bold tracking-tight leading-snug line-clamp-1 transition-colors duration-500 ${
+                      activePlaylistId === pl.id ? "text-gold" : "text-foreground/85"
+                    }`}>{pl.name}</h3>
+                    {pl.description && (
+                      <p className="text-[11px] text-muted-foreground/50 mt-1 line-clamp-1">{pl.description}</p>
+                    )}
+                  </div>
+                </button>
+              ))}
+            </ScrollableCarousel>
+
+            {/* Active playlist tracks */}
+            <AnimatePresence>
+              {activePlaylistId && activePlaylistTracks.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="mt-5 overflow-hidden"
+                >
+                  <div className="rounded-2xl border border-gold/10 bg-card/10 p-4 sm:p-5">
+                    <div className="flex items-center justify-between mb-4">
+                      <h3 className="font-display text-sm font-bold text-foreground/75">
+                        {activePlaylistData?.playlist?.name}
+                      </h3>
+                      {!isLocked && activePlaylistTracks.length > 0 && (
+                        <button
+                          onClick={() => {
+                            const playable = activePlaylistTracks.filter((t: any) => t.is_active);
+                            if (playable.length > 0) {
+                              setQueue(playable.map(dbTrackToPlayerTrack), 0);
+                              toast.success(`▶ Tocando playlist "${activePlaylistData?.playlist?.name}"`);
+                            }
+                          }}
+                          className="flex items-center gap-1.5 text-[11px] font-semibold text-gold/60 hover:text-gold/90 transition-colors duration-300 rounded-full border border-gold/15 hover:border-gold/30 px-3 py-1.5 bg-gold/5 hover:bg-gold/10"
+                        >
+                          <PlayCircle className="h-3 w-3" />
+                          <span>Tocar todas</span>
+                        </button>
+                      )}
+                    </div>
+                    <ScrollableCarousel>
+                      {activePlaylistTracks.map((track: any, idx: number) => (
+                        <TrackCard
+                          key={track.id}
+                          track={track}
+                          idx={idx}
+                          icon="🎵"
+                          catTracks={activePlaylistTracks}
+                          isCarousel={true}
+                          activeTrackRef={activeTrackRef}
+                          currentTrack={currentTrack}
+                          playing={playing}
+                          progress={progress}
+                          handlePlayWithQueue={handlePlayWithQueue}
+                          canDownload={canDownload}
+                          isLocked={isLocked}
+                        />
+                      ))}
+                    </ScrollableCarousel>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        )}
 
         {/* Content */}
         {isLoading ? (
