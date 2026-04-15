@@ -65,144 +65,117 @@ export function TrackCard({ track, index }: TrackCardProps) {
     <Link
       to="/conteudo/$trackId"
       params={{ trackId: String(track.id) }}
-      className="group relative cursor-pointer h-full block"
+      className="group/card relative cursor-pointer block"
     >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: index * 0.08, ease: "easeOut" }}
-        whileHover={{ scale: 1.03, y: -4 }}
-        whileTap={{ scale: 0.98 }}
-        className={`relative rounded-3xl border transition-all duration-700 overflow-hidden h-full flex flex-col ${
-          isPlaying
-            ? "border-gold/25 shadow-[0_8px_50px_-12px] shadow-gold/15"
-            : "border-border/20 shadow-[0_4px_30px_-10px] shadow-black/20 hover:border-gold/15 hover:shadow-[0_8px_40px_-10px] hover:shadow-gold/8"
-        } bg-card/20`}
+        className="relative"
       >
-        {/* Cover image area */}
-        <div className={`relative h-40 sm:h-44 w-full bg-gradient-to-br ${gradient} overflow-hidden`}>
-          {/* Cover image if available */}
-          {track.coverUrl && (
-            <img
-              src={track.coverUrl}
-              alt={track.title}
-              className="absolute inset-0 w-full h-full object-cover"
-              loading="lazy"
-            />
-          )}
-          {/* Texture overlay */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_40%,transparent_30%,rgba(0,0,0,0.4))]" />
-          {/* Soft glow on hover */}
-          <div className="absolute inset-0 bg-gradient-to-t from-transparent via-white/[0.03] to-white/[0.06] opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+        {/* Ambient glow */}
+        <div className="absolute -inset-4 rounded-3xl bg-gold/0 md:group-hover/card:bg-gold/[0.05] md:transition-all md:duration-700 blur-3xl pointer-events-none" />
 
-          {/* Floating icon (only show if no cover) */}
-          {!track.coverUrl && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className={`flex h-16 w-16 items-center justify-center rounded-2xl backdrop-blur-sm transition-all duration-700 ${
-                isPlaying
-                  ? "bg-gold/15 border border-gold/25 scale-110"
-                  : "bg-white/[0.04] border border-white/[0.06] group-hover:scale-105 group-hover:bg-white/[0.07]"
-              }`}>
-                <Music className={`h-7 w-7 transition-colors duration-500 ${
-                  isPlaying ? "text-gold/70" : "text-white/25 group-hover:text-white/40"
-                }`} />
+        <div className={`relative rounded-[14px] sm:rounded-[16px] overflow-hidden bg-card/5 shadow-md shadow-black/25 ring-1 ring-white/[0.04] md:group-hover/card:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.6)] md:group-hover/card:ring-gold/15 md:transition-all md:duration-500 md:group-hover/card:scale-[1.04]`}>
+
+          {/* Image — vertical poster 9:13 */}
+          <div className={`relative aspect-[9/13] overflow-hidden bg-gradient-to-br ${gradient}`}>
+            {track.coverUrl ? (
+              <img
+                src={track.coverUrl}
+                alt={track.title}
+                className="w-full h-full object-cover md:transition-transform md:duration-[900ms] md:ease-out md:group-hover/card:scale-[1.08]"
+                loading="lazy"
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className={`flex h-16 w-16 items-center justify-center rounded-2xl backdrop-blur-sm transition-all duration-700 ${
+                  isPlaying
+                    ? "bg-gold/15 border border-gold/25 scale-110"
+                    : "bg-white/[0.04] border border-white/[0.06] md:group-hover/card:scale-105 md:group-hover/card:bg-white/[0.07]"
+                }`}>
+                  <Music className={`h-7 w-7 transition-colors duration-500 ${
+                    isPlaying ? "text-gold/70" : "text-white/25 md:group-hover/card:text-white/40"
+                  }`} />
+                </div>
+              </div>
+            )}
+
+            {/* Bottom gradient */}
+            <div className="absolute inset-x-0 bottom-0 h-[70%] bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
+
+            {/* Hover darken overlay */}
+            <div className="absolute inset-0 bg-black/0 md:group-hover/card:bg-black/30 md:transition-all md:duration-500" />
+
+            {/* Inner vignette */}
+            <div className="absolute inset-0 shadow-[inset_0_0_30px_rgba(0,0,0,0.25)] pointer-events-none" />
+
+            {/* Category badge — top left */}
+            <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/25 backdrop-blur-md border border-white/[0.06] text-[9px] sm:text-[10px] font-medium tracking-[0.15em] uppercase text-white/35">
+              {categoryEmojis[track.category] || ""} {track.category}
+            </span>
+
+            {/* Playing indicator badge — top right */}
+            {isPlaying && (
+              <div className="absolute top-2.5 right-2.5 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-gold/20 backdrop-blur-sm border border-gold/30 animate-pulse">
+                <Music className="h-3 w-3 text-gold/80" />
+              </div>
+            )}
+
+            {/* Play/Pause button — center on hover */}
+            <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+              <button
+                onClick={handlePlay}
+                className={`flex items-center gap-2 h-auto px-5 py-2.5 sm:px-6 sm:py-3 rounded-full shadow-[0_4px_24px_rgba(0,0,0,0.4)] pointer-events-auto md:transition-all md:duration-500 md:ease-[cubic-bezier(0.22,1,0.36,1)] ${
+                  isPlaying
+                    ? "bg-gold/95 scale-100 opacity-100"
+                    : "bg-gold/95 scale-[0.5] opacity-0 md:group-hover/card:opacity-100 md:group-hover/card:scale-100"
+                }`}
+              >
+                {isPlaying ? (
+                  <Pause className="h-4 w-4 sm:h-5 sm:w-5 text-gold-foreground fill-gold-foreground" />
+                ) : (
+                  <Play className="h-4 w-4 sm:h-5 sm:w-5 text-gold-foreground fill-gold-foreground" />
+                )}
+              </button>
+            </div>
+
+            {/* Title + meta — bottom */}
+            <div className="absolute inset-x-0 bottom-0 px-3.5 sm:px-4 pb-4 sm:pb-5 z-10">
+              <h3 className="text-sm sm:text-[15px] font-bold text-white line-clamp-2 leading-snug drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] tracking-tight">
+                {track.title}
+              </h3>
+
+              {track.description && (
+                <p className="text-[10px] sm:text-[11px] text-white/35 mt-1.5 line-clamp-2 leading-relaxed">
+                  {track.description}
+                </p>
+              )}
+
+              <div className="flex items-center gap-3 mt-2 opacity-80 md:opacity-0 md:group-hover/card:opacity-100 md:transition-opacity md:duration-400">
+                <span className="text-[9px] sm:text-[10px] text-white/40 font-medium tracking-wider">
+                  {track.duration}
+                </span>
+
+                <button
+                  onClick={handleDownload}
+                  className="inline-flex items-center gap-1 text-[9px] sm:text-[10px] font-semibold tracking-[0.15em] uppercase text-gold/55 hover:text-gold/80 transition-colors duration-500"
+                >
+                  <Download className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                  Baixar
+                </button>
               </div>
             </div>
-          )}
 
-          {/* Track number */}
-          <span className="absolute top-4 left-5 text-xs font-bold tracking-[0.3em] text-white/15">
-            {String(track.id).padStart(2, "0")}
-          </span>
-
-          {/* Category badge */}
-          <span className="absolute top-4 right-4 text-[11px] font-medium tracking-[0.2em] uppercase rounded-full bg-black/20 backdrop-blur-sm border border-white/[0.06] px-3 py-1 text-white/30">
-            {categoryEmojis[track.category] || ""} {track.category}
-          </span>
-
-          {/* Playing indicator */}
-          {isPlaying && (
-            <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-gold/10 to-transparent" />
-          )}
-        </div>
-
-        {/* Content */}
-        <div className="relative p-5 sm:p-6 flex flex-col flex-1">
-          {/* Title */}
-          <h3
-            className={`font-display text-[16px] sm:text-[17px] font-bold tracking-tight leading-snug transition-colors duration-500 ${
-              isPlaying
-                ? "text-gold/85"
-                : "text-foreground/85 group-hover:text-foreground"
-            }`}
-          >
-            {track.title}
-          </h3>
-
-          {/* Description */}
-          <p
-            className={`mt-2.5 text-[12px] leading-[1.9] line-clamp-2 transition-colors duration-500 flex-1 ${
-              isPlaying
-                ? "text-muted-foreground/50"
-                : "text-muted-foreground/70 group-hover:text-muted-foreground/45"
-            }`}
-          >
-            {track.description}
-          </p>
-
-          {/* Duration */}
-          <p
-            className={`mt-3 text-xs tracking-[0.15em] font-medium transition-colors duration-500 ${
-              isPlaying ? "text-gold/40" : "text-muted-foreground/50"
-            }`}
-          >
-            {track.duration}
-          </p>
-
-          {/* Progress bar */}
-          {isPlaying && (
-            <div className="mt-3 h-[2px] rounded-full bg-muted/8 overflow-hidden">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-gold/30 via-gold/55 to-gold/35 transition-all duration-200 ease-linear"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
-          )}
-
-          {/* Actions */}
-          <div
-            className={`mt-4 pt-3.5 border-t border-border/6 flex items-center gap-3 transition-all duration-500 ${
-              isPlaying ? "opacity-100" : "opacity-0 group-hover:opacity-100"
-            }`}
-          >
-            <button
-              onClick={handlePlay}
-              className={`inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase transition-colors duration-500 ${
-                isPlaying ? "text-gold/55" : "text-muted-foreground/60"
-              }`}
-            >
-              {isPlaying ? (
-                <>
-                  <Pause className="h-3 w-3" />
-                  Pausar
-                </>
-              ) : (
-                <>
-                  <Play className="h-3 w-3 ml-0.5" />
-                  Ouvir Agora
-                </>
-              )}
-            </button>
-
-            <span className="w-px h-3 bg-border/8" />
-
-            <button
-              onClick={handleDownload}
-              className="inline-flex items-center gap-2 text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground/50 hover:text-gold/45 transition-colors duration-500"
-            >
-              <Download className="h-3 w-3" />
-              Baixar Louvor
-            </button>
+            {/* Progress bar — bottom edge */}
+            {isPlaying && (
+              <div className="absolute bottom-0 left-0 right-0 h-[2.5px] bg-white/[0.06] z-20">
+                <div
+                  className="h-full rounded-r-full bg-gold md:transition-all md:duration-200 ease-linear"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            )}
           </div>
         </div>
       </motion.div>
