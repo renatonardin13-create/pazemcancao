@@ -11,7 +11,8 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, Settings, Upload, Palette, Globe, Link2, Bell, Wrench, RefreshCw, Save, Download, UploadCloud, AlertTriangle, Loader2 } from "lucide-react";
+import { ArrowLeft, Settings, Upload, Palette, Globe, Link2, Bell, Wrench, RefreshCw, Save, Download, UploadCloud, AlertTriangle, Loader2, LayoutGrid } from "lucide-react";
+import { MODULE_KEYS, type ModuleKey, type PlatformModules } from "@/hooks/use-project-mode";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/settings")({
@@ -93,6 +94,9 @@ function SettingsPage() {
           <TabsTrigger value="advanced" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
             <Wrench className="h-3.5 w-3.5" /> Avançado
           </TabsTrigger>
+          <TabsTrigger value="modules" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
+            <LayoutGrid className="h-3.5 w-3.5" /> Módulos
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="branding" className="mt-4">
@@ -112,6 +116,9 @@ function SettingsPage() {
         </TabsContent>
         <TabsContent value="advanced" className="mt-4">
           <AdvancedTab settings={settings.advanced || {}} onSave={(v) => mutation.mutate({ key: "advanced", value: v })} saving={mutation.isPending} />
+        </TabsContent>
+        <TabsContent value="modules" className="mt-4">
+          <ModulesTab settings={settings.modules || {}} onSave={(v) => mutation.mutate({ key: "modules", value: v })} saving={mutation.isPending} />
         </TabsContent>
       </Tabs>
     </div>
@@ -633,5 +640,85 @@ function AdvancedTab({ settings, onSave, saving }: { settings: any; onSave: (v: 
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+/* ─── Modules ─── */
+const MODULE_LABELS: Record<ModuleKey, { label: string; desc: string; icon: string }> = {
+  vitrine: { label: "Vitrine", desc: "Página principal com prateleiras de cursos", icon: "🏪" },
+  louvores: { label: "Louvores", desc: "Catálogo de músicas e player de áudio", icon: "🎵" },
+  cursos: { label: "Cursos", desc: "Cursos com módulos, aulas e progresso", icon: "🎓" },
+  ebooks: { label: "Ebooks", desc: "Leitor de ebooks e materiais em PDF", icon: "📖" },
+  trilhas: { label: "Trilhas", desc: "Jornadas emocionais e categorias musicais", icon: "🛤️" },
+  perfil: { label: "Perfil", desc: "Página de perfil do aluno", icon: "👤" },
+  comunidade: { label: "Comunidade", desc: "Espaço de interação entre alunos", icon: "💬" },
+  bonus: { label: "Bônus", desc: "Conteúdos bônus e extras", icon: "🎁" },
+  lancamentos: { label: "Lançamentos", desc: "Novos conteúdos e pré-lançamentos", icon: "🚀" },
+};
+
+function ModulesTab({ settings, onSave, saving }: { settings: any; onSave: (v: any) => void; saving: boolean }) {
+  const [modules, setModules] = useState<Partial<PlatformModules>>(() => {
+    const initial: Partial<PlatformModules> = {};
+    for (const key of MODULE_KEYS) {
+      if (key in settings) initial[key] = !!settings[key];
+    }
+    return initial;
+  });
+
+  const toggle = (key: ModuleKey) => {
+    setModules((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
+
+  // Count enabled
+  const enabledCount = MODULE_KEYS.filter((k) => modules[k] !== false).length;
+
+  return (
+    <Card className="bg-card border-border/30">
+      <CardContent className="p-6 space-y-5">
+        <div>
+          <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <LayoutGrid className="h-5 w-5 text-gold" /> Módulos da Plataforma
+          </h3>
+          <p className="text-sm text-muted-foreground">
+            Habilite ou desabilite seções do app. Módulos desabilitados ficam ocultos no menu e na vitrine.
+          </p>
+          <p className="text-xs text-muted-foreground/50 mt-1">
+            {enabledCount} de {MODULE_KEYS.length} módulos habilitados
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {MODULE_KEYS.map((key) => {
+            const info = MODULE_LABELS[key];
+            const enabled = modules[key] !== false;
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => toggle(key)}
+                className={`p-4 rounded-xl border-2 text-left transition-all duration-200 ${
+                  enabled
+                    ? "border-gold/30 bg-gold/[0.06]"
+                    : "border-border/15 bg-card/30 opacity-60"
+                }`}
+              >
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-lg">{info.icon}</span>
+                  <Switch checked={enabled} onCheckedChange={() => toggle(key)} />
+                </div>
+                <p className={`text-sm font-bold ${enabled ? "text-foreground" : "text-muted-foreground"}`}>
+                  {info.label}
+                </p>
+                <p className="text-xs text-muted-foreground/70 mt-0.5">{info.desc}</p>
+              </button>
+            );
+          })}
+        </div>
+
+        <Button onClick={() => onSave(modules)} disabled={saving} className="w-full gap-2">
+          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Salvar Módulos
+        </Button>
+      </CardContent>
+    </Card>
   );
 }

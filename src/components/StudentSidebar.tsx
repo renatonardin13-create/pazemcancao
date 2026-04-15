@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 
 export function StudentSidebar() {
   const { logout, isAdmin, adminLoading } = useAuth();
-  const { showMusic, showCourses } = useProjectMode();
+  const { showMusic, showCourses, showVitrine, showPerfil } = useProjectMode();
   const location = useLocation();
   const [louvoresOpen, setLouvoresOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -121,7 +121,7 @@ export function StudentSidebar() {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-5 pt-6 pb-4 space-y-2">
         {/* Vitrine */}
-        {hasVitrine && showCourses && (
+        {hasVitrine && showVitrine && (
           <Link
             to="/vitrine"
             onClick={() => setMobileOpen(false)}
@@ -210,14 +210,16 @@ export function StudentSidebar() {
         <div className="my-4 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
         {/* Perfil */}
-        <Link
-          to="/perfil"
-          onClick={() => setMobileOpen(false)}
-          className={navItemClass(isActive("/perfil"))}
-        >
-          <UserCircle className="h-[22px] w-[22px] shrink-0" />
-          Perfil
-        </Link>
+        {showPerfil && (
+          <Link
+            to="/perfil"
+            onClick={() => setMobileOpen(false)}
+            className={navItemClass(isActive("/perfil"))}
+          >
+            <UserCircle className="h-[22px] w-[22px] shrink-0" />
+            Perfil
+          </Link>
+        )}
 
         {/* Admin */}
         {!adminLoading && isAdmin && (
