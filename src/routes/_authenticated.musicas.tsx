@@ -185,7 +185,7 @@ function MusicLibraryPage() {
       toggle(playerTrack);
     }
   }, [currentTrack?.id, playing, queue, toggle, setQueue]);
-  }, [currentTrack?.id, toggle, setQueue]);
+  
 
   const dbCategories = catData?.categories || [];
   const tracks = data?.tracks || [];
