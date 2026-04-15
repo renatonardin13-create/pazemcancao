@@ -273,6 +273,8 @@ function AdminUsersPage() {
       email: trimmedEmail,
       access_enabled: addEnabled,
       courseIds: addCourseIds,
+      is_trial: addIsTrial,
+      trialDays: addIsTrial ? addTrialDays : undefined,
     });
   };
 
