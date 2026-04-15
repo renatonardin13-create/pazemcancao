@@ -346,5 +346,6 @@ function MusicDetailPage() {
         </motion.div>
       </div>
     </div>
+    </StudentLayout>
   );
 }
