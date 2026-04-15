@@ -804,8 +804,9 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
             <span className="text-[10px] sm:text-xs tabular-nums text-stone-400/60">
               <span className="font-bold text-stone-300/80">{pageLabel}</span>
               <span className="mx-1 text-stone-600/30">/</span>
-              <span className="text-stone-500/50">{numPages}</span>
-              <span className="ml-1.5 text-gold/50 font-medium">{totalSpreads > 0 ? Math.round(((spread + 1) / totalSpreads) * 100) : 0}%</span>
+              <span className="text-stone-500/50">{hasPaywall ? freePageLimit : numPages}</span>
+              {hasPaywall && <Lock className="inline h-2.5 w-2.5 text-gold/40 ml-0.5" />}
+              <span className="ml-1.5 text-gold/50 font-medium">{totalSpreads > 0 ? Math.round(((spread + 1) / (hasPaywall ? maxAllowedSpread + 1 : totalSpreads)) * 100) : 0}%</span>
             </span>
           </div>
           <div className="hidden sm:block w-28 h-1 rounded-full bg-stone-700/20 overflow-hidden">
