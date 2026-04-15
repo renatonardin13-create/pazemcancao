@@ -213,7 +213,7 @@ export const CourseShelfCard = memo(function CourseShelfCard({
               {isLocked && (
                 <span className="text-[9px] sm:text-[10px] font-semibold tracking-[0.15em] uppercase text-gold/55">
                   <Lock className="inline h-2.5 w-2.5 mr-0.5" />
-                  Bloqueado
+                  Premium
                 </span>
               )}
               {!isLocked && hasProgress && (
