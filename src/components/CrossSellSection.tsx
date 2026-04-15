@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getCrossSellItems, type CrossSellItem } from "@/lib/cross-sell.functions";
+import { logFunnelClick } from "@/lib/funnel-analytics.functions";
 import { Link } from "@tanstack/react-router";
 import { Lock, Play, Sparkles, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
@@ -102,14 +103,14 @@ export function CrossSellSection({
         className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide snap-x snap-mandatory"
       >
         {items.map((item) => (
-          <CrossSellCard key={`${item.type}-${item.id}`} item={item} />
+          <CrossSellCard key={`${item.type}-${item.id}`} item={item} context={currentType} />
         ))}
       </div>
     </motion.div>
   );
 }
 
-function CrossSellCard({ item }: { item: CrossSellItem }) {
+function CrossSellCard({ item, context }: { item: CrossSellItem; context?: string }) {
   const isLocked = item.is_locked;
   const hasSalesPage = !!item.sales_page_url;
 
