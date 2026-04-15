@@ -132,7 +132,17 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
           </span>
 
           {/* Badge text / dynamic badges — top left */}
-          {item.badge_text ? (
+          {isLaunchContent ? (
+            <span className={`absolute top-2.5 left-2.5 z-20 inline-flex items-center gap-1 px-2.5 py-1 rounded-full backdrop-blur-md text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] ${
+              launchMode === 'lancamento_especial' ? 'bg-gradient-to-r from-gold/20 to-amber-500/15 border border-gold/30 text-gold/80' :
+              launchMode === 'em_breve' ? 'bg-primary/15 border border-primary/25 text-primary/70' :
+              'bg-rose-500/15 border border-rose-400/25 text-rose-400/70'
+            }`}>
+              {launchMode === 'lancamento_especial' && <><Star className="h-2.5 w-2.5 fill-current" /> Lançamento Especial</>}
+              {launchMode === 'em_breve' && <><Clock className="h-2.5 w-2.5" /> Em Breve</>}
+              {launchMode === 'bloqueado_para_venda' && <><Lock className="h-2.5 w-2.5" /> Conteúdo Exclusivo</>}
+            </span>
+          ) : item.badge_text ? (
             <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold/15 backdrop-blur-md border border-gold/20 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] text-gold/70">
               {item.badge_text}
             </span>
