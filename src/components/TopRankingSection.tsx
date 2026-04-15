@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { ContentCard } from "@/components/ContentCard";
 import { Flame, Trophy, TrendingUp, BookOpen, Video, GraduationCap, FileText } from "lucide-react";
-import { motion } from "framer-motion";
 
 const typeConfig: Record<string, { icon: any; gradient: string }> = {
   ebook: { icon: BookOpen, gradient: "from-blue-900/40 via-blue-950/30 to-slate-950/50" },
@@ -87,33 +86,31 @@ export function TopRankingSection({
         {ranked.map((item: any, idx: number) => {
           const config = typeConfig[item.content_type] || typeConfig.material;
           return (
-            <motion.div
-              key={`rank-${item.id}`}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.4, delay: idx * 0.06 }}
-              className="relative"
-            >
-              {/* Rank badge */}
-              <div
-                className={`absolute -top-2.5 -left-2 z-10 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
-                  rankBadgeStyles[idx] ||
-                  "bg-muted/60 text-foreground/60 border border-border/20"
-                }`}
-              >
-                {idx + 1}
-              </div>
+             <div
+               key={`rank-${item.id}`}
+               className="relative animate-in fade-in slide-in-from-bottom-2 duration-500"
+               style={{ animationDelay: `${idx * 60}ms`, animationFillMode: 'both' }}
+             >
+               {/* Rank badge */}
+               <div
+                 className={`absolute -top-2.5 -left-2 z-10 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${
+                   rankBadgeStyles[idx] ||
+                   "bg-muted/60 text-foreground/60 border border-border/20"
+                 }`}
+               >
+                 {idx + 1}
+               </div>
 
-              <ContentCard
-                item={item}
-                index={idx}
-                hasAccess={item.is_free || hasAccess}
-                gradient={config.gradient}
-                TypeIcon={config.icon}
-                progress={progressMap[item.id]}
-                isLastAccessed={item.id === lastAccessedId}
-              />
-            </motion.div>
+               <ContentCard
+                 item={item}
+                 index={idx}
+                 hasAccess={item.is_free || hasAccess}
+                 gradient={config.gradient}
+                 TypeIcon={config.icon}
+                 progress={progressMap[item.id]}
+                 isLastAccessed={item.id === lastAccessedId}
+               />
+             </div>
           );
         })}
       </div>

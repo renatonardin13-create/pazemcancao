@@ -13,7 +13,6 @@ import { FooterLinks } from "@/components/FooterLinks";
 import { ContentCard } from "@/components/ContentCard";
 import { RecommendedSection } from "@/components/RecommendedSection";
 import { TopRankingSection } from "@/components/TopRankingSection";
-import { motion } from "framer-motion";
 import {
   BookOpen,
   Video,
@@ -98,8 +97,7 @@ function ContentPage() {
     queryKey: ["content-items"],
     queryFn: () => listContentItems(),
     refetchOnWindowFocus: true,
-    staleTime: 30_000,        // refetch after 30s when revisiting
-    refetchInterval: 120_000, // auto-refresh every 2 min
+    staleTime: 60_000,
   });
 
   const { data: profileData } = useQuery({
@@ -204,6 +202,7 @@ function ContentPage() {
   }, [dbJourneys]);
 
   // Track shown items to avoid duplication
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const shownIds = useMemo(() => new Set<string>(), [items]);
 
   // "Continuar de onde parou"
@@ -335,11 +334,8 @@ function ContentPage() {
 
             {/* Stats bar with progress */}
             {stats.unlocked > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="space-y-3"
+              <div
+                className="space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-500"
               >
                 <div className="flex flex-wrap gap-4 sm:gap-6">
                   <StatPill icon={Library} label="Para você" value={stats.unlocked} color="text-gold/60" />
@@ -358,7 +354,7 @@ function ContentPage() {
                     </span>
                   </div>
                 )}
-              </motion.div>
+              </div>
             )}
           </div>
 
