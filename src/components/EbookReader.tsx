@@ -35,7 +35,7 @@ interface EbookReaderProps {
  * Mobile: single page with swipe.
  * Page-flip 3D animation on navigation.
  */
-export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
+export function EbookReader({ pdfUrl, title, audioUrl, onBack }: EbookReaderProps) {
   const isMobile = useIsMobile();
   const [numPages, setNumPages] = useState(0);
   // `spread` tracks the current spread index (0-based).
