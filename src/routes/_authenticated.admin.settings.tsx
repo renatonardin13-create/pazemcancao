@@ -328,9 +328,9 @@ function ColorsTab({ settings, onSave, saving }: { settings: any; onSave: (v: an
 
 /* ─── General ─── */
 const PROJECT_MODES = [
-  { value: "hibrido", label: "Híbrido", desc: "Música + Cursos + Ebooks + Outros" },
-  { value: "somente_musica", label: "Somente Música", desc: "Louvores, categorias e player" },
-  { value: "somente_cursos", label: "Somente Cursos", desc: "Cursos, módulos, aulas e ebooks" },
+  { value: "somente_musica", label: "Somente Música", desc: "Plataforma focada em louvores, categorias e player", icon: Music, accent: "from-sky-500/20 to-blue-500/5" },
+  { value: "somente_cursos", label: "Somente Cursos", desc: "Plataforma focada em cursos, aulas e área de membros", icon: GraduationCap, accent: "from-emerald-500/20 to-teal-500/5" },
+  { value: "hibrido", label: "Híbrido", desc: "Música + Cursos + Ebooks + outros produtos", icon: Layers, accent: "from-gold/20 to-amber-500/5" },
 ] as const;
 
 function GeneralTab({ settings, onSave, saving }: { settings: any; onSave: (v: any) => void; saving: boolean }) {
@@ -341,31 +341,59 @@ function GeneralTab({ settings, onSave, saving }: { settings: any; onSave: (v: a
 
   return (
     <div className="space-y-6">
-      {/* Project Mode */}
-      <Card className="bg-card border-gold/20">
-        <CardContent className="p-6 space-y-5">
+      {/* Project Mode — prominent card section */}
+      <Card className="bg-card border-gold/15 shadow-lg shadow-gold/5 relative overflow-hidden">
+        <div className="pointer-events-none absolute -top-20 -right-20 h-48 w-48 rounded-full bg-gold/[0.04] blur-[60px]" />
+        <CardContent className="p-6 space-y-5 relative z-10">
           <div>
-            <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+            <h3 className="text-lg font-bold text-foreground flex items-center gap-2">
               <Settings className="h-5 w-5 text-gold" /> Modo do Projeto
             </h3>
-            <p className="text-sm text-muted-foreground">Define quais módulos ficam visíveis para os alunos</p>
+            <p className="text-sm text-muted-foreground mt-1">Define o tipo de plataforma e quais módulos ficam visíveis</p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {PROJECT_MODES.map((m) => (
-              <button
-                key={m.value}
-                type="button"
-                onClick={() => setProjectMode(m.value)}
-                className={`p-4 rounded-xl border-2 text-left transition-all duration-200 ${
-                  projectMode === m.value
-                    ? "border-gold bg-gold/10 ring-1 ring-gold/20"
-                    : "border-border/20 hover:border-border/40 bg-card/50"
-                }`}
-              >
-                <p className={`text-sm font-bold ${projectMode === m.value ? "text-gold" : "text-foreground"}`}>{m.label}</p>
-                <p className="text-xs text-muted-foreground mt-1">{m.desc}</p>
-              </button>
-            ))}
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {PROJECT_MODES.map((m) => {
+              const Icon = m.icon;
+              const isActive = projectMode === m.value;
+              return (
+                <button
+                  key={m.value}
+                  type="button"
+                  onClick={() => setProjectMode(m.value)}
+                  className={`relative p-5 rounded-2xl border-2 text-left transition-all duration-300 group ${
+                    isActive
+                      ? "border-gold bg-gradient-to-br " + m.accent + " ring-2 ring-gold/25 shadow-lg shadow-gold/10"
+                      : "border-border/20 hover:border-border/40 bg-card/50 hover:bg-card/80"
+                  }`}
+                >
+                  {isActive && (
+                    <div className="absolute -top-px -right-px">
+                      <span className="flex h-5 w-5 items-center justify-center rounded-bl-lg rounded-tr-xl bg-gold text-[10px] font-black text-background">✓</span>
+                    </div>
+                  )}
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-xl mb-3 transition-colors ${
+                    isActive ? "bg-gold/20 text-gold" : "bg-muted/30 text-muted-foreground/60 group-hover:text-foreground/70"
+                  }`}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <p className={`text-sm font-bold tracking-tight ${isActive ? "text-gold" : "text-foreground/80"}`}>
+                    {m.label}
+                  </p>
+                  <p className="text-xs text-muted-foreground/60 mt-1.5 leading-relaxed">
+                    {m.desc}
+                  </p>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Warning */}
+          <div className="flex items-start gap-2.5 rounded-xl bg-amber-500/8 border border-amber-500/15 px-4 py-3">
+            <AlertTriangle className="h-4 w-4 text-amber-400/70 mt-0.5 shrink-0" />
+            <p className="text-xs text-amber-400/70 leading-relaxed">
+              Alterar o modo pode mudar o que aparece para os usuários. Módulos desabilitados serão ocultados do menu e da vitrine.
+            </p>
           </div>
         </CardContent>
       </Card>
