@@ -18,6 +18,8 @@ import {
   Settings,
   Sun,
   Moon,
+  SkipBack,
+  SkipForward,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
