@@ -237,6 +237,7 @@ export type Database = {
           external_product_id: string | null
           external_product_name: string | null
           id: string
+          integration_token: string | null
           is_enabled: boolean
           notes: string | null
           platform: string
@@ -250,6 +251,7 @@ export type Database = {
           external_product_id?: string | null
           external_product_name?: string | null
           id?: string
+          integration_token?: string | null
           is_enabled?: boolean
           notes?: string | null
           platform?: string
@@ -263,6 +265,7 @@ export type Database = {
           external_product_id?: string | null
           external_product_name?: string | null
           id?: string
+          integration_token?: string | null
           is_enabled?: boolean
           notes?: string | null
           platform?: string
