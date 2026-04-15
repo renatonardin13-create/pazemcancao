@@ -101,8 +101,9 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   const fontScaleMap: Record<FontSize, number> = { small: 0.85, medium: 1, large: 1.25 };
   const effectiveScale = scale * fontScaleMap[fontSize];
 
-  // Page image cache: pageNum → dataURL
+  // Page image cache: pageNum → dataURL (use ref to avoid dependency loops)
   const [pageImages, setPageImages] = useState<Record<number, string>>({});
+  const pageImagesRef = useRef<Record<number, string>>({});
   const [renderingPages, setRenderingPages] = useState<Set<number>>(new Set());
 
   const pdfDocRef = useRef<pdfjsLib.PDFDocumentProxy | null>(null);
