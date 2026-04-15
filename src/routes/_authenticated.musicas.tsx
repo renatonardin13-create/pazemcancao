@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router"; // rebuild
 import { ListSkeleton } from "@/components/LoadingSkeletons";
 import { logDownload } from "@/lib/analytics.functions";
+import { ModuleGuard } from "@/components/ModuleGuard";
 import { Music, Play, Pause, Download, Search, Headphones, Lock, Gift, ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";

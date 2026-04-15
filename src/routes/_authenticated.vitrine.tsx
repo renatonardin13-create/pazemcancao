@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { useQuery } from "@tanstack/react-query";
+import { ModuleGuard } from "@/components/ModuleGuard";
 import { getStudentShelves } from "@/lib/shelves.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
