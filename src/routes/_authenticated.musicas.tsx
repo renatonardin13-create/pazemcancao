@@ -190,6 +190,7 @@ function MusicLibraryPage() {
   }, [regularTracks]);
 
   return (
+    <ModuleGuard moduleKey="louvores">
     <StudentLayout>
     <div className="min-h-screen bg-background flex flex-col">
 
@@ -401,6 +402,7 @@ function MusicLibraryPage() {
       <FooterLinks />
     </div>
     </StudentLayout>
+    </ModuleGuard>
   );
 }
 
