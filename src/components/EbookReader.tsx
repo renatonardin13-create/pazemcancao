@@ -10,9 +10,14 @@ import {
   Loader2,
   ZoomIn,
   ZoomOut,
+  Play,
+  Pause,
+  Square,
+  Headphones,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useEbookAudio } from "@/hooks/use-ebook-audio";
 import * as pdfjsLib from "pdfjs-dist";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
@@ -20,6 +25,7 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs
 interface EbookReaderProps {
   pdfUrl: string;
   title: string;
+  audioUrl?: string;
   onBack?: () => void;
 }
 
@@ -29,7 +35,7 @@ interface EbookReaderProps {
  * Mobile: single page with swipe.
  * Page-flip 3D animation on navigation.
  */
-export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
+export function EbookReader({ pdfUrl, title, audioUrl, onBack }: EbookReaderProps) {
   const isMobile = useIsMobile();
   const [numPages, setNumPages] = useState(0);
   // `spread` tracks the current spread index (0-based).
@@ -40,6 +46,7 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
   const [direction, setDirection] = useState<"left" | "right">("right");
   const [scale, setScale] = useState(1);
   const [error, setError] = useState<string | null>(null);
+  const [pageTexts, setPageTexts] = useState<Record<number, string>>({});
 
   // Page image cache: pageNum → dataURL
   const [pageImages, setPageImages] = useState<Record<number, string>>({});
@@ -154,6 +161,44 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
     const allPages = [...pages, ...nextPages, ...prevPages];
     allPages.forEach((p) => renderPage(p));
   }, [spread, loading, numPages, getSpreadPages, totalSpreads, renderPage]);
+
+  // Extract text from current pages for TTS
+  useEffect(() => {
+    if (loading || numPages === 0) return;
+    const pdf = pdfDocRef.current;
+    if (!pdf) return;
+    currentPages.forEach(async (pageNum) => {
+      if (pageTexts[pageNum]) return;
+      try {
+        const page = await pdf.getPage(pageNum);
+        const textContent = await page.getTextContent();
+        const text = textContent.items
+          .map((item: any) => item.str)
+          .join(" ")
+          .trim();
+        if (text) {
+          setPageTexts((prev) => ({ ...prev, [pageNum]: text }));
+        }
+      } catch { /* ignore */ }
+    });
+  }, [spread, loading, numPages, currentPages]);
+
+  // Combine current page texts for audio
+  const currentPageText = currentPages
+    .map((p) => pageTexts[p] || "")
+    .filter(Boolean)
+    .join(". ");
+
+  // Audio player hook
+  const ebookAudio = useEbookAudio({
+    audioUrl,
+    pageText: currentPageText || undefined,
+  });
+
+  // Stop TTS when page changes
+  useEffect(() => {
+    ebookAudio.stop();
+  }, [spread]);
 
   // Re-render on scale change
   useEffect(() => {
@@ -405,6 +450,42 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
           </motion.div>
         </AnimatePresence>
       </div>
+
+      {/* ═══ AUDIO PLAYER BAR ═══ */}
+      {ebookAudio.available && (
+        <div className="flex items-center gap-2 px-3 sm:px-6 py-2 border-t border-border/8 bg-background/95 backdrop-blur-xl z-30">
+          <Headphones className="h-3.5 w-3.5 text-gold/50 shrink-0" />
+          <span className="text-[9px] uppercase tracking-widest text-muted-foreground/40 hidden sm:inline">
+            {ebookAudio.isFileMode ? "Áudio" : "Leitura em voz"}
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={ebookAudio.toggle}
+            className={`h-7 w-7 p-0 transition-colors ${ebookAudio.isPlaying ? "text-gold" : "text-muted-foreground/50 hover:text-gold"}`}
+          >
+            {ebookAudio.isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+          </Button>
+          {ebookAudio.isPlaying && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={ebookAudio.stop}
+              className="h-7 w-7 p-0 text-muted-foreground/40 hover:text-red-400"
+            >
+              <Square className="h-3 w-3" />
+            </Button>
+          )}
+          {ebookAudio.isFileMode && ebookAudio.duration > 0 && (
+            <div className="flex-1 max-w-[200px] h-1 rounded-full bg-border/10 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-gold/50 transition-all duration-300"
+                style={{ width: `${(ebookAudio.progress / ebookAudio.duration) * 100}%` }}
+              />
+            </div>
+          )}
+        </div>
+      )}
 
       {/* ═══ BOTTOM BAR ═══ */}
       <div className="flex items-center justify-between px-3 sm:px-6 py-2.5 border-t border-border/8 bg-background/95 backdrop-blur-xl z-30">
