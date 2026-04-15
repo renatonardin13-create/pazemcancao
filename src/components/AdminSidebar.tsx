@@ -14,6 +14,8 @@ import {
   ArrowLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useProjectMode } from "@/hooks/use-project-mode";
+import { useMemo } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -26,12 +28,12 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const contentItems = [
-  { title: "Músicas", url: "/admin/tracks", icon: Music },
-  { title: "Cursos", url: "/admin/courses", icon: BookOpen },
-  { title: "Vitrine", url: "/admin/shelves", icon: Layout },
-  { title: "Categorias", url: "/admin/categories", icon: FolderOpen },
-  { title: "Trilhas", url: "/admin/journeys", icon: Compass },
+const allContentItems = [
+  { title: "Músicas", url: "/admin/tracks", icon: Music, module: "louvores" as const },
+  { title: "Cursos", url: "/admin/courses", icon: BookOpen, module: "cursos" as const },
+  { title: "Vitrine", url: "/admin/shelves", icon: Layout, module: "vitrine" as const },
+  { title: "Categorias", url: "/admin/categories", icon: FolderOpen, module: "louvores" as const },
+  { title: "Trilhas", url: "/admin/journeys", icon: Compass, module: "trilhas" as const },
 ];
 
 const toolItems = [
@@ -49,6 +51,12 @@ export function AdminSidebar() {
   const collapsed = state === "collapsed";
   const location = useLocation();
   const currentPath = location.pathname;
+  const { modules } = useProjectMode();
+
+  const contentItems = useMemo(
+    () => allContentItems.filter((item) => modules[item.module]),
+    [modules]
+  );
 
   const isActive = (path: string) =>
     path === "/admin"
