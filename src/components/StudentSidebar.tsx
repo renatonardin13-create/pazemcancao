@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { listCategories, listActiveTracks } from "@/lib/tracks.functions";
 import { getStudentShelves } from "@/lib/shelves.functions";
 import { getMyCoursesData } from "@/lib/my-courses.functions";
+import { useProjectMode } from "@/hooks/use-project-mode";
 import { LogoBrand } from "./LogoBrand";
 import {
   Store,
