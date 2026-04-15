@@ -9,6 +9,8 @@ import { useQuery } from "@tanstack/react-query";
 import { listAllTracks, listCategories } from "@/lib/tracks.functions";
 import { listPlaylistsWithCounts, getPlaylistWithTracks } from "@/lib/playlists.functions";
 import { checkBuyerAccess } from "@/lib/access.functions";
+import { getNewTracks, getMostPlayedTracks, getContinueListening, getRecommendedTracks } from "@/lib/auto-playlists.functions";
+import { Flame, Sparkles, History, TrendingUp } from "lucide-react";
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { usePlayer } from "@/hooks/use-player";
@@ -125,6 +127,31 @@ function MusicLibraryPage() {
 
   const playlists = playlistsData?.playlists || [];
   const activePlaylistTracks = activePlaylistData?.tracks || [];
+
+  // Auto-playlists
+  const { data: newTracksData } = useQuery({
+    queryKey: ["auto-new-tracks"],
+    queryFn: () => getNewTracks(),
+    staleTime: 5 * 60_000,
+  });
+
+  const { data: mostPlayedData } = useQuery({
+    queryKey: ["auto-most-played"],
+    queryFn: () => getMostPlayedTracks(),
+    staleTime: 5 * 60_000,
+  });
+
+  const { data: continueData } = useQuery({
+    queryKey: ["auto-continue-listening"],
+    queryFn: () => getContinueListening(),
+    staleTime: 2 * 60_000,
+  });
+
+  const { data: recommendedData } = useQuery({
+    queryKey: ["auto-recommended"],
+    queryFn: () => getRecommendedTracks(),
+    staleTime: 5 * 60_000,
+  });
 
   const { currentTrack, playing, progress, toggle, setQueue } = usePlayer();
 
@@ -280,6 +307,67 @@ function MusicLibraryPage() {
             />
           </div>
         </motion.div>
+
+        {/* ── Auto Playlists ── */}
+        <AutoPlaylistShelf
+          title="Continue Ouvindo"
+          icon={<History className="h-4 w-4 text-gold/40" />}
+          tracks={continueData?.tracks || []}
+          delay={0.25}
+          activeTrackRef={activeTrackRef}
+          currentTrack={currentTrack}
+          playing={playing}
+          progress={progress}
+          handlePlayWithQueue={handlePlayWithQueue}
+          canDownload={canDownload}
+          isLocked={isLocked}
+          setQueue={setQueue}
+        />
+
+        <AutoPlaylistShelf
+          title="Recomendado para Você"
+          icon={<Sparkles className="h-4 w-4 text-gold/40" />}
+          tracks={recommendedData?.tracks || []}
+          delay={0.3}
+          activeTrackRef={activeTrackRef}
+          currentTrack={currentTrack}
+          playing={playing}
+          progress={progress}
+          handlePlayWithQueue={handlePlayWithQueue}
+          canDownload={canDownload}
+          isLocked={isLocked}
+          setQueue={setQueue}
+        />
+
+        <AutoPlaylistShelf
+          title="Mais Acessadas"
+          icon={<TrendingUp className="h-4 w-4 text-gold/40" />}
+          tracks={mostPlayedData?.tracks || []}
+          delay={0.35}
+          activeTrackRef={activeTrackRef}
+          currentTrack={currentTrack}
+          playing={playing}
+          progress={progress}
+          handlePlayWithQueue={handlePlayWithQueue}
+          canDownload={canDownload}
+          isLocked={isLocked}
+          setQueue={setQueue}
+        />
+
+        <AutoPlaylistShelf
+          title="Novidades"
+          icon={<Flame className="h-4 w-4 text-amber-400/50" />}
+          tracks={newTracksData?.tracks || []}
+          delay={0.4}
+          activeTrackRef={activeTrackRef}
+          currentTrack={currentTrack}
+          playing={playing}
+          progress={progress}
+          handlePlayWithQueue={handlePlayWithQueue}
+          canDownload={canDownload}
+          isLocked={isLocked}
+          setQueue={setQueue}
+        />
 
         {/* Playlists Section */}
         {playlists.length > 0 && (
@@ -605,6 +693,73 @@ function MusicLibraryPage() {
     </div>
     </StudentLayout>
     </ModuleGuard>
+  );
+}
+
+/* ── Auto Playlist Shelf ── */
+function AutoPlaylistShelf({
+  title, icon, tracks, delay, activeTrackRef,
+  currentTrack, playing, progress, handlePlayWithQueue, canDownload, isLocked, setQueue,
+}: {
+  title: string;
+  icon: React.ReactNode;
+  tracks: any[];
+  delay: number;
+  activeTrackRef: React.RefObject<HTMLDivElement | null>;
+  currentTrack: Track | null;
+  playing: boolean;
+  progress: number;
+  handlePlayWithQueue: (track: any, trackList: any[]) => void;
+  canDownload: boolean;
+  isLocked: boolean;
+  setQueue: (tracks: Track[], startIndex?: number) => void;
+}) {
+  if (!tracks || tracks.length === 0) return null;
+
+  return (
+    <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={delay} className="mb-8">
+      <div className="flex items-center gap-3 mb-4">
+        {icon}
+        <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">{title}</h2>
+        <div className="flex-1 h-px bg-gradient-to-r from-border/15 to-transparent" />
+        <span className="text-xs text-muted-foreground/50">{tracks.length} música{tracks.length !== 1 ? "s" : ""}</span>
+        {!isLocked && tracks.length > 1 && (
+          <button
+            onClick={() => {
+              const playable = tracks.filter((t: any) => t.is_active);
+              if (playable.length > 0) {
+                setQueue(playable.map(dbTrackToPlayerTrack), 0);
+                toast.success(`▶ Tocando "${title}"`);
+              }
+            }}
+            className="flex items-center gap-1.5 text-[11px] font-semibold text-gold/60 hover:text-gold/90 transition-colors duration-300 rounded-full border border-gold/15 hover:border-gold/30 px-3 py-1.5 bg-gold/5 hover:bg-gold/10"
+          >
+            <PlayCircle className="h-3 w-3" />
+            <span className="hidden sm:inline">Tocar todas</span>
+            <span className="sm:hidden">▶</span>
+          </button>
+        )}
+      </div>
+      <ScrollableCarousel>
+        {tracks.map((track: any, idx: number) => (
+          <TrackCard
+            key={track.id}
+            track={track}
+            idx={idx}
+            icon="🎵"
+            catTracks={tracks}
+            isCarousel={true}
+            activeTrackRef={activeTrackRef}
+            currentTrack={currentTrack}
+            playing={playing}
+            progress={progress}
+            handlePlayWithQueue={handlePlayWithQueue}
+            canDownload={canDownload}
+            isLocked={isLocked}
+          />
+        ))}
+      </ScrollableCarousel>
+    </motion.div>
   );
 }
 
