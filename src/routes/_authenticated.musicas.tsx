@@ -128,6 +128,31 @@ function MusicLibraryPage() {
   const playlists = playlistsData?.playlists || [];
   const activePlaylistTracks = activePlaylistData?.tracks || [];
 
+  // Auto-playlists
+  const { data: newTracksData } = useQuery({
+    queryKey: ["auto-new-tracks"],
+    queryFn: () => getNewTracks(),
+    staleTime: 5 * 60_000,
+  });
+
+  const { data: mostPlayedData } = useQuery({
+    queryKey: ["auto-most-played"],
+    queryFn: () => getMostPlayedTracks(),
+    staleTime: 5 * 60_000,
+  });
+
+  const { data: continueData } = useQuery({
+    queryKey: ["auto-continue-listening"],
+    queryFn: () => getContinueListening(),
+    staleTime: 2 * 60_000,
+  });
+
+  const { data: recommendedData } = useQuery({
+    queryKey: ["auto-recommended"],
+    queryFn: () => getRecommendedTracks(),
+    staleTime: 5 * 60_000,
+  });
+
   const { currentTrack, playing, progress, toggle, setQueue } = usePlayer();
 
   const handlePlayWithQueue = useCallback((track: any, trackList: any[]) => {
