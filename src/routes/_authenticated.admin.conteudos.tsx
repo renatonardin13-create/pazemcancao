@@ -84,6 +84,7 @@ function AdminContentPage() {
   const [initialFreeCount, setInitialFreeCount] = useState<string>("");
   const [lockedFinalCount, setLockedFinalCount] = useState<string>("");
   const [lockedLabel, setLockedLabel] = useState("");
+  const [launchMode, setLaunchMode] = useState("none");
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [contentFile, setContentFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -150,6 +151,7 @@ function AdminContentPage() {
     setInitialFreeCount("");
     setLockedFinalCount("");
     setLockedLabel("");
+    setLaunchMode("none");
     setCoverFile(null);
     setContentFile(null);
     setEditItem(null);
@@ -178,6 +180,7 @@ function AdminContentPage() {
     setInitialFreeCount(item.initial_free_count != null ? String(item.initial_free_count) : "");
     setLockedFinalCount(item.locked_final_count != null ? String(item.locked_final_count) : "");
     setLockedLabel(item.locked_label || "");
+    setLaunchMode(item.launch_mode || "none");
     setCoverFile(null);
     setContentFile(null);
     setFormOpen(true);
@@ -241,6 +244,7 @@ function AdminContentPage() {
         initial_free_count: initialFreeCount.trim() !== "" ? parseInt(initialFreeCount, 10) : 0,
         locked_final_count: lockedFinalCount.trim() !== "" ? parseInt(lockedFinalCount, 10) : 0,
         locked_label: lockedLabel.trim() || null,
+        launch_mode: launchMode,
       };
 
       if (editItem) {
@@ -615,6 +619,28 @@ function AdminContentPage() {
               )}
             </div>
 
+            {/* Launch Mode */}
+            <div className="space-y-2 rounded-xl border border-border/25 bg-card/15 p-4">
+              <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">🚀 Modo de Lançamento</Label>
+              <Select value={launchMode} onValueChange={setLaunchMode} disabled={isSubmitting}>
+                <SelectTrigger className="bg-card/15 border-border/30 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Nenhum (conteúdo normal)</SelectItem>
+                  <SelectItem value="lancamento_especial">🌟 Lançamento Especial</SelectItem>
+                  <SelectItem value="em_breve">⏳ Em Breve</SelectItem>
+                  <SelectItem value="bloqueado_para_venda">🔒 Bloqueado para Venda</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-[11px] text-muted-foreground/60">
+                {launchMode === "none" && "Conteúdo seguirá as regras normais de acesso."}
+                {launchMode === "lancamento_especial" && "Aparece com destaque premium e cadeado. Não é liberado automaticamente."}
+                {launchMode === "em_breve" && "Aparece visível mas bloqueado, com mensagem 'Em breve'."}
+                {launchMode === "bloqueado_para_venda" && "Aparece bloqueado com redirecionamento para página de vendas."}
+              </p>
+            </div>
+
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="ghost" onClick={() => { setFormOpen(false); resetForm(); }} disabled={isSubmitting} className="text-xs text-muted-foreground/70">
                 Cancelar
@@ -728,6 +754,11 @@ function AdminContentPage() {
                       {item.journey_group && (
                         <Badge variant="outline" className="text-[11px] px-1.5 py-0 text-purple-400/50 border-purple-500/15 bg-purple-500/5">
                           trilha: {item.journey_group.replace(/_/g, " ")}
+                        </Badge>
+                      )}
+                      {item.launch_mode && item.launch_mode !== 'none' && (
+                        <Badge variant="outline" className="text-[11px] px-1.5 py-0 text-orange-400/70 border-orange-500/20 bg-orange-500/10">
+                          {item.launch_mode === 'lancamento_especial' ? '🌟 Lançamento' : item.launch_mode === 'em_breve' ? '⏳ Em breve' : '🔒 Venda'}
                         </Badge>
                       )}
                       <span className="text-[11px] text-muted-foreground/50">#{item.sort_order}</span>

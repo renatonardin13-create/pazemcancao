@@ -1,5 +1,5 @@
 import { memo } from "react";
-import { Lock, Download, Play, ShoppingCart, Clock, ArrowRight, CheckCircle2, Eye, Heart } from "lucide-react";
+import { Lock, Download, Play, ShoppingCart, Clock, ArrowRight, CheckCircle2, Eye, Heart, Star, Sparkles } from "lucide-react";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { Link } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
@@ -34,10 +34,12 @@ function getContentState(item: any, hasAccess: boolean, progress: ContentCardPro
 
 export const ContentCard = memo(function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progress, isLastAccessed, onTrackView, onTrackDownload, isFavorite, onToggleFavorite }: ContentCardProps) {
   const accessMode = item.effectiveAccessMode || (item.is_free ? 'gratuito' : 'pago');
-  const isUnlocked = item.unlocked !== undefined ? item.unlocked : (item.is_free || hasAccess);
+  const launchMode = item.launch_mode || 'none';
+  const isLaunchContent = launchMode !== 'none';
+  const isUnlocked = isLaunchContent ? false : (item.unlocked !== undefined ? item.unlocked : (item.is_free || hasAccess));
   const isLocked = !isUnlocked;
-  const isPendingRelease = accessMode === 'liberar_em_dias' && !isUnlocked && hasAccess;
-  const isRuleLocked = !!item.unlockRuleMessage && !isUnlocked;
+  const isPendingRelease = !isLaunchContent && accessMode === 'liberar_em_dias' && !isUnlocked && hasAccess;
+  const isRuleLocked = !isLaunchContent && !!item.unlockRuleMessage && !isUnlocked;
   const daysLeft = item.unlockDate
     ? Math.max(0, Math.ceil((new Date(item.unlockDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : item.release_days || null;
@@ -56,6 +58,13 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
     : 0;
 
   const handleLockedClick = () => {
+    if (isLaunchContent) {
+      if (launchMode === 'bloqueado_para_venda' && item.sales_page_url) {
+        window.open(item.sales_page_url, "_blank");
+      }
+      // em_breve and lancamento_especial: no action (just show message)
+      return;
+    }
     if (isLocked && item.sales_page_url) {
       window.open(item.sales_page_url, "_blank");
     }
@@ -123,7 +132,17 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
           </span>
 
           {/* Badge text / dynamic badges — top left */}
-          {item.badge_text ? (
+          {isLaunchContent ? (
+            <span className={`absolute top-2.5 left-2.5 z-20 inline-flex items-center gap-1 px-2.5 py-1 rounded-full backdrop-blur-md text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] ${
+              launchMode === 'lancamento_especial' ? 'bg-gradient-to-r from-gold/20 to-amber-500/15 border border-gold/30 text-gold/80' :
+              launchMode === 'em_breve' ? 'bg-primary/15 border border-primary/25 text-primary/70' :
+              'bg-rose-500/15 border border-rose-400/25 text-rose-400/70'
+            }`}>
+              {launchMode === 'lancamento_especial' && <><Star className="h-2.5 w-2.5 fill-current" /> Lançamento Especial</>}
+              {launchMode === 'em_breve' && <><Clock className="h-2.5 w-2.5" /> Em Breve</>}
+              {launchMode === 'bloqueado_para_venda' && <><Lock className="h-2.5 w-2.5" /> Conteúdo Exclusivo</>}
+            </span>
+          ) : item.badge_text ? (
             <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold/15 backdrop-blur-md border border-gold/20 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] text-gold/70">
               {item.badge_text}
             </span>
@@ -149,8 +168,43 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
             </div>
           )}
 
+          {/* Launch mode overlay */}
+          {isLaunchContent && (
+            <div className="absolute inset-0 bg-black/55 backdrop-blur-[3px] flex flex-col items-center justify-center gap-3 z-10">
+              <div className="relative">
+                <div className={`absolute -inset-4 rounded-full blur-2xl animate-pulse ${
+                  launchMode === 'lancamento_especial' ? 'bg-gold/15' :
+                  launchMode === 'em_breve' ? 'bg-primary/10' : 'bg-rose-500/10'
+                }`} />
+                <div className={`relative flex h-16 w-16 items-center justify-center rounded-2xl border shadow-lg ${
+                  launchMode === 'lancamento_especial' ? 'bg-gradient-to-br from-gold/20 to-amber-600/15 border-gold/30 shadow-gold/15' :
+                  launchMode === 'em_breve' ? 'bg-primary/10 border-primary/25 shadow-primary/10' :
+                  'bg-gradient-to-br from-rose-500/15 to-red-600/10 border-rose-400/25 shadow-rose-500/10'
+                }`}>
+                  {launchMode === 'lancamento_especial' && <Sparkles className="h-7 w-7 text-gold/70" />}
+                  {launchMode === 'em_breve' && <Clock className="h-7 w-7 text-primary/60" />}
+                  {launchMode === 'bloqueado_para_venda' && <Lock className="h-7 w-7 text-rose-400/65" />}
+                </div>
+              </div>
+              <span className={`text-[10px] font-bold uppercase tracking-[0.25em] text-center px-4 ${
+                launchMode === 'lancamento_especial' ? 'text-gold/65' :
+                launchMode === 'em_breve' ? 'text-primary/50' : 'text-rose-400/60'
+              }`}>
+                {launchMode === 'lancamento_especial' && 'Lançamento Especial'}
+                {launchMode === 'em_breve' && 'Este conteúdo será liberado em breve'}
+                {launchMode === 'bloqueado_para_venda' && 'Conteúdo Exclusivo'}
+              </span>
+              {launchMode === 'bloqueado_para_venda' && item.sales_page_url && (
+                <span className="text-[9px] font-medium text-rose-400/45 flex items-center gap-1.5 bg-rose-500/[0.08] border border-rose-400/15 rounded-full px-3 py-1">
+                  <ShoppingCart className="h-2.5 w-2.5" />
+                  Toque para garantir
+                </span>
+              )}
+            </div>
+          )}
+
           {/* Premium lock overlay */}
-          {isLocked && !isPendingRelease && !isRuleLocked && (
+          {isLocked && !isLaunchContent && !isPendingRelease && !isRuleLocked && (
             <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex flex-col items-center justify-center gap-3 z-10">
               <div className="relative">
                 <div className="absolute -inset-3 rounded-full bg-gold/10 blur-xl animate-pulse" />
