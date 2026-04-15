@@ -15,6 +15,7 @@ import {
   BookOpen, Video, GraduationCap, FileText, Plus, Trash2,
   ToggleLeft, ToggleRight, Pencil, Loader2, ExternalLink,
 } from "lucide-react";
+import { AdminActionButtons } from "@/components/AdminActionButtons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -636,26 +637,21 @@ function AdminContentPage() {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-1">
-                  <button onClick={() => openEdit(item)} className="p-2 text-muted-foreground hover:text-gold transition-colors" title="Editar">
-                    <Pencil className="h-3.5 w-3.5" />
-                  </button>
-                  {item.sales_page_url && (
-                    <a href={item.sales_page_url} target="_blank" rel="noopener noreferrer" className="p-2 text-muted-foreground hover:text-gold transition-colors" title="Página de vendas">
-                      <ExternalLink className="h-3.5 w-3.5" />
-                    </a>
-                  )}
-                  <button
-                    onClick={() => toggleMutation.mutate({ id: item.id, is_active: !item.is_active })}
-                    className="p-2 text-muted-foreground hover:text-gold transition-colors"
-                    title={item.is_active ? "Desativar" : "Ativar"}
-                  >
-                    {item.is_active ? <ToggleRight className="h-4 w-4" /> : <ToggleLeft className="h-4 w-4" />}
-                  </button>
-                  <button onClick={() => setDeleteTarget(item)} className="p-2 text-muted-foreground/60 hover:text-destructive/60 transition-colors" title="Remover">
-                    <Trash2 className="h-3.5 w-3.5" />
-                  </button>
-                </div>
+                <AdminActionButtons
+                  onEdit={() => openEdit(item)}
+                  isActive={item.is_active}
+                  onToggle={(newState) => toggleMutation.mutate({ id: item.id, is_active: newState })}
+                  toggling={toggleMutation.isPending && (toggleMutation.variables as any)?.id === item.id}
+                  onDelete={() => setDeleteTarget(item)}
+                  extraBefore={
+                    item.sales_page_url ? (
+                      <a href={item.sales_page_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border/25 bg-card/20 text-muted-foreground/70 text-xs font-semibold hover:text-gold hover:border-gold/25 transition-all" title="Página de vendas">
+                        <ExternalLink className="h-3.5 w-3.5" />
+                        <span>Vendas</span>
+                      </a>
+                    ) : undefined
+                  }
+                />
               </div>
             );
           })}

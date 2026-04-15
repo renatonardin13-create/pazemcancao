@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toastError } from "@/lib/toast-utils";
+import { AdminActionButtons } from "@/components/AdminActionButtons";
 import { ImageUploadField } from "@/components/ImageUploadField";
 import { useState, useRef, useCallback, useEffect } from "react";
 import { toast } from "sonner";
@@ -860,26 +861,14 @@ export default function AdminVitrinePage() {
                             {banner.link_url ? `Link: ${banner.link_url}` : "Sem link"}
                           </p>
                         </div>
-                        <div className="flex items-center gap-1 shrink-0">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-7 w-7 text-muted-foreground hover:text-foreground"
-                            onClick={() => openEditPromo(banner)}
-                            title="Editar"
-                          >
-                            <Pencil className="h-3.5 w-3.5" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-7 w-7 text-muted-foreground/60 hover:text-destructive/60"
-                            onClick={() => setDeletePromoTarget(banner)}
-                            title="Excluir"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
-                        </div>
+                        <AdminActionButtons
+                          onEdit={() => openEditPromo(banner)}
+                          isActive={banner.is_active}
+                          onToggle={(newState) => updatePromoMut.mutate({ id: banner.id, is_active: newState })}
+                          toggling={updatePromoMut.isPending && (updatePromoMut.variables as any)?.id === banner.id}
+                          onDelete={() => setDeletePromoTarget(banner)}
+                          compact
+                        />
                       </div>
                     ))}
                   </div>
@@ -953,32 +942,14 @@ export default function AdminVitrinePage() {
                           </p>
                         </div>
 
-                        <div className="flex items-center gap-2 shrink-0">
-                          <Switch
-                            checked={shelf.is_active}
-                            onCheckedChange={(checked) => {
-                              updateMut.mutate({ id: shelf.id, is_active: checked });
-                            }}
-                          />
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8 border-border/30 text-muted-foreground/70 hover:text-foreground/60"
-                            onClick={() => openEdit(shelf)}
-                            title="Editar"
-                          >
-                            <Pencil className="h-3.5 w-3.5" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8 border-border/30 text-muted-foreground/70 hover:text-destructive/60"
-                            onClick={() => setDeleteTarget(shelf)}
-                            title="Excluir"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
-                        </div>
+                        <AdminActionButtons
+                          onEdit={() => openEdit(shelf)}
+                          isActive={shelf.is_active}
+                          onToggle={(newState) => updateMut.mutate({ id: shelf.id, is_active: newState })}
+                          toggling={updateMut.isPending && (updateMut.variables as any)?.id === shelf.id}
+                          onDelete={() => setDeleteTarget(shelf)}
+                          compact
+                        />
                       </div>
                     );
                   })}
