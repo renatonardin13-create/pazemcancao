@@ -42,11 +42,13 @@ const addStudentSchema = z.object({
   email: z.string().email().max(255).trim(),
   access_enabled: z.boolean(),
   courseIds: z.array(z.string().uuid()).max(50).optional(),
+  is_trial: z.boolean().optional(),
+  trialDays: z.number().min(1).max(365).optional(),
 });
 
 export const addStudent = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { nome: string; email: string; access_enabled: boolean; courseIds?: string[] }) =>
+  .inputValidator((input: { nome: string; email: string; access_enabled: boolean; courseIds?: string[]; is_trial?: boolean; trialDays?: number }) =>
     addStudentSchema.parse(input)
   )
   .handler(async ({ data, context }) => {
@@ -65,6 +67,15 @@ export const addStudent = createServerFn({ method: 'POST' })
       throw new Error('Já existe um aluno cadastrado com este e-mail.');
     }
 
+    // Build buyer record
+    const isTrial = data.is_trial === true && (data.trialDays ?? 0) > 0;
+    let trialExpiresAt: string | null = null;
+    if (isTrial) {
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + (data.trialDays ?? 7));
+      trialExpiresAt = expiresAt.toISOString();
+    }
+
     // Create approved_buyer
     const { data: inserted, error } = await supabaseAdmin
       .from('approved_buyers')
@@ -72,14 +83,15 @@ export const addStudent = createServerFn({ method: 'POST' })
         email,
         nome: data.nome,
         access_enabled: data.access_enabled,
-        status: 'approved',
-        is_trial: false,
-        can_download: true,
+        status: isTrial ? 'trial' : 'approved',
+        is_trial: isTrial,
+        trial_expires_at: trialExpiresAt,
+        can_download: !isTrial,
       })
       .select('id')
       .single();
 
-    if (error) throw new Error(error.message);
+    if (error) throw new Error(`Erro ao criar registro do aluno: ${error.message}`);
     const buyerId = inserted.id;
 
     // Create auth user if needed
@@ -96,16 +108,39 @@ export const addStudent = createServerFn({ method: 'POST' })
         password: generatedPassword,
         email_confirm: true,
       });
-      if (authErr) throw new Error(authErr.message);
+      if (authErr) throw new Error(`Erro ao criar conta de autenticação: ${authErr.message}`);
       authUserId = created.user.id;
     } else {
+      // Update password and ensure user is confirmed
       await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
         password: generatedPassword,
+        email_confirm: true,
       });
       authUserId = existingUser.id;
     }
 
-    // Create enrollments for selected courses in a single deduplicated upsert
+    // Ensure profile exists (fallback in case trigger didn't fire)
+    await supabaseAdmin
+      .from('profiles')
+      .upsert(
+        { user_id: authUserId, display_name: data.nome },
+        { onConflict: 'user_id' }
+      );
+
+    // Clear any previous security blocks for this email
+    await supabaseAdmin
+      .from('user_access_logs')
+      .delete()
+      .eq('email', email)
+      .eq('is_blocked', true);
+
+    // Invalidate old sessions so user starts fresh
+    await supabaseAdmin
+      .from('active_sessions')
+      .update({ is_valid: false })
+      .eq('email', email);
+
+    // Create enrollments for selected courses
     const selectedCourseIds = Array.from(new Set(data.courseIds ?? []));
 
     if (selectedCourseIds.length > 0) {
@@ -142,7 +177,7 @@ export const addStudent = createServerFn({ method: 'POST' })
       }
     }
 
-    return { success: true, generatedPassword, buyerId };
+    return { success: true, generatedPassword, buyerId, isTrial, trialExpiresAt };
   });
 
 const trialSchema = z.object({
@@ -226,18 +261,44 @@ export const createTrialUser = createServerFn({ method: 'POST' })
       (u) => u.email?.toLowerCase() === email
     );
 
+    let authUserId: string;
     if (!existingUser) {
-      await supabaseAdmin.auth.admin.createUser({
+      const { data: created, error: authErr } = await supabaseAdmin.auth.admin.createUser({
         email,
         password: generatedPassword,
         email_confirm: true,
       });
+      if (authErr) throw new Error(`Erro ao criar conta: ${authErr.message}`);
+      authUserId = created.user.id;
     } else {
       // Update password for existing user
       await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
         password: generatedPassword,
+        email_confirm: true,
       });
+      authUserId = existingUser.id;
     }
+
+    // Ensure profile exists
+    await supabaseAdmin
+      .from('profiles')
+      .upsert(
+        { user_id: authUserId, display_name: data.nome },
+        { onConflict: 'user_id' }
+      );
+
+    // Clear any security blocks
+    await supabaseAdmin
+      .from('user_access_logs')
+      .delete()
+      .eq('email', email)
+      .eq('is_blocked', true);
+
+    // Invalidate old sessions
+    await supabaseAdmin
+      .from('active_sessions')
+      .update({ is_valid: false })
+      .eq('email', email);
 
     return { success: true, expiresAt: expiresAt.toISOString(), generatedPassword };
   });
