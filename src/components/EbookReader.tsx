@@ -209,16 +209,22 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   }, [spread, pdfUrl, numPages]);
 
 
+  const renderingPagesRef = useRef<Set<number>>(new Set());
+
   const renderPage = useCallback(
     async (pageNum: number) => {
       const pdf = pdfDocRef.current;
       if (!pdf || pageNum < 1 || pageNum > pdf.numPages) return;
-      if (pageImages[pageNum] && scale === 1) return; // Already cached at default scale
+      // Use ref to check cache — avoids stale closure & dependency loop
+      if (pageImagesRef.current[pageNum]) return;
+      if (renderingPagesRef.current.has(pageNum)) return;
 
+      renderingPagesRef.current.add(pageNum);
       setRenderingPages((prev) => new Set(prev).add(pageNum));
       try {
         const page = await pdf.getPage(pageNum);
-        const viewport = page.getViewport({ scale: 2 * effectiveScale });
+        const renderScale = isMobile ? 1.5 : 2;
+        const viewport = page.getViewport({ scale: renderScale * effectiveScale });
 
         if (!offscreenCanvas.current) {
           offscreenCanvas.current = document.createElement("canvas");
@@ -231,11 +237,13 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
         if (!ctx) return;
 
         await page.render({ canvasContext: ctx, viewport }).promise;
-        const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+        pageImagesRef.current[pageNum] = dataUrl;
         setPageImages((prev) => ({ ...prev, [pageNum]: dataUrl }));
       } catch (err) {
         console.error("Failed to render page:", pageNum, err);
       } finally {
+        renderingPagesRef.current.delete(pageNum);
         setRenderingPages((prev) => {
           const next = new Set(prev);
           next.delete(pageNum);
@@ -243,18 +251,44 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
         });
       }
     },
-    [effectiveScale, pageImages]
+    [effectiveScale, isMobile]
   );
 
-  // Render current spread pages + prefetch next spread
+  // Evict far pages from cache to save memory (keep ±2 spreads)
+  const evictFarPages = useCallback((currentSpread: number) => {
+    const keepPages = new Set<number>();
+    for (let s = Math.max(0, currentSpread - 1); s <= Math.min(totalSpreads - 1, currentSpread + 2); s++) {
+      for (const p of getSpreadPages(s)) keepPages.add(p);
+    }
+    const cached = pageImagesRef.current;
+    let changed = false;
+    for (const key of Object.keys(cached)) {
+      const pageNum = parseInt(key, 10);
+      if (!keepPages.has(pageNum)) {
+        delete cached[pageNum];
+        changed = true;
+      }
+    }
+    if (changed) {
+      setPageImages({ ...cached });
+    }
+  }, [totalSpreads, getSpreadPages]);
+
+  // Render current spread pages + prefetch next spread, evict far ones
   useEffect(() => {
     if (loading || numPages === 0) return;
     const pages = getSpreadPages(spread);
     const nextPages = spread < totalSpreads - 1 ? getSpreadPages(spread + 1) : [];
     const prevPages = spread > 0 ? getSpreadPages(spread - 1) : [];
-    const allPages = [...pages, ...nextPages, ...prevPages];
-    allPages.forEach((p) => renderPage(p));
-  }, [spread, loading, numPages, getSpreadPages, totalSpreads, renderPage]);
+    // Render current first, then adjacent
+    pages.forEach((p) => renderPage(p));
+    // Use rAF for adjacent pages to not block current render
+    requestAnimationFrame(() => {
+      [...nextPages, ...prevPages].forEach((p) => renderPage(p));
+    });
+    // Evict pages far from current spread
+    evictFarPages(spread);
+  }, [spread, loading, numPages, getSpreadPages, totalSpreads, renderPage, evictFarPages]);
 
   // Extract text from current pages for TTS
   useEffect(() => {
