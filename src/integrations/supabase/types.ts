@@ -150,12 +150,16 @@ export type Database = {
           featured_priority: number
           file_url: string | null
           id: string
+          initial_free_count: number
           is_active: boolean
           is_featured: boolean
           is_free: boolean
           journey_group: string | null
           journey_order: number
+          locked_final_count: number
+          locked_label: string | null
           release_days: number | null
+          release_mode: string
           sales_page_url: string | null
           show_as_card: boolean | null
           sort_order: number
@@ -177,12 +181,16 @@ export type Database = {
           featured_priority?: number
           file_url?: string | null
           id?: string
+          initial_free_count?: number
           is_active?: boolean
           is_featured?: boolean
           is_free?: boolean
           journey_group?: string | null
           journey_order?: number
+          locked_final_count?: number
+          locked_label?: string | null
           release_days?: number | null
+          release_mode?: string
           sales_page_url?: string | null
           show_as_card?: boolean | null
           sort_order?: number
@@ -204,12 +212,16 @@ export type Database = {
           featured_priority?: number
           file_url?: string | null
           id?: string
+          initial_free_count?: number
           is_active?: boolean
           is_featured?: boolean
           is_free?: boolean
           journey_group?: string | null
           journey_order?: number
+          locked_final_count?: number
+          locked_label?: string | null
           release_days?: number | null
+          release_mode?: string
           sales_page_url?: string | null
           show_as_card?: boolean | null
           sort_order?: number

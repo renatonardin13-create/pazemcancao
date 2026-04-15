@@ -158,8 +158,8 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
                   <Lock className="h-6 w-6 text-gold/65" />
                 </div>
               </div>
-              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold/60">
-                Acesso Exclusivo
+              <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold/60 text-center px-4">
+                {item.locked_label || 'Acesso Exclusivo'}
               </span>
               {item.sales_page_url && (
                 <span className="text-[9px] font-medium text-gold/40 flex items-center gap-1.5 bg-gold/[0.06] border border-gold/12 rounded-full px-3 py-1">

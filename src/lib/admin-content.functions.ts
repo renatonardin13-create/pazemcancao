@@ -53,6 +53,10 @@ export const createContentItem = createServerFn({ method: 'POST' })
     unlock_rule_content_id?: string | null;
     is_featured?: boolean;
     featured_priority?: number;
+    release_mode?: string;
+    initial_free_count?: number;
+    locked_final_count?: number;
+    locked_label?: string | null;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
@@ -91,6 +95,10 @@ export const createContentItem = createServerFn({ method: 'POST' })
         unlock_rule_content_id: data.unlock_rule_content_id || null,
         is_featured: data.is_featured ?? false,
         featured_priority: data.featured_priority ?? 0,
+        release_mode: data.release_mode || 'liberar_tudo',
+        initial_free_count: data.initial_free_count ?? 0,
+        locked_final_count: data.locked_final_count ?? 0,
+        locked_label: data.locked_label || null,
       } as any)
       .select()
       .single();
@@ -125,6 +133,10 @@ export const updateContentItem = createServerFn({ method: 'POST' })
     unlock_rule_content_id?: string | null;
     is_featured?: boolean;
     featured_priority?: number;
+    release_mode?: string;
+    initial_free_count?: number;
+    locked_final_count?: number;
+    locked_label?: string | null;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
