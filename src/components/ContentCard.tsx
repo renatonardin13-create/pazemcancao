@@ -156,8 +156,14 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
                 <Lock className="h-5 w-5 text-gold/60" />
               </div>
               <span className="text-[10px] font-semibold uppercase tracking-[0.25em] text-gold/55">
-                Conteúdo Especial
+                Desbloqueie agora
               </span>
+              {item.sales_page_url && (
+                <span className="text-[9px] font-medium text-gold/35 flex items-center gap-1">
+                  <ShoppingCart className="h-2.5 w-2.5" />
+                  Toque para garantir
+                </span>
+              )}
             </div>
           )}
 
