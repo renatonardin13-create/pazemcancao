@@ -520,7 +520,7 @@ function TrackCard({
   const handleLockedClick = () => {
     if (isInactive) {
       toast.info("🕐 Este louvor estará disponível em breve!");
-    } else if (isBonusLocked) {
+    } else if (isBonusNotYetReleased) {
       toast.info(bonusCountdown
         ? `🎁 ${bonusCountdown}`
         : "🎁 Este bônus ainda não tem data de liberação definida"
@@ -583,7 +583,7 @@ function TrackCard({
                 <div className="flex h-14 w-14 rounded-2xl items-center justify-center backdrop-blur-sm bg-black/30 border border-white/10">
                   {isInactive ? (
                     <Clock className="h-6 w-6 text-sky-400/70" />
-                  ) : isBonusLocked ? (
+                  ) : isBonusNotYetReleased ? (
                     <Gift className="h-6 w-6 text-amber-400/70" />
                   ) : (
                     <Lock className="h-6 w-6 text-white/50" />
@@ -596,7 +596,7 @@ function TrackCard({
                     </p>
                   </div>
                 )}
-                {isBonusLocked && bonusCountdown && (
+                {isBonusNotYetReleased && bonusCountdown && (
                   <div className="rounded-full bg-black/50 backdrop-blur-sm border border-amber-400/20 px-3 py-1">
                     <p className="text-[11px] font-semibold text-amber-300/80 tracking-wider uppercase text-center">
                       ⏳ {bonusCountdown}
@@ -697,9 +697,9 @@ function TrackCard({
                 </p>
                 {effectiveLocked && (
                   <span className={`text-[10px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded-full ${
-                    isInactive ? "text-sky-400/60 bg-sky-400/10" : isBonusLocked ? "text-amber-400/60 bg-amber-400/10" : "text-destructive/40 bg-destructive/8"
+                    isInactive ? "text-sky-400/60 bg-sky-400/10" : isBonusNotYetReleased ? "text-amber-400/60 bg-amber-400/10" : "text-destructive/40 bg-destructive/8"
                   }`}>
-                    {isInactive ? "🕐 Em breve" : isBonusLocked ? "🎁 Bônus" : "Bloqueado"}
+                    {isInactive ? "🕐 Em breve" : isBonusNotYetReleased ? "🎁 Bônus" : "Bloqueado"}
                   </span>
                 )}
                 {!effectiveLocked && isPlaying && (
