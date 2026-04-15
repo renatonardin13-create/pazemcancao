@@ -356,9 +356,9 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   };
 
   return (
-    <div className="flex flex-col w-full min-h-screen bg-background">
-      {/* ═══ TOP BAR ═══ */}
-      <div className="flex items-center justify-between px-3 sm:px-6 py-2.5 border-b border-border/8 bg-background/95 backdrop-blur-xl z-30">
+    <div className="flex flex-col w-full min-h-screen" style={{ backgroundColor: "#1a1814" }}>
+      {/* ═══ TOP BAR — Kindle-style minimal ═══ */}
+      <div className={`flex items-center justify-between px-3 sm:px-6 py-2 border-b border-stone-800/40 bg-[#1a1814]/95 backdrop-blur-xl z-30 transition-all duration-300 ${immersive ? "opacity-0 pointer-events-none h-0 overflow-hidden py-0 border-0" : ""}`}>
         <div className="flex items-center gap-3 min-w-0">
           {onBack && (
             <Button variant="premiumOutline" size="sm" onClick={onBack} className="shrink-0">
@@ -366,57 +366,71 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
               <span className="hidden sm:inline">Voltar</span>
             </Button>
           )}
-          <div className="hidden sm:block h-5 w-px bg-border/10" />
-          <h2 className="text-xs sm:text-sm font-bold text-foreground/70 truncate">
+          <div className="hidden sm:block h-5 w-px bg-stone-700/20" />
+          <h2 className="text-xs sm:text-sm font-serif font-medium text-stone-400/70 truncate">
             {title}
           </h2>
         </div>
 
         <div className="flex items-center gap-1.5">
-          <Button variant="ghost" size="sm" onClick={() => setScale((s) => Math.max(0.5, s - 0.25))} disabled={scale <= 0.5} className="h-7 w-7 p-0 text-muted-foreground/50 hover:text-gold">
+          <Button variant="ghost" size="sm" onClick={() => setScale((s) => Math.max(0.5, s - 0.25))} disabled={scale <= 0.5} className="h-7 w-7 p-0 text-stone-500/50 hover:text-gold">
             <ZoomOut className="h-3.5 w-3.5" />
           </Button>
-          <span className="text-[10px] tabular-nums text-muted-foreground/40 min-w-[2rem] text-center">
+          <span className="text-[10px] tabular-nums text-stone-500/40 min-w-[2rem] text-center">
             {Math.round(scale * 100)}%
           </span>
-          <Button variant="ghost" size="sm" onClick={() => setScale((s) => Math.min(3, s + 0.25))} disabled={scale >= 3} className="h-7 w-7 p-0 text-muted-foreground/50 hover:text-gold">
+          <Button variant="ghost" size="sm" onClick={() => setScale((s) => Math.min(3, s + 0.25))} disabled={scale >= 3} className="h-7 w-7 p-0 text-stone-500/50 hover:text-gold">
             <ZoomIn className="h-3.5 w-3.5" />
           </Button>
-          <div className="h-4 w-px bg-border/10 mx-1" />
+          <div className="h-4 w-px bg-stone-700/20 mx-1" />
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setSoundEnabled(!soundEnabled)}
-            className={`h-7 w-7 p-0 transition-colors ${soundEnabled ? "text-gold" : "text-muted-foreground/40"}`}
+            className={`h-7 w-7 p-0 transition-colors ${soundEnabled ? "text-gold" : "text-stone-500/40"}`}
           >
             {soundEnabled ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeOff className="h-3.5 w-3.5" />}
+          </Button>
+          <div className="h-4 w-px bg-stone-700/20 mx-1" />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setImmersive(!immersive)}
+            className="h-7 w-7 p-0 text-stone-500/40 hover:text-gold"
+            title="Modo imersivo"
+          >
+            <BookOpen className="h-3.5 w-3.5" />
           </Button>
         </div>
       </div>
 
-      {/* ═══ BOOK AREA ═══ */}
+      {/* ═══ BOOK AREA — Kindle premium ═══ */}
       <div
-        className="relative flex-1 flex items-center justify-center py-4 sm:py-6 px-2 sm:px-6 lg:px-10 bg-gradient-to-b from-background via-card/3 to-background overflow-hidden"
+        className="relative flex-1 flex items-center justify-center py-6 sm:py-8 px-3 sm:px-8 lg:px-14 overflow-hidden cursor-pointer"
+        onClick={() => immersive && setImmersive(false)}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        style={{ perspective: "1800px" }}
+        style={{
+          perspective: "1800px",
+          background: "radial-gradient(ellipse at center, #221f1a 0%, #1a1814 60%, #141210 100%)",
+        }}
       >
         {/* Left arrow */}
-        {spread > 0 && (
+        {spread > 0 && !immersive && (
           <button
-            onClick={prevSpread}
-            className="absolute left-1 sm:left-3 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-background/80 border border-border/15 shadow-lg backdrop-blur-md text-foreground/40 hover:text-gold hover:border-gold/25 transition-all active:scale-90"
+            onClick={(e) => { e.stopPropagation(); prevSpread(); }}
+            className="absolute left-1 sm:left-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-900/60 border border-stone-700/20 shadow-lg backdrop-blur-md text-stone-400/50 hover:text-gold hover:border-gold/25 transition-all active:scale-90"
           >
-            <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+            <ChevronLeft className="h-5 w-5" />
           </button>
         )}
         {/* Right arrow */}
-        {spread < totalSpreads - 1 && (
+        {spread < totalSpreads - 1 && !immersive && (
           <button
-            onClick={nextSpread}
-            className="absolute right-1 sm:right-3 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-background/80 border border-border/15 shadow-lg backdrop-blur-md text-foreground/40 hover:text-gold hover:border-gold/25 transition-all active:scale-90"
+            onClick={(e) => { e.stopPropagation(); nextSpread(); }}
+            className="absolute right-1 sm:right-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-full bg-stone-900/60 border border-stone-700/20 shadow-lg backdrop-blur-md text-stone-400/50 hover:text-gold hover:border-gold/25 transition-all active:scale-90"
           >
-            <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+            <ChevronRight className="h-5 w-5" />
           </button>
         )}
 
@@ -431,27 +445,28 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
             exit="exit"
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             style={{ transformStyle: "preserve-3d" }}
-            className={`relative flex ${dualPage ? "max-w-[90vw] lg:max-w-[80vw] xl:max-w-[72vw]" : "max-w-[92vw] sm:max-w-[70vw] md:max-w-[55vw]"} w-full`}
+            className={`relative flex ${dualPage ? "max-w-[88vw] lg:max-w-[78vw] xl:max-w-[68vw]" : "max-w-[92vw] sm:max-w-[65vw] md:max-w-[50vw]"} w-full`}
           >
-            {/* Ambient glow behind the book */}
-            <div className="absolute -inset-4 rounded-2xl bg-gold/[0.03] blur-2xl pointer-events-none" />
+            {/* Ambient warm glow */}
+            <div className="absolute -inset-6 rounded-3xl bg-amber-900/[0.06] blur-3xl pointer-events-none" />
 
-            {/* Book shadow */}
-            <div className="absolute -inset-2 rounded-xl shadow-[0_20px_80px_-15px_rgba(0,0,0,0.7)] pointer-events-none" />
+            {/* Book shadow — deeper, warmer */}
+            <div className="absolute -inset-3 rounded-xl shadow-[0_25px_100px_-20px_rgba(0,0,0,0.8)] pointer-events-none" />
 
             {/* Pages container */}
-            <div className={`relative flex w-full ${dualPage ? "gap-0" : ""} rounded-lg overflow-hidden border border-border/10 shadow-2xl shadow-black/40`}>
+            <div className={`relative flex w-full ${dualPage ? "gap-0" : ""} rounded-md overflow-hidden border border-stone-700/15 shadow-2xl`}>
               {dualPage && currentPages.length === 2 ? (
                 <>
                   {renderPageImage(currentPages[0], "left")}
-                  <div className="w-px bg-gradient-to-b from-black/20 via-black/40 to-black/20 shadow-[2px_0_8px_rgba(0,0,0,0.3),-2px_0_8px_rgba(0,0,0,0.3)]" />
+                  {/* Spine — book binding effect */}
+                  <div className="w-[3px] bg-gradient-to-b from-stone-600/30 via-stone-800/50 to-stone-600/30 shadow-[3px_0_12px_rgba(0,0,0,0.4),-3px_0_12px_rgba(0,0,0,0.4)]" />
                   {renderPageImage(currentPages[1], "right")}
                 </>
               ) : dualPage && currentPages.length === 1 ? (
                 <>
                   {renderPageImage(currentPages[0], "left")}
-                  <div className="w-px bg-gradient-to-b from-black/20 via-black/40 to-black/20" />
-                  <div className="flex-1 bg-card/5 rounded-r-lg" style={{ minHeight: "70vh" }} />
+                  <div className="w-[3px] bg-gradient-to-b from-stone-600/30 via-stone-800/50 to-stone-600/30" />
+                  <div className="flex-1 rounded-r-md" style={{ minHeight: "75vh", backgroundColor: "#f0ebe4" }} />
                 </>
               ) : (
                 currentPages.length > 0 && renderPageImage(currentPages[0], "single")
