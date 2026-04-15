@@ -323,6 +323,15 @@ function MusicDetailPage() {
             {/* Upsell suggestions */}
             <UpsellSection sourceType="track" sourceId={trackId} className="mt-12 w-full max-w-lg" />
 
+            {/* Cross-sell related */}
+            <CrossSellSection
+              currentType="track"
+              currentId={trackId}
+              category={track?.category}
+              title="Relacionados"
+              className="mt-8 w-full max-w-lg"
+            />
+
             <motion.div variants={fadeUp} custom={1} className="mt-20 w-full max-w-md">
               <div className="mx-auto h-px w-full bg-gradient-to-r from-transparent via-border/8 to-transparent mb-8" />
               <div className="flex items-center justify-between">
