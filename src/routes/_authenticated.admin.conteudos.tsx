@@ -619,6 +619,28 @@ function AdminContentPage() {
               )}
             </div>
 
+            {/* Launch Mode */}
+            <div className="space-y-2 rounded-xl border border-border/25 bg-card/15 p-4">
+              <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">🚀 Modo de Lançamento</Label>
+              <Select value={launchMode} onValueChange={setLaunchMode} disabled={isSubmitting}>
+                <SelectTrigger className="bg-card/15 border-border/30 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Nenhum (conteúdo normal)</SelectItem>
+                  <SelectItem value="lancamento_especial">🌟 Lançamento Especial</SelectItem>
+                  <SelectItem value="em_breve">⏳ Em Breve</SelectItem>
+                  <SelectItem value="bloqueado_para_venda">🔒 Bloqueado para Venda</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-[11px] text-muted-foreground/60">
+                {launchMode === "none" && "Conteúdo seguirá as regras normais de acesso."}
+                {launchMode === "lancamento_especial" && "Aparece com destaque premium e cadeado. Não é liberado automaticamente."}
+                {launchMode === "em_breve" && "Aparece visível mas bloqueado, com mensagem 'Em breve'."}
+                {launchMode === "bloqueado_para_venda" && "Aparece bloqueado com redirecionamento para página de vendas."}
+              </p>
+            </div>
+
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="ghost" onClick={() => { setFormOpen(false); resetForm(); }} disabled={isSubmitting} className="text-xs text-muted-foreground/70">
                 Cancelar
