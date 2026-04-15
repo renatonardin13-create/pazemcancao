@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { listCategories, listActiveTracks } from "@/lib/tracks.functions";
 import { getStudentShelves } from "@/lib/shelves.functions";
 import { getMyCoursesData } from "@/lib/my-courses.functions";
+import { useProjectMode } from "@/hooks/use-project-mode";
 import { LogoBrand } from "./LogoBrand";
 import {
   Store,
@@ -22,6 +23,7 @@ import { cn } from "@/lib/utils";
 
 export function StudentSidebar() {
   const { logout, isAdmin, adminLoading } = useAuth();
+  const { showMusic, showCourses } = useProjectMode();
   const location = useLocation();
   const [louvoresOpen, setLouvoresOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -119,7 +121,7 @@ export function StudentSidebar() {
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-5 pt-6 pb-4 space-y-2">
         {/* Vitrine */}
-        {hasVitrine && (
+        {hasVitrine && showCourses && (
           <Link
             to="/vitrine"
             onClick={() => setMobileOpen(false)}
@@ -131,7 +133,7 @@ export function StudentSidebar() {
         )}
 
         {/* Meus Cursos */}
-        {hasCourses && (
+        {hasCourses && showCourses && (
           <Link
             to="/cursos"
             onClick={() => setMobileOpen(false)}
@@ -143,7 +145,7 @@ export function StudentSidebar() {
         )}
 
         {/* Louvores with subcategories */}
-        {hasTracks && (
+        {hasTracks && showMusic && (
           <div>
             <button
               onClick={() => setLouvoresOpen(!louvoresOpen)}
