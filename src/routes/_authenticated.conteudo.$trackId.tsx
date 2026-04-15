@@ -5,6 +5,8 @@ import { usePlayer } from "@/hooks/use-player";
 import { motion } from "framer-motion";
 import { StudentLayout } from "@/components/StudentLayout";
 import { Progress } from "@/components/ui/progress";
+import { UpsellSection } from "@/components/UpsellSection";
+import { CrossSellSection } from "@/components/CrossSellSection";
 
 export const Route = createFileRoute("/_authenticated/conteudo/$trackId")({
   component: TrackDetailPage,
