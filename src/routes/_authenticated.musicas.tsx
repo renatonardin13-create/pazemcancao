@@ -683,6 +683,9 @@ function MusicLibraryPage() {
           </div>
         )}
 
+        {/* Strategic conversion playlists */}
+        <StrategicMusicShelves />
+
         {/* Invisible funnel shelves */}
         <div className="mt-10">
           <InvisibleFunnelShelves context="musicas" />
