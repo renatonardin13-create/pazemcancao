@@ -818,7 +818,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
           </div>
         </div>
 
-        <Button variant="premiumOutline" size="sm" onClick={nextSpread} disabled={spread >= totalSpreads - 1} className="gap-1.5">
+        <Button variant="premiumOutline" size="sm" onClick={nextSpread} disabled={spread >= totalSpreads - 1 || isAtPaywall} className="gap-1.5">
           <span className="hidden sm:inline">Próxima</span>
           <ChevronRight className="h-3.5 w-3.5" />
         </Button>
