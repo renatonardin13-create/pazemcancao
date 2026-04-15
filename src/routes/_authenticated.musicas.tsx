@@ -574,12 +574,21 @@ function TrackCard({
             {effectiveLocked && (
               <div className="absolute inset-0 flex flex-col items-center justify-center z-10 gap-2">
                 <div className="flex h-14 w-14 rounded-2xl items-center justify-center backdrop-blur-sm bg-black/30 border border-white/10">
-                  {isBonusLocked ? (
+                  {isInactive ? (
+                    <Clock className="h-6 w-6 text-sky-400/70" />
+                  ) : isBonusLocked ? (
                     <Gift className="h-6 w-6 text-amber-400/70" />
                   ) : (
                     <Lock className="h-6 w-6 text-white/50" />
                   )}
                 </div>
+                {isInactive && (
+                  <div className="rounded-full bg-black/50 backdrop-blur-sm border border-sky-400/20 px-3 py-1">
+                    <p className="text-[11px] font-semibold text-sky-300/80 tracking-wider uppercase text-center">
+                      🕐 Em breve
+                    </p>
+                  </div>
+                )}
                 {isBonusLocked && bonusCountdown && (
                   <div className="rounded-full bg-black/50 backdrop-blur-sm border border-amber-400/20 px-3 py-1">
                     <p className="text-[11px] font-semibold text-amber-300/80 tracking-wider uppercase text-center">
