@@ -167,7 +167,7 @@ function FunnelShelf({
 }
 
 /** Poster card matching CourseShelfCard visual style (9:13 aspect ratio) */
-const FunnelPosterCard = memo(function FunnelPosterCard({ item, index }: { item: FunnelSuggestion; index: number }) {
+const FunnelPosterCard = memo(function FunnelPosterCard({ item, index, context, shelfTitle }: { item: FunnelSuggestion; index: number; context?: string; shelfTitle?: string }) {
   const isLocked = item.is_locked;
   const salesUrl = item.sales_page_url;
 
