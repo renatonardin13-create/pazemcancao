@@ -426,7 +426,7 @@ function ShelfItem({ children, index }: { children: React.ReactNode; index: numb
       initial={{ opacity: 0, x: 20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ duration: 0.5, delay: 0.04 * Math.min(index, 10), ease: [0.22, 1, 0.36, 1] }}
-      className="flex-shrink-0 snap-start w-[150px] sm:w-[165px] md:w-[175px] lg:w-[180px] xl:w-[185px]"
+      className="flex-shrink-0 snap-start w-[200px] sm:w-[220px]"
     >
       {children}
     </motion.div>
