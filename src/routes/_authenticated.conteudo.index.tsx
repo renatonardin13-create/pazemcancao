@@ -13,7 +13,6 @@ import { FooterLinks } from "@/components/FooterLinks";
 import { ContentCard } from "@/components/ContentCard";
 import { RecommendedSection } from "@/components/RecommendedSection";
 import { TopRankingSection } from "@/components/TopRankingSection";
-import { motion } from "framer-motion";
 import {
   BookOpen,
   Video,
@@ -98,8 +97,7 @@ function ContentPage() {
     queryKey: ["content-items"],
     queryFn: () => listContentItems(),
     refetchOnWindowFocus: true,
-    staleTime: 30_000,        // refetch after 30s when revisiting
-    refetchInterval: 120_000, // auto-refresh every 2 min
+    staleTime: 60_000,
   });
 
   const { data: profileData } = useQuery({
@@ -204,6 +202,7 @@ function ContentPage() {
   }, [dbJourneys]);
 
   // Track shown items to avoid duplication
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const shownIds = useMemo(() => new Set<string>(), [items]);
 
   // "Continuar de onde parou"
