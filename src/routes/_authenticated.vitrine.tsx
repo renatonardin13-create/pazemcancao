@@ -248,8 +248,10 @@ function ShelfCarousel({ courses }: { courses: any[] }) {
         className="flex gap-5 overflow-x-auto pb-4 px-4 sm:px-8 scrollbar-hide snap-x snap-mandatory touch-pan-x"
         style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
       >
-        {courses.map((course: any) => (
-          <CourseCard key={course.id} course={course} />
+        {courses.map((course: any, idx: number) => (
+          <div key={course.id} className="w-[170px] sm:w-[185px] shrink-0 snap-start">
+            <CourseShelfCard course={course} index={idx} showProgress />
+          </div>
         ))}
       </div>
     </div>
