@@ -370,27 +370,25 @@ function MusicLibraryPage() {
                       ))}
                     </div>
                   ) : (
-                    <div className="relative -mx-4 sm:-mx-6 px-4 sm:px-6">
-                      <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide snap-x snap-mandatory">
-                        {catTracks.map((track: any, idx: number) => (
-                          <TrackCard
-                            key={track.id}
-                            track={track}
-                            idx={idx}
-                            icon={icon}
-                            catTracks={catTracks}
-                            isCarousel={true}
-                            activeTrackRef={activeTrackRef}
-                            currentTrack={currentTrack}
-                            playing={playing}
-                            progress={progress}
-                            handlePlayWithQueue={handlePlayWithQueue}
-                            canDownload={canDownload}
-                            isLocked={isLocked}
-                          />
-                        ))}
-                      </div>
-                    </div>
+                    <ScrollableCarousel>
+                      {catTracks.map((track: any, idx: number) => (
+                        <TrackCard
+                          key={track.id}
+                          track={track}
+                          idx={idx}
+                          icon={icon}
+                          catTracks={catTracks}
+                          isCarousel={true}
+                          activeTrackRef={activeTrackRef}
+                          currentTrack={currentTrack}
+                          playing={playing}
+                          progress={progress}
+                          handlePlayWithQueue={handlePlayWithQueue}
+                          canDownload={canDownload}
+                          isLocked={isLocked}
+                        />
+                      ))}
+                    </ScrollableCarousel>
                   )}
                 </motion.section>
               );
