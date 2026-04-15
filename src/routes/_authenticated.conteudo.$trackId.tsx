@@ -5,6 +5,8 @@ import { usePlayer } from "@/hooks/use-player";
 import { motion } from "framer-motion";
 import { StudentLayout } from "@/components/StudentLayout";
 import { Progress } from "@/components/ui/progress";
+import { UpsellSection } from "@/components/UpsellSection";
+import { CrossSellSection } from "@/components/CrossSellSection";
 
 export const Route = createFileRoute("/_authenticated/conteudo/$trackId")({
   component: TrackDetailPage,
@@ -253,6 +255,10 @@ function TrackDetailPage() {
                 )}
               </div>
             </motion.div>
+
+            {/* Upsell & Cross-sell */}
+            <UpsellSection sourceType="content" sourceId={trackId} className="mt-10 w-full max-w-lg" />
+            <CrossSellSection currentType="content" currentId={trackId} title="Você também pode gostar" className="mt-6 w-full max-w-lg" />
           </motion.div>
         </div>
       </div>
