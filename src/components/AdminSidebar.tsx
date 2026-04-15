@@ -13,6 +13,7 @@ import {
   DollarSign,
   ArrowLeft,
   Sparkles,
+  Disc3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useProjectMode } from "@/hooks/use-project-mode";
@@ -31,6 +32,7 @@ import {
 
 const allContentItems = [
   { title: "Músicas", url: "/admin/tracks", icon: Music, module: "louvores" as const },
+  { title: "Playlists", url: "/admin/playlists", icon: Disc3, module: "louvores" as const },
   { title: "Cursos", url: "/admin/courses", icon: BookOpen, module: "cursos" as const },
   { title: "Vitrine", url: "/admin/shelves", icon: Layout, module: "vitrine" as const },
   { title: "Categorias", url: "/admin/categories", icon: FolderOpen, module: "louvores" as const },
