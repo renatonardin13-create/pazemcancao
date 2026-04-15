@@ -156,7 +156,7 @@ function FunnelShelf({
           <div className="shrink-0 w-0 lg:w-[calc((100vw-1400px)/2)]" />
           {items.map((item, idx) => (
             <div key={`${item.type}-${item.id}`} className="w-[150px] sm:w-[190px] md:w-[220px] lg:w-[240px] shrink-0 snap-start">
-              <FunnelPosterCard item={item} index={idx} />
+              <FunnelPosterCard item={item} index={idx} context={context} shelfTitle={title} />
             </div>
           ))}
           <div className="shrink-0 w-0 lg:w-[calc((100vw-1400px)/2)]" />
