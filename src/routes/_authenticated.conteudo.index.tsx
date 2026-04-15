@@ -354,7 +354,7 @@ function ContentPage() {
                     </span>
                   </div>
                 )}
-              </motion.div>
+              </div>
             )}
           </div>
 
