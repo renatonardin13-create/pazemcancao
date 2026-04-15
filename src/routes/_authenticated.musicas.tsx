@@ -472,9 +472,9 @@ function MusicLibraryPage() {
           </div>
         )}
 
-        {/* Funnel Upsell */}
+        {/* Invisible funnel shelves */}
         <div className="mt-10">
-          <FunnelBanner context="musicas" limit={6} variant="compact" />
+          <InvisibleFunnelShelves context="musicas" />
         </div>
       </main>
 

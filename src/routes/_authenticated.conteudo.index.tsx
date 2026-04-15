@@ -610,9 +610,9 @@ function ContentPage() {
           )}
         </div>
 
-        {/* Funnel Upsell */}
+        {/* Invisible funnel shelves */}
         <div className="max-w-6xl mx-auto px-5 sm:px-8 mt-10 mb-8">
-          <FunnelBanner context="conteudo" limit={6} />
+          <InvisibleFunnelShelves context="conteudo" />
         </div>
 
         <FooterLinks />
