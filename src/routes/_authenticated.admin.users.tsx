@@ -141,7 +141,7 @@ function AdminUsersPage() {
   });
 
   const addStudentMut = useMutation({
-    mutationFn: (input: { nome: string; email: string; access_enabled: boolean; courseIds: string[] }) =>
+    mutationFn: (input: { nome: string; email: string; access_enabled: boolean; courseIds: string[]; is_trial?: boolean; trialDays?: number }) =>
       addStudent({ data: input }),
     onSuccess: (result: any) => {
       toast.success("Aluno adicionado com sucesso!");
