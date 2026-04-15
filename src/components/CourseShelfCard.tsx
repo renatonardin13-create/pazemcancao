@@ -91,8 +91,13 @@ export function CourseShelfCard({
             {/* Play button — center */}
             {!isLocked && (
               <div className="absolute inset-0 flex items-center justify-center z-10">
-                <div className="flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-full bg-gold/95 shadow-[0_4px_24px_rgba(0,0,0,0.4)] scale-[0.5] opacity-0 md:group-hover/card:opacity-100 md:group-hover/card:scale-100 md:transition-all md:duration-500 md:ease-[cubic-bezier(0.22,1,0.36,1)]">
-                  <Play className="h-5 w-5 sm:h-6 sm:w-6 text-gold-foreground fill-gold-foreground ml-0.5" />
+                <div className="flex items-center gap-2 h-auto px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-gold/95 shadow-[0_4px_24px_rgba(0,0,0,0.4)] scale-[0.5] opacity-0 md:group-hover/card:opacity-100 md:group-hover/card:scale-100 md:transition-all md:duration-500 md:ease-[cubic-bezier(0.22,1,0.36,1)]">
+                  <Play className="h-4 w-4 sm:h-5 sm:w-5 text-gold-foreground fill-gold-foreground" />
+                  {hasProgress && (
+                    <span className="text-[10px] sm:text-[11px] font-bold text-gold-foreground uppercase tracking-wide whitespace-nowrap">
+                      Continuar
+                    </span>
+                  )}
                 </div>
               </div>
             )}
