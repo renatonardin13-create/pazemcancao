@@ -660,6 +660,16 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
             {readingTheme === "dark" ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
           </Button>
           <div className="h-4 w-px bg-stone-700/20 mx-1" />
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={toggleFullscreen}
+            className="h-7 w-7 p-0 text-stone-500/40 hover:text-gold transition-colors"
+            title={isFullscreen ? "Sair da tela cheia (F11)" : "Tela cheia (F11)"}
+          >
+            {isFullscreen ? <Minimize className="h-3.5 w-3.5" /> : <Maximize className="h-3.5 w-3.5" />}
+          </Button>
+          <div className="h-4 w-px bg-stone-700/20 mx-1" />
           <div className="relative">
             <Button
               variant="ghost"
