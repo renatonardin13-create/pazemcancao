@@ -255,6 +255,10 @@ function TrackDetailPage() {
                 )}
               </div>
             </motion.div>
+
+            {/* Upsell & Cross-sell */}
+            <UpsellSection sourceType="content" sourceId={trackId} className="mt-10 w-full max-w-lg" />
+            <CrossSellSection currentType="content" currentId={trackId} title="Você também pode gostar" className="mt-6 w-full max-w-lg" />
           </motion.div>
         </div>
       </div>
