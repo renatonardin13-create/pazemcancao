@@ -954,32 +954,14 @@ export default function AdminVitrinePage() {
                           </p>
                         </div>
 
-                        <div className="flex items-center gap-2 shrink-0">
-                          <Switch
-                            checked={shelf.is_active}
-                            onCheckedChange={(checked) => {
-                              updateMut.mutate({ id: shelf.id, is_active: checked });
-                            }}
-                          />
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8 border-border/30 text-muted-foreground/70 hover:text-foreground/60"
-                            onClick={() => openEdit(shelf)}
-                            title="Editar"
-                          >
-                            <Pencil className="h-3.5 w-3.5" />
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="icon"
-                            className="h-8 w-8 border-border/30 text-muted-foreground/70 hover:text-destructive/60"
-                            onClick={() => setDeleteTarget(shelf)}
-                            title="Excluir"
-                          >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
-                        </div>
+                        <AdminActionButtons
+                          onEdit={() => openEdit(shelf)}
+                          isActive={shelf.is_active}
+                          onToggle={(newState) => updateMut.mutate({ id: shelf.id, is_active: newState })}
+                          toggling={updateMut.isPending && (updateMut.variables as any)?.id === shelf.id}
+                          onDelete={() => setDeleteTarget(shelf)}
+                          compact
+                        />
                       </div>
                     );
                   })}
