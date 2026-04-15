@@ -13,17 +13,17 @@ interface AppHeaderProps {
 
 export function AppHeader({ showLogout = true }: AppHeaderProps) {
   const { logout, isAdmin, adminLoading } = useAuth();
-  const { showMusic, showCourses, showPerfil } = useProjectMode();
+  const { showMusicInMenu, showCoursesInMenu, showPerfilInMenu } = useProjectMode();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
   const navItems = useMemo(() => {
     const items: { to: string; icon: typeof Headphones; label: string }[] = [];
-    if (showMusic) items.push({ to: "/musicas", icon: Headphones, label: "Músicas" });
-    if (showCourses) items.push({ to: "/cursos", icon: GraduationCap, label: "Cursos" });
-    if (showPerfil) items.push({ to: "/perfil", icon: UserCircle, label: "Perfil" });
+    if (showMusicInMenu) items.push({ to: "/musicas", icon: Headphones, label: "Músicas" });
+    if (showCoursesInMenu) items.push({ to: "/cursos", icon: GraduationCap, label: "Cursos" });
+    if (showPerfilInMenu) items.push({ to: "/perfil", icon: UserCircle, label: "Perfil" });
     return items;
-  }, [showMusic, showCourses, showPerfil]);
+  }, [showMusicInMenu, showCoursesInMenu, showPerfilInMenu]);
 
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + "/");
 
