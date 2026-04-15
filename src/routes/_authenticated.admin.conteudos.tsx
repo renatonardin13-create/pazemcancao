@@ -80,6 +80,10 @@ function AdminContentPage() {
   const [unlockRuleContentId, setUnlockRuleContentId] = useState("");
   const [isFeatured, setIsFeatured] = useState(false);
   const [featuredPriority, setFeaturedPriority] = useState<string>("");
+  const [releaseMode, setReleaseMode] = useState("liberar_tudo");
+  const [initialFreeCount, setInitialFreeCount] = useState<string>("");
+  const [lockedFinalCount, setLockedFinalCount] = useState<string>("");
+  const [lockedLabel, setLockedLabel] = useState("");
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [contentFile, setContentFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -142,6 +146,10 @@ function AdminContentPage() {
     setUnlockRuleContentId("");
     setIsFeatured(false);
     setFeaturedPriority("");
+    setReleaseMode("liberar_tudo");
+    setInitialFreeCount("");
+    setLockedFinalCount("");
+    setLockedLabel("");
     setCoverFile(null);
     setContentFile(null);
     setEditItem(null);
@@ -166,6 +174,10 @@ function AdminContentPage() {
     setUnlockRuleContentId(item.unlock_rule_content_id || "");
     setIsFeatured(item.is_featured || false);
     setFeaturedPriority(item.featured_priority != null ? String(item.featured_priority) : "");
+    setReleaseMode(item.release_mode || "liberar_tudo");
+    setInitialFreeCount(item.initial_free_count != null ? String(item.initial_free_count) : "");
+    setLockedFinalCount(item.locked_final_count != null ? String(item.locked_final_count) : "");
+    setLockedLabel(item.locked_label || "");
     setCoverFile(null);
     setContentFile(null);
     setFormOpen(true);
