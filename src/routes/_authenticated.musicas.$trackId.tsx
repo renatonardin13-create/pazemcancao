@@ -285,13 +285,15 @@ function MusicDetailPage() {
               </motion.div>
             )}
 
-            <button
-              onClick={handleDownload}
-              className="mt-5 w-full flex items-center justify-center gap-2.5 rounded-full py-4 text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground/60 border border-border/20 hover:text-gold/70 hover:border-gold/15 hover:bg-gold/[0.03] transition-all duration-500"
-            >
-              <Download className="h-3.5 w-3.5" />
-              Baixar Música
-            </button>
+            {canDownload && (
+              <button
+                onClick={handleDownload}
+                className="mt-5 w-full flex items-center justify-center gap-2.5 rounded-full py-4 text-xs font-semibold tracking-[0.2em] uppercase text-muted-foreground/60 border border-border/20 hover:text-gold/70 hover:border-gold/15 hover:bg-gold/[0.03] transition-all duration-500"
+              >
+                <Download className="h-3.5 w-3.5" />
+                Baixar Música
+              </button>
+            )}
           </motion.div>
 
           {/* Emotional message */}
