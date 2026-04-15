@@ -1,15 +1,20 @@
 import { toastError } from "@/lib/toast-utils";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { CourseForm } from "@/components/CourseForm";
-import { CourseIntegrationSection } from "@/components/CourseIntegrationSection";
 import { getAdminCourse, updateCourse } from "@/lib/admin-courses.functions";
-import { CourseModulesTab } from "@/components/CourseModulesTab";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { ArrowLeft, Save, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback, lazy, Suspense } from "react";
+
+const CourseModulesTab = lazy(() =>
+  import("@/components/CourseModulesTab").then((m) => ({ default: m.CourseModulesTab }))
+);
+const CourseIntegrationSection = lazy(() =>
+  import("@/components/CourseIntegrationSection").then((m) => ({ default: m.CourseIntegrationSection }))
+);
 
 export const Route = createFileRoute(
   "/_authenticated/admin/courses/$courseId"
@@ -27,12 +32,39 @@ function EditCoursePage() {
   const { data, isLoading } = useQuery({
     queryKey: ["admin-course", courseId],
     queryFn: () => getAdminCourse({ data: { courseId } }),
+    staleTime: 30_000,
   });
 
+  // Track initial values to compute diff on save
+  const getChangedFields = useCallback(
+    (values: Record<string, any>) => {
+      const course = data?.course;
+      if (!course) return values;
+      const changed: Record<string, any> = {};
+      for (const key of Object.keys(values)) {
+        const oldVal = (course as any)[key];
+        const newVal = values[key];
+        // Treat null/undefined/"" as equivalent for comparison
+        const normalize = (v: any) => (v === undefined || v === "" ? null : v);
+        if (normalize(oldVal) !== normalize(newVal)) {
+          changed[key] = newVal;
+        }
+      }
+      return Object.keys(changed).length > 0 ? changed : null;
+    },
+    [data?.course]
+  );
+
   const mutation = useMutation({
-    mutationFn: (values: any) =>
-      updateCourse({ data: { id: courseId, ...values } }),
-    onSuccess: () => {
+    mutationFn: (values: any) => {
+      const diff = getChangedFields(values);
+      if (!diff) {
+        // Nothing changed — skip network call
+        return Promise.resolve({ course: data?.course });
+      }
+      return updateCourse({ data: { id: courseId, ...diff } });
+    },
+    onSuccess: (_data, _vars) => {
       queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
       queryClient.invalidateQueries({ queryKey: ["admin-course", courseId] });
       queryClient.invalidateQueries({ queryKey: ["student-shelves"] });
@@ -58,6 +90,12 @@ function EditCoursePage() {
 
   const tabTriggerClass =
     "data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-5";
+
+  const tabFallback = (
+    <div className="flex items-center justify-center py-12">
+      <Loader2 className="h-5 w-5 animate-spin text-muted-foreground/50" />
+    </div>
+  );
 
   return (
     <div className="max-w-6xl mx-auto space-y-4">
@@ -145,11 +183,15 @@ function EditCoursePage() {
               </span>
             </div>
           )}
-          <CourseModulesTab courseId={courseId} />
+          <Suspense fallback={tabFallback}>
+            <CourseModulesTab courseId={courseId} />
+          </Suspense>
         </TabsContent>
 
         <TabsContent value="settings" className="mt-4">
-          <CourseIntegrationSection courseId={courseId} />
+          <Suspense fallback={tabFallback}>
+            <CourseIntegrationSection courseId={courseId} />
+          </Suspense>
         </TabsContent>
       </Tabs>
     </div>

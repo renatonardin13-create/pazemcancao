@@ -59,6 +59,7 @@ function AdminCoursesPage() {
   const { data, isLoading } = useQuery({
     queryKey: ["admin-courses"],
     queryFn: () => listAdminCourses(),
+    staleTime: 30_000,
   });
 
   const deleteM = useMutation({
