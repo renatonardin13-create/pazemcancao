@@ -99,13 +99,22 @@ export function useProjectMode() {
     showComunidade: modules.comunidade,
     showBonus: modules.bonus,
     showLancamentos: modules.lancamentos,
-    // menu-specific shortcuts
+    // menu-specific shortcuts (all modules)
     showMusicInMenu: moduleInfo.louvores.visibleInMenu,
     showCoursesInMenu: moduleInfo.cursos.visibleInMenu,
     showVitrineInMenu: moduleInfo.vitrine.visibleInMenu,
     showPerfilInMenu: moduleInfo.perfil.visibleInMenu,
+    showEbooksInMenu: moduleInfo.ebooks.visibleInMenu,
+    showTrilhasInMenu: moduleInfo.trilhas.visibleInMenu,
+    showComunidadeInMenu: moduleInfo.comunidade.visibleInMenu,
+    showBonusInMenu: moduleInfo.bonus.visibleInMenu,
+    showLancamentosInMenu: moduleInfo.lancamentos.visibleInMenu,
     // vitrine-specific shortcuts
     showMusicInVitrine: moduleInfo.louvores.visibleInVitrine,
     showCoursesInVitrine: moduleInfo.cursos.visibleInVitrine,
+    showEbooksInVitrine: moduleInfo.ebooks.visibleInVitrine,
+    showTrilhasInVitrine: moduleInfo.trilhas.visibleInVitrine,
+    showBonusInVitrine: moduleInfo.bonus.visibleInVitrine,
+    showLancamentosInVitrine: moduleInfo.lancamentos.visibleInVitrine,
   };
 }
