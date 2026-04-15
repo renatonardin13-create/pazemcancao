@@ -94,7 +94,7 @@ function MeusCoursosPage() {
       <div className="min-h-screen bg-background">
 
         {/* ═══ TOP BAR — greeting + search ═══ */}
-        <div className="w-full max-w-[1600px] mx-auto px-8 sm:px-12 lg:px-20 pt-7 sm:pt-10">
+        <div className="w-full max-w-[1440px] mx-auto px-7 sm:px-10 lg:px-14 pt-7 sm:pt-10">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -123,7 +123,7 @@ function MeusCoursosPage() {
         )}
 
         {/* ═══ SHELVES CONTENT ═══ */}
-        <div className="w-full max-w-[1600px] mx-auto px-8 sm:px-12 lg:px-20">
+        <div className="w-full max-w-[1440px] mx-auto px-7 sm:px-10 lg:px-14">
 
           {/* ═══ SEARCH RESULTS ═══ */}
           {searchResults !== null ? (
@@ -306,7 +306,7 @@ function ShelfRow({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="group/shelf relative -mx-8 sm:-mx-12 lg:-mx-20">
+    <div className="group/shelf relative -mx-7 sm:-mx-10 lg:-mx-14">
       {/* Fade edges */}
       <div className={`absolute left-0 top-0 bottom-4 w-10 sm:w-14 lg:w-20 z-10 pointer-events-none bg-gradient-to-r from-background to-transparent transition-opacity duration-500 ${canScrollLeft ? 'opacity-100' : 'opacity-0'}`} />
       <div className={`absolute right-0 top-0 bottom-4 w-10 sm:w-14 lg:w-20 z-10 pointer-events-none bg-gradient-to-l from-background to-transparent transition-opacity duration-500 ${canScrollRight ? 'opacity-100' : 'opacity-0'}`} />
@@ -334,7 +334,7 @@ function ShelfRow({ children }: { children: React.ReactNode }) {
         }}
         onScroll={updateScrollState}
         onMouseEnter={updateScrollState}
-        className="flex gap-4 sm:gap-[18px] lg:gap-5 overflow-x-auto pb-3 scrollbar-hide px-8 sm:px-12 lg:px-20 snap-x snap-mandatory scroll-smooth cursor-grab select-none will-change-scroll"
+        className="flex gap-4 sm:gap-[18px] lg:gap-5 overflow-x-auto pb-3 scrollbar-hide px-7 sm:px-10 lg:px-14 snap-x snap-mandatory scroll-smooth cursor-grab select-none will-change-scroll"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {children}
