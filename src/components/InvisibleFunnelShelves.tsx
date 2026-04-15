@@ -282,20 +282,32 @@ const FunnelPosterCard = memo(function FunnelPosterCard({ item, index, context, 
     </div>
   );
 
+  const trackClick = () => {
+    logFunnelClick({
+      data: {
+        itemId: item.id,
+        itemType: item.type,
+        context,
+        shelfTitle,
+        isLocked: isLocked,
+      },
+    }).catch(() => {});
+  };
+
   if (isLocked && salesUrl) {
     return (
-      <a href={salesUrl} target="_blank" rel="noopener noreferrer" className="group/card relative block cursor-pointer">
+      <a href={salesUrl} target="_blank" rel="noopener noreferrer" className="group/card relative block cursor-pointer" onClick={trackClick}>
         {card}
       </a>
     );
   }
 
   if (isLocked) {
-    return <div className="group/card relative block">{card}</div>;
+    return <div className="group/card relative block" onClick={trackClick}>{card}</div>;
   }
 
   return (
-    <Link to={linkTo as any} className="group/card relative block cursor-pointer">
+    <Link to={linkTo as any} className="group/card relative block cursor-pointer" onClick={trackClick}>
       {card}
     </Link>
   );
