@@ -169,6 +169,7 @@ export default function AdminVitrinePage() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState("shelves");
   const [showPreview, setShowPreview] = useState(true);
+  const [previewDevice, setPreviewDevice] = useState<"desktop" | "tablet" | "mobile">("desktop");
 
   // Shelf dialogs
   const [dialogOpen, setDialogOpen] = useState(false);
