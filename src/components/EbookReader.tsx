@@ -101,8 +101,9 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   const fontScaleMap: Record<FontSize, number> = { small: 0.85, medium: 1, large: 1.25 };
   const effectiveScale = scale * fontScaleMap[fontSize];
 
-  // Page image cache: pageNum → dataURL
+  // Page image cache: pageNum → dataURL (use ref to avoid dependency loops)
   const [pageImages, setPageImages] = useState<Record<number, string>>({});
+  const pageImagesRef = useRef<Record<number, string>>({});
   const [renderingPages, setRenderingPages] = useState<Set<number>>(new Set());
 
   const pdfDocRef = useRef<pdfjsLib.PDFDocumentProxy | null>(null);
@@ -186,6 +187,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
         } catch {
           setSpread(0);
         }
+        pageImagesRef.current = {};
         setPageImages({});
         setLoading(false);
       } catch (err) {
@@ -208,16 +210,22 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   }, [spread, pdfUrl, numPages]);
 
 
+  const renderingPagesRef = useRef<Set<number>>(new Set());
+
   const renderPage = useCallback(
     async (pageNum: number) => {
       const pdf = pdfDocRef.current;
       if (!pdf || pageNum < 1 || pageNum > pdf.numPages) return;
-      if (pageImages[pageNum] && scale === 1) return; // Already cached at default scale
+      // Use ref to check cache — avoids stale closure & dependency loop
+      if (pageImagesRef.current[pageNum]) return;
+      if (renderingPagesRef.current.has(pageNum)) return;
 
+      renderingPagesRef.current.add(pageNum);
       setRenderingPages((prev) => new Set(prev).add(pageNum));
       try {
         const page = await pdf.getPage(pageNum);
-        const viewport = page.getViewport({ scale: 2 * effectiveScale });
+        const renderScale = isMobile ? 1.5 : 2;
+        const viewport = page.getViewport({ scale: renderScale * effectiveScale });
 
         if (!offscreenCanvas.current) {
           offscreenCanvas.current = document.createElement("canvas");
@@ -230,11 +238,13 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
         if (!ctx) return;
 
         await page.render({ canvasContext: ctx, viewport }).promise;
-        const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
+        pageImagesRef.current[pageNum] = dataUrl;
         setPageImages((prev) => ({ ...prev, [pageNum]: dataUrl }));
       } catch (err) {
         console.error("Failed to render page:", pageNum, err);
       } finally {
+        renderingPagesRef.current.delete(pageNum);
         setRenderingPages((prev) => {
           const next = new Set(prev);
           next.delete(pageNum);
@@ -242,18 +252,44 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
         });
       }
     },
-    [effectiveScale, pageImages]
+    [effectiveScale, isMobile]
   );
 
-  // Render current spread pages + prefetch next spread
+  // Evict far pages from cache to save memory (keep ±2 spreads)
+  const evictFarPages = useCallback((currentSpread: number) => {
+    const keepPages = new Set<number>();
+    for (let s = Math.max(0, currentSpread - 1); s <= Math.min(totalSpreads - 1, currentSpread + 2); s++) {
+      for (const p of getSpreadPages(s)) keepPages.add(p);
+    }
+    const cached = pageImagesRef.current;
+    let changed = false;
+    for (const key of Object.keys(cached)) {
+      const pageNum = parseInt(key, 10);
+      if (!keepPages.has(pageNum)) {
+        delete cached[pageNum];
+        changed = true;
+      }
+    }
+    if (changed) {
+      setPageImages({ ...cached });
+    }
+  }, [totalSpreads, getSpreadPages]);
+
+  // Render current spread pages + prefetch next spread, evict far ones
   useEffect(() => {
     if (loading || numPages === 0) return;
     const pages = getSpreadPages(spread);
     const nextPages = spread < totalSpreads - 1 ? getSpreadPages(spread + 1) : [];
     const prevPages = spread > 0 ? getSpreadPages(spread - 1) : [];
-    const allPages = [...pages, ...nextPages, ...prevPages];
-    allPages.forEach((p) => renderPage(p));
-  }, [spread, loading, numPages, getSpreadPages, totalSpreads, renderPage]);
+    // Render current first, then adjacent
+    pages.forEach((p) => renderPage(p));
+    // Use rAF for adjacent pages to not block current render
+    requestAnimationFrame(() => {
+      [...nextPages, ...prevPages].forEach((p) => renderPage(p));
+    });
+    // Evict pages far from current spread
+    evictFarPages(spread);
+  }, [spread, loading, numPages, getSpreadPages, totalSpreads, renderPage, evictFarPages]);
 
   // Extract text from current pages for TTS
   useEffect(() => {
@@ -373,9 +409,10 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
 
   const currentSentences = useMemo(() => splitIntoSentences(currentPageText), [currentPageText, splitIntoSentences]);
 
-  // Re-render on scale change
+  // Re-render on scale/font change — clear cache including ref
   useEffect(() => {
     if (loading || numPages === 0) return;
+    pageImagesRef.current = {};
     setPageImages({});
   }, [scale, fontSize]);
 
@@ -452,31 +489,22 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
     return `${currentPages[0]}–${currentPages[1]}`;
   })();
 
-  // Page-flip animation variants — realistic curl effect
+  // Page-flip animation — lightweight (no filter/brightness for GPU perf)
   const flipVariants = {
     enter: (dir: "left" | "right") => ({
-      rotateY: dir === "right" ? 45 : -45,
-      skewY: dir === "right" ? -2 : 2,
-      x: dir === "right" ? 80 : -80,
+      x: dir === "right" ? 60 : -60,
       opacity: 0,
-      scale: 0.96,
-      filter: "brightness(0.85)",
+      scale: 0.98,
     }),
     center: {
-      rotateY: 0,
-      skewY: 0,
       x: 0,
       opacity: 1,
       scale: 1,
-      filter: "brightness(1)",
     },
     exit: (dir: "left" | "right") => ({
-      rotateY: dir === "right" ? -45 : 45,
-      skewY: dir === "right" ? 2 : -2,
-      x: dir === "right" ? -80 : 80,
+      x: dir === "right" ? -60 : 60,
       opacity: 0,
-      scale: 0.96,
-      filter: "brightness(0.85)",
+      scale: 0.98,
     }),
   };
 
@@ -799,14 +827,9 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
             animate="center"
             exit="exit"
             transition={{
-              duration: 0.65,
+              duration: 0.35,
               ease: [0.25, 0.46, 0.45, 0.94],
-              opacity: { duration: 0.4 },
-              filter: { duration: 0.5 },
-            }}
-            style={{
-              transformStyle: "preserve-3d",
-              transformOrigin: direction === "right" ? "left center" : "right center",
+              opacity: { duration: 0.25 },
             }}
             className={`relative flex ${dualPage ? "max-w-[88vw] lg:max-w-[78vw] xl:max-w-[68vw]" : "max-w-[92vw] sm:max-w-[65vw] md:max-w-[50vw]"} w-full`}
           >
