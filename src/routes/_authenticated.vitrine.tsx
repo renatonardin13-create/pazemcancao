@@ -296,16 +296,20 @@ function HeroBanner({ course }: { course: any }) {
 
 
 /* ── Netflix-style Carousel ── */
-function NetflixCarousel({ courses, shelfId }: { courses: any[]; shelfId?: string }) {
+const NetflixCarousel = memo(function NetflixCarousel({ courses, shelfId }: { courses: any[]; shelfId?: string }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const rafRef = useRef<number>(0);
 
   const checkScroll = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 4);
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = requestAnimationFrame(() => {
+      const el = scrollRef.current;
+      if (!el) return;
+      setCanScrollLeft(el.scrollLeft > 4);
+      setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+    });
   }, []);
 
   useEffect(() => {
@@ -380,7 +384,7 @@ function NetflixCarousel({ courses, shelfId }: { courses: any[]; shelfId?: strin
       </div>
     </div>
   );
-}
+});
 
 
 function HeroCTA({ course }: { course: any }) {
