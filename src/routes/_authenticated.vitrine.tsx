@@ -259,8 +259,9 @@ function CourseCard({ course }: { course: any }) {
   const isDimmed = isLocked || isBlocked || isExpired;
 
   const handleLockedClick = () => {
-    if (course.checkout_url) {
-      window.open(course.checkout_url, "_blank");
+    const salesUrl = course.sales_page_url || course.checkout_url;
+    if (salesUrl) {
+      window.open(salesUrl, "_blank");
     }
   };
 
@@ -407,10 +408,11 @@ function CourseActionButton({ course }: { course: any }) {
     );
   }
 
-  if (isLocked && course.checkout_url) {
+  if (isLocked && (course.sales_page_url || course.checkout_url)) {
+    const salesUrl = course.sales_page_url || course.checkout_url;
     return (
       <a
-        href={course.checkout_url}
+        href={salesUrl}
         target="_blank"
         rel="noopener noreferrer"
         className="inline-flex items-center gap-2 rounded-xl bg-gold/15 text-gold/70 border border-gold/20 px-6 py-3 text-[12px] font-bold uppercase tracking-wider hover:bg-gold/25 hover:text-gold/90 transition-all"

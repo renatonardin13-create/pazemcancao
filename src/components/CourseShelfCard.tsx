@@ -31,9 +31,10 @@ export function CourseShelfCard({
   const isPaidCourse = !isLocked && (course.price > 0 || course.has_checkout) && !['enrolled', 'in_progress', 'completed'].includes(course.access_state);
 
   const handleClick = useCallback(async (e: React.MouseEvent) => {
-    // If locked with checkout, let the <a> handle it
-    if (isLocked && course.checkout_url) return;
-    // If locked without checkout, do nothing
+    const salesUrl = course.sales_page_url || course.checkout_url;
+    // If locked with sales URL, let the <a> handle it
+    if (isLocked && salesUrl) return;
+    // If locked without sales URL, do nothing
     if (isLocked) { e.preventDefault(); return; }
 
     e.preventDefault();
@@ -63,11 +64,10 @@ export function CourseShelfCard({
     } finally {
       setIsNavigating(false);
     }
-  }, [course.id, course.checkout_url, isLocked, isNavigating, navigate]);
+  }, [course.id, course.sales_page_url, course.checkout_url, isLocked, isNavigating, navigate]);
 
-  // For locked courses with checkout, use <a> to external URL
-  // For everything else, use <div> with onClick to resolve lesson directly
-  const isExternalLink = isLocked && course.checkout_url;
+  const salesUrl = course.sales_page_url || course.checkout_url;
+  const isExternalLink = isLocked && salesUrl;
 
   const cardContent = (
     <div className="relative rounded-[14px] sm:rounded-[16px] overflow-visible md:transition-all md:duration-[600ms] md:ease-[cubic-bezier(0.22,1,0.36,1)] md:group-hover/card:scale-[1.04] md:group-hover/card:z-30">
@@ -201,7 +201,7 @@ export function CourseShelfCard({
   if (isExternalLink) {
     return (
       <a
-        href={course.checkout_url}
+        href={salesUrl!}
         target="_blank"
         rel="noopener noreferrer"
         className="group/card relative block cursor-pointer"
