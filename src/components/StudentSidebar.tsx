@@ -2,9 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { listCategories, listActiveTracks } from "@/lib/tracks.functions";
-import { getStudentShelves } from "@/lib/shelves.functions";
-import { getMyCoursesData } from "@/lib/my-courses.functions";
-import { useProjectMode } from "@/hooks/use-project-mode";
+import { useProjectMode, type ModuleKey } from "@/hooks/use-project-mode";
 import { LogoBrand } from "./LogoBrand";
 import {
   Store,
@@ -17,13 +15,47 @@ import {
   ChevronRight,
   Menu,
   X,
+  BookOpen,
+  Route as RouteIcon,
+  Users,
+  Gift,
+  Rocket,
+  type LucideIcon,
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 
+/** Configuration for each module's menu entry */
+interface ModuleMenuConfig {
+  key: ModuleKey;
+  label: string;
+  icon: LucideIcon;
+  to: string;
+  /** If true, match prefix for active state */
+  matchPrefix?: boolean;
+  /** If true, render louvores submenu with categories */
+  hasSubmenu?: boolean;
+}
+
+/**
+ * Static mapping from module slug to menu config.
+ * Order here determines display order in the sidebar.
+ */
+const MODULE_MENU_CONFIG: ModuleMenuConfig[] = [
+  { key: "vitrine", label: "Vitrine", icon: Store, to: "/vitrine" },
+  { key: "cursos", label: "Meus Cursos", icon: GraduationCap, to: "/cursos", matchPrefix: true },
+  { key: "louvores", label: "Louvores", icon: Music2, to: "/musicas", matchPrefix: true, hasSubmenu: true },
+  { key: "ebooks", label: "Ebooks", icon: BookOpen, to: "/conteudo" },
+  { key: "trilhas", label: "Trilhas", icon: RouteIcon, to: "/conteudo" },
+  { key: "bonus", label: "Bônus", icon: Gift, to: "/conteudo" },
+  { key: "lancamentos", label: "Lançamentos", icon: Rocket, to: "/vitrine" },
+  { key: "comunidade", label: "Comunidade", icon: Users, to: "/vitrine" },
+  { key: "perfil", label: "Perfil", icon: UserCircle, to: "/perfil" },
+];
+
 export function StudentSidebar() {
   const { logout, isAdmin, adminLoading } = useAuth();
-  const { showMusicInMenu, showCoursesInMenu, showVitrineInMenu, showPerfilInMenu, isLoading: modulesLoading } = useProjectMode();
+  const { moduleInfo, isLoading: modulesLoading, dbModules } = useProjectMode();
   const location = useLocation();
   const [louvoresOpen, setLouvoresOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -31,20 +63,6 @@ export function StudentSidebar() {
   const { data: catData } = useQuery({
     queryKey: ["categories"],
     queryFn: () => listCategories(),
-  });
-
-  const { data: shelvesData } = useQuery({
-    queryKey: ["student-shelves"],
-    queryFn: () => getStudentShelves(),
-    staleTime: 10_000,
-    refetchOnWindowFocus: true,
-  });
-
-  const { data: myCoursesData } = useQuery({
-    queryKey: ["my-courses"],
-    queryFn: () => getMyCoursesData(),
-    staleTime: 10_000,
-    refetchOnWindowFocus: true,
   });
 
   const { data: tracksData } = useQuery({
@@ -55,9 +73,6 @@ export function StudentSidebar() {
 
   const allTracks = tracksData?.tracks || [];
   const categories = catData?.categories || [];
-  const hasVitrine = (shelvesData?.shelves || []).length > 0;
-  const hasCourses = (myCoursesData?.courses || []).length > 0;
-  const hasTracks = allTracks.length > 0;
 
   const normalizeStr = (s: string) =>
     s.replace(/^[^\p{L}\p{N}]+/u, "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -92,6 +107,20 @@ export function StudentSidebar() {
     });
   }, [categories, categoriesWithTracks]);
 
+  // Build the ordered list of visible menu items dynamically
+  // If DB modules exist, use their sort_order; otherwise use static config order
+  const visibleMenuItems = useMemo(() => {
+    const dbMap = new Map(dbModules.map((m) => [m.slug, m]));
+
+    return MODULE_MENU_CONFIG
+      .filter((cfg) => moduleInfo[cfg.key]?.visibleInMenu)
+      .sort((a, b) => {
+        const aOrder = dbMap.get(a.key)?.sort_order ?? MODULE_MENU_CONFIG.indexOf(a);
+        const bOrder = dbMap.get(b.key)?.sort_order ?? MODULE_MENU_CONFIG.indexOf(b);
+        return aOrder - bOrder;
+      });
+  }, [moduleInfo, dbModules]);
+
   const isActive = (path: string) => location.pathname === path;
   const isActivePrefix = (path: string) => location.pathname.startsWith(path);
 
@@ -111,106 +140,113 @@ export function StudentSidebar() {
         : "text-muted-foreground/45 hover:text-foreground/60 hover:bg-white/[0.03] border-l-2 border-transparent hover:border-white/[0.06]"
     );
 
+  /** Render the Louvores submenu with categories */
+  const renderLouvoresSubmenu = () => (
+    <div>
+      <button
+        onClick={() => setLouvoresOpen(!louvoresOpen)}
+        className={cn(
+          navItemClass(isActivePrefix("/musicas")),
+          "w-full justify-between"
+        )}
+      >
+        <span className="flex items-center gap-4">
+          <Music2 className="h-[22px] w-[22px] shrink-0" />
+          Louvores
+        </span>
+        {louvoresOpen ? (
+          <ChevronDown className="h-4.5 w-4.5 text-muted-foreground/40 transition-transform duration-300" />
+        ) : (
+          <ChevronRight className="h-4.5 w-4.5 text-muted-foreground/40 transition-transform duration-300" />
+        )}
+      </button>
+
+      {louvoresOpen && (
+        <div className="mt-2.5 space-y-1.5">
+          <Link
+            to="/musicas"
+            search={{}}
+            onClick={() => setMobileOpen(false)}
+            className={subItemClass(
+              isActive("/musicas") && !(location.search as any)?.categoria
+            )}
+          >
+            <span className="text-sm">⭐</span>
+            Destaques (Top 10)
+          </Link>
+          {visibleCategories
+            .filter((cat: any) => {
+              const slug = (cat.slug || cat.name.toLowerCase()).toLowerCase();
+              const plainName = cat.name.toLowerCase().replace(/^[^\p{L}\p{N}]+/u, "").trim();
+              return slug !== "destaques" && slug !== "top-10-mais-fortes"
+                && !plainName.startsWith("destaques");
+            })
+            .map((cat: any) => {
+              const catSlug = cat.slug || cat.name.toLowerCase();
+              const isActiveCat = (location.search as any)?.categoria === catSlug;
+              return (
+                <Link
+                  key={cat.id}
+                  to="/musicas"
+                  search={{ categoria: catSlug }}
+                  onClick={() => setMobileOpen(false)}
+                  className={subItemClass(isActiveCat)}
+                >
+                  <span className="text-sm">{cat.icon || "🎵"}</span>
+                  {cat.name.replace(/^[^\w\s]+\s*/u, "")}
+                </Link>
+              );
+            })}
+        </div>
+      )}
+    </div>
+  );
+
+  /** Render a standard menu item */
+  const renderMenuItem = (cfg: ModuleMenuConfig) => {
+    const Icon = cfg.icon;
+    const active = cfg.matchPrefix ? isActivePrefix(cfg.to) : isActive(cfg.to);
+
+    return (
+      <Link
+        key={cfg.key}
+        to={cfg.to}
+        onClick={() => setMobileOpen(false)}
+        className={navItemClass(active)}
+      >
+        <Icon className="h-[22px] w-[22px] shrink-0" />
+        {cfg.label}
+      </Link>
+    );
+  };
+
+  // Separate perfil from main items (goes after separator)
+  const mainItems = visibleMenuItems.filter((cfg) => cfg.key !== "perfil");
+  const showPerfil = visibleMenuItems.some((cfg) => cfg.key === "perfil");
+
   const sidebarContent = (
     <div className="flex flex-col h-full">
-      {/* Logo — prominent with generous spacing */}
+      {/* Logo */}
       <div className="px-7 pt-8 pb-6 border-b border-white/[0.06]">
         <LogoBrand size="lg" showSubtitle />
       </div>
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-5 pt-6 pb-4 space-y-2">
-        {/* Vitrine */}
-        {showVitrineInMenu && (
-          <Link
-            to="/vitrine"
-            onClick={() => setMobileOpen(false)}
-            className={navItemClass(isActive("/vitrine"))}
-          >
-            <Store className="h-[22px] w-[22px] shrink-0" />
-            Vitrine
-          </Link>
-        )}
-
-        {/* Meus Cursos */}
-        {showCoursesInMenu && (
-          <Link
-            to="/cursos"
-            onClick={() => setMobileOpen(false)}
-            className={navItemClass(isActive("/cursos") || isActivePrefix("/cursos/"))}
-          >
-            <GraduationCap className="h-[22px] w-[22px] shrink-0" />
-            Meus Cursos
-          </Link>
-        )}
-
-        {/* Louvores with subcategories */}
-        {showMusicInMenu && (
-          <div>
-            <button
-              onClick={() => setLouvoresOpen(!louvoresOpen)}
-              className={cn(
-                navItemClass(isActivePrefix("/musicas")),
-                "w-full justify-between"
-              )}
-            >
-              <span className="flex items-center gap-4">
-                <Music2 className="h-[22px] w-[22px] shrink-0" />
-                Louvores
-              </span>
-              {louvoresOpen ? (
-                <ChevronDown className="h-4.5 w-4.5 text-muted-foreground/40 transition-transform duration-300" />
-              ) : (
-                <ChevronRight className="h-4.5 w-4.5 text-muted-foreground/40 transition-transform duration-300" />
-              )}
-            </button>
-
-            {louvoresOpen && (
-              <div className="mt-2.5 space-y-1.5">
-                <Link
-                  to="/musicas"
-                  search={{}}
-                  onClick={() => setMobileOpen(false)}
-                  className={subItemClass(
-                    isActive("/musicas") && !(location.search as any)?.categoria
-                  )}
-                >
-                  <span className="text-sm">⭐</span>
-                  Destaques (Top 10)
-                </Link>
-                {visibleCategories
-                  .filter((cat: any) => {
-                    const slug = (cat.slug || cat.name.toLowerCase()).toLowerCase();
-                    const plainName = cat.name.toLowerCase().replace(/^[^\p{L}\p{N}]+/u, "").trim();
-                    return slug !== "destaques" && slug !== "top-10-mais-fortes"
-                      && !plainName.startsWith("destaques");
-                  })
-                  .map((cat: any) => {
-                    const catSlug = cat.slug || cat.name.toLowerCase();
-                    const isActiveCat = (location.search as any)?.categoria === catSlug;
-                    return (
-                      <Link
-                        key={cat.id}
-                        to="/musicas"
-                        search={{ categoria: catSlug }}
-                        onClick={() => setMobileOpen(false)}
-                        className={subItemClass(isActiveCat)}
-                      >
-                        <span className="text-sm">{cat.icon || "🎵"}</span>
-                        {cat.name.replace(/^[^\w\s]+\s*/u, "")}
-                      </Link>
-                    );
-                  })}
-              </div>
-            )}
-          </div>
+        {/* Dynamic module items */}
+        {mainItems.map((cfg) =>
+          cfg.hasSubmenu ? (
+            <div key={cfg.key}>{renderLouvoresSubmenu()}</div>
+          ) : (
+            renderMenuItem(cfg)
+          )
         )}
 
         {/* Separator */}
         <div className="my-4 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
         {/* Perfil */}
-        {showPerfilInMenu && (
+        {showPerfil && (
           <Link
             to="/perfil"
             onClick={() => setMobileOpen(false)}
@@ -237,7 +273,7 @@ export function StudentSidebar() {
         )}
       </nav>
 
-      {/* Logout — bottom */}
+      {/* Logout */}
       <div className="px-5 py-6 border-t border-white/[0.06]">
         <button
           onClick={() => { logout(); setMobileOpen(false); }}
