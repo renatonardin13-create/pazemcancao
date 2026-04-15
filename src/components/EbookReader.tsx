@@ -291,12 +291,18 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
     evictFarPages(spread);
   }, [spread, loading, numPages, getSpreadPages, totalSpreads, renderPage, evictFarPages]);
 
-  // Extract text from current pages for TTS
+  // Extract text from current + next pages for TTS
+  const nextSpreadPages = useMemo(() => {
+    return spread < totalSpreads - 1 ? getSpreadPages(spread + 1) : [];
+  }, [spread, totalSpreads, getSpreadPages]);
+
   useEffect(() => {
     if (loading || numPages === 0) return;
     const pdf = pdfDocRef.current;
     if (!pdf) return;
-    currentPages.forEach(async (pageNum) => {
+    // Extract text for current AND next spread pages
+    const pagesToExtract = [...currentPages, ...nextSpreadPages];
+    pagesToExtract.forEach(async (pageNum) => {
       if (pageTexts[pageNum]) return;
       try {
         const page = await pdf.getPage(pageNum);
@@ -310,10 +316,16 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
         }
       } catch { /* ignore */ }
     });
-  }, [spread, loading, numPages, currentPages]);
+  }, [spread, loading, numPages, currentPages, nextSpreadPages]);
 
   // Combine current page texts for audio
   const currentPageText = currentPages
+    .map((p) => pageTexts[p] || "")
+    .filter(Boolean)
+    .join(". ");
+
+  // Combine next page texts for pre-warming
+  const nextPageText = nextSpreadPages
     .map((p) => pageTexts[p] || "")
     .filter(Boolean)
     .join(". ");
@@ -353,6 +365,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   const ebookAudio = useEbookAudio({
     audioUrl,
     pageText: currentPageText || undefined,
+    nextPageText: nextPageText || undefined,
     onPageNarrationEnd: handlePageNarrationEnd,
   });
 
