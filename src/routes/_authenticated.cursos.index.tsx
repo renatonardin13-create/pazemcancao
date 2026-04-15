@@ -629,6 +629,7 @@ function MyCoursesCard({ course }: { course: any }) {
 
 /* ══════════════════════════════════════════════════════════════
    LIBRARY CONTENT CARD (unlocked / favorites / bonus)
+   Same visual pattern as CourseShelfCard — vertical poster 9:13
    ══════════════════════════════════════════════════════════════ */
 
 function LibraryContentCard({ item, isFree }: { item: any; isFree?: boolean }) {
@@ -636,41 +637,78 @@ function LibraryContentCard({ item, isFree }: { item: any; isFree?: boolean }) {
     <Link
       to="/conteudo/$trackId"
       params={{ trackId: item.id }}
-      className="group relative flex-shrink-0 w-[160px] sm:w-[190px] rounded-2xl overflow-hidden border border-border/8 bg-card/5 hover:border-gold/20 transition-all duration-300"
+      className="group/card relative block cursor-pointer"
     >
-      <div className="relative aspect-[3/4] overflow-hidden">
-        <img
-          src={item.card_cover_url || item.cover_url || "/placeholder.svg"}
-          alt={item.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-          loading="lazy"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-        {isFree && (
-          <div className="absolute top-2.5 right-2.5">
-            <span className="inline-flex items-center gap-1 rounded-lg bg-gold/90 px-2 py-0.5 text-[8px] font-bold text-background uppercase tracking-wider">
-              <Gift className="h-2.5 w-2.5" /> Grátis
-            </span>
+      <div className="relative rounded-[14px] sm:rounded-[16px] overflow-visible md:transition-all md:duration-[600ms] md:ease-[cubic-bezier(0.22,1,0.36,1)] md:group-hover/card:scale-[1.04] md:group-hover/card:z-30">
+        {/* Ambient glow */}
+        <div className="absolute -inset-4 rounded-3xl bg-gold/0 md:group-hover/card:bg-gold/[0.05] md:transition-all md:duration-700 blur-3xl pointer-events-none" />
+
+        <div className="relative rounded-[14px] sm:rounded-[16px] overflow-hidden bg-card/5 shadow-md shadow-black/25 ring-1 ring-white/[0.04] md:group-hover/card:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.6)] md:group-hover/card:ring-gold/15 md:transition-all md:duration-500">
+          <div className="relative aspect-[9/13] overflow-hidden">
+            {(item.card_cover_url || item.cover_url) ? (
+              <img
+                src={item.card_cover_url || item.cover_url}
+                alt={item.title}
+                className="w-full h-full object-cover md:transition-transform md:duration-[900ms] md:ease-out md:group-hover/card:scale-[1.08]"
+                loading="lazy"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-card/40 via-muted/10 to-background flex items-center justify-center">
+                <BookOpen className="h-10 w-10 text-muted-foreground/8" />
+              </div>
+            )}
+
+            {/* Bottom gradient */}
+            <div className="absolute inset-x-0 bottom-0 h-[70%] bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
+            <div className="absolute inset-0 bg-black/0 md:group-hover/card:bg-black/30 md:transition-all md:duration-500" />
+            <div className="absolute inset-0 shadow-[inset_0_0_30px_rgba(0,0,0,0.25)] pointer-events-none" />
+
+            {/* Badge */}
+            {isFree && (
+              <div className="absolute top-2.5 left-2.5 z-10">
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold/90 text-[9px] sm:text-[10px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm">
+                  <Gift className="h-2.5 w-2.5" /> Grátis
+                </span>
+              </div>
+            )}
+            {item.badge_text && !isFree && (
+              <div className="absolute top-2.5 left-2.5 z-10">
+                <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-gold/20 border border-gold/30 text-[9px] font-bold text-gold uppercase tracking-wider backdrop-blur-sm">
+                  {item.badge_text}
+                </span>
+              </div>
+            )}
+
+            {/* Play button on hover */}
+            <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+              <div className="flex items-center gap-2 h-auto px-5 py-2.5 rounded-full bg-gold/95 shadow-[0_4px_24px_rgba(0,0,0,0.4)] scale-[0.5] opacity-0 md:group-hover/card:opacity-100 md:group-hover/card:scale-100 md:transition-all md:duration-500 md:ease-[cubic-bezier(0.22,1,0.36,1)]">
+                <Play className="h-4 w-4 text-gold-foreground fill-gold-foreground" />
+              </div>
+            </div>
+
+            {/* Title + description — bottom */}
+            <div className="absolute inset-x-0 bottom-0 px-3.5 sm:px-4 pb-4 sm:pb-5 z-10">
+              <h3 className="text-sm sm:text-[15px] font-bold text-white line-clamp-2 leading-snug drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] tracking-tight">
+                {item.title}
+              </h3>
+              {item.description && (
+                <p className="text-[10px] sm:text-[11px] text-white/40 mt-1.5 line-clamp-2 leading-relaxed italic opacity-80 md:opacity-0 md:group-hover/card:opacity-100 md:transition-opacity md:duration-500">
+                  {item.description}
+                </p>
+              )}
+              <p className="text-[9px] text-white/25 mt-1 uppercase tracking-[0.18em] font-semibold">
+                {item.content_type === "ebook" ? "E-book" : item.content_type === "video" ? "Vídeo" : "Conteúdo"}
+              </p>
+            </div>
           </div>
-        )}
-        {item.badge_text && (
-          <div className="absolute top-2.5 left-2.5">
-            <span className="inline-flex items-center rounded-lg bg-gold/20 border border-gold/30 px-2 py-0.5 text-[8px] font-bold text-gold uppercase tracking-wider backdrop-blur-sm">
-              {item.badge_text}
-            </span>
-          </div>
-        )}
-      </div>
-      <div className="p-3">
-        <p className="text-xs font-semibold text-foreground/80 line-clamp-2 leading-tight">{item.title}</p>
-        <p className="text-[9px] text-muted-foreground/40 mt-1 uppercase tracking-wider">{item.content_type}</p>
+        </div>
       </div>
     </Link>
   );
 }
 
 /* ══════════════════════════════════════════════════════════════
-   LOCKED CONTENT CARD (premium / with padlock)
+   LOCKED CONTENT CARD — same poster shape with lock overlay
    ══════════════════════════════════════════════════════════════ */
 
 function LockedContentCard({ item }: { item: any }) {
@@ -683,61 +721,79 @@ function LockedContentCard({ item }: { item: any }) {
   return (
     <button
       onClick={handleClick}
-      className="group relative flex-shrink-0 w-[200px] sm:w-[240px] rounded-2xl overflow-hidden border border-gold/20 bg-card/5 hover:border-gold/50 transition-all duration-500 text-left cursor-pointer shadow-lg shadow-black/20 hover:shadow-gold/10"
+      className="group/card relative block cursor-pointer text-left"
     >
-      <div className="relative aspect-[3/4] overflow-hidden">
-        <img
-          src={item.card_cover_url || item.cover_url || "/placeholder.svg"}
-          alt={item.title}
-          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 brightness-[0.35] group-hover:brightness-[0.45]"
-          loading="lazy"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/10" />
+      <div className="relative rounded-[14px] sm:rounded-[16px] overflow-visible md:transition-all md:duration-[600ms] md:ease-[cubic-bezier(0.22,1,0.36,1)] md:group-hover/card:scale-[1.04] md:group-hover/card:z-30">
+        {/* Ambient gold glow */}
+        <div className="absolute -inset-4 rounded-3xl bg-gold/0 md:group-hover/card:bg-gold/[0.08] md:transition-all md:duration-700 blur-3xl pointer-events-none" />
 
-        {/* Content overlay */}
-        <div className="absolute inset-0 flex flex-col justify-end p-4 sm:p-5 gap-3">
-          {/* Title */}
-          <h3 className="font-display text-base sm:text-lg font-black text-foreground/90 leading-tight tracking-tight uppercase line-clamp-3">
-            {item.title}
-          </h3>
+        <div className="relative rounded-[14px] sm:rounded-[16px] overflow-hidden bg-card/5 shadow-md shadow-black/25 ring-1 ring-gold/10 md:group-hover/card:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.6)] md:group-hover/card:ring-gold/30 md:transition-all md:duration-500">
+          <div className="relative aspect-[9/13] overflow-hidden">
+            {(item.card_cover_url || item.cover_url) ? (
+              <img
+                src={item.card_cover_url || item.cover_url}
+                alt={item.title}
+                className="w-full h-full object-cover md:transition-transform md:duration-[900ms] md:ease-out md:group-hover/card:scale-[1.08] saturate-[0.45] brightness-[0.35] md:group-hover/card:brightness-[0.45]"
+                loading="lazy"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-card/40 via-muted/10 to-background" />
+            )}
 
-          {/* Subtitle / description */}
-          {item.description && (
-            <p className="text-[11px] sm:text-xs text-foreground/50 leading-snug line-clamp-2 italic">
-              {item.description}
-            </p>
-          )}
+            {/* Bottom gradient */}
+            <div className="absolute inset-x-0 bottom-0 h-[80%] bg-gradient-to-t from-black/95 via-black/60 to-transparent" />
+            <div className="absolute inset-0 bg-black/20" />
+            <div className="absolute inset-0 shadow-[inset_0_0_30px_rgba(0,0,0,0.25)] pointer-events-none" />
 
-          {/* Lock badge */}
-          <div className="flex items-center gap-2 mt-1">
-            <div className="h-7 w-7 rounded-full bg-gold/15 border border-gold/30 flex items-center justify-center backdrop-blur-md group-hover:bg-gold/25 group-hover:border-gold/50 transition-all duration-300">
-              <Lock className="h-3 w-3 text-gold" />
+            {/* Premium badge */}
+            <div className="absolute top-2.5 left-2.5 z-10">
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-gold/95 to-amber-500/90 text-[9px] sm:text-[10px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm border border-gold/20">
+                <Lock className="h-2.5 w-2.5" />
+                Premium
+              </span>
             </div>
-            <div className="flex flex-col">
-              <span className="text-[9px] font-bold text-gold uppercase tracking-[0.15em]">
-                Acesso exclusivo
-              </span>
-              <span className="text-[8px] text-muted-foreground/40">
-                Libera após a compra
-              </span>
+
+            {/* Lock icon — top right */}
+            <div className="absolute top-2.5 right-2.5 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm border border-white/[0.08]">
+              <Lock className="h-3 w-3 text-white/45" />
+            </div>
+
+            {/* Title + description + lock info — bottom */}
+            <div className="absolute inset-x-0 bottom-0 px-3.5 sm:px-4 pb-4 sm:pb-5 z-10 flex flex-col gap-2">
+              <h3 className="font-display text-sm sm:text-[15px] font-black text-white/90 leading-snug tracking-tight uppercase line-clamp-2 drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
+                {item.title}
+              </h3>
+
+              {item.description && (
+                <p className="text-[10px] sm:text-[11px] text-white/40 leading-relaxed line-clamp-2 italic">
+                  {item.description}
+                </p>
+              )}
+
+              {/* Lock badge */}
+              <div className="flex items-center gap-2 mt-1">
+                <div className="h-6 w-6 rounded-full bg-gold/15 border border-gold/30 flex items-center justify-center backdrop-blur-md md:group-hover/card:bg-gold/25 md:group-hover/card:border-gold/50 md:transition-all md:duration-300">
+                  <Lock className="h-2.5 w-2.5 text-gold" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[8px] sm:text-[9px] font-bold text-gold uppercase tracking-[0.15em]">
+                    Acesso exclusivo
+                  </span>
+                  <span className="text-[7px] sm:text-[8px] text-white/30">
+                    Libera após a compra
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-
-        {item.badge_text && (
-          <div className="absolute top-3 left-3">
-            <span className="inline-flex items-center rounded-lg bg-gold/20 border border-gold/30 px-2.5 py-1 text-[8px] font-bold text-gold uppercase tracking-wider backdrop-blur-sm">
-              {item.badge_text}
-            </span>
-          </div>
-        )}
       </div>
     </button>
   );
 }
 
 /* ══════════════════════════════════════════════════════════════
-   UPCOMING CONTENT CARD (countdown)
+   UPCOMING CONTENT CARD — same poster shape with countdown
    ══════════════════════════════════════════════════════════════ */
 
 function UpcomingContentCard({ item }: { item: any }) {
@@ -758,29 +814,46 @@ function UpcomingContentCard({ item }: { item: any }) {
   }
 
   return (
-    <div className="group relative flex-shrink-0 w-[160px] sm:w-[190px] rounded-2xl overflow-hidden border border-border/10 bg-card/5 transition-all duration-300">
-      <div className="relative aspect-[3/4] overflow-hidden">
-        <img
-          src={item.card_cover_url || item.cover_url || "/placeholder.svg"}
-          alt={item.title}
-          className="w-full h-full object-cover brightness-[0.4] saturate-50"
-          loading="lazy"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
+    <div className="group/card relative block">
+      <div className="relative rounded-[14px] sm:rounded-[16px] overflow-visible">
+        <div className="relative rounded-[14px] sm:rounded-[16px] overflow-hidden bg-card/5 shadow-md shadow-black/25 ring-1 ring-white/[0.04]">
+          <div className="relative aspect-[9/13] overflow-hidden">
+            {(item.card_cover_url || item.cover_url) ? (
+              <img
+                src={item.card_cover_url || item.cover_url}
+                alt={item.title}
+                className="w-full h-full object-cover brightness-[0.3] saturate-[0.3]"
+                loading="lazy"
+              />
+            ) : (
+              <div className="w-full h-full bg-gradient-to-br from-card/40 via-muted/10 to-background" />
+            )}
 
-        {/* Countdown badge */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-          <div className="h-12 w-12 rounded-full bg-card/20 border border-border/20 flex items-center justify-center backdrop-blur-md">
-            <Clock className="h-5 w-5 text-gold/60" />
+            <div className="absolute inset-x-0 bottom-0 h-[70%] bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
+            <div className="absolute inset-0 bg-black/30" />
+            <div className="absolute inset-0 shadow-[inset_0_0_30px_rgba(0,0,0,0.25)] pointer-events-none" />
+
+            {/* Countdown badge — center */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 z-10">
+              <div className="h-12 w-12 rounded-full bg-card/20 border border-border/20 flex items-center justify-center backdrop-blur-md">
+                <Clock className="h-5 w-5 text-gold/60" />
+              </div>
+              <span className="text-[10px] sm:text-[11px] font-bold text-gold/70 uppercase tracking-[0.15em]">
+                {countdownLabel}
+              </span>
+            </div>
+
+            {/* Title — bottom */}
+            <div className="absolute inset-x-0 bottom-0 px-3.5 sm:px-4 pb-4 sm:pb-5 z-10">
+              <h3 className="text-sm sm:text-[15px] font-bold text-white/50 line-clamp-2 leading-snug drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] tracking-tight">
+                {item.title}
+              </h3>
+              <p className="text-[9px] text-white/20 mt-1 uppercase tracking-[0.18em] font-semibold">
+                {item.content_type === "ebook" ? "E-book" : item.content_type === "video" ? "Vídeo" : "Conteúdo"}
+              </p>
+            </div>
           </div>
-          <span className="text-[10px] font-bold text-gold/70 uppercase tracking-[0.15em]">
-            {countdownLabel}
-          </span>
         </div>
-      </div>
-      <div className="p-3">
-        <p className="text-xs font-semibold text-foreground/50 line-clamp-2 leading-tight">{item.title}</p>
-        <p className="text-[9px] text-muted-foreground/30 mt-1 uppercase tracking-wider">{item.content_type}</p>
       </div>
     </div>
   );
