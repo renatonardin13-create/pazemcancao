@@ -156,6 +156,7 @@ export type Database = {
           is_free: boolean
           journey_group: string | null
           journey_order: number
+          launch_mode: string
           locked_final_count: number
           locked_label: string | null
           release_days: number | null
@@ -187,6 +188,7 @@ export type Database = {
           is_free?: boolean
           journey_group?: string | null
           journey_order?: number
+          launch_mode?: string
           locked_final_count?: number
           locked_label?: string | null
           release_days?: number | null
@@ -218,6 +220,7 @@ export type Database = {
           is_free?: boolean
           journey_group?: string | null
           journey_order?: number
+          launch_mode?: string
           locked_final_count?: number
           locked_label?: string | null
           release_days?: number | null
