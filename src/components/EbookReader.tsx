@@ -319,31 +319,36 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
     const img = pageImages[pageNum];
     const isRendering = renderingPages.has(pageNum);
     const roundedClass =
-      side === "left" ? "rounded-l-lg" :
-      side === "right" ? "rounded-r-lg" :
-      "rounded-lg";
+      side === "left" ? "rounded-l-md" :
+      side === "right" ? "rounded-r-md" :
+      "rounded-md";
 
     return (
       <div
         key={pageNum}
-        className={`relative flex-1 bg-white ${roundedClass} overflow-hidden flex items-center justify-center`}
-        style={{ minHeight: isMobile ? "55vh" : "70vh" }}
+        className={`relative flex-1 ${roundedClass} overflow-hidden flex items-center justify-center`}
+        style={{
+          minHeight: isMobile ? "60vh" : "75vh",
+          backgroundColor: "#f8f5f0",
+          padding: isMobile ? "12px" : "24px 32px",
+        }}
       >
         {img ? (
           <img
             src={img}
             alt={`Página ${pageNum}`}
-            className="w-full h-full object-contain"
+            className="w-full h-full object-contain drop-shadow-sm"
+            style={{ maxWidth: "100%", borderRadius: "2px" }}
           />
         ) : isRendering ? (
-          <Loader2 className="h-6 w-6 text-gold/40 animate-spin" />
+          <Loader2 className="h-6 w-6 text-amber-700/30 animate-spin" />
         ) : (
           <div className="flex items-center justify-center h-full w-full">
-            <Loader2 className="h-6 w-6 text-gold/30 animate-spin" />
+            <Loader2 className="h-6 w-6 text-amber-700/20 animate-spin" />
           </div>
         )}
-        {/* Page number watermark */}
-        <span className="absolute bottom-2 inset-x-0 text-center text-[9px] text-black/20 font-medium select-none pointer-events-none">
+        {/* Page number — subtle serif */}
+        <span className="absolute bottom-3 inset-x-0 text-center text-[10px] text-stone-400/60 font-serif select-none pointer-events-none tracking-wide">
           {pageNum}
         </span>
       </div>
