@@ -117,6 +117,9 @@ function SettingsPage() {
         <TabsContent value="advanced" className="mt-4">
           <AdvancedTab settings={settings.advanced || {}} onSave={(v) => mutation.mutate({ key: "advanced", value: v })} saving={mutation.isPending} />
         </TabsContent>
+        <TabsContent value="modules" className="mt-4">
+          <ModulesTab settings={settings.modules || {}} onSave={(v) => mutation.mutate({ key: "modules", value: v })} saving={mutation.isPending} />
+        </TabsContent>
       </Tabs>
     </div>
   );
