@@ -142,19 +142,21 @@ function VitrinePage() {
                           >
                             {banner.link_url ? (
                               <a href={banner.link_url} target="_blank" rel="noopener noreferrer">
-                                <img
+                              <OptimizedImage
                                   src={banner.image_url}
                                   alt={banner.title}
-                                  loading="lazy"
+                                  context="banner"
                                   className="w-full rounded-xl border border-border/25 hover:border-gold/20 transition-colors"
+                                />
                                 />
                               </a>
                             ) : (
-                              <img
+                              <OptimizedImage
                                 src={banner.image_url}
                                 alt={banner.title}
-                                loading="lazy"
+                                context="banner"
                                 className="w-full rounded-xl border border-border/25"
+                              />
                               />
                             )}
                           </div>
