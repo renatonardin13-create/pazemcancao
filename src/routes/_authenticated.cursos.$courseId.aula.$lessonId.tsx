@@ -464,6 +464,7 @@ function LessonDetailPage() {
                     className="w-full aspect-video"
                     onEnded={() => {
                       if (!isCompleted) {
+                        completionSourceRef.current = "video";
                         progressMutation.mutate({
                           lessonId,
                           watchedSeconds: Math.floor(
