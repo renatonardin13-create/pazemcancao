@@ -61,9 +61,9 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
         const p = s + 1;
         return p <= numPages ? [p] : [];
       }
-      if (s === 0) return [1]; // Cover alone
-      const left = s * 2;
-      const right = s * 2 + 1;
+      // Desktop: always two pages per spread
+      const left = s * 2 + 1;
+      const right = s * 2 + 2;
       const pages: number[] = [];
       if (left <= numPages) pages.push(left);
       if (right <= numPages) pages.push(right);
@@ -75,7 +75,6 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
   const totalSpreads = (() => {
     if (numPages === 0) return 0;
     if (!dualPage) return numPages;
-    // Cover is spread 0 (1 page). Then pairs: 2-3, 4-5, ...
     return Math.ceil(numPages / 2);
   })();
 
@@ -214,20 +213,18 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
     return `${currentPages[0]}–${currentPages[1]}`;
   })();
 
-  // 3D flip variants — elegant page turn
+  // 3D flip variants
   const flipVariants = {
     enter: (dir: "left" | "right") => ({
-      rotateY: dir === "right" ? 45 : -45,
+      rotateY: dir === "right" ? 60 : -60,
       opacity: 0,
-      scale: 0.96,
-      x: dir === "right" ? 40 : -40,
+      scale: 0.92,
     }),
-    center: { rotateY: 0, opacity: 1, scale: 1, x: 0 },
+    center: { rotateY: 0, opacity: 1, scale: 1 },
     exit: (dir: "left" | "right") => ({
-      rotateY: dir === "right" ? -45 : 45,
+      rotateY: dir === "right" ? -60 : 60,
       opacity: 0,
-      scale: 0.96,
-      x: dir === "right" ? -40 : 40,
+      scale: 0.92,
     }),
   };
 
@@ -276,14 +273,6 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
       side === "right" ? "rounded-r-lg" :
       "rounded-lg";
 
-    // Page curvature overlay — simulates light hitting a curved page
-    const curvatureOverlay =
-      side === "left"
-        ? "linear-gradient(to right, rgba(0,0,0,0.03) 0%, transparent 8%, transparent 85%, rgba(0,0,0,0.06) 100%)"
-        : side === "right"
-        ? "linear-gradient(to left, rgba(0,0,0,0.03) 0%, transparent 8%, transparent 85%, rgba(0,0,0,0.06) 100%)"
-        : "linear-gradient(to right, rgba(0,0,0,0.02) 0%, transparent 5%, transparent 95%, rgba(0,0,0,0.02) 100%)";
-
     return (
       <div
         key={pageNum}
@@ -303,11 +292,6 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
             <Loader2 className="h-6 w-6 text-gold/30 animate-spin" />
           </div>
         )}
-        {/* Curvature light overlay */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{ background: curvatureOverlay }}
-        />
         {/* Page number watermark */}
         <span className="absolute bottom-2 inset-x-0 text-center text-[9px] text-black/20 font-medium select-none pointer-events-none">
           {pageNum}
@@ -390,56 +374,31 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
             initial="enter"
             animate="center"
             exit="exit"
-            transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
-            style={{ transformStyle: "preserve-3d", transformOrigin: "center center" }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            style={{ transformStyle: "preserve-3d" }}
             className={`relative flex ${dualPage ? "max-w-[90vw] lg:max-w-[80vw] xl:max-w-[72vw]" : "max-w-[92vw] sm:max-w-[70vw] md:max-w-[55vw]"} w-full`}
           >
             {/* Ambient glow behind the book */}
-            <div className="absolute -inset-6 rounded-3xl bg-gold/[0.025] blur-3xl pointer-events-none" />
+            <div className="absolute -inset-4 rounded-2xl bg-gold/[0.03] blur-2xl pointer-events-none" />
 
-            {/* Book shadow — layered for realism */}
-            <div className="absolute -inset-2 rounded-xl pointer-events-none" style={{ boxShadow: "0 25px 60px -12px rgba(0,0,0,0.6), 0 8px 24px -8px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.03)" }} />
+            {/* Book shadow */}
+            <div className="absolute -inset-2 rounded-xl shadow-[0_20px_80px_-15px_rgba(0,0,0,0.7)] pointer-events-none" />
 
             {/* Pages container */}
-            <div className={`relative flex w-full ${dualPage ? "gap-0" : ""} rounded-lg overflow-hidden border border-white/[0.06]`} style={{ boxShadow: "0 2px 40px -8px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255,255,255,0.04)" }}>
+            <div className={`relative flex w-full ${dualPage ? "gap-0" : ""} rounded-lg overflow-hidden border border-border/10 shadow-2xl shadow-black/40`}>
               {dualPage && currentPages.length === 2 ? (
                 <>
-                  {/* Left page */}
                   {renderPageImage(currentPages[0], "left")}
-                  {/* Spine / fold shadow — central crease */}
-                  <div className="relative w-[6px] shrink-0" style={{
-                    background: "linear-gradient(to right, rgba(0,0,0,0.12), rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.35) 60%, rgba(0,0,0,0.12))",
-                    boxShadow: "4px 0 12px rgba(0,0,0,0.25), -4px 0 12px rgba(0,0,0,0.25), inset 0 0 4px rgba(0,0,0,0.15)"
-                  }} />
-                  {/* Right page */}
+                  <div className="w-px bg-gradient-to-b from-black/20 via-black/40 to-black/20 shadow-[2px_0_8px_rgba(0,0,0,0.3),-2px_0_8px_rgba(0,0,0,0.3)]" />
                   {renderPageImage(currentPages[1], "right")}
-                </>
-              ) : dualPage && currentPages.length === 1 && spread === 0 ? (
-                <>
-                  {/* Cover centered — show as single "right" page with blank left */}
-                  <div className="flex-1 bg-gradient-to-br from-card/20 via-card/10 to-card/5 rounded-l-lg flex items-center justify-center" style={{ minHeight: "70vh" }}>
-                    <BookOpen className="h-10 w-10 text-muted-foreground/8" />
-                  </div>
-                  <div className="relative w-[6px] shrink-0" style={{
-                    background: "linear-gradient(to right, rgba(0,0,0,0.12), rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.35) 60%, rgba(0,0,0,0.12))",
-                    boxShadow: "4px 0 12px rgba(0,0,0,0.25), -4px 0 12px rgba(0,0,0,0.25), inset 0 0 4px rgba(0,0,0,0.15)"
-                  }} />
-                  {renderPageImage(currentPages[0], "right")}
                 </>
               ) : dualPage && currentPages.length === 1 ? (
                 <>
-                  {/* Last page alone on left */}
                   {renderPageImage(currentPages[0], "left")}
-                  <div className="relative w-[6px] shrink-0" style={{
-                    background: "linear-gradient(to right, rgba(0,0,0,0.12), rgba(0,0,0,0.35) 40%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0.35) 60%, rgba(0,0,0,0.12))",
-                    boxShadow: "4px 0 12px rgba(0,0,0,0.25), -4px 0 12px rgba(0,0,0,0.25)"
-                  }} />
-                  <div className="flex-1 bg-gradient-to-br from-card/20 via-card/10 to-card/5 rounded-r-lg flex items-center justify-center" style={{ minHeight: "70vh" }}>
-                    <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/20 font-medium">Fim</p>
-                  </div>
+                  <div className="w-px bg-gradient-to-b from-black/20 via-black/40 to-black/20" />
+                  <div className="flex-1 bg-card/5 rounded-r-lg" style={{ minHeight: "70vh" }} />
                 </>
               ) : (
-                /* Mobile — single page */
                 currentPages.length > 0 && renderPageImage(currentPages[0], "single")
               )}
             </div>
