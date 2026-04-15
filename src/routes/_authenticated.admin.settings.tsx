@@ -673,9 +673,18 @@ function AdvancedTab({ settings, onSave, saving }: { settings: any; onSave: (v: 
 }
 
 /* ─── Modules (reads from platform_modules table) ─── */
-const MODULE_ICONS: Record<string, string> = {
-  vitrine: "🏪", louvores: "🎵", cursos: "🎓", ebooks: "📖", trilhas: "🛤️",
-  perfil: "👤", comunidade: "💬", bonus: "🎁", lancamentos: "🚀",
+import { Store, BookOpen, Compass, User, MessageCircle, Gift, Rocket } from "lucide-react";
+
+const MODULE_META: Record<string, { icon: React.ElementType; desc: string }> = {
+  vitrine: { icon: Store, desc: "Página principal com prateleiras e destaques" },
+  louvores: { icon: Music, desc: "Player de áudio, louvores e categorias musicais" },
+  cursos: { icon: GraduationCap, desc: "Área de cursos, módulos e aulas" },
+  ebooks: { icon: BookOpen, desc: "Leitura de ebooks e materiais em PDF" },
+  trilhas: { icon: Compass, desc: "Trilhas e jornadas emocionais guiadas" },
+  perfil: { icon: User, desc: "Página de perfil do aluno" },
+  comunidade: { icon: MessageCircle, desc: "Espaço de interação entre os membros" },
+  bonus: { icon: Gift, desc: "Conteúdos bônus e materiais extras" },
+  lancamentos: { icon: Rocket, desc: "Novidades e lançamentos em destaque" },
 };
 
 function ModulesTab() {
@@ -722,32 +731,51 @@ function ModulesTab() {
           </p>
         </div>
 
+        <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-3 flex items-start gap-2">
+          <AlertTriangle className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
+          <p className="text-xs text-muted-foreground">
+            Alterações são aplicadas em tempo real. Menu lateral e vitrine serão atualizados automaticamente.
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           {modules.map((mod) => {
-            const icon = MODULE_ICONS[mod.slug] || "📦";
+            const meta = MODULE_META[mod.slug] || { icon: LayoutGrid, desc: "Módulo da plataforma" };
+            const IconComp = meta.icon;
             return (
-              <button
+              <div
                 key={mod.id}
-                type="button"
-                onClick={() => toggleMutation.mutate({ id: mod.id, enabled: !mod.enabled })}
-                disabled={toggleMutation.isPending}
-                className={`p-4 rounded-xl border-2 text-left transition-all duration-200 ${
+                className={`group relative p-4 rounded-xl border-2 transition-all duration-200 ${
                   mod.enabled
                     ? "border-gold/30 bg-gold/[0.06]"
                     : "border-border/15 bg-card/30 opacity-60"
                 }`}
               >
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-lg">{icon}</span>
-                  <Switch checked={mod.enabled} onCheckedChange={() => toggleMutation.mutate({ id: mod.id, enabled: !mod.enabled })} />
+                <div className="flex items-start justify-between mb-2">
+                  <div className={`flex items-center justify-center h-9 w-9 rounded-lg ${
+                    mod.enabled ? "bg-gold/15 text-gold" : "bg-muted/10 text-muted-foreground/50"
+                  }`}>
+                    <IconComp className="h-4.5 w-4.5" />
+                  </div>
+                  <Switch
+                    checked={mod.enabled}
+                    onCheckedChange={() => toggleMutation.mutate({ id: mod.id, enabled: !mod.enabled })}
+                    disabled={toggleMutation.isPending}
+                  />
                 </div>
                 <p className={`text-sm font-bold ${mod.enabled ? "text-foreground" : "text-muted-foreground"}`}>
                   {mod.name}
                 </p>
-                <p className="text-xs text-muted-foreground/70 mt-0.5">
-                  {mod.visible_in_menu && mod.visible_in_vitrine ? "Menu + Vitrine" : mod.visible_in_menu ? "Apenas Menu" : mod.visible_in_vitrine ? "Apenas Vitrine" : "Oculto"}
+                <p className="text-xs text-muted-foreground/70 mt-0.5 leading-relaxed">
+                  {meta.desc}
                 </p>
-              </button>
+                <div className="flex items-center gap-1.5 mt-2">
+                  <span className={`inline-block h-1.5 w-1.5 rounded-full ${mod.enabled ? "bg-emerald-400" : "bg-muted-foreground/30"}`} />
+                  <span className="text-[10px] text-muted-foreground/50 uppercase tracking-wider font-medium">
+                    {mod.enabled ? "Ativo" : "Desativado"}
+                  </span>
+                </div>
+              </div>
             );
           })}
         </div>
