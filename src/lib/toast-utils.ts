@@ -6,7 +6,9 @@ import { toast } from "sonner";
  */
 const ERROR_MAP: [RegExp, string][] = [
   [/duplicate key|unique constraint|already exists/i, "Este registro já existe. Verifique os dados e tente novamente."],
-  [/foreign key|violates.*constraint/i, "Este item está vinculado a outros dados e não pode ser alterado assim."],
+  [/foreign key.*constraint|violates foreign key/i, "Este item está vinculado a outros dados e não pode ser alterado assim."],
+  [/violates.*not-null constraint/i, "Um campo obrigatório está vazio. Verifique os dados e tente novamente."],
+  [/violates.*check constraint/i, "Um dos valores informados é inválido. Verifique os campos e tente novamente."],
   [/row-level security|permission denied|not authorized|403/i, "Você não tem permissão para esta ação."],
   [/network|fetch|failed to fetch|ERR_NETWORK/i, "Erro de conexão. Verifique sua internet e tente novamente."],
   [/timeout|timed out|504|408/i, "A operação demorou demais. Tente novamente."],
