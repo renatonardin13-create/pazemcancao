@@ -17,6 +17,7 @@ function AuthenticatedLayout() {
   const [accessData, setAccessData] = useState<{ hasAccess: boolean; buyer: any; isTrial?: boolean; trialExpired?: boolean; canDownload?: boolean; trialExpiresAt?: string | null } | null>(null);
   const [accessLoading, setAccessLoading] = useState(true);
   const lastCheckedEmail = useRef<string | null>(null);
+  const welcomeShown = useRef(false);
 
   useEffect(() => {
     if (!isAuthenticated) {
