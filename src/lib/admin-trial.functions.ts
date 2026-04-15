@@ -261,18 +261,44 @@ export const createTrialUser = createServerFn({ method: 'POST' })
       (u) => u.email?.toLowerCase() === email
     );
 
+    let authUserId: string;
     if (!existingUser) {
-      await supabaseAdmin.auth.admin.createUser({
+      const { data: created, error: authErr } = await supabaseAdmin.auth.admin.createUser({
         email,
         password: generatedPassword,
         email_confirm: true,
       });
+      if (authErr) throw new Error(`Erro ao criar conta: ${authErr.message}`);
+      authUserId = created.user.id;
     } else {
       // Update password for existing user
       await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
         password: generatedPassword,
+        email_confirm: true,
       });
+      authUserId = existingUser.id;
     }
+
+    // Ensure profile exists
+    await supabaseAdmin
+      .from('profiles')
+      .upsert(
+        { user_id: authUserId, display_name: data.nome },
+        { onConflict: 'user_id' }
+      );
+
+    // Clear any security blocks
+    await supabaseAdmin
+      .from('user_access_logs')
+      .delete()
+      .eq('email', email)
+      .eq('is_blocked', true);
+
+    // Invalidate old sessions
+    await supabaseAdmin
+      .from('active_sessions')
+      .update({ is_valid: false })
+      .eq('email', email);
 
     return { success: true, expiresAt: expiresAt.toISOString(), generatedPassword };
   });
