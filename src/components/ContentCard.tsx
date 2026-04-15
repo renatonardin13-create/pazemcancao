@@ -42,6 +42,11 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
     ? Math.max(0, Math.ceil((new Date(item.unlockDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
     : item.release_days || null;
 
+  // Dynamic conversion badges
+  const isNew = (Date.now() - new Date(item.created_at).getTime()) < 14 * 24 * 60 * 60 * 1000;
+  const popularity = item._popularity || 0; // injected from parent if available
+  const isBestSeller = popularity >= 10;
+
   const contentState = getContentState(item, hasAccess, progress);
 
   const progressPercent = contentState === 'completed' ? 100
