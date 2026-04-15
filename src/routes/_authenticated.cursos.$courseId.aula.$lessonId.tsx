@@ -64,6 +64,9 @@ function LessonDetailPage() {
     queryFn: () => getLessonDetail({ data: { courseId, lessonId } }),
   });
 
+  // Track whether completion was triggered by video ending (for auto-advance)
+  const completionSourceRef = useRef<"video" | "manual">("manual");
+
   const progressMutation = useMutation({
     mutationFn: (input: {
       lessonId: string;
@@ -76,8 +79,13 @@ function LessonDetailPage() {
       });
       queryClient.invalidateQueries({ queryKey: ["course-detail", courseId] });
       toast.success("Aula concluída! ✓");
-      setShowNextUp(true);
-      setCountdown(5);
+
+      // Only auto-advance for video content completions
+      if (completionSourceRef.current === "video") {
+        setShowNextUp(true);
+        setCountdown(5);
+      }
+      completionSourceRef.current = "manual"; // reset
     },
   });
 
@@ -456,6 +464,7 @@ function LessonDetailPage() {
                     className="w-full aspect-video"
                     onEnded={() => {
                       if (!isCompleted) {
+                        completionSourceRef.current = "video";
                         progressMutation.mutate({
                           lessonId,
                           watchedSeconds: Math.floor(
