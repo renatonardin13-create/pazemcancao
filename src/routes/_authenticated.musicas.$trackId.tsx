@@ -9,6 +9,7 @@ import { usePlayer } from "@/hooks/use-player";
 import { motion } from "framer-motion";
 import type { Track } from "@/lib/sample-tracks";
 import { StudentLayout } from "@/components/StudentLayout";
+import { UpsellSection } from "@/components/UpsellSection";
 
 export const Route = createFileRoute("/_authenticated/musicas/$trackId")({
   component: MusicDetailPage,
@@ -317,6 +318,10 @@ function MusicDetailPage() {
 
           {/* Navigation */}
           {allTracks.length > 1 && (
+            <>
+            {/* Upsell suggestions */}
+            <UpsellSection sourceType="track" sourceId={trackId} className="mt-12 w-full max-w-lg" />
+
             <motion.div variants={fadeUp} custom={1} className="mt-20 w-full max-w-md">
               <div className="mx-auto h-px w-full bg-gradient-to-r from-transparent via-border/8 to-transparent mb-8" />
               <div className="flex items-center justify-between">
@@ -354,6 +359,7 @@ function MusicDetailPage() {
                 )}
               </div>
             </motion.div>
+            </>
           )}
         </motion.div>
       </div>

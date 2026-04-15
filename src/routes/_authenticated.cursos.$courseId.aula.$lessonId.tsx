@@ -34,6 +34,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { EbookReader } from "@/components/EbookReader";
+import { UpsellSection } from "@/components/UpsellSection";
 
 export const Route = createFileRoute(
   "/_authenticated/cursos/$courseId/aula/$lessonId"
@@ -766,6 +767,11 @@ function LessonDetailPage() {
               </div>
             </div>
           )}
+
+          {/* Upsell suggestions */}
+          <div className="px-5 sm:px-8">
+            <UpsellSection sourceType="course" sourceId={courseId} className="mt-6 mb-4" />
+          </div>
 
           {/* ═══ NEXT UP CARD — Netflix-style with countdown ═══ */}
           <AnimatePresence>
