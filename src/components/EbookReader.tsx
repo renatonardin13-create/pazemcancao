@@ -15,6 +15,9 @@ import {
   Square,
   Headphones,
   CheckCircle2,
+  Settings,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -51,7 +54,32 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   const [scale, setScale] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [controlsVisible, setControlsVisible] = useState(true);
+  const [showSettings, setShowSettings] = useState(false);
   const [pageTexts, setPageTexts] = useState<Record<number, string>>({});
+
+  // Reading preferences (persisted in localStorage)
+  type ReadingTheme = "light" | "dark";
+  type FontSize = "small" | "medium" | "large";
+
+  const loadPrefs = () => {
+    try {
+      const saved = localStorage.getItem("ebook-reader-prefs");
+      if (saved) return JSON.parse(saved);
+    } catch {}
+    return { theme: "light", fontSize: "medium" };
+  };
+  const savedPrefs = loadPrefs();
+  const [readingTheme, setReadingTheme] = useState<ReadingTheme>(savedPrefs.theme || "light");
+  const [fontSize, setFontSize] = useState<FontSize>(savedPrefs.fontSize || "medium");
+
+  // Save prefs whenever they change
+  useEffect(() => {
+    localStorage.setItem("ebook-reader-prefs", JSON.stringify({ theme: readingTheme, fontSize }));
+  }, [readingTheme, fontSize]);
+
+  // Map fontSize to scale multiplier
+  const fontScaleMap: Record<FontSize, number> = { small: 0.85, medium: 1, large: 1.25 };
+  const effectiveScale = scale * fontScaleMap[fontSize];
 
   // Page image cache: pageNum → dataURL
   const [pageImages, setPageImages] = useState<Record<number, string>>({});
@@ -129,7 +157,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
       setRenderingPages((prev) => new Set(prev).add(pageNum));
       try {
         const page = await pdf.getPage(pageNum);
-        const viewport = page.getViewport({ scale: 2 * scale });
+        const viewport = page.getViewport({ scale: 2 * effectiveScale });
 
         if (!offscreenCanvas.current) {
           offscreenCanvas.current = document.createElement("canvas");
@@ -154,7 +182,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
         });
       }
     },
-    [scale, pageImages]
+    [effectiveScale, pageImages]
   );
 
   // Render current spread pages + prefetch next spread
@@ -209,7 +237,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   useEffect(() => {
     if (loading || numPages === 0) return;
     setPageImages({});
-  }, [scale]);
+  }, [scale, fontSize]);
 
   // Sound
   const playPageTurnSound = useCallback(() => {
@@ -314,6 +342,12 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
     );
   }
 
+  // Theme colors
+  const pageBg = readingTheme === "dark" ? "#2a2520" : "#f8f5f0";
+  const emptyPageBg = readingTheme === "dark" ? "#252018" : "#f0ebe4";
+  const pageFilter = readingTheme === "dark" ? "invert(0.88) hue-rotate(180deg)" : "none";
+  const pageNumColor = readingTheme === "dark" ? "rgba(200,180,150,0.4)" : "rgba(168,162,158,0.6)";
+
   // ---------- RENDER PAGE IMAGE ----------
   const renderPageImage = (pageNum: number, side: "left" | "right" | "single") => {
     const img = pageImages[pageNum];
@@ -326,10 +360,10 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
     return (
       <div
         key={pageNum}
-        className={`relative flex-1 ${roundedClass} overflow-hidden flex items-center justify-center`}
+        className={`relative flex-1 ${roundedClass} overflow-hidden flex items-center justify-center transition-colors duration-300`}
         style={{
           minHeight: isMobile ? "60vh" : "75vh",
-          backgroundColor: "#f8f5f0",
+          backgroundColor: pageBg,
           padding: isMobile ? "12px" : "24px 32px",
         }}
       >
@@ -337,8 +371,8 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
           <img
             src={img}
             alt={`Página ${pageNum}`}
-            className="w-full h-full object-contain drop-shadow-sm"
-            style={{ maxWidth: "100%", borderRadius: "2px" }}
+            className="w-full h-full object-contain drop-shadow-sm transition-all duration-300"
+            style={{ maxWidth: "100%", borderRadius: "2px", filter: pageFilter }}
           />
         ) : isRendering ? (
           <Loader2 className="h-6 w-6 text-amber-700/30 animate-spin" />
@@ -347,8 +381,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
             <Loader2 className="h-6 w-6 text-amber-700/20 animate-spin" />
           </div>
         )}
-        {/* Page number — subtle serif */}
-        <span className="absolute bottom-3 inset-x-0 text-center text-[10px] text-stone-400/60 font-serif select-none pointer-events-none tracking-wide">
+        <span className="absolute bottom-3 inset-x-0 text-center text-[10px] font-serif select-none pointer-events-none tracking-wide" style={{ color: pageNumColor }}>
           {pageNum}
         </span>
       </div>
@@ -395,6 +428,84 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
           <Button
             variant="ghost"
             size="sm"
+            onClick={() => setReadingTheme(readingTheme === "dark" ? "light" : "dark")}
+            className={`h-7 w-7 p-0 transition-colors ${readingTheme === "dark" ? "text-gold" : "text-stone-500/40 hover:text-gold"}`}
+            title={readingTheme === "dark" ? "Modo claro" : "Modo escuro"}
+          >
+            {readingTheme === "dark" ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+          </Button>
+          <div className="h-4 w-px bg-stone-700/20 mx-1" />
+          <div className="relative">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowSettings(!showSettings)}
+              className={`h-7 w-7 p-0 transition-colors ${showSettings ? "text-gold" : "text-stone-500/40 hover:text-gold"}`}
+              title="Personalizar leitura"
+            >
+              <Settings className="h-3.5 w-3.5" />
+            </Button>
+            {/* Settings dropdown */}
+            {showSettings && (
+              <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-stone-700/30 bg-[#1e1b16]/95 backdrop-blur-xl shadow-2xl z-50 p-3 space-y-3"
+                onClick={(e) => e.stopPropagation()}>
+                {/* Font size */}
+                <div>
+                  <label className="text-[9px] uppercase tracking-widest text-stone-500/50 mb-1.5 block">Tamanho</label>
+                  <div className="flex gap-1">
+                    {(["small", "medium", "large"] as FontSize[]).map((s) => (
+                      <button
+                        key={s}
+                        onClick={() => setFontSize(s)}
+                        className={`flex-1 py-1.5 rounded-lg text-[11px] font-medium transition-all ${
+                          fontSize === s
+                            ? "bg-gold/20 text-gold border border-gold/30"
+                            : "bg-stone-800/40 text-stone-400/60 border border-stone-700/20 hover:border-stone-600/30"
+                        }`}
+                      >
+                        {s === "small" ? "Aa" : s === "medium" ? "Aa" : "Aa"}
+                      </button>
+                    ))}
+                  </div>
+                  <div className="flex justify-between px-1 mt-0.5">
+                    <span className="text-[8px] text-stone-600/40">Pequena</span>
+                    <span className="text-[8px] text-stone-600/40">Média</span>
+                    <span className="text-[8px] text-stone-600/40">Grande</span>
+                  </div>
+                </div>
+                {/* Theme */}
+                <div>
+                  <label className="text-[9px] uppercase tracking-widest text-stone-500/50 mb-1.5 block">Tema</label>
+                  <div className="flex gap-1">
+                    <button
+                      onClick={() => setReadingTheme("light")}
+                      className={`flex-1 py-1.5 rounded-lg text-[11px] font-medium transition-all flex items-center justify-center gap-1 ${
+                        readingTheme === "light"
+                          ? "bg-gold/20 text-gold border border-gold/30"
+                          : "bg-stone-800/40 text-stone-400/60 border border-stone-700/20 hover:border-stone-600/30"
+                      }`}
+                    >
+                      <Sun className="h-3 w-3" /> Claro
+                    </button>
+                    <button
+                      onClick={() => setReadingTheme("dark")}
+                      className={`flex-1 py-1.5 rounded-lg text-[11px] font-medium transition-all flex items-center justify-center gap-1 ${
+                        readingTheme === "dark"
+                          ? "bg-gold/20 text-gold border border-gold/30"
+                          : "bg-stone-800/40 text-stone-400/60 border border-stone-700/20 hover:border-stone-600/30"
+                      }`}
+                    >
+                      <Moon className="h-3 w-3" /> Escuro
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="h-4 w-px bg-stone-700/20 mx-1" />
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setControlsVisible(!controlsVisible)}
             className="h-7 w-7 p-0 text-stone-500/40 hover:text-gold"
             title="Modo imersivo"
@@ -410,6 +521,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onClick={(e) => {
+          if (showSettings) { setShowSettings(false); return; }
           const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
           const x = e.clientX - rect.left;
           const w = rect.width;
@@ -460,7 +572,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
                 <>
                   {renderPageImage(currentPages[0], "left")}
                   <div className="w-[3px] bg-gradient-to-b from-stone-600/30 via-stone-800/50 to-stone-600/30" />
-                  <div className="flex-1 rounded-r-md" style={{ minHeight: "75vh", backgroundColor: "#f0ebe4" }} />
+                  <div className="flex-1 rounded-r-md transition-colors duration-300" style={{ minHeight: "75vh", backgroundColor: emptyPageBg }} />
                 </>
               ) : (
                 currentPages.length > 0 && renderPageImage(currentPages[0], "single")
