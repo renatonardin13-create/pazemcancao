@@ -93,19 +93,25 @@ export function StudentSidebar() {
     });
   }, [categories, categoriesWithTracks]);
 
-  // Build the ordered list of visible menu items dynamically
-  // If DB modules exist, use their sort_order; otherwise use static config order
+  // Build the ordered list of visible menu items dynamically from DB modules
   const visibleMenuItems = useMemo(() => {
-    const dbMap = new Map(dbModules.map((m) => [m.slug, m]));
+    if (dbModules.length === 0) return [];
 
-    return MODULE_MENU_CONFIG
-      .filter((cfg) => moduleInfo[cfg.key]?.visibleInMenu)
-      .sort((a, b) => {
-        const aOrder = dbMap.get(a.key)?.sort_order ?? MODULE_MENU_CONFIG.indexOf(a);
-        const bOrder = dbMap.get(b.key)?.sort_order ?? MODULE_MENU_CONFIG.indexOf(b);
-        return aOrder - bOrder;
+    return dbModules
+      .filter((mod) => mod.enabled && mod.visible_in_menu)
+      .sort((a, b) => a.sort_order - b.sort_order)
+      .map((mod) => {
+        const meta = SLUG_META[mod.slug];
+        return {
+          key: mod.slug,
+          label: mod.name,
+          icon: meta?.icon || Store,
+          to: meta?.to || "/vitrine",
+          matchPrefix: meta?.matchPrefix || false,
+          hasSubmenu: meta?.hasSubmenu || false,
+        };
       });
-  }, [moduleInfo, dbModules]);
+  }, [dbModules]);
 
   const isActive = (path: string) => location.pathname === path;
   const isActivePrefix = (path: string) => location.pathname.startsWith(path);
