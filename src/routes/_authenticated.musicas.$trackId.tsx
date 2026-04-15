@@ -318,6 +318,7 @@ function MusicDetailPage() {
 
           {/* Navigation */}
           {allTracks.length > 1 && (
+            <>
             {/* Upsell suggestions */}
             <UpsellSection sourceType="track" sourceId={trackId} className="mt-12 w-full max-w-lg" />
 
