@@ -168,8 +168,43 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
             </div>
           )}
 
+          {/* Launch mode overlay */}
+          {isLaunchContent && (
+            <div className="absolute inset-0 bg-black/55 backdrop-blur-[3px] flex flex-col items-center justify-center gap-3 z-10">
+              <div className="relative">
+                <div className={`absolute -inset-4 rounded-full blur-2xl animate-pulse ${
+                  launchMode === 'lancamento_especial' ? 'bg-gold/15' :
+                  launchMode === 'em_breve' ? 'bg-primary/10' : 'bg-rose-500/10'
+                }`} />
+                <div className={`relative flex h-16 w-16 items-center justify-center rounded-2xl border shadow-lg ${
+                  launchMode === 'lancamento_especial' ? 'bg-gradient-to-br from-gold/20 to-amber-600/15 border-gold/30 shadow-gold/15' :
+                  launchMode === 'em_breve' ? 'bg-primary/10 border-primary/25 shadow-primary/10' :
+                  'bg-gradient-to-br from-rose-500/15 to-red-600/10 border-rose-400/25 shadow-rose-500/10'
+                }`}>
+                  {launchMode === 'lancamento_especial' && <Sparkles className="h-7 w-7 text-gold/70" />}
+                  {launchMode === 'em_breve' && <Clock className="h-7 w-7 text-primary/60" />}
+                  {launchMode === 'bloqueado_para_venda' && <Lock className="h-7 w-7 text-rose-400/65" />}
+                </div>
+              </div>
+              <span className={`text-[10px] font-bold uppercase tracking-[0.25em] text-center px-4 ${
+                launchMode === 'lancamento_especial' ? 'text-gold/65' :
+                launchMode === 'em_breve' ? 'text-primary/50' : 'text-rose-400/60'
+              }`}>
+                {launchMode === 'lancamento_especial' && 'Lançamento Especial'}
+                {launchMode === 'em_breve' && 'Este conteúdo será liberado em breve'}
+                {launchMode === 'bloqueado_para_venda' && 'Conteúdo Exclusivo'}
+              </span>
+              {launchMode === 'bloqueado_para_venda' && item.sales_page_url && (
+                <span className="text-[9px] font-medium text-rose-400/45 flex items-center gap-1.5 bg-rose-500/[0.08] border border-rose-400/15 rounded-full px-3 py-1">
+                  <ShoppingCart className="h-2.5 w-2.5" />
+                  Toque para garantir
+                </span>
+              )}
+            </div>
+          )}
+
           {/* Premium lock overlay */}
-          {isLocked && !isPendingRelease && !isRuleLocked && (
+          {isLocked && !isLaunchContent && !isPendingRelease && !isRuleLocked && (
             <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px] flex flex-col items-center justify-center gap-3 z-10">
               <div className="relative">
                 <div className="absolute -inset-3 rounded-full bg-gold/10 blur-xl animate-pulse" />
