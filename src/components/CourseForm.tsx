@@ -68,6 +68,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   const { data: categoriesData } = useQuery({
     queryKey: ["admin-categories"],
     queryFn: () => listAdminCategories(),
+    staleTime: 60_000,
   });
 
   const categories = categoriesData?.categories || [];

@@ -112,6 +112,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   const { data, isLoading } = useQuery({
     queryKey,
     queryFn: () => listModules({ data: { courseId } }),
+    staleTime: 30_000,
   });
 
   const modules = data?.modules || [];
