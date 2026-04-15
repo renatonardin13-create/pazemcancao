@@ -97,10 +97,11 @@ function MeusCoursosPage() {
 
   return (
     <StudentLayout>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-background flex flex-col">
 
-        {/* ═══ TOP BAR — greeting + search ═══ */}
-        <div className="w-full max-w-[1440px] mx-auto px-7 sm:px-10 lg:px-14 pt-7 sm:pt-10">
+        <main className="flex-1 mx-auto w-full max-w-6xl px-5 sm:px-8 py-8 sm:py-10 pb-28">
+
+          {/* ═══ TOP BAR — greeting + search ═══ */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -121,19 +122,15 @@ function MeusCoursosPage() {
               />
             </div>
           </motion.div>
-        </div>
 
-        {/* ═══ HERO BANNER ═══ */}
-        {!isLoading && featuredCourse && !searchResults && (
-          <HeroBanner course={featuredCourse} />
-        )}
+          {/* ═══ HERO BANNER ═══ */}
+          {!isLoading && featuredCourse && !searchResults && (
+            <HeroBanner course={featuredCourse} />
+          )}
 
-        {/* ═══ SHELVES CONTENT ═══ */}
-        <div className="w-full max-w-[1440px] mx-auto px-7 sm:px-10 lg:px-14">
-
-          {/* ═══ SEARCH RESULTS ═══ */}
+          {/* ═══ SHELVES CONTENT ═══ */}
           {searchResults !== null ? (
-            <div className="pt-8 pb-24">
+            <div className="pt-4 pb-8">
               <ShelfHeader title={`Resultados para "${search}"`} />
               {searchResults.length > 0 ? (
                 <ShelfRow>
@@ -148,7 +145,7 @@ function MeusCoursosPage() {
               )}
             </div>
           ) : (
-            <div className="pt-12 sm:pt-14 pb-28">
+            <div className="pt-6 sm:pt-8">
               {isLoading ? (
                 <CardGridSkeleton count={6} />
               ) : (
@@ -220,7 +217,7 @@ function MeusCoursosPage() {
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5 }}
-                            className="mb-16"
+                            className="mb-8"
                           >
                             {banner.link_url ? (
                               <a href={banner.link_url} target="_blank" rel="noopener noreferrer" className="block rounded-2xl overflow-hidden border border-border/6 hover:border-gold/10 transition-all duration-300">
@@ -314,7 +311,7 @@ function MeusCoursosPage() {
               )}
             </div>
           )}
-        </div>
+        </main>
 
         <FooterLinks />
       </div>
@@ -332,7 +329,7 @@ function ShelfSection({ children, delay = 0 }: { children: React.ReactNode; dela
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6, delay }}
-      className="mb-10 sm:mb-12"
+      className="mb-8 sm:mb-10"
     >
       {children}
     </motion.section>
@@ -381,10 +378,10 @@ function ShelfRow({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="group/shelf relative -mx-7 sm:-mx-10 lg:-mx-14">
+    <div className="group/shelf relative -mx-5 sm:-mx-8">
       {/* Fade edges */}
-      <div className={`absolute left-0 top-0 bottom-4 w-10 sm:w-14 lg:w-20 z-10 pointer-events-none bg-gradient-to-r from-background to-transparent transition-opacity duration-500 ${canScrollLeft ? 'opacity-100' : 'opacity-0'}`} />
-      <div className={`absolute right-0 top-0 bottom-4 w-10 sm:w-14 lg:w-20 z-10 pointer-events-none bg-gradient-to-l from-background to-transparent transition-opacity duration-500 ${canScrollRight ? 'opacity-100' : 'opacity-0'}`} />
+      <div className={`absolute left-0 top-0 bottom-3 w-8 sm:w-12 z-10 pointer-events-none bg-gradient-to-r from-background to-transparent transition-opacity duration-500 ${canScrollLeft ? 'opacity-100' : 'opacity-0'}`} />
+      <div className={`absolute right-0 top-0 bottom-3 w-8 sm:w-12 z-10 pointer-events-none bg-gradient-to-l from-background to-transparent transition-opacity duration-500 ${canScrollRight ? 'opacity-100' : 'opacity-0'}`} />
 
       {/* Left arrow */}
       <button
@@ -409,7 +406,7 @@ function ShelfRow({ children }: { children: React.ReactNode }) {
         }}
         onScroll={updateScrollState}
         onMouseEnter={updateScrollState}
-        className="flex gap-4 sm:gap-[18px] lg:gap-5 overflow-x-auto pb-3 scrollbar-hide px-7 sm:px-10 lg:px-14 snap-x snap-mandatory scroll-smooth cursor-grab select-none will-change-scroll"
+        className="flex gap-4 sm:gap-[18px] lg:gap-5 overflow-x-auto pb-3 scrollbar-hide px-5 sm:px-8 snap-x snap-mandatory scroll-smooth cursor-grab select-none will-change-scroll"
         style={{ WebkitOverflowScrolling: 'touch' }}
       >
         {children}
@@ -441,12 +438,12 @@ function HeroBanner({ course }: { course: any }) {
   const bannerLinkUrl = course.banner_link_url || course.sales_page_url || course.checkout_url;
 
   const bannerContent = (
-    <div className="px-5 sm:px-10 lg:px-14 xl:px-20 pt-2 sm:pt-4 mb-16 sm:mb-24">
+    <div className="mb-8 sm:mb-10">
       <motion.div
         initial={{ opacity: 0, scale: 0.97 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
-        className={`relative w-full h-[280px] sm:h-[380px] md:h-[460px] lg:h-[520px] xl:h-[560px] rounded-3xl sm:rounded-[28px] overflow-hidden shadow-[0_8px_60px_-12px_rgba(0,0,0,0.7)] ring-1 ring-white/[0.04] ${bannerLinkUrl && isCustomBanner ? 'cursor-pointer' : ''}`}
+        className={`relative w-full h-[220px] sm:h-[300px] md:h-[380px] lg:h-[420px] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_8px_60px_-12px_rgba(0,0,0,0.7)] ring-1 ring-white/[0.04] ${bannerLinkUrl && isCustomBanner ? 'cursor-pointer' : ''}`}
       >
         {/* Background image */}
         {bannerImg ? (
@@ -466,7 +463,7 @@ function HeroBanner({ course }: { course: any }) {
 
         {/* Premium vignette + glow */}
         <div className="absolute inset-0 shadow-[inset_0_0_150px_rgba(0,0,0,0.4)]" />
-        <div className="absolute inset-0 rounded-3xl sm:rounded-[28px] ring-1 ring-inset ring-white/[0.06]" />
+        <div className="absolute inset-0 rounded-2xl sm:rounded-3xl ring-1 ring-inset ring-white/[0.06]" />
 
         {/* Content — bottom left */}
         <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 md:p-12 lg:p-14">
