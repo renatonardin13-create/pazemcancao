@@ -5,7 +5,7 @@ import { Music, Play, Pause, Download, Search, Headphones, Lock, Gift, ChevronLe
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { useQuery } from "@tanstack/react-query";
-import { listActiveTracks, listCategories } from "@/lib/tracks.functions";
+import { listAllTracks, listCategories } from "@/lib/tracks.functions";
 import { checkBuyerAccess } from "@/lib/access.functions";
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Input } from "@/components/ui/input";
@@ -100,8 +100,8 @@ function MusicLibraryPage() {
   });
 
   const { data, isLoading } = useQuery({
-    queryKey: ["active-tracks"],
-    queryFn: () => listActiveTracks(),
+    queryKey: ["all-tracks"],
+    queryFn: () => listAllTracks(),
   });
 
   const { currentTrack, playing, progress, toggle, setQueue } = usePlayer();
