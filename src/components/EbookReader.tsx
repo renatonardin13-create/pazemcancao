@@ -451,6 +451,42 @@ export function EbookReader({ pdfUrl, title, audioUrl, onBack }: EbookReaderProp
         </AnimatePresence>
       </div>
 
+      {/* ═══ AUDIO PLAYER BAR ═══ */}
+      {ebookAudio.available && (
+        <div className="flex items-center gap-2 px-3 sm:px-6 py-2 border-t border-border/8 bg-background/95 backdrop-blur-xl z-30">
+          <Headphones className="h-3.5 w-3.5 text-gold/50 shrink-0" />
+          <span className="text-[9px] uppercase tracking-widest text-muted-foreground/40 hidden sm:inline">
+            {ebookAudio.isFileMode ? "Áudio" : "Leitura em voz"}
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={ebookAudio.toggle}
+            className={`h-7 w-7 p-0 transition-colors ${ebookAudio.isPlaying ? "text-gold" : "text-muted-foreground/50 hover:text-gold"}`}
+          >
+            {ebookAudio.isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
+          </Button>
+          {ebookAudio.isPlaying && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={ebookAudio.stop}
+              className="h-7 w-7 p-0 text-muted-foreground/40 hover:text-red-400"
+            >
+              <Square className="h-3 w-3" />
+            </Button>
+          )}
+          {ebookAudio.isFileMode && ebookAudio.duration > 0 && (
+            <div className="flex-1 max-w-[200px] h-1 rounded-full bg-border/10 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-gold/50 transition-all duration-300"
+                style={{ width: `${(ebookAudio.progress / ebookAudio.duration) * 100}%` }}
+              />
+            </div>
+          )}
+        </div>
+      )}
+
       {/* ═══ BOTTOM BAR ═══ */}
       <div className="flex items-center justify-between px-3 sm:px-6 py-2.5 border-t border-border/8 bg-background/95 backdrop-blur-xl z-30">
         <Button variant="premiumOutline" size="sm" onClick={prevSpread} disabled={spread <= 0} className="gap-1.5">
