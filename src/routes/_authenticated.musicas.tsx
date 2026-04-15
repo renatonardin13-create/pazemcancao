@@ -514,7 +514,7 @@ function ScrollableCarousel({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <div className="relative group/carousel -mx-4 sm:-mx-6">
+    <div className="relative group/carousel -mx-4 sm:-mx-6 lg:-mx-10 xl:-mx-12">
       {canScrollLeft && (
         <button
           onClick={() => scroll('left')}
@@ -536,7 +536,7 @@ function ScrollableCarousel({ children }: { children: React.ReactNode }) {
       <div
         ref={scrollRef}
         onScroll={checkScroll}
-        className="flex gap-4 overflow-x-auto pb-4 px-4 sm:px-6 scrollbar-hide snap-x snap-mandatory touch-pan-x"
+        className="flex gap-3.5 sm:gap-4 overflow-x-auto pb-4 px-4 sm:px-6 lg:px-10 xl:px-12 scrollbar-hide snap-x snap-mandatory touch-pan-x"
         style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
       >
         {children}
