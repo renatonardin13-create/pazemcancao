@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { getFunnelSuggestions, type FunnelSuggestion } from "@/lib/funnel.functions";
+import { logFunnelClick } from "@/lib/funnel-analytics.functions";
 import { Link } from "@tanstack/react-router";
 import { Lock, Sparkles, ExternalLink, Heart, ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { useRef, useState, useCallback, useEffect, memo } from "react";
@@ -61,7 +62,7 @@ export function InvisibleFunnelShelves({ context, insertAfterIndex }: InvisibleF
   return (
     <>
       {shelves.map((shelf, idx) => (
-        <FunnelShelf key={idx} title={shelf.title} subtitle={shelf.subtitle} items={shelf.items} shelfIdx={idx} />
+        <FunnelShelf key={idx} title={shelf.title} subtitle={shelf.subtitle} items={shelf.items} shelfIdx={idx} context={context} />
       ))}
     </>
   );
