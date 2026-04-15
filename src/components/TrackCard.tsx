@@ -1,8 +1,9 @@
 import { Play, Pause, Download, Music } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { memo } from "react";
 import type { Track } from "@/lib/sample-tracks";
 import { usePlayer } from "@/hooks/use-player";
+import { OptimizedImage } from "@/components/OptimizedImage";
 
 interface TrackCardProps {
   track: Track;
@@ -29,7 +30,7 @@ const categoryEmojis: Record<string, string> = {
   Refúgio: "🏔️",
 };
 
-export function TrackCard({ track, index }: TrackCardProps) {
+export const TrackCard = memo(function TrackCard({ track, index }: TrackCardProps) {
   const { currentTrack, playing, progress, toggle } = usePlayer();
   const isThis = currentTrack?.id === track.id;
   const isPlaying = isThis && playing;
@@ -67,11 +68,9 @@ export function TrackCard({ track, index }: TrackCardProps) {
       params={{ trackId: String(track.id) }}
       className="group/card relative cursor-pointer block"
     >
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: index * 0.08, ease: "easeOut" }}
-        className="relative"
+      <div
+        className="relative animate-in fade-in slide-in-from-bottom-4 duration-500"
+        style={{ animationDelay: `${Math.min(index * 80, 400)}ms`, animationFillMode: 'both' }}
       >
         {/* Ambient glow */}
         <div className="absolute -inset-4 rounded-3xl bg-gold/0 md:group-hover/card:bg-gold/[0.05] md:transition-all md:duration-700 blur-3xl pointer-events-none" />
@@ -81,11 +80,11 @@ export function TrackCard({ track, index }: TrackCardProps) {
           {/* Image — vertical poster 9:13 */}
           <div className={`relative aspect-[9/13] overflow-hidden bg-gradient-to-br ${gradient}`}>
             {track.coverUrl ? (
-              <img
+              <OptimizedImage
                 src={track.coverUrl}
                 alt={track.title}
+                context="card"
                 className="w-full h-full object-cover md:transition-transform md:duration-[900ms] md:ease-out md:group-hover/card:scale-[1.08]"
-                loading="lazy"
               />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
@@ -178,7 +177,7 @@ export function TrackCard({ track, index }: TrackCardProps) {
             )}
           </div>
         </div>
-      </motion.div>
+      </div>
     </Link>
   );
-}
+});
