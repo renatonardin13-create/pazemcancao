@@ -187,10 +187,22 @@ function CrossSellCard({ item, context }: { item: CrossSellItem; context?: strin
     </div>
   );
 
+  const trackClick = () => {
+    logFunnelClick({
+      data: {
+        itemId: item.id,
+        itemType: item.type,
+        context: context ? `cross-sell-${context}` : 'cross-sell',
+        shelfTitle: 'Relacionados',
+        isLocked,
+      },
+    }).catch(() => {});
+  };
+
   // Locked with sales page → external link
   if (isLocked && hasSalesPage) {
     return (
-      <a href={item.sales_page_url!} target="_blank" rel="noopener noreferrer">
+      <a href={item.sales_page_url!} target="_blank" rel="noopener noreferrer" onClick={trackClick}>
         {cardContent}
       </a>
     );
@@ -198,9 +210,9 @@ function CrossSellCard({ item, context }: { item: CrossSellItem; context?: strin
 
   // Locked without sales page → no navigation
   if (isLocked) {
-    return cardContent;
+    return <div onClick={trackClick}>{cardContent}</div>;
   }
 
   // Unlocked → internal navigation
-  return <Link to={linkTo as any}>{cardContent}</Link>;
+  return <Link to={linkTo as any} onClick={trackClick}>{cardContent}</Link>;
 }
