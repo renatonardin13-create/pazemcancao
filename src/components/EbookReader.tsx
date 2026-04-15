@@ -12,6 +12,7 @@ import {
   ZoomOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 import * as pdfjsLib from "pdfjs-dist";
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
@@ -22,27 +23,68 @@ interface EbookReaderProps {
   onBack?: () => void;
 }
 
+/**
+ * Immersive ebook reader — book-spread layout.
+ * Desktop: two pages side-by-side (left + right).
+ * Mobile: single page with swipe.
+ * Page-flip 3D animation on navigation.
+ */
 export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
+  const isMobile = useIsMobile();
   const [numPages, setNumPages] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
+  // `spread` tracks the current spread index (0-based).
+  // Spread 0 = cover (page 1 alone). Spread 1 = pages 2-3. Spread 2 = pages 4-5, etc.
+  const [spread, setSpread] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [pageLoading, setPageLoading] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [direction, setDirection] = useState<"left" | "right">("right");
   const [scale, setScale] = useState(1);
   const [error, setError] = useState<string | null>(null);
-  const [pageImageUrl, setPageImageUrl] = useState<string | null>(null);
+
+  // Page image cache: pageNum → dataURL
+  const [pageImages, setPageImages] = useState<Record<number, string>>({});
+  const [renderingPages, setRenderingPages] = useState<Set<number>>(new Set());
 
   const pdfDocRef = useRef<pdfjsLib.PDFDocumentProxy | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const touchStartX = useRef(0);
-  // Off-screen canvas for rendering — never mounted in DOM
   const offscreenCanvas = useRef<HTMLCanvasElement | null>(null);
 
-  // Load PDF document
+  // Dual-page mode only on desktop
+  const dualPage = !isMobile;
+
+  // Compute which pages are in a given spread
+  const getSpreadPages = useCallback(
+    (s: number): number[] => {
+      if (!dualPage) {
+        // Mobile: one page per spread
+        const p = s + 1;
+        return p <= numPages ? [p] : [];
+      }
+      if (s === 0) return [1]; // Cover alone
+      const left = s * 2;
+      const right = s * 2 + 1;
+      const pages: number[] = [];
+      if (left <= numPages) pages.push(left);
+      if (right <= numPages) pages.push(right);
+      return pages;
+    },
+    [dualPage, numPages]
+  );
+
+  const totalSpreads = (() => {
+    if (numPages === 0) return 0;
+    if (!dualPage) return numPages;
+    // Cover is spread 0 (1 page). Then pairs: 2-3, 4-5, ...
+    return Math.ceil(numPages / 2);
+  })();
+
+  // Current pages to show
+  const currentPages = getSpreadPages(spread);
+
+  // Load PDF
   useEffect(() => {
     let cancelled = false;
-
     async function loadPdf() {
       try {
         setLoading(true);
@@ -52,7 +94,8 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
         if (cancelled) return;
         pdfDocRef.current = pdf;
         setNumPages(pdf.numPages);
-        setCurrentPage(1);
+        setSpread(0);
+        setPageImages({});
         setLoading(false);
       } catch (err) {
         if (cancelled) return;
@@ -61,23 +104,21 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
         setLoading(false);
       }
     }
-
     loadPdf();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [pdfUrl]);
 
-  // Render current page to an image data-URL (off-screen)
+  // Render a single page to a data URL
   const renderPage = useCallback(
     async (pageNum: number) => {
       const pdf = pdfDocRef.current;
-      if (!pdf) return;
+      if (!pdf || pageNum < 1 || pageNum > pdf.numPages) return;
+      if (pageImages[pageNum] && scale === 1) return; // Already cached at default scale
 
-      setPageLoading(true);
+      setRenderingPages((prev) => new Set(prev).add(pageNum));
       try {
         const page = await pdf.getPage(pageNum);
-        const viewport = page.getViewport({ scale: 1.5 * scale });
+        const viewport = page.getViewport({ scale: 2 * scale });
 
         if (!offscreenCanvas.current) {
           offscreenCanvas.current = document.createElement("canvas");
@@ -90,23 +131,38 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
         if (!ctx) return;
 
         await page.render({ canvasContext: ctx, viewport }).promise;
-        setPageImageUrl(canvas.toDataURL("image/png"));
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
+        setPageImages((prev) => ({ ...prev, [pageNum]: dataUrl }));
       } catch (err) {
-        console.error("Failed to render page:", err);
+        console.error("Failed to render page:", pageNum, err);
       } finally {
-        setPageLoading(false);
+        setRenderingPages((prev) => {
+          const next = new Set(prev);
+          next.delete(pageNum);
+          return next;
+        });
       }
     },
-    [scale]
+    [scale, pageImages]
   );
 
+  // Render current spread pages + prefetch next spread
   useEffect(() => {
-    if (!loading && numPages > 0) {
-      renderPage(currentPage);
-    }
-  }, [currentPage, loading, numPages, renderPage]);
+    if (loading || numPages === 0) return;
+    const pages = getSpreadPages(spread);
+    const nextPages = spread < totalSpreads - 1 ? getSpreadPages(spread + 1) : [];
+    const prevPages = spread > 0 ? getSpreadPages(spread - 1) : [];
+    const allPages = [...pages, ...nextPages, ...prevPages];
+    allPages.forEach((p) => renderPage(p));
+  }, [spread, loading, numPages, getSpreadPages, totalSpreads, renderPage]);
 
-  // Play page turn sound
+  // Re-render on scale change
+  useEffect(() => {
+    if (loading || numPages === 0) return;
+    setPageImages({});
+  }, [scale]);
+
+  // Sound
   const playPageTurnSound = useCallback(() => {
     if (!soundEnabled) return;
     try {
@@ -116,71 +172,67 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
       }
       audioRef.current.currentTime = 0;
       audioRef.current.play().catch(() => {});
-    } catch {
-      // Ignore audio errors
-    }
+    } catch { /* ignore */ }
   }, [soundEnabled]);
 
-  const goToPage = useCallback(
-    (page: number, dir: "left" | "right") => {
-      if (page < 1 || page > numPages || pageLoading) return;
+  const goToSpread = useCallback(
+    (s: number, dir: "left" | "right") => {
+      if (s < 0 || s >= totalSpreads) return;
       setDirection(dir);
       playPageTurnSound();
-      setCurrentPage(page);
+      setSpread(s);
     },
-    [numPages, pageLoading, playPageTurnSound]
+    [totalSpreads, playPageTurnSound]
   );
 
-  const nextPage = useCallback(() => goToPage(currentPage + 1, "right"), [currentPage, goToPage]);
-  const prevPage = useCallback(() => goToPage(currentPage - 1, "left"), [currentPage, goToPage]);
+  const nextSpread = useCallback(() => goToSpread(spread + 1, "right"), [spread, goToSpread]);
+  const prevSpread = useCallback(() => goToSpread(spread - 1, "left"), [spread, goToSpread]);
 
-  // Keyboard navigation
+  // Keyboard
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
-      if (e.key === "ArrowRight" || e.key === " ") {
-        e.preventDefault();
-        nextPage();
-      } else if (e.key === "ArrowLeft") {
-        e.preventDefault();
-        prevPage();
-      }
+      if (e.key === "ArrowRight" || e.key === " ") { e.preventDefault(); nextSpread(); }
+      else if (e.key === "ArrowLeft") { e.preventDefault(); prevSpread(); }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [nextPage, prevPage]);
+  }, [nextSpread, prevSpread]);
 
-  // Touch / swipe
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-  };
+  // Touch/swipe
+  const handleTouchStart = (e: React.TouchEvent) => { touchStartX.current = e.touches[0].clientX; };
   const handleTouchEnd = (e: React.TouchEvent) => {
     const dx = e.changedTouches[0].clientX - touchStartX.current;
-    if (Math.abs(dx) > 50) {
-      if (dx < 0) nextPage();
-      else prevPage();
-    }
+    if (Math.abs(dx) > 50) { dx < 0 ? nextSpread() : prevSpread(); }
   };
 
-  // Animation variants
-  const pageVariants = {
+  // Page label for footer
+  const pageLabel = (() => {
+    if (currentPages.length === 0) return "—";
+    if (currentPages.length === 1) return `${currentPages[0]}`;
+    return `${currentPages[0]}–${currentPages[1]}`;
+  })();
+
+  // 3D flip variants
+  const flipVariants = {
     enter: (dir: "left" | "right") => ({
-      rotateY: dir === "right" ? 90 : -90,
+      rotateY: dir === "right" ? 60 : -60,
       opacity: 0,
-      scale: 0.95,
+      scale: 0.92,
     }),
     center: { rotateY: 0, opacity: 1, scale: 1 },
     exit: (dir: "left" | "right") => ({
-      rotateY: dir === "right" ? -90 : 90,
+      rotateY: dir === "right" ? -60 : 60,
       opacity: 0,
-      scale: 0.95,
+      scale: 0.92,
     }),
   };
 
+  // ---------- LOADING ----------
   if (loading) {
     return (
-      <div className="flex min-h-[70vh] items-center justify-center bg-background">
+      <div className="flex min-h-[80vh] items-center justify-center bg-background">
         <div className="text-center space-y-4">
           <div className="relative mx-auto h-14 w-14">
             <div className="absolute inset-0 rounded-full border-2 border-gold/10" />
@@ -194,9 +246,10 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
     );
   }
 
+  // ---------- ERROR ----------
   if (error) {
     return (
-      <div className="flex min-h-[70vh] items-center justify-center bg-background">
+      <div className="flex min-h-[80vh] items-center justify-center bg-background">
         <div className="text-center space-y-5">
           <div className="mx-auto h-16 w-16 rounded-2xl bg-card/10 border border-border/10 flex items-center justify-center">
             <BookOpen className="h-7 w-7 text-muted-foreground/25" />
@@ -204,8 +257,7 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
           <p className="text-foreground/60 text-sm font-semibold">{error}</p>
           {onBack && (
             <Button variant="premiumOutline" size="sm" onClick={onBack}>
-              <ArrowLeft className="h-3.5 w-3.5" />
-              Voltar
+              <ArrowLeft className="h-3.5 w-3.5" /> Voltar
             </Button>
           )}
         </div>
@@ -213,11 +265,47 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
     );
   }
 
+  // ---------- RENDER PAGE IMAGE ----------
+  const renderPageImage = (pageNum: number, side: "left" | "right" | "single") => {
+    const img = pageImages[pageNum];
+    const isRendering = renderingPages.has(pageNum);
+    const roundedClass =
+      side === "left" ? "rounded-l-lg" :
+      side === "right" ? "rounded-r-lg" :
+      "rounded-lg";
+
+    return (
+      <div
+        key={pageNum}
+        className={`relative flex-1 bg-white ${roundedClass} overflow-hidden flex items-center justify-center`}
+        style={{ minHeight: isMobile ? "55vh" : "70vh" }}
+      >
+        {img ? (
+          <img
+            src={img}
+            alt={`Página ${pageNum}`}
+            className="w-full h-full object-contain"
+          />
+        ) : isRendering ? (
+          <Loader2 className="h-6 w-6 text-gold/40 animate-spin" />
+        ) : (
+          <div className="flex items-center justify-center h-full w-full">
+            <Loader2 className="h-6 w-6 text-gold/30 animate-spin" />
+          </div>
+        )}
+        {/* Page number watermark */}
+        <span className="absolute bottom-2 inset-x-0 text-center text-[9px] text-black/20 font-medium select-none pointer-events-none">
+          {pageNum}
+        </span>
+      </div>
+    );
+  };
+
   return (
-    <div className="flex flex-col w-full">
-      {/* TOP CONTROLS */}
-      <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-b border-border/8 bg-background/90 backdrop-blur-xl">
-        <div className="flex items-center gap-3">
+    <div className="flex flex-col w-full min-h-screen bg-background">
+      {/* ═══ TOP BAR ═══ */}
+      <div className="flex items-center justify-between px-3 sm:px-6 py-2.5 border-b border-border/8 bg-background/95 backdrop-blur-xl z-30">
+        <div className="flex items-center gap-3 min-w-0">
           {onBack && (
             <Button variant="premiumOutline" size="sm" onClick={onBack} className="shrink-0">
               <ArrowLeft className="h-3.5 w-3.5" />
@@ -225,114 +313,143 @@ export function EbookReader({ pdfUrl, title, onBack }: EbookReaderProps) {
             </Button>
           )}
           <div className="hidden sm:block h-5 w-px bg-border/10" />
-          <h2 className="text-xs sm:text-sm font-bold text-foreground/70 truncate max-w-[200px] sm:max-w-none">
+          <h2 className="text-xs sm:text-sm font-bold text-foreground/70 truncate">
             {title}
           </h2>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" onClick={() => setScale((s) => Math.max(0.5, s - 0.25))} disabled={scale <= 0.5} className="h-8 w-8 p-0 text-muted-foreground/50 hover:text-gold">
+        <div className="flex items-center gap-1.5">
+          <Button variant="ghost" size="sm" onClick={() => setScale((s) => Math.max(0.5, s - 0.25))} disabled={scale <= 0.5} className="h-7 w-7 p-0 text-muted-foreground/50 hover:text-gold">
             <ZoomOut className="h-3.5 w-3.5" />
           </Button>
-          <span className="text-[10px] tabular-nums text-muted-foreground/40 min-w-[2.5rem] text-center">
+          <span className="text-[10px] tabular-nums text-muted-foreground/40 min-w-[2rem] text-center">
             {Math.round(scale * 100)}%
           </span>
-          <Button variant="ghost" size="sm" onClick={() => setScale((s) => Math.min(3, s + 0.25))} disabled={scale >= 3} className="h-8 w-8 p-0 text-muted-foreground/50 hover:text-gold">
+          <Button variant="ghost" size="sm" onClick={() => setScale((s) => Math.min(3, s + 0.25))} disabled={scale >= 3} className="h-7 w-7 p-0 text-muted-foreground/50 hover:text-gold">
             <ZoomIn className="h-3.5 w-3.5" />
           </Button>
-          <div className="h-5 w-px bg-border/10" />
+          <div className="h-4 w-px bg-border/10 mx-1" />
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setSoundEnabled(!soundEnabled)}
-            className={`h-8 w-8 p-0 transition-colors ${soundEnabled ? "text-gold" : "text-muted-foreground/40"}`}
-            title={soundEnabled ? "Desativar som" : "Ativar som"}
+            className={`h-7 w-7 p-0 transition-colors ${soundEnabled ? "text-gold" : "text-muted-foreground/40"}`}
           >
-            {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeOff className="h-4 w-4" />}
+            {soundEnabled ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeOff className="h-3.5 w-3.5" />}
           </Button>
         </div>
       </div>
 
-      {/* BOOK AREA */}
+      {/* ═══ BOOK AREA ═══ */}
       <div
-        className="relative flex-1 flex items-center justify-center min-h-[60vh] sm:min-h-[70vh] bg-gradient-to-b from-background via-card/3 to-background overflow-auto"
+        className="relative flex-1 flex items-center justify-center py-4 sm:py-6 px-2 sm:px-6 lg:px-10 bg-gradient-to-b from-background via-card/3 to-background overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        style={{ perspective: "1200px" }}
+        style={{ perspective: "1800px" }}
       >
-        {currentPage > 1 && (
-          <button onClick={prevPage} className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-background/90 border border-border/20 shadow-lg backdrop-blur-sm text-foreground/50 hover:text-gold hover:border-gold/30 transition-all active:scale-95" aria-label="Página anterior">
+        {/* Left arrow */}
+        {spread > 0 && (
+          <button
+            onClick={prevSpread}
+            className="absolute left-1 sm:left-3 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-background/80 border border-border/15 shadow-lg backdrop-blur-md text-foreground/40 hover:text-gold hover:border-gold/25 transition-all active:scale-90"
+          >
             <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
         )}
-        {currentPage < numPages && (
-          <button onClick={nextPage} className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-background/90 border border-border/20 shadow-lg backdrop-blur-sm text-foreground/50 hover:text-gold hover:border-gold/30 transition-all active:scale-95" aria-label="Próxima página">
+        {/* Right arrow */}
+        {spread < totalSpreads - 1 && (
+          <button
+            onClick={nextSpread}
+            className="absolute right-1 sm:right-3 top-1/2 -translate-y-1/2 z-20 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-background/80 border border-border/15 shadow-lg backdrop-blur-md text-foreground/40 hover:text-gold hover:border-gold/25 transition-all active:scale-90"
+          >
             <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
           </button>
         )}
 
-        {/* Page image with flip animation */}
-        <div className="relative py-6 px-12 sm:px-16 max-w-full overflow-auto">
-          {pageLoading && (
-            <div className="absolute inset-0 flex items-center justify-center z-10">
-              <Loader2 className="h-6 w-6 text-gold/50 animate-spin" />
-            </div>
-          )}
+        {/* Book spread */}
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={spread}
+            custom={direction}
+            variants={flipVariants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            style={{ transformStyle: "preserve-3d" }}
+            className={`relative flex ${dualPage ? "max-w-[90vw] lg:max-w-[80vw] xl:max-w-[72vw]" : "max-w-[92vw] sm:max-w-[70vw] md:max-w-[55vw]"} w-full`}
+          >
+            {/* Ambient glow behind the book */}
+            <div className="absolute -inset-4 rounded-2xl bg-gold/[0.03] blur-2xl pointer-events-none" />
 
-          <AnimatePresence mode="wait" custom={direction}>
-            <motion.div
-              key={currentPage}
-              custom={direction}
-              variants={pageVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] }}
-              style={{ transformStyle: "preserve-3d" }}
-              className="relative"
-            >
-              <div className="absolute -inset-1 rounded-xl bg-gradient-to-br from-gold/5 via-transparent to-gold/3 blur-sm pointer-events-none" />
-              <div className="relative rounded-lg overflow-hidden border border-border/15 shadow-2xl shadow-black/30 bg-white">
-                {pageImageUrl ? (
-                  <img
-                    src={pageImageUrl}
-                    alt={`Página ${currentPage}`}
-                    className="block max-w-full h-auto"
-                    style={{ maxHeight: "75vh" }}
-                  />
-                ) : (
-                  <div className="flex items-center justify-center" style={{ width: 600, height: 800 }}>
-                    <Loader2 className="h-8 w-8 text-gold/40 animate-spin" />
+            {/* Book shadow */}
+            <div className="absolute -inset-2 rounded-xl shadow-[0_20px_80px_-15px_rgba(0,0,0,0.7)] pointer-events-none" />
+
+            {/* Pages container */}
+            <div className={`relative flex w-full ${dualPage ? "gap-0" : ""} rounded-lg overflow-hidden border border-border/10 shadow-2xl shadow-black/40`}>
+              {dualPage && currentPages.length === 2 ? (
+                <>
+                  {/* Left page */}
+                  {renderPageImage(currentPages[0], "left")}
+                  {/* Spine shadow */}
+                  <div className="w-px bg-gradient-to-b from-black/20 via-black/40 to-black/20 shadow-[2px_0_8px_rgba(0,0,0,0.3),-2px_0_8px_rgba(0,0,0,0.3)]" />
+                  {/* Right page */}
+                  {renderPageImage(currentPages[1], "right")}
+                </>
+              ) : dualPage && currentPages.length === 1 && spread === 0 ? (
+                <>
+                  {/* Cover centered — show as single "right" page with blank left */}
+                  <div className="flex-1 bg-gradient-to-br from-card/20 via-card/10 to-card/5 rounded-l-lg flex items-center justify-center" style={{ minHeight: "70vh" }}>
+                    <BookOpen className="h-10 w-10 text-muted-foreground/8" />
                   </div>
-                )}
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
+                  <div className="w-px bg-gradient-to-b from-black/20 via-black/40 to-black/20 shadow-[2px_0_8px_rgba(0,0,0,0.3),-2px_0_8px_rgba(0,0,0,0.3)]" />
+                  {renderPageImage(currentPages[0], "right")}
+                </>
+              ) : dualPage && currentPages.length === 1 ? (
+                <>
+                  {/* Last page alone on left */}
+                  {renderPageImage(currentPages[0], "left")}
+                  <div className="w-px bg-gradient-to-b from-black/20 via-black/40 to-black/20" />
+                  <div className="flex-1 bg-gradient-to-br from-card/20 via-card/10 to-card/5 rounded-r-lg flex items-center justify-center" style={{ minHeight: "70vh" }}>
+                    <p className="text-[10px] uppercase tracking-[0.3em] text-muted-foreground/20 font-medium">Fim</p>
+                  </div>
+                </>
+              ) : (
+                /* Mobile — single page */
+                currentPages.length > 0 && renderPageImage(currentPages[0], "single")
+              )}
+            </div>
+          </motion.div>
+        </AnimatePresence>
       </div>
 
-      {/* BOTTOM CONTROLS */}
-      <div className="flex items-center justify-between px-4 sm:px-6 py-3 border-t border-border/8 bg-background/90 backdrop-blur-xl">
-        <Button variant="premiumOutline" size="sm" onClick={prevPage} disabled={currentPage <= 1} className="gap-1.5">
+      {/* ═══ BOTTOM BAR ═══ */}
+      <div className="flex items-center justify-between px-3 sm:px-6 py-2.5 border-t border-border/8 bg-background/95 backdrop-blur-xl z-30">
+        <Button variant="premiumOutline" size="sm" onClick={prevSpread} disabled={spread <= 0} className="gap-1.5">
           <ChevronLeft className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Anterior</span>
         </Button>
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 rounded-xl border border-border/10 bg-card/6 px-4 py-2">
-            <BookOpen className="h-3.5 w-3.5 text-gold/50" />
-            <span className="text-xs tabular-nums text-foreground/60">
-              <span className="font-bold text-foreground/80">{currentPage}</span>
+          <div className="flex items-center gap-2 rounded-xl border border-border/10 bg-card/6 px-3 py-1.5">
+            <BookOpen className="h-3 w-3 text-gold/50" />
+            <span className="text-[10px] sm:text-xs tabular-nums text-foreground/60">
+              <span className="font-bold text-foreground/80">{pageLabel}</span>
               <span className="mx-1 text-muted-foreground/30">/</span>
               <span className="text-muted-foreground/50">{numPages}</span>
             </span>
           </div>
-          <div className="hidden sm:block w-32 h-1.5 rounded-full bg-border/10 overflow-hidden">
-            <motion.div className="h-full rounded-full bg-gold/50" initial={{ width: 0 }} animate={{ width: `${(currentPage / numPages) * 100}%` }} transition={{ duration: 0.3, ease: "easeOut" }} />
+          <div className="hidden sm:block w-28 h-1 rounded-full bg-border/10 overflow-hidden">
+            <motion.div
+              className="h-full rounded-full bg-gold/50"
+              initial={{ width: 0 }}
+              animate={{ width: `${((spread + 1) / totalSpreads) * 100}%` }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+            />
           </div>
         </div>
 
-        <Button variant="premiumOutline" size="sm" onClick={nextPage} disabled={currentPage >= numPages} className="gap-1.5">
+        <Button variant="premiumOutline" size="sm" onClick={nextSpread} disabled={spread >= totalSpreads - 1} className="gap-1.5">
           <span className="hidden sm:inline">Próxima</span>
           <ChevronRight className="h-3.5 w-3.5" />
         </Button>
