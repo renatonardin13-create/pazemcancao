@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   ChevronLeft,
@@ -20,6 +20,8 @@ import {
   Moon,
   SkipBack,
   SkipForward,
+  Lock,
+  ShoppingCart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -42,6 +44,12 @@ interface EbookReaderProps {
   isCompletePending?: boolean;
   onComplete?: () => void;
   onBack?: () => void;
+  /** Number of free pages before paywall (0 = all free) */
+  freePageLimit?: number;
+  /** Whether user has full access (purchased) */
+  isUnlocked?: boolean;
+  /** URL to redirect when user clicks "Unlock" */
+  salesPageUrl?: string;
 }
 
 /**
@@ -50,7 +58,7 @@ interface EbookReaderProps {
  * Mobile: single page with swipe.
  * Page-flip 3D animation on navigation.
  */
-export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePending, onComplete, onBack }: EbookReaderProps) {
+export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePending, onComplete, onBack, freePageLimit = 0, isUnlocked = true, salesPageUrl }: EbookReaderProps) {
   const isMobile = useIsMobile();
   const [numPages, setNumPages] = useState(0);
   // `spread` tracks the current spread index (0-based).
@@ -126,6 +134,18 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
     if (!dualPage) return numPages;
     return Math.ceil(numPages / 2);
   })();
+
+  // Paywall logic
+  const hasPaywall = freePageLimit > 0 && !isUnlocked;
+  
+  // Compute max allowed spread based on free page limit
+  const maxAllowedSpread = useMemo(() => {
+    if (!hasPaywall || numPages === 0) return totalSpreads - 1;
+    if (!dualPage) return Math.min(freePageLimit - 1, totalSpreads - 1);
+    return Math.min(Math.ceil(freePageLimit / 2) - 1, totalSpreads - 1);
+  }, [hasPaywall, freePageLimit, numPages, dualPage, totalSpreads]);
+
+  const isAtPaywall = hasPaywall && spread >= maxAllowedSpread;
 
   // Current pages to show
   const currentPages = getSpreadPages(spread);
@@ -292,11 +312,13 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
   const goToSpread = useCallback(
     (s: number, dir: "left" | "right") => {
       if (s < 0 || s >= totalSpreads) return;
+      // Block navigation past paywall
+      if (hasPaywall && s > maxAllowedSpread) return;
       setDirection(dir);
       playPageTurnSound();
       setSpread(s);
     },
-    [totalSpreads, playPageTurnSound]
+    [totalSpreads, playPageTurnSound, hasPaywall, maxAllowedSpread]
   );
 
   const nextSpread = useCallback(() => goToSpread(spread + 1, "right"), [spread, goToSpread]);
@@ -660,6 +682,46 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
                 currentPages.length > 0 && renderPageImage(currentPages[0], "single")
               )}
             </div>
+
+            {/* ═══ PAYWALL OVERLAY ═══ */}
+            {isAtPaywall && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="absolute inset-0 z-20 flex items-end justify-center rounded-md overflow-hidden"
+              >
+                {/* Gradient fade from transparent to solid */}
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#1a1814]/70 to-[#1a1814]/98" />
+                
+                <div className="relative z-10 flex flex-col items-center gap-5 pb-12 px-6 text-center max-w-md">
+                  <div className="h-16 w-16 rounded-2xl bg-gold/10 border border-gold/20 flex items-center justify-center shadow-lg shadow-gold/5">
+                    <Lock className="h-7 w-7 text-gold/70" />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h3 className="text-lg font-serif font-bold text-stone-200">
+                      Continue lendo para acessar o conteúdo completo
+                    </h3>
+                    <p className="text-sm text-stone-400/70">
+                      Você leu as primeiras {freePageLimit} páginas gratuitamente. Desbloqueie o ebook completo para continuar sua jornada.
+                    </p>
+                  </div>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (salesPageUrl) {
+                        window.open(salesPageUrl, "_blank", "noopener");
+                      }
+                    }}
+                    className="flex items-center gap-2.5 px-8 py-3.5 rounded-xl bg-gold text-gold-foreground font-bold text-sm uppercase tracking-wider shadow-lg shadow-gold/25 hover:brightness-110 hover:shadow-xl hover:shadow-gold/35 hover:scale-[1.02] transition-all"
+                  >
+                    <ShoppingCart className="h-4 w-4" />
+                    Desbloquear agora
+                  </button>
+                </div>
+              </motion.div>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -742,8 +804,9 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
             <span className="text-[10px] sm:text-xs tabular-nums text-stone-400/60">
               <span className="font-bold text-stone-300/80">{pageLabel}</span>
               <span className="mx-1 text-stone-600/30">/</span>
-              <span className="text-stone-500/50">{numPages}</span>
-              <span className="ml-1.5 text-gold/50 font-medium">{totalSpreads > 0 ? Math.round(((spread + 1) / totalSpreads) * 100) : 0}%</span>
+              <span className="text-stone-500/50">{hasPaywall ? freePageLimit : numPages}</span>
+              {hasPaywall && <Lock className="inline h-2.5 w-2.5 text-gold/40 ml-0.5" />}
+              <span className="ml-1.5 text-gold/50 font-medium">{totalSpreads > 0 ? Math.round(((spread + 1) / (hasPaywall ? maxAllowedSpread + 1 : totalSpreads)) * 100) : 0}%</span>
             </span>
           </div>
           <div className="hidden sm:block w-28 h-1 rounded-full bg-stone-700/20 overflow-hidden">
@@ -756,7 +819,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
           </div>
         </div>
 
-        <Button variant="premiumOutline" size="sm" onClick={nextSpread} disabled={spread >= totalSpreads - 1} className="gap-1.5">
+        <Button variant="premiumOutline" size="sm" onClick={nextSpread} disabled={spread >= totalSpreads - 1 || isAtPaywall} className="gap-1.5">
           <span className="hidden sm:inline">Próxima</span>
           <ChevronRight className="h-3.5 w-3.5" />
         </Button>

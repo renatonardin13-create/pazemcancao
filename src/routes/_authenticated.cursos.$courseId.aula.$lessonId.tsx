@@ -481,7 +481,7 @@ function LessonDetailPage() {
           )}
 
           {/* PDF / Ebook reader */}
-          {!accessRestricted && (isPdf || isEbook) && (
+          {(isPdf || isEbook) && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -502,6 +502,9 @@ function LessonDetailPage() {
                   }
                 }}
                 onBack={() => navigate({ to: "/cursos/$courseId", params: { courseId } })}
+                freePageLimit={!enrollment && lesson.is_free_preview ? 5 : 0}
+                isUnlocked={!!enrollment}
+                salesPageUrl={checkoutUrl || undefined}
               />
             </motion.div>
           )}
