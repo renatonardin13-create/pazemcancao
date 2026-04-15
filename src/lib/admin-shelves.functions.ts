@@ -38,6 +38,7 @@ export const listShelves = createServerFn({ method: 'POST' })
 const createShelfSchema = z.object({
   name: z.string().min(1).max(255).trim(),
   is_active: z.boolean(),
+  show_in_vitrine: z.boolean().optional(),
   mode: z.enum(['manual', 'auto']),
   auto_criteria: z.string().max(50).optional(),
   sort_order: z.number().min(0).max(999).optional(),
@@ -45,7 +46,7 @@ const createShelfSchema = z.object({
 
 export const createShelf = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { name: string; is_active: boolean; mode: string; auto_criteria?: string; sort_order?: number }) =>
+  .inputValidator((input: { name: string; is_active: boolean; show_in_vitrine?: boolean; mode: string; auto_criteria?: string; sort_order?: number }) =>
     createShelfSchema.parse(input)
   )
   .handler(async ({ data, context }) => {
@@ -56,6 +57,7 @@ export const createShelf = createServerFn({ method: 'POST' })
       .insert({
         name: data.name,
         is_active: data.is_active,
+        show_in_vitrine: data.show_in_vitrine ?? true,
         mode: data.mode,
         auto_criteria: data.mode === 'auto' ? (data.auto_criteria || 'recent') : null,
         sort_order: data.sort_order ?? 0,
@@ -72,6 +74,7 @@ const updateShelfSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1).max(255).trim().optional(),
   is_active: z.boolean().optional(),
+  show_in_vitrine: z.boolean().optional(),
   mode: z.enum(['manual', 'auto']).optional(),
   auto_criteria: z.string().max(50).optional(),
   sort_order: z.number().min(0).max(999).optional(),
@@ -79,7 +82,7 @@ const updateShelfSchema = z.object({
 
 export const updateShelf = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { id: string; name?: string; is_active?: boolean; mode?: string; auto_criteria?: string; sort_order?: number }) =>
+  .inputValidator((input: { id: string; name?: string; is_active?: boolean; show_in_vitrine?: boolean; mode?: string; auto_criteria?: string; sort_order?: number }) =>
     updateShelfSchema.parse(input)
   )
   .handler(async ({ data, context }) => {

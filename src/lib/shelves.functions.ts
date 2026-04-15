@@ -9,7 +9,7 @@ type ShelfRecord = {
   mode: string;
   auto_criteria: string | null;
   sort_order: number;
-  exibir_na_vitrine?: boolean;
+  show_in_vitrine?: boolean;
 };
 
 type ShelfCourseLink = {
@@ -95,7 +95,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
     if (shelvesErr) throw new Error(shelvesErr.message);
 
     const shelves = (shelfRows || []).filter(
-      (shelf: ShelfRecord) => shelf.exibir_na_vitrine !== false,
+      (shelf: ShelfRecord) => shelf.show_in_vitrine !== false,
     ) as ShelfRecord[];
 
     const shelfIds = shelves.map((shelf) => shelf.id);
