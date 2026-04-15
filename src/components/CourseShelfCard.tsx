@@ -1,8 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
 import { BookOpen, Play, Lock, Clock, Gift, BookOpenCheck } from "lucide-react";
 import { resolveCourseLesson } from "@/lib/resolve-course-lesson.functions";
-import { useState, useCallback } from "react";
-import { motion } from "framer-motion";
+import { useState, useCallback, memo } from "react";
 
 interface CourseShelfCardProps {
   course: any;
@@ -17,7 +16,7 @@ interface CourseShelfCardProps {
  * Course card — uses the EXACT same visual shell as TrackCard in /louvores.
  * aspect-[9/13], same borders, overlays, hover, ambient glow, vignette.
  */
-export function CourseShelfCard({
+export const CourseShelfCard = memo(function CourseShelfCard({
   course,
   badge,
   showProgress = false,
@@ -69,11 +68,9 @@ export function CourseShelfCard({
     || (course.total_lessons > 0 ? `${course.total_lessons} aulas` : course.short_description || '');
 
   const cardContent = (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: index * 0.08, ease: "easeOut" }}
-      className="relative"
+    <div
+      className="relative animate-in fade-in slide-in-from-bottom-3 duration-400"
+      style={{ animationDelay: `${Math.min(index * 50, 300)}ms`, animationFillMode: 'both' }}
     >
       {/* Ambient glow */}
       <div className="absolute -inset-4 rounded-3xl bg-gold/0 md:group-hover/card:bg-gold/[0.05] md:transition-all md:duration-700 blur-3xl pointer-events-none" />
@@ -225,7 +222,7 @@ export function CourseShelfCard({
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 
   if (isExternalLink) {
@@ -252,4 +249,4 @@ export function CourseShelfCard({
       {cardContent}
     </div>
   );
-}
+});
