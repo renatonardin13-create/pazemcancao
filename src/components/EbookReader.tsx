@@ -342,6 +342,12 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
     );
   }
 
+  // Theme colors
+  const pageBg = readingTheme === "dark" ? "#2a2520" : "#f8f5f0";
+  const emptyPageBg = readingTheme === "dark" ? "#252018" : "#f0ebe4";
+  const pageFilter = readingTheme === "dark" ? "invert(0.88) hue-rotate(180deg)" : "none";
+  const pageNumColor = readingTheme === "dark" ? "rgba(200,180,150,0.4)" : "rgba(168,162,158,0.6)";
+
   // ---------- RENDER PAGE IMAGE ----------
   const renderPageImage = (pageNum: number, side: "left" | "right" | "single") => {
     const img = pageImages[pageNum];
@@ -354,10 +360,10 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
     return (
       <div
         key={pageNum}
-        className={`relative flex-1 ${roundedClass} overflow-hidden flex items-center justify-center`}
+        className={`relative flex-1 ${roundedClass} overflow-hidden flex items-center justify-center transition-colors duration-300`}
         style={{
           minHeight: isMobile ? "60vh" : "75vh",
-          backgroundColor: "#f8f5f0",
+          backgroundColor: pageBg,
           padding: isMobile ? "12px" : "24px 32px",
         }}
       >
@@ -365,8 +371,8 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
           <img
             src={img}
             alt={`Página ${pageNum}`}
-            className="w-full h-full object-contain drop-shadow-sm"
-            style={{ maxWidth: "100%", borderRadius: "2px" }}
+            className="w-full h-full object-contain drop-shadow-sm transition-all duration-300"
+            style={{ maxWidth: "100%", borderRadius: "2px", filter: pageFilter }}
           />
         ) : isRendering ? (
           <Loader2 className="h-6 w-6 text-amber-700/30 animate-spin" />
@@ -375,8 +381,7 @@ export function EbookReader({ pdfUrl, title, audioUrl, isCompleted, isCompletePe
             <Loader2 className="h-6 w-6 text-amber-700/20 animate-spin" />
           </div>
         )}
-        {/* Page number — subtle serif */}
-        <span className="absolute bottom-3 inset-x-0 text-center text-[10px] text-stone-400/60 font-serif select-none pointer-events-none tracking-wide">
+        <span className="absolute bottom-3 inset-x-0 text-center text-[10px] font-serif select-none pointer-events-none tracking-wide" style={{ color: pageNumColor }}>
           {pageNum}
         </span>
       </div>
