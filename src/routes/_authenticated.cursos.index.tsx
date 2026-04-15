@@ -227,16 +227,75 @@ function MeusCoursosPage() {
                     );
                   })}
 
-                  {/* ═══ BIBLIOTECA RESUMO ═══ */}
-                  <ShelfSection delay={0.3}>
-                    <ShelfHeader title="Minha biblioteca" />
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
-                      <StatCard label="Liberados" value={libStats?.unlocked ?? 0} icon={<Unlock className="h-3 w-3" />} />
-                      <StatCard label="Em Breve" value={libStats?.upcoming ?? 0} icon={<Clock className="h-3 w-3" />} />
-                      <StatCard label="Favoritos" value={libStats?.favorites ?? 0} icon={<Heart className="h-3 w-3" />} />
-                      <StatCard label="Bônus" value={libStats?.bonus ?? 0} icon={<Gift className="h-3 w-3" />} />
-                    </div>
-                  </ShelfSection>
+                  {/* ═══ SEUS ACESSOS ═══ */}
+                  {(libSections?.unlocked?.length ?? 0) > 0 && (
+                    <ShelfSection delay={0.3}>
+                      <ShelfHeader title="Seus Acessos" />
+                      <ShelfRow>
+                        {(libSections?.unlocked || []).map((item: any, idx: number) => (
+                          <ShelfItem key={`unlocked-${item.id}`} index={idx}>
+                            <LibraryContentCard item={item} />
+                          </ShelfItem>
+                        ))}
+                      </ShelfRow>
+                    </ShelfSection>
+                  )}
+
+                  {/* ═══ DISPONÍVEL PARA VOCÊ (BLOQUEADO) ═══ */}
+                  {(libSections?.locked?.length ?? 0) > 0 && (
+                    <ShelfSection delay={0.35}>
+                      <ShelfHeader title="Disponível para você" />
+                      <ShelfRow>
+                        {(libSections?.locked || []).map((item: any, idx: number) => (
+                          <ShelfItem key={`locked-${item.id}`} index={idx}>
+                            <LockedContentCard item={item} />
+                          </ShelfItem>
+                        ))}
+                      </ShelfRow>
+                    </ShelfSection>
+                  )}
+
+                  {/* ═══ EM BREVE ═══ */}
+                  {(libSections?.upcoming?.length ?? 0) > 0 && (
+                    <ShelfSection delay={0.4}>
+                      <ShelfHeader title="Novidades chegando" />
+                      <ShelfRow>
+                        {(libSections?.upcoming || []).map((item: any, idx: number) => (
+                          <ShelfItem key={`upcoming-${item.id}`} index={idx}>
+                            <UpcomingContentCard item={item} />
+                          </ShelfItem>
+                        ))}
+                      </ShelfRow>
+                    </ShelfSection>
+                  )}
+
+                  {/* ═══ FAVORITOS ═══ */}
+                  {(libSections?.favorites?.length ?? 0) > 0 && (
+                    <ShelfSection delay={0.45}>
+                      <ShelfHeader title="Seus Favoritos" />
+                      <ShelfRow>
+                        {(libSections?.favorites || []).map((item: any, idx: number) => (
+                          <ShelfItem key={`fav-${item.id}`} index={idx}>
+                            <LibraryContentCard item={item} />
+                          </ShelfItem>
+                        ))}
+                      </ShelfRow>
+                    </ShelfSection>
+                  )}
+
+                  {/* ═══ BÔNUS ═══ */}
+                  {(libSections?.bonus?.length ?? 0) > 0 && (
+                    <ShelfSection delay={0.5}>
+                      <ShelfHeader title="Bônus Exclusivos" />
+                      <ShelfRow>
+                        {(libSections?.bonus || []).map((item: any, idx: number) => (
+                          <ShelfItem key={`bonus-${item.id}`} index={idx}>
+                            <LibraryContentCard item={item} isFree />
+                          </ShelfItem>
+                        ))}
+                      </ShelfRow>
+                    </ShelfSection>
+                  )}
 
                   {shelves.length === 0 && (
                     <EmptyState icon={BookOpen} title="Nenhum conteúdo disponível" description="Em breve novos cursos serão adicionados." />
