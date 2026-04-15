@@ -690,9 +690,9 @@ function TrackCard({
                 </p>
                 {effectiveLocked && (
                   <span className={`text-[10px] font-semibold tracking-wider uppercase px-1.5 py-0.5 rounded-full ${
-                    isBonusLocked ? "text-amber-400/60 bg-amber-400/10" : "text-destructive/40 bg-destructive/8"
+                    isInactive ? "text-sky-400/60 bg-sky-400/10" : isBonusLocked ? "text-amber-400/60 bg-amber-400/10" : "text-destructive/40 bg-destructive/8"
                   }`}>
-                    {isBonusLocked ? "🎁 Bônus" : "Bloqueado"}
+                    {isInactive ? "🕐 Em breve" : isBonusLocked ? "🎁 Bônus" : "Bloqueado"}
                   </span>
                 )}
                 {!effectiveLocked && isPlaying && (
