@@ -87,7 +87,9 @@ export const PosterCard = memo(function PosterCard({
   index = 0,
   aboveCard,
 }: PosterCardProps) {
-  const hasProgress = typeof progress === "number" && progress > 0;
+  const cfg = getCardsConfigSync();
+  const hasProgress = cfg.showProgress && typeof progress === "number" && progress > 0;
+  const gradientOpacity = Math.max(0, Math.min(100, cfg.cardGradient)) / 100;
 
   return (
     <div
@@ -96,16 +98,20 @@ export const PosterCard = memo(function PosterCard({
     >
       {aboveCard}
 
-      {/* Glow ambiente */}
+      {/* Glow ambiente — respeita hoverGold */}
       <div
         className={`absolute -inset-4 rounded-3xl blur-3xl pointer-events-none md:transition-all md:duration-700 ${
-          highlight ? "bg-gold/[0.05]" : "bg-gold/0 md:group-hover/card:bg-gold/[0.05]"
+          highlight ? "bg-gold/[0.05]" : cfg.hoverGold ? "bg-gold/0 md:group-hover/card:bg-gold/[0.05]" : "bg-transparent"
         }`}
       />
 
       <div
-        className={`relative overflow-hidden rounded-[14px] sm:rounded-[16px] bg-card/5 shadow-md shadow-black/25 ring-1 md:transition-all md:duration-500 md:group-hover/card:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.6)] md:group-hover/card:ring-gold/15 md:group-hover/card:scale-[1.04] ${
-          highlight ? "ring-gold/12 shadow-[0_2px_32px_-8px] shadow-gold/8" : "ring-white/[0.04]"
+        className={`relative overflow-hidden rounded-[14px] sm:rounded-[16px] bg-card/5 shadow-md shadow-black/25 md:transition-all md:duration-500 md:group-hover/card:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.6)] md:group-hover/card:scale-[1.04] ${
+          cfg.showBorder ? "ring-1" : ""
+        } ${
+          cfg.hoverGold ? "md:group-hover/card:ring-gold/15" : ""
+        } ${
+          highlight ? "ring-gold/12 shadow-[0_2px_32px_-8px] shadow-gold/8" : cfg.showBorder ? "ring-white/[0.04]" : ""
         }`}
       >
         <div className={`relative aspect-[9/13] overflow-hidden bg-gradient-to-br ${gradientClass}`}>
