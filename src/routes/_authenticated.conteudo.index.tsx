@@ -2,7 +2,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { Progress } from "@/components/ui/progress";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useState } from "react";
 import { trackContentView, trackContentDownload } from "@/lib/progress.functions";
 import { listContentItems } from "@/lib/content.functions";
 import { listFavorites, toggleFavorite } from "@/lib/favorites.functions";
@@ -94,6 +94,15 @@ function ContentPage() {
       queryClient.invalidateQueries({ queryKey: ["content-items"] });
     });
   }, [queryClient]);
+
+  // RC1: dedupe ids across "Top semana" → "Mais acessados" → "Recomendado"
+  const [weeklyTopIds, setWeeklyTopIds] = useState<string[]>([]);
+  const [allTimeTopIds, setAllTimeTopIds] = useState<string[]>([]);
+  const weeklyTopSet = useMemo(() => new Set(weeklyTopIds), [weeklyTopIds]);
+  const recommendedExcludeSet = useMemo(
+    () => new Set([...weeklyTopIds, ...allTimeTopIds]),
+    [weeklyTopIds, allTimeTopIds],
+  );
 
   const { data, isLoading } = useQuery({
     queryKey: ["content-items"],
@@ -458,6 +467,7 @@ function ContentPage() {
                 progressMap={progressMap}
                 lastAccessedId={lastAccessedId}
                 mode="weekly"
+                onItemsResolved={setWeeklyTopIds}
               />
 
               {/* Mais acessados (all time) */}
@@ -468,6 +478,8 @@ function ContentPage() {
                 progressMap={progressMap}
                 lastAccessedId={lastAccessedId}
                 mode="all_time"
+                excludeIds={weeklyTopSet}
+                onItemsResolved={setAllTimeTopIds}
               />
 
               {/* Categorias em Destaque */}
@@ -606,6 +618,7 @@ function ContentPage() {
                 downloadedIds={data?.downloadedIds || []}
                 progressMap={progressMap}
                 popularityMap={data?.popularityMap || {}}
+                excludeIds={recommendedExcludeSet}
               />
             </>
           )}

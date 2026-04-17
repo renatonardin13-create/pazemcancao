@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { ContentCard } from "@/components/ContentCard";
 import { POSTER_GRID } from "@/lib/card-grid";
 import { Flame, Trophy, TrendingUp, BookOpen, Video, GraduationCap, FileText } from "lucide-react";
@@ -23,6 +23,8 @@ interface TopRankingSectionProps {
   progressMap?: Record<string, any>;
   lastAccessedId?: string | null;
   mode?: "all_time" | "weekly";
+  excludeIds?: Set<string>;
+  onItemsResolved?: (ids: string[]) => void;
 }
 
 /**
@@ -41,10 +43,13 @@ export function TopRankingSection({
   progressMap = {},
   lastAccessedId = null,
   mode = "all_time",
+  excludeIds,
+  onItemsResolved,
 }: TopRankingSectionProps) {
   const ranked = useMemo(() => {
     return items
       .filter((item: any) => item.is_active && item.show_as_card !== false)
+      .filter((item: any) => !excludeIds?.has(item.id))
       .map((item: any) => {
         const pop = popularityMap[item.id];
         const score = pop ? pop.plays * 2 + pop.downloads * 3 : 0;
@@ -54,7 +59,11 @@ export function TopRankingSection({
       .sort((a, b) => b.score - a.score)
       .slice(0, 10)
       .map((s) => s.item);
-  }, [items, popularityMap]);
+  }, [items, popularityMap, excludeIds]);
+
+  useEffect(() => {
+    onItemsResolved?.(ranked.map((i: any) => i.id));
+  }, [ranked, onItemsResolved]);
 
   if (ranked.length < 3) return null;
 
