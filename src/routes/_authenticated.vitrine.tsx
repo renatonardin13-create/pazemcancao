@@ -51,7 +51,7 @@ function VitrinePage() {
     : (featuredCourse ? [featuredCourse] : []);
 
   const modeShelves = useMemo(() => {
-    return shelves.filter((shelf: any) => {
+    const base = shelves.filter((shelf: any) => {
       // In somente_musica: hide course-specific smart shelves
       if (mode === "somente_musica" && COURSE_SMART_SHELVES.has(shelf.id)) return false;
       // In somente_cursos: show all course shelves (they're already course-based)
@@ -64,7 +64,22 @@ function VitrinePage() {
       const minCards = shelf.id === '__continue__' ? 1 : 2;
       return (shelf.courses?.length || 0) >= minCards;
     });
-  }, [shelves, mode, showCoursesInVitrine, showLancamentos]);
+
+    // Prepend "Mais acessados esta semana" se houver dados (≥2 cursos)
+    const trending = trendingData?.courses || [];
+    if (mode !== "somente_musica" && trending.length >= 2) {
+      return [
+        {
+          id: "__trending__",
+          name: "Mais acessados esta semana",
+          shelf_type: "smart",
+          courses: trending,
+        },
+        ...base,
+      ];
+    }
+    return base;
+  }, [shelves, mode, showCoursesInVitrine, showLancamentos, trendingData]);
 
   const filteredShelves = useMemo(() => {
     if (!searchTerm.trim()) return modeShelves;
