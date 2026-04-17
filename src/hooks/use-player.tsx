@@ -140,13 +140,12 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       audioRef.current.play().catch(() => {});
       setPlaying(true);
     } else {
-      // Find in queue
-      const idx = queueRef.current.findIndex(t => t.id === track.id);
+      const idx = queueRef.current.findIndex((item) => item.id === track.id);
       if (idx >= 0) {
+        queueIndexRef.current = idx;
         setQueueIndex(idx);
         startAudio(track);
       } else {
-        // Track not in current queue — play solo without auto-next
         setQueueState([track]);
         setQueueIndex(0);
         queueRef.current = [track];
@@ -172,6 +171,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       audioRef.current.load();
       audioRef.current = null;
     }
+    queueRef.current = [];
+    queueIndexRef.current = -1;
     setPlaying(false);
     setCurrentTrack(null);
     setProgress(0);
@@ -186,6 +187,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     const idx = queueIndexRef.current;
     if (q.length === 0) return;
     const nextIdx = idx < q.length - 1 ? idx + 1 : 0;
+    queueIndexRef.current = nextIdx;
     setQueueIndex(nextIdx);
     startAudio(q[nextIdx]);
   }, [startAudio]);
@@ -194,7 +196,6 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     const q = queueRef.current;
     const idx = queueIndexRef.current;
     if (q.length === 0) return;
-    // If >3s into track, restart; otherwise go previous
     if (audioRef.current && audioRef.current.currentTime > 3) {
       audioRef.current.currentTime = 0;
       setCurrentTime(0);
@@ -202,16 +203,30 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       return;
     }
     const prevIdx = idx > 0 ? idx - 1 : q.length - 1;
+    queueIndexRef.current = prevIdx;
     setQueueIndex(prevIdx);
     startAudio(q[prevIdx]);
   }, [startAudio]);
 
   const setQueue = useCallback((tracks: Track[], startIndex = 0) => {
-    setQueueState(tracks);
-    setQueueIndex(startIndex);
-    if (tracks.length > 0 && startIndex < tracks.length) {
-      startAudio(tracks[startIndex]);
+    const playableTracks = tracks.filter((track) => Boolean(track?.audioUrl));
+
+    if (playableTracks.length === 0) {
+      queueRef.current = [];
+      queueIndexRef.current = -1;
+      setQueueState([]);
+      setQueueIndex(-1);
+      setPlaying(false);
+      return;
     }
+
+    const safeStartIndex = Math.min(Math.max(startIndex, 0), playableTracks.length - 1);
+
+    queueRef.current = playableTracks;
+    queueIndexRef.current = safeStartIndex;
+    setQueueState(playableTracks);
+    setQueueIndex(safeStartIndex);
+    startAudio(playableTracks[safeStartIndex]);
   }, [startAudio]);
 
   return (
