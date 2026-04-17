@@ -185,11 +185,12 @@ function MusicLibraryPage() {
   const isLocked = accessData?.trialExpired === true || accessData?.isBlocked === true;
   const canDownload = accessData?.canDownload !== false;
 
-  console.log("init musicas");
-  console.log("categoria:", categoryFilter);
-  console.log("musicas:", tracks.length);
+  console.log("[musicas-route] init");
+  console.log("[musicas-route] categoria-param", rawCategoryFilter || "(nenhuma)");
+  console.log("[musicas-route] categorias-loaded", categories.length);
+  console.log("[musicas-route] musicas-loaded", tracks.length);
   if (tracksFailed || categoriesFailed || playlistsFailed) {
-    console.error("erro:", { tracksFailed, categoriesFailed, playlistsFailed });
+    console.error("[musicas-route] error", { tracksFailed, categoriesFailed, playlistsFailed });
   }
 
   const filteredTracks = useMemo(() => {
