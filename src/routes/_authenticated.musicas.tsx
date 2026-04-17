@@ -519,6 +519,7 @@ function MusicLibraryPage() {
               </section>
             )}
 
+            {!categoryFilter && (
             <section>
               <div className="mb-4 flex items-center gap-2">
                 <Disc3 className="h-4 w-4 text-primary/70" />
@@ -582,6 +583,7 @@ function MusicLibraryPage() {
                 </div>
               ) : null}
             </section>
+            )}
           </div>
           </SafeBoundary>
         </div>
