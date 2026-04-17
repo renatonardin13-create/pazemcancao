@@ -17,7 +17,7 @@ import { StudentLayout } from "@/components/StudentLayout";
 import { SafeBoundary } from "@/components/SafeBoundary";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { listActiveTracks, listCategories } from "@/lib/tracks.functions";
+import { listActiveTracks } from "@/lib/tracks.functions";
 import { listPlaylistsWithCounts, getPlaylistWithTracks } from "@/lib/playlists.functions";
 import { checkBuyerAccess } from "@/lib/access.functions";
 import { logDownload } from "@/lib/analytics.functions";
@@ -138,11 +138,8 @@ function MusicLibraryPage() {
     retry: 2,
   });
 
-  const { data: categoriesData, isLoading: categoriesLoading, isError: categoriesFailed } = useQuery({
-    queryKey: ["music-library-categories"],
-    queryFn: () => listCategories(),
-    staleTime: 60_000,
-  });
+  const categoriesLoading = false;
+  const categoriesFailed = false;
 
   const { data: playlistsData, isError: playlistsFailed } = useQuery({
     queryKey: ["music-library-playlists"],
@@ -166,11 +163,6 @@ function MusicLibraryPage() {
   const tracks = Array.isArray(tracksData?.tracks) ? tracksData.tracks : [];
   const playlists = Array.isArray(playlistsData?.playlists) ? playlistsData.playlists : [];
 
-  // A tabela `categories` é global (compartilhada com cursos/ebooks),
-  // por isso NÃO usamos categoriesData aqui. Derivamos as categorias da
-  // área de louvores diretamente do campo `category` das tracks ativas,
-  // garantindo que apenas categorias reais de músicas apareçam.
-  void categoriesData;
   const categories = useMemo(() => {
     const seen = new Map<string, { id: string; name: string; slug: string }>();
     for (const t of tracks as any[]) {
@@ -183,33 +175,17 @@ function MusicLibraryPage() {
   }, [tracks]);
   const playlistTracks = Array.isArray(playlistTracksData?.tracks) ? playlistTracksData.tracks : [];
 
-  // Validação segura da categoria vinda da URL: nunca quebra,
-  // cai em "destaques-top-10" → primeira categoria → "" (todas).
   const rawCategoryFilter = typeof search?.categoria === "string" ? search.categoria : "";
   const categorySlugs = categories
     .map((c: any) => safeSlug(c?.slug || c?.name))
     .filter(Boolean);
   const requestedSlug = safeSlug(rawCategoryFilter);
   const isRequestedValid = Boolean(requestedSlug) && categorySlugs.includes(requestedSlug);
-  const fallbackSlug = categorySlugs.includes("destaques-top-10")
-    ? "destaques-top-10"
-    : categorySlugs[0] || "";
-  const categoryFilter = isRequestedValid
-    ? requestedSlug
-    : rawCategoryFilter
-      ? fallbackSlug
-      : "";
+  const categoryFilter = isRequestedValid ? requestedSlug : "";
 
   const isLocked = accessData?.trialExpired === true || accessData?.isBlocked === true;
   const canDownload = accessData?.canDownload !== false;
 
-  console.log("[musicas-route] init");
-  console.log("[musicas-route] categoria-param", rawCategoryFilter || "(nenhuma)");
-  console.log("[musicas-route] categorias-loaded", categories.length);
-  console.log("[musicas-route] musicas-loaded", tracks.length);
-  if (tracksFailed || categoriesFailed || playlistsFailed) {
-    console.error("[musicas-route] error", { tracksFailed, categoriesFailed, playlistsFailed });
-  }
 
   const filteredTracks = useMemo(() => {
     return tracks.filter((track: any) => {

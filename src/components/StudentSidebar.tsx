@@ -115,9 +115,12 @@ export function StudentSidebar() {
 
   /** Render the Louvores submenu with categories */
   const renderLouvoresSubmenu = () => {
-    const currentCategoria = (location.search as any)?.categoria as string | undefined;
+    const currentCategoriaRaw = (location.search as any)?.categoria as string | undefined;
+    const currentCategoria = typeof currentCategoriaRaw === "string" ? currentCategoriaRaw.trim().toLowerCase() : "";
+    const validCategorySlugs = new Set(visibleCategories.map((cat: any) => String(cat.slug || cat.name).trim().toLowerCase()));
+    const hasValidCategory = Boolean(currentCategoria) && validCategorySlugs.has(currentCategoria);
     const isOnMusicas = isActivePrefix("/musicas");
-    const isGeneralActive = isOnMusicas && !currentCategoria;
+    const isGeneralActive = isOnMusicas && !hasValidCategory;
 
     return (
       <div>
@@ -153,8 +156,8 @@ export function StudentSidebar() {
         {louvoresOpen && (
           <div className="mt-2.5 space-y-1.5">
             {visibleCategories.map((cat: any) => {
-              const catSlug = (cat.slug || cat.name.toLowerCase()).toLowerCase();
-              const isActiveCat = isOnMusicas && currentCategoria === catSlug;
+              const catSlug = String(cat.slug || cat.name).trim().toLowerCase();
+              const isActiveCat = isOnMusicas && hasValidCategory && currentCategoria === catSlug;
               return (
                 <Link
                   key={cat.id}
