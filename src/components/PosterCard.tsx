@@ -118,16 +118,17 @@ export const PosterCard = memo(function PosterCard({
       >
         <div className={`relative aspect-[9/13] overflow-hidden bg-gradient-to-br ${gradientClass}`}>
           {/* Capa */}
-          {typeof cover === "string" && cover ? (
+          {showImage ? (
             <OptimizedImage
-              src={cover}
+              src={cover as string}
               alt={coverAlt}
               context="card"
+              onError={() => setImgFailed(true)}
               className={`h-full w-full object-cover md:transition-transform md:duration-[900ms] md:ease-out md:group-hover/card:scale-[1.08] ${
                 locked ? "saturate-[0.45] brightness-[0.6]" : ""
               }`}
             />
-          ) : cover ? (
+          ) : cover && typeof cover !== "string" ? (
             cover
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">{fallback}</div>
