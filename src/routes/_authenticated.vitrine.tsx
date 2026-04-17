@@ -82,10 +82,38 @@ function VitrinePage() {
     return base;
   }, [shelves, mode, showCoursesInVitrine, showLancamentos, trendingData]);
 
+  // RC1: dedupe — um curso não pode aparecer em mais de uma prateleira.
+  // Ordem de prioridade: a primeira prateleira fica intacta; as seguintes
+  // removem cursos já exibidos. Prateleiras "recomendadas" são empurradas
+  // para o final para receberem o restante.
+  const dedupedShelves = useMemo(() => {
+    const isRecommended = (s: any) =>
+      /recomend/i.test(s?.name || "") || s?.auto_criteria === "recommended";
+    const ordered = [...modeShelves].sort((a: any, b: any) => {
+      const ar = isRecommended(a) ? 1 : 0;
+      const br = isRecommended(b) ? 1 : 0;
+      return ar - br;
+    });
+    const seen = new Set<string>();
+    return ordered
+      .map((shelf: any) => {
+        const courses = (shelf.courses || []).filter((c: any) => {
+          if (seen.has(c.id)) return false;
+          seen.add(c.id);
+          return true;
+        });
+        return { ...shelf, courses };
+      })
+      .filter((shelf: any) => {
+        const minCards = shelf.id === "__continue__" ? 1 : 2;
+        return shelf.courses.length >= minCards;
+      });
+  }, [modeShelves]);
+
   const filteredShelves = useMemo(() => {
-    if (!searchTerm.trim()) return modeShelves;
+    if (!searchTerm.trim()) return dedupedShelves;
     const term = searchTerm.toLowerCase();
-    return modeShelves
+    return dedupedShelves
       .map((shelf: any) => ({
         ...shelf,
         courses: shelf.courses.filter((c: any) =>
@@ -94,7 +122,7 @@ function VitrinePage() {
         ),
       }))
       .filter((shelf: any) => shelf.courses.length > 0);
-  }, [modeShelves, searchTerm]);
+  }, [dedupedShelves, searchTerm]);
 
   // Count admin shelves for promo banner positioning
   let adminShelfIndex = 0;
