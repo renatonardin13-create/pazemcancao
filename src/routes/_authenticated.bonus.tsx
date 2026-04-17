@@ -9,6 +9,7 @@ import { listActiveTracks } from "@/lib/tracks.functions";
 import { listFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { trackContentView, trackContentDownload } from "@/lib/progress.functions";
 import { TrackCard } from "@/components/TrackCard";
+import { POSTER_GRID } from "@/lib/card-grid";
 import { useMemo, useCallback } from "react";
 import { Gift, Music } from "lucide-react";
 
@@ -113,7 +114,7 @@ function BonusPage() {
               ) : (
                 <div className="space-y-12">
                   {bonusItems.length > 0 && (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                    <div className={POSTER_GRID}>
                       {bonusItems.map((item: any, idx: number) => (
                         <ContentCard
                           key={item.id}
@@ -143,7 +144,7 @@ function BonusPage() {
                           ({bonusTracks.length})
                         </span>
                       </div>
-                      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+                      <div className={POSTER_GRID}>
                         {bonusTracks.map((track: any, idx: number) => (
                           <TrackCard key={track.id} track={track} index={idx} />
                         ))}

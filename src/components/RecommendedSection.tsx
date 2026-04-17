@@ -153,7 +153,7 @@ export function RecommendedSection({
           </p>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      <div className={POSTER_GRID}>
         {recommendations.map((item: any, idx: number) => {
           const config = typeConfig[item.content_type] || typeConfig.material;
           return (

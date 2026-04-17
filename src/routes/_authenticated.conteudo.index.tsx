@@ -512,7 +512,7 @@ function ContentPage() {
                     return (
                       <div key={`journey-${jg}`} className="space-y-4">
                         <SectionHeader title={label} count={jgItems.length} />
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+                        <div className={POSTER_GRID}>
                           {jgItems.map((item: any, idx: number) => {
                             const itemConfig =
                               typeConfig[item.content_type] || typeConfig.material;
@@ -675,7 +675,7 @@ function ContentShelf({
           <p className="text-[11px] text-muted-foreground/40 mt-0.5">{subtitle}</p>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+      <div className={POSTER_GRID}>
         {items.map((item: any, idx: number) => {
           const config = typeConfig[item.content_type] || typeConfig.material;
           return (
@@ -722,7 +722,7 @@ function ContentGrid({
   onToggleFavorite?: (contentId: string, isFav: boolean) => void;
 }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+    <div className={POSTER_GRID}>
       {items.map((item: any, idx: number) => (
         <ContentCard
           key={item.id}
