@@ -146,6 +146,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         // If refresh failed and there's no session, force clean signOut
         if (event === 'TOKEN_REFRESHED' && !newSession) {
+          toast.error('Sua sessão expirou, faça login novamente.');
           await supabase.auth.signOut();
           return;
         }
@@ -162,6 +163,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data: { session: s }, error } = await supabase.auth.getSession();
       if (error || !s) {
         // Session expired or invalid — force re-login
+        toast.error('Sua sessão expirou, faça login novamente.');
         await supabase.auth.signOut();
       }
     };
