@@ -122,6 +122,7 @@ function MusicLibraryState({
 
 function MusicLibraryPage() {
   const search = Route.useSearch();
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [activePlaylistId, setActivePlaylistId] = useState<string | null>(null);
 
@@ -237,7 +238,12 @@ function MusicLibraryPage() {
   }
 
   if (tracksFailed || categoriesFailed || playlistsFailed) {
-    return <MusicLibraryState message="Erro ao carregar músicas" />;
+    return (
+      <MusicLibraryState
+        message="Erro ao carregar músicas."
+        onRetry={() => router.invalidate()}
+      />
+    );
   }
 
   if (hasInvalidTracksPayload || hasInvalidCategoriesPayload) {
