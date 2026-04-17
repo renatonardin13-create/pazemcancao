@@ -87,8 +87,8 @@ function MusicDetailPage() {
   });
 
   const { data: allTracksData } = useQuery({
-    queryKey: ["active-tracks"],
-    queryFn: () => listActiveTracks(),
+    queryKey: ["all-tracks"],
+    queryFn: () => listAllTracks(),
   });
 
   const { currentTrack, playing, progress, toggle } = usePlayer();
