@@ -135,23 +135,34 @@ export function StudentSidebar() {
   /** Render the Louvores submenu with categories */
   const renderLouvoresSubmenu = () => (
     <div>
-      <button
-        onClick={() => setLouvoresOpen(!louvoresOpen)}
+      <div
         className={cn(
           navItemClass(isActivePrefix("/musicas")),
-          "w-full justify-between"
+          "w-full justify-between p-0 pr-2"
         )}
       >
-        <span className="flex items-center gap-4">
+        <Link
+          to="/musicas"
+          search={{}}
+          onClick={() => setMobileOpen(false)}
+          className="flex flex-1 items-center gap-4 px-5 py-4"
+        >
           <Music2 className="h-[22px] w-[22px] shrink-0" />
           Louvores
-        </span>
-        {louvoresOpen ? (
-          <ChevronDown className="h-4.5 w-4.5 text-muted-foreground/40 transition-transform duration-300" />
-        ) : (
-          <ChevronRight className="h-4.5 w-4.5 text-muted-foreground/40 transition-transform duration-300" />
-        )}
-      </button>
+        </Link>
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); setLouvoresOpen(!louvoresOpen); }}
+          aria-label={louvoresOpen ? "Recolher categorias" : "Expandir categorias"}
+          className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-white/[0.05] transition"
+        >
+          {louvoresOpen ? (
+            <ChevronDown className="h-4.5 w-4.5 text-muted-foreground/40 transition-transform duration-300" />
+          ) : (
+            <ChevronRight className="h-4.5 w-4.5 text-muted-foreground/40 transition-transform duration-300" />
+          )}
+        </button>
+      </div>
 
       {louvoresOpen && (
         <div className="mt-2.5 space-y-1.5">
