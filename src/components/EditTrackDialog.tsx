@@ -70,18 +70,17 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
 
       // Cover was removed
       if (!coverPreview && !coverFile) {
-        if (track.cover_url) {
-          const parts = track.cover_url.split("/covers/");
-          const oldPath = parts.length > 1 ? parts.pop()?.split("?")[0] : null;
-          if (oldPath) {
-            await supabase.storage.from("covers").remove([`covers/${oldPath}`]);
-          }
-        }
         cover_url = null;
       } else if (coverFile) {
         // Upload new cover
         setUploading(true);
-        const fileName = `covers/${track.id}.png`;
+
+        // Refresh session to avoid JWT expiration
+        await supabase.auth.refreshSession().catch(() => {});
+
+        const ext = (coverFile.name.split(".").pop() || "jpg").toLowerCase();
+        const fileName = `tracks/${track.id}-${Date.now()}.${ext}`;
+
         console.log("[EditTrackDialog] Iniciando upload da capa", {
           trackId: track.id,
           fileName,
@@ -89,19 +88,29 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
           fileSize: coverFile.size,
         });
 
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        let { error: uploadError } = await supabase.storage
           .from("covers")
           .upload(fileName, coverFile, {
             contentType: coverFile.type,
             upsert: true,
           });
 
+        // Retry once if token expired
+        if (uploadError && /exp.*claim|jwt|expired/i.test(uploadError.message)) {
+          await supabase.auth.refreshSession();
+          const retry = await supabase.storage
+            .from("covers")
+            .upload(fileName, coverFile, {
+              contentType: coverFile.type,
+              upsert: true,
+            });
+          uploadError = retry.error;
+        }
+
         if (uploadError) {
           console.error("[EditTrackDialog] Erro no upload da capa:", uploadError);
           throw new Error("Erro ao enviar capa: " + uploadError.message);
         }
-
-        console.log("[EditTrackDialog] Upload concluído", uploadData);
 
         const { data: urlData } = supabase.storage
           .from("covers")
