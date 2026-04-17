@@ -4,6 +4,7 @@ import { logPlay } from "@/lib/analytics.functions";
 
 interface PlayerState {
   currentTrack: Track | null;
+  nextTrack: Track | null;
   playing: boolean;
   progress: number;
   duration: number;
@@ -186,7 +187,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     const q = queueRef.current;
     const idx = queueIndexRef.current;
     if (q.length === 0) return;
-    const nextIdx = idx < q.length - 1 ? idx + 1 : 0;
+    if (idx >= q.length - 1) return; // fim da fila — não volta ao início
+    const nextIdx = idx + 1;
     queueIndexRef.current = nextIdx;
     setQueueIndex(nextIdx);
     startAudio(q[nextIdx]);
@@ -229,10 +231,12 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     startAudio(playableTracks[safeStartIndex]);
   }, [startAudio]);
 
+  const nextTrack = queueIndex >= 0 && queueIndex < queue.length - 1 ? queue[queueIndex + 1] : null;
+
   return (
     <PlayerContext.Provider
       value={{
-        currentTrack, playing, progress, duration, currentTime,
+        currentTrack, nextTrack, playing, progress, duration, currentTime,
         queue, queueIndex,
         play: playAudio, pause, toggle, seek, stop, next, previous, setQueue,
       }}
