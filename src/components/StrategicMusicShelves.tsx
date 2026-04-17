@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { getStrategicPlaylists, type StrategicPlaylist } from "@/lib/strategic-playlists.functions";
 import { ChevronLeft, ChevronRight, Lock } from "lucide-react";
-import { useRef, useState, useCallback, useEffect } from "react";
+import { useRef, useState, useCallback, useEffect, memo } from "react";
 import { TrackCard } from "@/components/TrackCard";
 import { POSTER_SHELF_ITEM } from "@/lib/card-grid";
 import type { Track } from "@/lib/sample-tracks";
@@ -30,7 +30,7 @@ function mapTrack(track: any): Track {
   };
 }
 
-export function StrategicMusicShelves() {
+export const StrategicMusicShelves = memo(function StrategicMusicShelves() {
   const { data, isLoading } = useQuery({
     queryKey: ["strategic-playlists"],
     queryFn: () => getStrategicPlaylists(),
