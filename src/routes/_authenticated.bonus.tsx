@@ -5,13 +5,11 @@ import { FooterLinks } from "@/components/FooterLinks";
 import { ContentCard } from "@/components/ContentCard";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listContentItems } from "@/lib/content.functions";
-import { listAllTracks } from "@/lib/tracks.functions";
 import { listFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { trackContentView, trackContentDownload } from "@/lib/progress.functions";
-import { TrackCard } from "@/components/TrackCard";
 import { POSTER_GRID } from "@/lib/card-grid";
 import { useMemo, useCallback } from "react";
-import { Gift, Music } from "lucide-react";
+import { Gift } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/bonus")({
   component: BonusPage,
