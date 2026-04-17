@@ -618,6 +618,7 @@ function ContentPage() {
                 downloadedIds={data?.downloadedIds || []}
                 progressMap={progressMap}
                 popularityMap={data?.popularityMap || {}}
+                excludeIds={recommendedExcludeSet}
               />
             </>
           )}
