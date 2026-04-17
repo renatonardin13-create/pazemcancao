@@ -415,48 +415,71 @@ function MusicLibraryPage() {
                   Nenhuma música encontrada
                 </div>
               ) : (
-                <div className="grid gap-3">
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                   {filteredTracks.map((track: any) => {
                     const playerTrack = dbTrackToPlayerTrack(track);
                     const isCurrent = currentTrack?.id === playerTrack.id;
                     const isPlaying = isCurrent && playing;
+                    const canPlay = Boolean(playerTrack.audioUrl);
 
                     return (
                       <div
                         key={track.id}
-                        className="rounded-2xl border border-border/30 bg-background/40 p-4"
+                        className="group relative flex flex-col overflow-hidden rounded-2xl border border-border/30 bg-card/40 transition-all hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10"
                       >
-                        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                          <div className="min-w-0 flex-1">
-                            <div className="flex items-center gap-3">
-                              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-border/30 bg-card/40 overflow-hidden">
-                                {playerTrack.coverUrl ? (
-                                  <img src={playerTrack.coverUrl} alt={playerTrack.title} className="h-full w-full object-cover" loading="lazy" />
-                                ) : (
-                                  <Music className="h-5 w-5 text-muted-foreground/70" />
-                                )}
-                              </div>
-                              <div className="min-w-0">
-                                <Link to="/musicas/$trackId" params={{ trackId: String(track.id) }} className="block truncate font-medium text-foreground hover:underline">
-                                  {track?.title || "Música sem título"}
-                                </Link>
-                                <p className="truncate text-sm text-muted-foreground/70">
-                                  {track?.category || "Sem categoria"} • {track?.duration || "0:00"}
-                                </p>
-                              </div>
+                        <Link
+                          to="/musicas/$trackId"
+                          params={{ trackId: String(track.id) }}
+                          className="relative block aspect-[9/13] w-full overflow-hidden bg-background/60"
+                        >
+                          {playerTrack.coverUrl ? (
+                            <img
+                              src={playerTrack.coverUrl}
+                              alt={playerTrack.title}
+                              loading="lazy"
+                              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center">
+                              <Music className="h-10 w-10 text-muted-foreground/40" />
                             </div>
-                          </div>
+                          )}
+                          <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-background/95 via-background/50 to-transparent" />
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (canPlay) handleTrackPlay(track, filteredTracks);
+                            }}
+                            disabled={!canPlay}
+                            className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 transition-transform hover:scale-110 disabled:opacity-50"
+                            aria-label={isPlaying ? "Pausar" : "Ouvir"}
+                          >
+                            {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 translate-x-[1px]" />}
+                          </button>
+                        </Link>
 
-                          <div className="flex flex-wrap items-center gap-2">
-                            <Button variant="premiumOutline" size="sm" onClick={() => handleTrackPlay(track, filteredTracks)} disabled={!playerTrack.audioUrl}>
-                              {isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
-                              {isPlaying ? "Pausar" : "Ouvir"}
-                            </Button>
-                            <Button variant="outline" size="sm" onClick={() => handleDownload(track)} disabled={isLocked || !canDownload || !playerTrack.downloadUrl}>
-                              <Download className="h-3.5 w-3.5" />
-                              Baixar
-                            </Button>
-                          </div>
+                        <div className="flex flex-1 flex-col gap-2 p-3">
+                          <Link
+                            to="/musicas/$trackId"
+                            params={{ trackId: String(track.id) }}
+                            className="line-clamp-2 text-sm font-medium text-foreground transition-colors group-hover:text-primary"
+                          >
+                            {track?.title || "Música sem título"}
+                          </Link>
+                          <p className="line-clamp-1 text-xs text-muted-foreground/70">
+                            {track?.category || "Sem categoria"} • {track?.duration || "0:00"}
+                          </p>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-auto h-8 w-full text-xs"
+                            onClick={() => handleDownload(track)}
+                            disabled={isLocked || !canDownload || !playerTrack.downloadUrl}
+                          >
+                            <Download className="h-3 w-3" />
+                            Baixar
+                          </Button>
                         </div>
                       </div>
                     );
