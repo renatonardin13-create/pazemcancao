@@ -333,10 +333,10 @@ function MusicLibraryPage() {
               </div>
             </section>
 
-            <section className="rounded-3xl border border-border/30 bg-card/20 p-5 sm:p-6">
+            <section>
               <div className="mb-4 flex items-center gap-2">
-                <Disc3 className="h-4 w-4 text-muted-foreground/70" />
-                <h2 className="text-sm font-medium text-foreground">Playlists</h2>
+                <Disc3 className="h-4 w-4 text-primary/70" />
+                <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">Playlists</h2>
               </div>
 
               {playlists.length === 0 ? (
@@ -344,7 +344,7 @@ function MusicLibraryPage() {
                   Nenhuma playlist disponível.
                 </div>
               ) : (
-                <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {playlists.map((playlist: any) => {
                     const isActive = playlist.id === activePlaylistId;
                     return (
@@ -352,23 +352,27 @@ function MusicLibraryPage() {
                         key={playlist.id}
                         type="button"
                         onClick={() => setActivePlaylistId(isActive ? null : playlist.id)}
-                        className={`rounded-2xl border p-4 text-left transition-colors ${
+                        className={`group relative overflow-hidden rounded-2xl border p-5 text-left transition-all duration-300 hover:-translate-y-1 ${
                           isActive
-                            ? "border-primary/40 bg-primary/10"
-                            : "border-border/30 bg-background/40 hover:border-border/60"
+                            ? "border-primary/50 bg-gradient-to-br from-primary/15 to-primary/5 shadow-[0_10px_30px_-10px_hsl(var(--primary)/0.5)]"
+                            : "border-border/40 bg-gradient-to-br from-card/60 to-card/20 hover:border-primary/30 hover:shadow-lg"
                         }`}
                       >
-                        <div className="flex items-start justify-between gap-3">
-                          <div>
-                            <h3 className="font-medium text-foreground">{playlist?.name || "Playlist"}</h3>
-                            {playlist?.description ? (
-                              <p className="mt-1 line-clamp-2 text-sm text-muted-foreground/70">{playlist.description}</p>
-                            ) : null}
+                        <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-primary/10 blur-2xl" />
+                        <div className="relative flex items-start justify-between gap-3">
+                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 ring-1 ring-primary/20">
+                            <Disc3 className="h-6 w-6 text-primary" />
                           </div>
-                          <span className="rounded-full border border-border/40 px-2.5 py-1 text-[11px] text-muted-foreground/70">
+                          <span className="rounded-full border border-border/40 bg-background/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/80 backdrop-blur">
                             {playlist?.track_count || 0} faixas
                           </span>
                         </div>
+                        <h3 className="relative mt-4 line-clamp-1 text-base font-bold tracking-tight text-foreground">
+                          {playlist?.name || "Playlist"}
+                        </h3>
+                        {playlist?.description ? (
+                          <p className="relative mt-1 line-clamp-2 text-xs text-muted-foreground/70">{playlist.description}</p>
+                        ) : null}
                       </button>
                     );
                   })}
@@ -376,15 +380,15 @@ function MusicLibraryPage() {
               )}
 
               {activePlaylistId ? (
-                <div className="mt-5 rounded-2xl border border-border/30 bg-background/40 p-4">
+                <div className="mt-5 rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/10 to-transparent p-5">
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                      <h3 className="font-medium text-foreground">{playlistTracksData?.playlist?.name || "Playlist selecionada"}</h3>
+                      <h3 className="font-bold text-foreground">{playlistTracksData?.playlist?.name || "Playlist selecionada"}</h3>
                       <p className="text-sm text-muted-foreground/70">
                         {playlistLoading ? "Carregando músicas da playlist..." : `${playlistTracks.length} música(s) nesta playlist`}
                       </p>
                     </div>
-                    <Button variant="premiumOutline" size="sm" onClick={handlePlaylistPlay} disabled={!playlistTracks.length || playlistLoading}>
+                    <Button variant="premium" size="sm" onClick={handlePlaylistPlay} disabled={!playlistTracks.length || playlistLoading}>
                       <Play className="h-3.5 w-3.5" />
                       Ouvir playlist
                     </Button>
