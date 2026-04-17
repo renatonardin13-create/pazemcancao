@@ -445,6 +445,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
 
     const bannerConfig = bannerSetting?.value as any;
     let featuredCourse: any = null;
+    const featuredCourses: any[] = [];
 
     if (bannerConfig?.enabled === true) {
       if (bannerConfig?.course_id) {
@@ -476,11 +477,30 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
           ? result[0].courses.find((course: any) => course.banner_image_url || course.cover_image_url) || null
           : null;
       }
+
+      // Monta lista de até 3 destaques (carrossel rotativo)
+      const seen = new Set<string>();
+      if (featuredCourse) {
+        featuredCourses.push(featuredCourse);
+        seen.add(featuredCourse.id);
+      }
+      for (const shelf of result) {
+        for (const course of shelf.courses || []) {
+          if (featuredCourses.length >= 3) break;
+          if (seen.has(course.id)) continue;
+          if (course.banner_image_url || course.cover_image_url) {
+            featuredCourses.push(course);
+            seen.add(course.id);
+          }
+        }
+        if (featuredCourses.length >= 3) break;
+      }
     }
 
     return {
       shelves: result,
       promoBanners: promoBanners || [],
       featuredCourse,
+      featuredCourses,
     };
   });

@@ -39,6 +39,9 @@ function VitrinePage() {
   const shelves = data?.shelves || [];
   const promoBanners = data?.promoBanners || [];
   const featuredCourse = data?.featuredCourse;
+  const featuredCourses: any[] = (data as any)?.featuredCourses?.length
+    ? (data as any).featuredCourses
+    : (featuredCourse ? [featuredCourse] : []);
 
   const modeShelves = useMemo(() => {
     return shelves.filter((shelf: any) => {
@@ -93,9 +96,9 @@ function VitrinePage() {
               </div>
             </div>
 
-            {/* ── Destaque da semana (card compacto) ── */}
-            {featuredCourse && !(mode === "somente_musica" && featuredCourse.id !== "__custom_banner__") && (
-              <FeaturedHighlight course={featuredCourse} />
+            {/* ── Destaque da semana (carrossel rotativo até 3) ── */}
+            {featuredCourses.length > 0 && !(mode === "somente_musica" && featuredCourses[0].id !== "__custom_banner__") && (
+              <FeaturedCarousel courses={featuredCourses} />
             )}
 
             {/* Search bar */}
@@ -197,6 +200,48 @@ function VitrinePage() {
       </div>
     </StudentLayout>
     </ModuleGuard>
+  );
+}
+
+/* ── Destaque da semana — carrossel rotativo (até 3, 6s) ── */
+function FeaturedCarousel({ courses }: { courses: any[] }) {
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const total = courses.length;
+
+  useEffect(() => {
+    if (total <= 1 || paused) return;
+    const id = setInterval(() => setIndex((i) => (i + 1) % total), 6000);
+    return () => clearInterval(id);
+  }, [total, paused]);
+
+  if (total === 0) return null;
+  const current = courses[Math.min(index, total - 1)];
+
+  return (
+    <div
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      className="relative"
+    >
+      <div key={current.id} className="animate-in fade-in duration-500">
+        <FeaturedHighlight course={current} />
+      </div>
+      {total > 1 && (
+        <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 -mt-4 mb-6 flex items-center justify-center gap-2">
+          {courses.map((c, i) => (
+            <button
+              key={c.id}
+              aria-label={`Destaque ${i + 1}`}
+              onClick={() => setIndex(i)}
+              className={`h-1.5 rounded-full transition-all ${
+                i === index ? 'w-8 bg-gold' : 'w-2 bg-gold/30 hover:bg-gold/50'
+              }`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
