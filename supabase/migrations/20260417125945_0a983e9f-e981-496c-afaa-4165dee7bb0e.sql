@@ -1,0 +1,1 @@
+UPDATE public.playlists SET is_active = true WHERE is_active = false;
