@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TrackCard } from "@/components/TrackCard";
 import { POSTER_GRID } from "@/lib/card-grid";
+import { PosterShelfRow, PosterShelfItem } from "@/components/PosterShelfRow";
 import { listAllTracks } from "@/lib/tracks.functions";
 import { listPlaylistsWithCounts, getPlaylistWithTracks } from "@/lib/playlists.functions";
 import { checkBuyerAccess } from "@/lib/access.functions";
