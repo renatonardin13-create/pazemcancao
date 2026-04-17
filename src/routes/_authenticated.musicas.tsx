@@ -414,15 +414,21 @@ function MusicLibraryPage() {
                 </div>
               ) : categoryFilter ? (
                 // Categoria selecionada → carrossel horizontal com setas.
-                // Mantém o mesmo card padrão (TrackCard) para preservar
-                // tamanho, proporção e layout interno.
-                <PosterShelfRow>
-                  {filteredTracks.map(dbTrackToPlayerTrack).map((pt, idx) => (
-                    <PosterShelfItem key={pt.id}>
-                      <TrackCard track={pt} index={idx} />
-                    </PosterShelfItem>
-                  ))}
-                </PosterShelfRow>
+                // Mostramos APENAS os louvores regulares aqui; os bônus dessa
+                // mesma categoria aparecem logo abaixo num bloco em destaque.
+                regularTracks.length > 0 ? (
+                  <PosterShelfRow>
+                    {regularTracks.map(dbTrackToPlayerTrack).map((pt, idx) => (
+                      <PosterShelfItem key={pt.id}>
+                        <TrackCard track={pt} index={idx} />
+                      </PosterShelfItem>
+                    ))}
+                  </PosterShelfRow>
+                ) : (
+                  <div className="rounded-2xl border border-dashed border-border/40 px-4 py-8 text-center text-sm text-muted-foreground/70">
+                    Esta categoria ainda não possui louvores regulares.
+                  </div>
+                )
               ) : (
                 <div className={POSTER_GRID}>
                   {filteredTracks.map(dbTrackToPlayerTrack).map((pt, idx) => (
@@ -431,6 +437,34 @@ function MusicLibraryPage() {
                 </div>
               )}
             </section>
+
+            {/* Bônus DENTRO da categoria — bloco visualmente distinto, com
+                destaque dourado. Respeita data de liberação porque o próprio
+                TrackCard já exibe o badge "Em breve" quando aplicável. */}
+            {categoryFilter && bonusTracks.length > 0 && (
+              <section className="space-y-4">
+                <div className="rounded-3xl border border-gold/20 bg-gradient-to-br from-gold/[0.06] via-background to-background p-5 sm:p-6">
+                  <div className="mb-4 flex items-end justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <Gift className="h-4 w-4 text-gold/80" />
+                      <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-gold/80">
+                        Bônus de {activeCategoryName}
+                      </h2>
+                    </div>
+                    <span className="rounded-full border border-gold/30 bg-gold/10 px-3 py-1 text-[11px] font-semibold text-gold/90">
+                      {bonusTracks.length} {bonusTracks.length === 1 ? "bônus" : "bônus"}
+                    </span>
+                  </div>
+                  <PosterShelfRow>
+                    {bonusTracks.map(dbTrackToPlayerTrack).map((pt, idx) => (
+                      <PosterShelfItem key={`bonus-${pt.id}`}>
+                        <TrackCard track={pt} index={idx} />
+                      </PosterShelfItem>
+                    ))}
+                  </PosterShelfRow>
+                </div>
+              </section>
+            )}
 
             <section>
               <div className="mb-4 flex items-center gap-2">
