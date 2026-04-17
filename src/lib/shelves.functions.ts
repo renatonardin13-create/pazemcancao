@@ -266,8 +266,13 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       const completedLessons = completedLessonsMap.get(course.id) || 0;
       const progressPct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
+      // RC1: comprado > não-lançado > bloqueado
+      const launchDate = (course as any).launch_date ? new Date((course as any).launch_date) : null;
+      const isNotLaunched = !!launchDate && launchDate.getTime() > Date.now();
+
       let accessState: string;
       if (isEnrolled) {
+        // LIBERADO — compra tem prioridade absoluta, mesmo se ainda não lançado
         if (progressPct >= 100 && totalLessons > 0) {
           accessState = 'completed';
         } else if (progressPct > 0) {
@@ -275,6 +280,9 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
         } else {
           accessState = 'enrolled';
         }
+      } else if (isNotLaunched) {
+        // NAO_LANCADO — não comprou e produto ainda não foi lançado
+        accessState = 'coming_soon';
       } else if (isBlocked) {
         accessState = 'blocked';
       } else if (isExpired) {
