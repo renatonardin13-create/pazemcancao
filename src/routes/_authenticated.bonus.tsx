@@ -120,24 +120,6 @@ function BonusPage() {
                     </div>
                   )}
 
-                  {bonusTracks.length > 0 && (
-                    <section>
-                      <div className="flex items-center gap-2 mb-4">
-                        <Music className="h-5 w-5 text-gold" />
-                        <h2 className="text-lg sm:text-xl font-bold text-foreground/90">
-                          Louvores Bônus
-                        </h2>
-                        <span className="text-xs text-muted-foreground/50">
-                          ({bonusTracks.length})
-                        </span>
-                      </div>
-                      <div className={POSTER_GRID}>
-                        {bonusTracks.map((track: any, idx: number) => (
-                          <TrackCard key={track.id} track={track} index={idx} />
-                        ))}
-                      </div>
-                    </section>
-                  )}
                 </div>
               )}
             </div>
