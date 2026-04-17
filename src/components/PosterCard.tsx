@@ -150,31 +150,34 @@ export const PosterCard = memo(function PosterCard({
 
           {actionTopRight && <div className="absolute top-2.5 right-2.5 z-20">{actionTopRight}</div>}
 
-          {/* Bloco inferior padronizado */}
+          {/*
+            Bloco inferior padronizado.
+            Regras anti-irregularidade:
+            - posicionamento absoluto (não empurra a capa)
+            - title: SEMPRE 2 linhas reservadas (min-h)
+            - subtitle: SEMPRE 1 linha (line-clamp-1)
+            - meta: altura reservada mesmo quando some no hover
+          */}
           <div className="absolute inset-x-0 bottom-0 z-10 px-3.5 pb-4 sm:px-4 sm:pb-5">
             <h3
-              className={`line-clamp-2 text-sm font-bold leading-snug tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] sm:text-[15px] ${
+              className={`line-clamp-2 min-h-[2.6em] text-sm font-bold leading-snug tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] sm:text-[15px] ${
                 locked ? "text-white/60" : "text-white"
               }`}
             >
               {title}
             </h3>
 
-            {subtitle && (
-              <p
-                className={`mt-1.5 line-clamp-2 text-[10px] leading-relaxed sm:text-[11px] ${
-                  locked ? "text-white/25" : "text-white/35"
-                }`}
-              >
-                {subtitle}
-              </p>
-            )}
+            <p
+              className={`mt-1.5 line-clamp-1 text-[10px] leading-relaxed sm:text-[11px] ${
+                locked ? "text-white/25" : "text-white/35"
+              }`}
+            >
+              {subtitle ?? "\u00A0"}
+            </p>
 
-            {meta && (
-              <div className="mt-2 flex items-center gap-3 opacity-80 md:opacity-0 md:group-hover/card:opacity-100 md:transition-opacity md:duration-400">
-                {meta}
-              </div>
-            )}
+            <div className="mt-2 flex h-4 items-center gap-3 opacity-80 md:opacity-0 md:group-hover/card:opacity-100 md:transition-opacity md:duration-400">
+              {meta}
+            </div>
           </div>
 
           {hasProgress && (
