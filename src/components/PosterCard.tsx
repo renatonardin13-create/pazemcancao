@@ -114,7 +114,7 @@ export const PosterCard = memo(function PosterCard({
           highlight ? "ring-gold/12 shadow-[0_2px_32px_-8px] shadow-gold/8" : cfg.showBorder ? "ring-white/[0.04]" : ""
         }`}
       >
-        <div className={`relative aspect-[9/13] overflow-hidden bg-gradient-to-br ${gradientClass}`}>
+        <div className={`relative aspect-[9/13] overflow-hidden bg-gradient-to-br ${gradientClass}`} style={{ opacity: 0.4 + gradientOpacity * 0.6 }}>
           {/* Capa */}
           {typeof cover === "string" && cover ? (
             <OptimizedImage
