@@ -407,7 +407,7 @@ function MusicLibraryPage() {
                 </div>
               ) : filteredTracks.length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-border/40 px-4 py-10 text-center text-sm text-muted-foreground/70">
-                  Nenhuma música disponível
+                  Nenhuma música encontrada
                 </div>
               ) : (
                 <div className="grid gap-3">
