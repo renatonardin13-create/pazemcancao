@@ -50,25 +50,42 @@ export function StudentSidebar() {
 
   const allTracks = tracksData?.tracks || [];
 
+const OFFICIAL_LOUVOR_CATEGORIES = [
+  "destaques",
+  "soldado ferido",
+  "ansiedade",
+  "cura da alma",
+  "não desista",
+  "refúgio",
+] as const;
+
+const LOUVOR_CATEGORY_LABELS: Record<(typeof OFFICIAL_LOUVOR_CATEGORIES)[number], string> = {
+  destaques: "Destaques (Top 10)",
+  "soldado ferido": "Soldado Ferido",
+  ansiedade: "Ansiedade",
+  "cura da alma": "Cura da Alma",
+  "não desista": "Não Desista",
+  refúgio: "Refúgio",
+};
+
   const normalizeStr = (s: string) =>
     s.replace(/^[^\p{L}\p{N}]+/u, "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-  // Derive categories ONLY from active tracks (avoids mixing with global
-  // categories used by courses/ebooks).
   const visibleCategories = useMemo(() => {
-    const seen = new Map<string, { id: string; name: string; slug: string; icon?: string }>();
+    const available = new Set<string>();
     for (const t of allTracks as any[]) {
       const rawName = String(t?.category || "").trim();
-      if (!rawName) continue;
-      const cleanName = rawName.replace(/^[^\p{L}\p{N}]+\s*/u, "").trim();
       const key = normalizeStr(rawName);
-      if (!key) continue;
-      if (seen.has(key)) continue;
-      // skip "destaques" / top-10 — exibido como item fixo separado
-      if (key.startsWith("destaques") || key.includes("top10") || key.includes("top-10")) continue;
-      seen.set(key, { id: key, name: cleanName || rawName, slug: rawName.toLowerCase() });
+      if (OFFICIAL_LOUVOR_CATEGORIES.includes(key as (typeof OFFICIAL_LOUVOR_CATEGORIES)[number])) {
+        available.add(key);
+      }
     }
-    return Array.from(seen.values());
+
+    return OFFICIAL_LOUVOR_CATEGORIES.filter((slug) => available.has(slug)).map((slug) => ({
+      id: slug,
+      name: LOUVOR_CATEGORY_LABELS[slug],
+      slug,
+    }));
   }, [allTracks]);
 
   // Build the ordered list of visible menu items dynamically from DB modules
