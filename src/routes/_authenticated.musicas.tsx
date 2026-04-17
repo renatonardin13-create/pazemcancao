@@ -583,6 +583,7 @@ function MusicLibraryPage() {
                 </div>
               ) : null}
             </section>
+            )}
           </div>
           </SafeBoundary>
         </div>
