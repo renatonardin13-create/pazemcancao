@@ -49,8 +49,11 @@ function VitrinePage() {
       if (mode === "hibrido" && !showCoursesInVitrine && COURSE_SMART_SHELVES.has(shelf.id)) return false;
       // Hide "Em breve" if lancamentos disabled
       if (shelf.id === "__coming_soon__" && !showLancamentos) return false;
-      // Filter out empty shelves
-      return (shelf.courses?.length || 0) > 0;
+      // Hide shelves with less than 2 cards to avoid broken Netflix-style layout.
+      // Smart shelves (continue/available/coming_soon) keep the 1-card threshold
+      // because they're contextual and meaningful even with a single item.
+      const minCards = shelf.shelf_type === 'smart' ? 1 : 2;
+      return (shelf.courses?.length || 0) >= minCards;
     });
   }, [shelves, mode, showCoursesInVitrine, showLancamentos]);
 
@@ -355,7 +358,9 @@ function NetflixCarousel({ courses, shelfId }: { courses: any[]; shelfId?: strin
       <div
         ref={scrollRef}
         onScroll={checkScroll}
-        className="flex gap-2.5 sm:gap-3 lg:gap-4 overflow-x-auto pb-4 px-4 sm:px-6 lg:px-12 scrollbar-hide snap-x snap-mandatory touch-pan-x"
+        className={`flex gap-2.5 sm:gap-3 lg:gap-4 overflow-x-auto pb-4 px-4 sm:px-6 lg:px-12 scrollbar-hide snap-x snap-mandatory touch-pan-x ${
+          !canScrollLeft && !canScrollRight ? 'lg:justify-start' : ''
+        }`}
         style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
       >
         <div className="shrink-0 w-0 lg:w-[calc((100vw-1400px)/2)]" />
