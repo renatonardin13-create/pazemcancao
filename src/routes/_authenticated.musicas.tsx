@@ -26,6 +26,15 @@ import { logDownload } from "@/lib/analytics.functions";
 import { usePlayer } from "@/hooks/use-player";
 import type { Track } from "@/lib/sample-tracks";
 
+const OFFICIAL_LOUVOR_CATEGORIES = [
+  "destaques",
+  "soldado ferido",
+  "ansiedade",
+  "cura da alma",
+  "não desista",
+  "refúgio",
+] as const;
+
 export const Route = createFileRoute("/_authenticated/musicas")({
   validateSearch: (search: Record<string, unknown>): { categoria?: string } => ({
     categoria: typeof search.categoria === "string" ? search.categoria : undefined,
