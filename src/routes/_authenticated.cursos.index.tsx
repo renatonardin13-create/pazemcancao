@@ -226,11 +226,11 @@ function MeusCoursosPage() {
                           >
                             {banner.link_url ? (
                               <a href={banner.link_url} target="_blank" rel="noopener noreferrer" className="block rounded-2xl overflow-hidden border border-border/6 hover:border-gold/10 transition-all duration-300">
-                                <img src={banner.image_url} alt={banner.title} className="w-full h-auto object-cover" />
+                                <img src={banner.image_url} alt={banner.title} loading="lazy" decoding="async" className="w-full h-auto object-cover" />
                               </a>
                             ) : (
                               <div className="rounded-2xl overflow-hidden border border-border/6">
-                                <img src={banner.image_url} alt={banner.title} className="w-full h-auto object-cover" />
+                                <img src={banner.image_url} alt={banner.title} loading="lazy" decoding="async" className="w-full h-auto object-cover" />
                               </div>
                             )}
                           </motion.div>
