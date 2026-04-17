@@ -16,7 +16,6 @@ import {
   BookOpen,
   Route as RouteIcon,
   Users,
-  Gift,
   Rocket,
   type LucideIcon,
 } from "lucide-react";
@@ -103,8 +102,8 @@ export function StudentSidebar() {
         return {
           key: mod.slug,
           label: mod.name,
-          icon: meta?.icon || Store,
-          to: meta?.to || "/vitrine",
+          icon: meta.icon,
+          to: meta.to,
           matchPrefix: meta.matchPrefix || false,
           hasSubmenu: meta.hasSubmenu || false,
         };
