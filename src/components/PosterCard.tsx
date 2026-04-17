@@ -1,5 +1,6 @@
 import { memo, type ReactNode } from "react";
 import { OptimizedImage } from "@/components/OptimizedImage";
+import { getCardsConfigSync } from "@/hooks/use-cards-config";
 
 /**
  * PosterCard — Card Master.
@@ -86,7 +87,9 @@ export const PosterCard = memo(function PosterCard({
   index = 0,
   aboveCard,
 }: PosterCardProps) {
-  const hasProgress = typeof progress === "number" && progress > 0;
+  const cfg = getCardsConfigSync();
+  const hasProgress = cfg.showProgress && typeof progress === "number" && progress > 0;
+  const gradientOpacity = Math.max(0, Math.min(100, cfg.cardGradient)) / 100;
 
   return (
     <div
@@ -95,16 +98,20 @@ export const PosterCard = memo(function PosterCard({
     >
       {aboveCard}
 
-      {/* Glow ambiente */}
+      {/* Glow ambiente — respeita hoverGold */}
       <div
         className={`absolute -inset-4 rounded-3xl blur-3xl pointer-events-none md:transition-all md:duration-700 ${
-          highlight ? "bg-gold/[0.05]" : "bg-gold/0 md:group-hover/card:bg-gold/[0.05]"
+          highlight ? "bg-gold/[0.05]" : cfg.hoverGold ? "bg-gold/0 md:group-hover/card:bg-gold/[0.05]" : "bg-transparent"
         }`}
       />
 
       <div
-        className={`relative overflow-hidden rounded-[14px] sm:rounded-[16px] bg-card/5 shadow-md shadow-black/25 ring-1 md:transition-all md:duration-500 md:group-hover/card:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.6)] md:group-hover/card:ring-gold/15 md:group-hover/card:scale-[1.04] ${
-          highlight ? "ring-gold/12 shadow-[0_2px_32px_-8px] shadow-gold/8" : "ring-white/[0.04]"
+        className={`relative overflow-hidden rounded-[14px] sm:rounded-[16px] bg-card/5 shadow-md shadow-black/25 md:transition-all md:duration-500 md:group-hover/card:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.6)] md:group-hover/card:scale-[1.04] ${
+          cfg.showBorder ? "ring-1" : ""
+        } ${
+          cfg.hoverGold ? "md:group-hover/card:ring-gold/15" : ""
+        } ${
+          highlight ? "ring-gold/12 shadow-[0_2px_32px_-8px] shadow-gold/8" : cfg.showBorder ? "ring-white/[0.04]" : ""
         }`}
       >
         <div className={`relative aspect-[9/13] overflow-hidden bg-gradient-to-br ${gradientClass}`}>
@@ -125,7 +132,7 @@ export const PosterCard = memo(function PosterCard({
           )}
 
           {/* Gradiente inferior (legibilidade do título) */}
-          <div className="absolute inset-x-0 bottom-0 h-[72%] bg-gradient-to-t from-black/95 via-black/55 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-[72%] bg-gradient-to-t from-black/95 via-black/55 to-transparent" style={{ opacity: 0.5 + gradientOpacity * 0.5 }} />
 
           {/* Escurecimento de hover */}
           <div
@@ -159,21 +166,25 @@ export const PosterCard = memo(function PosterCard({
             - meta: altura reservada mesmo quando some no hover
           */}
           <div className="absolute inset-x-0 bottom-0 z-10 px-3.5 pb-4 sm:px-4 sm:pb-5">
-            <h3
-              className={`line-clamp-2 min-h-[2.6em] text-sm font-bold leading-snug tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] sm:text-[15px] ${
-                locked ? "text-white/60" : "text-white"
-              }`}
-            >
-              {title}
-            </h3>
+            {cfg.showTitle && (
+              <h3
+                className={`line-clamp-2 min-h-[2.6em] text-sm font-bold leading-snug tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] sm:text-[15px] ${
+                  locked ? "text-white/60" : "text-white"
+                }`}
+              >
+                {title}
+              </h3>
+            )}
 
-            <p
-              className={`mt-1.5 line-clamp-1 text-[10px] leading-relaxed sm:text-[11px] ${
-                locked ? "text-white/25" : "text-white/35"
-              }`}
-            >
-              {subtitle ?? "\u00A0"}
-            </p>
+            {(cfg.showCategory || cfg.showDesc) && (
+              <p
+                className={`mt-1.5 line-clamp-1 text-[10px] leading-relaxed sm:text-[11px] ${
+                  locked ? "text-white/25" : "text-white/35"
+                }`}
+              >
+                {subtitle ?? "\u00A0"}
+              </p>
+            )}
 
             <div className="mt-2 flex h-4 items-center gap-3 opacity-80 md:opacity-0 md:group-hover/card:opacity-100 md:transition-opacity md:duration-400">
               {meta}
