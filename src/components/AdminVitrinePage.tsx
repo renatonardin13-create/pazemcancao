@@ -194,7 +194,7 @@ export default function AdminVitrinePage() {
   const [bannerSubtitle, setBannerSubtitle] = useState("");
   const [bannerImageUrl, setBannerImageUrl] = useState("");
   const [bannerCourseId, setBannerCourseId] = useState("");
-  const [bannerEnabled, setBannerEnabled] = useState(true);
+  const [bannerEnabled, setBannerEnabled] = useState(false);
   const [bannerFit, setBannerFit] = useState<string>("cover");
   const [bannerAspect, setBannerAspect] = useState<string>("auto");
   const [bannerLinkUrl, setBannerLinkUrl] = useState("");
