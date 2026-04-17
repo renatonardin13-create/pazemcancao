@@ -164,18 +164,30 @@ function MusicLibraryPage() {
   const categories = Array.isArray(categoriesData?.categories) ? categoriesData.categories : [];
   const playlists = Array.isArray(playlistsData?.playlists) ? playlistsData.playlists : [];
   const playlistTracks = Array.isArray(playlistTracksData?.tracks) ? playlistTracksData.tracks : [];
-  const categoryFilter = search.categoria || "";
+
+  // Validação segura da categoria vinda da URL: nunca quebra,
+  // cai em "destaques-top-10" → primeira categoria → "" (todas).
+  const rawCategoryFilter = typeof search?.categoria === "string" ? search.categoria : "";
+  const categorySlugs = categories
+    .map((c: any) => safeSlug(c?.slug || c?.name))
+    .filter(Boolean);
+  const requestedSlug = safeSlug(rawCategoryFilter);
+  const isRequestedValid = Boolean(requestedSlug) && categorySlugs.includes(requestedSlug);
+  const fallbackSlug = categorySlugs.includes("destaques-top-10")
+    ? "destaques-top-10"
+    : categorySlugs[0] || "";
+  const categoryFilter = isRequestedValid
+    ? requestedSlug
+    : rawCategoryFilter
+      ? fallbackSlug
+      : "";
+
   const isLocked = accessData?.trialExpired === true || accessData?.isBlocked === true;
   const canDownload = accessData?.canDownload !== false;
-  const hasInvalidTracksPayload = typeof tracksData !== "undefined" && !Array.isArray(tracksData?.tracks);
-  const hasInvalidCategoriesPayload = typeof categoriesData !== "undefined" && !Array.isArray(categoriesData?.categories);
-  const hasInvalidCategory =
-    Boolean(categoryFilter) &&
-    !categories.some((category: any) => safeSlug(category?.slug || category?.name) === safeSlug(categoryFilter));
 
   console.log("init musicas");
   console.log("categoria:", categoryFilter);
-  console.log("musicas:", tracks);
+  console.log("musicas:", tracks.length);
   if (tracksFailed || categoriesFailed || playlistsFailed) {
     console.error("erro:", { tracksFailed, categoriesFailed, playlistsFailed });
   }
