@@ -3,6 +3,7 @@ import { ModuleGuard } from "@/components/ModuleGuard";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { ContentCard } from "@/components/ContentCard";
+import { POSTER_GRID } from "@/lib/card-grid";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listContentItems } from "@/lib/content.functions";
 import { listFavorites, toggleFavorite } from "@/lib/favorites.functions";
@@ -94,7 +95,7 @@ function EbooksPage() {
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                <div className={POSTER_GRID}>
                   {ebookItems.map((item: any, idx: number) => (
                     <ContentCard
                       key={item.id}

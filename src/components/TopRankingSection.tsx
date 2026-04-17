@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { ContentCard } from "@/components/ContentCard";
+import { POSTER_GRID } from "@/lib/card-grid";
 import { Flame, Trophy, TrendingUp, BookOpen, Video, GraduationCap, FileText } from "lucide-react";
 
 const typeConfig: Record<string, { icon: any; gradient: string }> = {
@@ -82,7 +83,7 @@ export function TopRankingSection({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+      <div className={POSTER_GRID}>
         {ranked.map((item: any, idx: number) => {
           const config = typeConfig[item.content_type] || typeConfig.material;
           return (
