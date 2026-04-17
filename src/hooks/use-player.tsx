@@ -231,10 +231,12 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     startAudio(playableTracks[safeStartIndex]);
   }, [startAudio]);
 
+  const nextTrack = queueIndex >= 0 && queueIndex < queue.length - 1 ? queue[queueIndex + 1] : null;
+
   return (
     <PlayerContext.Provider
       value={{
-        currentTrack, playing, progress, duration, currentTime,
+        currentTrack, nextTrack, playing, progress, duration, currentTime,
         queue, queueIndex,
         play: playAudio, pause, toggle, seek, stop, next, previous, setQueue,
       }}
