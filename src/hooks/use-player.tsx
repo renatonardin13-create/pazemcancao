@@ -187,7 +187,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     const q = queueRef.current;
     const idx = queueIndexRef.current;
     if (q.length === 0) return;
-    const nextIdx = idx < q.length - 1 ? idx + 1 : 0;
+    if (idx >= q.length - 1) return; // fim da fila — não volta ao início
+    const nextIdx = idx + 1;
     queueIndexRef.current = nextIdx;
     setQueueIndex(nextIdx);
     startAudio(q[nextIdx]);
