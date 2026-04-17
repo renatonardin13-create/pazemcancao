@@ -1,18 +1,21 @@
 /**
  * Classe única para grids de cards 9:13 (TrackCard / ContentCard / CourseShelfCard).
- * Mantém largura, altura e gaps idênticos em toda a plataforma.
+ * Mantém largura, altura, alinhamento e gaps idênticos em toda a plataforma.
  *
- * Direção premium: cards GRANDES com presença visual.
- * - Mobile: 2 colunas (capa dominante)
- * - Tablet: 3 colunas
- * - Desktop: 4 colunas
- * - Wide: 5 colunas (limite máximo — nunca menor que isso)
+ * Regra de colunas (premium, capa dominante):
+ * - mobile  (<640px):  1 coluna
+ * - tablet  (≥640px):  2 colunas
+ * - desktop (≥1024px): 3 colunas
+ * - wide    (≥1280px): 4 colunas
+ *
+ * Gaps simétricos: mesmo valor horizontal e vertical (gap-x === gap-y),
+ * para que cards comecem sempre no mesmo eixo, sem "flutuar".
  *
  * Use sempre este token ao montar grades de cards de conteúdo
  * (home, /musicas, /bonus, /ebooks, /lancamentos, /trilhas, /conteudo).
  */
 export const POSTER_GRID =
-  "grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5 lg:gap-6";
+  "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6 lg:gap-7 items-start";
 
 /**
  * Largura fixa para itens em prateleiras horizontais (carrosséis).
@@ -20,4 +23,4 @@ export const POSTER_GRID =
  * presença visual em grids verticais e em scroll horizontal.
  */
 export const POSTER_SHELF_ITEM =
-  "w-[170px] sm:w-[200px] md:w-[230px] lg:w-[250px] xl:w-[270px] shrink-0 snap-start";
+  "w-[200px] sm:w-[230px] md:w-[260px] lg:w-[280px] xl:w-[300px] shrink-0 snap-start";
