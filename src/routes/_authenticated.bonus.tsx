@@ -31,18 +31,32 @@ function BonusPage() {
     staleTime: 30_000,
   });
 
+  const { data: tracksData } = useQuery({
+    queryKey: ["active-tracks"],
+    queryFn: () => listActiveTracks(),
+    staleTime: 60_000,
+  });
+
   const favoriteIds = useMemo(() => new Set(favData?.favoriteIds || []), [favData]);
   const hasAccess = data?.hasFullAccess ?? false;
   const progressMap: Record<string, any> = data?.progressMap || {};
   const allItems = data?.items || [];
 
-  // Filter only bonus content (is_bonus or access_mode = 'bonus')
+  // Bonus content_items (ebooks, vídeos, etc) marcados como bônus
   const bonusItems = useMemo(() => {
     return allItems.filter((item: any) => {
       if (!item.is_active) return false;
       return item.access_mode === 'bonus' || item.badge_text?.toLowerCase().includes('bônus');
     });
   }, [allItems]);
+
+  // Tracks (louvores) marcados como bônus no admin (is_bonus = true)
+  const bonusTracks = useMemo(() => {
+    const tracks = tracksData?.tracks || [];
+    return tracks.filter((t: any) => t.is_bonus);
+  }, [tracksData]);
+
+  const hasAnyBonus = bonusItems.length > 0 || bonusTracks.length > 0;
 
   const handleTrackView = useCallback((contentId: string) => {
     trackContentView({ data: { contentId } }).then(() => {
