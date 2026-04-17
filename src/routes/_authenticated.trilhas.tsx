@@ -3,6 +3,7 @@ import { ModuleGuard } from "@/components/ModuleGuard";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { ContentCard } from "@/components/ContentCard";
+import { POSTER_GRID } from "@/lib/card-grid";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listContentItems } from "@/lib/content.functions";
 import { listFavorites, toggleFavorite } from "@/lib/favorites.functions";

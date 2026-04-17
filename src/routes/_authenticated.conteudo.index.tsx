@@ -12,6 +12,7 @@ import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { InvisibleFunnelShelves } from "@/components/InvisibleFunnelShelves";
 import { ContentCard } from "@/components/ContentCard";
+import { POSTER_GRID } from "@/lib/card-grid";
 import { RecommendedSection } from "@/components/RecommendedSection";
 import { TopRankingSection } from "@/components/TopRankingSection";
 import {

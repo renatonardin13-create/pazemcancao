@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { ContentCard } from "@/components/ContentCard";
+import { POSTER_GRID } from "@/lib/card-grid";
 import { Flame, Trophy, TrendingUp, BookOpen, Video, GraduationCap, FileText } from "lucide-react";
 
 const typeConfig: Record<string, { icon: any; gradient: string }> = {
