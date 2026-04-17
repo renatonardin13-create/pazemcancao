@@ -4,6 +4,7 @@ import { logPlay } from "@/lib/analytics.functions";
 
 interface PlayerState {
   currentTrack: Track | null;
+  nextTrack: Track | null;
   playing: boolean;
   progress: number;
   duration: number;
