@@ -96,9 +96,11 @@ function safeSlug(value: unknown) {
 }
 
 function MusicLibraryState({
+  title = "Músicas",
   message,
   onRetry,
 }: {
+  title?: string;
   message: string;
   onRetry?: () => void;
 }) {
@@ -106,8 +108,9 @@ function MusicLibraryState({
     <ModuleGuard moduleKey="louvores">
       <StudentLayout>
         <div className="min-h-screen bg-background px-4 py-8 sm:px-6 lg:px-10">
-          <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-center gap-4 rounded-3xl border border-border/30 bg-card/20 px-6 py-16 text-center text-sm text-muted-foreground/70">
-            <span>{message}</span>
+          <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-center gap-4 rounded-3xl border border-border/30 bg-card/20 px-6 py-16 text-center">
+            <h1 className="font-display text-xl font-semibold text-foreground">{title}</h1>
+            <p className="text-sm text-muted-foreground/70">{message}</p>
             {onRetry ? (
               <Button variant="premiumOutline" size="sm" onClick={onRetry}>
                 Tentar novamente
