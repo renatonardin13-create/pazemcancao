@@ -202,12 +202,12 @@ export const CourseShelfCard = memo(function CourseShelfCard({
           description={course.sales_description || course.short_description || course.full_description}
           coverUrl={course.cover_image_url}
           price={priceLabel != null && Number(priceLabel) > 0 ? `R$ ${Number(priceLabel).toFixed(2).replace('.', ',')}` : undefined}
-          checkoutUrl={comingSoon ? null : salesUrl}
+          checkoutUrl={isNotLaunched ? null : salesUrl}
           benefits={Array.isArray(course.benefits) ? course.benefits.filter(Boolean) : []}
           totalLessons={course.total_lessons}
           totalDuration={course.total_duration}
           categoryName={course.category_name || course.categories?.name}
-          comingSoon={comingSoon}
+          comingSoon={isNotLaunched}
         />
       )}
     </>
