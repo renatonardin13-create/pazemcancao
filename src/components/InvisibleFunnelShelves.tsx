@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getFunnelSuggestions, type FunnelSuggestion } from "@/lib/funnel.functions";
 import { logFunnelClick } from "@/lib/funnel-analytics.functions";
-import { Link } from "@tanstack/react-router";
-import { Lock, Sparkles, ChevronLeft, ChevronRight, Play, ShoppingCart } from "lucide-react";
+import { Sparkles, ChevronLeft, ChevronRight, Play, BookOpen, Music } from "lucide-react";
 import { useRef, useState, useCallback, useEffect, memo } from "react";
-import { PosterCard } from "@/components/PosterCard";
+import { CourseShelfCard } from "@/components/CourseShelfCard";
+import { ContentCard } from "@/components/ContentCard";
 
 interface InvisibleFunnelShelvesProps {
   context?: string;
