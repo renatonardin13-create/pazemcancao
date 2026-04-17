@@ -129,7 +129,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loadSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, newSession) => {
+      async (event, newSession) => {
         if (cancelled) return;
 
         // On sign out, clear everything immediately
@@ -143,15 +143,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return;
         }
 
+        // If refresh failed and there's no session, force clean signOut
+        if (event === 'TOKEN_REFRESHED' && !newSession) {
+          await supabase.auth.signOut();
+          return;
+        }
+
         setSession(newSession);
         setUser(newSession?.user ?? null);
         setLoading(false);
       }
     );
 
+    // Re-check session when tab regains focus (catches expired JWT after sleep)
+    const handleFocus = async () => {
+      if (cancelled) return;
+      const { data: { session: s }, error } = await supabase.auth.getSession();
+      if (error || !s) {
+        // Session expired or invalid — force re-login
+        await supabase.auth.signOut();
+      }
+    };
+    window.addEventListener('focus', handleFocus);
+
     return () => {
       cancelled = true;
       subscription.unsubscribe();
+      window.removeEventListener('focus', handleFocus);
     };
   }, []);
 
