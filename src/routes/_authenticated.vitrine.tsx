@@ -3,6 +3,7 @@ import { OptimizedImage } from "@/components/OptimizedImage";
 import { useQuery } from "@tanstack/react-query";
 import { ModuleGuard } from "@/components/ModuleGuard";
 import { getStudentShelves } from "@/lib/shelves.functions";
+import { getTrendingCourses } from "@/lib/trending.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { CourseShelfCard } from "@/components/CourseShelfCard";
