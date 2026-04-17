@@ -98,6 +98,11 @@ function dbTrackToPlayerTrack(track: any): Track {
     downloadUrl: track?.download_url || audioUrl,
     description: track?.description || "",
     coverUrl: track?.cover_url || undefined,
+    // Propaga flags de bônus/liberação para o TrackCard exibir os badges
+    // ("Bônus", "Em breve") e travar a reprodução quando aplicável.
+    isBonus: Boolean(track?.is_bonus),
+    bonusReleaseDate: track?.bonus_release_date ?? null,
+    isLocked: track?.is_active === false,
   };
 }
 
