@@ -216,7 +216,7 @@ function MusicDetailPage() {
                 : "border-border/25 bg-card/15"
             }`}>
               {track.cover_url ? (
-                <img src={track.cover_url} alt={track.title} className="absolute inset-0 w-full h-full object-cover" />
+                <img src={track.cover_url} alt={track.title} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover" />
               ) : (
                 <>
                   {isPlaying && (

@@ -34,33 +34,33 @@ function MeusCoursosPage() {
   const { data: shelvesData, isLoading } = useQuery({
     queryKey: ["student-shelves"],
     queryFn: () => getStudentShelves(),
-    staleTime: 10_000,
-    refetchOnWindowFocus: true,
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
   });
 
   const { data: myData } = useQuery({
     queryKey: ["my-courses"],
     queryFn: () => getMyCoursesData(),
-    staleTime: 5_000,
+    staleTime: 30_000,
   });
 
   const { data: libStats } = useQuery({
     queryKey: ["library-stats"],
     queryFn: () => getLibraryStats(),
-    staleTime: 30_000,
+    staleTime: 60_000,
   });
 
   const { data: libSections } = useQuery({
     queryKey: ["library-sections"],
     queryFn: () => getLibrarySections(),
-    staleTime: 30_000,
+    staleTime: 60_000,
   });
 
   const { data: continueData } = useQuery({
     queryKey: ["continue-watching"],
     queryFn: () => getContinueWatching(),
-    staleTime: 5_000,
-    refetchOnWindowFocus: true,
+    staleTime: 30_000,
+    refetchOnWindowFocus: false,
   });
 
   const [search, setSearch] = useState("");
