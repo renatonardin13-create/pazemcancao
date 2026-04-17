@@ -49,7 +49,7 @@ export const StrategicMusicShelves = memo(function StrategicMusicShelves() {
       ))}
     </div>
   );
-}
+});
 
 function StrategicShelf({ playlist, shelfIdx }: { playlist: StrategicPlaylist; shelfIdx: number }) {
   const scrollRef = useRef<HTMLDivElement>(null);
