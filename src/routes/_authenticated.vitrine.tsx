@@ -365,7 +365,7 @@ function NetflixCarousel({ courses, shelfId }: { courses: any[]; shelfId?: strin
         <div className="shrink-0 w-0 lg:w-[calc((100vw-1400px)/2)]" />
 
         {courses.map((course: any, idx: number) => (
-          <div key={course.id} className="w-[155px] sm:w-[185px] md:w-[210px] lg:w-[230px] xl:w-[250px] shrink-0 snap-start">
+          <div key={course.id} className="w-[150px] sm:w-[185px] md:w-[210px] lg:w-[230px] xl:w-[245px] shrink-0 snap-start">
             <CourseShelfCard
               course={course}
               index={idx}

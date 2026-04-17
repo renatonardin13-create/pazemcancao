@@ -89,8 +89,8 @@ export function PosterShelfRow({ children }: { children: ReactNode }) {
         }}
         onScroll={updateScrollState}
         onMouseEnter={updateScrollState}
-        className="flex gap-3.5 sm:gap-4 lg:gap-5 overflow-x-auto pb-3 scrollbar-hide px-4 sm:px-6 lg:px-8 snap-x snap-mandatory scroll-smooth cursor-grab select-none will-change-scroll"
-        style={{ WebkitOverflowScrolling: "touch" }}
+        className="flex gap-3 sm:gap-4 lg:gap-5 overflow-x-auto pb-3 scrollbar-hide px-4 sm:px-6 lg:px-8 snap-x snap-mandatory scroll-smooth cursor-grab select-none will-change-scroll overscroll-x-contain"
+        style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}
       >
         {children}
       </div>
@@ -103,8 +103,9 @@ export function PosterShelfRow({ children }: { children: ReactNode }) {
  * nas prateleiras de cursos para manter consistência total.
  */
 export function PosterShelfItem({ children }: { children: ReactNode }) {
+  // mobile: ~2 cards visíveis · tablet: ~3 · desktop: 4-5 · wide: 5-6
   return (
-    <div className="flex-shrink-0 snap-start w-[170px] sm:w-[200px] md:w-[210px] lg:w-[220px] xl:w-[240px]">
+    <div className="flex-shrink-0 snap-start w-[150px] sm:w-[185px] md:w-[210px] lg:w-[225px] xl:w-[240px]">
       {children}
     </div>
   );
