@@ -5,10 +5,12 @@ import { FooterLinks } from "@/components/FooterLinks";
 import { ContentCard } from "@/components/ContentCard";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listContentItems } from "@/lib/content.functions";
+import { listActiveTracks } from "@/lib/tracks.functions";
 import { listFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { trackContentView, trackContentDownload } from "@/lib/progress.functions";
+import { TrackCard } from "@/components/TrackCard";
 import { useMemo, useCallback } from "react";
-import { Gift } from "lucide-react";
+import { Gift, Music } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/bonus")({
   component: BonusPage,
@@ -29,18 +31,32 @@ function BonusPage() {
     staleTime: 30_000,
   });
 
+  const { data: tracksData } = useQuery({
+    queryKey: ["active-tracks"],
+    queryFn: () => listActiveTracks(),
+    staleTime: 60_000,
+  });
+
   const favoriteIds = useMemo(() => new Set(favData?.favoriteIds || []), [favData]);
   const hasAccess = data?.hasFullAccess ?? false;
   const progressMap: Record<string, any> = data?.progressMap || {};
   const allItems = data?.items || [];
 
-  // Filter only bonus content (is_bonus or access_mode = 'bonus')
+  // Bonus content_items (ebooks, vídeos, etc) marcados como bônus
   const bonusItems = useMemo(() => {
     return allItems.filter((item: any) => {
       if (!item.is_active) return false;
       return item.access_mode === 'bonus' || item.badge_text?.toLowerCase().includes('bônus');
     });
   }, [allItems]);
+
+  // Tracks (louvores) marcados como bônus no admin (is_bonus = true)
+  const bonusTracks = useMemo(() => {
+    const tracks = tracksData?.tracks || [];
+    return tracks.filter((t: any) => t.is_bonus);
+  }, [tracksData]);
+
+  const hasAnyBonus = bonusItems.length > 0 || bonusTracks.length > 0;
 
   const handleTrackView = useCallback((contentId: string) => {
     trackContentView({ data: { contentId } }).then(() => {
@@ -84,7 +100,7 @@ function BonusPage() {
                     Carregando bônus...
                   </p>
                 </div>
-              ) : bonusItems.length === 0 ? (
+              ) : !hasAnyBonus ? (
                 <div className="text-center py-24">
                   <Gift className="h-10 w-10 text-muted-foreground/30 mx-auto mb-5" />
                   <p className="text-sm text-muted-foreground/60 mb-2">
@@ -95,22 +111,45 @@ function BonusPage() {
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                  {bonusItems.map((item: any, idx: number) => (
-                    <ContentCard
-                      key={item.id}
-                      item={item}
-                      index={idx}
-                      hasAccess={hasAccess}
-                      gradient="from-amber-900/40 via-amber-950/30 to-slate-950/50"
-                      TypeIcon={Gift}
-                      progress={progressMap[item.id]}
-                      isFavorite={favoriteIds.has(item.id)}
-                      onToggleFavorite={handleToggleFavorite}
-                      onTrackView={handleTrackView}
-                      onTrackDownload={handleTrackDownload}
-                    />
-                  ))}
+                <div className="space-y-12">
+                  {bonusItems.length > 0 && (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                      {bonusItems.map((item: any, idx: number) => (
+                        <ContentCard
+                          key={item.id}
+                          item={item}
+                          index={idx}
+                          hasAccess={hasAccess}
+                          gradient="from-amber-900/40 via-amber-950/30 to-slate-950/50"
+                          TypeIcon={Gift}
+                          progress={progressMap[item.id]}
+                          isFavorite={favoriteIds.has(item.id)}
+                          onToggleFavorite={handleToggleFavorite}
+                          onTrackView={handleTrackView}
+                          onTrackDownload={handleTrackDownload}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {bonusTracks.length > 0 && (
+                    <section>
+                      <div className="flex items-center gap-2 mb-4">
+                        <Music className="h-5 w-5 text-gold" />
+                        <h2 className="text-lg sm:text-xl font-bold text-foreground/90">
+                          Louvores Bônus
+                        </h2>
+                        <span className="text-xs text-muted-foreground/50">
+                          ({bonusTracks.length})
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                        {bonusTracks.map((track: any, idx: number) => (
+                          <TrackCard key={track.id} track={track} index={idx} />
+                        ))}
+                      </div>
+                    </section>
+                  )}
                 </div>
               )}
             </div>
