@@ -26,6 +26,15 @@ import { logDownload } from "@/lib/analytics.functions";
 import { usePlayer } from "@/hooks/use-player";
 import type { Track } from "@/lib/sample-tracks";
 
+const OFFICIAL_LOUVOR_CATEGORIES = [
+  "destaques",
+  "soldado ferido",
+  "ansiedade",
+  "cura da alma",
+  "não desista",
+  "refúgio",
+] as const;
+
 export const Route = createFileRoute("/_authenticated/musicas")({
   validateSearch: (search: Record<string, unknown>): { categoria?: string } => ({
     categoria: typeof search.categoria === "string" ? search.categoria : undefined,
@@ -177,20 +186,27 @@ function MusicLibraryPage() {
     const seen = new Map<string, { id: string; name: string; slug: string }>();
     for (const t of tracks as any[]) {
       const name = String(t?.category || "").trim();
-      if (!name) continue;
       const slug = safeSlug(name);
-      if (!seen.has(slug)) seen.set(slug, { id: slug, name, slug });
+      if (!slug || !OFFICIAL_LOUVOR_CATEGORIES.includes(slug as (typeof OFFICIAL_LOUVOR_CATEGORIES)[number])) {
+        continue;
+      }
+      if (!seen.has(slug)) {
+        seen.set(slug, { id: slug, name, slug });
+      }
     }
-    return Array.from(seen.values());
+    return OFFICIAL_LOUVOR_CATEGORIES.map((slug) => seen.get(slug)).filter(Boolean) as {
+      id: string;
+      name: string;
+      slug: string;
+    }[];
   }, [tracks]);
   const playlistTracks = Array.isArray(playlistTracksData?.tracks) ? playlistTracksData.tracks : [];
 
   const rawCategoryFilter = typeof search?.categoria === "string" ? search.categoria : "";
-  const categorySlugs = categories
-    .map((c: any) => safeSlug(c?.slug || c?.name))
-    .filter(Boolean);
   const requestedSlug = safeSlug(rawCategoryFilter);
-  const isRequestedValid = Boolean(requestedSlug) && categorySlugs.includes(requestedSlug);
+  const isRequestedValid = OFFICIAL_LOUVOR_CATEGORIES.includes(
+    requestedSlug as (typeof OFFICIAL_LOUVOR_CATEGORIES)[number]
+  );
   const categoryFilter = isRequestedValid ? requestedSlug : "";
 
   const isLocked = accessData?.trialExpired === true || accessData?.isBlocked === true;
@@ -342,9 +358,9 @@ function MusicLibraryPage() {
                 >
                   Todas
                 </Link>
-                {categories.map((category: any) => {
-                  const slug = safeSlug(category?.slug || category?.name);
-                  const active = slug === safeSlug(categoryFilter);
+                {categories.map((category) => {
+                  const slug = safeSlug(category.slug || category.name);
+                  const active = slug === categoryFilter;
                   return (
                     <Link
                       key={category.id}
@@ -356,7 +372,7 @@ function MusicLibraryPage() {
                           : "border-border/40 bg-card/30 text-muted-foreground hover:-translate-y-0.5 hover:border-primary/30 hover:text-foreground"
                       }`}
                     >
-                      {category?.name || "Sem categoria"}
+                      {category.name}
                     </Link>
                   );
                 })}
@@ -432,10 +448,10 @@ function MusicLibraryPage() {
                 <div className="space-y-1">
                   <p className="text-xs font-semibold uppercase tracking-[0.28em] text-primary/80">Coleção</p>
                   <h2 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                    Todas as músicas
+                    {activeCategoryName || "Todas as músicas"}
                   </h2>
                   <p className="text-sm text-muted-foreground/70">
-                    {categoryFilter ? "Filtrando por categoria" : "Sua biblioteca completa de louvores"}
+                    {activeCategoryName ? `Somente louvores de ${activeCategoryName}` : "Sua biblioteca completa de louvores"}
                   </p>
                 </div>
                 <span className="rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold text-primary">

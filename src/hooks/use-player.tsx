@@ -146,10 +146,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         setQueueIndex(idx);
         startAudio(track);
       } else {
-        setQueueState([track]);
-        setQueueIndex(0);
         queueRef.current = [track];
         queueIndexRef.current = 0;
+        setQueueState([track]);
+        setQueueIndex(0);
         startAudio(track, true);
       }
     }
