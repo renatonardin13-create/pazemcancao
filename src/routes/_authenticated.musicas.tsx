@@ -319,7 +319,7 @@ function MusicLibraryPage() {
                       className="gap-2"
                     >
                       <Play className="h-4 w-4" />
-                      {activeCategoryName ? `Tocar ${activeCategoryName}` : "Tocar todos os louvores"}
+                      {activeCategoryName ? `Tocar todos desta categoria` : "Tocar todos"}
                     </Button>
                   </div>
                 </div>
