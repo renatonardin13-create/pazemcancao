@@ -170,117 +170,100 @@ function FunnelShelf({
   );
 }
 
-/** Poster card unificado — usa PosterCard (Card Master) para garantir
- *  consistência visual com TrackCard / ContentCard / CourseShelfCard. */
-const FunnelPosterCard = memo(function FunnelPosterCard({ item, index, context, shelfTitle }: { item: FunnelSuggestion; index: number; context?: string; shelfTitle?: string }) {
-  const isLocked = item.is_locked;
-  const salesUrl = item.sales_page_url;
-
-  const linkTo =
-    item.type === "course"
-      ? `/cursos/${item.id}`
-      : item.type === "track"
-        ? `/musicas/${item.id}`
-        : `/conteudo/${item.id}`;
-
-  const typeLabel = item.type === "course" ? "Curso" : item.type === "track" ? "Música" : "Conteúdo";
-
-  const fallback = (
-    <div className="flex h-16 w-16 items-center justify-center rounded-2xl backdrop-blur-sm bg-white/[0.04] border border-white/[0.06]">
-      <Sparkles className="h-7 w-7 text-white/25" />
-    </div>
-  );
-
-  const badgeTopLeft = item.badge ? (
-    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold/90 text-[9px] sm:text-[10px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm border border-gold/20">
-      {item.badge}
-    </span>
-  ) : isLocked ? (
-    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-gold/95 to-amber-500/90 text-[9px] sm:text-[10px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm border border-gold/20">
-      <Lock className="h-2.5 w-2.5" />
-      Premium
-    </span>
-  ) : undefined;
-
-  const badgeTopRight = (
-    <span className="text-[9px] sm:text-[10px] font-medium tracking-[0.15em] uppercase rounded-full bg-black/25 backdrop-blur-md border border-white/[0.06] px-2.5 py-1 text-white/35">
-      {typeLabel}
-    </span>
-  );
-
-  const overlay = isLocked ? (
-    <div className="h-full bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2">
-      <div className="flex h-14 w-14 rounded-2xl items-center justify-center backdrop-blur-sm bg-black/30 border border-white/10">
-        <Lock className="h-6 w-6 text-white/50" />
-      </div>
-      <span className="text-[10px] font-bold text-gold/70 bg-black/40 backdrop-blur-sm rounded-full px-3 py-0.5 border border-gold/15">
-        {item.cta_text || "Desbloquear"}
-      </span>
-    </div>
-  ) : undefined;
-
-  const centerAction = !isLocked ? (
-    <div className="flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-gold/95 shadow-[0_4px_24px_rgba(0,0,0,0.4)] scale-[0.5] opacity-0 md:group-hover/card:opacity-100 md:group-hover/card:scale-100 md:transition-all md:duration-500">
-      <Play className="h-4 w-4 sm:h-5 sm:w-5 text-gold-foreground fill-gold-foreground" />
-    </div>
-  ) : undefined;
-
-  const meta = isLocked ? (
-    <span className="text-[9px] sm:text-[10px] font-semibold tracking-[0.15em] uppercase text-gold/55">
-      <ShoppingCart className="inline h-2.5 w-2.5 mr-0.5" />
-      {salesUrl ? "Ver detalhes" : "Bloqueado"}
-    </span>
-  ) : (
-    <span className="text-[9px] sm:text-[10px] font-semibold tracking-[0.15em] uppercase text-gold/55">
-      <Sparkles className="inline h-2.5 w-2.5 mr-0.5" />
-      Acessar
-    </span>
-  );
-
-  const card = (
-    <PosterCard
-      cover={item.cover_url || null}
-      coverAlt={item.title}
-      fallback={fallback}
-      gradientClass={isLocked ? "from-stone-900/40 via-zinc-950/30 to-neutral-950/50" : "from-sky-900/40 via-blue-950/30 to-slate-950/50"}
-      badgeTopLeft={badgeTopLeft}
-      badgeTopRight={badgeTopRight}
-      overlay={overlay}
-      centerAction={centerAction}
-      title={item.title}
-      meta={meta}
-      locked={isLocked}
-      index={index}
-    />
-  );
-
-  const trackClick = () => {
+/**
+ * Adapta uma sugestão do funil para o card-base correto:
+ * - course   → CourseShelfCard (já cuida de lock, sales, navegação)
+ * - content  → ContentCard     (mesmo da página /bonus, /ebooks, /conteudo)
+ * - track    → ContentCard     (renderizado como "material" para padronização visual)
+ *
+ * Garante que TODO card no app passe por um dos dois componentes oficiais,
+ * mantendo proporção 9:13, badges, overlay de lock e meta uniformes.
+ */
+const FunnelPosterCard = memo(function FunnelPosterCard({
+  item,
+  index,
+  context,
+  shelfTitle,
+}: {
+  item: FunnelSuggestion;
+  index: number;
+  context?: string;
+  shelfTitle?: string;
+}) {
+  const trackClick = useCallback(() => {
     logFunnelClick({
       data: {
         itemId: item.id,
         itemType: item.type,
         context,
         shelfTitle,
-        isLocked,
+        isLocked: item.is_locked,
       },
     }).catch(() => {});
-  };
+  }, [item.id, item.type, item.is_locked, context, shelfTitle]);
 
-  if (isLocked && salesUrl) {
+  if (item.type === "course") {
+    const courseLike = {
+      id: item.id,
+      title: item.title,
+      cover_image_url: item.cover_url,
+      sales_page_url: item.sales_page_url,
+      access_state: item.is_locked ? "locked" : "enrolled",
+      progress_pct: 0,
+      total_lessons: 0,
+      short_description: "",
+      category_name: "",
+    };
     return (
-      <a href={salesUrl} target="_blank" rel="noopener noreferrer" className="group/card relative block cursor-pointer" onClick={trackClick}>
-        {card}
-      </a>
+      <div onClickCapture={trackClick}>
+        <CourseShelfCard
+          course={courseLike}
+          index={index}
+          badge={
+            item.badge ? (
+              <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold/90 text-[9px] sm:text-[10px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm border border-gold/20">
+                {item.badge}
+              </span>
+            ) : undefined
+          }
+        />
+      </div>
     );
   }
 
-  if (isLocked) {
-    return <div className="group/card relative block" onClick={trackClick}>{card}</div>;
-  }
+  // content / track → ContentCard (Card Master para conteúdos)
+  const TypeIcon = item.type === "track" ? Music : item.type === "content" ? BookOpen : Play;
+  const contentLike = {
+    id: item.id,
+    title: item.title,
+    cover_url: item.cover_url,
+    card_cover_url: item.cover_url,
+    description: "",
+    sales_page_url: item.sales_page_url,
+    is_free: !item.is_locked,
+    unlocked: !item.is_locked,
+    effectiveAccessMode: item.is_locked ? "pago" : "gratuito",
+    content_type: item.type === "track" ? "audio" : "video",
+    badge_text: item.badge,
+    locked_label: item.cta_text || "Conteúdo Premium",
+    created_at: new Date().toISOString(),
+    launch_mode: "none",
+    is_active: true,
+  };
 
   return (
-    <Link to={linkTo as any} className="group/card relative block cursor-pointer" onClick={trackClick}>
-      {card}
-    </Link>
+    <div onClickCapture={trackClick}>
+      <ContentCard
+        item={contentLike}
+        index={index}
+        hasAccess={!item.is_locked}
+        gradient={
+          item.is_locked
+            ? "from-stone-900/40 via-zinc-950/30 to-neutral-950/50"
+            : "from-sky-900/40 via-blue-950/30 to-slate-950/50"
+        }
+        TypeIcon={TypeIcon}
+      />
+    </div>
   );
 });
