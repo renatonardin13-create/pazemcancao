@@ -11,8 +11,6 @@ import {
   UserCircle,
   Settings,
   LogOut,
-  ChevronDown,
-  ChevronRight,
   Menu,
   X,
   BookOpen,
@@ -42,7 +40,6 @@ export function StudentSidebar() {
   const { logout, isAdmin, adminLoading } = useAuth();
   const { moduleInfo, isLoading: modulesLoading, dbModules } = useProjectMode();
   const location = useLocation();
-  const [louvoresOpen, setLouvoresOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const { data: tracksData } = useQuery({
