@@ -95,6 +95,16 @@ function ContentPage() {
     });
   }, [queryClient]);
 
+  // RC1: dedupe ids across "Top semana" → "Mais acessados" → "Recomendado"
+  const [weeklyTopIds, setWeeklyTopIds] = useState<string[]>([]);
+  const [allTimeTopIds, setAllTimeTopIds] = useState<string[]>([]);
+  const weeklyExcludeSet = useMemo(() => new Set<string>(), []);
+  const weeklyTopSet = useMemo(() => new Set(weeklyTopIds), [weeklyTopIds]);
+  const recommendedExcludeSet = useMemo(
+    () => new Set([...weeklyTopIds, ...allTimeTopIds]),
+    [weeklyTopIds, allTimeTopIds],
+  );
+
   const { data, isLoading } = useQuery({
     queryKey: ["content-items"],
     queryFn: () => listContentItems(),
