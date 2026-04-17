@@ -95,13 +95,14 @@ function ContentPage() {
     });
   }, [queryClient]);
 
-  // RC1: dedupe ids across "Top semana" → "Mais acessados" → "Recomendado"
+  // RC1: dedupe ids across "Top semana" → "Mais acessados" → "Lançamentos" → "Recomendado"
   const [weeklyTopIds, setWeeklyTopIds] = useState<string[]>([]);
   const [allTimeTopIds, setAllTimeTopIds] = useState<string[]>([]);
+  const [newItemsIds, setNewItemsIds] = useState<string[]>([]);
   const weeklyTopSet = useMemo(() => new Set(weeklyTopIds), [weeklyTopIds]);
   const recommendedExcludeSet = useMemo(
-    () => new Set([...weeklyTopIds, ...allTimeTopIds]),
-    [weeklyTopIds, allTimeTopIds],
+    () => new Set([...weeklyTopIds, ...allTimeTopIds, ...newItemsIds]),
+    [weeklyTopIds, allTimeTopIds, newItemsIds],
   );
 
   const { data, isLoading } = useQuery({
