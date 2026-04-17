@@ -31,8 +31,11 @@ export const CourseShelfCard = memo(function CourseShelfCard({
 
   const progress = course.progress_pct ?? 0;
   const hasProgress = showProgress && progress > 0;
-  // Curso "não lançado" também é bloqueado para fins de clique.
-  const isLocked = comingSoon || course.access_state === 'locked' || course.access_state === 'blocked' || course.access_state === 'expired';
+  // RC1: NAO_LANCADO inclui prop `comingSoon` (vem de prateleira __coming_soon__)
+  // OU access_state === 'coming_soon' (curso publicado com launch_date futura).
+  const isNotLaunched = comingSoon || course.access_state === 'coming_soon';
+  // BLOQUEADO inclui não-lançado para fins de clique (overlay + modal).
+  const isLocked = isNotLaunched || course.access_state === 'locked' || course.access_state === 'blocked' || course.access_state === 'expired';
   const hasFreePreview = course.access_state === 'preview';
   const isPaidCourse = !isLocked && (course.price > 0 || course.has_checkout) && !['enrolled', 'in_progress', 'completed'].includes(course.access_state);
   const isCompleted = progress >= 100;
@@ -199,12 +202,12 @@ export const CourseShelfCard = memo(function CourseShelfCard({
           description={course.sales_description || course.short_description || course.full_description}
           coverUrl={course.cover_image_url}
           price={priceLabel != null && Number(priceLabel) > 0 ? `R$ ${Number(priceLabel).toFixed(2).replace('.', ',')}` : undefined}
-          checkoutUrl={comingSoon ? null : salesUrl}
+          checkoutUrl={isNotLaunched ? null : salesUrl}
           benefits={Array.isArray(course.benefits) ? course.benefits.filter(Boolean) : []}
           totalLessons={course.total_lessons}
           totalDuration={course.total_duration}
           categoryName={course.category_name || course.categories?.name}
-          comingSoon={comingSoon}
+          comingSoon={isNotLaunched}
         />
       )}
     </>
