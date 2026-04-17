@@ -3,6 +3,7 @@ import { OptimizedImage } from "@/components/OptimizedImage";
 import { useQuery } from "@tanstack/react-query";
 import { ModuleGuard } from "@/components/ModuleGuard";
 import { getStudentShelves } from "@/lib/shelves.functions";
+import { getTrendingCourses } from "@/lib/trending.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { CourseShelfCard } from "@/components/CourseShelfCard";
@@ -20,6 +21,7 @@ const SHELF_ICONS: Record<string, React.ReactNode> = {
   '__continue__': <Play className="h-4 w-4 text-gold fill-gold" />,
   '__available__': <ShoppingCart className="h-4 w-4 text-gold" />,
   '__coming_soon__': <Clock className="h-4 w-4 text-gold" />,
+  '__trending__': <Sparkles className="h-4 w-4 text-gold" />,
 };
 
 /** Smart shelf IDs that are course-specific */
@@ -33,6 +35,12 @@ function VitrinePage() {
     refetchOnWindowFocus: true,
   });
 
+  const { data: trendingData } = useQuery({
+    queryKey: ["trending-courses-7d"],
+    queryFn: () => getTrendingCourses(),
+    staleTime: 5 * 60_000,
+  });
+
   const { mode, showCoursesInVitrine, showMusicInVitrine, showLancamentos } = useProjectMode();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -44,7 +52,7 @@ function VitrinePage() {
     : (featuredCourse ? [featuredCourse] : []);
 
   const modeShelves = useMemo(() => {
-    return shelves.filter((shelf: any) => {
+    const base = shelves.filter((shelf: any) => {
       // In somente_musica: hide course-specific smart shelves
       if (mode === "somente_musica" && COURSE_SMART_SHELVES.has(shelf.id)) return false;
       // In somente_cursos: show all course shelves (they're already course-based)
@@ -57,7 +65,22 @@ function VitrinePage() {
       const minCards = shelf.id === '__continue__' ? 1 : 2;
       return (shelf.courses?.length || 0) >= minCards;
     });
-  }, [shelves, mode, showCoursesInVitrine, showLancamentos]);
+
+    // Prepend "Mais acessados esta semana" se houver dados (≥2 cursos)
+    const trending = trendingData?.courses || [];
+    if (mode !== "somente_musica" && trending.length >= 2) {
+      return [
+        {
+          id: "__trending__",
+          name: "Mais acessados esta semana",
+          shelf_type: "smart",
+          courses: trending,
+        },
+        ...base,
+      ];
+    }
+    return base;
+  }, [shelves, mode, showCoursesInVitrine, showLancamentos, trendingData]);
 
   const filteredShelves = useMemo(() => {
     if (!searchTerm.trim()) return modeShelves;
