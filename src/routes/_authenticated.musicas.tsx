@@ -20,7 +20,7 @@ import { SafeBoundary } from "@/components/SafeBoundary";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TrackCard } from "@/components/TrackCard";
-import { listActiveTracks } from "@/lib/tracks.functions";
+import { listAllTracks } from "@/lib/tracks.functions";
 import { listPlaylistsWithCounts, getPlaylistWithTracks } from "@/lib/playlists.functions";
 import { checkBuyerAccess } from "@/lib/access.functions";
 import { logDownload } from "@/lib/analytics.functions";
@@ -154,9 +154,12 @@ function MusicLibraryPage() {
     el.scrollBy({ left: dir === "next" ? amount : -amount, behavior: "smooth" });
   };
 
+  // Catálogo Louvores: lista TODAS as músicas (inclusive bônus com liberação
+  // programada / inativas) para exibir badge "Em breve" — a reprodução é
+  // bloqueada no TrackCard quando a faixa não está liberada.
   const { data: tracksData, isLoading: tracksLoading, isError: tracksFailed } = useQuery({
     queryKey: ["music-library-tracks"],
-    queryFn: () => listActiveTracks(),
+    queryFn: () => listAllTracks(),
     staleTime: 30_000,
     retry: 2,
   });
