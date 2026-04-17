@@ -410,91 +410,20 @@ function MusicLibraryPage() {
                   Nenhuma música encontrada
                 </div>
               ) : (() => {
-                const cards = filteredTracks.map((track: any) => {
-                  const playerTrack = dbTrackToPlayerTrack(track);
-                  const isCurrent = currentTrack?.id === playerTrack.id;
-                  const isPlaying = isCurrent && playing;
-                  const canPlay = Boolean(playerTrack.audioUrl);
+                const playerTracks = filteredTracks.map(dbTrackToPlayerTrack);
 
-                  return (
-                    <div
-                      key={track.id}
-                      className={`group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border/40 bg-gradient-to-b from-card/70 via-card/40 to-background/60 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-[0_20px_60px_-15px_hsl(var(--primary)/0.35)] ${
-                        categoryFilter
-                          ? "snap-start shrink-0 w-[72vw] sm:w-[260px] md:w-[280px] lg:w-[300px] xl:w-[320px]"
-                          : ""
-                      }`}
-                    >
-                      {/* Poster */}
-                      <Link
-                        to="/musicas/$trackId"
-                        params={{ trackId: String(track.id) }}
-                        className="relative block aspect-[4/5] w-full overflow-hidden"
-                      >
-                        {playerTrack.coverUrl ? (
-                          <img
-                            src={playerTrack.coverUrl}
-                            alt={playerTrack.title}
-                            loading="lazy"
-                            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                          />
-                        ) : (
-                          <div className="relative flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/20 via-background/30 to-background">
-                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.25),transparent_60%)]" />
-                            <Music className="relative h-20 w-20 text-primary/50 drop-shadow-[0_4px_20px_hsl(var(--primary)/0.4)]" />
-                          </div>
-                        )}
-
-                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-
-                        {track?.category ? (
-                          <span className="absolute left-3 top-3 rounded-full border border-white/10 bg-background/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-foreground/90 backdrop-blur-md">
-                            {track.category}
-                          </span>
-                        ) : null}
-
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            if (canPlay) handleTrackPlay(track, filteredTracks);
-                          }}
-                          disabled={!canPlay}
-                          aria-label={isPlaying ? "Pausar" : "Ouvir"}
-                          className="absolute bottom-4 right-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_10px_30px_-5px_hsl(var(--primary)/0.6)] ring-1 ring-primary/30 transition-all duration-300 hover:scale-110 disabled:opacity-40"
-                        >
-                          {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 translate-x-[2px]" />}
-                        </button>
-                      </Link>
-
-                      <div className="flex flex-1 flex-col gap-4 px-5 pb-5 pt-4">
-                        <div className="flex flex-1 flex-col gap-1">
-                          <Link
-                            to="/musicas/$trackId"
-                            params={{ trackId: String(track.id) }}
-                            className="line-clamp-2 text-lg font-bold leading-tight tracking-tight text-foreground transition-colors group-hover:text-primary"
-                          >
-                            {track?.title || "Música sem título"}
-                          </Link>
-                          <p className="text-xs font-medium text-muted-foreground/60">
-                            {track?.duration || "0:00"}
-                          </p>
-                        </div>
-
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-10 w-full border-border/50 bg-background/40 text-xs font-semibold tracking-wide hover:border-primary/40 hover:bg-primary/5"
-                          onClick={() => handleDownload(track)}
-                          disabled={isLocked || !canDownload || !playerTrack.downloadUrl}
-                        >
-                          <Download className="h-3.5 w-3.5" />
-                          Baixar
-                        </Button>
-                      </div>
-                    </div>
-                  );
-                });
+                const cards = playerTracks.map((pt, idx) => (
+                  <div
+                    key={pt.id}
+                    className={
+                      categoryFilter
+                        ? "snap-start shrink-0 w-[46vw] sm:w-[200px] md:w-[210px] lg:w-[220px] xl:w-[230px]"
+                        : ""
+                    }
+                  >
+                    <TrackCard track={pt} index={idx} />
+                  </div>
+                ));
 
                 if (categoryFilter) {
                   return (
@@ -526,7 +455,7 @@ function MusicLibraryPage() {
                 }
 
                 return (
-                  <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                     {cards}
                   </div>
                 );
