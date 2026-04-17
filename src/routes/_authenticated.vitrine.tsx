@@ -34,6 +34,12 @@ function VitrinePage() {
     refetchOnWindowFocus: true,
   });
 
+  const { data: trendingData } = useQuery({
+    queryKey: ["trending-courses-7d"],
+    queryFn: () => getTrendingCourses(),
+    staleTime: 5 * 60_000,
+  });
+
   const { mode, showCoursesInVitrine, showMusicInVitrine, showLancamentos } = useProjectMode();
   const [searchTerm, setSearchTerm] = useState("");
 
