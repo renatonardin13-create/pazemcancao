@@ -400,7 +400,7 @@ function NetflixCarousel({ courses, shelfId }: { courses: any[]; shelfId?: strin
       <div
         ref={scrollRef}
         onScroll={checkScroll}
-        className={`flex gap-2.5 sm:gap-3 lg:gap-4 overflow-x-auto pb-4 px-4 sm:px-6 lg:px-12 scrollbar-hide snap-x snap-mandatory touch-pan-x ${
+        className={`flex gap-2.5 sm:gap-3 lg:gap-4 overflow-x-auto pb-4 px-4 sm:px-8 lg:px-12 scrollbar-hide snap-x snap-mandatory touch-pan-x ${
           !canScrollLeft && !canScrollRight ? 'lg:justify-start' : ''
         }`}
         style={{ scrollbarWidth: 'none', WebkitOverflowScrolling: 'touch' }}
