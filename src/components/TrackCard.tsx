@@ -1,10 +1,11 @@
 import { Play, Pause, Download, Music, Lock, Clock, Gift } from "lucide-react";
 import { Link } from "@tanstack/react-router";
-import { memo } from "react";
+import { memo, useState } from "react";
 import type { Track } from "@/lib/sample-tracks";
 import { usePlayer } from "@/hooks/use-player";
 import { getTrackReleaseMeta } from "@/lib/track-release";
 import { PosterCard } from "@/components/PosterCard";
+import { UnlockModal } from "@/components/UnlockModal";
 
 interface TrackCardProps {
   track: Track;
