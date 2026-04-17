@@ -398,6 +398,17 @@ function MusicLibraryPage() {
                 <div className="rounded-2xl border border-dashed border-border/40 px-4 py-10 text-center text-sm text-muted-foreground/70">
                   Nenhuma música encontrada
                 </div>
+              ) : categoryFilter ? (
+                // Categoria selecionada → carrossel horizontal com setas.
+                // Mantém o mesmo card padrão (TrackCard) para preservar
+                // tamanho, proporção e layout interno.
+                <PosterShelfRow>
+                  {filteredTracks.map(dbTrackToPlayerTrack).map((pt, idx) => (
+                    <PosterShelfItem key={pt.id}>
+                      <TrackCard track={pt} index={idx} />
+                    </PosterShelfItem>
+                  ))}
+                </PosterShelfRow>
               ) : (
                 <div className={POSTER_GRID}>
                   {filteredTracks.map(dbTrackToPlayerTrack).map((pt, idx) => (
