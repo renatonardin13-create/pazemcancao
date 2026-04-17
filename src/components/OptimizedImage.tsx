@@ -11,6 +11,7 @@ interface OptimizedImageProps {
   /** Additional style */
   style?: React.CSSProperties;
   onClick?: (e: React.MouseEvent) => void;
+  onError?: () => void;
 }
 
 /**
