@@ -571,10 +571,30 @@ export const toggleStudentCourseAccess = createServerFn({ method: 'POST' })
 
     // Find auth user
     const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
-    const authUser = authUsers?.users?.find((u: any) => u.email?.toLowerCase() === email);
+    let authUser = authUsers?.users?.find((u: any) => u.email?.toLowerCase() === email);
 
     if (data.grant) {
-      if (!authUser) throw new Error('Usuário não encontrado no sistema de autenticação');
+      // Auto-create auth user if it doesn't exist yet (buyer was added manually without login)
+      if (!authUser) {
+        // Try to fetch name from approved_buyers for nicer display_name
+        const { data: buyerRow } = await supabaseAdmin
+          .from('approved_buyers')
+          .select('nome')
+          .eq('email', email)
+          .maybeSingle();
+
+        const tempPassword = `Pwd${crypto.randomUUID().replace(/-/g, '').slice(0, 16)}!`;
+        const { data: created, error: createErr } = await supabaseAdmin.auth.admin.createUser({
+          email,
+          password: tempPassword,
+          email_confirm: true,
+          user_metadata: { full_name: buyerRow?.nome || email.split('@')[0] },
+        });
+        if (createErr || !created?.user) {
+          throw new Error(`Não foi possível criar o usuário: ${createErr?.message || 'erro desconhecido'}`);
+        }
+        authUser = created.user;
+      }
 
       // Check if enrollment already exists
       const { data: existing } = await supabaseAdmin
