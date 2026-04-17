@@ -95,13 +95,24 @@ function safeSlug(value: unknown) {
   return value.trim().toLowerCase();
 }
 
-function MusicLibraryState({ message }: { message: string }) {
+function MusicLibraryState({
+  message,
+  onRetry,
+}: {
+  message: string;
+  onRetry?: () => void;
+}) {
   return (
     <ModuleGuard moduleKey="louvores">
       <StudentLayout>
         <div className="min-h-screen bg-background px-4 py-8 sm:px-6 lg:px-10">
-          <div className="mx-auto flex w-full max-w-6xl items-center justify-center rounded-3xl border border-border/30 bg-card/20 px-6 py-16 text-sm text-muted-foreground/70">
-            {message}
+          <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-center gap-4 rounded-3xl border border-border/30 bg-card/20 px-6 py-16 text-center text-sm text-muted-foreground/70">
+            <span>{message}</span>
+            {onRetry ? (
+              <Button variant="premiumOutline" size="sm" onClick={onRetry}>
+                Tentar novamente
+              </Button>
+            ) : null}
           </div>
         </div>
       </StudentLayout>
@@ -111,6 +122,7 @@ function MusicLibraryState({ message }: { message: string }) {
 
 function MusicLibraryPage() {
   const search = Route.useSearch();
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [activePlaylistId, setActivePlaylistId] = useState<string | null>(null);
 
@@ -226,7 +238,12 @@ function MusicLibraryPage() {
   }
 
   if (tracksFailed || categoriesFailed || playlistsFailed) {
-    return <MusicLibraryState message="Erro ao carregar músicas" />;
+    return (
+      <MusicLibraryState
+        message="Erro ao carregar músicas."
+        onRetry={() => router.invalidate()}
+      />
+    );
   }
 
   if (hasInvalidTracksPayload || hasInvalidCategoriesPayload) {
@@ -390,7 +407,7 @@ function MusicLibraryPage() {
                 </div>
               ) : filteredTracks.length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-border/40 px-4 py-10 text-center text-sm text-muted-foreground/70">
-                  Nenhuma música disponível
+                  Nenhuma música encontrada
                 </div>
               ) : (
                 <div className="grid gap-3">
