@@ -360,6 +360,7 @@ export type Database = {
         Row: {
           access_count: number
           banner_image_url: string | null
+          benefits: string[]
           category_id: string | null
           course_type: string
           cover_image_url: string | null
@@ -368,7 +369,9 @@ export type Database = {
           id: string
           launch_date: string | null
           price: number
+          product_type: string
           promotional_price: number | null
+          sales_description: string | null
           short_description: string | null
           sort_order: number
           status: string
@@ -380,6 +383,7 @@ export type Database = {
         Insert: {
           access_count?: number
           banner_image_url?: string | null
+          benefits?: string[]
           category_id?: string | null
           course_type?: string
           cover_image_url?: string | null
@@ -388,7 +392,9 @@ export type Database = {
           id?: string
           launch_date?: string | null
           price?: number
+          product_type?: string
           promotional_price?: number | null
+          sales_description?: string | null
           short_description?: string | null
           sort_order?: number
           status?: string
@@ -400,6 +406,7 @@ export type Database = {
         Update: {
           access_count?: number
           banner_image_url?: string | null
+          benefits?: string[]
           category_id?: string | null
           course_type?: string
           cover_image_url?: string | null
@@ -408,7 +415,9 @@ export type Database = {
           id?: string
           launch_date?: string | null
           price?: number
+          product_type?: string
           promotional_price?: number | null
+          sales_description?: string | null
           short_description?: string | null
           sort_order?: number
           status?: string
