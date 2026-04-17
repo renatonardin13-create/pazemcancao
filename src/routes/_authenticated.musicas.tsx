@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   AlertCircle,
   Disc3,
+  Gift,
   Headphones,
   ListMusic,
   Play,
