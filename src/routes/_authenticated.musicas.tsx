@@ -19,6 +19,7 @@ import { StudentLayout } from "@/components/StudentLayout";
 import { SafeBoundary } from "@/components/SafeBoundary";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { TrackCard } from "@/components/TrackCard";
 import { listActiveTracks } from "@/lib/tracks.functions";
 import { listPlaylistsWithCounts, getPlaylistWithTracks } from "@/lib/playlists.functions";
 import { checkBuyerAccess } from "@/lib/access.functions";
@@ -26,14 +27,17 @@ import { logDownload } from "@/lib/analytics.functions";
 import { usePlayer } from "@/hooks/use-player";
 import type { Track } from "@/lib/sample-tracks";
 
-const OFFICIAL_LOUVOR_CATEGORIES = [
-  "destaques",
-  "soldado ferido",
-  "ansiedade",
-  "cura da alma",
-  "não desista",
-  "refúgio",
-] as const;
+// Normalize a category name: remove emojis/symbols, lowercase, trim, collapse spaces.
+// This makes "⭐ Destaques (Top 10)" → "destaques (top 10)" so categorias com emoji
+// no banco continuam visíveis na UI.
+function normalizeCategorySlug(value: unknown): string {
+  if (typeof value !== "string") return "";
+  return value
+    .replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
 
 export const Route = createFileRoute("/_authenticated/musicas")({
   validateSearch: (search: Record<string, unknown>): { categoria?: string } => ({
@@ -182,31 +186,26 @@ function MusicLibraryPage() {
   const tracks = Array.isArray(tracksData?.tracks) ? tracksData.tracks : [];
   const playlists = Array.isArray(playlistsData?.playlists) ? playlistsData.playlists : [];
 
+  // Categorias dinâmicas: derivadas das próprias faixas, sem whitelist.
+  // Slug é normalizado (sem emojis) para que filtros funcionem mesmo
+  // quando o nome no banco contém ícones.
   const categories = useMemo(() => {
     const seen = new Map<string, { id: string; name: string; slug: string }>();
     for (const t of tracks as any[]) {
       const name = String(t?.category || "").trim();
-      const slug = safeSlug(name);
-      if (!slug || !OFFICIAL_LOUVOR_CATEGORIES.includes(slug as (typeof OFFICIAL_LOUVOR_CATEGORIES)[number])) {
-        continue;
-      }
+      const slug = normalizeCategorySlug(name);
+      if (!slug) continue;
       if (!seen.has(slug)) {
         seen.set(slug, { id: slug, name, slug });
       }
     }
-    return OFFICIAL_LOUVOR_CATEGORIES.map((slug) => seen.get(slug)).filter(Boolean) as {
-      id: string;
-      name: string;
-      slug: string;
-    }[];
+    return Array.from(seen.values()).sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
   }, [tracks]);
   const playlistTracks = Array.isArray(playlistTracksData?.tracks) ? playlistTracksData.tracks : [];
 
   const rawCategoryFilter = typeof search?.categoria === "string" ? search.categoria : "";
-  const requestedSlug = safeSlug(rawCategoryFilter);
-  const isRequestedValid = OFFICIAL_LOUVOR_CATEGORIES.includes(
-    requestedSlug as (typeof OFFICIAL_LOUVOR_CATEGORIES)[number]
-  );
+  const requestedSlug = normalizeCategorySlug(rawCategoryFilter);
+  const isRequestedValid = categories.some((c) => c.slug === requestedSlug);
   const categoryFilter = isRequestedValid ? requestedSlug : "";
 
   const isLocked = accessData?.trialExpired === true || accessData?.isBlocked === true;
@@ -215,7 +214,8 @@ function MusicLibraryPage() {
 
   const filteredTracks = useMemo(() => {
     return tracks.filter((track: any) => {
-      const matchesCategory = !categoryFilter || safeSlug(track?.category) === safeSlug(categoryFilter);
+      const matchesCategory =
+        !categoryFilter || normalizeCategorySlug(track?.category) === categoryFilter;
       const term = searchTerm.trim().toLowerCase();
       const matchesSearch =
         !term ||
@@ -410,91 +410,20 @@ function MusicLibraryPage() {
                   Nenhuma música encontrada
                 </div>
               ) : (() => {
-                const cards = filteredTracks.map((track: any) => {
-                  const playerTrack = dbTrackToPlayerTrack(track);
-                  const isCurrent = currentTrack?.id === playerTrack.id;
-                  const isPlaying = isCurrent && playing;
-                  const canPlay = Boolean(playerTrack.audioUrl);
+                const playerTracks = filteredTracks.map(dbTrackToPlayerTrack);
 
-                  return (
-                    <div
-                      key={track.id}
-                      className={`group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border/40 bg-gradient-to-b from-card/70 via-card/40 to-background/60 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-[0_20px_60px_-15px_hsl(var(--primary)/0.35)] ${
-                        categoryFilter
-                          ? "snap-start shrink-0 w-[72vw] sm:w-[260px] md:w-[280px] lg:w-[300px] xl:w-[320px]"
-                          : ""
-                      }`}
-                    >
-                      {/* Poster */}
-                      <Link
-                        to="/musicas/$trackId"
-                        params={{ trackId: String(track.id) }}
-                        className="relative block aspect-[4/5] w-full overflow-hidden"
-                      >
-                        {playerTrack.coverUrl ? (
-                          <img
-                            src={playerTrack.coverUrl}
-                            alt={playerTrack.title}
-                            loading="lazy"
-                            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                          />
-                        ) : (
-                          <div className="relative flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/20 via-background/30 to-background">
-                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.25),transparent_60%)]" />
-                            <Music className="relative h-20 w-20 text-primary/50 drop-shadow-[0_4px_20px_hsl(var(--primary)/0.4)]" />
-                          </div>
-                        )}
-
-                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-
-                        {track?.category ? (
-                          <span className="absolute left-3 top-3 rounded-full border border-white/10 bg-background/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-foreground/90 backdrop-blur-md">
-                            {track.category}
-                          </span>
-                        ) : null}
-
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            if (canPlay) handleTrackPlay(track, filteredTracks);
-                          }}
-                          disabled={!canPlay}
-                          aria-label={isPlaying ? "Pausar" : "Ouvir"}
-                          className="absolute bottom-4 right-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_10px_30px_-5px_hsl(var(--primary)/0.6)] ring-1 ring-primary/30 transition-all duration-300 hover:scale-110 disabled:opacity-40"
-                        >
-                          {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 translate-x-[2px]" />}
-                        </button>
-                      </Link>
-
-                      <div className="flex flex-1 flex-col gap-4 px-5 pb-5 pt-4">
-                        <div className="flex flex-1 flex-col gap-1">
-                          <Link
-                            to="/musicas/$trackId"
-                            params={{ trackId: String(track.id) }}
-                            className="line-clamp-2 text-lg font-bold leading-tight tracking-tight text-foreground transition-colors group-hover:text-primary"
-                          >
-                            {track?.title || "Música sem título"}
-                          </Link>
-                          <p className="text-xs font-medium text-muted-foreground/60">
-                            {track?.duration || "0:00"}
-                          </p>
-                        </div>
-
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          className="h-10 w-full border-border/50 bg-background/40 text-xs font-semibold tracking-wide hover:border-primary/40 hover:bg-primary/5"
-                          onClick={() => handleDownload(track)}
-                          disabled={isLocked || !canDownload || !playerTrack.downloadUrl}
-                        >
-                          <Download className="h-3.5 w-3.5" />
-                          Baixar
-                        </Button>
-                      </div>
-                    </div>
-                  );
-                });
+                const cards = playerTracks.map((pt, idx) => (
+                  <div
+                    key={pt.id}
+                    className={
+                      categoryFilter
+                        ? "snap-start shrink-0 w-[46vw] sm:w-[200px] md:w-[210px] lg:w-[220px] xl:w-[230px]"
+                        : ""
+                    }
+                  >
+                    <TrackCard track={pt} index={idx} />
+                  </div>
+                ));
 
                 if (categoryFilter) {
                   return (
@@ -526,7 +455,7 @@ function MusicLibraryPage() {
                 }
 
                 return (
-                  <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                     {cards}
                   </div>
                 );
