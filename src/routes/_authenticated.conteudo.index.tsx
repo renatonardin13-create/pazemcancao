@@ -2,7 +2,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { Progress } from "@/components/ui/progress";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useState } from "react";
 import { trackContentView, trackContentDownload } from "@/lib/progress.functions";
 import { listContentItems } from "@/lib/content.functions";
 import { listFavorites, toggleFavorite } from "@/lib/favorites.functions";
