@@ -141,14 +141,6 @@ function MusicLibraryPage() {
   const [activePlaylistId, setActivePlaylistId] = useState<string | null>(null);
 
   const { currentTrack, playing, toggle, setQueue } = usePlayer();
-  const carouselRef = useRef<HTMLDivElement>(null);
-
-  const scrollCarousel = (dir: "prev" | "next") => {
-    const el = carouselRef.current;
-    if (!el) return;
-    const amount = el.clientWidth * 0.85;
-    el.scrollBy({ left: dir === "next" ? amount : -amount, behavior: "smooth" });
-  };
 
   // Catálogo Louvores: lista TODAS as músicas (inclusive bônus com liberação
   // programada / inativas) para exibir badge "Em breve" — a reprodução é
