@@ -173,17 +173,12 @@ function MusicLibraryPage() {
     Boolean(categoryFilter) &&
     !categories.some((category: any) => safeSlug(category?.slug || category?.name) === safeSlug(categoryFilter));
 
-  console.log("[/musicas]", {
-    tracksLoading,
-    categoriesLoading,
-    tracksFailed,
-    categoriesFailed,
-    playlistsFailed,
-    categoryFilter,
-    tracks: tracks.length,
-    categories: categories.length,
-    playlists: playlists.length,
-  });
+  console.log("init musicas");
+  console.log("categoria:", categoryFilter);
+  console.log("musicas:", tracks);
+  if (tracksFailed || categoriesFailed || playlistsFailed) {
+    console.error("erro:", { tracksFailed, categoriesFailed, playlistsFailed });
+  }
 
   const filteredTracks = useMemo(() => {
     return tracks.filter((track: any) => {
