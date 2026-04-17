@@ -191,9 +191,14 @@ export const CourseShelfCard = memo(function CourseShelfCard({
           open={unlockOpen}
           onOpenChange={setUnlockOpen}
           title={course.title}
+          description={course.short_description || course.full_description}
           coverUrl={course.cover_image_url}
-          price={priceLabel ? `R$ ${Number(priceLabel).toFixed(2).replace('.', ',')}` : undefined}
+          price={priceLabel != null && Number(priceLabel) > 0 ? `R$ ${Number(priceLabel).toFixed(2).replace('.', ',')}` : undefined}
           checkoutUrl={salesUrl}
+          accessType={course.course_type === 'subscription' ? 'subscription' : 'single'}
+          totalLessons={course.total_lessons}
+          totalDuration={course.total_duration}
+          categoryName={course.category_name || course.categories?.name}
         />
       )}
     </>
