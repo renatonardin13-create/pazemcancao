@@ -571,7 +571,7 @@ export const toggleStudentCourseAccess = createServerFn({ method: 'POST' })
 
     // Find auth user
     const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
-    const authUser = authUsers?.users?.find((u: any) => u.email?.toLowerCase() === email);
+    let authUser = authUsers?.users?.find((u: any) => u.email?.toLowerCase() === email);
 
     if (data.grant) {
       // Auto-create auth user if it doesn't exist yet (buyer was added manually without login)
