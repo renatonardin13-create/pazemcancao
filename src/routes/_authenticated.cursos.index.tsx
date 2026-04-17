@@ -194,7 +194,7 @@ function MeusCoursosPage() {
                   )}
 
                   {/* ═══ PRATELEIRAS DO ADMIN ═══ */}
-                  {shelves.map((shelf: any, shelfIdx: number) => {
+                  {shelves.filter((s: any) => (s.courses?.length || 0) >= 2).map((shelf: any, shelfIdx: number) => {
                     const bannersAfter = promoBanners.filter((b: any) => b.position_after_shelf === shelfIdx + 1);
                     return (
                       <div key={shelf.id}>
@@ -240,7 +240,7 @@ function MeusCoursosPage() {
                   })}
 
                   {/* ═══ SEUS ACESSOS ═══ */}
-                  {(libSections?.unlocked?.length ?? 0) > 0 && (
+                  {(libSections?.unlocked?.length ?? 0) >= 2 && (
                     <ShelfSection delay={0.3}>
                       <ShelfHeader title="Seus Acessos" />
                       <ShelfRow>
@@ -254,7 +254,7 @@ function MeusCoursosPage() {
                   )}
 
                   {/* ═══ DISPONÍVEL PARA VOCÊ (BLOQUEADO) ═══ */}
-                  {(libSections?.locked?.length ?? 0) > 0 && (
+                  {(libSections?.locked?.length ?? 0) >= 2 && (
                     <ShelfSection delay={0.35}>
                       <ShelfHeader title="Disponível para você" />
                       <ShelfRow>
@@ -268,7 +268,7 @@ function MeusCoursosPage() {
                   )}
 
                   {/* ═══ EM BREVE ═══ */}
-                  {(libSections?.upcoming?.length ?? 0) > 0 && (
+                  {(libSections?.upcoming?.length ?? 0) >= 2 && (
                     <ShelfSection delay={0.4}>
                       <ShelfHeader title="Novidades chegando" />
                       <ShelfRow>
@@ -282,7 +282,7 @@ function MeusCoursosPage() {
                   )}
 
                   {/* ═══ FAVORITOS ═══ */}
-                  {(libSections?.favorites?.length ?? 0) > 0 && (
+                  {(libSections?.favorites?.length ?? 0) >= 2 && (
                     <ShelfSection delay={0.45}>
                       <ShelfHeader title="Seus Favoritos" />
                       <ShelfRow>
@@ -296,7 +296,7 @@ function MeusCoursosPage() {
                   )}
 
                   {/* ═══ BÔNUS ═══ */}
-                  {(libSections?.bonus?.length ?? 0) > 0 && (
+                  {(libSections?.bonus?.length ?? 0) >= 2 && (
                     <ShelfSection delay={0.5}>
                       <ShelfHeader title="Bônus Exclusivos" />
                       <ShelfRow>
