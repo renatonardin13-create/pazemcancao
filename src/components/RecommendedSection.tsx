@@ -132,10 +132,15 @@ export function RecommendedSection({
   downloadedIds,
   progressMap = {},
   popularityMap = {},
+  excludeIds,
 }: RecommendedSectionProps) {
+  const filteredItems = useMemo(
+    () => (excludeIds ? items.filter((i) => !excludeIds.has(i.id)) : items),
+    [items, excludeIds],
+  );
   const recommendations = useMemo(
-    () => computeRecommendations(items, viewedIds, downloadedIds, progressMap, popularityMap),
-    [items, viewedIds, downloadedIds, progressMap, popularityMap],
+    () => computeRecommendations(filteredItems, viewedIds, downloadedIds, progressMap, popularityMap),
+    [filteredItems, viewedIds, downloadedIds, progressMap, popularityMap],
   );
 
   // Esconde se vazio ou se houver apenas 1 item bloqueado (visual quebrado)
