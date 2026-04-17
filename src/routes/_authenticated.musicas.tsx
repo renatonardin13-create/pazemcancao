@@ -563,7 +563,7 @@ function MusicLibraryPage() {
                       </button>
                       <div
                         ref={carouselRef}
-                        className="flex gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                        className="flex gap-4 sm:gap-5 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]"
                       >
                         {cards}
                       </div>
