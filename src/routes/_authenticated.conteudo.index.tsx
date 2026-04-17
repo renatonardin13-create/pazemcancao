@@ -98,7 +98,6 @@ function ContentPage() {
   // RC1: dedupe ids across "Top semana" → "Mais acessados" → "Recomendado"
   const [weeklyTopIds, setWeeklyTopIds] = useState<string[]>([]);
   const [allTimeTopIds, setAllTimeTopIds] = useState<string[]>([]);
-  const weeklyExcludeSet = useMemo(() => new Set<string>(), []);
   const weeklyTopSet = useMemo(() => new Set(weeklyTopIds), [weeklyTopIds]);
   const recommendedExcludeSet = useMemo(
     () => new Set([...weeklyTopIds, ...allTimeTopIds]),
@@ -468,6 +467,7 @@ function ContentPage() {
                 progressMap={progressMap}
                 lastAccessedId={lastAccessedId}
                 mode="weekly"
+                onItemsResolved={setWeeklyTopIds}
               />
 
               {/* Mais acessados (all time) */}
@@ -478,6 +478,8 @@ function ContentPage() {
                 progressMap={progressMap}
                 lastAccessedId={lastAccessedId}
                 mode="all_time"
+                excludeIds={weeklyTopSet}
+                onItemsResolved={setAllTimeTopIds}
               />
 
               {/* Categorias em Destaque */}
