@@ -44,11 +44,13 @@ export const getTrackById = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { id: string }) => input)
   .handler(async ({ data }) => {
+    // Não filtrar por is_active — a biblioteca (/musicas) usa listAllTracks
+    // e exibe faixas mesmo inativas (com badge "Em breve"). A página de
+    // detalhe deve permanecer consistente com a lista.
     const { data: track, error } = await supabaseAdmin
       .from('tracks')
       .select('*')
       .eq('id', data.id)
-      .eq('is_active', true)
       .maybeSingle();
 
     if (error) throw new Error(error.message);
