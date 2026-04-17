@@ -19,6 +19,7 @@ import { StudentLayout } from "@/components/StudentLayout";
 import { SafeBoundary } from "@/components/SafeBoundary";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { TrackCard } from "@/components/TrackCard";
 import { listActiveTracks } from "@/lib/tracks.functions";
 import { listPlaylistsWithCounts, getPlaylistWithTracks } from "@/lib/playlists.functions";
 import { checkBuyerAccess } from "@/lib/access.functions";
@@ -26,14 +27,17 @@ import { logDownload } from "@/lib/analytics.functions";
 import { usePlayer } from "@/hooks/use-player";
 import type { Track } from "@/lib/sample-tracks";
 
-const OFFICIAL_LOUVOR_CATEGORIES = [
-  "destaques",
-  "soldado ferido",
-  "ansiedade",
-  "cura da alma",
-  "não desista",
-  "refúgio",
-] as const;
+// Normalize a category name: remove emojis/symbols, lowercase, trim, collapse spaces.
+// This makes "⭐ Destaques (Top 10)" → "destaques (top 10)" so categorias com emoji
+// no banco continuam visíveis na UI.
+function normalizeCategorySlug(value: unknown): string {
+  if (typeof value !== "string") return "";
+  return value
+    .replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
 
 export const Route = createFileRoute("/_authenticated/musicas")({
   validateSearch: (search: Record<string, unknown>): { categoria?: string } => ({
