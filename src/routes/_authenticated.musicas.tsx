@@ -294,20 +294,20 @@ function MusicLibraryPage() {
               </div>
             </section>
 
-            <section className="rounded-3xl border border-border/30 bg-card/20 p-5 sm:p-6">
+            <section>
               <div className="mb-4 flex items-center gap-2">
-                <ListMusic className="h-4 w-4 text-muted-foreground/70" />
-                <h2 className="text-sm font-medium text-foreground">Categorias</h2>
+                <ListMusic className="h-4 w-4 text-primary/70" />
+                <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">Categorias</h2>
               </div>
 
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2.5">
                 <Link
                   to="/musicas"
                   search={{}}
-                  className={`rounded-full border px-4 py-2 text-xs transition-colors ${
+                  className={`rounded-full border px-5 py-2.5 text-xs font-semibold tracking-wide transition-all duration-300 ${
                     !categoryFilter
-                      ? "border-primary/40 bg-primary/10 text-foreground"
-                      : "border-border/40 bg-background/40 text-muted-foreground hover:text-foreground"
+                      ? "border-primary/50 bg-primary/15 text-foreground shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.4)]"
+                      : "border-border/40 bg-card/30 text-muted-foreground hover:-translate-y-0.5 hover:border-primary/30 hover:text-foreground"
                   }`}
                 >
                   Todas
@@ -320,10 +320,10 @@ function MusicLibraryPage() {
                       key={category.id}
                       to="/musicas"
                       search={{ categoria: slug }}
-                      className={`rounded-full border px-4 py-2 text-xs transition-colors ${
+                      className={`rounded-full border px-5 py-2.5 text-xs font-semibold tracking-wide transition-all duration-300 ${
                         active
-                          ? "border-primary/40 bg-primary/10 text-foreground"
-                          : "border-border/40 bg-background/40 text-muted-foreground hover:text-foreground"
+                          ? "border-primary/50 bg-primary/15 text-foreground shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.4)]"
+                          : "border-border/40 bg-card/30 text-muted-foreground hover:-translate-y-0.5 hover:border-primary/30 hover:text-foreground"
                       }`}
                     >
                       {category?.name || "Sem categoria"}
