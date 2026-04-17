@@ -1,7 +1,7 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
-import { listCategories, listActiveTracks } from "@/lib/tracks.functions";
+import { listActiveTracks } from "@/lib/tracks.functions";
 import { useProjectMode, type ModuleKey } from "@/hooks/use-project-mode";
 import { LogoBrand } from "./LogoBrand";
 import {
