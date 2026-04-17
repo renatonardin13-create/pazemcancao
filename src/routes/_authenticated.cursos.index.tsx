@@ -34,33 +34,33 @@ function MeusCoursosPage() {
   const { data: shelvesData, isLoading } = useQuery({
     queryKey: ["student-shelves"],
     queryFn: () => getStudentShelves(),
-    staleTime: 10_000,
-    refetchOnWindowFocus: true,
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
   });
 
   const { data: myData } = useQuery({
     queryKey: ["my-courses"],
     queryFn: () => getMyCoursesData(),
-    staleTime: 5_000,
+    staleTime: 30_000,
   });
 
   const { data: libStats } = useQuery({
     queryKey: ["library-stats"],
     queryFn: () => getLibraryStats(),
-    staleTime: 30_000,
+    staleTime: 60_000,
   });
 
   const { data: libSections } = useQuery({
     queryKey: ["library-sections"],
     queryFn: () => getLibrarySections(),
-    staleTime: 30_000,
+    staleTime: 60_000,
   });
 
   const { data: continueData } = useQuery({
     queryKey: ["continue-watching"],
     queryFn: () => getContinueWatching(),
-    staleTime: 5_000,
-    refetchOnWindowFocus: true,
+    staleTime: 30_000,
+    refetchOnWindowFocus: false,
   });
 
   const [search, setSearch] = useState("");
@@ -226,11 +226,11 @@ function MeusCoursosPage() {
                           >
                             {banner.link_url ? (
                               <a href={banner.link_url} target="_blank" rel="noopener noreferrer" className="block rounded-2xl overflow-hidden border border-border/6 hover:border-gold/10 transition-all duration-300">
-                                <img src={banner.image_url} alt={banner.title} className="w-full h-auto object-cover" />
+                                <img src={banner.image_url} alt={banner.title} loading="lazy" decoding="async" className="w-full h-auto object-cover" />
                               </a>
                             ) : (
                               <div className="rounded-2xl overflow-hidden border border-border/6">
-                                <img src={banner.image_url} alt={banner.title} className="w-full h-auto object-cover" />
+                                <img src={banner.image_url} alt={banner.title} loading="lazy" decoding="async" className="w-full h-auto object-cover" />
                               </div>
                             )}
                           </motion.div>

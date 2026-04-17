@@ -63,7 +63,7 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
         <div className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0">
           <div className="shrink-0 h-10 w-10 sm:h-11 sm:w-11 rounded-lg overflow-hidden bg-card/20 border border-border/25 shadow-md">
             {currentTrack.coverUrl ? (
-              <img src={currentTrack.coverUrl} alt={currentTrack.title} className="h-full w-full object-cover" />
+              <img src={currentTrack.coverUrl} alt={currentTrack.title} loading="lazy" decoding="async" className="h-full w-full object-cover" />
             ) : (
               <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-gold/5 to-transparent">
                 <Music className="h-4 w-4 text-muted-foreground/60" />
