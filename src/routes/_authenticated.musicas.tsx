@@ -183,6 +183,7 @@ function MusicLibraryPage() {
 
   const tracks = Array.isArray(tracksData?.tracks) ? tracksData.tracks : [];
   const playlists = Array.isArray(playlistsData?.playlists) ? playlistsData.playlists : [];
+  const shouldShowPlaylistsSection = playlists.length > 0;
 
   // Categorias dinâmicas: derivadas das próprias faixas, sem whitelist.
   // Slug é normalizado (sem emojis) para que filtros funcionem mesmo
