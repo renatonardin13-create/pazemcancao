@@ -78,27 +78,24 @@ function VitrinePage() {
     <StudentLayout>
       <div className="min-h-screen flex flex-col bg-background">
         <div className="flex-1 w-full pb-28">
-          {/* ── Netflix-style Hero Banner (hide in music-only mode unless custom) ── */}
-          {featuredCourse && !(mode === "somente_musica" && featuredCourse.id !== "__custom_banner__") && (
-            <HeroBanner course={featuredCourse} />
-          )}
-
-          {/* ── Content area ── */}
-          <div className={`relative z-10 ${featuredCourse ? "-mt-16 sm:-mt-24" : ""}`}>
-            {!featuredCourse && (
-              <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 pt-10">
-                <div className="flex items-center gap-3 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-600">
-                  <Store className="h-7 w-7 text-gold" />
-                  <div>
-                    <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
-                      Vitrine
-                    </h1>
-                    <p className="text-[13px] text-muted-foreground/50 mt-0.5">
-                      Explore nossos cursos e conteúdos
-                    </p>
-                  </div>
+          <div className="relative z-10">
+            <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 pt-8 sm:pt-10">
+              <div className="flex items-center gap-3 mb-6 sm:mb-8 animate-in fade-in slide-in-from-bottom-4 duration-600">
+                <Store className="h-7 w-7 text-gold" />
+                <div>
+                  <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
+                    Vitrine
+                  </h1>
+                  <p className="text-[13px] text-muted-foreground/50 mt-0.5">
+                    Explore nossos cursos e conteúdos
+                  </p>
                 </div>
               </div>
+            </div>
+
+            {/* ── Destaque da semana (card compacto) ── */}
+            {featuredCourse && !(mode === "somente_musica" && featuredCourse.id !== "__custom_banner__") && (
+              <FeaturedHighlight course={featuredCourse} />
             )}
 
             {/* Search bar */}
@@ -203,99 +200,77 @@ function VitrinePage() {
   );
 }
 
-/* ── Netflix Premium Hero Banner ── */
-function HeroBanner({ course }: { course: any }) {
+/* ── Destaque da semana — card compacto consistente ── */
+function FeaturedHighlight({ course }: { course: any }) {
   const bannerLinkUrl = course.banner_link_url || course.sales_page_url || course.checkout_url;
   const imageUrl = course.banner_image_url || course.cover_image_url;
   const isLocked = ['locked', 'blocked', 'expired'].includes(course.access_state);
   const isEnrolled = ['enrolled', 'in_progress', 'completed'].includes(course.access_state);
 
-  const content = (
-    <div
-      className={`relative w-full h-[60vh] sm:h-[70vh] lg:h-[75vh] min-h-[360px] max-h-[720px] overflow-hidden animate-in fade-in duration-1000 ${bannerLinkUrl ? 'cursor-pointer' : ''}`}
-    >
-      {imageUrl && (
-        <OptimizedImage
-          src={imageUrl}
-          alt={course.display_title || course.title}
-          context="hero"
-          priority
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-      )}
-
-      {/* Cinematic overlays */}
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-background/10" />
-      <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/40 to-transparent" />
-      <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-background via-background/95 to-transparent" />
-      <div className="absolute inset-0 shadow-[inset_0_0_120px_40px_rgba(0,0,0,0.35)] pointer-events-none" />
-
-      {/* Content */}
-      <div className="absolute inset-0 flex items-end">
-        <div className="w-full px-4 sm:px-8 lg:px-12 pb-20 sm:pb-28 lg:pb-32">
-          <div className="mx-auto w-full max-w-[1400px]">
-            {/* Featured badge */}
-            <div className="mb-4 animate-in fade-in slide-in-from-left-4 duration-600" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-gold/20 border border-gold/30 text-gold text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] backdrop-blur-sm">
-                <Sparkles className="h-3 w-3" />
-                {isEnrolled ? 'Seu destaque' : isLocked ? 'Destaque Premium' : 'Em destaque'}
-              </span>
+  const card = (
+    <div className="group relative w-full overflow-hidden rounded-2xl border border-gold/15 bg-gradient-to-br from-card/40 via-background to-black/60 hover:border-gold/30 transition-all duration-500 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.6)]">
+      <div className="grid grid-cols-1 sm:grid-cols-[40%_1fr] gap-0">
+        <div className="relative aspect-[16/9] sm:aspect-auto sm:min-h-[180px] overflow-hidden">
+          {imageUrl ? (
+            <OptimizedImage
+              src={imageUrl}
+              alt={course.display_title || course.title}
+              context="banner"
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-gold/10 to-black/40 flex items-center justify-center">
+              <Sparkles className="h-10 w-10 text-gold/30" />
             </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-background/30 to-background sm:bg-gradient-to-r sm:from-transparent sm:to-background/95" />
+        </div>
 
-            {/* Title */}
-            <h1
-              className="font-display text-3xl sm:text-5xl lg:text-[3.5rem] xl:text-6xl font-black text-foreground tracking-tight mb-3 sm:mb-4 max-w-2xl leading-[1.08] drop-shadow-[0_4px_20px_rgba(0,0,0,0.7)] animate-in fade-in slide-in-from-bottom-6 duration-700"
-              style={{ animationDelay: '350ms', animationFillMode: 'both' }}
-            >
-              {course.display_title || course.title}
-            </h1>
-
-            {/* Subtitle */}
-            {(course.display_subtitle || course.short_description) && (
-              <p
-                className="text-sm sm:text-base lg:text-lg text-foreground/50 mb-6 sm:mb-8 max-w-xl leading-relaxed line-clamp-3 animate-in fade-in slide-in-from-bottom-6 duration-700"
-                style={{ animationDelay: '500ms', animationFillMode: 'both' }}
-              >
-                {course.display_subtitle || course.short_description}
-              </p>
-            )}
-
-            {/* CTA */}
-            {course.id !== '__custom_banner__' && (
-              <div
-                className="flex flex-wrap items-center gap-3 sm:gap-4 animate-in fade-in slide-in-from-bottom-6 duration-700"
-                style={{ animationDelay: '650ms', animationFillMode: 'both' }}
-              >
-                <HeroCTA course={course} />
-              </div>
-            )}
-
-            {/* Meta info */}
-            {course.total_lessons > 0 && (
-              <div
-                className="mt-5 flex items-center gap-4 text-[11px] sm:text-xs text-foreground/30 uppercase tracking-wider animate-in fade-in duration-600"
-                style={{ animationDelay: '900ms', animationFillMode: 'both' }}
-              >
-                <span>{course.total_lessons} aula{course.total_lessons !== 1 ? 's' : ''}</span>
-                {course.progress_pct > 0 && course.progress_pct < 100 && (
-                  <>
-                    <span className="h-1 w-1 rounded-full bg-gold/40" />
-                    <span className="text-gold/60">{course.progress_pct}% concluído</span>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
+        <div className="relative flex flex-col justify-center gap-2.5 p-5 sm:p-6 lg:p-7">
+          <span className="inline-flex w-fit items-center gap-1.5 px-2.5 py-1 rounded-full bg-gold/15 border border-gold/25 text-gold text-[10px] font-bold uppercase tracking-[0.2em]">
+            <Sparkles className="h-2.5 w-2.5" />
+            Destaque da semana
+          </span>
+          <h2 className="font-display text-lg sm:text-xl lg:text-2xl font-bold text-foreground/95 tracking-tight leading-tight line-clamp-2">
+            {course.display_title || course.title}
+          </h2>
+          {(course.display_subtitle || course.short_description) && (
+            <p className="text-xs sm:text-sm text-muted-foreground/70 leading-relaxed line-clamp-2 max-w-xl">
+              {course.display_subtitle || course.short_description}
+            </p>
+          )}
+          {course.id !== '__custom_banner__' && (
+            <div className="flex items-center gap-3 mt-1.5">
+              <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-gold/80 group-hover:text-gold transition-colors">
+                {isLocked ? <ShoppingCart className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 fill-current" />}
+                {isLocked ? 'Quero desbloquear' : isEnrolled ? 'Continuar' : 'Acessar agora'}
+                <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
+              </span>
+              {course.total_lessons > 0 && (
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground/40">
+                  {course.total_lessons} aula{course.total_lessons !== 1 ? 's' : ''}
+                </span>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 
-  return bannerLinkUrl ? (
-    <a href={bannerLinkUrl} target="_blank" rel="noopener noreferrer">
-      {content}
-    </a>
-  ) : content;
+  return (
+    <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mb-6 sm:mb-8 animate-in fade-in slide-in-from-bottom-4 duration-600">
+      {bannerLinkUrl ? (
+        <a href={bannerLinkUrl} target="_blank" rel="noopener noreferrer" className="block">
+          {card}
+        </a>
+      ) : course.id !== '__custom_banner__' ? (
+        <Link to="/cursos/$courseId" params={{ courseId: course.id }} className="block">
+          {card}
+        </Link>
+      ) : card}
+    </div>
+  );
 }
 
 

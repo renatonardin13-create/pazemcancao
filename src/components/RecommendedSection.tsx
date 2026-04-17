@@ -137,7 +137,13 @@ export function RecommendedSection({
     [items, viewedIds, downloadedIds, progressMap, popularityMap],
   );
 
+  // Esconde se vazio ou se houver apenas 1 item bloqueado (visual quebrado)
   if (recommendations.length === 0) return null;
+  if (recommendations.length === 1) {
+    const only = recommendations[0];
+    const isLocked = only.unlocked === false || (!only.is_free && !hasAccess);
+    if (isLocked) return null;
+  }
 
   return (
     <section className="space-y-5">
