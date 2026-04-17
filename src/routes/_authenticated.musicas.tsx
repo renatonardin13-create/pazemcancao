@@ -1,16 +1,11 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   AlertCircle,
-  ChevronLeft,
-  ChevronRight,
   Disc3,
-  Download,
   Headphones,
   ListMusic,
-  Music,
-  Pause,
   Play,
   Search,
 } from "lucide-react";
@@ -146,14 +141,6 @@ function MusicLibraryPage() {
   const [activePlaylistId, setActivePlaylistId] = useState<string | null>(null);
 
   const { currentTrack, playing, toggle, setQueue } = usePlayer();
-  const carouselRef = useRef<HTMLDivElement>(null);
-
-  const scrollCarousel = (dir: "prev" | "next") => {
-    const el = carouselRef.current;
-    if (!el) return;
-    const amount = el.clientWidth * 0.85;
-    el.scrollBy({ left: dir === "next" ? amount : -amount, behavior: "smooth" });
-  };
 
   // Catálogo Louvores: lista TODAS as músicas (inclusive bônus com liberação
   // programada / inativas) para exibir badge "Em breve" — a reprodução é
@@ -405,57 +392,13 @@ function MusicLibraryPage() {
                 <div className="rounded-2xl border border-dashed border-border/40 px-4 py-10 text-center text-sm text-muted-foreground/70">
                   Nenhuma música encontrada
                 </div>
-              ) : (() => {
-                const playerTracks = filteredTracks.map(dbTrackToPlayerTrack);
-
-                const cards = playerTracks.map((pt, idx) => (
-                  <div
-                    key={pt.id}
-                    className={
-                      categoryFilter
-                        ? "snap-start shrink-0 w-[46vw] sm:w-[200px] md:w-[210px] lg:w-[220px] xl:w-[230px]"
-                        : ""
-                    }
-                  >
-                    <TrackCard track={pt} index={idx} />
-                  </div>
-                ));
-
-                if (categoryFilter) {
-                  return (
-                    <div className="relative">
-                      <button
-                        type="button"
-                        onClick={() => scrollCarousel("prev")}
-                        aria-label="Anterior"
-                        className="absolute left-0 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 -translate-x-2 items-center justify-center rounded-full border border-border/50 bg-background/80 text-foreground shadow-lg backdrop-blur transition hover:bg-primary hover:text-primary-foreground sm:flex"
-                      >
-                        <ChevronLeft className="h-5 w-5" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => scrollCarousel("next")}
-                        aria-label="Próximo"
-                        className="absolute right-0 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 translate-x-2 items-center justify-center rounded-full border border-border/50 bg-background/80 text-foreground shadow-lg backdrop-blur transition hover:bg-primary hover:text-primary-foreground sm:flex"
-                      >
-                        <ChevronRight className="h-5 w-5" />
-                      </button>
-                      <div
-                        ref={carouselRef}
-                        className="flex gap-4 sm:gap-5 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]"
-                      >
-                        {cards}
-                      </div>
-                    </div>
-                  );
-                }
-
-                return (
-                  <div className={POSTER_GRID}>
-                    {cards}
-                  </div>
-                );
-              })()}
+              ) : (
+                <div className={POSTER_GRID}>
+                  {filteredTracks.map(dbTrackToPlayerTrack).map((pt, idx) => (
+                    <TrackCard key={pt.id} track={pt} index={idx} />
+                  ))}
+                </div>
+              )}
             </section>
 
             <section>
