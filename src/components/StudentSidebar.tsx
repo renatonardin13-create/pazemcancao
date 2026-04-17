@@ -30,7 +30,9 @@ const SLUG_META: Record<string, { icon: LucideIcon; to: string; matchPrefix?: bo
   louvores:    { icon: Music2,         to: "/musicas",     matchPrefix: true, hasSubmenu: true },
   ebooks:      { icon: BookOpen,       to: "/ebooks" },
   trilhas:     { icon: RouteIcon,      to: "/trilhas" },
-  bonus:       { icon: Gift,           to: "/bonus" },
+  // RC4: bônus musical fica DENTRO da categoria em /musicas — sidebar só
+  // exibe extras gerais (cursos, ebooks, lançamentos). Mantemos a entrada
+  // "bonus" no banco para compatibilidade, mas escondemos do menu lateral.
   lancamentos: { icon: Rocket,         to: "/lancamentos" },
   comunidade:  { icon: Users,          to: "/comunidade" },
   perfil:      { icon: UserCircle,     to: "/perfil" },
@@ -93,19 +95,21 @@ export function StudentSidebar() {
     if (dbModules.length === 0) return [];
 
     return dbModules
-      .filter((mod) => mod.enabled && mod.visible_in_menu)
+      .filter((mod) => mod.enabled && mod.visible_in_menu && mod.slug !== "bonus")
       .sort((a, b) => a.sort_order - b.sort_order)
       .map((mod) => {
         const meta = SLUG_META[mod.slug];
+        if (!meta) return null;
         return {
           key: mod.slug,
           label: mod.name,
           icon: meta?.icon || Store,
           to: meta?.to || "/vitrine",
-          matchPrefix: meta?.matchPrefix || false,
-          hasSubmenu: meta?.hasSubmenu || false,
+          matchPrefix: meta.matchPrefix || false,
+          hasSubmenu: meta.hasSubmenu || false,
         };
-      });
+      })
+      .filter((x): x is NonNullable<typeof x> => x !== null);
   }, [dbModules]);
 
   const isActive = (path: string) => location.pathname === path;
