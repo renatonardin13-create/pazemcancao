@@ -30,12 +30,6 @@ function BonusPage() {
     staleTime: 30_000,
   });
 
-  const { data: tracksData } = useQuery({
-    queryKey: ["all-tracks-bonus"],
-    queryFn: () => listAllTracks(),
-    staleTime: 60_000,
-  });
-
   const favoriteIds = useMemo(() => new Set(favData?.favoriteIds || []), [favData]);
   const hasAccess = data?.hasFullAccess ?? false;
   const progressMap: Record<string, any> = data?.progressMap || {};
