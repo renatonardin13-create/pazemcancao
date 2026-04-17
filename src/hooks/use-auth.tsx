@@ -169,6 +169,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
       subscription.unsubscribe();
+      window.removeEventListener('focus', handleFocus);
     };
   }, []);
 
