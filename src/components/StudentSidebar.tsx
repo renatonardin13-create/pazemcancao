@@ -114,60 +114,47 @@ export function StudentSidebar() {
     );
 
   /** Render the Louvores submenu with categories */
-  const renderLouvoresSubmenu = () => (
-    <div>
-      <div
-        className={cn(
-          navItemClass(isActivePrefix("/musicas")),
-          "w-full justify-between p-0 pr-2"
-        )}
-      >
-        <Link
-          to="/musicas"
-          search={{}}
-          onClick={() => setMobileOpen(false)}
-          className="flex flex-1 items-center gap-4 px-5 py-4"
-        >
-          <Music2 className="h-[22px] w-[22px] shrink-0" />
-          Louvores
-        </Link>
-        <button
-          type="button"
-          onClick={(e) => { e.stopPropagation(); setLouvoresOpen(!louvoresOpen); }}
-          aria-label={louvoresOpen ? "Recolher categorias" : "Expandir categorias"}
-          className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-white/[0.05] transition"
-        >
-          {louvoresOpen ? (
-            <ChevronDown className="h-4.5 w-4.5 text-muted-foreground/40 transition-transform duration-300" />
-          ) : (
-            <ChevronRight className="h-4.5 w-4.5 text-muted-foreground/40 transition-transform duration-300" />
-          )}
-        </button>
-      </div>
+  const renderLouvoresSubmenu = () => {
+    const currentCategoria = (location.search as any)?.categoria as string | undefined;
+    const isOnMusicas = isActivePrefix("/musicas");
+    const isGeneralActive = isOnMusicas && !currentCategoria;
 
-      {louvoresOpen && (
-        <div className="mt-2.5 space-y-1.5">
+    return (
+      <div>
+        <div
+          className={cn(
+            navItemClass(isGeneralActive),
+            "w-full justify-between p-0 pr-2"
+          )}
+        >
           <Link
             to="/musicas"
             search={{}}
             onClick={() => setMobileOpen(false)}
-            className={subItemClass(
-              isActive("/musicas") && !(location.search as any)?.categoria
-            )}
+            className="flex flex-1 items-center gap-4 px-5 py-4"
           >
-            <span className="text-sm">⭐</span>
-            Destaques (Top 10)
+            <Music2 className="h-[22px] w-[22px] shrink-0" />
+            Louvores
           </Link>
-          {visibleCategories
-            .filter((cat: any) => {
-              const slug = (cat.slug || cat.name.toLowerCase()).toLowerCase();
-              const plainName = cat.name.toLowerCase().replace(/^[^\p{L}\p{N}]+/u, "").trim();
-              return slug !== "destaques" && slug !== "top-10-mais-fortes"
-                && !plainName.startsWith("destaques");
-            })
-            .map((cat: any) => {
-              const catSlug = cat.slug || cat.name.toLowerCase();
-              const isActiveCat = (location.search as any)?.categoria === catSlug;
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); setLouvoresOpen(!louvoresOpen); }}
+            aria-label={louvoresOpen ? "Recolher categorias" : "Expandir categorias"}
+            className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-white/[0.05] transition"
+          >
+            {louvoresOpen ? (
+              <ChevronDown className="h-4.5 w-4.5 text-muted-foreground/40 transition-transform duration-300" />
+            ) : (
+              <ChevronRight className="h-4.5 w-4.5 text-muted-foreground/40 transition-transform duration-300" />
+            )}
+          </button>
+        </div>
+
+        {louvoresOpen && (
+          <div className="mt-2.5 space-y-1.5">
+            {visibleCategories.map((cat: any) => {
+              const catSlug = (cat.slug || cat.name.toLowerCase()).toLowerCase();
+              const isActiveCat = isOnMusicas && currentCategoria === catSlug;
               return (
                 <Link
                   key={cat.id}
@@ -176,15 +163,16 @@ export function StudentSidebar() {
                   onClick={() => setMobileOpen(false)}
                   className={subItemClass(isActiveCat)}
                 >
-                  <span className="text-sm">{cat.icon || "🎵"}</span>
-                  {cat.name.replace(/^[^\w\s]+\s*/u, "")}
+                  <span className="text-sm">🎵</span>
+                  {cat.name}
                 </Link>
               );
             })}
-        </div>
-      )}
-    </div>
-  );
+          </div>
+        )}
+      </div>
+    );
+  };
 
   /** Render a standard menu item */
   const renderMenuItem = (cfg: { key: string; label: string; icon: LucideIcon; to: string; matchPrefix: boolean }) => {
