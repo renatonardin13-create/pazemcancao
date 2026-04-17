@@ -164,8 +164,20 @@ function MusicLibraryPage() {
   });
 
   const tracks = Array.isArray(tracksData?.tracks) ? tracksData.tracks : [];
-  const categories = Array.isArray(categoriesData?.categories) ? categoriesData.categories : [];
+  const allCategories = Array.isArray(categoriesData?.categories) ? categoriesData.categories : [];
   const playlists = Array.isArray(playlistsData?.playlists) ? playlistsData.playlists : [];
+
+  // Apenas categorias relevantes à área de louvores:
+  // 1) Mantém somente categorias que possuem ao menos uma faixa associada (por slug ou nome)
+  // 2) Evita misturar categorias de cursos/ebooks/infoprodutos no filtro de /musicas
+  const trackCategoryKeys = new Set(
+    tracks.map((t: any) => safeSlug(t?.category)).filter(Boolean),
+  );
+  const categories = allCategories.filter((c: any) => {
+    const slug = safeSlug(c?.slug);
+    const name = safeSlug(c?.name);
+    return trackCategoryKeys.has(slug) || trackCategoryKeys.has(name);
+  });
   const playlistTracks = Array.isArray(playlistTracksData?.tracks) ? playlistTracksData.tracks : [];
 
   // Validação segura da categoria vinda da URL: nunca quebra,
