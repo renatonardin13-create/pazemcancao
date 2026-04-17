@@ -547,253 +547,62 @@ function HeroBanner({ course }: { course: any }) {
 
 
 /* ══════════════════════════════════════════════════════════════
-   LIBRARY CONTENT CARD (unlocked / favorites / bonus)
-   Same visual shell as TrackCard — aspect-[9/13], same borders,
-   overlays, hover, ambient glow, vignette.
+   LIBRARY CARDS — wrappers finos sobre ContentCard (Card Master)
+   para manter padronização visual com /bonus, /ebooks, /conteudo.
    ══════════════════════════════════════════════════════════════ */
 
 function LibraryContentCard({ item, isFree }: { item: any; isFree?: boolean }) {
+  const enrichedItem = isFree
+    ? { ...item, is_free: true, badge_text: item.badge_text || "Grátis" }
+    : item;
+  const TypeIcon = item.content_type === "ebook" ? BookOpen : Play;
   return (
-    <Link
-      to="/conteudo/$trackId"
-      params={{ trackId: item.id }}
-      className="group/card relative block cursor-pointer"
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="relative"
-      >
-        {/* Ambient glow */}
-        <div className="absolute -inset-4 rounded-3xl bg-gold/0 md:group-hover/card:bg-gold/[0.05] md:transition-all md:duration-700 blur-3xl pointer-events-none" />
-
-        <div className="relative rounded-[14px] sm:rounded-[16px] overflow-hidden bg-card/5 shadow-md shadow-black/25 ring-1 ring-white/[0.04] md:group-hover/card:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.6)] md:group-hover/card:ring-gold/15 md:transition-all md:duration-500 md:group-hover/card:scale-[1.04]">
-          <div className="relative aspect-[9/13] overflow-hidden bg-gradient-to-br from-sky-900/40 via-blue-950/30 to-slate-950/50">
-            {(item.card_cover_url || item.cover_url) ? (
-              <img
-                src={item.card_cover_url || item.cover_url}
-                alt={item.title}
-                className="w-full h-full object-cover md:transition-transform md:duration-[900ms] md:ease-out md:group-hover/card:scale-[1.08]"
-                loading="lazy"
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl backdrop-blur-sm bg-white/[0.04] border border-white/[0.06] md:group-hover/card:scale-105 md:group-hover/card:bg-white/[0.07] md:transition-all md:duration-700">
-                  <BookOpen className="h-7 w-7 text-white/25 md:group-hover/card:text-white/40 md:transition-colors md:duration-500" />
-                </div>
-              </div>
-            )}
-
-            {/* Bottom gradient */}
-            <div className="absolute inset-x-0 bottom-0 h-[70%] bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
-            <div className="absolute inset-0 bg-black/0 md:group-hover/card:bg-black/30 md:transition-all md:duration-500" />
-            <div className="absolute inset-0 shadow-[inset_0_0_30px_rgba(0,0,0,0.25)] pointer-events-none" />
-
-            {/* Badge — top left */}
-            {isFree && (
-              <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold/90 text-[9px] sm:text-[10px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm">
-                <Gift className="h-2.5 w-2.5" /> Grátis
-              </span>
-            )}
-            {item.badge_text && !isFree && (
-              <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold/15 backdrop-blur-md border border-gold/20 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.15em] text-gold/70">
-                {item.badge_text}
-              </span>
-            )}
-
-            {/* Content type — top right */}
-            <span className="absolute top-2.5 right-2.5 z-10 inline-flex items-center px-2.5 py-1 rounded-full bg-black/25 backdrop-blur-md border border-white/[0.06] text-[9px] sm:text-[10px] font-medium tracking-[0.15em] uppercase text-white/35">
-              {item.content_type === "ebook" ? "E-book" : item.content_type === "video" ? "Vídeo" : "Conteúdo"}
-            </span>
-
-            {/* Play button on hover */}
-            <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-              <div className="flex items-center gap-2 h-auto px-5 py-2.5 rounded-full bg-gold/95 shadow-[0_4px_24px_rgba(0,0,0,0.4)] scale-[0.5] opacity-0 md:group-hover/card:opacity-100 md:group-hover/card:scale-100 md:transition-all md:duration-500 md:ease-[cubic-bezier(0.22,1,0.36,1)]">
-                <Play className="h-4 w-4 text-gold-foreground fill-gold-foreground" />
-              </div>
-            </div>
-
-            {/* Title — bottom */}
-            <div className="absolute inset-x-0 bottom-0 px-3.5 sm:px-4 pb-4 sm:pb-5 z-10">
-              <h3 className="text-sm sm:text-[15px] font-bold text-white line-clamp-2 leading-snug drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] tracking-tight">
-                {item.title}
-              </h3>
-              {item.description && (
-                <p className="text-[10px] sm:text-[11px] text-white/35 mt-1.5 line-clamp-2 leading-relaxed">
-                  {item.description}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      </motion.div>
-    </Link>
+    <ContentCard
+      item={enrichedItem}
+      index={0}
+      hasAccess={true}
+      gradient="from-sky-900/40 via-blue-950/30 to-slate-950/50"
+      TypeIcon={TypeIcon}
+    />
   );
 }
-
-/* ══════════════════════════════════════════════════════════════
-   LOCKED CONTENT CARD — same poster shape with lock overlay
-   ══════════════════════════════════════════════════════════════ */
 
 function LockedContentCard({ item }: { item: any }) {
-  const handleClick = () => {
-    if (item.sales_page_url) {
-      window.open(item.sales_page_url, "_blank", "noopener,noreferrer");
-    }
+  // Força estado bloqueado mantendo sales_page_url para click externo
+  const lockedItem = {
+    ...item,
+    is_free: false,
+    unlocked: false,
+    effectiveAccessMode: "pago",
+    locked_label: "Conteúdo Premium",
   };
-
   return (
-    <button
-      onClick={handleClick}
-      className="group/card relative block cursor-pointer text-left"
-    >
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="relative"
-      >
-        {/* Ambient glow */}
-        <div className="absolute -inset-4 rounded-3xl bg-gold/0 md:group-hover/card:bg-gold/[0.08] md:transition-all md:duration-700 blur-3xl pointer-events-none" />
-
-        <div className="relative rounded-[14px] sm:rounded-[16px] overflow-hidden bg-card/5 shadow-md shadow-black/25 ring-1 ring-gold/10 md:group-hover/card:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.6)] md:group-hover/card:ring-gold/30 md:transition-all md:duration-500 md:group-hover/card:scale-[1.04]">
-          <div className="relative aspect-[9/13] overflow-hidden bg-gradient-to-br from-stone-900/40 via-zinc-950/30 to-neutral-950/50">
-            {(item.card_cover_url || item.cover_url) ? (
-              <img
-                src={item.card_cover_url || item.cover_url}
-                alt={item.title}
-                className="w-full h-full object-cover md:transition-transform md:duration-[900ms] md:ease-out md:group-hover/card:scale-[1.08] saturate-[0.45] brightness-[0.35] md:group-hover/card:brightness-[0.45]"
-                loading="lazy"
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl backdrop-blur-sm bg-white/[0.04] border border-white/[0.06]">
-                  <BookOpen className="h-7 w-7 text-white/20" />
-                </div>
-              </div>
-            )}
-
-            {/* Bottom gradient */}
-            <div className="absolute inset-x-0 bottom-0 h-[70%] bg-gradient-to-t from-black/95 via-black/60 to-transparent" />
-            <div className="absolute inset-0 bg-black/20" />
-            <div className="absolute inset-0 shadow-[inset_0_0_30px_rgba(0,0,0,0.25)] pointer-events-none" />
-
-            {/* Premium badge — top left */}
-            <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-gold/95 to-amber-500/90 text-[9px] sm:text-[10px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm border border-gold/20">
-              <Lock className="h-2.5 w-2.5" />
-              Premium
-            </span>
-
-            {/* Lock icon — top right */}
-            <div className="absolute top-2.5 right-2.5 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm border border-white/[0.08]">
-              <Lock className="h-3 w-3 text-white/45" />
-            </div>
-
-            {/* Lock overlay center */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center z-10 gap-2">
-              <div className="flex h-14 w-14 rounded-2xl items-center justify-center backdrop-blur-sm bg-black/30 border border-white/10">
-                <Lock className="h-6 w-6 text-white/50" />
-              </div>
-            </div>
-
-            {/* Title — bottom */}
-            <div className="absolute inset-x-0 bottom-0 px-3.5 sm:px-4 pb-4 sm:pb-5 z-10">
-              <h3 className="text-sm sm:text-[15px] font-bold text-white/60 line-clamp-2 leading-snug drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] tracking-tight">
-                {item.title}
-              </h3>
-              {item.description && (
-                <p className="text-[10px] sm:text-[11px] text-white/25 mt-1.5 line-clamp-2 leading-relaxed">
-                  {item.description}
-                </p>
-              )}
-              <div className="flex items-center gap-3 mt-2 opacity-80 md:opacity-0 md:group-hover/card:opacity-100 md:transition-opacity md:duration-400">
-                <span className="inline-flex items-center gap-1 text-[9px] sm:text-[10px] font-semibold tracking-[0.15em] uppercase text-gold/55">
-                  <Lock className="h-2.5 w-2.5" />
-                  Conteúdo Especial
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-    </button>
+    <ContentCard
+      item={lockedItem}
+      index={0}
+      hasAccess={false}
+      gradient="from-stone-900/40 via-zinc-950/30 to-neutral-950/50"
+      TypeIcon={Lock}
+    />
   );
 }
 
-/* ══════════════════════════════════════════════════════════════
-   UPCOMING CONTENT CARD — same poster shape with countdown
-   ══════════════════════════════════════════════════════════════ */
-
 function UpcomingContentCard({ item }: { item: any }) {
-  const unlockAt = item.unlock_at ? new Date(item.unlock_at) : null;
-  const now = new Date();
-  let countdownLabel = "Em breve";
-
-  if (unlockAt && unlockAt > now) {
-    const diffMs = unlockAt.getTime() - now.getTime();
-    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
-    if (diffDays <= 0) {
-      countdownLabel = "Hoje!";
-    } else if (diffDays === 1) {
-      countdownLabel = "Amanhã";
-    } else {
-      countdownLabel = `Em ${diffDays} dias`;
-    }
-  }
-
+  // Estado "em breve": força launch_mode para o overlay correto do ContentCard
+  const upcomingItem = {
+    ...item,
+    launch_mode: "em_breve",
+    is_free: false,
+    unlocked: false,
+    unlockDate: item.unlock_at,
+  };
   return (
-    <div className="group/card relative block">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
-        className="relative"
-      >
-        <div className="relative rounded-[14px] sm:rounded-[16px] overflow-hidden bg-card/5 shadow-md shadow-black/25 ring-1 ring-white/[0.04]">
-          <div className="relative aspect-[9/13] overflow-hidden bg-gradient-to-br from-stone-900/40 via-zinc-950/30 to-neutral-950/50">
-            {(item.card_cover_url || item.cover_url) ? (
-              <img
-                src={item.card_cover_url || item.cover_url}
-                alt={item.title}
-                className="w-full h-full object-cover brightness-[0.3] saturate-[0.3]"
-                loading="lazy"
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl backdrop-blur-sm bg-white/[0.04] border border-white/[0.06]">
-                  <BookOpen className="h-7 w-7 text-white/20" />
-                </div>
-              </div>
-            )}
-
-            {/* Bottom gradient */}
-            <div className="absolute inset-x-0 bottom-0 h-[70%] bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
-            <div className="absolute inset-0 bg-black/30" />
-            <div className="absolute inset-0 shadow-[inset_0_0_30px_rgba(0,0,0,0.25)] pointer-events-none" />
-
-            {/* Countdown — center */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 z-10">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl backdrop-blur-sm bg-card/20 border border-border/20">
-                <Clock className="h-6 w-6 text-gold/60" />
-              </div>
-              <span className="text-[10px] sm:text-[11px] font-bold text-gold/70 uppercase tracking-[0.15em]">
-                {countdownLabel}
-              </span>
-            </div>
-
-            {/* Title — bottom */}
-            <div className="absolute inset-x-0 bottom-0 px-3.5 sm:px-4 pb-4 sm:pb-5 z-10">
-              <h3 className="text-sm sm:text-[15px] font-bold text-white/50 line-clamp-2 leading-snug drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] tracking-tight">
-                {item.title}
-              </h3>
-              <p className="text-[10px] sm:text-[11px] text-white/25 mt-1.5 uppercase tracking-[0.15em] font-medium">
-                {item.content_type === "ebook" ? "E-book" : item.content_type === "video" ? "Vídeo" : "Conteúdo"}
-              </p>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-    </div>
+    <ContentCard
+      item={upcomingItem}
+      index={0}
+      hasAccess={true}
+      gradient="from-stone-900/40 via-zinc-950/30 to-neutral-950/50"
+      TypeIcon={Clock}
+    />
   );
 }
