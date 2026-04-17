@@ -21,6 +21,7 @@ const SHELF_ICONS: Record<string, React.ReactNode> = {
   '__continue__': <Play className="h-4 w-4 text-gold fill-gold" />,
   '__available__': <ShoppingCart className="h-4 w-4 text-gold" />,
   '__coming_soon__': <Clock className="h-4 w-4 text-gold" />,
+  '__trending__': <Sparkles className="h-4 w-4 text-gold" />,
 };
 
 /** Smart shelf IDs that are course-specific */
