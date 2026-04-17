@@ -223,6 +223,19 @@ function MusicLibraryPage() {
     });
   }, [tracks, categoryFilter, searchTerm]);
 
+  // Bloco de bônus DENTRO da categoria: respeita o filtro de categoria/busca
+  // e separa o que é bônus do catálogo regular para que apareçam em destaque
+  // sem se confundir com os louvores normais. Quando não há categoria ativa,
+  // mantemos a lista única (catálogo geral exibe tudo no grid principal).
+  const regularTracks = useMemo(
+    () => (categoryFilter ? filteredTracks.filter((t: any) => !t?.is_bonus) : filteredTracks),
+    [filteredTracks, categoryFilter],
+  );
+  const bonusTracks = useMemo(
+    () => (categoryFilter ? filteredTracks.filter((t: any) => Boolean(t?.is_bonus)) : []),
+    [filteredTracks, categoryFilter],
+  );
+
   const handleTrackPlay = (track: any, trackList: any[]) => {
     const playerTracks = trackList.map(dbTrackToPlayerTrack).filter((item) => item.audioUrl);
     const selectedTrack = dbTrackToPlayerTrack(track);
