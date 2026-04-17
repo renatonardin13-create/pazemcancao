@@ -70,12 +70,24 @@ export function ImageUploadField({
         setUploadState("uploading");
         setProgress(30);
 
+        // Refresh session to avoid "exp claim timestamp check failed"
+        await supabase.auth.refreshSession().catch(() => {});
+
         const ext = file.name.split(".").pop() || "jpg";
         const fileName = `${folder}/${crypto.randomUUID()}.${ext}`;
 
-        const { error: uploadError } = await supabase.storage
+        let { error: uploadError } = await supabase.storage
           .from(bucket)
-          .upload(fileName, file, { upsert: true });
+          .upload(fileName, file, { upsert: true, contentType: file.type });
+
+        // Retry once if token expired
+        if (uploadError && /exp.*claim|jwt|expired/i.test(uploadError.message)) {
+          await supabase.auth.refreshSession();
+          const retry = await supabase.storage
+            .from(bucket)
+            .upload(fileName, file, { upsert: true, contentType: file.type });
+          uploadError = retry.error;
+        }
 
         setProgress(80);
 
