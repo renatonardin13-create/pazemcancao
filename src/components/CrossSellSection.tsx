@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getCrossSellItems, type CrossSellItem } from "@/lib/cross-sell.functions";
 import { logFunnelClick } from "@/lib/funnel-analytics.functions";
-import { Link } from "@tanstack/react-router";
-import { Lock, Play, Sparkles, ExternalLink, ShoppingCart } from "lucide-react";
+import { Sparkles, Play, BookOpen, Music } from "lucide-react";
 import { motion } from "framer-motion";
-import { PosterCard } from "@/components/PosterCard";
+import { CourseShelfCard } from "@/components/CourseShelfCard";
+import { ContentCard } from "@/components/ContentCard";
 import { useRef, useState, useCallback, useEffect } from "react";
 
 interface CrossSellSectionProps {
