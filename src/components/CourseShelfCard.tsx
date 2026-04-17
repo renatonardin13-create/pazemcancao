@@ -190,12 +190,13 @@ export const CourseShelfCard = memo(function CourseShelfCard({
         <UnlockModal
           open={unlockOpen}
           onOpenChange={setUnlockOpen}
+          productType={course.product_type === 'assinatura' ? 'assinatura' : 'curso_individual'}
           title={course.title}
-          description={course.short_description || course.full_description}
+          description={course.sales_description || course.short_description || course.full_description}
           coverUrl={course.cover_image_url}
           price={priceLabel != null && Number(priceLabel) > 0 ? `R$ ${Number(priceLabel).toFixed(2).replace('.', ',')}` : undefined}
           checkoutUrl={salesUrl}
-          accessType={course.course_type === 'subscription' ? 'subscription' : 'single'}
+          benefits={Array.isArray(course.benefits) ? course.benefits.filter(Boolean) : []}
           totalLessons={course.total_lessons}
           totalDuration={course.total_duration}
           categoryName={course.category_name || course.categories?.name}

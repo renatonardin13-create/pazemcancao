@@ -2,38 +2,40 @@ import { Lock, Check, X, ShoppingCart } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
+type ProductType = "curso_individual" | "assinatura";
+
 interface UnlockModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  productType?: ProductType;
   title: string;
   description?: string | null;
   coverUrl?: string | null;
   price?: string;
   checkoutUrl?: string | null;
   benefits?: string[];
-  accessType?: "single" | "subscription";
   totalLessons?: number | null;
   totalDuration?: string | null;
   categoryName?: string | null;
 }
 
-const DEFAULT_BENEFITS = [
-  "Acesso imediato após pagamento",
-  "Conteúdo exclusivo e original",
-  "Qualidade profissional",
-  "Suporte e atualizações",
+const SUBSCRIPTION_BENEFITS = [
+  "Acesso a todos os cursos da plataforma",
+  "Conteúdos exclusivos premium",
+  "Atualizações contínuas",
+  "Acesso imediato após o pagamento",
 ];
 
 export function UnlockModal({
   open,
   onOpenChange,
+  productType = "curso_individual",
   title,
   description,
   coverUrl,
   price,
   checkoutUrl,
   benefits,
-  accessType = "single",
   totalLessons,
   totalDuration,
   categoryName,
@@ -43,20 +45,38 @@ export function UnlockModal({
     onOpenChange(false);
   };
 
-  // Build course-specific benefits based on real data
-  const courseBenefits: string[] = benefits && benefits.length > 0
-    ? benefits
-    : [
-        totalLessons && totalLessons > 0 ? `${totalLessons} ${totalLessons === 1 ? "aula completa" : "aulas completas"}` : null,
-        totalDuration ? `${totalDuration} de conteúdo` : null,
-        categoryName ? `Categoria: ${categoryName}` : null,
-        accessType === "subscription" ? "Acesso recorrente enquanto a assinatura estiver ativa" : "Acesso vitalício após o pagamento",
-        "Assista quando e onde quiser",
-      ].filter(Boolean) as string[];
+  const isSubscription = productType === "assinatura";
 
-  const finalBenefits = courseBenefits.length > 0 ? courseBenefits : DEFAULT_BENEFITS;
-  const accessLabel = accessType === "subscription" ? "Assinatura" : "Pagamento único";
-  const accessHint = accessType === "subscription" ? "acesso recorrente" : "sem mensalidade";
+  // Title and description per product type
+  const displayTitle = isSubscription ? "Desbloqueie o acesso completo" : title;
+  const displayDescription = isSubscription
+    ? description || "Tenha acesso a toda a plataforma com cursos, ebooks e conteúdos exclusivos."
+    : description;
+
+  // Benefits: subscription uses generic platform list; individual course uses its own data
+  let finalBenefits: string[];
+  if (isSubscription) {
+    finalBenefits = benefits && benefits.length > 0 ? benefits : SUBSCRIPTION_BENEFITS;
+  } else {
+    const courseBenefits = benefits && benefits.length > 0
+      ? benefits
+      : ([
+          totalLessons && totalLessons > 0
+            ? `${totalLessons} ${totalLessons === 1 ? "aula completa" : "aulas completas"}`
+            : null,
+          totalDuration ? `${totalDuration} de conteúdo` : null,
+          categoryName ? `Categoria: ${categoryName}` : null,
+          "Acesso vitalício após o pagamento",
+          "Assista quando e onde quiser",
+        ].filter(Boolean) as string[]);
+    finalBenefits = courseBenefits;
+  }
+
+  const accessLabel = isSubscription ? "Assinatura" : "Pagamento único";
+  const accessHint = isSubscription ? "acesso recorrente" : "sem mensalidade";
+  const ctaLabel = checkoutUrl
+    ? isSubscription ? "ASSINAR AGORA" : "COMPRAR AGORA"
+    : "EM BREVE";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -80,27 +100,29 @@ export function UnlockModal({
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gold/15 border border-gold/30 text-[10px] font-bold uppercase tracking-[0.2em] text-gold mb-2">
               <Lock className="h-2.5 w-2.5" /> Premium
             </span>
-            <h2 className="text-xl font-bold text-foreground leading-tight line-clamp-2">{title}</h2>
+            <h2 className="text-xl font-bold text-foreground leading-tight line-clamp-2">{displayTitle}</h2>
           </div>
         </div>
 
         <div className="px-6 py-5 space-y-5">
-          {description && (
+          {displayDescription && (
             <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
-              {description}
+              {displayDescription}
             </p>
           )}
 
-          <ul className="space-y-2.5">
-            {finalBenefits.map((b) => (
-              <li key={b} className="flex items-center gap-2.5 text-sm text-foreground/85">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gold/15 border border-gold/30 shrink-0">
-                  <Check className="h-3 w-3 text-gold" />
-                </span>
-                {b}
-              </li>
-            ))}
-          </ul>
+          {finalBenefits.length > 0 && (
+            <ul className="space-y-2.5">
+              {finalBenefits.map((b) => (
+                <li key={b} className="flex items-center gap-2.5 text-sm text-foreground/85">
+                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gold/15 border border-gold/30 shrink-0">
+                    <Check className="h-3 w-3 text-gold" />
+                  </span>
+                  {b}
+                </li>
+              ))}
+            </ul>
+          )}
 
           {price && (
             <div className="rounded-xl border border-gold/20 bg-gradient-to-br from-gold/[0.08] to-transparent px-4 py-3 flex items-baseline justify-between">
@@ -115,7 +137,7 @@ export function UnlockModal({
           <div className="space-y-2 pt-1">
             <Button variant="premium" size="lg" className="w-full" onClick={handleUnlock} disabled={!checkoutUrl}>
               <ShoppingCart className="h-4 w-4" />
-              {checkoutUrl ? "QUERO LIBERAR AGORA" : "EM BREVE"}
+              {ctaLabel}
             </Button>
             <Button variant="ghost" size="sm" className="w-full text-muted-foreground" onClick={() => onOpenChange(false)}>
               Agora não
