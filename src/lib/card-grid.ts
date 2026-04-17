@@ -15,7 +15,7 @@
  * (home, /musicas, /bonus, /ebooks, /lancamentos, /trilhas, /conteudo).
  */
 export const POSTER_GRID =
-  "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7 lg:gap-8 items-start max-w-[1280px] mx-auto";
+  "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7 lg:gap-8 items-start justify-items-start w-full";
 
 /**
  * Largura fixa para itens em prateleiras horizontais (carrosséis).
