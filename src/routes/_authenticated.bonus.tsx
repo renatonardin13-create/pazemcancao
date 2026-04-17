@@ -5,7 +5,7 @@ import { FooterLinks } from "@/components/FooterLinks";
 import { ContentCard } from "@/components/ContentCard";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listContentItems } from "@/lib/content.functions";
-import { listActiveTracks } from "@/lib/tracks.functions";
+import { listAllTracks } from "@/lib/tracks.functions";
 import { listFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { trackContentView, trackContentDownload } from "@/lib/progress.functions";
 import { TrackCard } from "@/components/TrackCard";
@@ -33,8 +33,8 @@ function BonusPage() {
   });
 
   const { data: tracksData } = useQuery({
-    queryKey: ["active-tracks"],
-    queryFn: () => listActiveTracks(),
+    queryKey: ["all-tracks-bonus"],
+    queryFn: () => listAllTracks(),
     staleTime: 60_000,
   });
 
