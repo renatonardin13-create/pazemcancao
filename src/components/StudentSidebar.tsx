@@ -36,20 +36,6 @@ const SLUG_META: Record<string, { icon: LucideIcon; to: string; matchPrefix?: bo
   perfil:      { icon: UserCircle,     to: "/perfil" },
 };
 
-export function StudentSidebar() {
-  const { logout, isAdmin, adminLoading } = useAuth();
-  const { moduleInfo, isLoading: modulesLoading, dbModules } = useProjectMode();
-  const location = useLocation();
-  const [mobileOpen, setMobileOpen] = useState(false);
-
-  const { data: tracksData } = useQuery({
-    queryKey: ["tracks-active"],
-    queryFn: () => listActiveTracks(),
-    staleTime: 60_000,
-  });
-
-  const allTracks = tracksData?.tracks || [];
-
 const OFFICIAL_LOUVOR_CATEGORIES = [
   "destaques",
   "soldado ferido",
@@ -67,6 +53,20 @@ const LOUVOR_CATEGORY_LABELS: Record<(typeof OFFICIAL_LOUVOR_CATEGORIES)[number]
   "não desista": "Não Desista",
   refúgio: "Refúgio",
 };
+
+export function StudentSidebar() {
+  const { logout, isAdmin, adminLoading } = useAuth();
+  const { moduleInfo, isLoading: modulesLoading, dbModules } = useProjectMode();
+  const location = useLocation();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const { data: tracksData } = useQuery({
+    queryKey: ["tracks-active"],
+    queryFn: () => listActiveTracks(),
+    staleTime: 60_000,
+  });
+
+  const allTracks = tracksData?.tracks || [];
 
   const normalizeStr = (s: string) =>
     s.replace(/^[^\p{L}\p{N}]+/u, "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");

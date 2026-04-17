@@ -448,10 +448,10 @@ function MusicLibraryPage() {
                 <div className="space-y-1">
                   <p className="text-xs font-semibold uppercase tracking-[0.28em] text-primary/80">Coleção</p>
                   <h2 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                    Todas as músicas
+                    {activeCategoryName || "Todas as músicas"}
                   </h2>
                   <p className="text-sm text-muted-foreground/70">
-                    {categoryFilter ? "Filtrando por categoria" : "Sua biblioteca completa de louvores"}
+                    {activeCategoryName ? `Somente louvores de ${activeCategoryName}` : "Sua biblioteca completa de louvores"}
                   </p>
                 </div>
                 <span className="rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold text-primary">
