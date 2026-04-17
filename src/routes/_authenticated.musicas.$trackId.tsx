@@ -3,7 +3,7 @@ import { logDownload } from "@/lib/analytics.functions";
 import { ArrowLeft, Download, Play, Pause, Music, Heart, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useQuery } from "@tanstack/react-query";
-import { getTrackById, listActiveTracks } from "@/lib/tracks.functions";
+import { getTrackById, listAllTracks } from "@/lib/tracks.functions";
 import { checkBuyerAccess } from "@/lib/access.functions";
 import { usePlayer } from "@/hooks/use-player";
 import { motion } from "framer-motion";
