@@ -2,9 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { getCrossSellItems, type CrossSellItem } from "@/lib/cross-sell.functions";
 import { logFunnelClick } from "@/lib/funnel-analytics.functions";
 import { Link } from "@tanstack/react-router";
-import { Lock, Play, Sparkles, ExternalLink } from "lucide-react";
+import { Lock, Play, Sparkles, ExternalLink, ShoppingCart } from "lucide-react";
 import { motion } from "framer-motion";
-import { OptimizedImage } from "@/components/OptimizedImage";
+import { PosterCard } from "@/components/PosterCard";
 import { useRef, useState, useCallback, useEffect } from "react";
 
 interface CrossSellSectionProps {
@@ -121,69 +121,66 @@ function CrossSellCard({ item, context }: { item: CrossSellItem; context?: strin
         ? `/musicas/${item.id}`
         : `/conteudo/${item.id}`;
 
-  const cardContent = (
-    <div className="group relative w-[155px] shrink-0 snap-start cursor-pointer">
-      {/* Poster card — 9:13 aspect ratio like the rest of the system */}
-      <div className="relative aspect-[9/13] rounded-xl overflow-hidden border border-border/10 bg-card/30 transition-all duration-300 group-hover:border-gold/20 group-hover:shadow-lg group-hover:shadow-gold/5">
-        {/* Cover image */}
-        {item.cover_url ? (
-          <img
-            src={item.cover_url}
-            alt={item.title}
-            className="absolute inset-0 w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
-            loading="lazy"
-          />
-        ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-gold/10 to-gold/[0.02] flex items-center justify-center">
-            <Sparkles className="h-8 w-8 text-muted-foreground/15" />
-          </div>
-        )}
+  const typeLabel = item.type === "course" ? "Curso" : item.type === "track" ? "Música" : "Conteúdo";
 
-        {/* Gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+  const fallback = (
+    <div className="flex h-14 w-14 items-center justify-center rounded-2xl backdrop-blur-sm bg-white/[0.04] border border-white/[0.06]">
+      <Sparkles className="h-6 w-6 text-white/25" />
+    </div>
+  );
 
-        {/* Lock overlay */}
-        {isLocked && (
-          <div className="absolute inset-0 bg-black/40 flex items-center justify-center backdrop-blur-[1px]">
-            <div className="flex flex-col items-center gap-1.5">
-              <Lock className="h-5 w-5 text-white/60" />
-              {hasSalesPage && (
-                <span className="text-[9px] font-bold text-white/50 uppercase tracking-wider flex items-center gap-1">
-                  Desbloquear <ExternalLink className="h-2.5 w-2.5" />
-                </span>
-              )}
-            </div>
-          </div>
-        )}
+  const badgeTopRight = (
+    <span className="text-[9px] sm:text-[10px] font-medium tracking-[0.15em] uppercase rounded-full bg-black/25 backdrop-blur-md border border-white/[0.06] px-2.5 py-1 text-white/35">
+      {typeLabel}
+    </span>
+  );
 
-        {/* Play indicator for unlocked */}
-        {!isLocked && (
-          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gold/90 shadow-lg">
-              <Play className="h-3 w-3 text-background fill-background ml-0.5" />
-            </div>
-          </div>
-        )}
-
-        {/* Title at bottom */}
-        <div className="absolute bottom-0 left-0 right-0 p-3">
-          <p className="text-[11px] font-bold text-white leading-tight line-clamp-2 drop-shadow-lg">
-            {item.title}
-          </p>
-          {item.category && (
-            <span className="text-[9px] text-white/50 mt-1 block truncate">
-              {item.category}
-            </span>
-          )}
-        </div>
-
-        {/* Type badge */}
-        <div className="absolute top-2 left-2">
-          <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-black/50 text-white/60 backdrop-blur-sm">
-            {item.type === "course" ? "Curso" : item.type === "track" ? "Música" : "Conteúdo"}
-          </span>
-        </div>
+  const overlay = isLocked ? (
+    <div className="h-full bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2">
+      <div className="flex h-12 w-12 rounded-2xl items-center justify-center bg-gradient-to-br from-gold/20 to-amber-600/10 border border-gold/25">
+        <Lock className="h-5 w-5 text-gold/70" />
       </div>
+      {hasSalesPage && (
+        <span className="text-[9px] font-bold text-gold/50 uppercase tracking-[0.2em] flex items-center gap-1">
+          Desbloquear <ExternalLink className="h-2.5 w-2.5" />
+        </span>
+      )}
+    </div>
+  ) : undefined;
+
+  const centerAction = !isLocked ? (
+    <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-gold/95 shadow-[0_4px_24px_rgba(0,0,0,0.4)] scale-[0.5] opacity-0 md:group-hover/card:opacity-100 md:group-hover/card:scale-100 md:transition-all md:duration-500">
+      <Play className="h-4 w-4 text-gold-foreground fill-gold-foreground" />
+    </div>
+  ) : undefined;
+
+  const meta = isLocked ? (
+    <span className="text-[9px] sm:text-[10px] font-semibold tracking-[0.15em] uppercase text-gold/55">
+      <ShoppingCart className="inline h-2.5 w-2.5 mr-0.5" />
+      {hasSalesPage ? "Quero esse conteúdo" : "Premium"}
+    </span>
+  ) : (
+    <span className="text-[9px] sm:text-[10px] font-semibold tracking-[0.15em] uppercase text-gold/55">
+      <Sparkles className="inline h-2.5 w-2.5 mr-0.5" />
+      Acessar
+    </span>
+  );
+
+  const cardContent = (
+    <div className="group/card relative w-[150px] sm:w-[185px] md:w-[210px] shrink-0 snap-start cursor-pointer">
+      <PosterCard
+        cover={item.cover_url || null}
+        coverAlt={item.title}
+        fallback={fallback}
+        gradientClass={isLocked ? "from-stone-900/40 via-zinc-950/30 to-neutral-950/50" : "from-sky-900/40 via-blue-950/30 to-slate-950/50"}
+        badgeTopRight={badgeTopRight}
+        overlay={overlay}
+        centerAction={centerAction}
+        title={item.title}
+        subtitle={item.category || undefined}
+        meta={meta}
+        locked={isLocked}
+      />
     </div>
   );
 
@@ -199,7 +196,6 @@ function CrossSellCard({ item, context }: { item: CrossSellItem; context?: strin
     }).catch(() => {});
   };
 
-  // Locked with sales page → external link
   if (isLocked && hasSalesPage) {
     return (
       <a href={item.sales_page_url!} target="_blank" rel="noopener noreferrer" onClick={trackClick}>
@@ -208,11 +204,9 @@ function CrossSellCard({ item, context }: { item: CrossSellItem; context?: strin
     );
   }
 
-  // Locked without sales page → no navigation
   if (isLocked) {
     return <div onClick={trackClick}>{cardContent}</div>;
   }
 
-  // Unlocked → internal navigation
   return <Link to={linkTo as any} onClick={trackClick}>{cardContent}</Link>;
 }

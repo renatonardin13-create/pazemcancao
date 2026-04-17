@@ -2,9 +2,9 @@ import { useQuery } from "@tanstack/react-query";
 import { getFunnelSuggestions, type FunnelSuggestion } from "@/lib/funnel.functions";
 import { logFunnelClick } from "@/lib/funnel-analytics.functions";
 import { Link } from "@tanstack/react-router";
-import { Lock, Sparkles, ExternalLink, Heart, ChevronLeft, ChevronRight, Play } from "lucide-react";
+import { Lock, Sparkles, ChevronLeft, ChevronRight, Play, ShoppingCart } from "lucide-react";
 import { useRef, useState, useCallback, useEffect, memo } from "react";
-import { OptimizedImage } from "@/components/OptimizedImage";
+import { PosterCard } from "@/components/PosterCard";
 
 interface InvisibleFunnelShelvesProps {
   context?: string;
@@ -170,7 +170,8 @@ function FunnelShelf({
   );
 }
 
-/** Poster card matching CourseShelfCard visual style (9:13 aspect ratio) */
+/** Poster card unificado — usa PosterCard (Card Master) para garantir
+ *  consistência visual com TrackCard / ContentCard / CourseShelfCard. */
 const FunnelPosterCard = memo(function FunnelPosterCard({ item, index, context, shelfTitle }: { item: FunnelSuggestion; index: number; context?: string; shelfTitle?: string }) {
   const isLocked = item.is_locked;
   const salesUrl = item.sales_page_url;
@@ -184,106 +185,73 @@ const FunnelPosterCard = memo(function FunnelPosterCard({ item, index, context, 
 
   const typeLabel = item.type === "course" ? "Curso" : item.type === "track" ? "Música" : "Conteúdo";
 
-  const card = (
-    <div
-      className="relative animate-in fade-in slide-in-from-bottom-4 duration-500"
-      style={{ animationDelay: `${Math.min(index * 80, 400)}ms`, animationFillMode: "both" }}
-    >
-      {/* Ambient glow */}
-      <div className="absolute -inset-4 rounded-3xl bg-gold/0 md:group-hover/card:bg-gold/[0.05] md:transition-all md:duration-700 blur-3xl pointer-events-none" />
-
-      <div className="relative rounded-[14px] sm:rounded-[16px] overflow-hidden bg-card/5 shadow-md shadow-black/25 ring-1 ring-white/[0.04] md:group-hover/card:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.6)] md:group-hover/card:ring-gold/15 md:transition-all md:duration-500 md:group-hover/card:scale-[1.04]">
-        <div className={`relative aspect-[9/13] overflow-hidden ${
-          isLocked ? "bg-gradient-to-br from-stone-900/40 via-zinc-950/30 to-neutral-950/50" : "bg-gradient-to-br from-sky-900/40 via-blue-950/30 to-slate-950/50"
-        }`}>
-          {item.cover_url ? (
-            <OptimizedImage
-              src={item.cover_url}
-              alt={item.title}
-              context="card"
-              className={`w-full h-full object-cover md:transition-transform md:duration-[900ms] md:ease-out md:group-hover/card:scale-[1.08] ${
-                isLocked ? "saturate-[0.45] brightness-[0.5]" : ""
-              }`}
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="flex h-16 w-16 items-center justify-center rounded-2xl backdrop-blur-sm bg-white/[0.04] border border-white/[0.06]">
-                <Sparkles className="h-7 w-7 text-white/25" />
-              </div>
-            </div>
-          )}
-
-          {/* Bottom gradient */}
-          <div className="absolute inset-x-0 bottom-0 h-[70%] bg-gradient-to-t from-black/95 via-black/50 to-transparent" />
-          <div className={`absolute inset-0 md:transition-all md:duration-500 ${isLocked ? "bg-black/20" : "bg-black/0 md:group-hover/card:bg-black/30"}`} />
-          <div className="absolute inset-0 shadow-[inset_0_0_30px_rgba(0,0,0,0.25)] pointer-events-none" />
-
-          {/* Badge — top left */}
-          {item.badge && (
-            <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold/90 text-[9px] sm:text-[10px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm border border-gold/20">
-              {item.badge}
-            </span>
-          )}
-
-          {/* Lock badge when no other badge */}
-          {!item.badge && isLocked && (
-            <span className="absolute top-2.5 left-2.5 z-10 inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-gold/95 to-amber-500/90 text-[9px] sm:text-[10px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm border border-gold/20">
-              <Lock className="h-2.5 w-2.5" />
-              Premium
-            </span>
-          )}
-
-          {/* Type tag — top right */}
-          <span className="absolute top-2.5 right-2.5 z-10 text-[9px] sm:text-[10px] font-medium tracking-[0.15em] uppercase rounded-full bg-black/25 backdrop-blur-md border border-white/[0.06] px-2.5 py-1 text-white/35">
-            {typeLabel}
-          </span>
-
-          {/* Lock icon center */}
-          {isLocked && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center z-10 gap-2">
-              <div className="flex h-14 w-14 rounded-2xl items-center justify-center backdrop-blur-sm bg-black/30 border border-white/10">
-                <Lock className="h-6 w-6 text-white/50" />
-              </div>
-              <span className="text-[10px] font-bold text-gold/70 bg-black/40 backdrop-blur-sm rounded-full px-3 py-0.5 border border-gold/15">
-                {item.cta_text || "Desbloquear"}
-              </span>
-            </div>
-          )}
-
-          {/* Play button on hover (unlocked) */}
-          {!isLocked && (
-            <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-              <div className="flex items-center gap-2 h-auto px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-gold/95 shadow-[0_4px_24px_rgba(0,0,0,0.4)] scale-[0.5] opacity-0 md:group-hover/card:opacity-100 md:group-hover/card:scale-100 md:transition-all md:duration-500 md:ease-[cubic-bezier(0.22,1,0.36,1)]">
-                <Play className="h-4 w-4 sm:h-5 sm:w-5 text-gold-foreground fill-gold-foreground" />
-              </div>
-            </div>
-          )}
-
-          {/* Title + meta */}
-          <div className="absolute inset-x-0 bottom-0 px-3.5 sm:px-4 pb-4 sm:pb-5 z-10">
-            <h3 className={`text-sm sm:text-[15px] font-bold line-clamp-2 leading-snug drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] tracking-tight ${
-              isLocked ? "text-white/60" : "text-white"
-            }`}>
-              {item.title}
-            </h3>
-
-            <div className="flex items-center gap-3 mt-2 opacity-80 md:opacity-0 md:group-hover/card:opacity-100 md:transition-opacity md:duration-400">
-              {isLocked ? (
-                <span className="text-[9px] sm:text-[10px] font-semibold tracking-[0.15em] uppercase text-gold/55">
-                  <Lock className="inline h-2.5 w-2.5 mr-0.5" />
-                  {salesUrl ? "Ver detalhes" : "Bloqueado"}
-                </span>
-              ) : (
-                <span className="text-[9px] sm:text-[10px] font-semibold tracking-[0.15em] uppercase text-gold/55">
-                  <Sparkles className="inline h-2.5 w-2.5 mr-0.5" />
-                  Acessar
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+  const fallback = (
+    <div className="flex h-16 w-16 items-center justify-center rounded-2xl backdrop-blur-sm bg-white/[0.04] border border-white/[0.06]">
+      <Sparkles className="h-7 w-7 text-white/25" />
     </div>
+  );
+
+  const badgeTopLeft = item.badge ? (
+    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold/90 text-[9px] sm:text-[10px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm border border-gold/20">
+      {item.badge}
+    </span>
+  ) : isLocked ? (
+    <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-gold/95 to-amber-500/90 text-[9px] sm:text-[10px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm border border-gold/20">
+      <Lock className="h-2.5 w-2.5" />
+      Premium
+    </span>
+  ) : undefined;
+
+  const badgeTopRight = (
+    <span className="text-[9px] sm:text-[10px] font-medium tracking-[0.15em] uppercase rounded-full bg-black/25 backdrop-blur-md border border-white/[0.06] px-2.5 py-1 text-white/35">
+      {typeLabel}
+    </span>
+  );
+
+  const overlay = isLocked ? (
+    <div className="h-full bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2">
+      <div className="flex h-14 w-14 rounded-2xl items-center justify-center backdrop-blur-sm bg-black/30 border border-white/10">
+        <Lock className="h-6 w-6 text-white/50" />
+      </div>
+      <span className="text-[10px] font-bold text-gold/70 bg-black/40 backdrop-blur-sm rounded-full px-3 py-0.5 border border-gold/15">
+        {item.cta_text || "Desbloquear"}
+      </span>
+    </div>
+  ) : undefined;
+
+  const centerAction = !isLocked ? (
+    <div className="flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-gold/95 shadow-[0_4px_24px_rgba(0,0,0,0.4)] scale-[0.5] opacity-0 md:group-hover/card:opacity-100 md:group-hover/card:scale-100 md:transition-all md:duration-500">
+      <Play className="h-4 w-4 sm:h-5 sm:w-5 text-gold-foreground fill-gold-foreground" />
+    </div>
+  ) : undefined;
+
+  const meta = isLocked ? (
+    <span className="text-[9px] sm:text-[10px] font-semibold tracking-[0.15em] uppercase text-gold/55">
+      <ShoppingCart className="inline h-2.5 w-2.5 mr-0.5" />
+      {salesUrl ? "Ver detalhes" : "Bloqueado"}
+    </span>
+  ) : (
+    <span className="text-[9px] sm:text-[10px] font-semibold tracking-[0.15em] uppercase text-gold/55">
+      <Sparkles className="inline h-2.5 w-2.5 mr-0.5" />
+      Acessar
+    </span>
+  );
+
+  const card = (
+    <PosterCard
+      cover={item.cover_url || null}
+      coverAlt={item.title}
+      fallback={fallback}
+      gradientClass={isLocked ? "from-stone-900/40 via-zinc-950/30 to-neutral-950/50" : "from-sky-900/40 via-blue-950/30 to-slate-950/50"}
+      badgeTopLeft={badgeTopLeft}
+      badgeTopRight={badgeTopRight}
+      overlay={overlay}
+      centerAction={centerAction}
+      title={item.title}
+      meta={meta}
+      locked={isLocked}
+      index={index}
+    />
   );
 
   const trackClick = () => {
@@ -293,7 +261,7 @@ const FunnelPosterCard = memo(function FunnelPosterCard({ item, index, context, 
         itemType: item.type,
         context,
         shelfTitle,
-        isLocked: isLocked,
+        isLocked,
       },
     }).catch(() => {});
   };
