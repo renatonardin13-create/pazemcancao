@@ -17,6 +17,7 @@ interface RecommendedSectionProps {
   downloadedIds: string[];
   progressMap?: Record<string, any>;
   popularityMap?: Record<string, { plays: number; downloads: number }>;
+  excludeIds?: Set<string>;
 }
 
 /**
