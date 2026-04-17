@@ -245,6 +245,17 @@ function MusicLibraryPage() {
     handleTrackPlay(playlistTracks[0], playlistTracks);
   };
 
+  const handlePlayAll = () => {
+    if (!filteredTracks.length) return;
+    handleTrackPlay(filteredTracks[0], filteredTracks);
+  };
+
+  const activeCategoryName = useMemo(() => {
+    if (!categoryFilter) return "";
+    const found = categories.find((c: any) => safeSlug(c?.slug || c?.name) === safeSlug(categoryFilter));
+    return found?.name || "";
+  }, [categories, categoryFilter]);
+
   const handleDownload = (track: any) => {
     if (isLocked || !canDownload) return;
 
@@ -291,10 +302,26 @@ function MusicLibraryPage() {
                     <Headphones className="h-4 w-4" />
                     <span className="text-xs font-semibold uppercase tracking-[0.32em]">Louvores</span>
                   </div>
-                  <h1 className="font-display text-4xl font-bold tracking-tight text-foreground sm:text-5xl">Músicas</h1>
+                  <h1 className="font-display text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+                    {activeCategoryName || "Músicas"}
+                  </h1>
                   <p className="max-w-xl text-sm text-muted-foreground/80 sm:text-base">
-                    Sua coleção completa de louvores para acalmar a alma e renovar a fé.
+                    {activeCategoryName
+                      ? `Louvores da categoria "${activeCategoryName}".`
+                      : "Sua coleção completa de louvores para acalmar a alma e renovar a fé."}
                   </p>
+                  <div className="pt-2">
+                    <Button
+                      variant="premium"
+                      size="lg"
+                      onClick={handlePlayAll}
+                      disabled={!filteredTracks.length}
+                      className="gap-2"
+                    >
+                      <Play className="h-4 w-4" />
+                      {activeCategoryName ? `Tocar ${activeCategoryName}` : "Tocar todos os louvores"}
+                    </Button>
+                  </div>
                 </div>
 
                 <div className="relative w-full max-w-md">

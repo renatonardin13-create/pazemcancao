@@ -1,7 +1,7 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
-import { listCategories, listActiveTracks } from "@/lib/tracks.functions";
+import { listActiveTracks } from "@/lib/tracks.functions";
 import { useProjectMode, type ModuleKey } from "@/hooks/use-project-mode";
 import { LogoBrand } from "./LogoBrand";
 import {
@@ -45,12 +45,6 @@ export function StudentSidebar() {
   const [louvoresOpen, setLouvoresOpen] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const { data: catData } = useQuery({
-    queryKey: ["categories"],
-    queryFn: () => listCategories(),
-    staleTime: 60_000,
-  });
-
   const { data: tracksData } = useQuery({
     queryKey: ["tracks-active"],
     queryFn: () => listActiveTracks(),
@@ -58,40 +52,27 @@ export function StudentSidebar() {
   });
 
   const allTracks = tracksData?.tracks || [];
-  const categories = catData?.categories || [];
 
   const normalizeStr = (s: string) =>
     s.replace(/^[^\p{L}\p{N}]+/u, "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 
-  const categoriesWithTracks = useMemo(() => {
-    const catSet = new Set<string>();
-    for (const t of allTracks) {
-      if (t.category) {
-        catSet.add(normalizeStr(t.category));
-      }
-    }
-    return catSet;
-  }, [allTracks]);
-
+  // Derive categories ONLY from active tracks (avoids mixing with global
+  // categories used by courses/ebooks).
   const visibleCategories = useMemo(() => {
-    const seen = new Set<string>();
-    return categories.filter((cat: any) => {
-      const slug = (cat.slug || "").toLowerCase();
-      const normalizedName = normalizeStr(cat.name);
-      const normalizedSlug = normalizeStr(slug);
-
-      const hasTrack =
-        categoriesWithTracks.has(normalizedSlug) ||
-        categoriesWithTracks.has(normalizedName);
-
-      if (!hasTrack) return false;
-
-      const dedupeKey = normalizedName || normalizedSlug;
-      if (seen.has(dedupeKey)) return false;
-      seen.add(dedupeKey);
-      return true;
-    });
-  }, [categories, categoriesWithTracks]);
+    const seen = new Map<string, { id: string; name: string; slug: string; icon?: string }>();
+    for (const t of allTracks as any[]) {
+      const rawName = String(t?.category || "").trim();
+      if (!rawName) continue;
+      const cleanName = rawName.replace(/^[^\p{L}\p{N}]+\s*/u, "").trim();
+      const key = normalizeStr(rawName);
+      if (!key) continue;
+      if (seen.has(key)) continue;
+      // skip "destaques" / top-10 — exibido como item fixo separado
+      if (key.startsWith("destaques") || key.includes("top10") || key.includes("top-10")) continue;
+      seen.set(key, { id: key, name: cleanName || rawName, slug: rawName.toLowerCase() });
+    }
+    return Array.from(seen.values());
+  }, [allTracks]);
 
   // Build the ordered list of visible menu items dynamically from DB modules
   const visibleMenuItems = useMemo(() => {
@@ -135,23 +116,34 @@ export function StudentSidebar() {
   /** Render the Louvores submenu with categories */
   const renderLouvoresSubmenu = () => (
     <div>
-      <button
-        onClick={() => setLouvoresOpen(!louvoresOpen)}
+      <div
         className={cn(
           navItemClass(isActivePrefix("/musicas")),
-          "w-full justify-between"
+          "w-full justify-between p-0 pr-2"
         )}
       >
-        <span className="flex items-center gap-4">
+        <Link
+          to="/musicas"
+          search={{}}
+          onClick={() => setMobileOpen(false)}
+          className="flex flex-1 items-center gap-4 px-5 py-4"
+        >
           <Music2 className="h-[22px] w-[22px] shrink-0" />
           Louvores
-        </span>
-        {louvoresOpen ? (
-          <ChevronDown className="h-4.5 w-4.5 text-muted-foreground/40 transition-transform duration-300" />
-        ) : (
-          <ChevronRight className="h-4.5 w-4.5 text-muted-foreground/40 transition-transform duration-300" />
-        )}
-      </button>
+        </Link>
+        <button
+          type="button"
+          onClick={(e) => { e.stopPropagation(); setLouvoresOpen(!louvoresOpen); }}
+          aria-label={louvoresOpen ? "Recolher categorias" : "Expandir categorias"}
+          className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-white/[0.05] transition"
+        >
+          {louvoresOpen ? (
+            <ChevronDown className="h-4.5 w-4.5 text-muted-foreground/40 transition-transform duration-300" />
+          ) : (
+            <ChevronRight className="h-4.5 w-4.5 text-muted-foreground/40 transition-transform duration-300" />
+          )}
+        </button>
+      </div>
 
       {louvoresOpen && (
         <div className="mt-2.5 space-y-1.5">
