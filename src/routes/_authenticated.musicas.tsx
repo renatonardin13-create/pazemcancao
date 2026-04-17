@@ -253,13 +253,10 @@ function MusicLibraryPage() {
     );
   }
 
-  if (hasInvalidTracksPayload || hasInvalidCategoriesPayload) {
+  if (tracks.length === 0) {
     return <MusicLibraryState message="Nenhuma música encontrada" />;
   }
 
-  if (hasInvalidCategory) {
-    return <MusicLibraryState message="Categoria não encontrada" />;
-  }
 
   return (
     <ModuleGuard moduleKey="louvores">
