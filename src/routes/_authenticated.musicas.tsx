@@ -186,20 +186,27 @@ function MusicLibraryPage() {
     const seen = new Map<string, { id: string; name: string; slug: string }>();
     for (const t of tracks as any[]) {
       const name = String(t?.category || "").trim();
-      if (!name) continue;
       const slug = safeSlug(name);
-      if (!seen.has(slug)) seen.set(slug, { id: slug, name, slug });
+      if (!slug || !OFFICIAL_LOUVOR_CATEGORIES.includes(slug as (typeof OFFICIAL_LOUVOR_CATEGORIES)[number])) {
+        continue;
+      }
+      if (!seen.has(slug)) {
+        seen.set(slug, { id: slug, name, slug });
+      }
     }
-    return Array.from(seen.values());
+    return OFFICIAL_LOUVOR_CATEGORIES.map((slug) => seen.get(slug)).filter(Boolean) as {
+      id: string;
+      name: string;
+      slug: string;
+    }[];
   }, [tracks]);
   const playlistTracks = Array.isArray(playlistTracksData?.tracks) ? playlistTracksData.tracks : [];
 
   const rawCategoryFilter = typeof search?.categoria === "string" ? search.categoria : "";
-  const categorySlugs = categories
-    .map((c: any) => safeSlug(c?.slug || c?.name))
-    .filter(Boolean);
   const requestedSlug = safeSlug(rawCategoryFilter);
-  const isRequestedValid = Boolean(requestedSlug) && categorySlugs.includes(requestedSlug);
+  const isRequestedValid = OFFICIAL_LOUVOR_CATEGORIES.includes(
+    requestedSlug as (typeof OFFICIAL_LOUVOR_CATEGORIES)[number]
+  );
   const categoryFilter = isRequestedValid ? requestedSlug : "";
 
   const isLocked = accessData?.trialExpired === true || accessData?.isBlocked === true;
@@ -351,9 +358,9 @@ function MusicLibraryPage() {
                 >
                   Todas
                 </Link>
-                {categories.map((category: any) => {
-                  const slug = safeSlug(category?.slug || category?.name);
-                  const active = slug === safeSlug(categoryFilter);
+                {categories.map((category) => {
+                  const slug = safeSlug(category.slug || category.name);
+                  const active = slug === categoryFilter;
                   return (
                     <Link
                       key={category.id}
@@ -365,7 +372,7 @@ function MusicLibraryPage() {
                           : "border-border/40 bg-card/30 text-muted-foreground hover:-translate-y-0.5 hover:border-primary/30 hover:text-foreground"
                       }`}
                     >
-                      {category?.name || "Sem categoria"}
+                      {category.name}
                     </Link>
                   );
                 })}
@@ -476,7 +483,7 @@ function MusicLibraryPage() {
                       key={track.id}
                       className={`group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border/40 bg-gradient-to-b from-card/70 via-card/40 to-background/60 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-[0_20px_60px_-15px_hsl(var(--primary)/0.35)] ${
                         categoryFilter
-                          ? "snap-start shrink-0 w-[70vw] sm:w-[280px] md:w-[300px] lg:w-[320px]"
+                          ? "snap-start shrink-0 w-[72vw] sm:w-[260px] md:w-[280px] lg:w-[300px] xl:w-[320px]"
                           : ""
                       }`}
                     >
@@ -572,7 +579,7 @@ function MusicLibraryPage() {
                       </button>
                       <div
                         ref={carouselRef}
-                        className="flex gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                        className="flex gap-4 sm:gap-5 overflow-x-auto overscroll-x-contain scroll-smooth snap-x snap-mandatory pb-4 -mx-4 px-4 sm:mx-0 sm:px-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [-webkit-overflow-scrolling:touch]"
                       >
                         {cards}
                       </div>
