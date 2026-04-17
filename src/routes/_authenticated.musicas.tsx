@@ -95,6 +95,20 @@ function safeSlug(value: unknown) {
   return value.trim().toLowerCase();
 }
 
+function MusicLibraryState({ message }: { message: string }) {
+  return (
+    <ModuleGuard moduleKey="louvores">
+      <StudentLayout>
+        <div className="min-h-screen bg-background px-4 py-8 sm:px-6 lg:px-10">
+          <div className="mx-auto flex w-full max-w-6xl items-center justify-center rounded-3xl border border-border/30 bg-card/20 px-6 py-16 text-sm text-muted-foreground/70">
+            {message}
+          </div>
+        </div>
+      </StudentLayout>
+    </ModuleGuard>
+  );
+}
+
 function MusicLibraryPage() {
   const search = Route.useSearch();
   const [searchTerm, setSearchTerm] = useState("");
@@ -109,13 +123,13 @@ function MusicLibraryPage() {
     retry: 2,
   });
 
-  const { data: categoriesData } = useQuery({
+  const { data: categoriesData, isLoading: categoriesLoading, isError: categoriesFailed } = useQuery({
     queryKey: ["music-library-categories"],
     queryFn: () => listCategories(),
     staleTime: 60_000,
   });
 
-  const { data: playlistsData } = useQuery({
+  const { data: playlistsData, isError: playlistsFailed } = useQuery({
     queryKey: ["music-library-playlists"],
     queryFn: () => listPlaylistsWithCounts(),
     staleTime: 60_000,
@@ -141,6 +155,23 @@ function MusicLibraryPage() {
   const categoryFilter = search.categoria || "";
   const isLocked = accessData?.trialExpired === true || accessData?.isBlocked === true;
   const canDownload = accessData?.canDownload !== false;
+  const hasInvalidTracksPayload = typeof tracksData !== "undefined" && !Array.isArray(tracksData?.tracks);
+  const hasInvalidCategoriesPayload = typeof categoriesData !== "undefined" && !Array.isArray(categoriesData?.categories);
+  const hasInvalidCategory =
+    Boolean(categoryFilter) &&
+    !categories.some((category: any) => safeSlug(category?.slug || category?.name) === safeSlug(categoryFilter));
+
+  console.log("[/musicas]", {
+    tracksLoading,
+    categoriesLoading,
+    tracksFailed,
+    categoriesFailed,
+    playlistsFailed,
+    categoryFilter,
+    tracks: tracks.length,
+    categories: categories.length,
+    playlists: playlists.length,
+  });
 
   const filteredTracks = useMemo(() => {
     return tracks.filter((track: any) => {
@@ -189,6 +220,22 @@ function MusicLibraryPage() {
     link.download = `${playerTrack.title}.mp3`;
     link.click();
   };
+
+  if (tracksLoading || categoriesLoading) {
+    return <MusicLibraryState message="Carregando músicas..." />;
+  }
+
+  if (tracksFailed || categoriesFailed || playlistsFailed) {
+    return <MusicLibraryState message="Erro ao carregar músicas" />;
+  }
+
+  if (hasInvalidTracksPayload || hasInvalidCategoriesPayload) {
+    return <MusicLibraryState message="Nenhuma música encontrada" />;
+  }
+
+  if (hasInvalidCategory) {
+    return <MusicLibraryState message="Categoria não encontrada" />;
+  }
 
   return (
     <ModuleGuard moduleKey="louvores">
