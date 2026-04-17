@@ -1,5 +1,6 @@
 import { createFileRoute, Outlet, useLocation, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
+import { useCardsConfig } from "@/hooks/use-cards-config";
 import { RestrictedAccessCard } from "@/components/RestrictedAccessCard";
 import { checkBuyerAccess } from "@/lib/access.functions";
 import { useEffect, useState, useRef } from "react";
@@ -12,6 +13,8 @@ export const Route = createFileRoute("/_authenticated")({
 
 function AuthenticatedLayout() {
   const { isAuthenticated, loading, adminLoading, isAdmin, logout, user, blocked, blockMessage } = useAuth();
+  // Carrega cards_config global do admin (popula cache para PosterCard)
+  useCardsConfig();
   const navigate = useNavigate();
   const location = useLocation();
 
