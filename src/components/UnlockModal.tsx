@@ -6,23 +6,57 @@ interface UnlockModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
+  description?: string | null;
   coverUrl?: string | null;
   price?: string;
   checkoutUrl?: string | null;
+  benefits?: string[];
+  accessType?: "single" | "subscription";
+  totalLessons?: number | null;
+  totalDuration?: string | null;
+  categoryName?: string | null;
 }
 
-const benefits = [
+const DEFAULT_BENEFITS = [
   "Acesso imediato após pagamento",
-  "Músicas exclusivas e originais",
+  "Conteúdo exclusivo e original",
   "Qualidade profissional",
-  "Atualizações contínuas",
+  "Suporte e atualizações",
 ];
 
-export function UnlockModal({ open, onOpenChange, title, coverUrl, price = "R$ 49,90", checkoutUrl }: UnlockModalProps) {
+export function UnlockModal({
+  open,
+  onOpenChange,
+  title,
+  description,
+  coverUrl,
+  price,
+  checkoutUrl,
+  benefits,
+  accessType = "single",
+  totalLessons,
+  totalDuration,
+  categoryName,
+}: UnlockModalProps) {
   const handleUnlock = () => {
     if (checkoutUrl) window.open(checkoutUrl, "_blank", "noopener,noreferrer");
     onOpenChange(false);
   };
+
+  // Build course-specific benefits based on real data
+  const courseBenefits: string[] = benefits && benefits.length > 0
+    ? benefits
+    : [
+        totalLessons && totalLessons > 0 ? `${totalLessons} ${totalLessons === 1 ? "aula completa" : "aulas completas"}` : null,
+        totalDuration ? `${totalDuration} de conteúdo` : null,
+        categoryName ? `Categoria: ${categoryName}` : null,
+        accessType === "subscription" ? "Acesso recorrente enquanto a assinatura estiver ativa" : "Acesso vitalício após o pagamento",
+        "Assista quando e onde quiser",
+      ].filter(Boolean) as string[];
+
+  const finalBenefits = courseBenefits.length > 0 ? courseBenefits : DEFAULT_BENEFITS;
+  const accessLabel = accessType === "subscription" ? "Assinatura" : "Pagamento único";
+  const accessHint = accessType === "subscription" ? "acesso recorrente" : "sem mensalidade";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -46,17 +80,19 @@ export function UnlockModal({ open, onOpenChange, title, coverUrl, price = "R$ 4
             <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gold/15 border border-gold/30 text-[10px] font-bold uppercase tracking-[0.2em] text-gold mb-2">
               <Lock className="h-2.5 w-2.5" /> Premium
             </span>
-            <h2 className="text-xl font-bold text-foreground leading-tight">Desbloqueie o acesso completo</h2>
+            <h2 className="text-xl font-bold text-foreground leading-tight line-clamp-2">{title}</h2>
           </div>
         </div>
 
         <div className="px-6 py-5 space-y-5">
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Tenha acesso imediato a todas as músicas exclusivas da plataforma e conteúdos premium.
-          </p>
+          {description && (
+            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
+              {description}
+            </p>
+          )}
 
           <ul className="space-y-2.5">
-            {benefits.map((b) => (
+            {finalBenefits.map((b) => (
               <li key={b} className="flex items-center gap-2.5 text-sm text-foreground/85">
                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gold/15 border border-gold/30 shrink-0">
                   <Check className="h-3 w-3 text-gold" />
@@ -66,18 +102,20 @@ export function UnlockModal({ open, onOpenChange, title, coverUrl, price = "R$ 4
             ))}
           </ul>
 
-          <div className="rounded-xl border border-gold/20 bg-gradient-to-br from-gold/[0.08] to-transparent px-4 py-3 flex items-baseline justify-between">
-            <div>
-              <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold/70">Pagamento único</div>
-              <div className="text-2xl font-bold text-gold">{price}</div>
+          {price && (
+            <div className="rounded-xl border border-gold/20 bg-gradient-to-br from-gold/[0.08] to-transparent px-4 py-3 flex items-baseline justify-between">
+              <div>
+                <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold/70">{accessLabel}</div>
+                <div className="text-2xl font-bold text-gold">{price}</div>
+              </div>
+              <span className="text-[10px] text-muted-foreground">{accessHint}</span>
             </div>
-            <span className="text-[10px] text-muted-foreground">sem mensalidade</span>
-          </div>
+          )}
 
           <div className="space-y-2 pt-1">
             <Button variant="premium" size="lg" className="w-full" onClick={handleUnlock} disabled={!checkoutUrl}>
               <ShoppingCart className="h-4 w-4" />
-              QUERO LIBERAR AGORA
+              {checkoutUrl ? "QUERO LIBERAR AGORA" : "EM BREVE"}
             </Button>
             <Button variant="ghost" size="sm" className="w-full text-muted-foreground" onClick={() => onOpenChange(false)}>
               Agora não
