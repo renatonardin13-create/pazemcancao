@@ -245,6 +245,17 @@ function MusicLibraryPage() {
     handleTrackPlay(playlistTracks[0], playlistTracks);
   };
 
+  const handlePlayAll = () => {
+    if (!filteredTracks.length) return;
+    handleTrackPlay(filteredTracks[0], filteredTracks);
+  };
+
+  const activeCategoryName = useMemo(() => {
+    if (!categoryFilter) return "";
+    const found = categories.find((c: any) => safeSlug(c?.slug || c?.name) === safeSlug(categoryFilter));
+    return found?.name || "";
+  }, [categories, categoryFilter]);
+
   const handleDownload = (track: any) => {
     if (isLocked || !canDownload) return;
 
