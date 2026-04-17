@@ -148,24 +148,6 @@ export function StudentSidebar() {
           Louvores
         </Link>
 
-        <div className="mt-2.5 space-y-1.5">
-          {visibleCategories.map((cat: any) => {
-            const catSlug = String(cat.slug || cat.name).trim().toLowerCase();
-            const isActiveCat = isOnMusicas && hasValidCategory && currentCategoria === catSlug;
-            return (
-              <Link
-                key={cat.id}
-                to="/musicas"
-                search={{ categoria: catSlug }}
-                onClick={() => setMobileOpen(false)}
-                className={subItemClass(isActiveCat)}
-              >
-                <span className="text-sm">🎵</span>
-                {cat.name}
-              </Link>
-            );
-          })}
-        </div>
       </div>
     );
   };
