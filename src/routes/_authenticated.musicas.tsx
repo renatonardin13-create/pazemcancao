@@ -3,14 +3,9 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   AlertCircle,
-  ChevronLeft,
-  ChevronRight,
   Disc3,
-  Download,
   Headphones,
   ListMusic,
-  Music,
-  Pause,
   Play,
   Search,
 } from "lucide-react";
