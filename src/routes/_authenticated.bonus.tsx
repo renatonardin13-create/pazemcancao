@@ -100,7 +100,7 @@ function BonusPage() {
                     Carregando bônus...
                   </p>
                 </div>
-              ) : bonusItems.length === 0 ? (
+              ) : !hasAnyBonus ? (
                 <div className="text-center py-24">
                   <Gift className="h-10 w-10 text-muted-foreground/30 mx-auto mb-5" />
                   <p className="text-sm text-muted-foreground/60 mb-2">
@@ -111,22 +111,45 @@ function BonusPage() {
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-                  {bonusItems.map((item: any, idx: number) => (
-                    <ContentCard
-                      key={item.id}
-                      item={item}
-                      index={idx}
-                      hasAccess={hasAccess}
-                      gradient="from-amber-900/40 via-amber-950/30 to-slate-950/50"
-                      TypeIcon={Gift}
-                      progress={progressMap[item.id]}
-                      isFavorite={favoriteIds.has(item.id)}
-                      onToggleFavorite={handleToggleFavorite}
-                      onTrackView={handleTrackView}
-                      onTrackDownload={handleTrackDownload}
-                    />
-                  ))}
+                <div className="space-y-12">
+                  {bonusItems.length > 0 && (
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                      {bonusItems.map((item: any, idx: number) => (
+                        <ContentCard
+                          key={item.id}
+                          item={item}
+                          index={idx}
+                          hasAccess={hasAccess}
+                          gradient="from-amber-900/40 via-amber-950/30 to-slate-950/50"
+                          TypeIcon={Gift}
+                          progress={progressMap[item.id]}
+                          isFavorite={favoriteIds.has(item.id)}
+                          onToggleFavorite={handleToggleFavorite}
+                          onTrackView={handleTrackView}
+                          onTrackDownload={handleTrackDownload}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {bonusTracks.length > 0 && (
+                    <section>
+                      <div className="flex items-center gap-2 mb-4">
+                        <Music className="h-5 w-5 text-gold" />
+                        <h2 className="text-lg sm:text-xl font-bold text-foreground/90">
+                          Louvores Bônus
+                        </h2>
+                        <span className="text-xs text-muted-foreground/50">
+                          ({bonusTracks.length})
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                        {bonusTracks.map((track: any, idx: number) => (
+                          <TrackCard key={track.id} track={track} index={idx} />
+                        ))}
+                      </div>
+                    </section>
+                  )}
                 </div>
               )}
             </div>
