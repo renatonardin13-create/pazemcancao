@@ -17,6 +17,8 @@ interface UnlockModalProps {
   totalLessons?: number | null;
   totalDuration?: string | null;
   categoryName?: string | null;
+  /** Curso ainda não lançado — desabilita CTA de compra e exibe "Em breve". */
+  comingSoon?: boolean;
 }
 
 const SUBSCRIPTION_BENEFITS = [
@@ -39,8 +41,10 @@ export function UnlockModal({
   totalLessons,
   totalDuration,
   categoryName,
+  comingSoon = false,
 }: UnlockModalProps) {
   const handleUnlock = () => {
+    if (comingSoon) return;
     if (checkoutUrl) window.open(checkoutUrl, "_blank", "noopener,noreferrer");
     onOpenChange(false);
   };
@@ -48,14 +52,20 @@ export function UnlockModal({
   const isSubscription = productType === "assinatura";
 
   // Title and description per product type
-  const displayTitle = isSubscription ? "Desbloqueie o acesso completo" : title;
-  const displayDescription = isSubscription
-    ? description || "Tenha acesso a toda a plataforma com cursos, ebooks e conteúdos exclusivos."
-    : description;
+  const displayTitle = comingSoon
+    ? title
+    : isSubscription ? "Desbloqueie o acesso completo" : title;
+  const displayDescription = comingSoon
+    ? description || "Este conteúdo ainda não foi lançado. Em breve estará disponível na plataforma."
+    : isSubscription
+      ? description || "Tenha acesso a toda a plataforma com cursos, ebooks e conteúdos exclusivos."
+      : description;
 
   // Benefits: subscription uses generic platform list; individual course uses its own data
   let finalBenefits: string[];
-  if (isSubscription) {
+  if (comingSoon) {
+    finalBenefits = [];
+  } else if (isSubscription) {
     finalBenefits = benefits && benefits.length > 0 ? benefits : SUBSCRIPTION_BENEFITS;
   } else {
     const courseBenefits = benefits && benefits.length > 0
@@ -74,9 +84,12 @@ export function UnlockModal({
 
   const accessLabel = isSubscription ? "Assinatura" : "Pagamento único";
   const accessHint = isSubscription ? "acesso recorrente" : "sem mensalidade";
-  const ctaLabel = checkoutUrl
-    ? isSubscription ? "ASSINAR AGORA" : "COMPRAR AGORA"
-    : "EM BREVE";
+  const ctaDisabled = comingSoon || !checkoutUrl;
+  const ctaLabel = comingSoon
+    ? "EM BREVE"
+    : checkoutUrl
+      ? isSubscription ? "ASSINAR AGORA" : "COMPRAR AGORA"
+      : "EM BREVE";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
