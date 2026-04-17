@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TrackCard } from "@/components/TrackCard";
 import { POSTER_GRID } from "@/lib/card-grid";
+import { PosterShelfRow, PosterShelfItem } from "@/components/PosterShelfRow";
 import { listAllTracks } from "@/lib/tracks.functions";
 import { listPlaylistsWithCounts, getPlaylistWithTracks } from "@/lib/playlists.functions";
 import { checkBuyerAccess } from "@/lib/access.functions";
@@ -397,6 +398,17 @@ function MusicLibraryPage() {
                 <div className="rounded-2xl border border-dashed border-border/40 px-4 py-10 text-center text-sm text-muted-foreground/70">
                   Nenhuma música encontrada
                 </div>
+              ) : categoryFilter ? (
+                // Categoria selecionada → carrossel horizontal com setas.
+                // Mantém o mesmo card padrão (TrackCard) para preservar
+                // tamanho, proporção e layout interno.
+                <PosterShelfRow>
+                  {filteredTracks.map(dbTrackToPlayerTrack).map((pt, idx) => (
+                    <PosterShelfItem key={pt.id}>
+                      <TrackCard track={pt} index={idx} />
+                    </PosterShelfItem>
+                  ))}
+                </PosterShelfRow>
               ) : (
                 <div className={POSTER_GRID}>
                   {filteredTracks.map(dbTrackToPlayerTrack).map((pt, idx) => (
