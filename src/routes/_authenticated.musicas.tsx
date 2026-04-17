@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { ModuleGuard } from "@/components/ModuleGuard";
 import { StudentLayout } from "@/components/StudentLayout";
+import { SafeBoundary } from "@/components/SafeBoundary";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { listActiveTracks, listCategories } from "@/lib/tracks.functions";
@@ -193,6 +194,7 @@ function MusicLibraryPage() {
     <ModuleGuard moduleKey="louvores">
       <StudentLayout>
         <div className="min-h-screen bg-background">
+          <SafeBoundary fallbackTitle="Erro ao carregar músicas">
           <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
             <section className="rounded-3xl border border-border/30 bg-card/20 p-5 sm:p-7">
               <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
@@ -394,6 +396,7 @@ function MusicLibraryPage() {
               )}
             </section>
           </div>
+          </SafeBoundary>
         </div>
       </StudentLayout>
     </ModuleGuard>
