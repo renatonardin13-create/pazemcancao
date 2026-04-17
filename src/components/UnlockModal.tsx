@@ -137,7 +137,7 @@ export function UnlockModal({
             </ul>
           )}
 
-          {price && (
+          {price && !comingSoon && (
             <div className="rounded-xl border border-gold/20 bg-gradient-to-br from-gold/[0.08] to-transparent px-4 py-3 flex items-baseline justify-between">
               <div>
                 <div className="text-[10px] font-semibold uppercase tracking-[0.2em] text-gold/70">{accessLabel}</div>
@@ -148,8 +148,8 @@ export function UnlockModal({
           )}
 
           <div className="space-y-2 pt-1">
-            <Button variant="premium" size="lg" className="w-full" onClick={handleUnlock} disabled={!checkoutUrl}>
-              <ShoppingCart className="h-4 w-4" />
+            <Button variant="premium" size="lg" className="w-full" onClick={handleUnlock} disabled={ctaDisabled}>
+              {!comingSoon && <ShoppingCart className="h-4 w-4" />}
               {ctaLabel}
             </Button>
             <Button variant="ghost" size="sm" className="w-full text-muted-foreground" onClick={() => onOpenChange(false)}>
