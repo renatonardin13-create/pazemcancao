@@ -143,7 +143,7 @@ function BonusPage() {
                           ({bonusTracks.length})
                         </span>
                       </div>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                         {bonusTracks.map((track: any, idx: number) => (
                           <TrackCard key={track.id} track={track} index={idx} />
                         ))}
