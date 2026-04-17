@@ -1,8 +1,10 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   AlertCircle,
+  ChevronLeft,
+  ChevronRight,
   Disc3,
   Download,
   Headphones,
@@ -130,6 +132,14 @@ function MusicLibraryPage() {
   const [activePlaylistId, setActivePlaylistId] = useState<string | null>(null);
 
   const { currentTrack, playing, toggle, setQueue } = usePlayer();
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  const scrollCarousel = (dir: "prev" | "next") => {
+    const el = carouselRef.current;
+    if (!el) return;
+    const amount = el.clientWidth * 0.85;
+    el.scrollBy({ left: dir === "next" ? amount : -amount, behavior: "smooth" });
+  };
 
   const { data: tracksData, isLoading: tracksLoading, isError: tracksFailed } = useQuery({
     queryKey: ["music-library-tracks"],
@@ -445,95 +455,128 @@ function MusicLibraryPage() {
                 <div className="rounded-2xl border border-dashed border-border/40 px-4 py-10 text-center text-sm text-muted-foreground/70">
                   Nenhuma música encontrada
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                  {filteredTracks.map((track: any) => {
-                    const playerTrack = dbTrackToPlayerTrack(track);
-                    const isCurrent = currentTrack?.id === playerTrack.id;
-                    const isPlaying = isCurrent && playing;
-                    const canPlay = Boolean(playerTrack.audioUrl);
+              ) : (() => {
+                const cards = filteredTracks.map((track: any) => {
+                  const playerTrack = dbTrackToPlayerTrack(track);
+                  const isCurrent = currentTrack?.id === playerTrack.id;
+                  const isPlaying = isCurrent && playing;
+                  const canPlay = Boolean(playerTrack.audioUrl);
 
-                    return (
-                      <div
-                        key={track.id}
-                        className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border/40 bg-gradient-to-b from-card/70 via-card/40 to-background/60 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-[0_20px_60px_-15px_hsl(var(--primary)/0.35)]"
+                  return (
+                    <div
+                      key={track.id}
+                      className={`group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border/40 bg-gradient-to-b from-card/70 via-card/40 to-background/60 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-[0_20px_60px_-15px_hsl(var(--primary)/0.35)] ${
+                        categoryFilter
+                          ? "snap-start shrink-0 w-[70vw] sm:w-[280px] md:w-[300px] lg:w-[320px]"
+                          : ""
+                      }`}
+                    >
+                      {/* Poster */}
+                      <Link
+                        to="/musicas/$trackId"
+                        params={{ trackId: String(track.id) }}
+                        className="relative block aspect-[4/5] w-full overflow-hidden"
                       >
-                        {/* Poster */}
-                        <Link
-                          to="/musicas/$trackId"
-                          params={{ trackId: String(track.id) }}
-                          className="relative block aspect-[4/5] w-full overflow-hidden"
-                        >
-                          {playerTrack.coverUrl ? (
-                            <img
-                              src={playerTrack.coverUrl}
-                              alt={playerTrack.title}
-                              loading="lazy"
-                              className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                            />
-                          ) : (
-                            <div className="relative flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/20 via-background/30 to-background">
-                              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.25),transparent_60%)]" />
-                              <Music className="relative h-20 w-20 text-primary/50 drop-shadow-[0_4px_20px_hsl(var(--primary)/0.4)]" />
-                            </div>
-                          )}
-
-                          {/* Gradient overlay */}
-                          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
-
-                          {/* Category badge */}
-                          {track?.category ? (
-                            <span className="absolute left-3 top-3 rounded-full border border-white/10 bg-background/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-foreground/90 backdrop-blur-md">
-                              {track.category}
-                            </span>
-                          ) : null}
-
-                          {/* Floating play button */}
-                          <button
-                            type="button"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              if (canPlay) handleTrackPlay(track, filteredTracks);
-                            }}
-                            disabled={!canPlay}
-                            aria-label={isPlaying ? "Pausar" : "Ouvir"}
-                            className="absolute bottom-4 right-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_10px_30px_-5px_hsl(var(--primary)/0.6)] ring-1 ring-primary/30 transition-all duration-300 hover:scale-110 disabled:opacity-40"
-                          >
-                            {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 translate-x-[2px]" />}
-                          </button>
-                        </Link>
-
-                        {/* Content */}
-                        <div className="flex flex-1 flex-col gap-4 px-5 pb-5 pt-4">
-                          <div className="flex flex-1 flex-col gap-1">
-                            <Link
-                              to="/musicas/$trackId"
-                              params={{ trackId: String(track.id) }}
-                              className="line-clamp-2 text-lg font-bold leading-tight tracking-tight text-foreground transition-colors group-hover:text-primary"
-                            >
-                              {track?.title || "Música sem título"}
-                            </Link>
-                            <p className="text-xs font-medium text-muted-foreground/60">
-                              {track?.duration || "0:00"}
-                            </p>
+                        {playerTrack.coverUrl ? (
+                          <img
+                            src={playerTrack.coverUrl}
+                            alt={playerTrack.title}
+                            loading="lazy"
+                            className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                          />
+                        ) : (
+                          <div className="relative flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/20 via-background/30 to-background">
+                            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.25),transparent_60%)]" />
+                            <Music className="relative h-20 w-20 text-primary/50 drop-shadow-[0_4px_20px_hsl(var(--primary)/0.4)]" />
                           </div>
+                        )}
 
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="h-10 w-full border-border/50 bg-background/40 text-xs font-semibold tracking-wide hover:border-primary/40 hover:bg-primary/5"
-                            onClick={() => handleDownload(track)}
-                            disabled={isLocked || !canDownload || !playerTrack.downloadUrl}
+                        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+
+                        {track?.category ? (
+                          <span className="absolute left-3 top-3 rounded-full border border-white/10 bg-background/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-foreground/90 backdrop-blur-md">
+                            {track.category}
+                          </span>
+                        ) : null}
+
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            if (canPlay) handleTrackPlay(track, filteredTracks);
+                          }}
+                          disabled={!canPlay}
+                          aria-label={isPlaying ? "Pausar" : "Ouvir"}
+                          className="absolute bottom-4 right-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_10px_30px_-5px_hsl(var(--primary)/0.6)] ring-1 ring-primary/30 transition-all duration-300 hover:scale-110 disabled:opacity-40"
+                        >
+                          {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 translate-x-[2px]" />}
+                        </button>
+                      </Link>
+
+                      <div className="flex flex-1 flex-col gap-4 px-5 pb-5 pt-4">
+                        <div className="flex flex-1 flex-col gap-1">
+                          <Link
+                            to="/musicas/$trackId"
+                            params={{ trackId: String(track.id) }}
+                            className="line-clamp-2 text-lg font-bold leading-tight tracking-tight text-foreground transition-colors group-hover:text-primary"
                           >
-                            <Download className="h-3.5 w-3.5" />
-                            Baixar
-                          </Button>
+                            {track?.title || "Música sem título"}
+                          </Link>
+                          <p className="text-xs font-medium text-muted-foreground/60">
+                            {track?.duration || "0:00"}
+                          </p>
                         </div>
+
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-10 w-full border-border/50 bg-background/40 text-xs font-semibold tracking-wide hover:border-primary/40 hover:bg-primary/5"
+                          onClick={() => handleDownload(track)}
+                          disabled={isLocked || !canDownload || !playerTrack.downloadUrl}
+                        >
+                          <Download className="h-3.5 w-3.5" />
+                          Baixar
+                        </Button>
                       </div>
-                    );
-                  })}
-                </div>
-              )}
+                    </div>
+                  );
+                });
+
+                if (categoryFilter) {
+                  return (
+                    <div className="relative">
+                      <button
+                        type="button"
+                        onClick={() => scrollCarousel("prev")}
+                        aria-label="Anterior"
+                        className="absolute left-0 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 -translate-x-2 items-center justify-center rounded-full border border-border/50 bg-background/80 text-foreground shadow-lg backdrop-blur transition hover:bg-primary hover:text-primary-foreground sm:flex"
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => scrollCarousel("next")}
+                        aria-label="Próximo"
+                        className="absolute right-0 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 translate-x-2 items-center justify-center rounded-full border border-border/50 bg-background/80 text-foreground shadow-lg backdrop-blur transition hover:bg-primary hover:text-primary-foreground sm:flex"
+                      >
+                        <ChevronRight className="h-5 w-5" />
+                      </button>
+                      <div
+                        ref={carouselRef}
+                        className="flex gap-5 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                      >
+                        {cards}
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                    {cards}
+                  </div>
+                );
+              })()}
             </section>
           </div>
           </SafeBoundary>
