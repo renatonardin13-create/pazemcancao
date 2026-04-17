@@ -51,10 +51,11 @@ function BonusPage() {
     });
   }, [allItems]);
 
-  // Tracks (louvores) marcados como bônus no admin (is_bonus = true)
+  // Louvores bônus: apenas tracks marcados como bônus que NÃO estão publicados
+  // no catálogo principal (/louvores). Evita duplicar louvores já visíveis.
   const bonusTracks = useMemo(() => {
     const tracks = tracksData?.tracks || [];
-    return tracks.filter((t: any) => t.is_bonus);
+    return tracks.filter((t: any) => t.is_bonus && !t.is_active);
   }, [tracksData]);
 
   const hasAnyBonus = bonusItems.length > 0 || bonusTracks.length > 0;
