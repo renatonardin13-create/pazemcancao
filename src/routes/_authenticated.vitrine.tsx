@@ -49,10 +49,9 @@ function VitrinePage() {
       if (mode === "hibrido" && !showCoursesInVitrine && COURSE_SMART_SHELVES.has(shelf.id)) return false;
       // Hide "Em breve" if lancamentos disabled
       if (shelf.id === "__coming_soon__" && !showLancamentos) return false;
-      // Hide shelves with fewer than 4 cards to avoid broken/sparse layouts.
-      // Smart shelves (continue/available/coming_soon) keep a 1-card threshold
-      // because they're contextual and meaningful even with a single item.
-      const minCards = shelf.shelf_type === 'smart' ? 1 : 4;
+      // Evita prateleiras com 1 item isolado (visual quebrado/vazio).
+      // "Continue assistindo" pode ter 1 item porque é contextual e útil.
+      const minCards = shelf.id === '__continue__' ? 1 : 2;
       return (shelf.courses?.length || 0) >= minCards;
     });
   }, [shelves, mode, showCoursesInVitrine, showLancamentos]);
