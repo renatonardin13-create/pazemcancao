@@ -39,6 +39,9 @@ function VitrinePage() {
   const shelves = data?.shelves || [];
   const promoBanners = data?.promoBanners || [];
   const featuredCourse = data?.featuredCourse;
+  const featuredCourses: any[] = (data as any)?.featuredCourses?.length
+    ? (data as any).featuredCourses
+    : (featuredCourse ? [featuredCourse] : []);
 
   const modeShelves = useMemo(() => {
     return shelves.filter((shelf: any) => {
@@ -93,9 +96,9 @@ function VitrinePage() {
               </div>
             </div>
 
-            {/* ── Destaque da semana (card compacto) ── */}
-            {featuredCourse && !(mode === "somente_musica" && featuredCourse.id !== "__custom_banner__") && (
-              <FeaturedHighlight course={featuredCourse} />
+            {/* ── Destaque da semana (carrossel rotativo até 3) ── */}
+            {featuredCourses.length > 0 && !(mode === "somente_musica" && featuredCourses[0].id !== "__custom_banner__") && (
+              <FeaturedCarousel courses={featuredCourses} />
             )}
 
             {/* Search bar */}
