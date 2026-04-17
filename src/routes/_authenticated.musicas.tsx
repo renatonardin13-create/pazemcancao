@@ -186,31 +186,26 @@ function MusicLibraryPage() {
   const tracks = Array.isArray(tracksData?.tracks) ? tracksData.tracks : [];
   const playlists = Array.isArray(playlistsData?.playlists) ? playlistsData.playlists : [];
 
+  // Categorias dinâmicas: derivadas das próprias faixas, sem whitelist.
+  // Slug é normalizado (sem emojis) para que filtros funcionem mesmo
+  // quando o nome no banco contém ícones.
   const categories = useMemo(() => {
     const seen = new Map<string, { id: string; name: string; slug: string }>();
     for (const t of tracks as any[]) {
       const name = String(t?.category || "").trim();
-      const slug = safeSlug(name);
-      if (!slug || !OFFICIAL_LOUVOR_CATEGORIES.includes(slug as (typeof OFFICIAL_LOUVOR_CATEGORIES)[number])) {
-        continue;
-      }
+      const slug = normalizeCategorySlug(name);
+      if (!slug) continue;
       if (!seen.has(slug)) {
         seen.set(slug, { id: slug, name, slug });
       }
     }
-    return OFFICIAL_LOUVOR_CATEGORIES.map((slug) => seen.get(slug)).filter(Boolean) as {
-      id: string;
-      name: string;
-      slug: string;
-    }[];
+    return Array.from(seen.values()).sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
   }, [tracks]);
   const playlistTracks = Array.isArray(playlistTracksData?.tracks) ? playlistTracksData.tracks : [];
 
   const rawCategoryFilter = typeof search?.categoria === "string" ? search.categoria : "";
-  const requestedSlug = safeSlug(rawCategoryFilter);
-  const isRequestedValid = OFFICIAL_LOUVOR_CATEGORIES.includes(
-    requestedSlug as (typeof OFFICIAL_LOUVOR_CATEGORIES)[number]
-  );
+  const requestedSlug = normalizeCategorySlug(rawCategoryFilter);
+  const isRequestedValid = categories.some((c) => c.slug === requestedSlug);
   const categoryFilter = isRequestedValid ? requestedSlug : "";
 
   const isLocked = accessData?.trialExpired === true || accessData?.isBlocked === true;
@@ -219,7 +214,8 @@ function MusicLibraryPage() {
 
   const filteredTracks = useMemo(() => {
     return tracks.filter((track: any) => {
-      const matchesCategory = !categoryFilter || safeSlug(track?.category) === safeSlug(categoryFilter);
+      const matchesCategory =
+        !categoryFilter || normalizeCategorySlug(track?.category) === categoryFilter;
       const term = searchTerm.trim().toLowerCase();
       const matchesSearch =
         !term ||
