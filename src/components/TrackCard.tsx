@@ -12,7 +12,7 @@ interface TrackCardProps {
 }
 
 const categoryGradients: Record<string, string> = {
-  Paz: "from-sky-900/40 via-blue-950/30 to-slate-950/50",
+  Paz: "from-stone-900/45 via-zinc-950/35 to-neutral-950/55",
   Cura: "from-amber-900/35 via-yellow-950/25 to-stone-950/50",
   Força: "from-orange-900/35 via-red-950/25 to-stone-950/50",
   Oração: "from-violet-900/35 via-purple-950/25 to-slate-950/50",
