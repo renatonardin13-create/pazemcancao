@@ -2,7 +2,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { Progress } from "@/components/ui/progress";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useCallback, useState } from "react";
+import { useMemo, useCallback, useState, useEffect } from "react";
 import { trackContentView, trackContentDownload } from "@/lib/progress.functions";
 import { listContentItems } from "@/lib/content.functions";
 import { listFavorites, toggleFavorite } from "@/lib/favorites.functions";
@@ -95,13 +95,14 @@ function ContentPage() {
     });
   }, [queryClient]);
 
-  // RC1: dedupe ids across "Top semana" → "Mais acessados" → "Recomendado"
+  // RC1: dedupe ids across "Top semana" → "Mais acessados" → "Lançamentos" → "Recomendado"
   const [weeklyTopIds, setWeeklyTopIds] = useState<string[]>([]);
   const [allTimeTopIds, setAllTimeTopIds] = useState<string[]>([]);
+  const [newItemsIds, setNewItemsIds] = useState<string[]>([]);
   const weeklyTopSet = useMemo(() => new Set(weeklyTopIds), [weeklyTopIds]);
   const recommendedExcludeSet = useMemo(
-    () => new Set([...weeklyTopIds, ...allTimeTopIds]),
-    [weeklyTopIds, allTimeTopIds],
+    () => new Set([...weeklyTopIds, ...allTimeTopIds, ...newItemsIds]),
+    [weeklyTopIds, allTimeTopIds, newItemsIds],
   );
 
   const { data, isLoading } = useQuery({
@@ -272,6 +273,11 @@ function ContentPage() {
     result.forEach((i: any) => shownIds.add(i.id));
     return result;
   }, [items, shownIds]);
+
+  // RC1: registra ids de "Lançamentos" para excluir do "Recomendado"
+  useEffect(() => {
+    setNewItemsIds(newItems.map((i: any) => i.id));
+  }, [newItems]);
 
   // Group remaining items
   const categoryGroups: Record<string, any[]> = {};
