@@ -1,8 +1,10 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import {
   AlertCircle,
+  ChevronLeft,
+  ChevronRight,
   Disc3,
   Download,
   Headphones,
@@ -130,6 +132,14 @@ function MusicLibraryPage() {
   const [activePlaylistId, setActivePlaylistId] = useState<string | null>(null);
 
   const { currentTrack, playing, toggle, setQueue } = usePlayer();
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  const scrollCarousel = (dir: "prev" | "next") => {
+    const el = carouselRef.current;
+    if (!el) return;
+    const amount = el.clientWidth * 0.85;
+    el.scrollBy({ left: dir === "next" ? amount : -amount, behavior: "smooth" });
+  };
 
   const { data: tracksData, isLoading: tracksLoading, isError: tracksFailed } = useQuery({
     queryKey: ["music-library-tracks"],
