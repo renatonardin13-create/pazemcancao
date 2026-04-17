@@ -3,6 +3,7 @@ import { getStrategicPlaylists, type StrategicPlaylist } from "@/lib/strategic-p
 import { ChevronLeft, ChevronRight, Lock } from "lucide-react";
 import { useRef, useState, useCallback, useEffect } from "react";
 import { TrackCard } from "@/components/TrackCard";
+import { POSTER_SHELF_ITEM } from "@/lib/card-grid";
 import type { Track } from "@/lib/sample-tracks";
 
 function getStoragePublicUrl(storagePath: string | null | undefined): string {
@@ -128,7 +129,7 @@ function StrategicShelf({ playlist, shelfIdx }: { playlist: StrategicPlaylist; s
           style={{ scrollbarWidth: "none", WebkitOverflowScrolling: "touch" } as any}
         >
           {tracks.map((track, idx) => (
-            <div key={track.id} className="w-[155px] sm:w-[185px] md:w-[210px] lg:w-[230px] xl:w-[250px] shrink-0 snap-start">
+            <div key={track.id} className={POSTER_SHELF_ITEM}>
               <TrackCard track={track} index={idx} />
             </div>
           ))}
