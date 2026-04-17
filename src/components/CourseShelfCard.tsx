@@ -12,6 +12,8 @@ interface CourseShelfCardProps {
   index?: number;
   showStatusBadge?: boolean;
   subtitle?: string;
+  /** Curso ainda não lançado — força modal "Em breve" sem CTA de checkout. */
+  comingSoon?: boolean;
 }
 
 export const CourseShelfCard = memo(function CourseShelfCard({
@@ -21,6 +23,7 @@ export const CourseShelfCard = memo(function CourseShelfCard({
   index = 0,
   showStatusBadge = false,
   subtitle,
+  comingSoon = false,
 }: CourseShelfCardProps) {
   const navigate = useNavigate();
   const [isNavigating, setIsNavigating] = useState(false);
@@ -28,7 +31,8 @@ export const CourseShelfCard = memo(function CourseShelfCard({
 
   const progress = course.progress_pct ?? 0;
   const hasProgress = showProgress && progress > 0;
-  const isLocked = course.access_state === 'locked' || course.access_state === 'blocked' || course.access_state === 'expired';
+  // Curso "não lançado" também é bloqueado para fins de clique.
+  const isLocked = comingSoon || course.access_state === 'locked' || course.access_state === 'blocked' || course.access_state === 'expired';
   const hasFreePreview = course.access_state === 'preview';
   const isPaidCourse = !isLocked && (course.price > 0 || course.has_checkout) && !['enrolled', 'in_progress', 'completed'].includes(course.access_state);
   const isCompleted = progress >= 100;
@@ -195,11 +199,12 @@ export const CourseShelfCard = memo(function CourseShelfCard({
           description={course.sales_description || course.short_description || course.full_description}
           coverUrl={course.cover_image_url}
           price={priceLabel != null && Number(priceLabel) > 0 ? `R$ ${Number(priceLabel).toFixed(2).replace('.', ',')}` : undefined}
-          checkoutUrl={salesUrl}
+          checkoutUrl={comingSoon ? null : salesUrl}
           benefits={Array.isArray(course.benefits) ? course.benefits.filter(Boolean) : []}
           totalLessons={course.total_lessons}
           totalDuration={course.total_duration}
           categoryName={course.category_name || course.categories?.name}
+          comingSoon={comingSoon}
         />
       )}
     </>
