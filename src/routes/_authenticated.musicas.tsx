@@ -467,7 +467,7 @@ function MusicLibraryPage() {
                       key={track.id}
                       className={`group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border/40 bg-gradient-to-b from-card/70 via-card/40 to-background/60 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-[0_20px_60px_-15px_hsl(var(--primary)/0.35)] ${
                         categoryFilter
-                          ? "snap-start shrink-0 w-[70vw] sm:w-[280px] md:w-[300px] lg:w-[320px]"
+                          ? "snap-start shrink-0 w-[72vw] sm:w-[260px] md:w-[280px] lg:w-[300px] xl:w-[320px]"
                           : ""
                       }`}
                     >
