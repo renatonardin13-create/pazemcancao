@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
+import { getTrackReleaseMeta } from '@/lib/track-release';
 
 export type StrategicPlaylist = {
   key: string;
@@ -21,7 +22,6 @@ export const getStrategicPlaylists = createServerFn({ method: 'POST' })
     const { data: userData } = await context.supabase.auth.getUser();
     const email = userData?.user?.email;
 
-    // Determine access level
     let hasFullAccess = false;
     let isTrial = false;
 
@@ -40,7 +40,6 @@ export const getStrategicPlaylists = createServerFn({ method: 'POST' })
       }
     }
 
-    // Get all active tracks
     const { data: allTracks, error } = await supabaseAdmin
       .from('tracks')
       .select('*')
@@ -50,7 +49,6 @@ export const getStrategicPlaylists = createServerFn({ method: 'POST' })
     if (error) throw new Error(error.message);
     if (!allTracks || allTracks.length === 0) return { playlists: [] };
 
-    // Get play counts for popularity
     const since = new Date(Date.now() - 30 * 86400_000).toISOString();
     const { data: playRows } = await supabaseAdmin
       .from('play_logs')
@@ -62,29 +60,22 @@ export const getStrategicPlaylists = createServerFn({ method: 'POST' })
       playCount[r.track_id] = (playCount[r.track_id] || 0) + 1;
     });
 
-    // Mark tracks as locked based on access
     const markTracks = (tracks: any[]) =>
       tracks.map((t) => {
-        const isBonusNotReleased = t.is_bonus && (!t.bonus_release_date || new Date(t.bonus_release_date + 'T00:00:00') > new Date());
+        const releaseMeta = getTrackReleaseMeta(t);
+        const isReleaseLocked = releaseMeta.isComingSoon;
+
         return {
           ...t,
-          _locked: !hasFullAccess || isBonusNotReleased,
+          _locked: !hasFullAccess || isReleaseLocked,
           _plays: playCount[t.id] || 0,
+          release_label: releaseMeta.label,
         };
       });
 
     const enriched = markTracks(allTracks);
-
-    // Category-based groupings for strategic playlists
-    const byCategory: Record<string, any[]> = {};
-    enriched.forEach((t) => {
-      if (!byCategory[t.category]) byCategory[t.category] = [];
-      byCategory[t.category].push(t);
-    });
-
     const playlists: StrategicPlaylist[] = [];
 
-    // 1. "Descubra Mais" — mix of popular + lesser known
     const popular = [...enriched].sort((a, b) => b._plays - a._plays);
     const lesserKnown = [...enriched].sort((a, b) => a._plays - b._plays);
     const discoverMix = [
@@ -102,7 +93,6 @@ export const getStrategicPlaylists = createServerFn({ method: 'POST' })
       });
     }
 
-    // 2. "Conteúdos Exclusivos" — bonus tracks (all locked if not released)
     const bonusTracks = enriched.filter((t) => t.is_bonus);
     const regularPremium = enriched.filter((t) => !t.is_bonus).slice(0, 4);
     const exclusiveMix = [...bonusTracks.slice(0, 5), ...regularPremium.slice(0, 3)];
@@ -117,11 +107,7 @@ export const getStrategicPlaylists = createServerFn({ method: 'POST' })
       });
     }
 
-    // 3. "Acesso Premium" — most popular locked tracks
-    const lockedPopular = enriched
-      .filter((t) => t._locked)
-      .sort((a, b) => b._plays - a._plays);
-    // Mix with a couple unlocked ones to show value
+    const lockedPopular = enriched.filter((t) => t._locked).sort((a, b) => b._plays - a._plays);
     const unlockedSample = enriched.filter((t) => !t._locked).slice(0, 2);
     const premiumMix = [...unlockedSample, ...lockedPopular.slice(0, 6)];
     if (premiumMix.length >= 3) {
@@ -135,7 +121,6 @@ export const getStrategicPlaylists = createServerFn({ method: 'POST' })
       });
     }
 
-    // 4. "Louvores que vão além" — spiritual depth categories
     const spiritualCats = ['Oração', 'Cura', 'Presença', 'Refúgio', 'Madrugada'];
     const spiritualTracks = enriched.filter((t) =>
       spiritualCats.some((c) => t.category.toLowerCase().includes(c.toLowerCase()))
@@ -155,10 +140,7 @@ export const getStrategicPlaylists = createServerFn({ method: 'POST' })
       });
     }
 
-    // 5. "Continue sua experiência" — recent tracks + some locked variety
-    const newest = [...enriched].sort((a, b) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
+    const newest = [...enriched].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
     const continueMix = newest.slice(0, 8);
     if (continueMix.length >= 3) {
       playlists.push({
