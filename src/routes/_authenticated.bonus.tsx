@@ -5,7 +5,7 @@ import { FooterLinks } from "@/components/FooterLinks";
 import { ContentCard } from "@/components/ContentCard";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { listContentItems } from "@/lib/content.functions";
-import { listActiveTracks } from "@/lib/tracks.functions";
+import { listAllTracks } from "@/lib/tracks.functions";
 import { listFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { trackContentView, trackContentDownload } from "@/lib/progress.functions";
 import { TrackCard } from "@/components/TrackCard";
@@ -33,8 +33,8 @@ function BonusPage() {
   });
 
   const { data: tracksData } = useQuery({
-    queryKey: ["active-tracks"],
-    queryFn: () => listActiveTracks(),
+    queryKey: ["all-tracks-bonus"],
+    queryFn: () => listAllTracks(),
     staleTime: 60_000,
   });
 
@@ -51,11 +51,19 @@ function BonusPage() {
     });
   }, [allItems]);
 
-  // Louvores bônus: apenas tracks marcados como bônus que NÃO estão publicados
-  // no catálogo principal (/louvores). Evita duplicar louvores já visíveis.
+  // Louvores bônus: TODOS os tracks marcados como bônus (ativos ou agendados).
+  // O TrackCard cuida do estado visual (badge "Em breve", lock, etc).
+  // Não filtramos por is_active aqui — bônus é uma curadoria, não um catálogo.
   const bonusTracks = useMemo(() => {
     const tracks = tracksData?.tracks || [];
-    return tracks.filter((t: any) => t.is_bonus && !t.is_active);
+    return tracks
+      .filter((t: any) => t.is_bonus)
+      .sort((a: any, b: any) => {
+        // Mais novos / próximos de liberar primeiro
+        const da = a.bonus_release_date || a.created_at || "";
+        const db = b.bonus_release_date || b.created_at || "";
+        return db.localeCompare(da);
+      });
   }, [tracksData]);
 
   const hasAnyBonus = bonusItems.length > 0 || bonusTracks.length > 0;
