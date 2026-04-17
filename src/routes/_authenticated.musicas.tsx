@@ -397,16 +397,19 @@ function MusicLibraryPage() {
               ) : null}
             </section>
 
-            <section className="rounded-3xl border border-border/30 bg-card/20 p-5 sm:p-6">
-              <div className="mb-4 flex items-center justify-between gap-3">
-                <div>
-                  <h2 className="text-sm font-medium text-foreground">Todas as músicas liberadas</h2>
+            <section className="space-y-6">
+              <div className="flex items-end justify-between gap-3 border-b border-border/30 pb-4">
+                <div className="space-y-1">
+                  <p className="text-xs font-semibold uppercase tracking-[0.28em] text-primary/80">Coleção</p>
+                  <h2 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                    Todas as músicas
+                  </h2>
                   <p className="text-sm text-muted-foreground/70">
-                    {categoryFilter ? "Filtro por categoria aplicado." : "Listagem geral sem filtro automático."}
+                    {categoryFilter ? "Filtrando por categoria" : "Sua biblioteca completa de louvores"}
                   </p>
                 </div>
-                <span className="rounded-full border border-border/40 px-3 py-1 text-xs text-muted-foreground/70">
-                  {filteredTracks.length} música(s)
+                <span className="rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-xs font-semibold text-primary">
+                  {filteredTracks.length} {filteredTracks.length === 1 ? "música" : "músicas"}
                 </span>
               </div>
 
