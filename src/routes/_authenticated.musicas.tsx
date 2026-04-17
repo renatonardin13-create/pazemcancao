@@ -418,7 +418,7 @@ function MusicLibraryPage() {
                   Nenhuma música encontrada
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                <div className="grid grid-cols-1 gap-7 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                   {filteredTracks.map((track: any) => {
                     const playerTrack = dbTrackToPlayerTrack(track);
                     const isCurrent = currentTrack?.id === playerTrack.id;
@@ -428,65 +428,78 @@ function MusicLibraryPage() {
                     return (
                       <div
                         key={track.id}
-                        className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-b from-card/60 to-card/20 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10"
+                        className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-border/40 bg-gradient-to-b from-card/70 via-card/40 to-background/60 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.5)] backdrop-blur-md transition-all duration-500 hover:-translate-y-1.5 hover:border-primary/50 hover:shadow-[0_20px_60px_-15px_hsl(var(--primary)/0.35)]"
                       >
+                        {/* Poster */}
                         <Link
                           to="/musicas/$trackId"
                           params={{ trackId: String(track.id) }}
-                          className="relative block aspect-square w-full overflow-hidden bg-gradient-to-br from-background/80 to-background/40"
+                          className="relative block aspect-[4/5] w-full overflow-hidden"
                         >
                           {playerTrack.coverUrl ? (
                             <img
                               src={playerTrack.coverUrl}
                               alt={playerTrack.title}
                               loading="lazy"
-                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
                             />
                           ) : (
-                            <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/10 via-background/40 to-background/80">
-                              <Music className="h-14 w-14 text-primary/40" />
+                            <div className="relative flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/20 via-background/30 to-background">
+                              <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.25),transparent_60%)]" />
+                              <Music className="relative h-20 w-20 text-primary/50 drop-shadow-[0_4px_20px_hsl(var(--primary)/0.4)]" />
                             </div>
                           )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-60" />
+
+                          {/* Gradient overlay */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
+
+                          {/* Category badge */}
+                          {track?.category ? (
+                            <span className="absolute left-3 top-3 rounded-full border border-white/10 bg-background/70 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-foreground/90 backdrop-blur-md">
+                              {track.category}
+                            </span>
+                          ) : null}
+
+                          {/* Floating play button */}
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (canPlay) handleTrackPlay(track, filteredTracks);
+                            }}
+                            disabled={!canPlay}
+                            aria-label={isPlaying ? "Pausar" : "Ouvir"}
+                            className="absolute bottom-4 right-4 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[0_10px_30px_-5px_hsl(var(--primary)/0.6)] ring-1 ring-primary/30 transition-all duration-300 hover:scale-110 disabled:opacity-40"
+                          >
+                            {isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 translate-x-[2px]" />}
+                          </button>
                         </Link>
 
-                        <div className="flex flex-1 flex-col gap-4 p-5">
-                          <div className="flex flex-1 flex-col gap-1.5">
+                        {/* Content */}
+                        <div className="flex flex-1 flex-col gap-4 px-5 pb-5 pt-4">
+                          <div className="flex flex-1 flex-col gap-1">
                             <Link
                               to="/musicas/$trackId"
                               params={{ trackId: String(track.id) }}
-                              className="line-clamp-2 text-base font-semibold leading-tight text-foreground transition-colors group-hover:text-primary"
+                              className="line-clamp-2 text-lg font-bold leading-tight tracking-tight text-foreground transition-colors group-hover:text-primary"
                             >
                               {track?.title || "Música sem título"}
                             </Link>
-                            <p className="line-clamp-1 text-xs uppercase tracking-wider text-muted-foreground/60">
-                              {track?.category || "Sem categoria"}
-                              {track?.duration ? ` • ${track.duration}` : ""}
+                            <p className="text-xs font-medium text-muted-foreground/60">
+                              {track?.duration || "0:00"}
                             </p>
                           </div>
 
-                          <div className="flex items-center gap-2 pt-1">
-                            <Button
-                              variant="premium"
-                              size="sm"
-                              className="flex-1 h-9"
-                              onClick={() => canPlay && handleTrackPlay(track, filteredTracks)}
-                              disabled={!canPlay}
-                            >
-                              {isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5" />}
-                              {isPlaying ? "Pausar" : "Ouvir"}
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              className="h-9 w-9 shrink-0"
-                              onClick={() => handleDownload(track)}
-                              disabled={isLocked || !canDownload || !playerTrack.downloadUrl}
-                              aria-label="Baixar"
-                            >
-                              <Download className="h-3.5 w-3.5" />
-                            </Button>
-                          </div>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="h-10 w-full border-border/50 bg-background/40 text-xs font-semibold tracking-wide hover:border-primary/40 hover:bg-primary/5"
+                            onClick={() => handleDownload(track)}
+                            disabled={isLocked || !canDownload || !playerTrack.downloadUrl}
+                          >
+                            <Download className="h-3.5 w-3.5" />
+                            Baixar
+                          </Button>
                         </div>
                       </div>
                     );
