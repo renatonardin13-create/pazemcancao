@@ -78,27 +78,24 @@ function VitrinePage() {
     <StudentLayout>
       <div className="min-h-screen flex flex-col bg-background">
         <div className="flex-1 w-full pb-28">
-          {/* ── Netflix-style Hero Banner (hide in music-only mode unless custom) ── */}
-          {featuredCourse && !(mode === "somente_musica" && featuredCourse.id !== "__custom_banner__") && (
-            <HeroBanner course={featuredCourse} />
-          )}
-
-          {/* ── Content area ── */}
-          <div className={`relative z-10 ${featuredCourse ? "-mt-16 sm:-mt-24" : ""}`}>
-            {!featuredCourse && (
-              <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 pt-10">
-                <div className="flex items-center gap-3 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-600">
-                  <Store className="h-7 w-7 text-gold" />
-                  <div>
-                    <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
-                      Vitrine
-                    </h1>
-                    <p className="text-[13px] text-muted-foreground/50 mt-0.5">
-                      Explore nossos cursos e conteúdos
-                    </p>
-                  </div>
+          <div className="relative z-10">
+            <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 pt-8 sm:pt-10">
+              <div className="flex items-center gap-3 mb-6 sm:mb-8 animate-in fade-in slide-in-from-bottom-4 duration-600">
+                <Store className="h-7 w-7 text-gold" />
+                <div>
+                  <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
+                    Vitrine
+                  </h1>
+                  <p className="text-[13px] text-muted-foreground/50 mt-0.5">
+                    Explore nossos cursos e conteúdos
+                  </p>
                 </div>
               </div>
+            </div>
+
+            {/* ── Destaque da semana (card compacto) ── */}
+            {featuredCourse && !(mode === "somente_musica" && featuredCourse.id !== "__custom_banner__") && (
+              <FeaturedHighlight course={featuredCourse} />
             )}
 
             {/* Search bar */}
