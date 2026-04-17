@@ -7,6 +7,10 @@ export interface Track {
   downloadUrl: string;
   description: string;
   coverUrl?: string;
+  isBonus?: boolean;
+  bonusReleaseDate?: string | null;
+  isLocked?: boolean;
+  releaseLabel?: string | null;
 }
 
 export const sampleTracks: Track[] = [
