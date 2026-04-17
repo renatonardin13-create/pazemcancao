@@ -446,7 +446,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
     const bannerConfig = bannerSetting?.value as any;
     let featuredCourse: any = null;
 
-    if (bannerConfig?.enabled !== false) {
+    if (bannerConfig?.enabled === true) {
       if (bannerConfig?.course_id) {
         const configured = courseMap.get(bannerConfig.course_id);
         if (configured) {
