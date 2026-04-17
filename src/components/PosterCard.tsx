@@ -1,4 +1,4 @@
-import { memo, type ReactNode } from "react";
+import { memo, useState, type ReactNode } from "react";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { getCardsConfigSync } from "@/hooks/use-cards-config";
 
