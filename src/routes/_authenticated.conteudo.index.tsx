@@ -274,6 +274,11 @@ function ContentPage() {
     return result;
   }, [items, shownIds]);
 
+  // RC1: registra ids de "Lançamentos" para excluir do "Recomendado"
+  useEffect(() => {
+    setNewItemsIds(newItems.map((i: any) => i.id));
+  }, [newItems]);
+
   // Group remaining items
   const categoryGroups: Record<string, any[]> = {};
   const typeGroups: Record<string, any[]> = {};
