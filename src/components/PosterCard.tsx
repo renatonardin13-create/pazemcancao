@@ -1,4 +1,4 @@
-import { memo, type ReactNode } from "react";
+import { memo, useState, type ReactNode } from "react";
 import { OptimizedImage } from "@/components/OptimizedImage";
 import { getCardsConfigSync } from "@/hooks/use-cards-config";
 
@@ -65,7 +65,7 @@ export interface PosterCardProps {
   aboveCard?: ReactNode;
 }
 
-const DEFAULT_GRADIENT = "from-sky-900/40 via-blue-950/30 to-slate-950/50";
+const DEFAULT_GRADIENT = "from-stone-900/50 via-zinc-950/40 to-neutral-950/60";
 
 export const PosterCard = memo(function PosterCard({
   cover,
@@ -90,6 +90,8 @@ export const PosterCard = memo(function PosterCard({
   const cfg = getCardsConfigSync();
   const hasProgress = cfg.showProgress && typeof progress === "number" && progress > 0;
   const gradientOpacity = Math.max(0, Math.min(100, cfg.cardGradient)) / 100;
+  const [imgFailed, setImgFailed] = useState(false);
+  const showImage = typeof cover === "string" && cover && !imgFailed;
 
   return (
     <div
@@ -116,16 +118,17 @@ export const PosterCard = memo(function PosterCard({
       >
         <div className={`relative aspect-[9/13] overflow-hidden bg-gradient-to-br ${gradientClass}`}>
           {/* Capa */}
-          {typeof cover === "string" && cover ? (
+          {showImage ? (
             <OptimizedImage
-              src={cover}
+              src={cover as string}
               alt={coverAlt}
               context="card"
+              onError={() => setImgFailed(true)}
               className={`h-full w-full object-cover md:transition-transform md:duration-[900ms] md:ease-out md:group-hover/card:scale-[1.08] ${
                 locked ? "saturate-[0.45] brightness-[0.6]" : ""
               }`}
             />
-          ) : cover ? (
+          ) : cover && typeof cover !== "string" ? (
             cover
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">{fallback}</div>
