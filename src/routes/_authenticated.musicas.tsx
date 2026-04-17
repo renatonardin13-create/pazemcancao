@@ -300,15 +300,17 @@ function MusicLibraryPage() {
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-primary/80">
                     <Headphones className="h-4 w-4" />
-                    <span className="text-xs font-semibold uppercase tracking-[0.32em]">Louvores</span>
+                    <span className="text-xs font-semibold uppercase tracking-[0.32em]">
+                      {activeCategoryName ? "Categoria" : "Visão geral"}
+                    </span>
                   </div>
                   <h1 className="font-display text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-                    {activeCategoryName || "Músicas"}
+                    {activeCategoryName || "Louvores"}
                   </h1>
                   <p className="max-w-xl text-sm text-muted-foreground/80 sm:text-base">
                     {activeCategoryName
-                      ? `Louvores da categoria "${activeCategoryName}".`
-                      : "Sua coleção completa de louvores para acalmar a alma e renovar a fé."}
+                      ? `Louvores selecionados da categoria ${activeCategoryName}.`
+                      : "Todos os louvores disponíveis."}
                   </p>
                   <div className="pt-2">
                     <Button
@@ -319,7 +321,7 @@ function MusicLibraryPage() {
                       className="gap-2"
                     >
                       <Play className="h-4 w-4" />
-                      {activeCategoryName ? `Tocar todos desta categoria` : "Tocar todos"}
+                      {activeCategoryName ? "Tocar todos da categoria" : "Tocar todos"}
                     </Button>
                   </div>
                 </div>
