@@ -107,11 +107,7 @@ export const TrackCard = memo(function TrackCard({ track, index }: TrackCardProp
       <Lock className="h-2.5 w-2.5" />
       Premium
     </span>
-  ) : (
-    <span className="inline-flex items-center gap-1 rounded-full border border-white/[0.06] bg-black/25 px-2.5 py-1 text-[9px] font-medium uppercase tracking-[0.15em] text-white/35 backdrop-blur-md sm:text-[10px]">
-      {categoryEmojis[track.category] || ""} {track.category}
-    </span>
-  );
+  ) : null;
 
   const badgeTopRight =
     track.isBonus && !isComingSoon ? (
