@@ -1,7 +1,6 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
 import {
   AlertCircle,
   Disc3,
@@ -352,9 +351,8 @@ function MusicLibraryPage() {
                     const isPlaying = isCurrent && playing;
 
                     return (
-                      <motion.div
+                      <div
                         key={track.id}
-                        layout
                         className="rounded-2xl border border-border/30 bg-background/40 p-4"
                       >
                         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -389,7 +387,7 @@ function MusicLibraryPage() {
                             </Button>
                           </div>
                         </div>
-                      </motion.div>
+                      </div>
                     );
                   })}
                 </div>
