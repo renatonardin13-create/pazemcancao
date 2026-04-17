@@ -430,10 +430,63 @@ function MusicLibraryPage() {
                   </div>
                 )
               ) : (
-                <div className={POSTER_GRID}>
-                  {filteredTracks.map(dbTrackToPlayerTrack).map((pt, idx) => (
-                    <TrackCard key={pt.id} track={pt} index={idx} />
-                  ))}
+                // Visão geral → uma prateleira horizontal por categoria
+                // (Destaques, Soldado Ferido, Ansiedade, Cura da Alma, etc).
+                // Substitui o grid vertical infinito por carrosséis premium.
+                <div className="space-y-10">
+                  {(() => {
+                    const term = searchTerm.trim().toLowerCase();
+                    const groups: Array<{ key: string; name: string; slug: string; items: any[] }> = [];
+
+                    // Destaques: top por sort_order entre todas as faixas filtradas
+                    const highlights = [...filteredTracks]
+                      .sort((a: any, b: any) => (a?.sort_order ?? 0) - (b?.sort_order ?? 0))
+                      .slice(0, 12);
+                    if (highlights.length) {
+                      groups.push({ key: "__destaques", name: "Destaques", slug: "", items: highlights });
+                    }
+
+                    for (const cat of categories) {
+                      const items = filteredTracks.filter(
+                        (t: any) => normalizeCategorySlug(t?.category) === cat.slug,
+                      );
+                      if (items.length) groups.push({ key: cat.slug, name: cat.name, slug: cat.slug, items });
+                    }
+
+                    if (!groups.length) {
+                      return (
+                        <div className="rounded-2xl border border-dashed border-border/40 px-4 py-10 text-center text-sm text-muted-foreground/70">
+                          {term ? "Nenhuma música encontrada" : "Nenhum louvor disponível"}
+                        </div>
+                      );
+                    }
+
+                    return groups.map((group) => (
+                      <div key={group.key} className="space-y-3">
+                        <div className="flex items-end justify-between gap-3">
+                          <h3 className="font-display text-xl font-bold tracking-tight text-foreground">
+                            {group.name}
+                          </h3>
+                          {group.slug ? (
+                            <Link
+                              to="/musicas"
+                              search={{ categoria: group.slug }}
+                              className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/80 hover:text-primary"
+                            >
+                              Ver tudo
+                            </Link>
+                          ) : null}
+                        </div>
+                        <PosterShelfRow>
+                          {group.items.map(dbTrackToPlayerTrack).map((pt, idx) => (
+                            <PosterShelfItem key={`${group.key}-${pt.id}`}>
+                              <TrackCard track={pt} index={idx} />
+                            </PosterShelfItem>
+                          ))}
+                        </PosterShelfRow>
+                      </div>
+                    ));
+                  })()}
                 </div>
               )}
             </section>
