@@ -183,6 +183,7 @@ function MusicLibraryPage() {
 
   const tracks = Array.isArray(tracksData?.tracks) ? tracksData.tracks : [];
   const playlists = Array.isArray(playlistsData?.playlists) ? playlistsData.playlists : [];
+  const shouldShowPlaylistsSection = playlists.length > 0;
 
   // Categorias dinâmicas: derivadas das próprias faixas, sem whitelist.
   // Slug é normalizado (sem emojis) para que filtros funcionem mesmo
@@ -519,52 +520,46 @@ function MusicLibraryPage() {
               </section>
             )}
 
-            {!categoryFilter && (
+            {shouldShowPlaylistsSection && (
             <section>
               <div className="mb-4 flex items-center gap-2">
                 <Disc3 className="h-4 w-4 text-primary/70" />
                 <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">Playlists</h2>
               </div>
 
-              {playlists.length === 0 ? (
-                <div className="rounded-2xl border border-dashed border-border/40 px-4 py-6 text-sm text-muted-foreground/70">
-                  Nenhuma playlist disponível.
-                </div>
-              ) : (
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                  {playlists.map((playlist: any) => {
-                    const isActive = playlist.id === activePlaylistId;
-                    return (
-                      <button
-                        key={playlist.id}
-                        type="button"
-                        onClick={() => setActivePlaylistId(isActive ? null : playlist.id)}
-                        className={`group relative overflow-hidden rounded-2xl border p-5 text-left transition-all duration-300 hover:-translate-y-1 ${
-                          isActive
-                            ? "border-primary/50 bg-gradient-to-br from-primary/15 to-primary/5 shadow-[0_10px_30px_-10px_hsl(var(--primary)/0.5)]"
-                            : "border-border/40 bg-gradient-to-br from-card/60 to-card/20 hover:border-primary/30 hover:shadow-lg"
-                        }`}
-                      >
-                        <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-primary/10 blur-2xl" />
-                        <div className="relative flex items-start justify-between gap-3">
-                          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 ring-1 ring-primary/20">
-                            <Disc3 className="h-6 w-6 text-primary" />
-                          </div>
-                          <span className="rounded-full border border-border/40 bg-background/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/80 backdrop-blur">
-                            {playlist?.track_count || 0} faixas
-                          </span>
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {playlists.map((playlist: any) => {
+                  const isActive = playlist.id === activePlaylistId;
+                  return (
+                    <button
+                      key={playlist.id}
+                      type="button"
+                      onClick={() => setActivePlaylistId(isActive ? null : playlist.id)}
+                      className={`group relative overflow-hidden rounded-2xl border p-5 text-left transition-all duration-300 hover:-translate-y-1 ${
+                        isActive
+                          ? "border-primary/50 bg-gradient-to-br from-primary/15 to-primary/5 shadow-[0_10px_30px_-10px_hsl(var(--primary)/0.5)]"
+                          : "border-border/40 bg-gradient-to-br from-card/60 to-card/20 hover:border-primary/30 hover:shadow-lg"
+                      }`}
+                    >
+                      <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-primary/10 blur-2xl" />
+                      <div className="relative flex items-start justify-between gap-3">
+                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/30 to-primary/10 ring-1 ring-primary/20">
+                          <Disc3 className="h-6 w-6 text-primary" />
                         </div>
-                        <h3 className="relative mt-4 line-clamp-1 text-base font-bold tracking-tight text-foreground">
-                          {playlist?.name || "Playlist"}
-                        </h3>
-                        {playlist?.description ? (
-                          <p className="relative mt-1 line-clamp-2 text-xs text-muted-foreground/70">{playlist.description}</p>
-                        ) : null}
-                      </button>
-                    );
-                  })}
-                </div>
-              )}
+                        <span className="rounded-full border border-border/40 bg-background/60 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/80 backdrop-blur">
+                          {playlist?.track_count || 0} faixas
+                        </span>
+                      </div>
+                      <h3 className="relative mt-4 line-clamp-1 text-base font-bold tracking-tight text-foreground">
+                        {playlist?.name || "Playlist"}
+                      </h3>
+                      {playlist?.description ? (
+                        <p className="relative mt-1 line-clamp-2 text-xs text-muted-foreground/70">{playlist.description}</p>
+                      ) : null}
+                    </button>
+                  );
+                })}
+              </div>
 
               {activePlaylistId ? (
                 <div className="mt-5 rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/10 to-transparent p-5">
