@@ -42,12 +42,12 @@ export const OptimizedImage = memo(function OptimizedImage({
   priority = false,
   style,
   onClick,
+  onError,
 }: OptimizedImageProps) {
   const [loaded, setLoaded] = useState(false);
   const [inView, setInView] = useState(priority);
   const imgRef = useRef<HTMLImageElement>(null);
 
-  // IntersectionObserver for deferred rendering (skip if priority)
   useEffect(() => {
     if (priority) { setInView(true); return; }
     const el = imgRef.current;
@@ -60,13 +60,14 @@ export const OptimizedImage = memo(function OptimizedImage({
           observer.disconnect();
         }
       },
-      { rootMargin: "200px 0px" } // start loading 200px before visible
+      { rootMargin: "200px 0px" }
     );
     observer.observe(el);
     return () => observer.disconnect();
   }, [priority]);
 
   const handleLoad = useCallback(() => setLoaded(true), []);
+  const handleError = useCallback(() => onError?.(), [onError]);
 
   const sizes = SIZES_MAP[context] || SIZES_MAP.card;
 
@@ -79,6 +80,7 @@ export const OptimizedImage = memo(function OptimizedImage({
       decoding="async"
       sizes={sizes}
       onLoad={handleLoad}
+      onError={handleError}
       onClick={onClick}
       className={`${className} transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
       style={style}
