@@ -114,7 +114,7 @@ export const PosterCard = memo(function PosterCard({
           highlight ? "ring-gold/12 shadow-[0_2px_32px_-8px] shadow-gold/8" : cfg.showBorder ? "ring-white/[0.04]" : ""
         }`}
       >
-        <div className={`relative aspect-[9/13] overflow-hidden bg-gradient-to-br ${gradientClass}`} style={{ opacity: 0.4 + gradientOpacity * 0.6 }}>
+        <div className={`relative aspect-[9/13] overflow-hidden bg-gradient-to-br ${gradientClass}`}>
           {/* Capa */}
           {typeof cover === "string" && cover ? (
             <OptimizedImage
@@ -132,7 +132,7 @@ export const PosterCard = memo(function PosterCard({
           )}
 
           {/* Gradiente inferior (legibilidade do título) */}
-          <div className="absolute inset-x-0 bottom-0 h-[72%] bg-gradient-to-t from-black/95 via-black/55 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-[72%] bg-gradient-to-t from-black/95 via-black/55 to-transparent" style={{ opacity: 0.5 + gradientOpacity * 0.5 }} />
 
           {/* Escurecimento de hover */}
           <div
@@ -166,21 +166,25 @@ export const PosterCard = memo(function PosterCard({
             - meta: altura reservada mesmo quando some no hover
           */}
           <div className="absolute inset-x-0 bottom-0 z-10 px-3.5 pb-4 sm:px-4 sm:pb-5">
-            <h3
-              className={`line-clamp-2 min-h-[2.6em] text-sm font-bold leading-snug tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] sm:text-[15px] ${
-                locked ? "text-white/60" : "text-white"
-              }`}
-            >
-              {title}
-            </h3>
+            {cfg.showTitle && (
+              <h3
+                className={`line-clamp-2 min-h-[2.6em] text-sm font-bold leading-snug tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] sm:text-[15px] ${
+                  locked ? "text-white/60" : "text-white"
+                }`}
+              >
+                {title}
+              </h3>
+            )}
 
-            <p
-              className={`mt-1.5 line-clamp-1 text-[10px] leading-relaxed sm:text-[11px] ${
-                locked ? "text-white/25" : "text-white/35"
-              }`}
-            >
-              {subtitle ?? "\u00A0"}
-            </p>
+            {(cfg.showCategory || cfg.showDesc) && (
+              <p
+                className={`mt-1.5 line-clamp-1 text-[10px] leading-relaxed sm:text-[11px] ${
+                  locked ? "text-white/25" : "text-white/35"
+                }`}
+              >
+                {subtitle ?? "\u00A0"}
+              </p>
+            )}
 
             <div className="mt-2 flex h-4 items-center gap-3 opacity-80 md:opacity-0 md:group-hover/card:opacity-100 md:transition-opacity md:duration-400">
               {meta}
