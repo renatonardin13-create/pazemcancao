@@ -3,6 +3,7 @@ import { BookOpen, Play, Lock, BookOpenCheck, ShoppingCart } from "lucide-react"
 import { resolveCourseLesson } from "@/lib/resolve-course-lesson.functions";
 import { useState, useCallback, memo } from "react";
 import { PosterCard } from "@/components/PosterCard";
+import { UnlockModal } from "@/components/UnlockModal";
 
 interface CourseShelfCardProps {
   course: any;
@@ -23,6 +24,7 @@ export const CourseShelfCard = memo(function CourseShelfCard({
 }: CourseShelfCardProps) {
   const navigate = useNavigate();
   const [isNavigating, setIsNavigating] = useState(false);
+  const [unlockOpen, setUnlockOpen] = useState(false);
 
   const progress = course.progress_pct ?? 0;
   const hasProgress = showProgress && progress > 0;
@@ -33,9 +35,11 @@ export const CourseShelfCard = memo(function CourseShelfCard({
   const isInProgress = progress > 0 && progress < 100;
 
   const handleClick = useCallback(async (e: React.MouseEvent) => {
-    const salesUrl = course.sales_page_url || course.checkout_url;
-    if (isLocked && salesUrl) return;
-    if (isLocked) { e.preventDefault(); return; }
+    if (isLocked) {
+      e.preventDefault();
+      setUnlockOpen(true);
+      return;
+    }
 
     e.preventDefault();
     if (isNavigating) return;
@@ -53,11 +57,11 @@ export const CourseShelfCard = memo(function CourseShelfCard({
     } finally {
       setIsNavigating(false);
     }
-  }, [course.id, course.sales_page_url, course.checkout_url, isLocked, isNavigating, navigate]);
+  }, [course.id, isLocked, isNavigating, navigate]);
 
   const salesUrl = course.sales_page_url || course.checkout_url;
-  const isExternalLink = isLocked && salesUrl;
-
+  const isExternalLink = false;
+  const priceLabel = course.promotional_price ?? course.price;
   const metaLine = subtitle || (course.total_lessons > 0 ? `${course.total_lessons} aulas` : course.short_description || '');
 
   const fallback = (
@@ -172,14 +176,26 @@ export const CourseShelfCard = memo(function CourseShelfCard({
   }
 
   return (
-    <div
-      role="link"
-      tabIndex={0}
-      onClick={handleClick}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(e as any); } }}
-      className={`group/card relative block cursor-pointer ${isNavigating ? 'pointer-events-none' : ''}`}
-    >
-      {card}
-    </div>
+    <>
+      <div
+        role="link"
+        tabIndex={0}
+        onClick={handleClick}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleClick(e as any); } }}
+        className={`group/card relative block cursor-pointer ${isNavigating ? 'pointer-events-none' : ''}`}
+      >
+        {card}
+      </div>
+      {isLocked && (
+        <UnlockModal
+          open={unlockOpen}
+          onOpenChange={setUnlockOpen}
+          title={course.title}
+          coverUrl={course.cover_image_url}
+          price={priceLabel ? `R$ ${Number(priceLabel).toFixed(2).replace('.', ',')}` : undefined}
+          checkoutUrl={salesUrl}
+        />
+      )}
+    </>
   );
 });

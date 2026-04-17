@@ -1,8 +1,9 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { Lock, Download, Play, ShoppingCart, Clock, ArrowRight, CheckCircle2, Eye, Heart, Star, Sparkles } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 import { PosterCard } from "@/components/PosterCard";
+import { UnlockModal } from "@/components/UnlockModal";
 
 interface ContentCardProps {
   item: any;
@@ -33,6 +34,7 @@ function getContentState(item: any, hasAccess: boolean, progress: ContentCardPro
 }
 
 export const ContentCard = memo(function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progress, isLastAccessed, onTrackView, onTrackDownload, isFavorite, onToggleFavorite }: ContentCardProps) {
+  const [unlockOpen, setUnlockOpen] = useState(false);
   const accessMode = item.effectiveAccessMode || (item.is_free ? 'gratuito' : 'pago');
   const launchMode = item.launch_mode || 'none';
   const isLaunchContent = launchMode !== 'none';
@@ -58,13 +60,13 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
 
   const handleLockedClick = () => {
     if (isLaunchContent) {
-      if (launchMode === 'bloqueado_para_venda' && item.sales_page_url) {
-        window.open(item.sales_page_url, "_blank");
+      if (launchMode === 'bloqueado_para_venda') {
+        setUnlockOpen(true);
       }
       return;
     }
-    if (isLocked && item.sales_page_url) {
-      window.open(item.sales_page_url, "_blank");
+    if (isLocked && !isPendingRelease && !isRuleLocked) {
+      setUnlockOpen(true);
     }
   };
 
@@ -277,29 +279,40 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
   ) : undefined;
 
   return (
-    <div
-      onClick={isLocked ? handleLockedClick : undefined}
-      className={`group/card relative block ${isLocked ? 'cursor-pointer' : ''}`}
-    >
-      <PosterCard
-        cover={item.card_cover_url || item.cover_url || null}
-        coverAlt={item.title}
-        fallback={fallback}
-        gradientClass={gradient}
-        badgeTopLeft={badgeTopLeft}
-        badgeTopRight={badgeTopRight}
-        overlay={overlay}
-        centerAction={centerAction}
-        actionTopRight={actionTopRight}
-        title={item.title}
-        subtitle={item.description || undefined}
-        meta={meta}
-        progress={contentState === 'in_progress' && progressPercent > 0 ? progressPercent : null}
-        locked={isLocked}
-        highlight={isLastAccessed}
-        index={index}
-        aboveCard={aboveCard}
-      />
-    </div>
+    <>
+      <div
+        onClick={isLocked ? handleLockedClick : undefined}
+        className={`group/card relative block ${isLocked ? 'cursor-pointer' : ''}`}
+      >
+        <PosterCard
+          cover={item.card_cover_url || item.cover_url || null}
+          coverAlt={item.title}
+          fallback={fallback}
+          gradientClass={gradient}
+          badgeTopLeft={badgeTopLeft}
+          badgeTopRight={badgeTopRight}
+          overlay={overlay}
+          centerAction={centerAction}
+          actionTopRight={actionTopRight}
+          title={item.title}
+          subtitle={item.description || undefined}
+          meta={meta}
+          progress={contentState === 'in_progress' && progressPercent > 0 ? progressPercent : null}
+          locked={isLocked}
+          highlight={isLastAccessed}
+          index={index}
+          aboveCard={aboveCard}
+        />
+      </div>
+      {isLocked && (
+        <UnlockModal
+          open={unlockOpen}
+          onOpenChange={setUnlockOpen}
+          title={item.title}
+          coverUrl={item.card_cover_url || item.cover_url}
+          checkoutUrl={item.sales_page_url}
+        />
+      )}
+    </>
   );
 });

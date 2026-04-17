@@ -41,6 +41,7 @@ function formatReleaseDate(date: string | null | undefined) {
 
 export const TrackCard = memo(function TrackCard({ track, index }: TrackCardProps) {
   const { currentTrack, playing, progress, toggle } = usePlayer();
+  const [unlockOpen, setUnlockOpen] = useState(false);
   const isThis = currentTrack?.id === track.id;
   const isPlaying = isThis && playing;
 
@@ -175,6 +176,44 @@ export const TrackCard = memo(function TrackCard({ track, index }: TrackCardProp
       </button>
     </>
   ) : undefined;
+
+  if (isPremiumLocked) {
+    return (
+      <>
+        <div
+          role="button"
+          tabIndex={0}
+          onClick={(e) => { e.preventDefault(); e.stopPropagation(); setUnlockOpen(true); }}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setUnlockOpen(true); } }}
+          className="group/card relative block cursor-pointer"
+        >
+          <PosterCard
+            cover={track.coverUrl}
+            coverAlt={track.title}
+            fallback={fallback}
+            gradientClass={gradient}
+            badgeTopLeft={badgeTopLeft}
+            badgeTopRight={badgeTopRight}
+            overlay={overlay}
+            centerAction={centerAction}
+            actionTopRight={actionTopRight}
+            title={track.title}
+            subtitle={track.description || undefined}
+            meta={meta}
+            progress={null}
+            locked={isRestricted}
+            index={index}
+          />
+        </div>
+        <UnlockModal
+          open={unlockOpen}
+          onOpenChange={setUnlockOpen}
+          title={track.title}
+          coverUrl={track.coverUrl}
+        />
+      </>
+    );
+  }
 
   return (
     <Link
