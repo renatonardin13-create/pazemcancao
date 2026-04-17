@@ -90,6 +90,8 @@ export const PosterCard = memo(function PosterCard({
   const cfg = getCardsConfigSync();
   const hasProgress = cfg.showProgress && typeof progress === "number" && progress > 0;
   const gradientOpacity = Math.max(0, Math.min(100, cfg.cardGradient)) / 100;
+  const [imgFailed, setImgFailed] = useState(false);
+  const showImage = typeof cover === "string" && cover && !imgFailed;
 
   return (
     <div
