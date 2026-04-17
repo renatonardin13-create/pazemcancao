@@ -268,26 +268,27 @@ function MusicLibraryPage() {
         <div className="min-h-screen bg-background">
           <SafeBoundary fallbackTitle="Erro ao carregar músicas">
           <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
-            <section className="rounded-3xl border border-border/30 bg-card/20 p-5 sm:p-7">
-              <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-muted-foreground/70">
+            <section className="relative overflow-hidden rounded-3xl border border-border/40 bg-gradient-to-br from-card/60 via-card/30 to-background/60 p-6 shadow-[0_4px_30px_-10px_rgba(0,0,0,0.5)] sm:p-9">
+              <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
+              <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-primary/80">
                     <Headphones className="h-4 w-4" />
-                    <span className="text-xs uppercase tracking-[0.28em]">Louvores</span>
+                    <span className="text-xs font-semibold uppercase tracking-[0.32em]">Louvores</span>
                   </div>
-                  <h1 className="font-display text-2xl font-semibold text-foreground sm:text-3xl">Músicas</h1>
-                  <p className="text-sm text-muted-foreground/70">
-                    Todas as músicas liberadas, com categorias como filtro secundário e espaço para playlists.
+                  <h1 className="font-display text-4xl font-bold tracking-tight text-foreground sm:text-5xl">Músicas</h1>
+                  <p className="max-w-xl text-sm text-muted-foreground/80 sm:text-base">
+                    Sua coleção completa de louvores para acalmar a alma e renovar a fé.
                   </p>
                 </div>
 
                 <div className="relative w-full max-w-md">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
+                  <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
                   <Input
                     value={searchTerm}
                     onChange={(event) => setSearchTerm(event.target.value)}
                     placeholder="Buscar músicas..."
-                    className="pl-9"
+                    className="h-12 rounded-2xl border-border/50 bg-background/60 pl-11 text-sm shadow-inner backdrop-blur-md focus-visible:ring-primary/40"
                   />
                 </div>
               </div>
