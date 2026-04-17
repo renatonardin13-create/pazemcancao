@@ -12,6 +12,8 @@ interface CourseShelfCardProps {
   index?: number;
   showStatusBadge?: boolean;
   subtitle?: string;
+  /** Curso ainda não lançado — força modal "Em breve" sem CTA de checkout. */
+  comingSoon?: boolean;
 }
 
 export const CourseShelfCard = memo(function CourseShelfCard({
