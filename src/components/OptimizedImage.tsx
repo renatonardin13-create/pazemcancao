@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect, memo } from "react";
+import { useState, useCallback, memo } from "react";
 
 interface OptimizedImageProps {
   src: string;
@@ -14,10 +14,6 @@ interface OptimizedImageProps {
   onError?: () => void;
 }
 
-/**
- * Width hints per context for `sizes` attribute.
- * Helps browser pick the right resolution before layout.
- */
 const SIZES_MAP: Record<string, string> = {
   card: "(max-width: 640px) 170px, (max-width: 1024px) 210px, 240px",
   banner: "(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 1400px",
@@ -27,12 +23,9 @@ const SIZES_MAP: Record<string, string> = {
 };
 
 /**
- * Optimized image component with:
- * - Native lazy loading via `loading="lazy"` (or eager for priority)
- * - `decoding="async"` to avoid blocking the main thread
- * - Responsive `sizes` hints per context
- * - Fade-in on load for perceived performance
- * - IntersectionObserver fallback for browsers without native lazy
+ * Optimized image with native lazy loading + async decoding.
+ * Confia no `loading="lazy"` nativo (sem IntersectionObserver em JS),
+ * o que reduz CPU/memória em listas longas de cards.
  */
 export const OptimizedImage = memo(function OptimizedImage({
   src,
@@ -45,39 +38,18 @@ export const OptimizedImage = memo(function OptimizedImage({
   onError,
 }: OptimizedImageProps) {
   const [loaded, setLoaded] = useState(false);
-  const [inView, setInView] = useState(priority);
-  const imgRef = useRef<HTMLImageElement>(null);
-
-  useEffect(() => {
-    if (priority) { setInView(true); return; }
-    const el = imgRef.current;
-    if (!el) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setInView(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: "200px 0px" }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [priority]);
-
   const handleLoad = useCallback(() => setLoaded(true), []);
   const handleError = useCallback(() => onError?.(), [onError]);
-
   const sizes = SIZES_MAP[context] || SIZES_MAP.card;
 
   return (
     <img
-      ref={imgRef}
-      src={inView ? src : undefined}
+      src={src}
       alt={alt}
       loading={priority ? "eager" : "lazy"}
       decoding="async"
+      // @ts-ignore — fetchpriority é suportado pelo browser
+      fetchpriority={priority ? "high" : "auto"}
       sizes={sizes}
       onLoad={handleLoad}
       onError={handleError}
@@ -87,3 +59,4 @@ export const OptimizedImage = memo(function OptimizedImage({
     />
   );
 });
+
