@@ -84,7 +84,7 @@ function VitrinePage() {
           )}
 
           {/* ── Content area ── */}
-          <div className="relative z-10 -mt-16 sm:-mt-24">
+          <div className={`relative z-10 ${featuredCourse ? "-mt-16 sm:-mt-24" : ""}`}>
             {!featuredCourse && (
               <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 pt-10">
                 <div className="flex items-center gap-3 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-600">
