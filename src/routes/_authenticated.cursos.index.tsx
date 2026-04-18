@@ -2,16 +2,17 @@ import { EmptyState } from "@/components/EmptyState";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CardGridSkeleton } from "@/components/LoadingSkeletons";
 import { useQuery } from "@tanstack/react-query";
-import { listPublishedCourses } from "@/lib/courses.functions";
 import { getMyCoursesData } from "@/lib/my-courses.functions";
+import { getLibraryStats, getLibrarySections } from "@/lib/user-library.functions";
 import { getContinueWatching } from "@/lib/continue-watching.functions";
+import { listPublishedCourses } from "@/lib/courses.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { CourseShelfCard } from "@/components/CourseShelfCard";
 import { ContentCard } from "@/components/ContentCard";
 import { motion } from "framer-motion";
 import { BookOpen, Search, ArrowRight, Play, Clock, Lock, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState, useMemo, useRef, useCallback } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { useDragScroll } from "@/hooks/use-drag-scroll";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
@@ -26,22 +27,34 @@ function MeusCoursosPage() {
   const { user } = useAuth();
 
   const { data: profileData } = useQuery({
-    queryKey: ["courses-page", "my-profile"],
+    queryKey: ["my-profile"],
     queryFn: () => getMyProfile(),
     staleTime: 60_000,
   });
 
-  const { data: catalogData, isLoading: isCatalogLoading } = useQuery({
+  const { data: catalogData, isLoading } = useQuery({
     queryKey: ["courses-page", "published-courses"],
     queryFn: () => listPublishedCourses(),
     staleTime: 60_000,
     refetchOnWindowFocus: false,
   });
 
-  const { data: myData, isLoading: isMyCoursesLoading } = useQuery({
+  const { data: myData } = useQuery({
     queryKey: ["courses-page", "my-courses"],
     queryFn: () => getMyCoursesData(),
     staleTime: 30_000,
+  });
+
+  useQuery({
+    queryKey: ["courses-page", "library-stats"],
+    queryFn: () => getLibraryStats(),
+    staleTime: 60_000,
+  });
+
+  const { data: libSections } = useQuery({
+    queryKey: ["courses-page", "library-sections"],
+    queryFn: () => getLibrarySections(),
+    staleTime: 60_000,
   });
 
   const { data: continueData } = useQuery({
@@ -56,10 +69,9 @@ function MeusCoursosPage() {
   const displayName = profileData?.profile?.display_name || user?.email?.split("@")[0] || "aluno";
   const firstName = displayName.split(" ")[0];
 
-  const myCourses = myData?.courses || [];
-  const continueWatchingCourses = continueData?.courses || [];
   const publishedCourses = catalogData?.courses || [];
-  const isLoading = isCatalogLoading || isMyCoursesLoading;
+  const continueWatchingCourses = continueData?.courses || [];
+  const myCourses = myData?.courses || [];
 
   const enrolledCourseIds = useMemo(() => new Set(myCourses.map((course: any) => course.id)), [myCourses]);
 
@@ -101,10 +113,23 @@ function MeusCoursosPage() {
     );
   }, [search, searchableCourses]);
 
+  useEffect(() => {
+    const renderedCards = searchResults !== null
+      ? searchResults.length
+      : continueWatchingCourses.length + myCourses.length + availableCourses.length;
+
+    console.log("[DEBUG][CURSOS] routeComponent=MeusCoursosPage");
+    console.log("[DEBUG][CURSOS] queries=[courses-page:published-courses,courses-page:my-courses,courses-page:library-sections,courses-page:continue-watching]");
+    console.log("[DEBUG][CURSOS] renderedCards=", renderedCards);
+  }, [availableCourses.length, continueWatchingCourses.length, myCourses.length, searchResults]);
+
   return (
     <StudentLayout>
       <div className="min-h-screen bg-background flex flex-col">
+
         <main className="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10 xl:px-12 pt-6 sm:pt-8 pb-28">
+
+          {/* ═══ GREETING + SEARCH ═══ */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -116,7 +141,7 @@ function MeusCoursosPage() {
                 Olá, {firstName}
               </h1>
               <p className="text-[13px] sm:text-sm text-muted-foreground/40 mt-1 leading-relaxed">
-                Acompanhe seus cursos e explore o catálogo completo.
+                Continue sua jornada de aprendizado
               </p>
             </div>
 
@@ -125,114 +150,170 @@ function MeusCoursosPage() {
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Buscar cursos..."
+                placeholder="Buscar cursos, ebooks..."
                 className="pl-10 h-10 bg-card/8 border-border/10 rounded-xl text-sm placeholder:text-muted-foreground/20 focus:border-gold/25 focus:ring-gold/10 transition-all duration-300"
               />
             </div>
           </motion.div>
 
-          {isLoading ? (
-            <CardGridSkeleton count={6} />
-          ) : searchResults !== null ? (
-            <section className="pb-8">
-              <ShelfHeader title={`Resultados para \"${search}\"`} />
+          {/* ═══ SHELVES CONTENT ═══ */}
+          {searchResults !== null ? (
+            <div className="pb-8">
+              <ShelfHeader title={`Resultados para "${search}"`} />
               {searchResults.length > 0 ? (
-                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                <ShelfRow>
                   {searchResults.map((course: any, idx: number) => (
-                    <motion.div
-                      key={`search-${course.id}`}
-                      initial={{ opacity: 0, y: 16 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.35, delay: Math.min(idx, 6) * 0.04 }}
-                    >
-                      <CourseShelfCard
-                        course={course}
-                        showProgress={["enrolled", "in_progress", "completed"].includes(course.access_state)}
-                        showStatusBadge={["enrolled", "in_progress", "completed"].includes(course.access_state)}
-                        comingSoon={course.access_state === "coming_soon"}
-                      />
-                    </motion.div>
+                    <ShelfItem key={`search-${course.id}`} index={idx}>
+                      <CourseShelfCard course={course} showProgress />
+                    </ShelfItem>
                   ))}
-                </div>
+                </ShelfRow>
               ) : (
                 <EmptyState icon={Search} title="Nenhum curso encontrado" description="Tente buscar com outras palavras." />
               )}
-            </section>
+            </div>
           ) : (
-            <>
-              {continueWatchingCourses.length > 0 && (
-                <ShelfSection delay={0.05}>
-                  <ShelfHeader title="Continue assistindo" />
-                  <ShelfRow>
-                    {continueWatchingCourses.map((course: any, idx: number) => (
-                      <ShelfItem key={`cw-${course.id}`} index={idx}>
-                        <CourseShelfCard
-                          course={course}
-                          showProgress
-                          showStatusBadge
-                          subtitle={`${course.completed_lessons || 0}/${course.total_lessons || 0} aulas`}
-                        />
-                      </ShelfItem>
-                    ))}
-                  </ShelfRow>
-                </ShelfSection>
-              )}
+            <div>
+              {isLoading ? (
+                <CardGridSkeleton count={6} />
+              ) : (
+                <>
+                  {/* ═══ CONTINUE ASSISTINDO ═══ */}
+                  {continueWatchingCourses.length > 0 && (
+                    <ShelfSection delay={0.05}>
+                      <ShelfHeader title="Continue assistindo" linkTo="/cursos" linkLabel="Ver todos" />
+                      <ShelfRow>
+                        {continueWatchingCourses.map((course: any, idx: number) => (
+                          <ShelfItem key={`cw-${course.id}`} index={idx}>
+                            <CourseShelfCard
+                              course={course}
+                              showProgress
+                              showStatusBadge
+                              subtitle={`${course.completed_lessons || 0}/${course.total_lessons || 0} aulas`}
+                            />
+                          </ShelfItem>
+                        ))}
+                      </ShelfRow>
+                    </ShelfSection>
+                  )}
 
-              {myCourses.length > 0 && (
-                <ShelfSection delay={0.1}>
-                  <ShelfHeader title="Meus cursos" />
-                  <ShelfRow>
-                    {myCourses.map((course: any, idx: number) => (
-                      <ShelfItem key={`mc-${course.id}`} index={idx}>
-                        <CourseShelfCard
-                          course={{
-                            ...course,
-                            access_state:
-                              course.progress_pct >= 100
-                                ? "completed"
-                                : course.progress_pct > 0
-                                  ? "in_progress"
-                                  : "enrolled",
-                          }}
-                          showProgress
-                          showStatusBadge
-                          subtitle={`${course.completed_lessons || 0}/${course.lesson_count || course.total_lessons || 0} aulas`}
-                        />
-                      </ShelfItem>
-                    ))}
-                  </ShelfRow>
-                </ShelfSection>
-              )}
+                  {/* ═══ MEUS CURSOS ═══ */}
+                  {myCourses.length > 0 && (
+                    <ShelfSection delay={0.1}>
+                      <ShelfHeader title="Meus cursos" linkTo="/cursos" linkLabel="Ver todos" />
+                      <ShelfRow>
+                        {myCourses.map((course: any, idx: number) => (
+                          <ShelfItem key={`mc-${course.id}`} index={idx}>
+                            <CourseShelfCard
+                              course={course}
+                              showProgress
+                              showStatusBadge
+                              subtitle={`${course.completed_lessons || 0}/${course.lesson_count || course.total_lessons || 0} aulas`}
+                            />
+                          </ShelfItem>
+                        ))}
+                      </ShelfRow>
+                    </ShelfSection>
+                  )}
 
-              {availableCourses.length > 0 && (
-                <ShelfSection delay={0.15}>
-                  <ShelfHeader title="Explorar cursos" />
-                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                    {availableCourses.map((course: any, idx: number) => (
-                      <motion.div
-                        key={`catalog-${course.id}`}
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.35, delay: Math.min(idx, 8) * 0.04 }}
-                      >
-                        <CourseShelfCard
-                          course={course}
-                          comingSoon={course.access_state === "coming_soon"}
-                        />
-                      </motion.div>
-                    ))}
-                  </div>
-                </ShelfSection>
-              )}
+                  {/* ═══ EXPLORAR CURSOS ═══ */}
+                  {availableCourses.length > 0 && (
+                    <ShelfSection delay={0.15}>
+                      <ShelfHeader title="Explorar cursos" linkTo="/cursos" linkLabel="Ver todos" />
+                      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                        {availableCourses.map((course: any, idx: number) => (
+                          <motion.div
+                            key={`catalog-${course.id}`}
+                            initial={{ opacity: 0, y: 16 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.35, delay: Math.min(idx, 8) * 0.04 }}
+                          >
+                            <CourseShelfCard
+                              course={course}
+                              comingSoon={course.access_state === "coming_soon"}
+                            />
+                          </motion.div>
+                        ))}
+                      </div>
+                    </ShelfSection>
+                  )}
 
-              {continueWatchingCourses.length === 0 && myCourses.length === 0 && availableCourses.length === 0 && (
-                <EmptyState
-                  icon={BookOpen}
-                  title="Nenhum curso disponível"
-                  description="Assim que novos cursos forem publicados, eles aparecerão aqui."
-                />
+                  {/* ═══ SEUS ACESSOS ═══ */}
+                  {(libSections?.unlocked?.length ?? 0) >= 2 && (
+                    <ShelfSection delay={0.3}>
+                      <ShelfHeader title="Seus Acessos" />
+                      <ShelfRow>
+                        {(libSections?.unlocked || []).map((item: any, idx: number) => (
+                          <ShelfItem key={`unlocked-${item.id}`} index={idx}>
+                            <LibraryContentCard item={item} />
+                          </ShelfItem>
+                        ))}
+                      </ShelfRow>
+                    </ShelfSection>
+                  )}
+
+                  {/* ═══ DISPONÍVEL PARA VOCÊ (BLOQUEADO) ═══ */}
+                  {(libSections?.locked?.length ?? 0) >= 2 && (
+                    <ShelfSection delay={0.35}>
+                      <ShelfHeader title="Disponível para você" />
+                      <ShelfRow>
+                        {(libSections?.locked || []).map((item: any, idx: number) => (
+                          <ShelfItem key={`locked-${item.id}`} index={idx}>
+                            <LockedContentCard item={item} />
+                          </ShelfItem>
+                        ))}
+                      </ShelfRow>
+                    </ShelfSection>
+                  )}
+
+                  {/* ═══ EM BREVE ═══ */}
+                  {(libSections?.upcoming?.length ?? 0) >= 2 && (
+                    <ShelfSection delay={0.4}>
+                      <ShelfHeader title="Novidades chegando" />
+                      <ShelfRow>
+                        {(libSections?.upcoming || []).map((item: any, idx: number) => (
+                          <ShelfItem key={`upcoming-${item.id}`} index={idx}>
+                            <UpcomingContentCard item={item} />
+                          </ShelfItem>
+                        ))}
+                      </ShelfRow>
+                    </ShelfSection>
+                  )}
+
+                  {/* ═══ FAVORITOS ═══ */}
+                  {(libSections?.favorites?.length ?? 0) >= 2 && (
+                    <ShelfSection delay={0.45}>
+                      <ShelfHeader title="Seus Favoritos" />
+                      <ShelfRow>
+                        {(libSections?.favorites || []).map((item: any, idx: number) => (
+                          <ShelfItem key={`fav-${item.id}`} index={idx}>
+                            <LibraryContentCard item={item} />
+                          </ShelfItem>
+                        ))}
+                      </ShelfRow>
+                    </ShelfSection>
+                  )}
+
+                  {/* ═══ BÔNUS ═══ */}
+                  {(libSections?.bonus?.length ?? 0) >= 2 && (
+                    <ShelfSection delay={0.5}>
+                      <ShelfHeader title="Bônus Exclusivos" />
+                      <ShelfRow>
+                        {(libSections?.bonus || []).map((item: any, idx: number) => (
+                          <ShelfItem key={`bonus-${item.id}`} index={idx}>
+                            <LibraryContentCard item={item} isFree />
+                          </ShelfItem>
+                        ))}
+                      </ShelfRow>
+                    </ShelfSection>
+                  )}
+
+                  {continueWatchingCourses.length === 0 && myCourses.length === 0 && availableCourses.length === 0 && (
+                    <EmptyState icon={BookOpen} title="Nenhum conteúdo disponível" description="Em breve novos cursos serão adicionados." />
+                  )}
+                </>
               )}
-            </>
+            </div>
           )}
         </main>
 

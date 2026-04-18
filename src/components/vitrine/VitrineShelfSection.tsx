@@ -1,6 +1,6 @@
 import { Clock } from "lucide-react";
-import { CourseShelfCard } from "@/components/CourseShelfCard";
 import { PosterShelfItem, PosterShelfRow } from "@/components/PosterShelfRow";
+import { VitrineCourseCard } from "./VitrineCourseCard";
 import type { VitrineShelf } from "./types";
 
 interface VitrineShelfSectionProps {
@@ -30,12 +30,9 @@ export function VitrineShelfSection({ shelf }: VitrineShelfSectionProps) {
 
           return (
             <PosterShelfItem key={`${shelf.id}-${course.id}`}>
-              <CourseShelfCard
+              <VitrineCourseCard
                 course={course}
                 index={index}
-                showProgress
-                showStatusBadge
-                comingSoon={isComingSoon}
                 badge={
                   isComingSoon && course.badge_text ? (
                     <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/30 bg-gradient-to-r from-amber-500/95 to-orange-500/90 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-black shadow-lg shadow-black/30 backdrop-blur-sm sm:text-[10px]">
