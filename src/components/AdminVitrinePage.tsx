@@ -319,7 +319,16 @@ export default function AdminVitrinePage() {
   };
 
   const createMut = useMutation({
-    mutationFn: (input: any) => createShelf({ data: input }),
+    mutationFn: async (input: any) => {
+      const res = await createShelf({ data: input });
+      // Persiste cursos vinculados ao criar prateleira manual
+      if (input.mode === "manual" && selectedCourseIds.length > 0 && res?.id) {
+        await setShelfCourses({
+          data: { shelfId: res.id, courseIds: selectedCourseIds },
+        });
+      }
+      return res;
+    },
     onSuccess: () => {
       toast.success("Prateleira criada!");
       queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
