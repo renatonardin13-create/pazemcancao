@@ -120,7 +120,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
     {
       const { data: allCourses, error: coursesErr } = await supabaseAdmin
         .from('courses')
-        .select('id, title, short_description, cover_image_url, banner_image_url, status, sort_order, created_at, price')
+        .select('id, title, short_description, cover_image_url, banner_image_url, status, sort_order, created_at, price, launch_date')
         .eq('status', 'published')
         .order('sort_order', { ascending: true });
 
