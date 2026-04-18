@@ -21,12 +21,6 @@ interface UnlockModalProps {
   comingSoon?: boolean;
 }
 
-const SUBSCRIPTION_BENEFITS = [
-  "Acesso a todos os cursos da plataforma",
-  "Conteúdos exclusivos premium",
-  "Atualizações contínuas",
-  "Acesso imediato após o pagamento",
-];
 
 export function UnlockModal({
   open,
@@ -51,36 +45,22 @@ export function UnlockModal({
 
   const isSubscription = productType === "assinatura";
 
-  // Title and description per product type
-  const displayTitle = comingSoon
-    ? title
-    : isSubscription ? "Desbloqueie o acesso completo" : title;
+  // SEMPRE usar dados reais do curso. Nada de título/descrição genérica.
+  const displayTitle = title;
   const displayDescription = comingSoon
-    ? description || "Este conteúdo ainda não foi lançado. Em breve estará disponível na plataforma."
-    : isSubscription
-      ? description || "Tenha acesso a toda a plataforma com cursos, ebooks e conteúdos exclusivos."
-      : description;
+    ? (description || "Disponível em breve.")
+    : description;
 
-  // Benefits: subscription uses generic platform list; individual course uses its own data
-  let finalBenefits: string[];
-  if (comingSoon) {
-    finalBenefits = [];
-  } else if (isSubscription) {
-    finalBenefits = benefits && benefits.length > 0 ? benefits : SUBSCRIPTION_BENEFITS;
-  } else {
-    const courseBenefits = benefits && benefits.length > 0
-      ? benefits
-      : ([
-          totalLessons && totalLessons > 0
-            ? `${totalLessons} ${totalLessons === 1 ? "aula completa" : "aulas completas"}`
-            : null,
-          totalDuration ? `${totalDuration} de conteúdo` : null,
-          categoryName ? `Categoria: ${categoryName}` : null,
-          "Acesso vitalício após o pagamento",
-          "Assista quando e onde quiser",
-        ].filter(Boolean) as string[]);
-    finalBenefits = courseBenefits;
-  }
+  // Benefits: usar APENAS os reais do curso. Sem fallback genérico.
+  const realBenefits = (benefits && benefits.length > 0) ? benefits.filter(Boolean) : [];
+  const derivedBenefits = comingSoon ? [] : ([
+    totalLessons && totalLessons > 0
+      ? `${totalLessons} ${totalLessons === 1 ? "aula" : "aulas"}`
+      : null,
+    totalDuration ? `${totalDuration} de conteúdo` : null,
+    categoryName ? `Categoria: ${categoryName}` : null,
+  ].filter(Boolean) as string[]);
+  const finalBenefits = realBenefits.length > 0 ? realBenefits : derivedBenefits;
 
   const accessLabel = isSubscription ? "Assinatura" : "Pagamento único";
   const accessHint = isSubscription ? "acesso recorrente" : "sem mensalidade";
@@ -88,7 +68,7 @@ export function UnlockModal({
   const ctaLabel = comingSoon
     ? "EM BREVE"
     : checkoutUrl
-      ? isSubscription ? "ASSINAR AGORA" : "COMPRAR AGORA"
+      ? "COMPRAR AGORA"
       : "EM BREVE";
 
   return (
