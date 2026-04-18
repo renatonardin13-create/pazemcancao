@@ -35,7 +35,7 @@ function MeusCoursosPage() {
   });
 
   const { data: myData, isLoading } = useQuery({
-    queryKey: ["courses-page", "my-courses", "v3-owned-only"],
+    queryKey: ["courses-page", "my-courses", "v4-owned-access-state"],
     queryFn: () => getMyCoursesData(),
     staleTime: 30_000,
   });

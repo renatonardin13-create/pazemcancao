@@ -10,7 +10,7 @@ import { getMyCoursesData } from "@/lib/my-courses.functions";
 
 export function useOwnedProducts() {
   const query = useQuery({
-    queryKey: ["owned-products", "v1"],
+    queryKey: ["owned-products", "v2-access-state"],
     queryFn: () => getMyCoursesData(),
     staleTime: 30_000,
   });
