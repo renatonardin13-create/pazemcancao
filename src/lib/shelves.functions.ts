@@ -81,19 +81,11 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
 
-    const { data: userData } = await supabase.auth.getUser();
-    const email = userData?.user?.email?.toLowerCase();
+    // REGRA 8 — Não detectamos role admin aqui de propósito.
+    // A vitrine do aluno deve obedecer exclusivamente às regras de acesso reais
+    // (vínculo em enrollments). Admin não libera nada automaticamente.
 
-    const { data: adminRole, error: adminRoleError } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', userId)
-      .eq('role', 'admin')
-      .maybeSingle();
-
-    if (adminRoleError) throw new Error(adminRoleError.message);
-
-    const isAdmin = !!adminRole || email === 'renatonardin13@gmail.com';
+    void userId;
 
     const { data: shelfRows, error: shelvesErr } = await supabaseAdmin
       .from('shelves')
