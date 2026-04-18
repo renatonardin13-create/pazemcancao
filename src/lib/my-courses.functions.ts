@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+import { buildEntitlements, resolveProductAccessState } from '@/lib/product-access';
 
 export const getMyCoursesData = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
@@ -94,15 +95,28 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
       }
     }
 
+    const entitlements = buildEntitlements(activeEnrollments);
+
     const enrichedCourses = (courses || []).map((course) => {
       const enrollment = enrollmentByCourse.get(course.id);
       const totalLessons = lessonCountMap.get(course.id) || course.total_lessons || 0;
       const completedLessons = completedLessonsMap.get(course.id) || 0;
       const progressPct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
       const moduleCount = moduleCountMap.get(course.id) || 0;
+      const accessState = resolveProductAccessState(course, entitlements, { context: 'my_courses' });
+      const visualAccessState = progressPct >= 100 && totalLessons > 0
+        ? 'completed'
+        : progressPct > 0
+          ? 'in_progress'
+          : accessState === 'owned'
+            ? 'enrolled'
+            : accessState;
 
       return {
         ...course,
+        access_state: visualAccessState,
+        product_access_state: accessState,
+        is_enrolled: accessState === 'owned',
         module_count: moduleCount,
         lesson_count: totalLessons,
         completed_lessons: completedLessons,
