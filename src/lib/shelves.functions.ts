@@ -81,19 +81,9 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
   .handler(async ({ context }) => {
     const { supabase, userId } = context;
 
-    const { data: userData } = await supabase.auth.getUser();
-    const email = userData?.user?.email?.toLowerCase();
-
-    const { data: adminRole, error: adminRoleError } = await supabase
-      .from('user_roles')
-      .select('role')
-      .eq('user_id', userId)
-      .eq('role', 'admin')
-      .maybeSingle();
-
-    if (adminRoleError) throw new Error(adminRoleError.message);
-
-    const isAdmin = !!adminRole || email === 'renatonardin13@gmail.com';
+    // REGRA 8 — Não detectamos role admin aqui de propósito.
+    // A vitrine do aluno deve obedecer exclusivamente às regras de acesso reais
+    // (vínculo em enrollments). Admin não libera nada automaticamente.
 
     const { data: shelfRows, error: shelvesErr } = await supabaseAdmin
       .from('shelves')
@@ -277,7 +267,9 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
     }
 
     const enrichCourse = (course: CourseRecord) => {
-      const isEnrolled = enrolledCourseIds.has(course.id) || isAdmin;
+      // REGRA 8 — admin NÃO contamina visão do aluno na vitrine.
+      // Acesso liberado SOMENTE com vínculo real em enrollments (status=active e não expirado).
+      const isEnrolled = enrolledCourseIds.has(course.id);
       const isBlocked = blockedEnrollmentIds.has(course.id);
       const isExpired = expiredEnrollmentIds.has(course.id);
       const hasPreview = previewCourseIds.has(course.id);
@@ -374,7 +366,32 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       }
     }
 
-    const result = adminShelves.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+    const sortedAdminShelves = adminShelves.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+
+    // REGRA 1 — Vitrine deve listar TODOS os produtos ativos do catálogo.
+    // Garante que cursos publicados que não estão em nenhuma prateleira manual
+    // apareçam em uma prateleira "Todos os Cursos" no final.
+    const coursesInShelves = new Set<string>();
+    for (const shelf of sortedAdminShelves) {
+      for (const course of shelf.courses) {
+        coursesInShelves.add((course as any).id);
+      }
+    }
+
+    const orphanCourses = publishedCourses
+      .filter((course) => !coursesInShelves.has(course.id))
+      .map(enrichCourse);
+
+    const result = [...sortedAdminShelves];
+    if (orphanCourses.length > 0) {
+      result.push({
+        id: '__all_courses__',
+        name: sortedAdminShelves.length > 0 ? 'Todos os Cursos' : 'Catálogo',
+        sort_order: 9999,
+        shelf_type: 'admin' as const,
+        courses: orphanCourses,
+      });
+    }
 
     // ── Banner config ──
     const { data: bannerSetting, error: bannerError } = await supabaseAdmin
