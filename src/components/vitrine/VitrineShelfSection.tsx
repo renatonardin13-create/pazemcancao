@@ -11,7 +11,7 @@ export function VitrineShelfSection({ shelf }: VitrineShelfSectionProps) {
   if (!shelf.courses.length) return null;
 
   return (
-    <section className="space-y-3 sm:space-y-4">
+    <section className="space-y-5 sm:space-y-6">
       <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12">
         <div className="flex items-center gap-2.5">
           <h2 className="font-display text-lg sm:text-xl font-bold text-foreground/90 tracking-tight">

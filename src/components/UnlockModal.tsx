@@ -1,4 +1,5 @@
-import { Lock, Check, X, ShoppingCart } from "lucide-react";
+import { Lock, Check, X, ArrowRight, BookOpen, Clock3, Tag, Layers } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
@@ -8,6 +9,7 @@ interface UnlockModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   productType?: ProductType;
+  productId?: string;
   title: string;
   description?: string | null;
   coverUrl?: string | null;
@@ -21,11 +23,20 @@ interface UnlockModalProps {
   comingSoon?: boolean;
 }
 
+const TYPE_LABEL: Record<string, string> = {
+  curso_individual: "Curso",
+  assinatura: "Assinatura",
+  ebook: "Ebook",
+  pack: "Pack",
+  aula: "Aula",
+};
+
 
 export function UnlockModal({
   open,
   onOpenChange,
   productType = "curso_individual",
+  productId,
   title,
   description,
   coverUrl,
@@ -37,39 +48,44 @@ export function UnlockModal({
   categoryName,
   comingSoon = false,
 }: UnlockModalProps) {
-  const handleUnlock = () => {
+  const navigate = useNavigate();
+
+  const handlePrimary = () => {
+    onOpenChange(false);
+    if (productId) {
+      navigate({ to: "/produto/$courseId", params: { courseId: productId } });
+    }
+  };
+
+  const handleSecondary = () => {
     if (comingSoon) return;
     if (checkoutUrl) window.open(checkoutUrl, "_blank", "noopener,noreferrer");
-    onOpenChange(false);
   };
 
   const isSubscription = productType === "assinatura";
 
-  // SEMPRE usar dados reais do curso. Nada de título/descrição genérica.
   const displayTitle = title;
   const displayDescription = comingSoon
     ? (description || "Disponível em breve.")
     : description;
 
-  // Benefits: usar APENAS os reais do curso. Sem fallback genérico.
   const realBenefits = (benefits && benefits.length > 0) ? benefits.filter(Boolean) : [];
-  const derivedBenefits = comingSoon ? [] : ([
-    totalLessons && totalLessons > 0
-      ? `${totalLessons} ${totalLessons === 1 ? "aula" : "aulas"}`
-      : null,
-    totalDuration ? `${totalDuration} de conteúdo` : null,
-    categoryName ? `Categoria: ${categoryName}` : null,
-  ].filter(Boolean) as string[]);
-  const finalBenefits = realBenefits.length > 0 ? realBenefits : derivedBenefits;
+
+  // Meta chips (categoria, tipo, aulas, duração) — sempre exibidos quando existirem
+  const metaChips: Array<{ icon: typeof BookOpen; label: string }> = [];
+  if (totalLessons && totalLessons > 0) {
+    metaChips.push({ icon: BookOpen, label: `${totalLessons} ${totalLessons === 1 ? "aula" : "aulas"}` });
+  }
+  if (totalDuration) metaChips.push({ icon: Clock3, label: totalDuration });
+  if (categoryName) metaChips.push({ icon: Tag, label: categoryName });
+  if (productType && TYPE_LABEL[productType]) {
+    metaChips.push({ icon: Layers, label: TYPE_LABEL[productType] });
+  }
 
   const accessLabel = isSubscription ? "Assinatura" : "Pagamento único";
   const accessHint = isSubscription ? "acesso recorrente" : "sem mensalidade";
-  const ctaDisabled = comingSoon || !checkoutUrl;
-  const ctaLabel = comingSoon
-    ? "EM BREVE"
-    : checkoutUrl
-      ? "COMPRAR AGORA"
-      : "EM BREVE";
+  const primaryDisabled = !productId;
+  const primaryLabel = comingSoon ? "Ver detalhes" : "Ver detalhes do produto";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -97,21 +113,35 @@ export function UnlockModal({
           </div>
         </div>
 
-        <div className="px-6 py-5 space-y-5">
+        <div className="px-6 py-6 space-y-5">
+          {metaChips.length > 0 && (
+            <div className="flex flex-wrap items-center gap-1.5">
+              {metaChips.map((m) => (
+                <span
+                  key={m.label}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-border/30 bg-card/40 px-2.5 py-1 text-[10px] font-medium text-foreground/80"
+                >
+                  <m.icon className="h-3 w-3 text-gold/80" />
+                  {m.label}
+                </span>
+              ))}
+            </div>
+          )}
+
           {displayDescription && (
             <p className="text-sm text-muted-foreground leading-relaxed line-clamp-4">
               {displayDescription}
             </p>
           )}
 
-          {finalBenefits.length > 0 && (
+          {realBenefits.length > 0 && (
             <ul className="space-y-2.5">
-              {finalBenefits.map((b) => (
-                <li key={b} className="flex items-center gap-2.5 text-sm text-foreground/85">
-                  <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gold/15 border border-gold/30 shrink-0">
+              {realBenefits.slice(0, 4).map((b) => (
+                <li key={b} className="flex items-start gap-2.5 text-sm text-foreground/85">
+                  <span className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-gold/15 border border-gold/30 shrink-0">
                     <Check className="h-3 w-3 text-gold" />
                   </span>
-                  {b}
+                  <span className="leading-snug">{b}</span>
                 </li>
               ))}
             </ul>
@@ -128,11 +158,32 @@ export function UnlockModal({
           )}
 
           <div className="space-y-2 pt-1">
-            <Button variant="premium" size="lg" className="w-full" onClick={handleUnlock} disabled={ctaDisabled}>
-              {!comingSoon && <ShoppingCart className="h-4 w-4" />}
-              {ctaLabel}
+            <Button
+              variant="premium"
+              size="lg"
+              className="w-full"
+              onClick={handlePrimary}
+              disabled={primaryDisabled}
+            >
+              {primaryLabel}
+              <ArrowRight className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="sm" className="w-full text-muted-foreground" onClick={() => onOpenChange(false)}>
+            {!comingSoon && checkoutUrl && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full text-muted-foreground hover:text-gold"
+                onClick={handleSecondary}
+              >
+                Comprar agora
+              </Button>
+            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="w-full text-muted-foreground/60"
+              onClick={() => onOpenChange(false)}
+            >
               Agora não
             </Button>
           </div>
