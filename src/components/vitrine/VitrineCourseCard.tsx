@@ -179,6 +179,7 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
           open={unlockOpen}
           onOpenChange={setUnlockOpen}
           productType={course.product_type === "assinatura" ? "assinatura" : "curso_individual"}
+          productId={course.id}
           title={course.title}
           description={course.sales_description || course.short_description || course.full_description}
           coverUrl={course.cover_image_url || undefined}

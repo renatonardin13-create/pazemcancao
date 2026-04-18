@@ -89,7 +89,7 @@ export function PosterShelfRow({ children }: { children: ReactNode }) {
         }}
         onScroll={updateScrollState}
         onMouseEnter={updateScrollState}
-        className="flex gap-3 sm:gap-4 lg:gap-5 overflow-x-auto pb-3 scrollbar-hide px-4 sm:px-6 lg:px-8 snap-x snap-mandatory scroll-smooth cursor-grab select-none will-change-scroll overscroll-x-contain"
+        className="flex gap-5 sm:gap-6 lg:gap-7 overflow-x-auto pb-5 scrollbar-hide px-4 sm:px-8 lg:px-12 snap-x snap-mandatory scroll-smooth cursor-grab select-none will-change-scroll overscroll-x-contain"
         style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}
       >
         {children}
