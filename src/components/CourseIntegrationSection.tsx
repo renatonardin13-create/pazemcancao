@@ -356,7 +356,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
       <div className="flex gap-3">
         <Button
           type="button"
-          onClick={() => mutation.mutate()}
+          onClick={handleSave}
           disabled={mutation.isPending}
           className="flex-1"
         >
