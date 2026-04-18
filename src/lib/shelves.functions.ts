@@ -35,7 +35,6 @@ type CourseRecord = {
   total_duration: string | null;
   total_lessons: number;
   product_type: string;
-  sales_page_url: string | null;
   category_id: string | null;
   launch_date?: string | null;
 };
@@ -128,7 +127,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
     {
       const { data: allCourses, error: coursesErr } = await supabaseAdmin
         .from('courses')
-        .select('id, title, short_description, full_description, sales_description, cover_image_url, banner_image_url, status, sort_order, created_at, price, promotional_price, benefits, total_duration, total_lessons, product_type, sales_page_url, category_id, launch_date')
+        .select('id, title, short_description, full_description, sales_description, cover_image_url, banner_image_url, status, sort_order, created_at, price, promotional_price, benefits, total_duration, total_lessons, product_type, category_id, launch_date')
         .in('status', ['published', 'draft'])
         .order('sort_order', { ascending: true });
 
