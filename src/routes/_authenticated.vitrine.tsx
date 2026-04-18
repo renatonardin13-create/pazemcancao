@@ -6,7 +6,7 @@ import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { Store, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { VitrineFeaturedBanner } from "@/components/vitrine/VitrineFeaturedBanner";
 import { VitrineShelfSection } from "@/components/vitrine/VitrineShelfSection";
 import type { VitrineShelf } from "@/components/vitrine/types";
@@ -50,56 +50,6 @@ function VitrinePage() {
       })
       .filter((shelf) => shelf.courses.length > 0);
   }, [shelves, searchTerm]);
-
-  // 🔍 LOGS TEMPORÁRIOS — validação da vitrine (remover depois do QA)
-  useEffect(() => {
-    if (import.meta.env.PROD) return;
-    if (isLoading) return;
-
-    const allRenderedIds: string[] = [];
-    const duplicates: string[] = [];
-
-    console.groupCollapsed(
-      `%c[/vitrine • VitrinePage] ${filteredShelves.length} prateleira(s) carregada(s)`,
-      "color:#d4af37;font-weight:bold",
-    );
-    console.log("rota:", "/vitrine");
-    console.log("componente:", "src/routes/_authenticated.vitrine.tsx > VitrinePage");
-    console.log("nomes das prateleiras:", filteredShelves.map((shelf) => shelf.name));
-
-    filteredShelves.forEach((shelf) => {
-      const courses = shelf.courses || [];
-      console.groupCollapsed(
-        `📚 ${shelf.name} — ${courses.length} curso(s)`,
-      );
-      console.log("cards renderizados na prateleira:", courses.length);
-      courses.forEach((c) => {
-        const today = new Date();
-        const launch = c.launch_date ? new Date(c.launch_date) : null;
-        const notLaunched = launch && launch > today;
-        const purchased = !!c.is_enrolled;
-        const state = purchased
-          ? "LIBERADO"
-          : notLaunched
-            ? "NAO_LANCADO"
-            : "BLOQUEADO";
-        const dup = allRenderedIds.includes(c.id);
-        if (dup) duplicates.push(c.id);
-        allRenderedIds.push(c.id);
-        console.log(
-          `  ${state === "LIBERADO" ? "✅" : state === "NAO_LANCADO" ? "🕒" : "🔒"} ${c.title}`,
-          { id: c.id, state, duplicate: dup },
-        );
-      });
-      console.groupEnd();
-    });
-    console.log(
-      `%cTotal renderizado: ${allRenderedIds.length} | Únicos: ${new Set(allRenderedIds).size} | Duplicados: ${duplicates.length}`,
-      duplicates.length ? "color:#ef4444;font-weight:bold" : "color:#22c55e",
-    );
-    if (duplicates.length) console.warn("⚠️ IDs duplicados:", duplicates);
-    console.groupEnd();
-  }, [filteredShelves, isLoading]);
 
   return (
     <ModuleGuard moduleKey="vitrine">
