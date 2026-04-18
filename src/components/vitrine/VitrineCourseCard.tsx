@@ -20,9 +20,16 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
   const [unlockOpen, setUnlockOpen] = useState(false);
 
   const progress = course.progress_pct ?? 0;
-  const isReleased = ["enrolled", "in_progress", "completed"].includes(course.access_state || "");
-  const isNotLaunched = course.access_state === "coming_soon";
-  const isLocked = !isReleased && !isNotLaunched;
+  // Fonte única de verdade: prioriza product_access_state se vier do servidor.
+  const canonical = course.product_access_state
+    ?? (["enrolled", "in_progress", "completed"].includes(course.access_state || "")
+      ? "owned"
+      : course.access_state === "coming_soon"
+        ? "coming_soon"
+        : "locked");
+  const isReleased = canonical === "owned";
+  const isNotLaunched = canonical === "coming_soon";
+  const isLocked = canonical === "locked";
   const isCompleted = progress >= 100;
   const isInProgress = progress > 0 && progress < 100;
   const salesUrl = course.banner_link_url || course.sales_page_url || course.checkout_url;
