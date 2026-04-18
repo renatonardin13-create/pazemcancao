@@ -93,7 +93,7 @@ function VitrinePage() {
             </div>
 
             {/* ── Destaque da semana (carrossel rotativo até 3) ── */}
-            {featuredCourses.length > 0 && !(mode === "somente_musica" && featuredCourses[0].id !== "__custom_banner__") && (
+            {featuredCourses.length > 0 && (
               <FeaturedCarousel courses={featuredCourses} />
             )}
 
