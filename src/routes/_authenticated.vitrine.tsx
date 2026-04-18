@@ -152,6 +152,7 @@ function VitrinePage() {
 
   // Count admin shelves for promo banner positioning
   let adminShelfIndex = 0;
+  const renderSeenIds = new Set<string>();
 
   return (
     <ModuleGuard moduleKey="vitrine">
@@ -207,6 +208,20 @@ function VitrinePage() {
             ) : (
               <div className="space-y-8 sm:space-y-12">
                 {filteredShelves.map((shelf: any, shelfIdx: number) => {
+                  const renderSafeCourses = (shelf.courses || []).filter((course: any) => {
+                    if (!course?.id) return false;
+                    if (renderSeenIds.has(course.id)) {
+                      // eslint-disable-next-line no-console
+                      console.log(`[Vitrine render guard] duplicado bloqueado em "${shelf.name}":`, course.id);
+                      return false;
+                    }
+                    renderSeenIds.add(course.id);
+                    return true;
+                  });
+
+                  const minCards = shelf.id === '__continue__' ? 1 : 2;
+                  if (renderSafeCourses.length < minCards) return null;
+
                   const isAdminShelf = shelf.shelf_type !== 'smart';
                   if (isAdminShelf) adminShelfIndex++;
 
@@ -227,13 +242,13 @@ function VitrinePage() {
                           </h2>
                           <div className="flex-1 h-px bg-gradient-to-r from-gold/10 to-transparent" />
                           <span className="text-[10px] sm:text-xs text-muted-foreground/40 uppercase tracking-wider font-medium">
-                            {shelf.courses.length} título{shelf.courses.length !== 1 ? "s" : ""}
+                            {renderSafeCourses.length} título{renderSafeCourses.length !== 1 ? "s" : ""}
                           </span>
                         </div>
                       </div>
 
                       {/* Netflix carousel */}
-                      <NetflixCarousel courses={shelf.courses} shelfId={shelf.id} />
+                      <NetflixCarousel courses={renderSafeCourses} shelfId={shelf.id} />
 
                       {/* Promo banner after admin shelf */}
                       {isAdminShelf && promoBanners
