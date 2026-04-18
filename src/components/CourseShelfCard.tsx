@@ -31,40 +31,37 @@ export const CourseShelfCard = memo(function CourseShelfCard({
 
   const progress = course.progress_pct ?? 0;
   const hasProgress = showProgress && progress > 0;
-  // RC1: NAO_LANCADO inclui prop `comingSoon` (vem de prateleira __coming_soon__)
-  // OU access_state === 'coming_soon' (curso publicado com launch_date futura).
+
+  // RC1 — 3 estados puros:
+  // LIBERADO: usuário comprou (enrolled / in_progress / completed) ou admin
+  // NAO_LANCADO: curso com launch_date futura (access_state === 'coming_soon') ou prop comingSoon
+  // BLOQUEADO: qualquer outro caso (locked / blocked / expired / preview / available sem compra)
+  const isReleased = ['enrolled', 'in_progress', 'completed'].includes(course.access_state);
   const isNotLaunched = comingSoon || course.access_state === 'coming_soon';
-  // BLOQUEADO inclui não-lançado para fins de clique (overlay + modal).
-  const isLocked = isNotLaunched || course.access_state === 'locked' || course.access_state === 'blocked' || course.access_state === 'expired';
-  const hasFreePreview = course.access_state === 'preview';
-  const isPaidCourse = !isLocked && (course.price > 0 || course.has_checkout) && !['enrolled', 'in_progress', 'completed'].includes(course.access_state);
+  const isLocked = !isReleased && !isNotLaunched;
+
   const isCompleted = progress >= 100;
   const isInProgress = progress > 0 && progress < 100;
+  // Mantido para compat com restante do JSX (badges visuais existentes)
+  const hasFreePreview = false;
+  const isPaidCourse = isLocked;
 
-  const handleClick = useCallback(async (e: React.MouseEvent) => {
-    if (isLocked) {
-      e.preventDefault();
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    // BLOQUEADO ou NAO_LANCADO → modal
+    if (!isReleased) {
       setUnlockOpen(true);
       return;
     }
-
-    e.preventDefault();
+    // LIBERADO → página do curso
     if (isNavigating) return;
     setIsNavigating(true);
-
     try {
-      const result = await resolveCourseLesson({ data: { courseId: course.id } });
-      if (result.lessonId) {
-        navigate({ to: '/cursos/$courseId/aula/$lessonId', params: { courseId: course.id, lessonId: result.lessonId } });
-      } else {
-        navigate({ to: '/cursos/$courseId', params: { courseId: course.id } });
-      }
-    } catch {
       navigate({ to: '/cursos/$courseId', params: { courseId: course.id } });
     } finally {
       setIsNavigating(false);
     }
-  }, [course.id, isLocked, isNavigating, navigate]);
+  }, [course.id, isReleased, isNavigating, navigate]);
 
   const salesUrl = course.sales_page_url || course.checkout_url;
   const isExternalLink = false;
@@ -80,17 +77,16 @@ export const CourseShelfCard = memo(function CourseShelfCard({
   );
 
   const badgeTopLeft = badge ? badge
-    : (isLocked || isPaidCourse) && !hasFreePreview ? (
+    : isNotLaunched ? (
+      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-500/95 to-orange-500/90 text-[9px] sm:text-[10px] font-bold text-black uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm border border-amber-400/30">
+        Em breve
+      </span>
+    ) : isLocked ? (
       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-gold/95 to-amber-500/90 text-[9px] sm:text-[10px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm border border-gold/20">
         <Lock className="h-2.5 w-2.5" />
         Premium
       </span>
-    ) : hasFreePreview && !isLocked && !isPaidCourse ? (
-      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold/90 text-[9px] sm:text-[10px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm">
-        <Play className="h-2.5 w-2.5 fill-current" />
-        Aula grátis
-      </span>
-    ) : showStatusBadge && !isLocked && !isPaidCourse && !hasFreePreview ? (
+    ) : showStatusBadge ? (
       isCompleted ? (
         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/90 text-[9px] sm:text-[10px] font-bold text-white uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm">
           <BookOpenCheck className="h-2.5 w-2.5" /> Concluído
@@ -106,13 +102,23 @@ export const CourseShelfCard = memo(function CourseShelfCard({
     <div className="flex h-7 w-7 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm border border-white/[0.08]">
       <Lock className="h-3 w-3 text-white/45" />
     </div>
-  ) : course.category_name ? (
+  ) : isNotLaunched ? undefined
+    : course.category_name ? (
     <span className="text-[9px] sm:text-[10px] font-medium tracking-[0.15em] uppercase rounded-full bg-black/25 backdrop-blur-md border border-white/[0.06] px-2.5 py-1 text-white/35">
       {course.category_name}
     </span>
   ) : undefined;
 
-  const overlay = isLocked ? (
+  const overlay = isNotLaunched ? (
+    <div className="h-full bg-black/55 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2.5">
+      <span className="px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-[11px] font-bold uppercase tracking-[0.2em] text-black shadow-lg">
+        Em breve
+      </span>
+      <span className="text-[10px] font-medium text-white/60 mt-0.5">
+        Toque para mais detalhes
+      </span>
+    </div>
+  ) : isLocked ? (
     <div className="h-full bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2.5">
       <div className="relative">
         <div className="absolute -inset-3 rounded-full bg-gold/10 blur-xl animate-pulse" />
@@ -132,7 +138,7 @@ export const CourseShelfCard = memo(function CourseShelfCard({
     </div>
   ) : undefined;
 
-  const centerAction = !isLocked ? (
+  const centerAction = isReleased ? (
     <div className={`flex items-center gap-2 h-auto px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-gold/95 shadow-[0_4px_24px_rgba(0,0,0,0.4)] scale-[0.5] opacity-0 md:group-hover/card:opacity-100 md:group-hover/card:scale-100 md:transition-all md:duration-500 md:ease-[cubic-bezier(0.22,1,0.36,1)] ${isNavigating ? 'animate-pulse' : ''}`}>
       <Play className="h-4 w-4 sm:h-5 sm:w-5 text-gold-foreground fill-gold-foreground" />
     </div>
