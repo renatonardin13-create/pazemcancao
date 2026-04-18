@@ -82,32 +82,58 @@ function VitrinePage() {
     return base;
   }, [shelves, mode, showCoursesInVitrine, showLancamentos, trendingData]);
 
-  // RC1: dedupe — um curso não pode aparecer em mais de uma prateleira.
-  // Ordem de prioridade: a primeira prateleira fica intacta; as seguintes
-  // removem cursos já exibidos. Prateleiras "recomendadas" são empurradas
-  // para o final para receberem o restante.
+  // RC1: dedupe global por ID — um curso só pode aparecer UMA vez na vitrine.
+  // Prioridade fixa: 1) Mais acessados (__trending__) 2) Lançamentos/Em breve
+  // 3) Continue 4) Demais admin shelves 5) Recomendado para você (por último)
   const dedupedShelves = useMemo(() => {
-    const isRecommended = (s: any) =>
-      /recomend/i.test(s?.name || "") || s?.auto_criteria === "recommended";
-    const ordered = [...modeShelves].sort((a: any, b: any) => {
-      const ar = isRecommended(a) ? 1 : 0;
-      const br = isRecommended(b) ? 1 : 0;
-      return ar - br;
-    });
+    const priority = (s: any): number => {
+      if (s?.id === "__trending__") return 0;
+      const name = (s?.name || "").toLowerCase();
+      if (s?.id === "__coming_soon__" || /lan[çc]amento/i.test(name)) return 1;
+      if (s?.id === "__continue__") return 2;
+      const isRecommended =
+        /recomend/i.test(name) || s?.auto_criteria === "recommended";
+      if (isRecommended) return 5;
+      return 3;
+    };
+
+    const ordered = [...modeShelves]
+      .map((s, i) => ({ s, i }))
+      .sort((a, b) => {
+        const pa = priority(a.s);
+        const pb = priority(b.s);
+        if (pa !== pb) return pa - pb;
+        return a.i - b.i; // mantém ordem original entre iguais
+      })
+      .map((x) => x.s);
+
     const seen = new Set<string>();
-    return ordered
+    const result = ordered
       .map((shelf: any) => {
+        const originalIds = (shelf.courses || []).map((c: any) => c.id);
         const courses = (shelf.courses || []).filter((c: any) => {
+          if (!c?.id) return false;
           if (seen.has(c.id)) return false;
           seen.add(c.id);
           return true;
         });
+        // Logs temporários de validação
+        // eslint-disable-next-line no-console
+        console.log(
+          `[Vitrine dedup] "${shelf.name}" (prio ${priority(shelf)}) → antes:`,
+          originalIds,
+          "depois:",
+          courses.map((c: any) => c.id),
+        );
         return { ...shelf, courses };
       })
       .filter((shelf: any) => {
         const minCards = shelf.id === "__continue__" ? 1 : 2;
         return shelf.courses.length >= minCards;
       });
+    // eslint-disable-next-line no-console
+    console.log("[Vitrine dedup] IDs exibidos no total:", Array.from(seen));
+    return result;
   }, [modeShelves]);
 
   const filteredShelves = useMemo(() => {
