@@ -15,8 +15,10 @@ export type ProductAccessState = "owned" | "locked" | "coming_soon" | "hidden";
 
 export interface ProductLike {
   id: string;
-  status?: string | null; // 'published' | 'draft' | ...
+  status?: string | null; // 'published' | 'draft' | 'coming_soon' | ...
   launch_date?: string | null;
+  is_active?: boolean | null;
+  show_in_store?: boolean | null;
 }
 
 export interface UserEntitlements {
@@ -25,8 +27,11 @@ export interface UserEntitlements {
 }
 
 export interface ResolveOptions {
-  /** Visão "Vitrine": mostra produtos publicados mesmo sem acesso. */
+  /** Visão "Vitrine": mostra produtos publicados mesmo sem acesso.
+   *  Visão "my_courses": somente owned. */
   context: "vitrine" | "my_courses";
+  /** Preview administrativo manual e EXPLÍCITO. Nunca true por padrão. */
+  previewMode?: boolean;
 }
 
 export function resolveProductAccessState(
@@ -41,12 +46,23 @@ export function resolveProductAccessState(
     return isOwned ? "owned" : "hidden";
   }
 
-  // Vitrine: acesso real tem prioridade absoluta (mesmo se não-lançado).
+  // Vitrine — acesso real tem prioridade absoluta.
   if (isOwned) return "owned";
 
-  // Vitrine só lista produtos publicados.
+  // Preview administrativo manual: simula owned sem alterar dados reais.
+  if (options.previewMode) return "owned";
+
+  // Produto não ativo / não visível na loja → hidden.
+  if (product.is_active === false) return "hidden";
+  if (product.show_in_store === false) return "hidden";
+
+  // Status explícito de coming_soon.
+  if (product.status === "coming_soon") return "coming_soon";
+
+  // Status diferente de "published" não aparece (draft/hidden/etc).
   if (product.status && product.status !== "published") return "hidden";
 
+  // launch_date no futuro = coming_soon.
   const launch = product.launch_date ? new Date(product.launch_date) : null;
   if (launch && launch.getTime() > Date.now()) return "coming_soon";
 

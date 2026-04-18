@@ -16,7 +16,6 @@ export type VitrineCourse = {
   checkout_url?: string | null;
   sales_page_url?: string | null;
   access_state?: string;
-  product_access_state?: "owned" | "locked" | "coming_soon" | "hidden";
   progress_pct?: number;
   badge_text?: string;
   launch_date?: string | null;
