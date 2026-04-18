@@ -3,11 +3,9 @@ import { OptimizedImage } from "@/components/OptimizedImage";
 import { useQuery } from "@tanstack/react-query";
 import { ModuleGuard } from "@/components/ModuleGuard";
 import { getStudentShelves } from "@/lib/shelves.functions";
-import { getTrendingCourses } from "@/lib/trending.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { CourseShelfCard } from "@/components/CourseShelfCard";
-import { useProjectMode } from "@/hooks/use-project-mode";
 import { Store, Lock, Play, ArrowRight, ShoppingCart, Search, ChevronLeft, ChevronRight, Clock, Sparkles } from "lucide-react";
 import { InvisibleFunnelShelves } from "@/components/InvisibleFunnelShelves";
 import { Input } from "@/components/ui/input";
@@ -17,16 +15,6 @@ export const Route = createFileRoute("/_authenticated/vitrine")({
   component: VitrinePage,
 });
 
-const SHELF_ICONS: Record<string, React.ReactNode> = {
-  '__continue__': <Play className="h-4 w-4 text-gold fill-gold" />,
-  '__available__': <ShoppingCart className="h-4 w-4 text-gold" />,
-  '__coming_soon__': <Clock className="h-4 w-4 text-gold" />,
-  '__trending__': <Sparkles className="h-4 w-4 text-gold" />,
-};
-
-/** Smart shelf IDs that are course-specific */
-const COURSE_SMART_SHELVES = new Set(['__continue__', '__available__', '__coming_soon__']);
-
 function VitrinePage() {
   const { data, isLoading } = useQuery({
     queryKey: ["student-shelves"],
@@ -35,13 +23,6 @@ function VitrinePage() {
     refetchOnWindowFocus: true,
   });
 
-  const { data: trendingData } = useQuery({
-    queryKey: ["trending-courses-7d"],
-    queryFn: () => getTrendingCourses(),
-    staleTime: 5 * 60_000,
-  });
-
-  const { mode, showCoursesInVitrine, showMusicInVitrine, showLancamentos } = useProjectMode();
   const [searchTerm, setSearchTerm] = useState("");
 
   const shelves = data?.shelves || [];
@@ -51,90 +32,27 @@ function VitrinePage() {
     ? (data as any).featuredCourses
     : (featuredCourse ? [featuredCourse] : []);
 
-  const modeShelves = useMemo(() => {
-    const base = shelves.filter((shelf: any) => {
-      // In somente_musica: hide course-specific smart shelves
-      if (mode === "somente_musica" && COURSE_SMART_SHELVES.has(shelf.id)) return false;
-      // In somente_cursos: show all course shelves (they're already course-based)
-      // In hibrido: show courses shelves only if courses module enabled
-      if (mode === "hibrido" && !showCoursesInVitrine && COURSE_SMART_SHELVES.has(shelf.id)) return false;
-      // Hide "Em breve" if lancamentos disabled
-      if (shelf.id === "__coming_soon__" && !showLancamentos) return false;
-      // Evita prateleiras com 1 item isolado (visual quebrado/vazio).
-      // "Continue assistindo" pode ter 1 item porque é contextual e útil.
-      const minCards = shelf.id === '__continue__' ? 1 : 2;
-      return (shelf.courses?.length || 0) >= minCards;
-    });
-
-    // Prepend "Mais acessados esta semana" se houver dados (≥2 cursos)
-    const trending = trendingData?.courses || [];
-    if (mode !== "somente_musica" && trending.length >= 2) {
-      return [
-        {
-          id: "__trending__",
-          name: "Mais acessados esta semana",
-          shelf_type: "smart",
-          courses: trending,
-        },
-        ...base,
-      ];
-    }
-    return base;
-  }, [shelves, mode, showCoursesInVitrine, showLancamentos, trendingData]);
-
-  // RC1: dedupe global por ID — um curso só pode aparecer UMA vez na vitrine.
-  // Prioridade fixa: 1) Mais acessados (__trending__) 2) Lançamentos/Em breve
-  // 3) Continue 4) Demais admin shelves 5) Recomendado para você (por último)
+  // Vitrine 100% dinâmica: apenas prateleiras do admin (ativas, ordenadas por sort_order),
+  // com cursos vinculados. Prateleiras vazias são automaticamente omitidas.
+  // Dedupe global no front para garantir que nenhum curso apareça em 2 prateleiras.
   const dedupedShelves = useMemo(() => {
-    const priority = (s: any): number => {
-      if (s?.id === "__trending__") return 0;
-      const name = (s?.name || "").toLowerCase();
-      if (s?.id === "__coming_soon__" || /lan[çc]amento/i.test(name)) return 1;
-      if (s?.id === "__continue__") return 2;
-      const isRecommended =
-        /recomend/i.test(name) || s?.auto_criteria === "recommended";
-      if (isRecommended) return 5;
-      return 3;
-    };
-
-    const ordered = [...modeShelves]
-      .map((s, i) => ({ s, i }))
-      .sort((a, b) => {
-        const pa = priority(a.s);
-        const pb = priority(b.s);
-        if (pa !== pb) return pa - pb;
-        return a.i - b.i; // mantém ordem original entre iguais
-      })
-      .map((x) => x.s);
+    const adminShelves = (shelves as any[]).filter((s) => s?.shelf_type !== "smart");
+    const ordered = [...adminShelves].sort(
+      (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0),
+    );
 
     const seen = new Set<string>();
-    const result = ordered
+    return ordered
       .map((shelf: any) => {
-        const originalIds = (shelf.courses || []).map((c: any) => c.id);
         const courses = (shelf.courses || []).filter((c: any) => {
-          if (!c?.id) return false;
-          if (seen.has(c.id)) return false;
+          if (!c?.id || seen.has(c.id)) return false;
           seen.add(c.id);
           return true;
         });
-        // Logs temporários de validação
-        // eslint-disable-next-line no-console
-        console.log(
-          `[Vitrine dedup] "${shelf.name}" (prio ${priority(shelf)}) → antes:`,
-          originalIds,
-          "depois:",
-          courses.map((c: any) => c.id),
-        );
         return { ...shelf, courses };
       })
-      .filter((shelf: any) => {
-        const minCards = shelf.id === "__continue__" ? 1 : 2;
-        return shelf.courses.length >= minCards;
-      });
-    // eslint-disable-next-line no-console
-    console.log("[Vitrine dedup] IDs exibidos no total:", Array.from(seen));
-    return result;
-  }, [modeShelves]);
+      .filter((shelf: any) => shelf.courses.length > 0);
+  }, [shelves]);
 
   const filteredShelves = useMemo(() => {
     if (!searchTerm.trim()) return dedupedShelves;
@@ -175,7 +93,7 @@ function VitrinePage() {
             </div>
 
             {/* ── Destaque da semana (carrossel rotativo até 3) ── */}
-            {featuredCourses.length > 0 && !(mode === "somente_musica" && featuredCourses[0].id !== "__custom_banner__") && (
+            {featuredCourses.length > 0 && (
               <FeaturedCarousel courses={featuredCourses} />
             )}
 
@@ -234,9 +152,6 @@ function VitrinePage() {
                       {/* Shelf title */}
                       <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mb-3 sm:mb-4">
                         <div className="flex items-center gap-2.5">
-                          {SHELF_ICONS[shelf.id] && (
-                            <span className="flex-shrink-0">{SHELF_ICONS[shelf.id]}</span>
-                          )}
                           <h2 className="font-display text-lg sm:text-xl font-bold text-foreground/90 tracking-tight">
                             {shelf.name}
                           </h2>
