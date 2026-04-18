@@ -28,6 +28,7 @@ type CourseRecord = {
   sort_order: number;
   created_at: string;
   price: number;
+  launch_date?: string | null;
 };
 
 function resolveAutoShelfCourses(
