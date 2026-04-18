@@ -152,9 +152,6 @@ function VitrinePage() {
                       {/* Shelf title */}
                       <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 mb-3 sm:mb-4">
                         <div className="flex items-center gap-2.5">
-                          {SHELF_ICONS[shelf.id] && (
-                            <span className="flex-shrink-0">{SHELF_ICONS[shelf.id]}</span>
-                          )}
                           <h2 className="font-display text-lg sm:text-xl font-bold text-foreground/90 tracking-tight">
                             {shelf.name}
                           </h2>
