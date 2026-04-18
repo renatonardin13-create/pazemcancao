@@ -1,6 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
-import { buildEntitlements, resolveProductAccessState } from '@/lib/product-access';
+import { buildEntitlements, deriveProductVisualAccessState, resolveProductAccessState } from '@/lib/product-access';
 
 export const getMyCoursesData = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
@@ -104,13 +104,7 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
       const progressPct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
       const moduleCount = moduleCountMap.get(course.id) || 0;
       const accessState = resolveProductAccessState(course, entitlements, { context: 'my_courses' });
-      const visualAccessState = progressPct >= 100 && totalLessons > 0
-        ? 'completed'
-        : progressPct > 0
-          ? 'in_progress'
-          : accessState === 'owned'
-            ? 'enrolled'
-            : accessState;
+      const visualAccessState = deriveProductVisualAccessState(accessState, progressPct, totalLessons);
 
       return {
         ...course,
