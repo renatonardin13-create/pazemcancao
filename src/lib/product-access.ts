@@ -34,6 +34,8 @@ export interface ResolveOptions {
   previewMode?: boolean;
 }
 
+export type ProductVisualAccessState = "enrolled" | "in_progress" | "completed" | "locked" | "coming_soon" | "hidden";
+
 export function resolveProductAccessState(
   product: ProductLike,
   entitlements: UserEntitlements,
@@ -81,4 +83,20 @@ export function buildEntitlements(
     ownedCourseIds.add(e.course_id);
   }
   return { ownedCourseIds };
+}
+
+export function deriveProductVisualAccessState(
+  productAccessState: ProductAccessState,
+  progressPct: number,
+  totalLessons: number,
+): ProductVisualAccessState {
+  if (productAccessState === "owned") {
+    if (progressPct >= 100 && totalLessons > 0) return "completed";
+    if (progressPct > 0) return "in_progress";
+    return "enrolled";
+  }
+
+  if (productAccessState === "coming_soon") return "coming_soon";
+  if (productAccessState === "hidden") return "hidden";
+  return "locked";
 }
