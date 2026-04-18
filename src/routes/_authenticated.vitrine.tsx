@@ -17,9 +17,9 @@ export const Route = createFileRoute("/_authenticated/vitrine")({
 
 function VitrinePage() {
   const { data, isLoading } = useQuery({
-    queryKey: ["student-shelves"],
+    queryKey: ["student-shelves", "v2"],
     queryFn: () => getStudentShelves(),
-    staleTime: 60_000,
+    staleTime: 0,
     refetchOnWindowFocus: true,
   });
 
