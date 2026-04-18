@@ -107,20 +107,22 @@ export const PosterCard = memo(function PosterCard({
     >
       {aboveCard}
 
-      {/* Glow ambiente — respeita hoverGold */}
+      {/* Glow dourado ambiente — sutil, premium */}
       <div
-        className={`absolute -inset-4 rounded-3xl blur-3xl pointer-events-none md:transition-all md:duration-700 ${
-          highlight ? "bg-gold/[0.05]" : cfg.hoverGold ? "bg-gold/0 md:group-hover/card:bg-gold/[0.05]" : "bg-transparent"
+        className={`absolute -inset-3 rounded-3xl blur-2xl pointer-events-none md:transition-all md:duration-500 ${
+          highlight
+            ? "bg-gold/[0.10] opacity-100"
+            : cfg.hoverGold
+              ? "bg-gold/[0.18] opacity-0 md:group-hover/card:opacity-100"
+              : "bg-transparent opacity-0"
         }`}
       />
 
       <div
-        className={`relative overflow-hidden rounded-[14px] sm:rounded-[16px] bg-card/5 shadow-md shadow-black/25 md:transition-all md:duration-500 md:group-hover/card:shadow-[0_12px_40px_-8px_rgba(0,0,0,0.6)] md:group-hover/card:scale-[1.04] ${
-          cfg.showBorder ? "ring-1" : ""
+        className={`relative overflow-hidden rounded-[14px] sm:rounded-[16px] bg-card/5 shadow-md shadow-black/25 ring-1 md:transition-all md:duration-500 md:ease-out md:group-hover/card:scale-[1.05] md:group-hover/card:shadow-[0_18px_48px_-10px_rgba(212,175,55,0.28)] ${
+          cfg.hoverGold ? "md:group-hover/card:ring-gold/40" : ""
         } ${
-          cfg.hoverGold ? "md:group-hover/card:ring-gold/15" : ""
-        } ${
-          highlight ? "ring-gold/12 shadow-[0_2px_32px_-8px] shadow-gold/8" : cfg.showBorder ? "ring-white/[0.04]" : ""
+          highlight ? "ring-gold/30 shadow-[0_2px_32px_-8px] shadow-gold/15" : cfg.showBorder ? "ring-white/[0.04]" : "ring-transparent"
         }`}
       >
         <div className={`relative aspect-[9/13] overflow-hidden bg-gradient-to-br ${gradientClass}`}>
