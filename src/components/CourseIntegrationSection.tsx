@@ -63,24 +63,18 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
   }, [integration]);
 
   const mutation = useMutation({
-    mutationFn: () => {
-      if (isEnabled && !externalProductId.trim()) {
-        throw new Error("O ID do produto externo é obrigatório quando a integração está habilitada");
-      }
-      if (checkoutUrl.trim() && !/^https?:\/\/.+/.test(checkoutUrl.trim())) {
-        throw new Error("A URL da página de vendas deve ser um link válido (começando com http:// ou https://)");
-      }
+    mutationFn: async () => {
       return upsertCourseIntegration({
         data: {
           courseId,
           is_enabled: isEnabled,
           platform,
-          external_product_id: externalProductId || undefined,
-          external_product_name: externalProductName || undefined,
-          checkout_url: checkoutUrl || undefined,
-          notes: notes || undefined,
+          external_product_id: externalProductId.trim() || undefined,
+          external_product_name: externalProductName.trim() || undefined,
+          checkout_url: checkoutUrl.trim() || undefined,
+          notes: notes.trim() || undefined,
           webhook_active: webhookActive,
-          integration_token: integrationToken || undefined,
+          integration_token: integrationToken.trim() || undefined,
         },
       });
     },
@@ -89,9 +83,23 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
       queryClient.invalidateQueries({ queryKey: ["course-integration", courseId] });
     },
     onError: (err: Error) => {
-      toast.error(err.message);
+      console.error("[CourseIntegration] save error:", err);
+      toast.error(err?.message || "Erro ao salvar integração");
     },
   });
+
+  const handleSave = () => {
+    const url = checkoutUrl.trim();
+    if (isEnabled && !externalProductId.trim()) {
+      toast.error("Informe o ID do Produto Externo antes de salvar.");
+      return;
+    }
+    if (url && !/^https?:\/\/.+\..+/i.test(url)) {
+      toast.error("URL da Página de Vendas inválida. Use o formato https://seusite.com/...");
+      return;
+    }
+    mutation.mutate();
+  };
 
   const webhookUrl = `https://pazemcancao.lovable.app/api/webhook/kiwify?course=${courseId}`;
 
