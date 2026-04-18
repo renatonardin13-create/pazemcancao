@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+import { buildEntitlements } from '@/lib/product-access';
 
 export const getMyCoursesData = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
@@ -18,12 +19,9 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
       return { courses: [], stats: { total: 0, inProgress: 0, completed: 0 } };
     }
 
-    // Filter: only active enrollments that haven't expired
-    const activeEnrollments = enrollments.filter((e: any) => {
-      if (e.status !== 'active') return false;
-      if (e.expires_at && new Date(e.expires_at) < new Date()) return false;
-      return true;
-    });
+    // FONTE ÚNICA: usa buildEntitlements (active + não expirado).
+    const entitlements = buildEntitlements(enrollments as any);
+    const activeEnrollments = (enrollments as any[]).filter((e) => entitlements.ownedCourseIds.has(e.course_id));
 
     if (activeEnrollments.length === 0) {
       return { courses: [], stats: { total: 0, inProgress: 0, completed: 0 } };

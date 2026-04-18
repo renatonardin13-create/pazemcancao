@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
+import { buildEntitlements, resolveProductAccessState } from '@/lib/product-access';
 
 type ShelfRecord = {
   id: string;
@@ -157,23 +158,9 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
 
     if (enrollmentsError) throw new Error(enrollmentsError.message);
 
-    const activeEnrollmentIds = new Set<string>();
-    const blockedEnrollmentIds = new Set<string>();
-    const expiredEnrollmentIds = new Set<string>();
-
-    for (const enrollment of enrollments || []) {
-      const isExpired = !!enrollment.expires_at && new Date(enrollment.expires_at) < new Date();
-
-      if (enrollment.status === 'active' && !isExpired) {
-        activeEnrollmentIds.add(enrollment.course_id);
-      } else if (enrollment.status === 'blocked') {
-        blockedEnrollmentIds.add(enrollment.course_id);
-      } else if (isExpired || enrollment.status === 'expired') {
-        expiredEnrollmentIds.add(enrollment.course_id);
-      }
-    }
-
-    const enrolledCourseIds = activeEnrollmentIds;
+    // REGRA 8: usa fonte única de verdade. Não considera role admin.
+    const entitlements = buildEntitlements(enrollments || []);
+    const enrolledCourseIds = entitlements.ownedCourseIds;
 
     let lessonCounts: Array<{ course_id: string }> = [];
     if (publishedCourseIds.length > 0) {
@@ -241,7 +228,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       lessonCountMap.set(lesson.course_id, (lessonCountMap.get(lesson.course_id) || 0) + 1);
     }
 
-    const enrolledIds = Array.from(activeEnrollmentIds);
+    const enrolledIds = Array.from(enrolledCourseIds);
     const completedLessonsMap = new Map<string, number>();
     let userProgressData: Array<{ course_id: string; lesson_id: string; completed: boolean; updated_at: string }> = [];
 
@@ -267,11 +254,13 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
     }
 
     const enrichCourse = (course: CourseRecord) => {
-      // REGRA 8 — admin NÃO contamina visão do aluno na vitrine.
-      // Acesso liberado SOMENTE com vínculo real em enrollments (status=active e não expirado).
-      const isEnrolled = enrolledCourseIds.has(course.id);
-      const isBlocked = blockedEnrollmentIds.has(course.id);
-      const isExpired = expiredEnrollmentIds.has(course.id);
+      // FONTE ÚNICA DE VERDADE — resolveProductAccessState (vitrine).
+      const baseState = resolveProductAccessState(
+        { id: course.id, status: course.status, launch_date: (course as any).launch_date ?? null },
+        entitlements,
+        { context: 'vitrine' },
+      );
+
       const hasPreview = previewCourseIds.has(course.id);
       const checkoutUrl = integrationMap.get(course.id) || null;
       const hasCheckout = !!checkoutUrl;
@@ -280,43 +269,23 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       const completedLessons = completedLessonsMap.get(course.id) || 0;
       const progressPct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
-      // RC1: comprado > não-lançado > bloqueado
-      const launchDate = (course as any).launch_date ? new Date((course as any).launch_date) : null;
-      const isNotLaunched = !!launchDate && launchDate.getTime() > Date.now();
-
-      let accessState: string;
-      if (isEnrolled) {
-        // LIBERADO — compra tem prioridade absoluta, mesmo se ainda não lançado
-        if (progressPct >= 100 && totalLessons > 0) {
-          accessState = 'completed';
-        } else if (progressPct > 0) {
-          accessState = 'in_progress';
-        } else {
-          accessState = 'enrolled';
-        }
-      } else if (isNotLaunched) {
-        // NAO_LANCADO — não comprou e produto ainda não foi lançado
-        accessState = 'coming_soon';
-      } else if (isBlocked) {
-        accessState = 'blocked';
-      } else if (isExpired) {
-        accessState = 'expired';
-      } else if (hasPreview) {
-        accessState = 'preview';
-      } else if (hasCheckout) {
-        accessState = 'locked';
-      } else {
-        accessState = 'available';
+      // access_state legado para compatibilidade visual com cards (in_progress/completed/enrolled)
+      let accessState: string = baseState;
+      if (baseState === 'owned') {
+        if (progressPct >= 100 && totalLessons > 0) accessState = 'completed';
+        else if (progressPct > 0) accessState = 'in_progress';
+        else accessState = 'enrolled';
       }
 
       return {
         ...course,
         category_name: course.category_id ? categoryMap.get(course.category_id) || null : null,
-        is_enrolled: isEnrolled,
+        is_enrolled: baseState === 'owned',
         has_preview: hasPreview,
         has_checkout: hasCheckout,
         checkout_url: checkoutUrl,
         access_state: accessState,
+        product_access_state: baseState, // estado canônico
         sales_count: salesCountMap.get(course.id) || 0,
         progress_pct: progressPct,
         total_lessons: totalLessons,
@@ -352,7 +321,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       const courses = dedupedLinkedCourses.length > 0
         ? dedupedLinkedCourses
         : shelf.mode === 'auto'
-          ? resolveAutoShelfCourses(shelf, publishedCourses, enrichCourse, salesCountMap, enrolledCourseIds)
+          ? resolveAutoShelfCourses(shelf, publishedCourses, enrichCourse, salesCountMap, new Set(enrolledCourseIds))
           : [];
 
       if (courses.length > 0) {
