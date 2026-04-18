@@ -195,7 +195,7 @@ function MeusCoursosPage() {
                   )}
 
                   {/* ═══ PRATELEIRAS DO ADMIN ═══ */}
-                  {shelves.filter((s: any) => (s.courses?.length || 0) >= 2).map((shelf: any, shelfIdx: number) => {
+                  {shelves.filter((s: any) => (s.courses?.length || 0) >= 1).map((shelf: any, shelfIdx: number) => {
                     const bannersAfter = promoBanners.filter((b: any) => b.position_after_shelf === shelfIdx + 1);
                     return (
                       <div key={shelf.id}>
