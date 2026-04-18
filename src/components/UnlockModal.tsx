@@ -1,4 +1,5 @@
-import { Lock, Check, X, ShoppingCart } from "lucide-react";
+import { Lock, Check, X, ArrowRight, BookOpen, Clock3, Tag, Layers } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
@@ -8,6 +9,7 @@ interface UnlockModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   productType?: ProductType;
+  productId?: string;
   title: string;
   description?: string | null;
   coverUrl?: string | null;
@@ -20,6 +22,14 @@ interface UnlockModalProps {
   /** Curso ainda não lançado — desabilita CTA de compra e exibe "Em breve". */
   comingSoon?: boolean;
 }
+
+const TYPE_LABEL: Record<string, string> = {
+  curso_individual: "Curso",
+  assinatura: "Assinatura",
+  ebook: "Ebook",
+  pack: "Pack",
+  aula: "Aula",
+};
 
 
 export function UnlockModal({
