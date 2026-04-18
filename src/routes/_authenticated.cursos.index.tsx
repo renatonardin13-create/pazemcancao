@@ -2,9 +2,8 @@ import { EmptyState } from "@/components/EmptyState";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CardGridSkeleton } from "@/components/LoadingSkeletons";
 import { useQuery } from "@tanstack/react-query";
-import { getStudentShelves } from "@/lib/shelves.functions";
+import { listPublishedCourses } from "@/lib/courses.functions";
 import { getMyCoursesData } from "@/lib/my-courses.functions";
-import { getLibraryStats, getLibrarySections } from "@/lib/user-library.functions";
 import { getContinueWatching } from "@/lib/continue-watching.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
@@ -27,38 +26,26 @@ function MeusCoursosPage() {
   const { user } = useAuth();
 
   const { data: profileData } = useQuery({
-    queryKey: ["my-profile"],
+    queryKey: ["courses-page", "my-profile"],
     queryFn: () => getMyProfile(),
     staleTime: 60_000,
   });
 
-  const { data: shelvesData, isLoading } = useQuery({
-    queryKey: ["student-shelves"],
-    queryFn: () => getStudentShelves(),
+  const { data: catalogData, isLoading: isCatalogLoading } = useQuery({
+    queryKey: ["courses-page", "published-courses"],
+    queryFn: () => listPublishedCourses(),
     staleTime: 60_000,
     refetchOnWindowFocus: false,
   });
 
-  const { data: myData } = useQuery({
-    queryKey: ["my-courses"],
+  const { data: myData, isLoading: isMyCoursesLoading } = useQuery({
+    queryKey: ["courses-page", "my-courses"],
     queryFn: () => getMyCoursesData(),
     staleTime: 30_000,
   });
 
-  const { data: libStats } = useQuery({
-    queryKey: ["library-stats"],
-    queryFn: () => getLibraryStats(),
-    staleTime: 60_000,
-  });
-
-  const { data: libSections } = useQuery({
-    queryKey: ["library-sections"],
-    queryFn: () => getLibrarySections(),
-    staleTime: 60_000,
-  });
-
   const { data: continueData } = useQuery({
-    queryKey: ["continue-watching"],
+    queryKey: ["courses-page", "continue-watching"],
     queryFn: () => getContinueWatching(),
     staleTime: 30_000,
     refetchOnWindowFocus: false,
@@ -69,45 +56,55 @@ function MeusCoursosPage() {
   const displayName = profileData?.profile?.display_name || user?.email?.split("@")[0] || "aluno";
   const firstName = displayName.split(" ")[0];
 
-  const shelves = shelvesData?.shelves || [];
-  const featuredCourse = shelvesData?.featuredCourse || null;
-  const promoBanners = shelvesData?.promoBanners || [];
-  const stats = myData?.stats || { total: 0, inProgress: 0, completed: 0 };
-  const continueWatchingCourses = continueData?.courses || [];
   const myCourses = myData?.courses || [];
+  const continueWatchingCourses = continueData?.courses || [];
+  const publishedCourses = catalogData?.courses || [];
+  const isLoading = isCatalogLoading || isMyCoursesLoading;
 
-  const allShelfCourses = useMemo(() => {
-    const seen = new Set<string>();
-    const result: any[] = [];
-    for (const shelf of shelves) {
-      for (const c of shelf.courses || []) {
-        if (!seen.has(c.id)) {
-          seen.add(c.id);
-          result.push(c);
-        }
+  const enrolledCourseIds = useMemo(() => new Set(myCourses.map((course: any) => course.id)), [myCourses]);
+
+  const availableCourses = useMemo(() => {
+    return (publishedCourses || [])
+      .filter((course: any) => !enrolledCourseIds.has(course.id))
+      .map((course: any) => {
+        const launchDate = course.launch_date ? new Date(course.launch_date).getTime() : null;
+        const isComingSoon = !!launchDate && launchDate > Date.now();
+
+        return {
+          ...course,
+          access_state: isComingSoon ? "coming_soon" : "locked",
+        };
+      })
+      .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  }, [publishedCourses, enrolledCourseIds]);
+
+  const searchableCourses = useMemo(() => {
+    const deduped = new Map<string, any>();
+
+    [...continueWatchingCourses, ...myCourses, ...availableCourses].forEach((course: any) => {
+      if (!deduped.has(course.id)) {
+        deduped.set(course.id, course);
       }
-    }
-    return result;
-  }, [shelves]);
+    });
+
+    return Array.from(deduped.values());
+  }, [continueWatchingCourses, myCourses, availableCourses]);
 
   const searchResults = useMemo(() => {
-    if (!search) return null;
-    const q = search.toLowerCase();
-    return allShelfCourses.filter((c: any) => c.title?.toLowerCase().includes(q));
-  }, [search, allShelfCourses]);
+    const term = search.trim().toLowerCase();
+    if (!term) return null;
+
+    return searchableCourses.filter((course: any) =>
+      [course.title, course.short_description, course.sales_description, course.categories?.name]
+        .filter(Boolean)
+        .some((value) => String(value).toLowerCase().includes(term)),
+    );
+  }, [search, searchableCourses]);
 
   return (
     <StudentLayout>
       <div className="min-h-screen bg-background flex flex-col">
-
         <main className="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10 xl:px-12 pt-6 sm:pt-8 pb-28">
-
-          {/* ═══ HERO BANNER (first, for maximum impact) ═══ */}
-          {!isLoading && featuredCourse && !searchResults && (
-            <HeroBanner course={featuredCourse} />
-          )}
-
-          {/* ═══ GREETING + SEARCH ═══ */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -119,7 +116,7 @@ function MeusCoursosPage() {
                 Olá, {firstName}
               </h1>
               <p className="text-[13px] sm:text-sm text-muted-foreground/40 mt-1 leading-relaxed">
-                Continue sua jornada de aprendizado
+                Acompanhe seus cursos e explore o catálogo completo.
               </p>
             </div>
 
@@ -128,194 +125,114 @@ function MeusCoursosPage() {
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Buscar cursos, ebooks..."
+                placeholder="Buscar cursos..."
                 className="pl-10 h-10 bg-card/8 border-border/10 rounded-xl text-sm placeholder:text-muted-foreground/20 focus:border-gold/25 focus:ring-gold/10 transition-all duration-300"
               />
             </div>
           </motion.div>
 
-          {/* ═══ SHELVES CONTENT ═══ */}
-          {searchResults !== null ? (
-            <div className="pb-8">
-              <ShelfHeader title={`Resultados para "${search}"`} />
+          {isLoading ? (
+            <CardGridSkeleton count={6} />
+          ) : searchResults !== null ? (
+            <section className="pb-8">
+              <ShelfHeader title={`Resultados para \"${search}\"`} />
               {searchResults.length > 0 ? (
-                <ShelfRow>
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
                   {searchResults.map((course: any, idx: number) => (
-                    <ShelfItem key={`search-${course.id}`} index={idx}>
-                      <CourseShelfCard course={course} showProgress />
-                    </ShelfItem>
+                    <motion.div
+                      key={`search-${course.id}`}
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.35, delay: Math.min(idx, 6) * 0.04 }}
+                    >
+                      <CourseShelfCard
+                        course={course}
+                        showProgress={["enrolled", "in_progress", "completed"].includes(course.access_state)}
+                        showStatusBadge={["enrolled", "in_progress", "completed"].includes(course.access_state)}
+                        comingSoon={course.access_state === "coming_soon"}
+                      />
+                    </motion.div>
                   ))}
-                </ShelfRow>
+                </div>
               ) : (
                 <EmptyState icon={Search} title="Nenhum curso encontrado" description="Tente buscar com outras palavras." />
               )}
-            </div>
+            </section>
           ) : (
-            <div>
-              {isLoading ? (
-                <CardGridSkeleton count={6} />
-              ) : (
-                <>
-                  {/* ═══ CONTINUE ASSISTINDO ═══ */}
-                  {continueWatchingCourses.length > 0 && (
-                    <ShelfSection delay={0.05}>
-                      <ShelfHeader title="Continue assistindo" linkTo="/cursos" linkLabel="Ver todos" />
-                      <ShelfRow>
-                        {continueWatchingCourses.map((course: any, idx: number) => (
-                          <ShelfItem key={`cw-${course.id}`} index={idx}>
-                            <CourseShelfCard
-                              course={course}
-                              showProgress
-                              showStatusBadge
-                              subtitle={`${course.completed_lessons || 0}/${course.total_lessons || 0} aulas`}
-                            />
-                          </ShelfItem>
-                        ))}
-                      </ShelfRow>
-                    </ShelfSection>
-                  )}
-
-                  {/* ═══ MEUS CURSOS ═══ */}
-                  {myCourses.length > 0 && (
-                    <ShelfSection delay={0.1}>
-                      <ShelfHeader title="Meus cursos" linkTo="/cursos" linkLabel="Ver todos" />
-                      <ShelfRow>
-                        {myCourses.map((course: any, idx: number) => (
-                          <ShelfItem key={`mc-${course.id}`} index={idx}>
-                            <CourseShelfCard
-                              course={course}
-                              showProgress
-                              showStatusBadge
-                              subtitle={`${course.completed_lessons || 0}/${course.lesson_count || course.total_lessons || 0} aulas`}
-                            />
-                          </ShelfItem>
-                        ))}
-                      </ShelfRow>
-                    </ShelfSection>
-                  )}
-
-                  {/* ═══ PRATELEIRAS DO ADMIN ═══ */}
-                  {shelves.filter((s: any) => (s.courses?.length || 0) >= 1).map((shelf: any, shelfIdx: number) => {
-                    const bannersAfter = promoBanners.filter((b: any) => b.position_after_shelf === shelfIdx + 1);
-                    return (
-                      <div key={shelf.id}>
-                        <ShelfSection delay={0.15 + shelfIdx * 0.04}>
-                          <ShelfHeader
-                            title={shelf.name}
-                            linkTo="/cursos"
-                            linkLabel={(shelf.courses?.length ?? 0) > 3 ? "Ver todos" : undefined}
-                          />
-                          <ShelfRow>
-                            {(shelf.courses || []).map((course: any, idx: number) => (
-                              <ShelfItem key={`${shelf.id}-${course.id}`} index={idx}>
-                                <CourseShelfCard
-                                  course={course}
-                                  showProgress={course.access_state === 'in_progress' || course.access_state === 'enrolled'}
-                                />
-                              </ShelfItem>
-                            ))}
-                          </ShelfRow>
-                        </ShelfSection>
-
-                        {bannersAfter.map((banner: any) => (
-                          <motion.div
-                            key={banner.id}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.5 }}
-                            className="mb-8"
-                          >
-                            {banner.link_url ? (
-                              <a href={banner.link_url} target="_blank" rel="noopener noreferrer" className="block rounded-2xl overflow-hidden border border-border/6 hover:border-gold/10 transition-all duration-300">
-                                <img src={banner.image_url} alt={banner.title} loading="lazy" decoding="async" className="w-full h-auto object-cover" />
-                              </a>
-                            ) : (
-                              <div className="rounded-2xl overflow-hidden border border-border/6">
-                                <img src={banner.image_url} alt={banner.title} loading="lazy" decoding="async" className="w-full h-auto object-cover" />
-                              </div>
-                            )}
-                          </motion.div>
-                        ))}
-                      </div>
-                    );
-                  })}
-
-                  {/* ═══ SEUS ACESSOS ═══ */}
-                  {(libSections?.unlocked?.length ?? 0) >= 2 && (
-                    <ShelfSection delay={0.3}>
-                      <ShelfHeader title="Seus Acessos" />
-                      <ShelfRow>
-                        {(libSections?.unlocked || []).map((item: any, idx: number) => (
-                          <ShelfItem key={`unlocked-${item.id}`} index={idx}>
-                            <LibraryContentCard item={item} />
-                          </ShelfItem>
-                        ))}
-                      </ShelfRow>
-                    </ShelfSection>
-                  )}
-
-                  {/* ═══ DISPONÍVEL PARA VOCÊ (BLOQUEADO) ═══ */}
-                  {(libSections?.locked?.length ?? 0) >= 2 && (
-                    <ShelfSection delay={0.35}>
-                      <ShelfHeader title="Disponível para você" />
-                      <ShelfRow>
-                        {(libSections?.locked || []).map((item: any, idx: number) => (
-                          <ShelfItem key={`locked-${item.id}`} index={idx}>
-                            <LockedContentCard item={item} />
-                          </ShelfItem>
-                        ))}
-                      </ShelfRow>
-                    </ShelfSection>
-                  )}
-
-                  {/* ═══ EM BREVE ═══ */}
-                  {(libSections?.upcoming?.length ?? 0) >= 2 && (
-                    <ShelfSection delay={0.4}>
-                      <ShelfHeader title="Novidades chegando" />
-                      <ShelfRow>
-                        {(libSections?.upcoming || []).map((item: any, idx: number) => (
-                          <ShelfItem key={`upcoming-${item.id}`} index={idx}>
-                            <UpcomingContentCard item={item} />
-                          </ShelfItem>
-                        ))}
-                      </ShelfRow>
-                    </ShelfSection>
-                  )}
-
-                  {/* ═══ FAVORITOS ═══ */}
-                  {(libSections?.favorites?.length ?? 0) >= 2 && (
-                    <ShelfSection delay={0.45}>
-                      <ShelfHeader title="Seus Favoritos" />
-                      <ShelfRow>
-                        {(libSections?.favorites || []).map((item: any, idx: number) => (
-                          <ShelfItem key={`fav-${item.id}`} index={idx}>
-                            <LibraryContentCard item={item} />
-                          </ShelfItem>
-                        ))}
-                      </ShelfRow>
-                    </ShelfSection>
-                  )}
-
-                  {/* ═══ BÔNUS ═══ */}
-                  {(libSections?.bonus?.length ?? 0) >= 2 && (
-                    <ShelfSection delay={0.5}>
-                      <ShelfHeader title="Bônus Exclusivos" />
-                      <ShelfRow>
-                        {(libSections?.bonus || []).map((item: any, idx: number) => (
-                          <ShelfItem key={`bonus-${item.id}`} index={idx}>
-                            <LibraryContentCard item={item} isFree />
-                          </ShelfItem>
-                        ))}
-                      </ShelfRow>
-                    </ShelfSection>
-                  )}
-
-                  {shelves.length === 0 && (
-                    <EmptyState icon={BookOpen} title="Nenhum conteúdo disponível" description="Em breve novos cursos serão adicionados." />
-                  )}
-                </>
+            <>
+              {continueWatchingCourses.length > 0 && (
+                <ShelfSection delay={0.05}>
+                  <ShelfHeader title="Continue assistindo" />
+                  <ShelfRow>
+                    {continueWatchingCourses.map((course: any, idx: number) => (
+                      <ShelfItem key={`cw-${course.id}`} index={idx}>
+                        <CourseShelfCard
+                          course={course}
+                          showProgress
+                          showStatusBadge
+                          subtitle={`${course.completed_lessons || 0}/${course.total_lessons || 0} aulas`}
+                        />
+                      </ShelfItem>
+                    ))}
+                  </ShelfRow>
+                </ShelfSection>
               )}
-            </div>
+
+              {myCourses.length > 0 && (
+                <ShelfSection delay={0.1}>
+                  <ShelfHeader title="Meus cursos" />
+                  <ShelfRow>
+                    {myCourses.map((course: any, idx: number) => (
+                      <ShelfItem key={`mc-${course.id}`} index={idx}>
+                        <CourseShelfCard
+                          course={{
+                            ...course,
+                            access_state:
+                              course.progress_pct >= 100
+                                ? "completed"
+                                : course.progress_pct > 0
+                                  ? "in_progress"
+                                  : "enrolled",
+                          }}
+                          showProgress
+                          showStatusBadge
+                          subtitle={`${course.completed_lessons || 0}/${course.lesson_count || course.total_lessons || 0} aulas`}
+                        />
+                      </ShelfItem>
+                    ))}
+                  </ShelfRow>
+                </ShelfSection>
+              )}
+
+              {availableCourses.length > 0 && (
+                <ShelfSection delay={0.15}>
+                  <ShelfHeader title="Explorar cursos" />
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                    {availableCourses.map((course: any, idx: number) => (
+                      <motion.div
+                        key={`catalog-${course.id}`}
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.35, delay: Math.min(idx, 8) * 0.04 }}
+                      >
+                        <CourseShelfCard
+                          course={course}
+                          comingSoon={course.access_state === "coming_soon"}
+                        />
+                      </motion.div>
+                    ))}
+                  </div>
+                </ShelfSection>
+              )}
+
+              {continueWatchingCourses.length === 0 && myCourses.length === 0 && availableCourses.length === 0 && (
+                <EmptyState
+                  icon={BookOpen}
+                  title="Nenhum curso disponível"
+                  description="Assim que novos cursos forem publicados, eles aparecerão aqui."
+                />
+              )}
+            </>
           )}
         </main>
 
