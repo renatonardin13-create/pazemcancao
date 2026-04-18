@@ -102,13 +102,23 @@ export const CourseShelfCard = memo(function CourseShelfCard({
     <div className="flex h-7 w-7 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm border border-white/[0.08]">
       <Lock className="h-3 w-3 text-white/45" />
     </div>
-  ) : course.category_name ? (
+  ) : isNotLaunched ? undefined
+    : course.category_name ? (
     <span className="text-[9px] sm:text-[10px] font-medium tracking-[0.15em] uppercase rounded-full bg-black/25 backdrop-blur-md border border-white/[0.06] px-2.5 py-1 text-white/35">
       {course.category_name}
     </span>
   ) : undefined;
 
-  const overlay = isLocked ? (
+  const overlay = isNotLaunched ? (
+    <div className="h-full bg-black/55 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2.5">
+      <span className="px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-orange-500 text-[11px] font-bold uppercase tracking-[0.2em] text-black shadow-lg">
+        Em breve
+      </span>
+      <span className="text-[10px] font-medium text-white/60 mt-0.5">
+        Toque para mais detalhes
+      </span>
+    </div>
+  ) : isLocked ? (
     <div className="h-full bg-black/40 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2.5">
       <div className="relative">
         <div className="absolute -inset-3 rounded-full bg-gold/10 blur-xl animate-pulse" />
@@ -128,7 +138,7 @@ export const CourseShelfCard = memo(function CourseShelfCard({
     </div>
   ) : undefined;
 
-  const centerAction = !isLocked ? (
+  const centerAction = isReleased ? (
     <div className={`flex items-center gap-2 h-auto px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-gold/95 shadow-[0_4px_24px_rgba(0,0,0,0.4)] scale-[0.5] opacity-0 md:group-hover/card:opacity-100 md:group-hover/card:scale-100 md:transition-all md:duration-500 md:ease-[cubic-bezier(0.22,1,0.36,1)] ${isNavigating ? 'animate-pulse' : ''}`}>
       <Play className="h-4 w-4 sm:h-5 sm:w-5 text-gold-foreground fill-gold-foreground" />
     </div>
