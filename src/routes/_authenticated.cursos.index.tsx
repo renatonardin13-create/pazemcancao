@@ -2,17 +2,17 @@ import { EmptyState } from "@/components/EmptyState";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CardGridSkeleton } from "@/components/LoadingSkeletons";
 import { useQuery } from "@tanstack/react-query";
-import { getStudentShelves } from "@/lib/shelves.functions";
 import { getMyCoursesData } from "@/lib/my-courses.functions";
 import { getLibraryStats, getLibrarySections } from "@/lib/user-library.functions";
 import { getContinueWatching } from "@/lib/continue-watching.functions";
+import { listPublishedCourses } from "@/lib/courses.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { CourseShelfCard } from "@/components/CourseShelfCard";
 import { ContentCard } from "@/components/ContentCard";
 import { motion } from "framer-motion";
 import { BookOpen, Search, ArrowRight, Play, Clock, Lock, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState, useMemo, useRef, useCallback } from "react";
+import { useState, useMemo, useRef, useCallback, useEffect } from "react";
 import { useDragScroll } from "@/hooks/use-drag-scroll";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
@@ -32,33 +32,33 @@ function MeusCoursosPage() {
     staleTime: 60_000,
   });
 
-  const { data: shelvesData, isLoading } = useQuery({
-    queryKey: ["student-shelves"],
-    queryFn: () => getStudentShelves(),
+  const { data: catalogData, isLoading } = useQuery({
+    queryKey: ["courses-page", "published-courses"],
+    queryFn: () => listPublishedCourses(),
     staleTime: 60_000,
     refetchOnWindowFocus: false,
   });
 
   const { data: myData } = useQuery({
-    queryKey: ["my-courses"],
+    queryKey: ["courses-page", "my-courses"],
     queryFn: () => getMyCoursesData(),
     staleTime: 30_000,
   });
 
   const { data: libStats } = useQuery({
-    queryKey: ["library-stats"],
+    queryKey: ["courses-page", "library-stats"],
     queryFn: () => getLibraryStats(),
     staleTime: 60_000,
   });
 
   const { data: libSections } = useQuery({
-    queryKey: ["library-sections"],
+    queryKey: ["courses-page", "library-sections"],
     queryFn: () => getLibrarySections(),
     staleTime: 60_000,
   });
 
   const { data: continueData } = useQuery({
-    queryKey: ["continue-watching"],
+    queryKey: ["courses-page", "continue-watching"],
     queryFn: () => getContinueWatching(),
     staleTime: 30_000,
     refetchOnWindowFocus: false,
@@ -69,32 +69,60 @@ function MeusCoursosPage() {
   const displayName = profileData?.profile?.display_name || user?.email?.split("@")[0] || "aluno";
   const firstName = displayName.split(" ")[0];
 
-  const shelves = shelvesData?.shelves || [];
-  const featuredCourse = shelvesData?.featuredCourse || null;
-  const promoBanners = shelvesData?.promoBanners || [];
+  const publishedCourses = catalogData?.courses || [];
   const stats = myData?.stats || { total: 0, inProgress: 0, completed: 0 };
   const continueWatchingCourses = continueData?.courses || [];
   const myCourses = myData?.courses || [];
 
-  const allShelfCourses = useMemo(() => {
-    const seen = new Set<string>();
-    const result: any[] = [];
-    for (const shelf of shelves) {
-      for (const c of shelf.courses || []) {
-        if (!seen.has(c.id)) {
-          seen.add(c.id);
-          result.push(c);
-        }
+  const enrolledCourseIds = useMemo(() => new Set(myCourses.map((course: any) => course.id)), [myCourses]);
+
+  const availableCourses = useMemo(() => {
+    return (publishedCourses || [])
+      .filter((course: any) => !enrolledCourseIds.has(course.id))
+      .map((course: any) => {
+        const launchDate = course.launch_date ? new Date(course.launch_date).getTime() : null;
+        const isComingSoon = !!launchDate && launchDate > Date.now();
+
+        return {
+          ...course,
+          access_state: isComingSoon ? "coming_soon" : "locked",
+        };
+      })
+      .sort((a: any, b: any) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  }, [publishedCourses, enrolledCourseIds]);
+
+  const searchableCourses = useMemo(() => {
+    const deduped = new Map<string, any>();
+
+    [...continueWatchingCourses, ...myCourses, ...availableCourses].forEach((course: any) => {
+      if (!deduped.has(course.id)) {
+        deduped.set(course.id, course);
       }
-    }
-    return result;
-  }, [shelves]);
+    });
+
+    return Array.from(deduped.values());
+  }, [continueWatchingCourses, myCourses, availableCourses]);
 
   const searchResults = useMemo(() => {
-    if (!search) return null;
-    const q = search.toLowerCase();
-    return allShelfCourses.filter((c: any) => c.title?.toLowerCase().includes(q));
-  }, [search, allShelfCourses]);
+    const term = search.trim().toLowerCase();
+    if (!term) return null;
+
+    return searchableCourses.filter((course: any) =>
+      [course.title, course.short_description, course.sales_description, course.categories?.name]
+        .filter(Boolean)
+        .some((value) => String(value).toLowerCase().includes(term)),
+    );
+  }, [search, searchableCourses]);
+
+  useEffect(() => {
+    const renderedCards = searchResults !== null
+      ? searchResults.length
+      : continueWatchingCourses.length + myCourses.length + availableCourses.length;
+
+    console.log("[DEBUG][CURSOS] routeComponent=MeusCoursosPage");
+    console.log("[DEBUG][CURSOS] queries=[courses-page:published-courses,courses-page:my-courses,courses-page:library-sections,courses-page:continue-watching]");
+    console.log("[DEBUG][CURSOS] renderedCards=", renderedCards);
+  }, [availableCourses.length, continueWatchingCourses.length, myCourses.length, searchResults]);
 
   return (
     <StudentLayout>
