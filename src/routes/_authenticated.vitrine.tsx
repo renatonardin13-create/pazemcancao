@@ -32,45 +32,70 @@ function VitrinePage() {
     ? (data as any).featuredCourses
     : (featuredCourse ? [featuredCourse] : []);
 
-  // Vitrine 100% dinâmica: apenas prateleiras do admin (ativas, ordenadas por sort_order),
-  // com cursos vinculados. Prateleiras vazias são automaticamente omitidas.
-  // Dedupe global no front para garantir que nenhum curso apareça em 2 prateleiras.
-  const dedupedShelves = useMemo(() => {
-    const adminShelves = (shelves as any[]).filter((s) => s?.shelf_type !== "smart");
-    const ordered = [...adminShelves].sort(
+  // Vitrine 100% dinâmica: mantém prateleiras do admin e aplica busca.
+  // A proteção final contra duplicação acontece no render, por prioridade de prateleira.
+  const searchableShelves = useMemo(() => {
+    const ordered = [...(shelves as any[])].sort(
       (a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0),
     );
 
-    const seen = new Set<string>();
-    return ordered
-      .map((shelf: any) => {
-        const courses = (shelf.courses || []).filter((c: any) => {
-          if (!c?.id || seen.has(c.id)) return false;
-          seen.add(c.id);
-          return true;
-        });
-        return { ...shelf, courses };
-      })
-      .filter((shelf: any) => shelf.courses.length > 0);
-  }, [shelves]);
+    if (!searchTerm.trim()) {
+      return ordered.filter((shelf: any) => (shelf.courses || []).length > 0);
+    }
 
-  const filteredShelves = useMemo(() => {
-    if (!searchTerm.trim()) return dedupedShelves;
     const term = searchTerm.toLowerCase();
-    return dedupedShelves
+    return ordered
       .map((shelf: any) => ({
         ...shelf,
-        courses: shelf.courses.filter((c: any) =>
+        courses: (shelf.courses || []).filter((c: any) =>
           c.title?.toLowerCase().includes(term) ||
-          c.short_description?.toLowerCase().includes(term)
+          c.short_description?.toLowerCase().includes(term),
         ),
       }))
       .filter((shelf: any) => shelf.courses.length > 0);
-  }, [dedupedShelves, searchTerm]);
+  }, [shelves, searchTerm]);
+
+  // Prioridade: prateleiras do admin vencem; prateleiras smart só mostram sobras.
+  const filteredShelves = useMemo(() => {
+    const adminSeenIds = new Set<string>();
+
+    searchableShelves.forEach((shelf: any) => {
+      if (shelf?.shelf_type === 'smart') return;
+      (shelf.courses || []).forEach((course: any) => {
+        if (course?.id) adminSeenIds.add(course.id);
+      });
+    });
+
+    const smartSeenIds = new Set<string>();
+
+    return searchableShelves
+      .map((shelf: any) => {
+        const isSmartShelf = shelf?.shelf_type === 'smart';
+        const seenInShelf = new Set<string>();
+
+        const courses = (shelf.courses || []).filter((course: any) => {
+          if (!course?.id) return false;
+          if (seenInShelf.has(course.id)) return false;
+          seenInShelf.add(course.id);
+
+          if (!isSmartShelf) {
+            return true;
+          }
+
+          if (adminSeenIds.has(course.id)) return false;
+          if (smartSeenIds.has(course.id)) return false;
+
+          smartSeenIds.add(course.id);
+          return true;
+        });
+
+        return { ...shelf, courses };
+      })
+      .filter((shelf: any) => shelf.courses.length > 0);
+  }, [searchableShelves]);
 
   // Count admin shelves for promo banner positioning
   let adminShelfIndex = 0;
-  const renderSeenIds = new Set<string>();
 
   return (
     <ModuleGuard moduleKey="vitrine">
@@ -126,16 +151,7 @@ function VitrinePage() {
             ) : (
               <div className="space-y-8 sm:space-y-12">
                 {filteredShelves.map((shelf: any, shelfIdx: number) => {
-                  const renderSafeCourses = (shelf.courses || []).filter((course: any) => {
-                    if (!course?.id) return false;
-                    if (renderSeenIds.has(course.id)) {
-                      // eslint-disable-next-line no-console
-                      console.log(`[Vitrine render guard] duplicado bloqueado em "${shelf.name}":`, course.id);
-                      return false;
-                    }
-                    renderSeenIds.add(course.id);
-                    return true;
-                  });
+                  const renderSafeCourses = shelf.courses || [];
 
                   const minCards = shelf.id === '__continue__' ? 1 : 2;
                   if (renderSafeCourses.length < minCards) return null;
