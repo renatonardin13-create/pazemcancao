@@ -85,8 +85,6 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
     // A vitrine do aluno deve obedecer exclusivamente às regras de acesso reais
     // (vínculo em enrollments). Admin não libera nada automaticamente.
 
-    void userId;
-
     const { data: shelfRows, error: shelvesErr } = await supabaseAdmin
       .from('shelves')
       .select('*')
