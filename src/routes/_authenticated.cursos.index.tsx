@@ -168,6 +168,18 @@ function MeusCoursosPage() {
               </ShelfSection>
             </>
           )}
+
+          {myCourses.length > 0 && (
+            <div className="mt-12 sm:mt-16 flex justify-center">
+              <Link
+                to="/vitrine"
+                className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-gold/15 bg-card/5 text-sm text-muted-foreground/70 hover:text-gold hover:border-gold/30 hover:bg-card/10 transition-all duration-500"
+              >
+                Explorar mais cursos
+                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-500 group-hover:translate-x-0.5" />
+              </Link>
+            </div>
+          )}
         </main>
 
         <FooterLinks />
