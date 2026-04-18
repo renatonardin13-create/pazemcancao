@@ -32,12 +32,13 @@ export const CourseShelfCard = memo(function CourseShelfCard({
   const progress = course.progress_pct ?? 0;
   const hasProgress = showProgress && progress > 0;
 
-  // RC1 — 3 estados puros:
-  // LIBERADO: usuário comprou (enrolled / in_progress / completed) ou admin
-  // NAO_LANCADO: curso com launch_date futura (access_state === 'coming_soon') ou prop comingSoon
-  // BLOQUEADO: qualquer outro caso (locked / blocked / expired / preview / available sem compra)
-  const isReleased = ['enrolled', 'in_progress', 'completed'].includes(course.access_state);
-  const isNotLaunched = comingSoon || course.access_state === 'coming_soon';
+  const finalAccessState = course.product_access_state === 'owned'
+    ? 'owned'
+    : course.access_state === 'coming_soon'
+      ? 'coming_soon'
+      : course.product_access_state || course.access_state || 'locked';
+  const isReleased = finalAccessState === 'owned' || ['enrolled', 'in_progress', 'completed'].includes(course.access_state);
+  const isNotLaunched = comingSoon || finalAccessState === 'coming_soon';
   const isLocked = !isReleased && !isNotLaunched;
 
   const isCompleted = progress >= 100;

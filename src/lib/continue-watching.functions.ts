@@ -1,5 +1,6 @@
 import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+import { deriveProductVisualAccessState } from '@/lib/product-access';
 
 export const getContinueWatching = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
@@ -119,6 +120,7 @@ export const getContinueWatching = createServerFn({ method: 'POST' })
           }
         }
 
+        const productAccessState = 'owned' as const;
         return {
           ...course,
           progress_pct: progressPct,
@@ -126,7 +128,8 @@ export const getContinueWatching = createServerFn({ method: 'POST' })
           completed_lessons: completedLessons,
           last_accessed_at: info.lastAccessedAt,
           resume_lesson_id: resumeLessonId,
-          access_state: 'in_progress',
+          product_access_state: productAccessState,
+          access_state: deriveProductVisualAccessState(productAccessState, progressPct, totalLessons),
         };
       })
       .filter(Boolean)
