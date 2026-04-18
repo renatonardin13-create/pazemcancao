@@ -1,6 +1,7 @@
 import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
+import { buildEntitlements, resolveProductAccessState } from '@/lib/product-access';
 
 type ShelfRecord = {
   id: string;
@@ -157,23 +158,9 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
 
     if (enrollmentsError) throw new Error(enrollmentsError.message);
 
-    const activeEnrollmentIds = new Set<string>();
-    const blockedEnrollmentIds = new Set<string>();
-    const expiredEnrollmentIds = new Set<string>();
-
-    for (const enrollment of enrollments || []) {
-      const isExpired = !!enrollment.expires_at && new Date(enrollment.expires_at) < new Date();
-
-      if (enrollment.status === 'active' && !isExpired) {
-        activeEnrollmentIds.add(enrollment.course_id);
-      } else if (enrollment.status === 'blocked') {
-        blockedEnrollmentIds.add(enrollment.course_id);
-      } else if (isExpired || enrollment.status === 'expired') {
-        expiredEnrollmentIds.add(enrollment.course_id);
-      }
-    }
-
-    const enrolledCourseIds = activeEnrollmentIds;
+    // REGRA 8: usa fonte única de verdade. Não considera role admin.
+    const entitlements = buildEntitlements(enrollments || []);
+    const enrolledCourseIds = entitlements.ownedCourseIds;
 
     let lessonCounts: Array<{ course_id: string }> = [];
     if (publishedCourseIds.length > 0) {
