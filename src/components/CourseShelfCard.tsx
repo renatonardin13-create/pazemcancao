@@ -77,17 +77,16 @@ export const CourseShelfCard = memo(function CourseShelfCard({
   );
 
   const badgeTopLeft = badge ? badge
-    : (isLocked || isPaidCourse) && !hasFreePreview ? (
+    : isNotLaunched ? (
+      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-amber-500/95 to-orange-500/90 text-[9px] sm:text-[10px] font-bold text-black uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm border border-amber-400/30">
+        Em breve
+      </span>
+    ) : isLocked ? (
       <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gradient-to-r from-gold/95 to-amber-500/90 text-[9px] sm:text-[10px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm border border-gold/20">
         <Lock className="h-2.5 w-2.5" />
         Premium
       </span>
-    ) : hasFreePreview && !isLocked && !isPaidCourse ? (
-      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-gold/90 text-[9px] sm:text-[10px] font-bold text-gold-foreground uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm">
-        <Play className="h-2.5 w-2.5 fill-current" />
-        Aula grátis
-      </span>
-    ) : showStatusBadge && !isLocked && !isPaidCourse && !hasFreePreview ? (
+    ) : showStatusBadge ? (
       isCompleted ? (
         <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-500/90 text-[9px] sm:text-[10px] font-bold text-white uppercase tracking-wide shadow-lg shadow-black/30 backdrop-blur-sm">
           <BookOpenCheck className="h-2.5 w-2.5" /> Concluído
