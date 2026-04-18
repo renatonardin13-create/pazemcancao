@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useState, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { BookOpen, BookOpenCheck, Clock3, Lock, Play, ShoppingCart } from "lucide-react";
 import { PosterCard } from "@/components/PosterCard";
@@ -8,7 +8,7 @@ import type { VitrineCourse } from "./types";
 interface VitrineCourseCardProps {
   course: VitrineCourse;
   index?: number;
-  badge?: React.ReactNode;
+  badge?: ReactNode;
 }
 
 export const VitrineCourseCard = memo(function VitrineCourseCard({
@@ -28,7 +28,7 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
   const salesUrl = course.banner_link_url || course.sales_page_url || course.checkout_url;
 
   const handleClick = useCallback(
-    (e: React.MouseEvent) => {
+    (e: MouseEvent) => {
       e.preventDefault();
 
       if (!isReleased) {
@@ -136,10 +136,10 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
         role="link"
         tabIndex={0}
         onClick={handleClick}
-        onKeyDown={(e) => {
+        onKeyDown={(e: KeyboardEvent<HTMLDivElement>) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
-            handleClick(e as unknown as React.MouseEvent);
+            handleClick(e as unknown as MouseEvent);
           }
         }}
         className="group/card relative block cursor-pointer"
