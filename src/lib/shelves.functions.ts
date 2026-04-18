@@ -22,12 +22,20 @@ type CourseRecord = {
   id: string;
   title: string;
   short_description: string | null;
+  full_description: string | null;
+  sales_description: string | null;
   cover_image_url: string | null;
   banner_image_url: string | null;
   status: string;
   sort_order: number;
   created_at: string;
   price: number;
+  promotional_price: number | null;
+  benefits: string[];
+  total_duration: string | null;
+  total_lessons: number;
+  product_type: string;
+  category_id: string | null;
   launch_date?: string | null;
 };
 
@@ -113,23 +121,36 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       shelfCourseLinks = (shelfCourseRows || []) as ShelfCourseLink[];
     }
 
-    const linkedCourseIds = Array.from(new Set(shelfCourseLinks.map((link) => link.course_id)));
-    const hasAutoShelves = shelves.some((shelf) => shelf.mode === 'auto');
-
-    // Always fetch all published courses to build smart shelves
-    let publishedCourses: CourseRecord[] = [];
+    // Sempre busca catálogo completo para montar a vitrine com dados reais,
+    // incluindo cursos já publicados e cursos ainda não lançados.
+    let catalogCourses: CourseRecord[] = [];
     {
       const { data: allCourses, error: coursesErr } = await supabaseAdmin
         .from('courses')
-        .select('id, title, short_description, cover_image_url, banner_image_url, status, sort_order, created_at, price, launch_date')
-        .eq('status', 'published')
+        .select('id, title, short_description, full_description, sales_description, cover_image_url, banner_image_url, status, sort_order, created_at, price, promotional_price, benefits, total_duration, total_lessons, product_type, category_id, launch_date')
+        .in('status', ['published', 'draft'])
         .order('sort_order', { ascending: true });
 
       if (coursesErr) throw new Error(coursesErr.message);
-      publishedCourses = (allCourses || []) as CourseRecord[];
+      catalogCourses = (allCourses || []) as CourseRecord[];
     }
 
+    const publishedCourses = catalogCourses.filter((course) => course.status === 'published');
     const publishedCourseIds = publishedCourses.map((course) => course.id);
+    const categoryIds = Array.from(new Set(catalogCourses.map((course) => course.category_id).filter(Boolean))) as string[];
+
+    let categoryRows: Array<{ id: string; name: string }> = [];
+    if (categoryIds.length > 0) {
+      const { data, error } = await supabaseAdmin
+        .from('categories')
+        .select('id, name')
+        .in('id', categoryIds);
+
+      if (error) throw new Error(error.message);
+      categoryRows = data || [];
+    }
+
+    const categoryMap = new Map(categoryRows.map((category) => [category.id, category.name]));
 
     const { data: promoBanners, error: promoBannersError } = await supabase
       .from('promo_banners')
@@ -263,7 +284,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       const checkoutUrl = integrationMap.get(course.id) || null;
       const hasCheckout = !!checkoutUrl;
 
-      const totalLessons = lessonCountMap.get(course.id) || 0;
+      const totalLessons = lessonCountMap.get(course.id) || course.total_lessons || 0;
       const completedLessons = completedLessonsMap.get(course.id) || 0;
       const progressPct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
 
@@ -298,6 +319,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
 
       return {
         ...course,
+        category_name: course.category_id ? categoryMap.get(course.category_id) || null : null,
         is_enrolled: isEnrolled,
         has_preview: hasPreview,
         has_checkout: hasCheckout,
@@ -311,7 +333,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
     };
 
     const courseMap = new Map(
-      publishedCourses.map((course) => [course.id, enrichCourse(course)]),
+      catalogCourses.map((course) => [course.id, enrichCourse(course)]),
     );
 
     const shelfCourseMap = new Map<string, ShelfCourseLink[]>();
@@ -333,8 +355,10 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
         .map((link) => courseMap.get(link.course_id))
         .filter(Boolean);
 
-      const courses = linkedCourses.length > 0
-        ? linkedCourses
+      const dedupedLinkedCourses = Array.from(new Map(linkedCourses.map((course: any) => [course.id, course])).values());
+
+      const courses = dedupedLinkedCourses.length > 0
+        ? dedupedLinkedCourses
         : shelf.mode === 'auto'
           ? resolveAutoShelfCourses(shelf, publishedCourses, enrichCourse, salesCountMap, enrolledCourseIds)
           : [];
@@ -350,98 +374,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       }
     }
 
-    // ── Build smart shelves ──
-
-    // 1. "Continue sua experiência" — in-progress courses sorted by last activity
-    const continueShelf: any[] = [];
-    const courseProgressMap = new Map<string, { lastAccess: string }>();
-    for (const p of userProgressData) {
-      if (!courseProgressMap.has(p.course_id)) {
-        courseProgressMap.set(p.course_id, { lastAccess: p.updated_at });
-      }
-    }
-    for (const [courseId, info] of courseProgressMap) {
-      const enriched = courseMap.get(courseId);
-      if (enriched && enriched.access_state === 'in_progress') {
-        continueShelf.push({ ...enriched, last_accessed_at: info.lastAccess });
-      }
-    }
-    continueShelf.sort((a, b) => new Date(b.last_accessed_at).getTime() - new Date(a.last_accessed_at).getTime());
-
-    // 2. "Disponível para você" — locked courses with checkout URL
-    const availableForYou = Array.from(courseMap.values())
-      .filter((c: any) => ['locked', 'blocked', 'expired'].includes(c.access_state) && c.checkout_url)
-      .slice(0, 20);
-
-    // 3. "Em breve" — courses with future launch_date (need to fetch)
-    let comingSoonCourses: any[] = [];
-    {
-      const { data: upcomingCourses } = await supabaseAdmin
-        .from('courses')
-        .select('id, title, short_description, cover_image_url, banner_image_url, status, sort_order, created_at, price, launch_date')
-        .eq('status', 'draft')
-        .not('launch_date', 'is', null)
-        .gt('launch_date', new Date().toISOString().split('T')[0])
-        .order('launch_date', { ascending: true })
-        .limit(20);
-
-      if (upcomingCourses && upcomingCourses.length > 0) {
-        const now = new Date();
-        comingSoonCourses = upcomingCourses.map((c: any) => {
-          const launchDate = new Date(c.launch_date);
-          const diffDays = Math.ceil((launchDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-          return {
-            ...c,
-            access_state: 'coming_soon',
-            coming_soon_days: diffDays,
-            badge_text: diffDays <= 7 ? `Em ${diffDays} dia${diffDays !== 1 ? 's' : ''}` : 'Em breve',
-            total_lessons: 0,
-            progress_pct: 0,
-          };
-        });
-      }
-    }
-
-    // ── Assemble final ordered result ──
-    const result: any[] = [];
-
-    // Smart shelf: Continue
-    if (continueShelf.length > 0) {
-      result.push({
-        id: '__continue__',
-        name: 'Continue sua experiência',
-        sort_order: -100,
-        shelf_type: 'smart',
-        courses: continueShelf.slice(0, 15),
-      });
-    }
-
-    // Admin shelves in their original order
-    for (const shelf of adminShelves) {
-      result.push(shelf);
-    }
-
-    // Smart shelf: Disponível para você
-    if (availableForYou.length > 0) {
-      result.push({
-        id: '__available__',
-        name: 'Disponível para você',
-        sort_order: 900,
-        shelf_type: 'smart',
-        courses: availableForYou,
-      });
-    }
-
-    // Smart shelf: Em breve
-    if (comingSoonCourses.length > 0) {
-      result.push({
-        id: '__coming_soon__',
-        name: 'Em breve',
-        sort_order: 950,
-        shelf_type: 'smart',
-        courses: comingSoonCourses,
-      });
-    }
+    const result = adminShelves.sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
 
     // ── Banner config ──
     const { data: bannerSetting, error: bannerError } = await supabaseAdmin
