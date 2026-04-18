@@ -21,12 +21,6 @@ interface UnlockModalProps {
   comingSoon?: boolean;
 }
 
-const SUBSCRIPTION_BENEFITS = [
-  "Acesso a todos os cursos da plataforma",
-  "Conteúdos exclusivos premium",
-  "Atualizações contínuas",
-  "Acesso imediato após o pagamento",
-];
 
 export function UnlockModal({
   open,
