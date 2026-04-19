@@ -697,19 +697,7 @@ function AdminUsersPage() {
                 </span>
 
                 <div className="hidden lg:block">
-                  {!isEnabledBuyer ? (
-                    <Badge className="bg-destructive/15 text-destructive/80 border-0 text-xs font-semibold">
-                      Bloqueado
-                    </Badge>
-                  ) : isTrial && expired ? (
-                    <Badge className="bg-amber-500/15 text-amber-400/80 border-0 text-xs font-semibold">
-                      Expirado
-                    </Badge>
-                  ) : (
-                    <Badge className="bg-emerald-500/15 text-emerald-400/80 border-0 text-xs font-semibold">
-                      Ativo
-                    </Badge>
-                  )}
+                  {renderStatusBadge(buyer)}
                 </div>
 
                 <span className="hidden lg:block text-sm text-foreground/60 text-center font-medium">{buyer.course_count ?? 0}</span>
