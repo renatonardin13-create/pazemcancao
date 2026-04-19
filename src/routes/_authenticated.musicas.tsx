@@ -318,46 +318,48 @@ function MusicLibraryPage() {
         <div className="min-h-screen bg-background">
           <SafeBoundary fallbackTitle="Erro ao carregar músicas">
           <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-8 px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
-            <section className="relative overflow-hidden rounded-3xl border border-border/40 bg-gradient-to-br from-card/60 via-card/30 to-background/60 p-6 shadow-[0_4px_30px_-10px_rgba(0,0,0,0.5)] sm:p-9">
-              <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
-              <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-                <div className="space-y-3">
+            <section className="relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-br from-card/60 via-card/30 to-background/60 px-5 py-4 shadow-[0_4px_30px_-10px_rgba(0,0,0,0.5)] sm:px-6 sm:py-5">
+              <div className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-primary/10 blur-3xl" />
+              <div className="relative flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div className="flex flex-col gap-1.5 lg:flex-row lg:items-center lg:gap-4">
                   <div className="flex items-center gap-2 text-primary/80">
-                    <Headphones className="h-4 w-4" />
-                    <span className="text-xs font-semibold uppercase tracking-[0.32em]">
+                    <Headphones className="h-3.5 w-3.5" />
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.28em]">
                       {activeCategoryName ? "Categoria" : "Visão geral"}
                     </span>
                   </div>
-                  <h1 className="font-display text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
-                    {activeCategoryName || "Louvores"}
-                  </h1>
-                  <p className="max-w-xl text-sm text-muted-foreground/80 sm:text-base">
-                    {activeCategoryName
-                      ? `Louvores selecionados da categoria ${activeCategoryName}.`
-                      : "Todos os louvores disponíveis."}
-                  </p>
-                  <div className="pt-2">
-                    <Button
-                      variant="premium"
-                      size="lg"
-                      onClick={handlePlayAll}
-                      disabled={!filteredTracks.length}
-                      className="gap-2"
-                    >
-                      <Play className="h-4 w-4" />
-                      {activeCategoryName ? "Tocar todos da categoria" : "Tocar todos"}
-                    </Button>
+                  <div className="flex flex-col">
+                    <h1 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                      {activeCategoryName || "Louvores"}
+                    </h1>
+                    <p className="text-xs text-muted-foreground/75 sm:text-sm">
+                      {activeCategoryName
+                        ? `Selecionados da categoria ${activeCategoryName}.`
+                        : "Todos os louvores disponíveis."}
+                    </p>
                   </div>
                 </div>
 
-                <div className="relative w-full max-w-md">
-                  <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
-                  <Input
-                    value={searchTerm}
-                    onChange={(event) => setSearchTerm(event.target.value)}
-                    placeholder="Buscar músicas..."
-                    className="h-12 rounded-2xl border-border/50 bg-background/60 pl-11 text-sm shadow-inner backdrop-blur-md focus-visible:ring-primary/40"
-                  />
+                <div className="flex flex-col-reverse items-stretch gap-2 sm:flex-row sm:items-center">
+                  <div className="relative w-full sm:w-72">
+                    <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
+                    <Input
+                      value={searchTerm}
+                      onChange={(event) => setSearchTerm(event.target.value)}
+                      placeholder="Buscar músicas..."
+                      className="h-10 rounded-xl border-border/50 bg-background/60 pl-10 text-sm shadow-inner backdrop-blur-md focus-visible:ring-primary/40"
+                    />
+                  </div>
+                  <Button
+                    variant="premium"
+                    size="sm"
+                    onClick={handlePlayAll}
+                    disabled={!filteredTracks.length}
+                    className="h-10 gap-2 px-4"
+                  >
+                    <Play className="h-4 w-4" />
+                    {activeCategoryName ? "Tocar categoria" : "Tocar todos"}
+                  </Button>
                 </div>
               </div>
             </section>
@@ -596,13 +598,13 @@ function MusicLibraryPage() {
                       key={playlist.id}
                       type="button"
                       onClick={() => setActivePlaylistId(isActive ? null : playlist.id)}
-                      className={`group relative flex h-24 items-center gap-4 overflow-hidden rounded-2xl border p-3 text-left transition-all duration-300 hover:-translate-y-0.5 ${
+                      className={`group relative flex h-32 items-center gap-4 overflow-hidden rounded-2xl border p-3 text-left transition-all duration-300 hover:-translate-y-0.5 ${
                         isActive
                           ? "border-gold/50 bg-gradient-to-r from-gold/15 via-card/40 to-background shadow-[0_10px_30px_-10px_hsl(var(--primary)/0.5)]"
                           : "border-gold/20 bg-gradient-to-r from-card/60 via-card/30 to-background/60 hover:border-gold/40"
                       }`}
                     >
-                      <div className="relative h-full w-24 shrink-0 overflow-hidden rounded-xl">
+                      <div className="relative h-full w-28 shrink-0 overflow-hidden rounded-xl">
                         {playlist?.cover_url ? (
                           <img
                             src={playlist.cover_url}
@@ -612,12 +614,12 @@ function MusicLibraryPage() {
                           />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/30 to-primary/5">
-                            <Disc3 className="h-7 w-7 text-primary" />
+                            <Disc3 className="h-9 w-9 text-primary" />
                           </div>
                         )}
                       </div>
-                      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
-                        <h3 className="line-clamp-1 text-sm font-bold tracking-tight text-foreground">
+                      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5">
+                        <h3 className="line-clamp-2 text-sm font-bold tracking-tight text-foreground">
                           {playlist?.name || "Playlist"}
                         </h3>
                         <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground/70">
@@ -625,7 +627,7 @@ function MusicLibraryPage() {
                           <span>{playlist?.track_count || 0} faixas</span>
                         </div>
                       </div>
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gold/40 bg-gold/10 text-gold transition group-hover:bg-gold/20">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gold/40 bg-gold/10 text-gold transition group-hover:bg-gold/20">
                         <Play className="h-4 w-4 fill-current" />
                       </div>
                     </button>
