@@ -337,10 +337,27 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
   // ACTION: expire   → marca acesso como expirado (enrollment expired, access_enabled=false)
   //   Statuses: expired, expirado, expiracao, subscription_expired
 
-  const approvedStatuses = ['paid', 'approved', 'completed', 'compra_aprovada'];
+  const approvedStatuses = ['paid', 'approved', 'completed', 'compra_aprovada', 'subscription_renewed', 'subscription_renew', 'renewed'];
   const pendingStatuses = ['pending', 'waiting_payment', 'pagamento_pendente', 'waiting', 'billet_printed'];
   const revokeStatuses = ['refunded', 'chargedback', 'chargeback', 'cancelled', 'compra_cancelada', 'reembolso', 'dispute'];
-  const expiredStatuses = ['expired', 'expirado', 'expiracao', 'subscription_expired'];
+  const expiredStatuses = ['expired', 'expirado', 'expiracao', 'subscription_expired', 'subscription_canceled', 'subscription_cancelled', 'subscription_late'];
+  const testStatuses = ['test', 'webhook_test', 'kiwify_test'];
+
+  // ─── ACTION: test (Kiwify webhook test) ───
+  // Não cria enrollment definitivo, apenas registra o teste para auditoria.
+  if (testStatuses.includes(status)) {
+    await logWebhookEvent({
+      eventType: status,
+      email: customerEmail,
+      orderId,
+      payload: rawBody,
+      responseStatus: 200,
+      responseMessage: 'Test event received — no access granted',
+      ...audit,
+      isSuccess: true,
+    });
+    return jsonResponse({ success: true, message: 'Test event received — no enrollment created' });
+  }
 
   if (!status) {
     await logWebhookEvent({
