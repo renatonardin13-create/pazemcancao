@@ -192,9 +192,16 @@ function extractEventId(payload: any, rawBody: any): string {
 
 function extractFields(rawBody: any) {
   const payload = rawBody.data || rawBody;
-  const status = (
+  // Kiwify envia o tipo do evento em webhook_event_type/event/event_type (ex.: subscription_canceled, refunded, test).
+  // Quando presente, ele tem prioridade sobre order_status para o roteamento.
+  const eventType = (
+    rawBody.webhook_event_type || rawBody.event || rawBody.event_type ||
+    payload.webhook_event_type || payload.event || payload.event_type || ''
+  ).toString().toLowerCase().trim();
+  const orderStatus = (
     payload.order_status || payload.status || rawBody.order_status || ''
   ).toLowerCase();
+  const status = eventType || orderStatus;
   const customerEmail = (
     payload.customer?.email ||
     payload.Customer?.email ||
@@ -330,10 +337,27 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
   // ACTION: expire   → marca acesso como expirado (enrollment expired, access_enabled=false)
   //   Statuses: expired, expirado, expiracao, subscription_expired
 
-  const approvedStatuses = ['paid', 'approved', 'completed', 'compra_aprovada'];
+  const approvedStatuses = ['paid', 'approved', 'completed', 'compra_aprovada', 'subscription_renewed', 'subscription_renew', 'renewed'];
   const pendingStatuses = ['pending', 'waiting_payment', 'pagamento_pendente', 'waiting', 'billet_printed'];
   const revokeStatuses = ['refunded', 'chargedback', 'chargeback', 'cancelled', 'compra_cancelada', 'reembolso', 'dispute'];
-  const expiredStatuses = ['expired', 'expirado', 'expiracao', 'subscription_expired'];
+  const expiredStatuses = ['expired', 'expirado', 'expiracao', 'subscription_expired', 'subscription_canceled', 'subscription_cancelled', 'subscription_late'];
+  const testStatuses = ['test', 'webhook_test', 'kiwify_test'];
+
+  // ─── ACTION: test (Kiwify webhook test) ───
+  // Não cria enrollment definitivo, apenas registra o teste para auditoria.
+  if (testStatuses.includes(status)) {
+    await logWebhookEvent({
+      eventType: status,
+      email: customerEmail,
+      orderId,
+      payload: rawBody,
+      responseStatus: 200,
+      responseMessage: 'Test event received — no access granted',
+      ...audit,
+      isSuccess: true,
+    });
+    return jsonResponse({ success: true, message: 'Test event received — no enrollment created' });
+  }
 
   if (!status) {
     await logWebhookEvent({
