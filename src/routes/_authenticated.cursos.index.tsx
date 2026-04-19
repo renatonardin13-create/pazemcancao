@@ -1,32 +1,33 @@
-import { EmptyState } from "@/components/EmptyState";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CardGridSkeleton } from "@/components/LoadingSkeletons";
 import { useQuery } from "@tanstack/react-query";
-import { getMyCoursesData } from "@/lib/my-courses.functions";
-import { getContinueWatching } from "@/lib/continue-watching.functions";
+import { motion } from "framer-motion";
+import { BookOpen, Search, ArrowRight, Sparkles } from "lucide-react";
+import { useMemo, useState } from "react";
+
+import { EmptyState } from "@/components/EmptyState";
+import { CardGridSkeleton } from "@/components/LoadingSkeletons";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
-import { CourseShelfCard } from "@/components/CourseShelfCard";
-import { motion } from "framer-motion";
-import { BookOpen, Search, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState, useMemo, useRef, useCallback, useEffect } from "react";
-import { useDragScroll } from "@/hooks/use-drag-scroll";
 import { Input } from "@/components/ui/input";
+import { ShelfRow } from "@/components/vitrine/ShelfRow";
+import { CoursePosterCard } from "@/components/vitrine/CoursePosterCard";
+import type { VitrineCourse } from "@/components/vitrine/types";
 import { useAuth } from "@/hooks/use-auth";
 import { getMyProfile } from "@/lib/profile.functions";
+import { getMyCoursesData } from "@/lib/my-courses.functions";
+import { getContinueWatching } from "@/lib/continue-watching.functions";
 
 export const Route = createFileRoute("/_authenticated/cursos/")({
-  component: MeusCoursosPage,
+  component: MeusCursosPage,
 });
 
 /**
- * REGRA: a página /cursos é a BIBLIOTECA do aluno.
- * SOMENTE produtos com entitlement REAL ativo (status=active, não expirado)
- * podem aparecer aqui. Nada de catálogo, nada de bloqueado, nada de "em breve".
- * Catálogo completo vive em /vitrine.
+ * Biblioteca do aluno — mesma linguagem visual da /vitrine.
+ * Apenas cursos com entitlement REAL ativo. Catálogo completo vive em /vitrine.
  */
-function MeusCoursosPage() {
+function MeusCursosPage() {
   const { user } = useAuth();
+  const [search, setSearch] = useState("");
 
   const { data: profileData } = useQuery({
     queryKey: ["my-profile"],
@@ -35,149 +36,156 @@ function MeusCoursosPage() {
   });
 
   const { data: myData, isLoading } = useQuery({
-    queryKey: ["courses-page", "my-courses", "v4-owned-access-state"],
+    queryKey: ["my-courses-library", "v1"],
     queryFn: () => getMyCoursesData(),
     staleTime: 30_000,
   });
 
   const { data: continueData } = useQuery({
-    queryKey: ["courses-page", "continue-watching"],
+    queryKey: ["my-courses-library", "continue-watching"],
     queryFn: () => getContinueWatching(),
     staleTime: 30_000,
     refetchOnWindowFocus: false,
   });
 
-  const [search, setSearch] = useState("");
-
   const displayName = profileData?.profile?.display_name || user?.email?.split("@")[0] || "aluno";
   const firstName = displayName.split(" ")[0];
 
-  const myCourses = myData?.courses || [];
-  const ownedCourseIds = useMemo(() => new Set(myCourses.map((c: any) => c.id)), [myCourses]);
+  const myCourses: VitrineCourse[] = useMemo(() => myData?.courses || [], [myData]);
+  const ownedIds = useMemo(() => new Set(myCourses.map((c) => c.id)), [myCourses]);
 
-  // Continue assistindo só pode listar cursos que o aluno REALMENTE possui.
-  const continueWatchingCourses = useMemo(
-    () => (continueData?.courses || []).filter((c: any) => ownedCourseIds.has(c.id)),
-    [continueData, ownedCourseIds],
+  const continueWatching: VitrineCourse[] = useMemo(
+    () => (continueData?.courses || []).filter((c: VitrineCourse) => ownedIds.has(c.id)),
+    [continueData, ownedIds],
   );
+
+  const inProgress = useMemo(
+    () => myCourses.filter((c) => Number(c.progress_pct ?? 0) > 0 && Number(c.progress_pct ?? 0) < 100),
+    [myCourses],
+  );
+  const completed = useMemo(
+    () => myCourses.filter((c) => Number(c.progress_pct ?? 0) >= 100),
+    [myCourses],
+  );
+  const newCourses = useMemo(
+    () => myCourses.filter((c) => Number(c.progress_pct ?? 0) === 0),
+    [myCourses],
+  );
+
+  // Group by category
+  const byCategory = useMemo(() => {
+    const map = new Map<string, VitrineCourse[]>();
+    for (const c of myCourses) {
+      const key = c.category_name || "Outros";
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(c);
+    }
+    return Array.from(map.entries()).filter(([, list]) => list.length > 0);
+  }, [myCourses]);
 
   const searchResults = useMemo(() => {
     const term = search.trim().toLowerCase();
     if (!term) return null;
-    return myCourses.filter((course: any) =>
-      [course.title, course.short_description].filter(Boolean).some((v) => String(v).toLowerCase().includes(term)),
+    return myCourses.filter((course) =>
+      [course.title, course.short_description]
+        .filter(Boolean)
+        .some((v) => String(v).toLowerCase().includes(term)),
     );
   }, [search, myCourses]);
 
-  useEffect(() => {
-    console.log("[DEBUG][CURSOS] routeComponent=MeusCoursosPage(owned-only)");
-    console.log("[DEBUG][CURSOS] ownedCount=", myCourses.length);
-  }, [myCourses.length]);
-
   return (
     <StudentLayout>
-      <div className="min-h-screen bg-background flex flex-col">
-        <main className="flex-1 mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-10 xl:px-12 pt-6 sm:pt-8 pb-28">
+      <div className="flex min-h-screen flex-col bg-background">
+        <main className="flex-1 pt-6 pb-20 sm:pt-8">
+          {/* Header / saudação */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-8 sm:mb-10"
+            className="mb-8 px-4 sm:mb-10 sm:px-8 lg:px-12"
           >
-            <div className="mb-4">
-              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
-                Olá, {firstName}
+            <div className="flex flex-col gap-1.5">
+              <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-primary/25 bg-primary/[0.06] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
+                <Sparkles className="h-3 w-3" /> Sua biblioteca
+              </span>
+              <h1 className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+                Olá, <span className="bg-gradient-to-r from-primary via-amber-300 to-primary bg-clip-text text-transparent">{firstName}</span>
               </h1>
-              <p className="text-[13px] sm:text-sm text-muted-foreground/40 mt-1 leading-relaxed">
-                Sua biblioteca de cursos liberados
+              <p className="max-w-xl text-sm text-muted-foreground/70 sm:text-base">
+                Tudo o que você liberou, organizado em prateleiras para continuar de onde parou.
               </p>
             </div>
 
             {myCourses.length > 0 && (
-              <div className="relative w-full max-w-sm">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/25" />
+              <div className="relative mt-6 w-full max-w-sm">
+                <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/40" />
                 <Input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder="Buscar nos seus cursos..."
-                  className="pl-10 h-10 bg-card/8 border-border/10 rounded-xl text-sm placeholder:text-muted-foreground/20 focus:border-gold/25 focus:ring-gold/10 transition-all duration-300"
+                  className="h-11 rounded-xl border-border/30 bg-card/40 pl-10 text-sm placeholder:text-muted-foreground/40 focus:border-primary/40 focus:ring-primary/15"
                 />
               </div>
             )}
           </motion.div>
 
+          {/* Conteúdo */}
           {isLoading ? (
-            <CardGridSkeleton count={6} />
+            <div className="px-4 sm:px-8 lg:px-12">
+              <CardGridSkeleton count={6} />
+            </div>
           ) : myCourses.length === 0 ? (
-            <EmptyState
-              icon={BookOpen}
-              title="Você ainda não possui cursos liberados"
-              description="Explore a Vitrine para conhecer os conteúdos disponíveis."
-              actionTo="/vitrine"
-              actionLabel="Ir para a Vitrine"
-            />
+            <div className="px-4 sm:px-8 lg:px-12">
+              <EmptyState
+                icon={BookOpen}
+                title="Sua biblioteca está esperando você"
+                description="Você ainda não possui cursos liberados. Conheça o catálogo completo na Vitrine."
+                actionTo="/vitrine"
+                actionLabel="Ir para a Vitrine"
+              />
+            </div>
           ) : searchResults !== null ? (
-            <div className="pb-8">
-              <ShelfHeader title={`Resultados para "${search}"`} />
+            <div className="space-y-6">
               {searchResults.length > 0 ? (
-                <ShelfRow>
-                  {searchResults.map((course: any, idx: number) => (
-                    <ShelfItem key={`search-${course.id}`} index={idx}>
-                      <CourseShelfCard course={course} showProgress />
-                    </ShelfItem>
-                  ))}
-                </ShelfRow>
+                <ShelfRow title={`Resultados para "${search}"`} courses={searchResults} />
               ) : (
-                <EmptyState icon={Search} title="Nenhum curso encontrado" description="Tente buscar com outras palavras." />
+                <div className="px-4 sm:px-8 lg:px-12">
+                  <EmptyState
+                    icon={Search}
+                    title="Nenhum curso encontrado"
+                    description="Tente buscar com outras palavras."
+                  />
+                </div>
               )}
             </div>
           ) : (
-            <>
-              {continueWatchingCourses.length > 0 && (
-                <ShelfSection delay={0.05}>
-                  <ShelfHeader title="Continue assistindo" />
-                  <ShelfRow>
-                    {continueWatchingCourses.map((course: any, idx: number) => (
-                      <ShelfItem key={`cw-${course.id}`} index={idx}>
-                        <CourseShelfCard
-                          course={course}
-                          showProgress
-                          showStatusBadge
-                          subtitle={`${course.completed_lessons || 0}/${course.total_lessons || 0} aulas`}
-                        />
-                      </ShelfItem>
-                    ))}
-                  </ShelfRow>
-                </ShelfSection>
+            <div className="space-y-10 sm:space-y-12">
+              {continueWatching.length > 0 && (
+                <ShelfRow title="Continue assistindo" courses={continueWatching} />
               )}
+              {inProgress.length > 0 && continueWatching.length === 0 && (
+                <ShelfRow title="Em andamento" courses={inProgress} />
+              )}
+              <ShelfRow title="Meus cursos" courses={myCourses} />
+              {newCourses.length > 0 && newCourses.length < myCourses.length && (
+                <ShelfRow title="Novos para começar" courses={newCourses} />
+              )}
+              {byCategory.length > 1 &&
+                byCategory.map(([cat, list]) => (
+                  <ShelfRow key={cat} title={cat} courses={list} />
+                ))}
+              {completed.length > 0 && <ShelfRow title="Concluídos" courses={completed} />}
 
-              <ShelfSection delay={0.1}>
-                <ShelfHeader title="Meus cursos" />
-                <ShelfRow>
-                  {myCourses.map((course: any, idx: number) => (
-                    <ShelfItem key={`mc-${course.id}`} index={idx}>
-                      <CourseShelfCard
-                        course={course}
-                        showProgress
-                        showStatusBadge
-                        subtitle={`${course.completed_lessons || 0}/${course.lesson_count || course.total_lessons || 0} aulas`}
-                      />
-                    </ShelfItem>
-                  ))}
-                </ShelfRow>
-              </ShelfSection>
-            </>
-          )}
-
-          {myCourses.length > 0 && (
-            <div className="mt-12 sm:mt-16 flex justify-center">
-              <Link
-                to="/vitrine"
-                className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-gold/15 bg-card/5 text-sm text-muted-foreground/70 hover:text-gold hover:border-gold/30 hover:bg-card/10 transition-all duration-500"
-              >
-                Explorar mais cursos
-                <ArrowRight className="h-3.5 w-3.5 transition-transform duration-500 group-hover:translate-x-0.5" />
-              </Link>
+              {/* CTA explorar */}
+              <div className="flex justify-center px-4 pt-6 sm:px-8 lg:px-12">
+                <Link
+                  to="/vitrine"
+                  className="group inline-flex items-center gap-2 rounded-full border border-primary/25 bg-card/40 px-6 py-3 text-sm font-medium text-foreground/80 transition-all duration-300 hover:border-primary/50 hover:bg-card/60 hover:text-primary"
+                >
+                  Explorar mais cursos na Vitrine
+                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                </Link>
+              </div>
             </div>
           )}
         </main>
@@ -188,101 +196,5 @@ function MeusCoursosPage() {
   );
 }
 
-/* ─── Shelf primitives ─── */
-
-function ShelfSection({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
-  return (
-    <motion.section
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay }}
-      className="mb-8 sm:mb-10"
-    >
-      {children}
-    </motion.section>
-  );
-}
-
-function ShelfHeader({ title }: { title: string }) {
-  return (
-    <div className="flex items-baseline justify-between mb-3.5 sm:mb-4">
-      <h2 className="font-display text-[22px] sm:text-[26px] md:text-[28px] font-bold text-foreground/95 tracking-[-0.01em] leading-none">
-        {title}
-      </h2>
-    </div>
-  );
-}
-
-function ShelfRow({ children }: { children: React.ReactNode }) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const dragRef = useDragScroll();
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
-
-  const updateScrollState = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setCanScrollLeft(el.scrollLeft > 4);
-    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
-  }, []);
-
-  const scroll = useCallback((direction: "left" | "right") => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const amount = el.clientWidth * 0.7;
-    el.scrollBy({ left: direction === "left" ? -amount : amount, behavior: "smooth" });
-  }, []);
-
-  return (
-    <div className="group/shelf relative -mx-4 sm:-mx-6 lg:-mx-10 xl:-mx-12">
-      <div className={`absolute left-0 top-0 bottom-3 w-8 sm:w-12 z-10 pointer-events-none bg-gradient-to-r from-background to-transparent transition-opacity duration-500 ${canScrollLeft ? "opacity-100" : "opacity-0"}`} />
-      <div className={`absolute right-0 top-0 bottom-3 w-8 sm:w-12 z-10 pointer-events-none bg-gradient-to-l from-background to-transparent transition-opacity duration-500 ${canScrollRight ? "opacity-100" : "opacity-0"}`} />
-
-      <button
-        onClick={() => scroll("left")}
-        className={`absolute left-2 top-1/2 -translate-y-1/2 z-20 h-11 w-11 rounded-full bg-background/90 border border-border/20 backdrop-blur-md flex items-center justify-center transition-all duration-300 hover:bg-card/50 hover:scale-105 shadow-xl ${canScrollLeft ? "opacity-0 group-hover/shelf:opacity-100" : "opacity-0 pointer-events-none"}`}
-      >
-        <ChevronLeft className="h-5 w-5 text-foreground/70" />
-      </button>
-      <button
-        onClick={() => scroll("right")}
-        className={`absolute right-2 top-1/2 -translate-y-1/2 z-20 h-11 w-11 rounded-full bg-background/90 border border-border/20 backdrop-blur-md flex items-center justify-center transition-all duration-300 hover:bg-card/50 hover:scale-105 shadow-xl ${canScrollRight ? "opacity-0 group-hover/shelf:opacity-100" : "opacity-0 pointer-events-none"}`}
-      >
-        <ChevronRight className="h-5 w-5 text-foreground/70" />
-      </button>
-
-      <div
-        ref={(el) => {
-          (scrollRef as any).current = el;
-          (dragRef as any).current = el;
-        }}
-        onScroll={updateScrollState}
-        onMouseEnter={updateScrollState}
-        className="flex gap-3.5 sm:gap-4 lg:gap-5 overflow-x-auto pb-3 scrollbar-hide px-4 sm:px-6 lg:px-8 snap-x snap-mandatory scroll-smooth cursor-grab select-none will-change-scroll"
-        style={{ WebkitOverflowScrolling: "touch" }}
-      >
-        {children}
-      </div>
-    </div>
-  );
-}
-
-function ShelfItem({ children, index }: { children: React.ReactNode; index: number }) {
-  if (index > 5) {
-    return (
-      <div className="flex-shrink-0 snap-start w-[170px] sm:w-[200px] md:w-[210px] lg:w-[220px] xl:w-[240px]">
-        {children}
-      </div>
-    );
-  }
-  return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.4, delay: 0.04 * index, ease: [0.22, 1, 0.36, 1] }}
-      className="flex-shrink-0 snap-start w-[170px] sm:w-[200px] md:w-[210px] lg:w-[220px] xl:w-[240px]"
-    >
-      {children}
-    </motion.div>
-  );
-}
+// Re-export to keep the old named import working if referenced anywhere
+export { CoursePosterCard };
