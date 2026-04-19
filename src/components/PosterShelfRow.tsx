@@ -59,13 +59,13 @@ export function PosterShelfRow({ children }: { children: ReactNode }) {
         type="button"
         aria-label="Anterior"
         onClick={() => scroll("left")}
-        className={`absolute left-2 top-1/2 -translate-y-1/2 z-20 h-11 w-11 rounded-full bg-background/90 border border-border/20 backdrop-blur-md flex items-center justify-center transition-all duration-300 hover:bg-card/50 hover:scale-105 shadow-xl ${
+        className={`hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2 z-20 h-12 w-12 rounded-full bg-black/60 border border-white/10 backdrop-blur-md items-center justify-center transition-all duration-300 hover:bg-gold hover:border-gold hover:scale-110 hover:text-gold-foreground text-white/85 shadow-2xl shadow-black/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
           canScrollLeft
             ? "opacity-0 group-hover/shelf:opacity-100"
             : "opacity-0 pointer-events-none"
         }`}
       >
-        <ChevronLeft className="h-5 w-5 text-foreground/70" />
+        <ChevronLeft className="h-6 w-6" />
       </button>
 
       {/* Right arrow */}
@@ -73,13 +73,13 @@ export function PosterShelfRow({ children }: { children: ReactNode }) {
         type="button"
         aria-label="Próximo"
         onClick={() => scroll("right")}
-        className={`absolute right-2 top-1/2 -translate-y-1/2 z-20 h-11 w-11 rounded-full bg-background/90 border border-border/20 backdrop-blur-md flex items-center justify-center transition-all duration-300 hover:bg-card/50 hover:scale-105 shadow-xl ${
+        className={`hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2 z-20 h-12 w-12 rounded-full bg-black/60 border border-white/10 backdrop-blur-md items-center justify-center transition-all duration-300 hover:bg-gold hover:border-gold hover:scale-110 hover:text-gold-foreground text-white/85 shadow-2xl shadow-black/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
           canScrollRight
             ? "opacity-0 group-hover/shelf:opacity-100"
             : "opacity-0 pointer-events-none"
         }`}
       >
-        <ChevronRight className="h-5 w-5 text-foreground/70" />
+        <ChevronRight className="h-6 w-6" />
       </button>
 
       <div
@@ -89,7 +89,7 @@ export function PosterShelfRow({ children }: { children: ReactNode }) {
         }}
         onScroll={updateScrollState}
         onMouseEnter={updateScrollState}
-        className="flex gap-5 sm:gap-6 lg:gap-7 overflow-x-auto pb-5 scrollbar-hide px-4 sm:px-8 lg:px-12 snap-x snap-mandatory scroll-smooth cursor-grab select-none will-change-scroll overscroll-x-contain"
+        className="flex gap-4 sm:gap-5 lg:gap-6 overflow-x-auto pb-5 scrollbar-hide px-4 sm:px-8 lg:px-12 sm:snap-x sm:snap-proximity snap-x snap-mandatory scroll-smooth cursor-grab select-none will-change-scroll overscroll-x-contain"
         style={{ WebkitOverflowScrolling: "touch", scrollbarWidth: "none" }}
       >
         {children}
