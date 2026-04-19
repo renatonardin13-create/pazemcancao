@@ -468,21 +468,28 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
             banner_link_url: bannerConfig.link_url || null,
           };
         }
-      } else if (bannerConfig?.image_url) {
+      } else if (safeImageUrl) {
         featuredCourse = {
           id: '__custom_banner__',
           title: bannerConfig.title || '',
           short_description: bannerConfig.subtitle || '',
-          banner_image_url: bannerConfig.image_url,
+          banner_image_url: safeImageUrl,
           banner_fit: bannerConfig.fit || 'cover',
           banner_aspect: bannerConfig.aspect || 'auto',
           banner_link_url: bannerConfig.link_url || null,
           access_state: 'available',
         };
       } else {
-        featuredCourse = result.length > 0
-          ? result[0].courses.find((course: any) => course.banner_image_url || course.cover_image_url) || null
-          : null;
+        // Fallback: pega primeiro curso com imagem da primeira prateleira não vazia
+        for (const shelf of result) {
+          const candidate = (shelf?.courses || []).find(
+            (course: any) => course && (course.banner_image_url || course.cover_image_url),
+          );
+          if (candidate) {
+            featuredCourse = candidate;
+            break;
+          }
+        }
       }
 
       // Monta lista de até 3 destaques (carrossel rotativo)
