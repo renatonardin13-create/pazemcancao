@@ -16,6 +16,7 @@ import { SafeBoundary } from "@/components/SafeBoundary";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TrackCard } from "@/components/TrackCard";
+import { HighlightTrackCard } from "@/components/HighlightTrackCard";
 import { UpcomingReleaseBlock } from "@/components/UpcomingReleaseBlock";
 import { POSTER_GRID } from "@/lib/card-grid";
 import { PosterShelfRow, PosterShelfItem } from "@/components/PosterShelfRow";
