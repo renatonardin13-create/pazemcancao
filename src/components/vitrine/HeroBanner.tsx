@@ -64,7 +64,7 @@ export function HeroBanner({ course }: Props) {
               onClick={handlePrimary}
               className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-transform hover:scale-105"
             >
-              <Play className="h-5 w-5 fill-current" />
+              {isOwned ? <Play className="h-5 w-5 fill-current" /> : <Lock className="h-5 w-5" />}
               {isOwned ? "Assistir agora" : "Saiba mais"}
             </button>
             {isOwned && (
