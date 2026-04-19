@@ -4,15 +4,17 @@ import type { VitrineCourse } from "./types";
 import { isCourseUnlocked } from "@/lib/course-access";
 
 interface Props {
-  course: VitrineCourse;
+  course?: VitrineCourse | null;
 }
 
 export function HeroBanner({ course }: Props) {
+  if (!course?.id) return null;
+
   const navigate = useNavigate();
   const isOwned = isCourseUnlocked(course);
   const bg = course.banner_image_url || course.cover_image_url;
-  const title = course.display_title || course.title;
-  const subtitle = course.display_subtitle || course.short_description;
+  const title = course.display_title || course.title || "Curso em destaque";
+  const subtitle = course.display_subtitle || course.short_description || null;
 
   const handlePrimary = () => {
     navigate({

@@ -59,11 +59,14 @@ function MeusCursosPage() {
   const displayName = profileData?.profile?.display_name || user?.email?.split("@")[0] || "aluno";
   const firstName = displayName.split(" ")[0];
 
-  const myCourses: VitrineCourse[] = useMemo(() => myData?.courses || [], [myData]);
+  const myCourses: VitrineCourse[] = useMemo(
+    () => (Array.isArray(myData?.courses) ? myData.courses.filter((course): course is VitrineCourse => Boolean(course?.id)) : []),
+    [myData],
+  );
   const ownedIds = useMemo(() => new Set(myCourses.map((c) => c.id)), [myCourses]);
 
   const continueWatching: VitrineCourse[] = useMemo(
-    () => (continueData?.courses || []).filter((c: VitrineCourse) => ownedIds.has(c.id)),
+    () => (Array.isArray(continueData?.courses) ? continueData.courses : []).filter((c: VitrineCourse) => Boolean(c?.id) && ownedIds.has(c.id)),
     [continueData, ownedIds],
   );
 
@@ -95,9 +98,9 @@ function MeusCursosPage() {
   const premiumCourses: VitrineCourse[] = useMemo(() => {
     const all: VitrineCourse[] = [];
     const seen = new Set<string>();
-    const shelves = (vitrineData?.shelves || []) as { courses: VitrineCourse[] }[];
+    const shelves = (Array.isArray(vitrineData?.shelves) ? vitrineData.shelves : []) as { courses: VitrineCourse[] }[];
     for (const shelf of shelves) {
-      for (const c of shelf.courses || []) {
+      for (const c of Array.isArray(shelf?.courses) ? shelf.courses : []) {
         if (!c?.id || ownedIds.has(c.id) || seen.has(c.id)) continue;
         seen.add(c.id);
         all.push(c);
