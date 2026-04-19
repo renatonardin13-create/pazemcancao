@@ -3,6 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { BookOpen, BookOpenCheck, Clock3, Lock, Play, ShoppingCart } from "lucide-react";
 import { PosterCard } from "@/components/PosterCard";
 import { UnlockModal } from "@/components/UnlockModal";
+import { isContentUnlocked, isContentComingSoon } from "@/lib/vitrine-access";
 import type { VitrineCourse } from "./types";
 
 interface VitrineCourseCardProps {
@@ -20,8 +21,8 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
   const [unlockOpen, setUnlockOpen] = useState(false);
 
   const progress = course.progress_pct ?? 0;
-  const isReleased = ["enrolled", "in_progress", "completed"].includes(course.access_state || "");
-  const isNotLaunched = course.access_state === "coming_soon";
+  const isReleased = isContentUnlocked(course);
+  const isNotLaunched = isContentComingSoon(course);
   const isLocked = !isReleased && !isNotLaunched;
   const isCompleted = progress >= 100;
   const isInProgress = progress > 0 && progress < 100;
