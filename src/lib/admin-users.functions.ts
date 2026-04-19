@@ -22,13 +22,32 @@ export const listApprovedBuyers = createServerFn({ method: 'POST' })
       throw new Error('Acesso não autorizado');
     }
 
-    // Fetch approved buyers
-    const { data: buyers, error } = await supabaseAdmin
+    // Fetch admin user IDs and emails to EXCLUDE from the student list
+    const { data: adminRoles } = await supabaseAdmin
+      .from('user_roles')
+      .select('user_id')
+      .eq('role', 'admin');
+    const adminUserIds = new Set((adminRoles || []).map((r: any) => r.user_id));
+
+    const { data: adminAuthUsers } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+    const adminEmails = new Set<string>();
+    for (const u of adminAuthUsers?.users || []) {
+      if (u.email && adminUserIds.has(u.id)) adminEmails.add(u.email.toLowerCase());
+    }
+    // Hardcoded admin safety net
+    adminEmails.add('renatonardin13@gmail.com');
+
+    // Fetch approved buyers (exclude admins)
+    const { data: buyersRaw, error } = await supabaseAdmin
       .from('approved_buyers')
       .select('*')
       .order('created_at', { ascending: false });
 
     if (error) throw new Error(error.message);
+
+    const buyers = (buyersRaw || []).filter(
+      (b: any) => !adminEmails.has((b.email || '').toLowerCase())
+    );
 
     // Fetch active sessions
     const { data: sessions } = await supabaseAdmin
@@ -36,11 +55,10 @@ export const listApprovedBuyers = createServerFn({ method: 'POST' })
       .select('email, is_valid, last_active_at')
       .eq('is_valid', true);
 
-    // Fetch ALL active enrollments (with email for matching)
+    // Fetch ALL enrollments (any status — we surface per-course status to the UI)
     const { data: enrollments } = await supabaseAdmin
       .from('enrollments')
-      .select('email, user_id, course_id, status, progress_percentage')
-      .eq('status', 'active');
+      .select('email, user_id, course_id, status, progress_percentage, expires_at, access_origin');
 
     // Fetch lesson progress for all users
     const { data: lessonProgress } = await supabaseAdmin
