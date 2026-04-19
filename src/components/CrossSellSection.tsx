@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getCrossSellItems, type CrossSellItem } from "@/lib/cross-sell.functions";
 import { logFunnelClick } from "@/lib/funnel-analytics.functions";
-import { Sparkles, Play, BookOpen, Music } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import { CourseShelfCard } from "@/components/CourseShelfCard";
-import { ContentCard } from "@/components/ContentCard";
+import { CoursePosterCard } from "@/components/vitrine/CoursePosterCard";
+import type { VitrineCourse } from "@/components/vitrine/types";
 import { useRef, useState, useCallback, useEffect } from "react";
 
 interface CrossSellSectionProps {
