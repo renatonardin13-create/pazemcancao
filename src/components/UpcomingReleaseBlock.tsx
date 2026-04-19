@@ -129,8 +129,11 @@ function formatRemaining(ms: number) {
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
-export function UpcomingReleaseBlock({ tracks = [] as RawTrack[] }: { tracks?: RawTrack[] }) {
-  const items = useMemo(() => pickMixedUpcoming(tracks), [tracks]);
+export function UpcomingReleaseBlock({ tracks = [] as RawTrack[], excludeIds = [] }: { tracks?: RawTrack[]; excludeIds?: string[] }) {
+  const items = useMemo(() => {
+    const exclude = new Set(excludeIds.map(String));
+    return pickMixedUpcoming(tracks).filter((it) => !exclude.has(it.id));
+  }, [tracks, excludeIds]);
   const [now, setNow] = useState<number>(() => Date.now());
 
   useEffect(() => {

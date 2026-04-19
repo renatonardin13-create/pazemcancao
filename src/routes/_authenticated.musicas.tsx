@@ -521,7 +521,12 @@ function MusicLibraryPage() {
               </section>
             )}
 
-            {!categoryFilter && <UpcomingReleaseBlock tracks={tracks} />}
+            {!categoryFilter && (
+              <UpcomingReleaseBlock
+                tracks={tracks}
+                excludeIds={filteredTracks.map((t: any) => String(t?.id)).filter(Boolean)}
+              />
+            )}
 
             {shouldShowPlaylistsSection && (
             <section>
