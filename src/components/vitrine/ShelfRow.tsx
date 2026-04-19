@@ -5,13 +5,16 @@ import type { VitrineCourse } from "./types";
 
 interface Props {
   title: string;
-  courses: VitrineCourse[];
+  courses?: VitrineCourse[] | null;
 }
 
 export function ShelfRow({ title, courses }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(false);
+  const safeCourses = Array.isArray(courses)
+    ? courses.filter((course): course is VitrineCourse => Boolean(course?.id))
+    : [];
 
   const updateScrollState = () => {
     const el = scrollRef.current;
@@ -30,7 +33,7 @@ export function ShelfRow({ title, courses }: Props) {
       el.removeEventListener("scroll", updateScrollState);
       window.removeEventListener("resize", updateScrollState);
     };
-  }, [courses.length]);
+  }, [safeCourses.length]);
 
   const scroll = (dir: "left" | "right") => {
     const el = scrollRef.current;
@@ -39,7 +42,7 @@ export function ShelfRow({ title, courses }: Props) {
     el.scrollBy({ left: dir === "left" ? -amount : amount, behavior: "smooth" });
   };
 
-  if (!courses.length) return null;
+  if (!safeCourses.length) return null;
 
   return (
     <section className="group/shelf relative space-y-3">
@@ -63,7 +66,7 @@ export function ShelfRow({ title, courses }: Props) {
           ref={scrollRef}
           className="scrollbar-hide flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-smooth px-4 pb-2 sm:gap-4 sm:px-8 lg:px-12"
         >
-          {courses.map((course) => (
+          {safeCourses.map((course) => (
             <CoursePosterCard key={course.id} course={course} />
           ))}
         </div>
