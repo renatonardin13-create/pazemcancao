@@ -70,38 +70,41 @@ export const listApprovedBuyers = createServerFn({ method: 'POST' })
       .from('lessons')
       .select('id, course_id');
 
+    // Fetch course titles
+    const { data: coursesData } = await supabaseAdmin
+      .from('courses')
+      .select('id, title');
+    const courseTitles = new Map<string, string>();
+    for (const c of coursesData || []) courseTitles.set(c.id, c.title);
+
     // Build lessons-per-course map
     const lessonsPerCourse = new Map<string, number>();
     for (const l of allLessons || []) {
       lessonsPerCourse.set(l.course_id, (lessonsPerCourse.get(l.course_id) || 0) + 1);
     }
 
-    // Fetch auth users to map email → user_id
-    const { data: authUsersData } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+    // Map email → user_id (reuse adminAuthUsers list — already paged 1000)
     const emailToUserId = new Map<string, string>();
-    for (const u of authUsersData?.users || []) {
+    for (const u of adminAuthUsers?.users || []) {
       if (u.email) emailToUserId.set(u.email.toLowerCase(), u.id);
     }
 
-    // Build enrollment count and progress per email
-    const enrollmentsByEmail = new Map<string, { courseCount: number; courseIds: string[] }>();
-    for (const e of enrollments || []) {
+    // Group enrollments keeping FULL records (not just count)
+    type EnrollmentRow = { email: string | null; user_id: string | null; course_id: string; status: string; expires_at: string | null; access_origin: string };
+    const enrollmentsByEmail = new Map<string, EnrollmentRow[]>();
+    const enrollmentsByUserId = new Map<string, EnrollmentRow[]>();
+    for (const e of (enrollments || []) as EnrollmentRow[]) {
       const email = e.email?.toLowerCase();
-      if (!email) continue;
-      const entry = enrollmentsByEmail.get(email) || { courseCount: 0, courseIds: [] };
-      entry.courseCount++;
-      entry.courseIds.push(e.course_id);
-      enrollmentsByEmail.set(email, entry);
-    }
-
-    // Also map by user_id for enrollments without email
-    const enrollmentsByUserId = new Map<string, { courseCount: number; courseIds: string[] }>();
-    for (const e of enrollments || []) {
-      if (!e.user_id) continue;
-      const entry = enrollmentsByUserId.get(e.user_id) || { courseCount: 0, courseIds: [] };
-      entry.courseCount++;
-      entry.courseIds.push(e.course_id);
-      enrollmentsByUserId.set(e.user_id, entry);
+      if (email) {
+        const arr = enrollmentsByEmail.get(email) || [];
+        arr.push(e);
+        enrollmentsByEmail.set(email, arr);
+      }
+      if (e.user_id) {
+        const arr = enrollmentsByUserId.get(e.user_id) || [];
+        arr.push(e);
+        enrollmentsByUserId.set(e.user_id, arr);
+      }
     }
 
     // Build completed lessons per user_id per course
@@ -113,30 +116,54 @@ export const listApprovedBuyers = createServerFn({ method: 'POST' })
       courseMap.set(p.course_id, (courseMap.get(p.course_id) || 0) + 1);
     }
 
+    // Helper: derive effective per-course status
+    const now = Date.now();
+    const deriveStatus = (e: EnrollmentRow): string => {
+      if (e.status === 'active' && e.expires_at && new Date(e.expires_at).getTime() < now) return 'expired';
+      return e.status;
+    };
+
     // Enrich each buyer
-    const enrichedBuyers = (buyers || []).map((buyer: any) => {
+    const enrichedBuyers = buyers.map((buyer: any) => {
       const email = buyer.email?.toLowerCase();
       const authUserId = email ? emailToUserId.get(email) : null;
 
-      // Merge enrollment data from email + user_id
-      const byEmail = enrollmentsByEmail.get(email || '') || { courseCount: 0, courseIds: [] };
-      const byUid = authUserId ? (enrollmentsByUserId.get(authUserId) || { courseCount: 0, courseIds: [] }) : { courseCount: 0, courseIds: [] };
+      // Merge enrollment rows from email + user_id (dedupe by course_id, prefer active)
+      const merged = new Map<string, EnrollmentRow>();
+      for (const e of [...(enrollmentsByEmail.get(email || '') || []), ...(authUserId ? enrollmentsByUserId.get(authUserId) || [] : [])]) {
+        const existing = merged.get(e.course_id);
+        if (!existing || (existing.status !== 'active' && e.status === 'active')) {
+          merged.set(e.course_id, e);
+        }
+      }
 
-      // Unique course ids
-      const allCourseIds = Array.from(new Set([...byEmail.courseIds, ...byUid.courseIds]));
-      const courseCount = allCourseIds.length;
+      const courses = Array.from(merged.values()).map((e) => ({
+        course_id: e.course_id,
+        course_title: courseTitles.get(e.course_id) || 'Curso removido',
+        status: deriveStatus(e),
+        access_origin: e.access_origin,
+        expires_at: e.expires_at,
+      }));
 
-      // Calculate overall progress
+      const activeCourses = courses.filter((c) => c.status === 'active');
+      const courseCount = activeCourses.length;
+
+      // Coherent overall status
+      let overallStatus: string;
+      if (!buyer.access_enabled) overallStatus = 'blocked';
+      else if (activeCourses.length > 0) overallStatus = 'active';
+      else if (courses.some((c) => ['refunded', 'chargedback', 'cancelled'].includes(c.status))) overallStatus = 'refunded';
+      else if (courses.some((c) => c.status === 'expired')) overallStatus = 'expired';
+      else overallStatus = 'no_access';
+
+      // Progress only over active courses
       let totalLessons = 0;
       let completedLessons = 0;
       if (authUserId) {
         const userCompleted = completedByUser.get(authUserId);
-        for (const courseId of allCourseIds) {
-          const courseLessons = lessonsPerCourse.get(courseId) || 0;
-          totalLessons += courseLessons;
-          if (userCompleted) {
-            completedLessons += userCompleted.get(courseId) || 0;
-          }
+        for (const c of activeCourses) {
+          totalLessons += lessonsPerCourse.get(c.course_id) || 0;
+          if (userCompleted) completedLessons += userCompleted.get(c.course_id) || 0;
         }
       }
       const progressPct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
@@ -145,6 +172,8 @@ export const listApprovedBuyers = createServerFn({ method: 'POST' })
         ...buyer,
         course_count: courseCount,
         progress_pct: progressPct,
+        overall_status: overallStatus,
+        courses,
       };
     });
 
