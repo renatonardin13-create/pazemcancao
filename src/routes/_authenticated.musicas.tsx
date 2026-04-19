@@ -544,7 +544,7 @@ function MusicLibraryPage() {
             {!categoryFilter && null}
 
             {shouldShowPlaylistsSection && (
-            <section className="space-y-4">
+            <section id="playlists-section" className="space-y-4 scroll-mt-20">
               <div className="flex items-end justify-between gap-3">
                 <div className="flex items-center gap-2">
                   <Disc3 className="h-4 w-4 text-primary/70" />
@@ -552,7 +552,13 @@ function MusicLibraryPage() {
                     Playlists <span className="text-muted-foreground/50 normal-case tracking-normal">(Playbacks)</span>
                   </h2>
                 </div>
-                <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/80">Ver todas</span>
+                <button
+                  type="button"
+                  onClick={() => setActivePlaylistId(playlists[0]?.id ?? null)}
+                  className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/80 transition hover:text-primary"
+                >
+                  Ver todas
+                </button>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
