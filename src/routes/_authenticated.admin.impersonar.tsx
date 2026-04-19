@@ -13,6 +13,13 @@ import { setImpersonationState } from "@/components/ImpersonationBanner";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const Route = createFileRoute("/_authenticated/admin/impersonar")({
   component: ImpersonarPage,
@@ -20,6 +27,8 @@ export const Route = createFileRoute("/_authenticated/admin/impersonar")({
 
 function ImpersonarPage() {
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [courseFilter, setCourseFilter] = useState<string>("all");
   const [pendingEmail, setPendingEmail] = useState<string | null>(null);
 
   const listBuyersFn = useServerFn(listApprovedBuyers);
@@ -63,18 +72,43 @@ function ImpersonarPage() {
     },
   });
 
+  const courseOptions = useMemo(() => {
+    const list = (buyersQuery.data ?? []) as any[];
+    const map = new Map<string, string>();
+    for (const b of list) {
+      for (const c of b.courses || []) {
+        if (c.course_id && !map.has(c.course_id)) {
+          map.set(c.course_id, c.course_title || "Curso");
+        }
+      }
+    }
+    return Array.from(map, ([id, title]) => ({ id, title })).sort((a, b) =>
+      a.title.localeCompare(b.title)
+    );
+  }, [buyersQuery.data]);
+
   const filteredBuyers = useMemo(() => {
     const list = (buyersQuery.data ?? []) as any[];
     const q = search.trim().toLowerCase();
-    if (!q) return list.slice(0, 50);
-    return list
-      .filter(
-        (b) =>
-          b.email?.toLowerCase().includes(q) ||
-          b.nome?.toLowerCase().includes(q)
-      )
-      .slice(0, 50);
-  }, [buyersQuery.data, search]);
+    const filtered = list.filter((b) => {
+      if (q && !(b.email?.toLowerCase().includes(q) || b.nome?.toLowerCase().includes(q))) {
+        return false;
+      }
+      if (statusFilter !== "all") {
+        if (statusFilter === "trial" && !b.is_trial) return false;
+        if (statusFilter === "blocked" && b.access_enabled !== false) return false;
+        if (statusFilter === "active" && (b.access_enabled === false || b.is_trial)) return false;
+      }
+      if (courseFilter !== "all") {
+        const has = (b.courses || []).some(
+          (c: any) => c.course_id === courseFilter && c.status === "active"
+        );
+        if (!has) return false;
+      }
+      return true;
+    });
+    return filtered.slice(0, 50);
+  }, [buyersQuery.data, search, statusFilter, courseFilter]);
 
   const handleStart = (email: string) => {
     if (!confirm(
@@ -104,14 +138,34 @@ function ImpersonarPage() {
 
       {/* Lista de alunos */}
       <section className="rounded-xl border border-border/40 bg-card/40 p-4">
-        <div className="mb-3 flex items-center gap-2">
-          <Search className="h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Buscar por email ou nome..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="h-9"
-          />
+        <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center">
+          <div className="flex flex-1 items-center gap-2">
+            <Search className="h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Buscar por email ou nome..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="h-9"
+            />
+          </div>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="h-9 w-full sm:w-40"><SelectValue placeholder="Status" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos status</SelectItem>
+              <SelectItem value="active">Ativo</SelectItem>
+              <SelectItem value="blocked">Bloqueado</SelectItem>
+              <SelectItem value="trial">Trial</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={courseFilter} onValueChange={setCourseFilter}>
+            <SelectTrigger className="h-9 w-full sm:w-56"><SelectValue placeholder="Curso" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos cursos</SelectItem>
+              {courseOptions.map((c) => (
+                <SelectItem key={c.id} value={c.id}>{c.title}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         {buyersQuery.isLoading ? (
