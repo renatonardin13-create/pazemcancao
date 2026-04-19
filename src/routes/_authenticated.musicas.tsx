@@ -463,6 +463,9 @@ function MusicLibraryPage() {
                       );
                     }
 
+                    const highlightIds = new Set(
+                      (groups.find((g) => g.key === "__destaques")?.items || []).map((t: any) => String(t?.id)),
+                    );
                     return groups.map((group) => (
                       <div key={group.key} className="space-y-3">
                         <div className="flex items-end justify-between gap-3">
@@ -477,7 +480,11 @@ function MusicLibraryPage() {
                             >
                               Ver tudo
                             </Link>
-                          ) : null}
+                          ) : (
+                            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/80">
+                              Ver todos
+                            </span>
+                          )}
                         </div>
                         <PosterShelfRow>
                           {group.items.map(dbTrackToPlayerTrack).map((pt, idx) => (
@@ -486,6 +493,14 @@ function MusicLibraryPage() {
                             </PosterShelfItem>
                           ))}
                         </PosterShelfRow>
+                        {group.key === "__destaques" && (
+                          <div className="pt-4">
+                            <UpcomingReleaseBlock
+                              tracks={tracks}
+                              excludeIds={Array.from(highlightIds)}
+                            />
+                          </div>
+                        )}
                       </div>
                     ));
                   })()}
