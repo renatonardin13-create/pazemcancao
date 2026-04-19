@@ -8,7 +8,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { getStudentShelves } from "@/lib/shelves.functions";
-import type { VitrineCourse } from "@/components/vitrine/types";
+import type { VitrineCourse, VitrineShelf } from "@/components/vitrine/types";
 
 export function useCatalogProducts() {
   const query = useQuery({
@@ -18,12 +18,18 @@ export function useCatalogProducts() {
     refetchOnWindowFocus: true,
   });
 
+  const safeShelves: VitrineShelf[] = useMemo(
+    () =>
+      (query.data?.shelves ?? []).filter(
+        (shelf): shelf is VitrineShelf => !!shelf && Array.isArray(shelf.courses),
+      ),
+    [query.data],
+  );
+
   const products: VitrineCourse[] = useMemo(() => {
     const seen = new Set<string>();
     const out: VitrineCourse[] = [];
-    for (const shelf of (query.data?.shelves || []).filter(
-      (value): value is { courses: VitrineCourse[] } => !!value && Array.isArray(value.courses),
-    )) {
+    for (const shelf of safeShelves) {
       for (const c of shelf.courses) {
         if (seen.has(c.id)) continue;
         if (c.product_access_state === "hidden") continue;
@@ -32,13 +38,11 @@ export function useCatalogProducts() {
       }
     }
     return out;
-  }, [query.data]);
+  }, [safeShelves]);
 
   return {
     products,
-    shelves: (query.data?.shelves || []).filter(
-      (value): value is { courses: VitrineCourse[] } & typeof value => !!value && Array.isArray(value.courses),
-    ),
+    shelves: safeShelves,
     featured: query.data?.featuredCourse,
     isLoading: query.isLoading,
     isError: query.isError,
