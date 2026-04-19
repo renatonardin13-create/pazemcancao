@@ -346,15 +346,33 @@ function AdminUsersPage() {
     const normalized = (status || 'none').toLowerCase();
     const map: Record<string, { label: string; cls: string }> = {
       active: { label: 'Ativo', cls: 'bg-emerald-500/15 text-emerald-400/80' },
+      trial: { label: 'Teste', cls: 'bg-sky-500/15 text-sky-400/80' },
       refunded: { label: 'Reembolsado', cls: 'bg-rose-500/15 text-rose-400/80' },
       chargedback: { label: 'Chargeback', cls: 'bg-rose-500/15 text-rose-400/80' },
+      chargeback: { label: 'Chargeback', cls: 'bg-rose-500/15 text-rose-400/80' },
       cancelled: { label: 'Cancelado', cls: 'bg-slate-500/15 text-slate-300/80' },
+      canceled: { label: 'Cancelado', cls: 'bg-slate-500/15 text-slate-300/80' },
       expired: { label: 'Vencido', cls: 'bg-amber-500/15 text-amber-400/80' },
       blocked: { label: 'Bloqueado', cls: 'bg-destructive/15 text-destructive/80' },
       none: { label: 'Sem acesso', cls: 'bg-muted/20 text-muted-foreground/70' },
     };
     const { label, cls } = map[normalized] || map.none;
-    return <Badge className={`${cls} border-0 text-[11px]`}>{label}</Badge>;
+    return <Badge className={`${cls} border-0 text-[10px] px-1.5 py-0 h-4`}>{label}</Badge>;
+  };
+
+  const renderOriginBadge = (origin?: string | null) => {
+    const normalized = (origin || 'manual').toLowerCase();
+    const map: Record<string, { label: string; cls: string }> = {
+      manual: { label: 'Manual', cls: 'bg-violet-500/15 text-violet-300/80' },
+      webhook: { label: 'Webhook', cls: 'bg-blue-500/15 text-blue-300/80' },
+      kiwify: { label: 'Kiwify', cls: 'bg-blue-500/15 text-blue-300/80' },
+      hotmart: { label: 'Hotmart', cls: 'bg-orange-500/15 text-orange-300/80' },
+      cakto: { label: 'Cakto', cls: 'bg-teal-500/15 text-teal-300/80' },
+      trial: { label: 'Trial', cls: 'bg-sky-500/15 text-sky-300/80' },
+      test: { label: 'Teste', cls: 'bg-sky-500/15 text-sky-300/80' },
+    };
+    const { label, cls } = map[normalized] || { label: normalized, cls: 'bg-muted/20 text-muted-foreground/70' };
+    return <Badge className={`${cls} border-0 text-[10px] px-1.5 py-0 h-4`}>{label}</Badge>;
   };
 
   const totalUsers = buyers.length;
