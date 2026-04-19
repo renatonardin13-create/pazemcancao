@@ -89,14 +89,6 @@ export function CoursePosterCard({ course }: Props) {
 
           {/* Title */}
           <div className="absolute inset-x-0 bottom-0 p-3">
-            <h3 className="line-clamp-2 font-display text-sm font-semibold text-white drop-shadow-lg">
-              {title}
-            </h3>
-            {categoryName && (
-              <p className="mt-0.5 line-clamp-1 text-[10px] uppercase tracking-wider text-primary/80">
-                {categoryName}
-              </p>
-            )}
             {/* Progress bar */}
             {isInProgress && (
               <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/20">
