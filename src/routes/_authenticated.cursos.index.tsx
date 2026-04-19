@@ -16,6 +16,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { getMyProfile } from "@/lib/profile.functions";
 import { getMyCoursesData } from "@/lib/my-courses.functions";
 import { getContinueWatching } from "@/lib/continue-watching.functions";
+import { getStudentVitrineData } from "@/lib/student-vitrine.functions";
 
 export const Route = createFileRoute("/_authenticated/cursos/")({
   component: MeusCursosPage,
@@ -45,6 +46,13 @@ function MeusCursosPage() {
     queryKey: ["my-courses-library", "continue-watching"],
     queryFn: () => getContinueWatching(),
     staleTime: 30_000,
+    refetchOnWindowFocus: false,
+  });
+
+  const { data: vitrineData } = useQuery({
+    queryKey: ["my-courses-library", "premium-catalog"],
+    queryFn: () => getStudentVitrineData(),
+    staleTime: 60_000,
     refetchOnWindowFocus: false,
   });
 
@@ -82,6 +90,21 @@ function MeusCursosPage() {
     }
     return Array.from(map.entries()).filter(([, list]) => list.length > 0);
   }, [myCourses]);
+
+  // Conteúdo Premium: cursos da vitrine que o aluno ainda NÃO possui
+  const premiumCourses: VitrineCourse[] = useMemo(() => {
+    const all: VitrineCourse[] = [];
+    const seen = new Set<string>();
+    const shelves = (vitrineData?.shelves || []) as { courses: VitrineCourse[] }[];
+    for (const shelf of shelves) {
+      for (const c of shelf.courses || []) {
+        if (!c?.id || ownedIds.has(c.id) || seen.has(c.id)) continue;
+        seen.add(c.id);
+        all.push(c);
+      }
+    }
+    return all;
+  }, [vitrineData, ownedIds]);
 
   const searchResults = useMemo(() => {
     const term = search.trim().toLowerCase();
@@ -175,6 +198,10 @@ function MeusCursosPage() {
                   <ShelfRow key={cat} title={cat} courses={list} />
                 ))}
               {completed.length > 0 && <ShelfRow title="Concluídos" courses={completed} />}
+
+              {premiumCourses.length > 0 && (
+                <ShelfRow title="Conteúdo Premium" courses={premiumCourses} />
+              )}
 
               {/* CTA explorar */}
               <div className="flex justify-center px-4 pt-6 sm:px-8 lg:px-12">
