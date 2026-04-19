@@ -1,6 +1,7 @@
 import { Store, Search } from "lucide-react";
 import { useMemo, useEffect } from "react";
 import { FooterLinks } from "@/components/FooterLinks";
+import { EmptyState } from "@/components/EmptyState";
 import { Input } from "@/components/ui/input";
 import { VitrineFeaturedBanner } from "./VitrineFeaturedBanner";
 import { VitrineShelfSection } from "./VitrineShelfSection";
@@ -78,21 +79,21 @@ export function VitrinePageContent({
   }, [filteredShelves, safeShelves]);
 
   return (
-    <div className="min-h-screen bg-background pb-28">
-      <div className="mx-auto w-full max-w-[1400px] px-4 pb-8 pt-8 sm:px-8 sm:pt-10 lg:px-12">
-        <div className="mb-6 flex animate-in items-center gap-3 fade-in slide-in-from-bottom-4 duration-600 sm:mb-8">
+    <div className="min-h-screen bg-background">
+      <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-6 px-4 pb-10 pt-8 sm:px-8 sm:pt-10 lg:px-12">
+        <div className="flex animate-in items-center gap-3 fade-in slide-in-from-bottom-4 duration-600">
           <Store className="h-7 w-7 text-gold" />
           <div>
             <h1 className="font-display text-2xl font-bold tracking-tight text-foreground/90 sm:text-3xl">
               Vitrine
             </h1>
             <p className="mt-0.5 text-[13px] text-muted-foreground/50">
-              Todas as prateleiras publicadas do admin, organizadas em linhas horizontais.
+              Cursos liberados e disponíveis para explorar.
             </p>
           </div>
         </div>
 
-        <div className="relative mb-6 max-w-sm">
+        <div className="relative max-w-sm">
           <Search className="absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/60" />
           <Input
             value={searchTerm}
@@ -103,32 +104,30 @@ export function VitrinePageContent({
         </div>
       </div>
 
-      {featuredCourse && typeof featuredCourse.id === "string" ? <VitrineFeaturedBanner course={featuredCourse} /> : null}
+      <div className="space-y-12 pb-28 sm:space-y-16 lg:space-y-20">
+        {featuredCourse && typeof featuredCourse.id === "string" ? <VitrineFeaturedBanner course={featuredCourse} /> : null}
 
-      {isLoading ? (
-        <div className="py-24 text-center">
-          <p className="animate-pulse text-xs uppercase tracking-[0.4em] text-muted-foreground/60">
-            Carregando vitrine...
-          </p>
-        </div>
-      ) : filteredShelves.length === 0 ? (
-        <div className="py-24 text-center">
-          <Store className="mx-auto mb-5 h-10 w-10 text-muted-foreground/50" />
-          <p className="text-sm text-muted-foreground/70">
-            {searchTerm
-              ? "Nenhum curso encontrado para esta busca."
-              : "Nenhum conteúdo disponível na vitrine no momento."}
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-12 sm:space-y-16 lg:space-y-20">
-          {filteredShelves.map((shelf) => (
-            <VitrineShelfSection key={shelf.id} shelf={shelf} />
-          ))}
-        </div>
-      )}
+        {isLoading ? (
+          <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12">
+            <EmptyState
+              icon={Store}
+              title="Carregando vitrine"
+              description="Estamos preparando seus cursos e prateleiras."
+            />
+          </div>
+        ) : filteredShelves.length === 0 ? (
+          <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12">
+            <EmptyState
+              icon={Store}
+              title={searchTerm ? "Nenhum curso encontrado" : "Sua vitrine está vazia"}
+              description={searchTerm ? "Tente buscar por outro nome." : "Quando houver cursos publicados, eles aparecerão aqui."}
+            />
+          </div>
+        ) : (
+          filteredShelves.map((shelf) => <VitrineShelfSection key={shelf.id} shelf={shelf} />)
+        )}
+      </div>
 
       <FooterLinks />
     </div>
   );
-}
