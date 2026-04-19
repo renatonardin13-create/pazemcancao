@@ -146,10 +146,18 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
       linksByShelf.set(link.shelf_id, list);
     }
 
-    const builtShelves = shelves.map((shelf) => {
+    type BuiltShelf = {
+      id: string;
+      name: string;
+      sort_order: number;
+      shelf_type: 'admin';
+      courses: any[];
+    };
+
+    const builtShelves: BuiltShelf[] = shelves.map((shelf) => {
       const coursesForShelf = (linksByShelf.get(shelf.id) || [])
         .map((link) => courseMap.get(link.course_id))
-        .filter(Boolean);
+        .filter(Boolean) as any[];
 
       return {
         id: shelf.id,
