@@ -12,10 +12,14 @@ interface Props {
 export function CoursePosterCard({ course }: Props) {
   const navigate = useNavigate();
   const [modalOpen, setModalOpen] = useState(false);
+  if (!course?.id) return null;
+
   const access = getCourseAccessState(course);
   const isUnlocked = access === "unlocked";
   const isComingSoon = access === "coming_soon";
   const cover = course.cover_image_url || course.banner_image_url;
+  const title = course.title || "Curso sem título";
+  const categoryName = course.category_name || null;
   const progress = Number(course.progress_pct ?? 0);
   const isCompleted = isUnlocked && progress >= 100;
   const isInProgress = isUnlocked && progress > 0 && progress < 100;
@@ -49,7 +53,7 @@ export function CoursePosterCard({ course }: Props) {
           {cover ? (
             <img
               src={cover}
-              alt={course.title}
+              alt={title}
               loading="lazy"
               className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 ${
                 !isUnlocked ? "brightness-[0.55]" : ""
@@ -61,7 +65,7 @@ export function CoursePosterCard({ course }: Props) {
           ) : (
             <div className="flex h-full w-full items-center justify-center p-3 text-center">
               <span className="font-display text-sm font-semibold text-foreground/80">
-                {course.title}
+                {title}
               </span>
             </div>
           )}
@@ -86,11 +90,11 @@ export function CoursePosterCard({ course }: Props) {
           {/* Title */}
           <div className="absolute inset-x-0 bottom-0 p-3">
             <h3 className="line-clamp-2 font-display text-sm font-semibold text-white drop-shadow-lg">
-              {course.title}
+              {title}
             </h3>
-            {course.category_name && (
+            {categoryName && (
               <p className="mt-0.5 line-clamp-1 text-[10px] uppercase tracking-wider text-primary/80">
-                {course.category_name}
+                {categoryName}
               </p>
             )}
             {/* Progress bar */}
