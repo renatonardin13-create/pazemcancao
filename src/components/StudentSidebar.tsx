@@ -171,7 +171,7 @@ export function StudentSidebar() {
         <LogoBrand size="lg" showSubtitle />
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-4 pt-4 pb-3 space-y-1">
+      <nav className="flex-1 overflow-y-auto px-4 pt-2 pb-2 space-y-0.5">
         {mainItems.map((cfg) =>
           cfg.hasSubmenu ? (
             <div key={cfg.key}>{renderLouvoresSubmenu()}</div>
