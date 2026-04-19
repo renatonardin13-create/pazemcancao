@@ -105,7 +105,9 @@ export function VitrinePageContent({
       </div>
 
       <div className="space-y-12 pb-28 sm:space-y-16 lg:space-y-20">
-        {featuredCourse && typeof featuredCourse.id === "string" ? <VitrineFeaturedBanner course={featuredCourse} /> : null}
+        {featuredCourse && typeof featuredCourse.id === "string" ? (
+          <VitrineFeaturedBanner course={featuredCourse} />
+        ) : null}
 
         {isLoading ? (
           <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12">
@@ -131,3 +133,4 @@ export function VitrinePageContent({
       <FooterLinks />
     </div>
   );
+}
