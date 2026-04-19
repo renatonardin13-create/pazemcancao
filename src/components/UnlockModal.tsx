@@ -51,10 +51,15 @@ export function UnlockModal({
   const navigate = useNavigate();
 
   const handlePrimary = () => {
-    onOpenChange(false);
-    if (productId) {
-      navigate({ to: "/produto/$courseId", params: { courseId: productId } });
+    if (comingSoon) return;
+    // Sem productId interno → leva direto para a página de vendas (fallback elegante)
+    if (!productId) {
+      if (checkoutUrl) window.open(checkoutUrl, "_blank", "noopener,noreferrer");
+      onOpenChange(false);
+      return;
     }
+    onOpenChange(false);
+    navigate({ to: "/produto/$courseId", params: { courseId: productId } });
   };
 
   const handleSecondary = () => {
@@ -84,8 +89,12 @@ export function UnlockModal({
 
   const accessLabel = isSubscription ? "Assinatura" : "Pagamento único";
   const accessHint = isSubscription ? "acesso recorrente" : "sem mensalidade";
-  const primaryDisabled = !productId;
-  const primaryLabel = comingSoon ? "Ver detalhes" : "Ver detalhes do produto";
+  const primaryDisabled = comingSoon || (!productId && !checkoutUrl);
+  const primaryLabel = comingSoon
+    ? "Em breve"
+    : !productId && checkoutUrl
+      ? "Ir para página de vendas"
+      : "Ver detalhes do produto";
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

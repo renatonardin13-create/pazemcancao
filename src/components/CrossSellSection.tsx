@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getCrossSellItems, type CrossSellItem } from "@/lib/cross-sell.functions";
 import { logFunnelClick } from "@/lib/funnel-analytics.functions";
-import { Sparkles, Play, BookOpen, Music } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import { CourseShelfCard } from "@/components/CourseShelfCard";
-import { ContentCard } from "@/components/ContentCard";
+import { CoursePosterCard } from "@/components/vitrine/CoursePosterCard";
+import type { VitrineCourse } from "@/components/vitrine/types";
 import { useRef, useState, useCallback, useEffect } from "react";
 
 interface CrossSellSectionProps {
@@ -111,12 +111,9 @@ export function CrossSellSection({
 }
 
 /**
- * Adapta um item de cross-sell para o card-base correto:
- * - course   → CourseShelfCard
- * - content  → ContentCard
- * - track    → ContentCard (renderizado como material para padronização)
- *
- * Padronização total: nenhum card manual; tudo passa pelos componentes oficiais.
+ * Card unificado: usa o CoursePosterCard da Vitrine para todos os tipos
+ * (course/content/track), garantindo o mesmo visual premium e o modal
+ * "Ir para página de vendas" para itens bloqueados.
  */
 function CrossSellCard({ item, context }: { item: CrossSellItem; context?: string }) {
   const trackClick = useCallback(() => {
@@ -131,59 +128,23 @@ function CrossSellCard({ item, context }: { item: CrossSellItem; context?: strin
     }).catch(() => {});
   }, [item.id, item.type, item.is_locked, context]);
 
-  // Largura padrão das prateleiras horizontais (mantida para snap-scroll).
-  const widthClass = "w-[170px] sm:w-[200px] md:w-[210px] lg:w-[220px] xl:w-[240px] shrink-0 snap-start";
-
-  if (item.type === "course") {
-    const courseLike = {
-      id: item.id,
-      title: item.title,
-      cover_image_url: item.cover_url,
-      sales_page_url: item.sales_page_url,
-      access_state: item.is_locked ? "locked" : "enrolled",
-      progress_pct: 0,
-      total_lessons: 0,
-      short_description: item.category || "",
-      category_name: item.category || "",
-    };
-    return (
-      <div className={widthClass} onClickCapture={trackClick}>
-        <CourseShelfCard course={courseLike} />
-      </div>
-    );
-  }
-
-  const TypeIcon = item.type === "track" ? Music : item.type === "content" ? BookOpen : Play;
-  const contentLike = {
+  const courseLike = {
     id: item.id,
     title: item.title,
-    cover_url: item.cover_url,
-    card_cover_url: item.cover_url,
-    description: item.category || "",
-    sales_page_url: item.sales_page_url,
-    is_free: !item.is_locked,
-    unlocked: !item.is_locked,
-    effectiveAccessMode: item.is_locked ? "pago" : "gratuito",
-    content_type: item.type === "track" ? "audio" : "video",
-    locked_label: "Conteúdo Premium",
-    created_at: new Date().toISOString(),
-    launch_mode: "none",
-    is_active: true,
-  };
+    cover_image_url: item.cover_url,
+    banner_image_url: item.cover_url,
+    sales_page_url: item.sales_page_url || null,
+    checkout_url: item.sales_page_url || null,
+    access_state: item.is_locked ? "locked" : "unlocked",
+    progress_pct: 0,
+    total_lessons: 0,
+    short_description: item.category || "",
+    category_name: item.category || "",
+  } as unknown as VitrineCourse;
 
   return (
-    <div className={widthClass} onClickCapture={trackClick}>
-      <ContentCard
-        item={contentLike}
-        index={0}
-        hasAccess={!item.is_locked}
-        gradient={
-          item.is_locked
-            ? "from-stone-900/40 via-zinc-950/30 to-neutral-950/50"
-            : "from-sky-900/40 via-blue-950/30 to-slate-950/50"
-        }
-        TypeIcon={TypeIcon}
-      />
+    <div onClickCapture={trackClick} className="shrink-0 snap-start">
+      <CoursePosterCard course={courseLike} />
     </div>
   );
 }
