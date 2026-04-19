@@ -478,9 +478,13 @@ function MusicLibraryPage() {
                               Ver tudo
                             </Link>
                           ) : (
-                            <span className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/80">
+                            <button
+                              type="button"
+                              onClick={() => document.getElementById("playlists-section")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                              className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/80 transition hover:text-primary"
+                            >
                               Ver todos
-                            </span>
+                            </button>
                           )}
                         </div>
                         <PosterShelfRow>
