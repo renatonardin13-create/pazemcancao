@@ -1548,6 +1548,54 @@ export type Database = {
         }
         Relationships: []
       }
+      vitrine_hero_banners: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string
+          is_active: boolean
+          primary_cta_label: string | null
+          primary_cta_url: string | null
+          secondary_cta_label: string | null
+          secondary_cta_url: string | null
+          sort_order: number
+          subtitle: string | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url: string
+          is_active?: boolean
+          primary_cta_label?: string | null
+          primary_cta_url?: string | null
+          secondary_cta_label?: string | null
+          secondary_cta_url?: string | null
+          sort_order?: number
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string
+          is_active?: boolean
+          primary_cta_label?: string | null
+          primary_cta_url?: string | null
+          secondary_cta_label?: string | null
+          secondary_cta_url?: string | null
+          sort_order?: number
+          subtitle?: string | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       webhook_logs: {
         Row: {
           created_at: string
