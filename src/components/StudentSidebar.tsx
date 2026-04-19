@@ -2,7 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { listActiveTracks } from "@/lib/tracks.functions";
-import { useProjectMode, type ModuleKey } from "@/hooks/use-project-mode";
+import { useProjectMode } from "@/hooks/use-project-mode";
 import { LogoBrand } from "./LogoBrand";
 import {
   Store,
@@ -19,7 +19,7 @@ import {
   Rocket,
   type LucideIcon,
 } from "lucide-react";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 
 /** Static lookup: slug → icon, route, prefix-match, submenu flag */
@@ -57,11 +57,11 @@ const LOUVOR_CATEGORY_LABELS: Record<(typeof OFFICIAL_LOUVOR_CATEGORIES)[number]
 
 export function StudentSidebar() {
   const { logout, isAdmin, adminLoading } = useAuth();
-  const { moduleInfo, isLoading: modulesLoading, dbModules } = useProjectMode();
+  const { dbModules } = useProjectMode();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const { data: tracksData, error: tracksError, isLoading: tracksLoading } = useQuery({
+  const { data: tracksData } = useQuery({
     queryKey: ["tracks-active"],
     queryFn: () => listActiveTracks(),
     staleTime: 60_000,
@@ -122,15 +122,6 @@ export function StudentSidebar() {
         : "text-foreground/50 hover:text-foreground/80 hover:bg-white/[0.03] ring-1 ring-transparent hover:ring-white/[0.04]"
     );
 
-  const subItemClass = (active: boolean) =>
-    cn(
-      "flex items-center gap-3 rounded-xl px-4 py-2.5 ml-8 text-[13.5px] font-medium tracking-tight transition-all duration-400",
-      active
-        ? "text-gold/90 bg-gold/[0.07] border-l-2 border-gold/40"
-        : "text-muted-foreground/45 hover:text-foreground/60 hover:bg-white/[0.03] border-l-2 border-transparent hover:border-white/[0.06]"
-    );
-
-  /** Render the Louvores submenu with categories */
   const renderLouvoresSubmenu = () => {
     const currentCategoriaRaw = (location.search as any)?.categoria as string | undefined;
     const currentCategoria = typeof currentCategoriaRaw === "string" ? currentCategoriaRaw.trim().toLowerCase() : "";
@@ -150,12 +141,10 @@ export function StudentSidebar() {
           <Music2 className="h-[22px] w-[22px] shrink-0" />
           Louvores
         </Link>
-
       </div>
     );
   };
 
-  /** Render a standard menu item */
   const renderMenuItem = (cfg: { key: string; label: string; icon: LucideIcon; to: string; matchPrefix: boolean }) => {
     const Icon = cfg.icon;
     const active = cfg.matchPrefix ? isActivePrefix(cfg.to) : isActive(cfg.to);
@@ -173,49 +162,16 @@ export function StudentSidebar() {
     );
   };
 
-  // Separate perfil from main items (goes after separator)
   const mainItems = visibleMenuItems.filter((cfg) => cfg.key !== "perfil");
   const showPerfil = visibleMenuItems.some((cfg) => cfg.key === "perfil");
 
-  useEffect(() => {
-    console.log("[debug][StudentSidebar] auth/modules state", {
-      pathname: location.pathname,
-      adminLoading,
-      isAdmin,
-      modulesLoading,
-      dbModules,
-      moduleInfo,
-    });
-  }, [adminLoading, dbModules, isAdmin, location.pathname, moduleInfo, modulesLoading]);
-
-  useEffect(() => {
-    console.log("[debug][StudentSidebar] tracks query", {
-      isLoading: tracksLoading,
-      error: tracksError instanceof Error ? tracksError.message : tracksError,
-      tracksCount: allTracks.length,
-      visibleCategories,
-    });
-  }, [allTracks.length, tracksError, tracksLoading, visibleCategories]);
-
-  useEffect(() => {
-    console.log("[debug][StudentSidebar] menu state", {
-      visibleMenuItems,
-      mainItems,
-      showPerfil,
-      mobileOpen,
-    });
-  }, [mainItems, mobileOpen, showPerfil, visibleMenuItems]);
-
   const sidebarContent = (
     <div className="flex flex-col h-full">
-      {/* Logo */}
       <div className="px-7 pt-8 pb-6 border-b border-white/[0.06]">
         <LogoBrand size="lg" showSubtitle />
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-5 pt-6 pb-4 space-y-2">
-        {/* Dynamic module items */}
         {mainItems.map((cfg) =>
           cfg.hasSubmenu ? (
             <div key={cfg.key}>{renderLouvoresSubmenu()}</div>
@@ -224,10 +180,8 @@ export function StudentSidebar() {
           )
         )}
 
-        {/* Separator */}
         <div className="my-4 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
-        {/* Perfil */}
         {showPerfil && (
           <Link
             to="/perfil"
@@ -239,7 +193,6 @@ export function StudentSidebar() {
           </Link>
         )}
 
-        {/* Admin */}
         {!adminLoading && isAdmin && (
           <>
             <div className="my-4 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
@@ -255,7 +208,6 @@ export function StudentSidebar() {
         )}
       </nav>
 
-      {/* Logout */}
       <div className="px-5 py-6 border-t border-white/[0.06]">
         <button
           onClick={() => { logout(); setMobileOpen(false); }}
@@ -270,7 +222,6 @@ export function StudentSidebar() {
 
   return (
     <>
-      {/* Mobile trigger */}
       <div className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 py-2.5 bg-background/95 backdrop-blur-2xl border-b border-white/[0.06] md:hidden safe-area-top">
         <LogoBrand size="sm" />
         <button
@@ -282,7 +233,6 @@ export function StudentSidebar() {
         </button>
       </div>
 
-      {/* Mobile overlay */}
       {mobileOpen && (
         <div
           className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm md:hidden"
@@ -290,7 +240,6 @@ export function StudentSidebar() {
         />
       )}
 
-      {/* Mobile sidebar */}
       <div
         className={cn(
           "fixed top-0 left-0 z-50 h-full w-[320px] bg-sidebar border-r border-sidebar-border transform transition-transform duration-300 md:hidden",
@@ -300,7 +249,6 @@ export function StudentSidebar() {
         {sidebarContent}
       </div>
 
-      {/* Desktop sidebar */}
       <aside className="hidden md:flex md:flex-col md:w-[310px] md:min-h-screen bg-sidebar border-r border-white/[0.05] shrink-0">
         {sidebarContent}
       </aside>
