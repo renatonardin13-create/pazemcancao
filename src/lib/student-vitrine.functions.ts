@@ -164,16 +164,41 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
     const orphanCourses = courses
       .filter((course) => course.status === 'published' && !shownIds.has(course.id))
       .map((course) => courseMap.get(course.id))
-      .filter(Boolean);
+      .filter(Boolean) as any[];
 
     if (orphanCourses.length > 0) {
-      builtShelves.push({
-        id: '__catalog__',
-        name: builtShelves.length ? 'Todos os Cursos' : 'Catálogo',
-        sort_order: 9999,
-        shelf_type: 'admin' as const,
-        courses: orphanCourses,
+      // Agrupa órfãos pela categoria real do curso; cursos sem categoria
+      // caem em uma seção discreta "Sem categoria".
+      const groups = new Map<string, { name: string; courses: any[] }>();
+      const FALLBACK_KEY = '__uncategorized__';
+      const FALLBACK_NAME = 'Sem categoria';
+
+      for (const course of orphanCourses) {
+        const rawName = (course?.category_name || '').trim();
+        const key = rawName ? `cat:${rawName.toLowerCase()}` : FALLBACK_KEY;
+        const name = rawName || FALLBACK_NAME;
+        const bucket = groups.get(key) || { name, courses: [] };
+        bucket.courses.push(course);
+        groups.set(key, bucket);
+      }
+
+      const sortedKeys = Array.from(groups.keys()).sort((a, b) => {
+        if (a === FALLBACK_KEY) return 1;
+        if (b === FALLBACK_KEY) return -1;
+        return groups.get(a)!.name.localeCompare(groups.get(b)!.name, 'pt-BR');
       });
+
+      let offset = 0;
+      for (const key of sortedKeys) {
+        const group = groups.get(key)!;
+        builtShelves.push({
+          id: `__cat__${key}`,
+          name: group.name,
+          sort_order: 9000 + offset++,
+          shelf_type: 'admin' as const,
+          courses: group.courses,
+        });
+      }
     }
 
     const hero = heroBannerRes.data?.value as any;
