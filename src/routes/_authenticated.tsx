@@ -142,7 +142,7 @@ function AuthenticatedLayout() {
     );
   }
 
-  if (accessCheckFailed && !isMusicExperience) {
+  if (accessCheckFailed && !skipAccessGate) {
     return <RestrictedAccessCard />;
   }
 
