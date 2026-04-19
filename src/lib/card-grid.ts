@@ -2,25 +2,22 @@
  * Classe única para grids de cards 9:13 (TrackCard / ContentCard / CourseShelfCard).
  * Mantém largura, altura, alinhamento e gaps idênticos em toda a plataforma.
  *
- * Regra de colunas (premium, capa dominante):
- * - mobile  (<640px):  1 coluna
- * - tablet  (≥640px):  2 colunas
- * - desktop (≥1024px): 3 colunas
- * - wide    (≥1280px): 4 colunas
+ * Regra de colunas responsiva (cards mais compactos):
+ * - mobile  (<480px):  2 colunas
+ * - sm      (≥640px):  3 colunas
+ * - md      (≥768px):  4 colunas
+ * - lg      (≥1024px): 5 colunas
+ * - xl      (≥1280px): 6 colunas
+ * - 2xl     (≥1536px): 7 colunas
  *
- * Gaps simétricos: mesmo valor horizontal e vertical (gap-x === gap-y),
- * para que cards comecem sempre no mesmo eixo, sem "flutuar".
- *
- * Use sempre este token ao montar grades de cards de conteúdo
- * (home, /musicas, /bonus, /ebooks, /lancamentos, /trilhas, /conteudo).
+ * Gaps simétricos e enxutos para acomodar mais cards por linha.
  */
 export const POSTER_GRID =
-  "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-7 lg:gap-8 items-start justify-items-start w-full";
+  "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 sm:gap-4 lg:gap-5 items-start justify-items-stretch w-full";
 
 /**
  * Largura fixa para itens em prateleiras horizontais (carrosséis).
- * Espelha o tamanho do POSTER_GRID para que o usuário sinta a mesma
- * presença visual em grids verticais e em scroll horizontal.
+ * Cards mais compactos para caber mais por viewport e melhorar mobile.
  */
 export const POSTER_SHELF_ITEM =
-  "w-[200px] sm:w-[230px] md:w-[260px] lg:w-[280px] xl:w-[300px] shrink-0 snap-start";
+  "w-[140px] sm:w-[160px] md:w-[170px] lg:w-[180px] xl:w-[190px] shrink-0 snap-start";
