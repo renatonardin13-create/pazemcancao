@@ -48,6 +48,7 @@ import { Route as AuthenticatedAdminMusicasRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminJourneysRouteImport } from './routes/_authenticated.admin.journeys'
 import { Route as AuthenticatedAdminIntegrationsRouteImport } from './routes/_authenticated.admin.integrations'
 import { Route as AuthenticatedAdminIntegracoesRouteImport } from './routes/_authenticated.admin.integracoes'
+import { Route as AuthenticatedAdminImpersonarRouteImport } from './routes/_authenticated.admin.impersonar'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated.admin.dashboard'
 import { Route as AuthenticatedAdminCursosRouteImport } from './routes/_authenticated.admin.cursos'
 import { Route as AuthenticatedAdminCoursesRouteImport } from './routes/_authenticated.admin.courses'
@@ -273,6 +274,12 @@ const AuthenticatedAdminIntegracoesRoute =
     path: '/integracoes',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminImpersonarRoute =
+  AuthenticatedAdminImpersonarRouteImport.update({
+    id: '/impersonar',
+    path: '/impersonar',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminDashboardRoute =
   AuthenticatedAdminDashboardRouteImport.update({
     id: '/dashboard',
@@ -364,6 +371,7 @@ export interface FileRoutesByFullPath {
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/admin/cursos': typeof AuthenticatedAdminCursosRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/impersonar': typeof AuthenticatedAdminImpersonarRoute
   '/admin/integracoes': typeof AuthenticatedAdminIntegracoesRoute
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/admin/journeys': typeof AuthenticatedAdminJourneysRoute
@@ -411,6 +419,7 @@ export interface FileRoutesByTo {
   '/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
   '/admin/cursos': typeof AuthenticatedAdminCursosRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/impersonar': typeof AuthenticatedAdminImpersonarRoute
   '/admin/integracoes': typeof AuthenticatedAdminIntegracoesRoute
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/admin/journeys': typeof AuthenticatedAdminJourneysRoute
@@ -463,6 +472,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/_authenticated/admin/cursos': typeof AuthenticatedAdminCursosRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/_authenticated/admin/impersonar': typeof AuthenticatedAdminImpersonarRoute
   '/_authenticated/admin/integracoes': typeof AuthenticatedAdminIntegracoesRoute
   '/_authenticated/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/_authenticated/admin/journeys': typeof AuthenticatedAdminJourneysRoute
@@ -516,6 +526,7 @@ export interface FileRouteTypes {
     | '/admin/courses'
     | '/admin/cursos'
     | '/admin/dashboard'
+    | '/admin/impersonar'
     | '/admin/integracoes'
     | '/admin/integrations'
     | '/admin/journeys'
@@ -563,6 +574,7 @@ export interface FileRouteTypes {
     | '/admin/conteudos'
     | '/admin/cursos'
     | '/admin/dashboard'
+    | '/admin/impersonar'
     | '/admin/integracoes'
     | '/admin/integrations'
     | '/admin/journeys'
@@ -614,6 +626,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/courses'
     | '/_authenticated/admin/cursos'
     | '/_authenticated/admin/dashboard'
+    | '/_authenticated/admin/impersonar'
     | '/_authenticated/admin/integracoes'
     | '/_authenticated/admin/integrations'
     | '/_authenticated/admin/journeys'
@@ -927,6 +940,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminIntegracoesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/impersonar': {
+      id: '/_authenticated/admin/impersonar'
+      path: '/impersonar'
+      fullPath: '/admin/impersonar'
+      preLoaderRoute: typeof AuthenticatedAdminImpersonarRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/dashboard': {
       id: '/_authenticated/admin/dashboard'
       path: '/dashboard'
@@ -1033,6 +1053,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCoursesRoute: typeof AuthenticatedAdminCoursesRouteWithChildren
   AuthenticatedAdminCursosRoute: typeof AuthenticatedAdminCursosRoute
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
+  AuthenticatedAdminImpersonarRoute: typeof AuthenticatedAdminImpersonarRoute
   AuthenticatedAdminIntegracoesRoute: typeof AuthenticatedAdminIntegracoesRoute
   AuthenticatedAdminIntegrationsRoute: typeof AuthenticatedAdminIntegrationsRoute
   AuthenticatedAdminJourneysRoute: typeof AuthenticatedAdminJourneysRoute
@@ -1055,6 +1076,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCoursesRoute: AuthenticatedAdminCoursesRouteWithChildren,
   AuthenticatedAdminCursosRoute: AuthenticatedAdminCursosRoute,
   AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
+  AuthenticatedAdminImpersonarRoute: AuthenticatedAdminImpersonarRoute,
   AuthenticatedAdminIntegracoesRoute: AuthenticatedAdminIntegracoesRoute,
   AuthenticatedAdminIntegrationsRoute: AuthenticatedAdminIntegrationsRoute,
   AuthenticatedAdminJourneysRoute: AuthenticatedAdminJourneysRoute,

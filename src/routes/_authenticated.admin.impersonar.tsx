@@ -8,8 +8,8 @@ import { listApprovedBuyers } from "@/lib/admin-users.functions";
 import {
   startImpersonation,
   listImpersonationLogs,
-  setImpersonationState,
 } from "@/lib/impersonation.functions";
+import { setImpersonationState } from "@/components/ImpersonationBanner";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
