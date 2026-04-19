@@ -230,7 +230,7 @@ function MeusCursosPage() {
                   byCategory.map(([cat, list]) => (
                     <ShelfRow key={cat} title={cat} courses={list} />
                   ))}
-                {completed.length > 0 && <ShelfRow title="Concluídos" courses={completed} />}
+                {completed.length > 0 && <ShelfRow title="Continuar assistindo" courses={completed} />}
 
                 {premiumCourses.length > 0 && (
                   <ShelfRow title="Conteúdo Premium" courses={premiumCourses} />
