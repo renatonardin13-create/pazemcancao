@@ -119,6 +119,7 @@ function resolveAutoShelfCourses(
 export const getStudentShelves = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    try {
     const { supabase, userId } = context;
 
     // REGRA 8 — Não detectamos role admin aqui de propósito.
@@ -434,20 +435,28 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
     }
 
     // ── Banner config ──
-    const { data: bannerSetting, error: bannerError } = await supabaseAdmin
-      .from('platform_settings')
-      .select('value')
-      .eq('key', 'hero_banner')
-      .maybeSingle();
+    let bannerConfig: any = null;
+    try {
+      const { data: bannerSetting } = await supabaseAdmin
+        .from('platform_settings')
+        .select('value')
+        .eq('key', 'hero_banner')
+        .maybeSingle();
+      bannerConfig = bannerSetting?.value ?? null;
+    } catch (err) {
+      console.error('[getStudentShelves] banner config fetch failed:', err);
+      bannerConfig = null;
+    }
 
-    if (bannerError) throw new Error(bannerError.message);
+    // Normaliza strings vazias para null — evita criar banner sintético inválido
+    const safeCourseId = typeof bannerConfig?.course_id === 'string' && bannerConfig.course_id.trim() ? bannerConfig.course_id.trim() : null;
+    const safeImageUrl = typeof bannerConfig?.image_url === 'string' && bannerConfig.image_url.trim() ? bannerConfig.image_url.trim() : null;
 
-    const bannerConfig = bannerSetting?.value as any;
     let featuredCourse: any = null;
     const featuredCourses: any[] = [];
 
     if (bannerConfig?.enabled === true) {
-      if (bannerConfig?.course_id) {
+      if (safeCourseId) {
         const configured = courseMap.get(bannerConfig.course_id);
         if (configured) {
           featuredCourse = {
@@ -460,21 +469,28 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
             banner_link_url: bannerConfig.link_url || null,
           };
         }
-      } else if (bannerConfig?.image_url) {
+      } else if (safeImageUrl) {
         featuredCourse = {
           id: '__custom_banner__',
           title: bannerConfig.title || '',
           short_description: bannerConfig.subtitle || '',
-          banner_image_url: bannerConfig.image_url,
+          banner_image_url: safeImageUrl,
           banner_fit: bannerConfig.fit || 'cover',
           banner_aspect: bannerConfig.aspect || 'auto',
           banner_link_url: bannerConfig.link_url || null,
           access_state: 'available',
         };
       } else {
-        featuredCourse = result.length > 0
-          ? result[0].courses.find((course: any) => course.banner_image_url || course.cover_image_url) || null
-          : null;
+        // Fallback: pega primeiro curso com imagem da primeira prateleira não vazia
+        for (const shelf of result) {
+          const candidate = (shelf?.courses || []).find(
+            (course: any) => course && (course.banner_image_url || course.cover_image_url),
+          );
+          if (candidate) {
+            featuredCourse = candidate;
+            break;
+          }
+        }
       }
 
       // Monta lista de até 3 destaques (carrossel rotativo)
@@ -505,4 +521,13 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       featuredCourse: safeFeaturedCourse,
       featuredCourses: featuredCourses.map(sanitizeCourse).filter(Boolean),
     };
+    } catch (err) {
+      console.error('[getStudentShelves] failed:', err);
+      return {
+        shelves: [],
+        promoBanners: [],
+        featuredCourse: null,
+        featuredCourses: [],
+      };
+    }
   });
