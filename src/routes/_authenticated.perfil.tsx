@@ -18,7 +18,8 @@ import {
   BookOpen,
   CheckCircle2,
   Clock,
-  Award,
+  Shield,
+  UserCircle2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -83,284 +84,332 @@ function ProfilePage() {
   const enrollments = data?.enrollments || [];
   const completedByCourse = data?.completedByCourse || {};
   const contentStats = data?.contentStats || { viewed: 0, completed: 0, totalItems: 0 };
-  const timeWatchedLabel = data?.timeWatchedLabel || '0h';
+  const timeWatchedLabel = data?.timeWatchedLabel || "0h";
 
   const totalCourses = enrollments.length;
   const totalLessonsCompleted = Object.values(completedByCourse).reduce(
     (a: number, b: number) => a + b,
     0
   );
-  const overallProgressPct = contentStats.totalItems > 0
-    ? Math.round((contentStats.completed / contentStats.totalItems) * 100)
-    : 0;
+  const overallProgressPct =
+    contentStats.totalItems > 0
+      ? Math.round((contentStats.completed / contentStats.totalItems) * 100)
+      : 0;
 
   const email = data?.email || "";
-  const name = displayName || data?.profile?.display_name || email.split("@")[0] || "Aluno";
+  const name =
+    displayName || data?.profile?.display_name || email.split("@")[0] || "Aluno";
   const initials = name.slice(0, 2).toUpperCase();
-  const memberSince = data?.profile && "created_at" in data.profile && data.profile.created_at
-    ? new Date(data.profile.created_at).toLocaleDateString("pt-BR", { month: "long", year: "numeric" })
-    : "";
+  const memberSince =
+    data?.profile && "created_at" in data.profile && data.profile.created_at
+      ? new Date(data.profile.created_at).toLocaleDateString("pt-BR", {
+          month: "long",
+          year: "numeric",
+        })
+      : "";
 
   return (
     <ModuleGuard moduleKey="perfil">
-    <StudentLayout>
-    <div className="min-h-screen bg-background flex flex-col">
-
-      <main className="flex-1 mx-auto w-full max-w-[800px] px-4 sm:px-6 py-8 space-y-6">
-        {isLoading ? (
-          <div className="text-center py-24">
-            <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
-              Carregando perfil...
-            </p>
-          </div>
-        ) : (
-          <>
-            {/* Page header */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="flex items-center gap-3"
-            >
-              <User className="h-7 w-7 text-gold" />
-              <div>
-                <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
-                  Meu Perfil
-                </h1>
-                <p className="text-[13px] text-muted-foreground/50 mt-0.5 italic">
-                  Sua história na caminhada espiritual
+      <StudentLayout>
+        <div className="min-h-screen bg-background flex flex-col">
+          <main className="flex-1 mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-8">
+            {isLoading ? (
+              <div className="text-center py-24">
+                <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
+                  Carregando perfil...
                 </p>
               </div>
-            </motion.div>
-
-            {/* Profile card */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.05 }}
-              className="rounded-xl border border-border/30 bg-card/8 p-6"
-            >
-              <div className="flex items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gold/15 text-xl font-bold text-gold shrink-0">
-                  {initials}
-                </div>
-                <div className="min-w-0">
-                  <h2 className="text-lg font-bold text-foreground/90 truncate">
-                    {name}
-                  </h2>
-                  <p className="text-[13px] text-muted-foreground/50 flex items-center gap-1.5">
-                    <Mail className="h-3.5 w-3.5" />
-                    {email}
-                  </p>
-                  {memberSince && (
-                    <p className="text-xs text-muted-foreground/70 mt-0.5">
-                      Membro desde {memberSince}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Statistics */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.1 }}
-              className="rounded-xl border border-border/30 bg-card/8 p-5 space-y-5"
-            >
-              <h3 className="text-[12px] font-semibold text-muted-foreground/50 flex items-center gap-1.5">
-                <Award className="h-4 w-4 text-gold/60" />
-                Sua Caminhada
-              </h3>
-
-              {/* Overall progress */}
-              {contentStats.totalItems > 0 && (
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-muted-foreground/60">Sua evolução espiritual</span>
-                    <span className="text-xs font-bold text-foreground/70">{overallProgressPct}%</span>
-                  </div>
-                  <Progress value={overallProgressPct} className="h-2 bg-muted/15" />
-                  <p className="text-[10px] text-muted-foreground/40">
-                    {contentStats.completed} de {contentStats.totalItems} conteúdos vivenciados
-                  </p>
-                </div>
-              )}
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gold/10 shrink-0">
-                    <BookOpen className="h-5 w-5 text-gold/60" />
+            ) : (
+              <>
+                {/* Header */}
+                <motion.div
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5 }}
+                  className="flex items-center gap-3"
+                >
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gold/10 border border-gold/20">
+                    <UserCircle2 className="h-6 w-6 text-gold" />
                   </div>
                   <div>
-                    <p className="font-display text-xl font-bold text-foreground/85">
-                      {totalCourses}
+                    <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
+                      Meu perfil
+                    </h1>
+                    <p className="text-[13px] text-muted-foreground/70 mt-0.5">
+                      Suas informações pessoais e preferências da conta
                     </p>
-                    <p className="text-xs text-muted-foreground/70">Cursos</p>
                   </div>
+                </motion.div>
+
+                {/* Two-column grid */}
+                <div className="grid grid-cols-1 lg:grid-cols-[360px_1fr] gap-6">
+                  {/* LEFT column */}
+                  <motion.aside
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.05 }}
+                    className="space-y-6"
+                  >
+                    {/* Identity card */}
+                    <div className="rounded-2xl border border-border/40 bg-card/40 backdrop-blur-sm p-6 text-center">
+                      <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-gold/30 to-gold/10 border border-gold/30 text-2xl font-bold text-gold">
+                        {initials}
+                      </div>
+                      <h2 className="mt-4 text-lg font-bold text-foreground truncate">
+                        {name}
+                      </h2>
+                      <p className="text-[13px] text-muted-foreground/70 flex items-center justify-center gap-1.5 mt-1">
+                        <Mail className="h-3.5 w-3.5" />
+                        <span className="truncate max-w-[260px]">{email}</span>
+                      </p>
+                      {memberSince && (
+                        <p className="text-xs text-muted-foreground/60 mt-2">
+                          Membro desde {memberSince}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Stats card */}
+                    <div className="rounded-2xl border border-border/40 bg-card/40 backdrop-blur-sm p-6 space-y-5">
+                      <h3 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-muted-foreground/60">
+                        Sua caminhada
+                      </h3>
+
+                      {contentStats.totalItems > 0 && (
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs text-muted-foreground/70">
+                              Evolução geral
+                            </span>
+                            <span className="text-xs font-bold text-gold">
+                              {overallProgressPct}%
+                            </span>
+                          </div>
+                          <Progress
+                            value={overallProgressPct}
+                            className="h-1.5 bg-muted/20"
+                          />
+                        </div>
+                      )}
+
+                      <div className="space-y-3">
+                        <StatRow
+                          icon={<BookOpen className="h-4 w-4 text-gold" />}
+                          label="Cursos"
+                          value={totalCourses}
+                          tone="gold"
+                        />
+                        <StatRow
+                          icon={<CheckCircle2 className="h-4 w-4 text-emerald-400" />}
+                          label="Aulas concluídas"
+                          value={totalLessonsCompleted}
+                          tone="emerald"
+                        />
+                        <StatRow
+                          icon={<CheckCircle2 className="h-4 w-4 text-purple-400" />}
+                          label="Conteúdos vivenciados"
+                          value={contentStats.completed}
+                          tone="purple"
+                        />
+                        <StatRow
+                          icon={<Clock className="h-4 w-4 text-blue-400" />}
+                          label="Tempo de estudo"
+                          value={timeWatchedLabel}
+                          tone="blue"
+                        />
+                      </div>
+                    </div>
+                  </motion.aside>
+
+                  {/* RIGHT column */}
+                  <motion.section
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                    className="space-y-6"
+                  >
+                    {/* Personal info */}
+                    <div className="rounded-2xl border border-border/40 bg-card/40 backdrop-blur-sm p-6 sm:p-7 space-y-5">
+                      <div className="flex items-center gap-2">
+                        <User className="h-4 w-4 text-gold" />
+                        <h3 className="text-base font-bold text-foreground">
+                          Informações pessoais
+                        </h3>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="fullName"
+                            className="text-[12px] font-semibold text-foreground/70 uppercase tracking-wide"
+                          >
+                            Nome completo
+                          </Label>
+                          <Input
+                            id="fullName"
+                            value={displayName}
+                            onChange={(e) => setDisplayName(e.target.value)}
+                            placeholder="Seu nome completo"
+                            className="bg-background/40 border-border/40 h-10"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label className="text-[12px] font-semibold text-foreground/70 uppercase tracking-wide">
+                            Email
+                          </Label>
+                          <Input
+                            value={email}
+                            disabled
+                            className="bg-muted/10 border-border/30 text-muted-foreground/70 h-10"
+                          />
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground/60 -mt-1">
+                        O email não pode ser alterado
+                      </p>
+
+                      <div className="pt-2">
+                        <Button
+                          onClick={() => profileMutation.mutate()}
+                          disabled={profileMutation.isPending}
+                          className="bg-gold text-gold-foreground hover:bg-gold/90 font-bold"
+                        >
+                          {profileMutation.isPending ? (
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          ) : null}
+                          Salvar alterações
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Security */}
+                    <div className="rounded-2xl border border-border/40 bg-card/40 backdrop-blur-sm p-6 sm:p-7 space-y-5">
+                      <div className="flex items-center gap-2">
+                        <Shield className="h-4 w-4 text-gold" />
+                        <h3 className="text-base font-bold text-foreground">
+                          Segurança
+                        </h3>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="currentPwd"
+                            className="text-[12px] font-semibold text-foreground/70 uppercase tracking-wide"
+                          >
+                            Senha atual
+                          </Label>
+                          <Input
+                            id="currentPwd"
+                            type="password"
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            placeholder="••••••••"
+                            className="bg-background/40 border-border/40 h-10"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="newPwd"
+                            className="text-[12px] font-semibold text-foreground/70 uppercase tracking-wide"
+                          >
+                            Nova senha
+                          </Label>
+                          <Input
+                            id="newPwd"
+                            type="password"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            placeholder="Mínimo 6 caracteres"
+                            className="bg-background/40 border-border/40 h-10"
+                          />
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label
+                            htmlFor="confirmPwd"
+                            className="text-[12px] font-semibold text-foreground/70 uppercase tracking-wide"
+                          >
+                            Confirmar
+                          </Label>
+                          <Input
+                            id="confirmPwd"
+                            type="password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            placeholder="Repita a senha"
+                            className="bg-background/40 border-border/40 h-10"
+                          />
+                        </div>
+                      </div>
+
+                      <div className="pt-2">
+                        <Button
+                          onClick={handlePasswordChange}
+                          disabled={
+                            passwordMutation.isPending ||
+                            !newPassword ||
+                            !confirmPassword
+                          }
+                          variant="outline"
+                          className="border-gold/30 text-gold hover:bg-gold/10 font-bold"
+                        >
+                          {passwordMutation.isPending ? (
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          ) : (
+                            <Lock className="h-4 w-4 mr-2" />
+                          )}
+                          Alterar senha
+                        </Button>
+                      </div>
+                    </div>
+                  </motion.section>
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 shrink-0">
-                    <CheckCircle2 className="h-5 w-5 text-emerald-400/60" />
-                  </div>
-                  <div>
-                    <p className="font-display text-xl font-bold text-foreground/85">
-                      {totalLessonsCompleted}
-                    </p>
-                    <p className="text-xs text-muted-foreground/70">Aulas</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-purple-500/10 shrink-0">
-                    <CheckCircle2 className="h-5 w-5 text-purple-400/60" />
-                  </div>
-                  <div>
-                    <p className="font-display text-xl font-bold text-foreground/85">
-                      {contentStats.completed}
-                    </p>
-                    <p className="text-xs text-muted-foreground/70">Conteúdos</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-500/10 shrink-0">
-                    <Clock className="h-5 w-5 text-blue-400/60" />
-                  </div>
-                  <div>
-                    <p className="font-display text-xl font-bold text-foreground/85">
-                      {timeWatchedLabel}
-                    </p>
-                    <p className="text-xs text-muted-foreground/70">Tempo</p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+              </>
+            )}
+          </main>
 
-            {/* Personal info */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="rounded-xl border border-border/30 bg-card/8 p-6 space-y-5"
-            >
-              <h3 className="text-base font-bold text-foreground/85">
-                Informações Pessoais
-              </h3>
-
-              <div className="space-y-2">
-                <Label htmlFor="fullName" className="text-[13px] font-semibold text-foreground/70">
-                  Nome completo
-                </Label>
-                <Input
-                  id="fullName"
-                  value={displayName}
-                  onChange={(e) => setDisplayName(e.target.value)}
-                  placeholder="Seu nome completo"
-                  className="bg-card/20 border-border/30"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label className="text-[13px] font-semibold text-foreground/70">
-                  Email
-                </Label>
-                <Input
-                  value={email}
-                  disabled
-                  className="bg-muted/10 border-border/25 text-muted-foreground/70"
-                />
-                <p className="text-xs text-muted-foreground/60">
-                  O email não pode ser alterado
-                </p>
-              </div>
-
-              <Button
-                onClick={() => profileMutation.mutate()}
-                disabled={profileMutation.isPending}
-                className="bg-gold/90 text-gold-foreground hover:bg-gold text-[12px] font-bold"
-              >
-                {profileMutation.isPending ? (
-                  <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
-                ) : null}
-                Salvar Alterações
-              </Button>
-            </motion.div>
-
-            {/* Change password */}
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="rounded-xl border border-border/30 bg-card/8 p-6 space-y-5"
-            >
-              <h3 className="text-base font-bold text-foreground/85 flex items-center gap-2">
-                <Lock className="h-4 w-4 text-muted-foreground/50" />
-                Alterar Senha
-              </h3>
-
-              <div className="space-y-2">
-                <Label htmlFor="currentPwd" className="text-[13px] font-semibold text-foreground/70">
-                  Senha atual
-                </Label>
-                <Input
-                  id="currentPwd"
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  className="bg-card/20 border-border/30"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="newPwd" className="text-[13px] font-semibold text-foreground/70">
-                  Nova senha
-                </Label>
-                <Input
-                  id="newPwd"
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Mínimo 6 caracteres"
-                  className="bg-card/20 border-border/30"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="confirmPwd" className="text-[13px] font-semibold text-foreground/70">
-                  Confirmar nova senha
-                </Label>
-                <Input
-                  id="confirmPwd"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Digite a senha novamente"
-                  className="bg-card/20 border-border/30"
-                />
-              </div>
-
-              <Button
-                onClick={handlePasswordChange}
-                disabled={
-                  passwordMutation.isPending ||
-                  !newPassword ||
-                  !confirmPassword
-                }
-                variant="outline"
-                className="border-gold/20 text-gold/70 hover:bg-gold/10 text-[12px] font-bold"
-              >
-                {passwordMutation.isPending ? (
-                  <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
-                ) : null}
-                Alterar Senha
-              </Button>
-            </motion.div>
-          </>
-        )}
-      </main>
-
-      <FooterLinks />
-    </div>
-    </StudentLayout>
+          <FooterLinks />
+        </div>
+      </StudentLayout>
     </ModuleGuard>
+  );
+}
+
+function StatRow({
+  icon,
+  label,
+  value,
+  tone,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: string | number;
+  tone: "gold" | "emerald" | "purple" | "blue";
+}) {
+  const bgMap: Record<string, string> = {
+    gold: "bg-gold/10",
+    emerald: "bg-emerald-500/10",
+    purple: "bg-purple-500/10",
+    blue: "bg-blue-500/10",
+  };
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center gap-3 min-w-0">
+        <div
+          className={`flex h-9 w-9 items-center justify-center rounded-lg shrink-0 ${bgMap[tone]}`}
+        >
+          {icon}
+        </div>
+        <span className="text-[13px] text-muted-foreground/80 truncate">
+          {label}
+        </span>
+      </div>
+      <span className="font-display text-base font-bold text-foreground">
+        {value}
+      </span>
+    </div>
   );
 }
