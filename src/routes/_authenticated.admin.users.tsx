@@ -318,15 +318,13 @@ function AdminUsersPage() {
     return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
   };
 
-  // Status geral coerente: usa overall_status do backend (calculado a partir de cursos ativos),
-  // com fallback para a flag access_enabled / trial.
   const getOverallStatus = (buyer: any): 'active' | 'blocked' | 'refunded' | 'expired' | 'no_access' | 'trial_expired' => {
-    if (!buyer.access_enabled) return 'blocked';
-    if (buyer.is_trial && isTrialExpired(buyer)) return 'trial_expired';
     const s = buyer.overall_status as string | undefined;
-    if (s === 'active' || s === 'refunded' || s === 'expired' || s === 'no_access' || s === 'blocked') {
-      return s as any;
+    if (buyer.is_trial && isTrialExpired(buyer)) return 'trial_expired';
+    if (s === 'active' || s === 'blocked' || s === 'refunded' || s === 'expired' || s === 'no_access') {
+      return s;
     }
+    if (buyer.access_enabled === false) return 'blocked';
     return (buyer.course_count ?? 0) > 0 ? 'active' : 'no_access';
   };
 
@@ -344,6 +342,21 @@ function AdminUsersPage() {
     return <Badge className={`${cls} border-0 text-xs font-semibold`}>{label}</Badge>;
   };
 
+  const renderCourseStatusBadge = (status?: string | null) => {
+    const normalized = (status || 'none').toLowerCase();
+    const map: Record<string, { label: string; cls: string }> = {
+      active: { label: 'Ativo', cls: 'bg-emerald-500/15 text-emerald-400/80' },
+      refunded: { label: 'Reembolsado', cls: 'bg-rose-500/15 text-rose-400/80' },
+      chargedback: { label: 'Chargeback', cls: 'bg-rose-500/15 text-rose-400/80' },
+      cancelled: { label: 'Cancelado', cls: 'bg-slate-500/15 text-slate-300/80' },
+      expired: { label: 'Vencido', cls: 'bg-amber-500/15 text-amber-400/80' },
+      blocked: { label: 'Bloqueado', cls: 'bg-destructive/15 text-destructive/80' },
+      none: { label: 'Sem acesso', cls: 'bg-muted/20 text-muted-foreground/70' },
+    };
+    const { label, cls } = map[normalized] || map.none;
+    return <Badge className={`${cls} border-0 text-[11px]`}>{label}</Badge>;
+  };
+
   const totalUsers = buyers.length;
   const enabledUsers = buyers.filter((buyer: any) => getOverallStatus(buyer) === 'active').length;
   const inactiveUsers = buyers.filter((buyer: any) => {
@@ -357,22 +370,22 @@ function AdminUsersPage() {
   const onlineUsers = buyers.filter((buyer: any) => activeSessionEmails.has(buyer.email.toLowerCase())).length;
   const trialUsers = buyers.filter((buyer: any) => buyer.is_trial).length;
 
-  // Filter buyers
   const filteredBuyers = buyers.filter((buyer: any) => {
     const matchesSearch = !searchQuery ||
       buyer.nome?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       buyer.email?.toLowerCase().includes(searchQuery.toLowerCase());
 
+    const overallStatus = getOverallStatus(buyer);
     const matchesStatus =
       statusFilter === "all" ||
-      (statusFilter === "active" && buyer.access_enabled && !buyer.is_trial) ||
+      (statusFilter === "active" && overallStatus === 'active') ||
       (statusFilter === "trial" && buyer.is_trial) ||
-      (statusFilter === "blocked" && !buyer.access_enabled);
+      (statusFilter === "blocked" && ['blocked', 'refunded', 'expired', 'trial_expired', 'no_access'].includes(overallStatus));
 
     const matchesCourse =
       courseFilter === "all" ||
-      (courseFilter === "with_courses" && (buyer.course_count ?? 0) > 0) ||
-      (courseFilter === "no_courses" && (buyer.course_count ?? 0) === 0);
+      (courseFilter === "with_courses" && (buyer.courses || []).length > 0) ||
+      (courseFilter === "no_courses" && (buyer.courses || []).length === 0);
 
     return matchesSearch && matchesStatus && matchesCourse;
   });
@@ -684,14 +697,13 @@ function AdminUsersPage() {
 
                 {/* Mobile bottom info row */}
                 <div className="flex items-center gap-3 text-xs text-muted-foreground/60 lg:hidden pl-12">
-                  <span>{buyer.course_count ?? 0} curso(s)</span>
+                  <span>{buyer.courses?.length ?? 0} vínculo(s)</span>
                   <span>·</span>
                   <span>{buyer.progress_pct ?? 0}%</span>
                   <span>·</span>
                   <span>{buyer.last_login_at ? formatDate(buyer.last_login_at) : "Nunca"}</span>
                 </div>
 
-                {/* Desktop-only columns */}
                 <span className="hidden lg:block text-sm text-muted-foreground truncate">
                   {buyer.email}
                 </span>
@@ -700,7 +712,19 @@ function AdminUsersPage() {
                   {renderStatusBadge(buyer)}
                 </div>
 
-                <span className="hidden lg:block text-sm text-foreground/60 text-center font-medium">{buyer.course_count ?? 0}</span>
+                <div className="hidden lg:flex flex-col gap-1 min-w-0">
+                  <span className="text-sm text-foreground/60 font-medium">{buyer.courses?.length ?? 0} vínculo(s)</span>
+                  <div className="flex flex-wrap gap-1">
+                    {(buyer.courses || []).slice(0, 2).map((course: any) => (
+                      <Badge key={course.course_id} className="bg-muted/20 text-muted-foreground/80 border-0 text-[10px] max-w-[140px] truncate inline-block">
+                        {course.course_title}
+                      </Badge>
+                    ))}
+                    {(buyer.courses || []).length > 2 ? (
+                      <Badge className="bg-muted/20 text-muted-foreground/80 border-0 text-[10px]">+{(buyer.courses || []).length - 2}</Badge>
+                    ) : null}
+                  </div>
+                </div>
 
                 <div className="hidden lg:flex items-center gap-2">
                   <Progress value={buyer.progress_pct ?? 0} className="h-1.5 flex-1 bg-muted/20" />
@@ -1009,7 +1033,7 @@ function AdminUsersPage() {
               {/* Tab: Cursos */}
               <TabsContent value="courses" className="mt-4">
                 <p className="text-[13px] text-muted-foreground/50 mb-3">
-                  Gerencie o acesso do aluno aos cursos da plataforma.
+                  Cursos, status real, tipo de vínculo e último evento aplicado ao aluno.
                 </p>
                 {detailLoading ? (
                   <p className="text-center text-xs text-muted-foreground/60 py-8 animate-pulse">Carregando cursos...</p>
@@ -1020,7 +1044,7 @@ function AdminUsersPage() {
                     {studentDetail.courses.map((course: any) => (
                       <div
                         key={course.id}
-                        className="flex items-center gap-3 rounded-xl border border-border/30 bg-card/8 p-3"
+                        className="flex items-start gap-3 rounded-xl border border-border/30 bg-card/8 p-3"
                       >
                         {course.cover_image_url ? (
                           <img src={course.cover_image_url} alt="" className="h-10 w-10 rounded-lg object-cover shrink-0" />
@@ -1029,11 +1053,19 @@ function AdminUsersPage() {
                             <BookOpen className="h-4 w-4 text-muted-foreground/60" />
                           </div>
                         )}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-foreground/80 truncate">{course.title}</p>
-                          <p className="text-xs text-muted-foreground/70">
-                            {course.hasAccess ? "Com acesso" : "Sem acesso"}
-                          </p>
+                        <div className="flex-1 min-w-0 space-y-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <p className="text-sm font-medium text-foreground/80 truncate">{course.title}</p>
+                            {renderCourseStatusBadge(course.status)}
+                          </div>
+                          <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] text-muted-foreground/70">
+                            <span>Vínculo: {course.accessOrigin || '—'}</span>
+                            <span>Último evento: {course.lastEventType || '—'}</span>
+                            {course.lastEventAt ? <span>Em: {formatDate(course.lastEventAt)}</span> : null}
+                          </div>
+                          {course.lastEventMessage ? (
+                            <p className="text-[11px] text-muted-foreground/55 truncate">{course.lastEventMessage}</p>
+                          ) : null}
                         </div>
                         <Switch
                           checked={course.hasAccess}

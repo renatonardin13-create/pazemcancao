@@ -58,7 +58,7 @@ export const listApprovedBuyers = createServerFn({ method: 'POST' })
     // Fetch ALL enrollments (any status — we surface per-course status to the UI)
     const { data: enrollments } = await supabaseAdmin
       .from('enrollments')
-      .select('email, user_id, course_id, status, progress_percentage, expires_at, access_origin');
+      .select('email, user_id, course_id, status, progress_percentage, expires_at, access_origin, updated_at, notes');
 
     // Fetch lesson progress for all users
     const { data: lessonProgress } = await supabaseAdmin
@@ -90,7 +90,16 @@ export const listApprovedBuyers = createServerFn({ method: 'POST' })
     }
 
     // Group enrollments keeping FULL records (not just count)
-    type EnrollmentRow = { email: string | null; user_id: string | null; course_id: string; status: string; expires_at: string | null; access_origin: string };
+    type EnrollmentRow = {
+      email: string | null;
+      user_id: string | null;
+      course_id: string;
+      status: string;
+      expires_at: string | null;
+      access_origin: string;
+      updated_at?: string | null;
+      notes?: string | null;
+    };
     const enrollmentsByEmail = new Map<string, EnrollmentRow[]>();
     const enrollmentsByUserId = new Map<string, EnrollmentRow[]>();
     for (const e of (enrollments || []) as EnrollmentRow[]) {
@@ -118,8 +127,16 @@ export const listApprovedBuyers = createServerFn({ method: 'POST' })
 
     // Helper: derive effective per-course status
     const now = Date.now();
-    const deriveStatus = (e: EnrollmentRow): string => {
+    const deriveStatus = (e: EnrollmentRow, buyerStatus?: string, accessEnabled?: boolean): string => {
+      const normalizedBuyerStatus = (buyerStatus || '').toLowerCase();
       if (e.status === 'active' && e.expires_at && new Date(e.expires_at).getTime() < now) return 'expired';
+      if (
+        e.status === 'active' &&
+        accessEnabled === false &&
+        !['refunded', 'chargedback', 'chargeback', 'reembolso', 'expired', 'cancelled'].includes(normalizedBuyerStatus)
+      ) {
+        return 'blocked';
+      }
       return e.status;
     };
 
@@ -128,11 +145,13 @@ export const listApprovedBuyers = createServerFn({ method: 'POST' })
       const email = buyer.email?.toLowerCase();
       const authUserId = email ? emailToUserId.get(email) : null;
 
-      // Merge enrollment rows from email + user_id (dedupe by course_id, prefer active)
+      // Merge enrollment rows from email + user_id (dedupe by course_id, prefer newest state)
       const merged = new Map<string, EnrollmentRow>();
       for (const e of [...(enrollmentsByEmail.get(email || '') || []), ...(authUserId ? enrollmentsByUserId.get(authUserId) || [] : [])]) {
         const existing = merged.get(e.course_id);
-        if (!existing || (existing.status !== 'active' && e.status === 'active')) {
+        const existingTs = existing?.updated_at ? new Date(existing.updated_at).getTime() : 0;
+        const nextTs = e.updated_at ? new Date(e.updated_at).getTime() : 0;
+        if (!existing || nextTs > existingTs || (nextTs === existingTs && existing.status !== 'active' && e.status === 'active')) {
           merged.set(e.course_id, e);
         }
       }
@@ -140,20 +159,22 @@ export const listApprovedBuyers = createServerFn({ method: 'POST' })
       const courses = Array.from(merged.values()).map((e) => ({
         course_id: e.course_id,
         course_title: courseTitles.get(e.course_id) || 'Curso removido',
-        status: deriveStatus(e),
+        status: deriveStatus(e, buyer.status, buyer.access_enabled),
         access_origin: e.access_origin,
         expires_at: e.expires_at,
+        last_event: e.notes || null,
       }));
 
       const activeCourses = courses.filter((c) => c.status === 'active');
       const courseCount = activeCourses.length;
+      const buyerStatus = (buyer.status || '').toLowerCase();
 
-      // Coherent overall status
+      // Coherent overall status based on real course statuses
       let overallStatus: string;
-      if (!buyer.access_enabled) overallStatus = 'blocked';
-      else if (activeCourses.length > 0) overallStatus = 'active';
-      else if (courses.some((c) => ['refunded', 'chargedback', 'cancelled'].includes(c.status))) overallStatus = 'refunded';
-      else if (courses.some((c) => c.status === 'expired')) overallStatus = 'expired';
+      if (activeCourses.length > 0) overallStatus = 'active';
+      else if (courses.some((c) => c.status === 'blocked') || buyerStatus === 'blocked') overallStatus = 'blocked';
+      else if (courses.some((c) => ['refunded', 'chargedback'].includes(c.status)) || ['refunded', 'chargedback', 'chargeback', 'reembolso'].includes(buyerStatus)) overallStatus = 'refunded';
+      else if (courses.some((c) => c.status === 'expired') || buyerStatus === 'expired') overallStatus = 'expired';
       else overallStatus = 'no_access';
 
       // Progress only over active courses

@@ -464,16 +464,50 @@ export const toggleBuyerAccess = createServerFn({ method: 'POST' })
       throw new Error('Acesso não autorizado');
     }
 
+    const { data: buyer, error: buyerError } = await supabaseAdmin
+      .from('approved_buyers')
+      .select('email, is_trial')
+      .eq('id', data.buyerId)
+      .single();
+
+    if (buyerError || !buyer) throw new Error(buyerError?.message || 'Aluno não encontrado');
+
+    const email = buyer.email.toLowerCase();
+    const now = new Date().toISOString();
+    const nextBuyerStatus = data.access_enabled ? (buyer.is_trial ? 'trial' : 'approved') : 'blocked';
+
     const { error } = await supabaseAdmin
       .from('approved_buyers')
-      .update({ access_enabled: data.access_enabled })
+      .update({ access_enabled: data.access_enabled, status: nextBuyerStatus })
       .eq('id', data.buyerId);
 
     if (error) throw new Error(error.message);
+
+    const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+    const authUser = authUsers?.users?.find((u: any) => u.email?.toLowerCase() === email) ?? null;
+
+    const updateBlockedEnrollments = async (match: { email?: string; user_id?: string }) => {
+      const query = supabaseAdmin
+        .from('enrollments')
+        .update({
+          status: data.access_enabled ? 'active' : 'blocked',
+          updated_at: now,
+          notes: data.access_enabled ? 'manual_unblock' : 'manual_block',
+        });
+
+      if (match.email) query.eq('email', match.email);
+      if (match.user_id) query.eq('user_id', match.user_id);
+      query.eq('status', data.access_enabled ? 'blocked' : 'active');
+      await query;
+    };
+
+    await updateBlockedEnrollments({ email });
+    if (authUser?.id) await updateBlockedEnrollments({ user_id: authUser.id });
+
     return { success: true, access_enabled: data.access_enabled };
   });
 
-// ── Get student details (enrollments + progress) ──
+// ── Get student details (enrollments + progress + latest events) ──
 export const getStudentDetails = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { email: string }) => z.object({ email: z.string().email() }).parse(input))
@@ -482,77 +516,102 @@ export const getStudentDetails = createServerFn({ method: 'POST' })
 
     const email = data.email.toLowerCase().trim();
 
-    // Get all courses
     const { data: allCourses } = await supabaseAdmin
       .from('courses')
       .select('id, title, cover_image_url, status')
       .order('title', { ascending: true });
 
-    // Get enrollments for this user email
-    const { data: enrollments } = await supabaseAdmin
-      .from('enrollments')
-      .select('id, course_id, status, progress_percentage')
-      .eq('email', email)
-      .eq('status', 'active');
-
-    // Also check by user_id if user exists in auth
     const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
     const authUser = authUsers?.users?.find((u: any) => u.email?.toLowerCase() === email);
 
-    let enrollmentsByUserId: any[] = [];
-    if (authUser) {
-      const { data: uidEnrollments } = await supabaseAdmin
+    const [emailEnrollmentsRes, userEnrollmentsRes, lessonProgressRes, allLessonsRes, webhookLogsRes] = await Promise.all([
+      supabaseAdmin
         .from('enrollments')
-        .select('id, course_id, status, progress_percentage')
-        .eq('user_id', authUser.id)
-        .eq('status', 'active');
-      enrollmentsByUserId = uidEnrollments || [];
-    }
-
-    // Merge enrollments (by email and by user_id)
-    const enrolledCourseIds = new Set([
-      ...(enrollments || []).map((e: any) => e.course_id),
-      ...enrollmentsByUserId.map((e: any) => e.course_id),
+        .select('id, course_id, status, progress_percentage, access_origin, granted_at, updated_at, expires_at, notes, email, user_id')
+        .eq('email', email),
+      authUser
+        ? supabaseAdmin
+            .from('enrollments')
+            .select('id, course_id, status, progress_percentage, access_origin, granted_at, updated_at, expires_at, notes, email, user_id')
+            .eq('user_id', authUser.id)
+        : Promise.resolve({ data: [] as any[] }),
+      authUser
+        ? supabaseAdmin.from('lesson_progress').select('course_id, completed').eq('user_id', authUser.id)
+        : Promise.resolve({ data: [] as any[] }),
+      supabaseAdmin.from('lessons').select('id, course_id'),
+      supabaseAdmin
+        .from('webhook_logs')
+        .select('event_type, processed_at, response_message, internal_course_id')
+        .eq('email', email)
+        .order('processed_at', { ascending: false })
+        .limit(200),
     ]);
 
-    // Get lesson progress if user exists
-    let lessonProgress: any[] = [];
-    if (authUser) {
-      const { data: progress } = await supabaseAdmin
-        .from('lesson_progress')
-        .select('course_id, completed')
-        .eq('user_id', authUser.id);
-      lessonProgress = progress || [];
+    const normalizeEnrollmentStatus = (enrollment: any) => {
+      if (enrollment.status === 'active' && enrollment.expires_at && new Date(enrollment.expires_at).getTime() < Date.now()) {
+        return 'expired';
+      }
+      return enrollment.status || 'none';
+    };
+
+    const mergedByCourse = new Map<string, any>();
+    const allEnrollments = [...(emailEnrollmentsRes.data || []), ...(userEnrollmentsRes.data || [])];
+
+    for (const enrollment of allEnrollments) {
+      const existing = mergedByCourse.get(enrollment.course_id);
+      const nextTs = new Date(enrollment.updated_at || enrollment.granted_at || 0).getTime();
+      const existingTs = existing ? new Date(existing.updated_at || existing.granted_at || 0).getTime() : 0;
+      const nextStatus = normalizeEnrollmentStatus(enrollment);
+      const existingStatus = existing ? normalizeEnrollmentStatus(existing) : null;
+
+      if (!existing || nextTs > existingTs || (nextTs === existingTs && existingStatus !== 'active' && nextStatus === 'active')) {
+        mergedByCourse.set(enrollment.course_id, enrollment);
+      }
     }
 
-    // Get total lessons per course
-    const { data: allLessons } = await supabaseAdmin
-      .from('lessons')
-      .select('id, course_id');
+    const latestWebhookByCourse = new Map<string, any>();
+    for (const log of webhookLogsRes.data || []) {
+      if (!log.internal_course_id) continue;
+      if (!latestWebhookByCourse.has(log.internal_course_id)) {
+        latestWebhookByCourse.set(log.internal_course_id, log);
+      }
+    }
 
-    const coursesWithAccess = (allCourses || []).map((course: any) => {
-      const hasAccess = enrolledCourseIds.has(course.id);
-      const totalLessons = (allLessons || []).filter((l: any) => l.course_id === course.id).length;
+    const lessonProgress = lessonProgressRes.data || [];
+    const allLessons = allLessonsRes.data || [];
+
+    const coursesWithState = (allCourses || []).map((course: any) => {
+      const enrollment = mergedByCourse.get(course.id) || null;
+      const enrollmentStatus = enrollment ? normalizeEnrollmentStatus(enrollment) : 'none';
+      const hasAccess = enrollmentStatus === 'active';
+      const totalLessons = allLessons.filter((l: any) => l.course_id === course.id).length;
       const completedLessons = lessonProgress.filter((p: any) => p.course_id === course.id && p.completed).length;
       const progressPct = totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+      const latestWebhook = latestWebhookByCourse.get(course.id) || null;
 
       return {
         ...course,
         hasAccess,
+        status: enrollmentStatus,
+        accessOrigin: enrollment?.access_origin || null,
+        lastEventType: latestWebhook?.event_type || enrollment?.notes || null,
+        lastEventAt: latestWebhook?.processed_at || enrollment?.updated_at || enrollment?.granted_at || null,
+        lastEventMessage: latestWebhook?.response_message || null,
+        expiresAt: enrollment?.expires_at || null,
         totalLessons,
         completedLessons,
         progressPct,
       };
     });
 
-    const enrolledCourses = coursesWithAccess.filter((c: any) => c.hasAccess);
-    const overallProgress = enrolledCourses.length > 0
-      ? Math.round(enrolledCourses.reduce((sum: number, c: any) => sum + c.progressPct, 0) / enrolledCourses.length)
+    const activeCourses = coursesWithState.filter((c: any) => c.status === 'active');
+    const overallProgress = activeCourses.length > 0
+      ? Math.round(activeCourses.reduce((sum: number, c: any) => sum + c.progressPct, 0) / activeCourses.length)
       : 0;
 
     return {
-      courses: coursesWithAccess,
-      enrolledCount: enrolledCourses.length,
+      courses: coursesWithState,
+      enrolledCount: activeCourses.length,
       overallProgress,
       userId: authUser?.id || null,
     };
@@ -568,15 +627,13 @@ export const toggleStudentCourseAccess = createServerFn({ method: 'POST' })
     await verifyAdmin(context.supabase, context.userId);
 
     const email = data.email.toLowerCase().trim();
+    const now = new Date().toISOString();
 
-    // Find auth user
     const { data: authUsers } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
     let authUser = authUsers?.users?.find((u: any) => u.email?.toLowerCase() === email);
 
     if (data.grant) {
-      // Auto-create auth user if it doesn't exist yet (buyer was added manually without login)
       if (!authUser) {
-        // Try to fetch name from approved_buyers for nicer display_name
         const { data: buyerRow } = await supabaseAdmin
           .from('approved_buyers')
           .select('nome')
@@ -596,38 +653,37 @@ export const toggleStudentCourseAccess = createServerFn({ method: 'POST' })
         authUser = created.user;
       }
 
-      // Check if enrollment already exists
-      const { data: existing } = await supabaseAdmin
+      const { error: upsertError } = await supabaseAdmin
         .from('enrollments')
-        .select('id')
-        .eq('user_id', authUser.id)
-        .eq('course_id', data.courseId)
-        .eq('status', 'active')
-        .maybeSingle();
+        .upsert(
+          {
+            user_id: authUser.id,
+            course_id: data.courseId,
+            email,
+            access_origin: 'admin_manual',
+            status: 'active',
+            expires_at: null,
+            updated_at: now,
+            granted_at: now,
+            notes: 'manual_grant',
+          },
+          { onConflict: 'user_id,course_id' }
+        );
 
-      if (!existing) {
-        await supabaseAdmin.from('enrollments').insert({
-          user_id: authUser.id,
-          course_id: data.courseId,
-          email,
-          access_origin: 'admin_manual',
-          status: 'active',
-        });
-      }
+      if (upsertError) throw new Error(upsertError.message);
     } else {
-      // Remove enrollment
       if (authUser) {
         await supabaseAdmin
           .from('enrollments')
-          .update({ status: 'cancelled' })
+          .update({ status: 'blocked', updated_at: now, notes: 'manual_block' })
           .eq('user_id', authUser.id)
           .eq('course_id', data.courseId)
           .eq('status', 'active');
       }
-      // Also remove by email
+
       await supabaseAdmin
         .from('enrollments')
-        .update({ status: 'cancelled' })
+        .update({ status: 'blocked', updated_at: now, notes: 'manual_block' })
         .eq('email', email)
         .eq('course_id', data.courseId)
         .eq('status', 'active');
