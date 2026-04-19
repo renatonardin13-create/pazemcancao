@@ -116,7 +116,7 @@ export function StudentSidebar() {
 
   const navItemClass = (active: boolean) =>
     cn(
-      "flex items-center gap-4 rounded-2xl px-5 py-4 text-[16px] font-semibold tracking-tight transition-all duration-400 group/navitem",
+      "flex items-center gap-3 rounded-2xl px-4 py-2.5 text-[15px] font-semibold tracking-tight transition-all duration-400 group/navitem",
       active
         ? "text-gold bg-gold/[0.10] ring-1 ring-gold/15 shadow-[0_0_20px_-4px] shadow-gold/10"
         : "text-foreground/50 hover:text-foreground/80 hover:bg-white/[0.03] ring-1 ring-transparent hover:ring-white/[0.04]"
