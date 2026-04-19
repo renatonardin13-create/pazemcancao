@@ -148,6 +148,7 @@ function MusicLibraryPage() {
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
   const [activePlaylistId, setActivePlaylistId] = useState<string | null>(null);
+  const [showAllTracks, setShowAllTracks] = useState(false);
 
   const { currentTrack, playing, toggle, setQueue } = usePlayer();
 
@@ -264,6 +265,13 @@ function MusicLibraryPage() {
   const handlePlayAll = () => {
     if (!filteredTracks.length) return;
     handleTrackPlay(filteredTracks[0], filteredTracks);
+  };
+
+  const handleOpenAllTracks = () => {
+    setShowAllTracks(true);
+    window.setTimeout(() => {
+      document.getElementById("all-tracks-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
   };
 
   const activeCategoryName = useMemo(() => {
@@ -480,7 +488,7 @@ function MusicLibraryPage() {
                           ) : (
                             <button
                               type="button"
-                              onClick={() => document.getElementById("playlists-section")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                              onClick={handleOpenAllTracks}
                               className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/80 transition hover:text-primary"
                             >
                               Ver todos
@@ -510,6 +518,25 @@ function MusicLibraryPage() {
                     ));
                   })()}
                 </div>
+              )}
+
+              {!categoryFilter && showAllTracks && (
+                <section id="all-tracks-section" className="space-y-4 scroll-mt-20">
+                  <div className="flex items-end justify-between gap-3">
+                    <h2 className="font-display text-xl font-bold tracking-tight text-foreground">
+                      Todos os louvores
+                    </h2>
+                    <span className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary">
+                      {filteredTracks.length} {filteredTracks.length === 1 ? "música" : "músicas"}
+                    </span>
+                  </div>
+
+                  <div className={POSTER_GRID}>
+                    {filteredTracks.map(dbTrackToPlayerTrack).map((pt, idx) => (
+                      <TrackCard key={`all-${pt.id}`} track={pt} index={idx} />
+                    ))}
+                  </div>
+                </section>
               )}
             </section>
 
