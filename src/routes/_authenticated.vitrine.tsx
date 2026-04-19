@@ -86,7 +86,9 @@ function VitrinePage() {
             </div>
           ) : (
             <>
-              {featured && <HeroBanner course={featured} />}
+              {(heroBanners.length > 0 || featured) && (
+                <HeroBanner banners={heroBanners} fallbackCourse={featured} />
+              )}
               <div className="space-y-10 py-8 sm:py-12">
                 {shelves.map((shelf) => (
                   <ShelfRow key={shelf.id} title={shelf.name} courses={shelf.courses} />
