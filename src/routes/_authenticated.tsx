@@ -26,6 +26,12 @@ function AuthenticatedLayout() {
   const welcomeShown = useRef(false);
   const isMusicExperience = location.pathname === "/musicas" || location.pathname.startsWith("/louvor/");
   const isAdminRoute = location.pathname.startsWith("/admin");
+  // /vitrine é a tela "catálogo público" para aluno autenticado: não pode ficar
+  // refém do loader bloqueante de checkBuyerAccess. A própria vitrine já tem
+  // skeleton/empty-state elegantes, então liberamos o Outlet imediatamente
+  // (assim como já fazemos para a experiência musical).
+  const isVitrineRoute = location.pathname === "/vitrine" || location.pathname.startsWith("/vitrine/");
+  const skipAccessGate = isMusicExperience || isVitrineRoute;
 
   // Admin acessando rota de aluno → redireciona para /admin (evita tela preta e conflito de contexto)
   useEffect(() => {
@@ -65,7 +71,7 @@ function AuthenticatedLayout() {
       console.error("Access check timeout:", currentEmail);
       setAccessCheckFailed(true);
       setAccessLoading(false);
-      if (isMusicExperience) {
+      if (skipAccessGate) {
         setAccessData({ hasAccess: true, buyer: null, canDownload: false, isTrial: false, trialExpired: false, trialExpiresAt: null });
       }
     }, 8000);
@@ -83,7 +89,7 @@ function AuthenticatedLayout() {
       console.error("Access check failed:", err);
       if (!cancelled) {
         setAccessCheckFailed(true);
-        if (isMusicExperience) {
+        if (skipAccessGate) {
           setAccessData({ hasAccess: true, buyer: null, canDownload: false, isTrial: false, trialExpired: false, trialExpiresAt: null });
         } else {
           setAccessData(null);
@@ -96,7 +102,7 @@ function AuthenticatedLayout() {
       cancelled = true;
       clearTimeout(timeout);
     };
-  }, [isAuthenticated, isAdmin, user?.email, isMusicExperience]);
+  }, [isAuthenticated, isAdmin, user?.email, skipAccessGate]);
 
   // Redirect to login if not authenticated (after loading completes)
   useEffect(() => {
@@ -122,7 +128,7 @@ function AuthenticatedLayout() {
     }
   }, [accessData, isAdmin]);
 
-  if (loading || (isAuthenticated && !isAdmin && accessLoading && !isMusicExperience)) {
+  if (loading || (isAuthenticated && !isAdmin && accessLoading && !skipAccessGate)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_40%,var(--color-gold)/0.025,transparent_70%)]" />
@@ -136,7 +142,7 @@ function AuthenticatedLayout() {
     );
   }
 
-  if (accessCheckFailed && !isMusicExperience) {
+  if (accessCheckFailed && !skipAccessGate) {
     return <RestrictedAccessCard />;
   }
 
@@ -185,7 +191,7 @@ function AuthenticatedLayout() {
     return <RestrictedAccessCard />;
   }
 
-  if (!isMusicExperience && !isAdmin && !accessData?.hasAccess) {
+  if (!skipAccessGate && !isAdmin && !accessData?.hasAccess) {
     const handleLogout = async () => {
       await logout();
       navigate({ to: "/login" });
