@@ -47,19 +47,6 @@ export function HeroBanner({ course }: Props) {
       {/* Content */}
       <div className="relative z-10 flex h-full items-end px-4 pb-12 sm:px-8 sm:pb-16 lg:px-12">
         <div className="max-w-2xl space-y-4">
-          {course.category_name && (
-            <span className="inline-block rounded-md bg-primary/20 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-primary backdrop-blur-sm">
-              {course.category_name}
-            </span>
-          )}
-          <h1 className="font-display text-3xl font-bold leading-tight text-white drop-shadow-2xl sm:text-5xl lg:text-6xl">
-            {title}
-          </h1>
-          {subtitle && (
-            <p className="line-clamp-3 max-w-xl text-sm text-white/85 drop-shadow-lg sm:text-base">
-              {subtitle}
-            </p>
-          )}
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
             {isOwned && (
