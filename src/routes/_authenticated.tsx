@@ -128,7 +128,7 @@ function AuthenticatedLayout() {
     }
   }, [accessData, isAdmin]);
 
-  if (loading || (isAuthenticated && !isAdmin && accessLoading && !isMusicExperience)) {
+  if (loading || (isAuthenticated && !isAdmin && accessLoading && !skipAccessGate)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_40%,var(--color-gold)/0.025,transparent_70%)]" />
