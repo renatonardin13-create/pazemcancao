@@ -133,46 +133,57 @@ function MeusCursosPage() {
   return (
     <StudentLayout>
       <div className="flex min-h-screen flex-col bg-background">
-        <main className="flex-1 pt-6 pb-20 sm:pt-8">
-          {/* Header / saudação */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="mb-8 px-4 sm:mb-10 sm:px-8 lg:px-12"
-          >
-            <div className="flex flex-col gap-1.5">
-              <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-primary/25 bg-primary/[0.06] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-primary">
-                <Sparkles className="h-3 w-3" /> Sua biblioteca
-              </span>
-              <h1 className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-                Olá, <span className="bg-gradient-to-r from-primary via-amber-300 to-primary bg-clip-text text-transparent">{firstName}</span>
-              </h1>
-              <p className="max-w-xl text-sm text-muted-foreground/70 sm:text-base">
-                Tudo o que você liberou, organizado em prateleiras para continuar de onde parou.
-              </p>
-            </div>
+        <main className="flex-1 pt-8 pb-20 sm:pt-10">
+          <div className="mx-auto w-full max-w-7xl px-4 sm:px-8 lg:px-10">
+            {/* Header / saudação */}
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              className="mb-10 sm:mb-12"
+            >
+              <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+                <div className="flex flex-col gap-2 max-w-2xl">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-primary/80">
+                    Olá, {firstName}
+                  </span>
+                  <h1 className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
+                    Meus <span className="bg-gradient-to-r from-primary via-amber-300 to-primary bg-clip-text text-transparent">cursos</span>
+                  </h1>
+                  <p className="text-sm text-muted-foreground/70 sm:text-[15px]">
+                    Tudo o que você liberou, reunido aqui para continuar de onde parou.
+                  </p>
+                </div>
 
-            {myCourses.length > 0 && (
-              <div className="relative mt-6 w-full max-w-sm">
-                <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/40" />
-                <Input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Buscar nos seus cursos..."
-                  className="h-11 rounded-xl border-border/30 bg-card/40 pl-10 text-sm placeholder:text-muted-foreground/40 focus:border-primary/40 focus:ring-primary/15"
-                />
+                {myCourses.length > 0 && (
+                  <div className="flex w-full flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-end lg:w-auto">
+                    <div className="relative w-full sm:w-72">
+                      <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/40" />
+                      <Input
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        placeholder="Buscar nos seus cursos..."
+                        className="h-11 rounded-xl border-border/30 bg-card/40 pl-10 text-sm placeholder:text-muted-foreground/40 focus:border-primary/40 focus:ring-primary/15"
+                      />
+                    </div>
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
+                      className="h-11 rounded-xl border border-border/30 bg-card/40 px-3.5 text-sm text-foreground/80 focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/15"
+                    >
+                      <option value="recent">Mais recentes</option>
+                      <option value="progress">Maior progresso</option>
+                      <option value="title">Ordem alfabética</option>
+                    </select>
+                  </div>
+                )}
               </div>
-            )}
-          </motion.div>
+            </motion.div>
 
-          {/* Conteúdo */}
-          {isLoading ? (
-            <div className="px-4 sm:px-8 lg:px-12">
+            {/* Conteúdo */}
+            {isLoading ? (
               <CardGridSkeleton count={6} />
-            </div>
-          ) : myCourses.length === 0 ? (
-            <div className="px-4 sm:px-8 lg:px-12">
+            ) : myCourses.length === 0 ? (
               <EmptyState
                 icon={BookOpen}
                 title="Sua biblioteca está esperando você"
@@ -180,55 +191,63 @@ function MeusCursosPage() {
                 actionTo="/vitrine"
                 actionLabel="Ir para a Vitrine"
               />
-            </div>
-          ) : searchResults !== null ? (
-            <div className="space-y-6">
-              {searchResults.length > 0 ? (
-                <ShelfRow title={`Resultados para "${search}"`} courses={searchResults} />
-              ) : (
-                <div className="px-4 sm:px-8 lg:px-12">
+            ) : searchResults !== null ? (
+              <div className="space-y-6">
+                {searchResults.length > 0 ? (
+                  <ShelfRow title={`Resultados para "${search}"`} courses={searchResults} />
+                ) : (
                   <EmptyState
                     icon={Search}
                     title="Nenhum curso encontrado"
                     description="Tente buscar com outras palavras."
                   />
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="space-y-10 sm:space-y-12">
-              {continueWatching.length > 0 && (
-                <ShelfRow title="Continue assistindo" courses={continueWatching} />
-              )}
-              {inProgress.length > 0 && continueWatching.length === 0 && (
-                <ShelfRow title="Em andamento" courses={inProgress} />
-              )}
-              <ShelfRow title="Meus cursos" courses={myCourses} />
-              {newCourses.length > 0 && newCourses.length < myCourses.length && (
-                <ShelfRow title="Novos para começar" courses={newCourses} />
-              )}
-              {byCategory.length > 1 &&
-                byCategory.map(([cat, list]) => (
-                  <ShelfRow key={cat} title={cat} courses={list} />
-                ))}
-              {completed.length > 0 && <ShelfRow title="Concluídos" courses={completed} />}
-
-              {premiumCourses.length > 0 && (
-                <ShelfRow title="Conteúdo Premium" courses={premiumCourses} />
-              )}
-
-              {/* CTA explorar */}
-              <div className="flex justify-center px-4 pt-6 sm:px-8 lg:px-12">
-                <Link
-                  to="/vitrine"
-                  className="group inline-flex items-center gap-2 rounded-full border border-primary/25 bg-card/40 px-6 py-3 text-sm font-medium text-foreground/80 transition-all duration-300 hover:border-primary/50 hover:bg-card/60 hover:text-primary"
-                >
-                  Explorar mais cursos na Vitrine
-                  <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </Link>
+                )}
               </div>
-            </div>
-          )}
+            ) : (
+              <div className="space-y-12 sm:space-y-14">
+                {continueWatching.length > 0 && (
+                  <ShelfRow title="Continue aprendendo" courses={continueWatching} />
+                )}
+                {inProgress.length > 0 && continueWatching.length === 0 && (
+                  <ShelfRow title="Em andamento" courses={inProgress} />
+                )}
+                <ShelfRow title="Sua biblioteca" courses={sortedMyCourses} />
+                {newCourses.length > 0 && newCourses.length < myCourses.length && (
+                  <ShelfRow title="Novos para começar" courses={newCourses} />
+                )}
+                {byCategory.length > 1 &&
+                  byCategory.map(([cat, list]) => (
+                    <ShelfRow key={cat} title={cat} courses={list} />
+                  ))}
+                {completed.length > 0 && <ShelfRow title="Concluídos" courses={completed} />}
+
+                {premiumCourses.length > 0 && (
+                  <ShelfRow title="Conteúdo Premium" courses={premiumCourses} />
+                )}
+
+                {/* CTA explorar — integrado como continuação natural */}
+                <div className="rounded-2xl border border-border/25 bg-gradient-to-br from-card/50 via-card/30 to-card/50 p-6 sm:p-8">
+                  <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="space-y-1">
+                      <h3 className="font-display text-lg font-semibold text-foreground sm:text-xl">
+                        Continue aprendendo
+                      </h3>
+                      <p className="text-sm text-muted-foreground/70">
+                        Descubra novos cursos disponíveis na Vitrine.
+                      </p>
+                    </div>
+                    <Link
+                      to="/vitrine"
+                      className="group inline-flex shrink-0 items-center gap-2 rounded-full border border-primary/30 bg-primary/[0.08] px-5 py-2.5 text-sm font-semibold text-primary transition-all duration-300 hover:border-primary/50 hover:bg-primary/[0.12]"
+                    >
+                      Ir para a Vitrine
+                      <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </main>
 
         <FooterLinks />
