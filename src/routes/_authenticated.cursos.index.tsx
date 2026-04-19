@@ -60,7 +60,7 @@ function MeusCursosPage() {
   const firstName = displayName.split(" ")[0];
 
   const myCourses: VitrineCourse[] = useMemo(
-    () => (Array.isArray(myData?.courses) ? myData.courses.filter((course): course is VitrineCourse => Boolean(course?.id)) : []),
+    () => (Array.isArray(myData?.courses) ? myData.courses.filter((course) => Boolean(course?.id)) : []),
     [myData],
   );
   const ownedIds = useMemo(() => new Set(myCourses.map((c) => c.id)), [myCourses]);

@@ -8,9 +8,9 @@ interface Props {
 }
 
 export function HeroBanner({ course }: Props) {
+  const navigate = useNavigate();
   if (!course?.id) return null;
 
-  const navigate = useNavigate();
   const isOwned = isCourseUnlocked(course);
   const bg = course.banner_image_url || course.cover_image_url;
   const title = course.display_title || course.title || "Curso em destaque";
