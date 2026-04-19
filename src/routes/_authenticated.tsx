@@ -24,6 +24,14 @@ function AuthenticatedLayout() {
   const lastCheckedEmail = useRef<string | null>(null);
   const welcomeShown = useRef(false);
   const isMusicExperience = location.pathname === "/musicas" || location.pathname.startsWith("/louvor/");
+  const isAdminRoute = location.pathname.startsWith("/admin");
+
+  // Admin acessando rota de aluno → redireciona para /admin (evita tela preta e conflito de contexto)
+  useEffect(() => {
+    if (!loading && isAuthenticated && isAdmin && !isAdminRoute) {
+      navigate({ to: "/admin" });
+    }
+  }, [loading, isAuthenticated, isAdmin, isAdminRoute, navigate]);
 
   useEffect(() => {
     if (!isAuthenticated) {
