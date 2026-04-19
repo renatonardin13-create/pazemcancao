@@ -521,6 +521,8 @@ function MusicLibraryPage() {
               </section>
             )}
 
+            <UpcomingReleaseBlock />
+
             {shouldShowPlaylistsSection && (
             <section>
               <div className="mb-4 flex items-center gap-2">
