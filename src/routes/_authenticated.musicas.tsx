@@ -317,7 +317,7 @@ function MusicLibraryPage() {
       <StudentLayout>
         <div className="min-h-screen bg-background">
           <SafeBoundary fallbackTitle="Erro ao carregar músicas">
-          <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
+          <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-8 px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
             <section className="relative overflow-hidden rounded-3xl border border-border/40 bg-gradient-to-br from-card/60 via-card/30 to-background/60 p-6 shadow-[0_4px_30px_-10px_rgba(0,0,0,0.5)] sm:p-9">
               <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
               <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
