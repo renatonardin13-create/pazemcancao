@@ -346,15 +346,33 @@ function AdminUsersPage() {
     const normalized = (status || 'none').toLowerCase();
     const map: Record<string, { label: string; cls: string }> = {
       active: { label: 'Ativo', cls: 'bg-emerald-500/15 text-emerald-400/80' },
+      trial: { label: 'Teste', cls: 'bg-sky-500/15 text-sky-400/80' },
       refunded: { label: 'Reembolsado', cls: 'bg-rose-500/15 text-rose-400/80' },
       chargedback: { label: 'Chargeback', cls: 'bg-rose-500/15 text-rose-400/80' },
+      chargeback: { label: 'Chargeback', cls: 'bg-rose-500/15 text-rose-400/80' },
       cancelled: { label: 'Cancelado', cls: 'bg-slate-500/15 text-slate-300/80' },
+      canceled: { label: 'Cancelado', cls: 'bg-slate-500/15 text-slate-300/80' },
       expired: { label: 'Vencido', cls: 'bg-amber-500/15 text-amber-400/80' },
       blocked: { label: 'Bloqueado', cls: 'bg-destructive/15 text-destructive/80' },
       none: { label: 'Sem acesso', cls: 'bg-muted/20 text-muted-foreground/70' },
     };
     const { label, cls } = map[normalized] || map.none;
-    return <Badge className={`${cls} border-0 text-[11px]`}>{label}</Badge>;
+    return <Badge className={`${cls} border-0 text-[10px] px-1.5 py-0 h-4`}>{label}</Badge>;
+  };
+
+  const renderOriginBadge = (origin?: string | null) => {
+    const normalized = (origin || 'manual').toLowerCase();
+    const map: Record<string, { label: string; cls: string }> = {
+      manual: { label: 'Manual', cls: 'bg-violet-500/15 text-violet-300/80' },
+      webhook: { label: 'Webhook', cls: 'bg-blue-500/15 text-blue-300/80' },
+      kiwify: { label: 'Kiwify', cls: 'bg-blue-500/15 text-blue-300/80' },
+      hotmart: { label: 'Hotmart', cls: 'bg-orange-500/15 text-orange-300/80' },
+      cakto: { label: 'Cakto', cls: 'bg-teal-500/15 text-teal-300/80' },
+      trial: { label: 'Trial', cls: 'bg-sky-500/15 text-sky-300/80' },
+      test: { label: 'Teste', cls: 'bg-sky-500/15 text-sky-300/80' },
+    };
+    const { label, cls } = map[normalized] || { label: normalized, cls: 'bg-muted/20 text-muted-foreground/70' };
+    return <Badge className={`${cls} border-0 text-[10px] px-1.5 py-0 h-4`}>{label}</Badge>;
   };
 
   const totalUsers = buyers.length;
@@ -714,14 +732,21 @@ function AdminUsersPage() {
 
                 <div className="hidden lg:flex flex-col gap-1 min-w-0">
                   <span className="text-sm text-foreground/60 font-medium">{buyer.courses?.length ?? 0} vínculo(s)</span>
-                  <div className="flex flex-wrap gap-1">
-                    {(buyer.courses || []).slice(0, 2).map((course: any) => (
-                      <Badge key={course.course_id} className="bg-muted/20 text-muted-foreground/80 border-0 text-[10px] max-w-[140px] truncate inline-block">
-                        {course.course_title}
-                      </Badge>
-                    ))}
-                    {(buyer.courses || []).length > 2 ? (
-                      <Badge className="bg-muted/20 text-muted-foreground/80 border-0 text-[10px]">+{(buyer.courses || []).length - 2}</Badge>
+                  <div className="flex flex-col gap-1">
+                    {(buyer.courses || []).slice(0, 3).map((course: any) => {
+                      const origin = buyer.is_trial ? 'trial' : (course.access_origin || 'manual');
+                      return (
+                        <div key={course.course_id} className="flex items-center gap-1 min-w-0">
+                          <span className="text-[11px] text-foreground/70 truncate max-w-[120px]" title={course.course_title}>
+                            {course.course_title}
+                          </span>
+                          {renderCourseStatusBadge(course.status)}
+                          {renderOriginBadge(origin)}
+                        </div>
+                      );
+                    })}
+                    {(buyer.courses || []).length > 3 ? (
+                      <Badge className="bg-muted/20 text-muted-foreground/80 border-0 text-[10px] w-fit">+{(buyer.courses || []).length - 3} mais</Badge>
                     ) : null}
                   </div>
                 </div>
