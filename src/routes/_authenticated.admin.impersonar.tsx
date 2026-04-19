@@ -27,6 +27,8 @@ export const Route = createFileRoute("/_authenticated/admin/impersonar")({
 
 function ImpersonarPage() {
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [courseFilter, setCourseFilter] = useState<string>("all");
   const [pendingEmail, setPendingEmail] = useState<string | null>(null);
 
   const listBuyersFn = useServerFn(listApprovedBuyers);
