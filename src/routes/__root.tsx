@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/hooks/use-auth";
 import { PlayerProvider } from "@/hooks/use-player";
 import { GlobalPlayer } from "@/components/GlobalPlayer";
+import { ImpersonationBanner } from "@/components/ImpersonationBanner";
 import { Toaster } from "@/components/ui/sonner";
 
 import "../styles.css";
@@ -81,6 +82,7 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <PlayerProvider>
+          <ImpersonationBanner />
           <Outlet />
           <GlobalPlayer />
           <Toaster richColors position="top-right" />
