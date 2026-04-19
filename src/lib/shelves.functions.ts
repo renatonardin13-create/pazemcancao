@@ -434,20 +434,28 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
     }
 
     // ── Banner config ──
-    const { data: bannerSetting, error: bannerError } = await supabaseAdmin
-      .from('platform_settings')
-      .select('value')
-      .eq('key', 'hero_banner')
-      .maybeSingle();
+    let bannerConfig: any = null;
+    try {
+      const { data: bannerSetting } = await supabaseAdmin
+        .from('platform_settings')
+        .select('value')
+        .eq('key', 'hero_banner')
+        .maybeSingle();
+      bannerConfig = bannerSetting?.value ?? null;
+    } catch (err) {
+      console.error('[getStudentShelves] banner config fetch failed:', err);
+      bannerConfig = null;
+    }
 
-    if (bannerError) throw new Error(bannerError.message);
+    // Normaliza strings vazias para null — evita criar banner sintético inválido
+    const safeCourseId = typeof bannerConfig?.course_id === 'string' && bannerConfig.course_id.trim() ? bannerConfig.course_id.trim() : null;
+    const safeImageUrl = typeof bannerConfig?.image_url === 'string' && bannerConfig.image_url.trim() ? bannerConfig.image_url.trim() : null;
 
-    const bannerConfig = bannerSetting?.value as any;
     let featuredCourse: any = null;
     const featuredCourses: any[] = [];
 
     if (bannerConfig?.enabled === true) {
-      if (bannerConfig?.course_id) {
+      if (safeCourseId) {
         const configured = courseMap.get(bannerConfig.course_id);
         if (configured) {
           featuredCourse = {
