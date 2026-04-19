@@ -26,6 +26,12 @@ function AuthenticatedLayout() {
   const welcomeShown = useRef(false);
   const isMusicExperience = location.pathname === "/musicas" || location.pathname.startsWith("/louvor/");
   const isAdminRoute = location.pathname.startsWith("/admin");
+  // /vitrine é a tela "catálogo público" para aluno autenticado: não pode ficar
+  // refém do loader bloqueante de checkBuyerAccess. A própria vitrine já tem
+  // skeleton/empty-state elegantes, então liberamos o Outlet imediatamente
+  // (assim como já fazemos para a experiência musical).
+  const isVitrineRoute = location.pathname === "/vitrine" || location.pathname.startsWith("/vitrine/");
+  const skipAccessGate = isMusicExperience || isVitrineRoute;
 
   // Admin acessando rota de aluno → redireciona para /admin (evita tela preta e conflito de contexto)
   useEffect(() => {
