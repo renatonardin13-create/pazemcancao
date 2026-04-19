@@ -71,7 +71,7 @@ function AuthenticatedLayout() {
       console.error("Access check timeout:", currentEmail);
       setAccessCheckFailed(true);
       setAccessLoading(false);
-      if (isMusicExperience) {
+      if (skipAccessGate) {
         setAccessData({ hasAccess: true, buyer: null, canDownload: false, isTrial: false, trialExpired: false, trialExpiresAt: null });
       }
     }, 8000);
@@ -89,7 +89,7 @@ function AuthenticatedLayout() {
       console.error("Access check failed:", err);
       if (!cancelled) {
         setAccessCheckFailed(true);
-        if (isMusicExperience) {
+        if (skipAccessGate) {
           setAccessData({ hasAccess: true, buyer: null, canDownload: false, isTrial: false, trialExpired: false, trialExpiresAt: null });
         } else {
           setAccessData(null);
