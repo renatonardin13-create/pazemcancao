@@ -16,6 +16,7 @@ import { SafeBoundary } from "@/components/SafeBoundary";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TrackCard } from "@/components/TrackCard";
+import { HighlightTrackCard } from "@/components/HighlightTrackCard";
 import { UpcomingReleaseBlock } from "@/components/UpcomingReleaseBlock";
 import { POSTER_GRID } from "@/lib/card-grid";
 import { PosterShelfRow, PosterShelfItem } from "@/components/PosterShelfRow";
@@ -485,7 +486,11 @@ function MusicLibraryPage() {
                         <PosterShelfRow>
                           {group.items.map(dbTrackToPlayerTrack).map((pt, idx) => (
                             <PosterShelfItem key={`${group.key}-${pt.id}`}>
-                              <TrackCard track={pt} index={idx} />
+                              {group.key === "__destaques" ? (
+                                <HighlightTrackCard track={pt} />
+                              ) : (
+                                <TrackCard track={pt} index={idx} />
+                              )}
                             </PosterShelfItem>
                           ))}
                         </PosterShelfRow>
