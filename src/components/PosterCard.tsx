@@ -99,11 +99,7 @@ export const PosterCard = memo(function PosterCard({
       style={{
         animationDelay: `${Math.min(index * 80, 400)}ms`,
         animationFillMode: "both",
-        // Browser pula layout/paint dos cards fora da viewport — grande ganho
-        // em listas longas, sem custo de JS.
-        contentVisibility: "auto",
-        containIntrinsicSize: "320px 240px",
-      } as React.CSSProperties}
+      }}
     >
       {aboveCard}
 

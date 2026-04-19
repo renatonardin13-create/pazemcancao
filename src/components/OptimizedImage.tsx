@@ -39,7 +39,10 @@ export const OptimizedImage = memo(function OptimizedImage({
 }: OptimizedImageProps) {
   const [loaded, setLoaded] = useState(false);
   const handleLoad = useCallback(() => setLoaded(true), []);
-  const handleError = useCallback(() => onError?.(), [onError]);
+  const handleError = useCallback(() => {
+    setLoaded(true);
+    onError?.();
+  }, [onError]);
   const sizes = SIZES_MAP[context] || SIZES_MAP.card;
 
   return (
@@ -54,7 +57,7 @@ export const OptimizedImage = memo(function OptimizedImage({
       onLoad={handleLoad}
       onError={handleError}
       onClick={onClick}
-      className={`${className} transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
+      className={`${className} transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-100"}`}
       style={style}
     />
   );
