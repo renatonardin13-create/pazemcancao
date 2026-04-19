@@ -732,14 +732,21 @@ function AdminUsersPage() {
 
                 <div className="hidden lg:flex flex-col gap-1 min-w-0">
                   <span className="text-sm text-foreground/60 font-medium">{buyer.courses?.length ?? 0} vínculo(s)</span>
-                  <div className="flex flex-wrap gap-1">
-                    {(buyer.courses || []).slice(0, 2).map((course: any) => (
-                      <Badge key={course.course_id} className="bg-muted/20 text-muted-foreground/80 border-0 text-[10px] max-w-[140px] truncate inline-block">
-                        {course.course_title}
-                      </Badge>
-                    ))}
-                    {(buyer.courses || []).length > 2 ? (
-                      <Badge className="bg-muted/20 text-muted-foreground/80 border-0 text-[10px]">+{(buyer.courses || []).length - 2}</Badge>
+                  <div className="flex flex-col gap-1">
+                    {(buyer.courses || []).slice(0, 3).map((course: any) => {
+                      const origin = buyer.is_trial ? 'trial' : (course.access_origin || 'manual');
+                      return (
+                        <div key={course.course_id} className="flex items-center gap-1 min-w-0">
+                          <span className="text-[11px] text-foreground/70 truncate max-w-[120px]" title={course.course_title}>
+                            {course.course_title}
+                          </span>
+                          {renderCourseStatusBadge(course.status)}
+                          {renderOriginBadge(origin)}
+                        </div>
+                      );
+                    })}
+                    {(buyer.courses || []).length > 3 ? (
+                      <Badge className="bg-muted/20 text-muted-foreground/80 border-0 text-[10px] w-fit">+{(buyer.courses || []).length - 3} mais</Badge>
                     ) : null}
                   </div>
                 </div>
