@@ -1,4 +1,4 @@
-import { ExternalLink, Lock, X, BookOpen, Clock, Tag } from "lucide-react";
+import { ArrowRight, Lock, X, BookOpen, Clock, Tag, Sparkles } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import type { VitrineCourse } from "@/components/vitrine/types";
@@ -109,12 +109,15 @@ export function LockedCourseModal({ open, onOpenChange, course }: Props) {
                 <Button
                   variant="premium"
                   size="lg"
-                  className="h-12 w-full text-sm font-bold tracking-wide shadow-[0_10px_30px_-10px_rgba(212,175,55,0.6)]"
+                  className="group h-12 w-full gap-2 text-sm font-semibold tracking-wide shadow-[0_10px_30px_-10px_rgba(212,175,55,0.55)]"
                   onClick={handleSales}
                   disabled={ctaDisabled}
                 >
-                  {ctaDisabled ? "Em breve" : "Saiba mais sobre este conteúdo"}
-                  {!ctaDisabled && <ExternalLink className="h-4 w-4" />}
+                  {!ctaDisabled && <Sparkles className="h-4 w-4" />}
+                  {ctaDisabled ? "Em breve" : "Conhecer este conteúdo"}
+                  {!ctaDisabled && (
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                  )}
                 </Button>
                 <Button
                   variant="ghost"
