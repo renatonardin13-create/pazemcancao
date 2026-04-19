@@ -146,11 +146,11 @@ export function UpcomingReleaseBlock({ tracks = [] as RawTrack[] }: { tracks?: R
 
   return (
     <section aria-labelledby="upcoming-release-title">
-      <div className="relative overflow-hidden rounded-3xl border border-gold/25 bg-gradient-to-br from-gold/[0.07] via-background to-background p-5 shadow-[0_10px_40px_-20px_hsl(var(--primary)/0.5)] sm:p-7">
+      <div className="relative overflow-hidden rounded-3xl border border-gold/25 bg-gradient-to-br from-gold/[0.07] via-background to-background p-5 shadow-[0_10px_40px_-20px_hsl(var(--primary)/0.5)] sm:p-6 lg:p-8">
         <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-gold/15 blur-3xl" />
         <div className="pointer-events-none absolute -bottom-20 -left-16 h-56 w-56 rounded-full bg-primary/10 blur-3xl" />
 
-        <div className="relative grid gap-6 lg:grid-cols-[minmax(0,260px)_1fr] lg:gap-8">
+        <div className="relative grid gap-6 lg:grid-cols-[minmax(0,280px)_1fr] lg:items-center lg:gap-10">
           {/* Esquerda — info */}
           <div className="flex flex-col gap-4">
             <div className="inline-flex w-fit items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.22em] text-gold/90">
@@ -166,14 +166,14 @@ export function UpcomingReleaseBlock({ tracks = [] as RawTrack[] }: { tracks?: R
               </p>
             </div>
 
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
               {[
                 { label: "Dias", value: remaining.d },
                 { label: "Hrs", value: remaining.h },
                 { label: "Min", value: remaining.m },
                 { label: "Seg", value: remaining.s },
               ].map((item) => (
-                <div key={item.label} className="rounded-xl border border-gold/20 bg-background/60 px-2 py-2 text-center backdrop-blur">
+                <div key={item.label} className="rounded-xl border border-gold/20 bg-background/60 px-1.5 py-2 text-center backdrop-blur">
                   <div className="font-display text-lg font-bold tabular-nums text-gold sm:text-xl">{pad(item.value)}</div>
                   <div className="mt-0.5 text-[9px] font-semibold uppercase tracking-wider text-muted-foreground/70">{item.label}</div>
                 </div>
@@ -187,11 +187,11 @@ export function UpcomingReleaseBlock({ tracks = [] as RawTrack[] }: { tracks?: R
           </div>
 
           {/* Direita — cards reais misturados */}
-          <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-2 [scrollbar-width:thin]">
+          <div className="-mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-2 [scrollbar-width:thin] sm:gap-4">
             {items.map((item) => (
               <div
                 key={item.id}
-                className="group relative flex h-[190px] w-[130px] shrink-0 flex-col overflow-hidden rounded-2xl border border-gold/20 bg-card/40 shadow-[0_6px_20px_-10px_rgba(0,0,0,0.6)] transition-all duration-300 hover:-translate-y-1 hover:border-gold/40"
+                className="group relative flex h-[200px] w-[132px] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border border-gold/20 bg-card/40 shadow-[0_6px_20px_-10px_rgba(0,0,0,0.6)] transition-all duration-300 hover:-translate-y-1 hover:border-gold/40 sm:h-[210px] sm:w-[140px]"
               >
                 {/* Capa */}
                 <div className="relative h-[120px] w-full overflow-hidden bg-gradient-to-br from-card/80 to-background">
