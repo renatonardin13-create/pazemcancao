@@ -21,7 +21,9 @@ export function useCatalogProducts() {
   const products: VitrineCourse[] = useMemo(() => {
     const seen = new Set<string>();
     const out: VitrineCourse[] = [];
-    for (const shelf of query.data?.shelves || []) {
+    for (const shelf of (query.data?.shelves || []).filter(
+      (value): value is { courses: VitrineCourse[] } => !!value && Array.isArray(value.courses),
+    )) {
       for (const c of shelf.courses) {
         if (seen.has(c.id)) continue;
         if (c.product_access_state === "hidden") continue;
@@ -34,7 +36,9 @@ export function useCatalogProducts() {
 
   return {
     products,
-    shelves: query.data?.shelves || [],
+    shelves: (query.data?.shelves || []).filter(
+      (value): value is { courses: VitrineCourse[] } & typeof value => !!value && Array.isArray(value.courses),
+    ),
     featured: query.data?.featuredCourse,
     isLoading: query.isLoading,
     isError: query.isError,
