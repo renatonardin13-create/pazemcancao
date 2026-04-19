@@ -5,6 +5,7 @@ import { PlayerProvider } from "@/hooks/use-player";
 import { GlobalPlayer } from "@/components/GlobalPlayer";
 import { ImpersonationBanner } from "@/components/ImpersonationBanner";
 import { Toaster } from "@/components/ui/sonner";
+import { SafeBoundary } from "@/components/SafeBoundary";
 
 import "../styles.css";
 
@@ -83,7 +84,9 @@ function RootComponent() {
       <AuthProvider>
         <PlayerProvider>
           <ImpersonationBanner />
-          <Outlet />
+          <SafeBoundary fallbackTitle="Erro ao carregar a página">
+            <Outlet />
+          </SafeBoundary>
           <GlobalPlayer />
           <Toaster richColors position="top-right" />
         </PlayerProvider>
