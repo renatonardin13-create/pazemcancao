@@ -58,7 +58,7 @@ export const listApprovedBuyers = createServerFn({ method: 'POST' })
     // Fetch ALL enrollments (any status — we surface per-course status to the UI)
     const { data: enrollments } = await supabaseAdmin
       .from('enrollments')
-      .select('email, user_id, course_id, status, progress_percentage, expires_at, access_origin');
+      .select('email, user_id, course_id, status, progress_percentage, expires_at, access_origin, updated_at, notes');
 
     // Fetch lesson progress for all users
     const { data: lessonProgress } = await supabaseAdmin
