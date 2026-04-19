@@ -959,11 +959,7 @@ function AdminUsersPage() {
                       {detailBuyer.email}
                     </p>
                     <div className="mt-1">
-                      {!detailBuyer.access_enabled ? (
-                        <Badge className="bg-destructive/15 text-destructive/80 border-0 text-xs">Bloqueado</Badge>
-                      ) : (
-                        <Badge className="bg-emerald-500/15 text-emerald-400/80 border-0 text-xs">Ativo</Badge>
-                      )}
+                      {renderStatusBadge(detailBuyer)}
                     </div>
                   </div>
                 </div>
