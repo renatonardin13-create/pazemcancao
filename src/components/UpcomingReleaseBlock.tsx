@@ -102,6 +102,23 @@ function pickMixedUpcoming(tracks: RawTrack[]): UpcomingItem[] {
   return mixed;
 }
 
+function pickFallbackItems(tracks: RawTrack[], excludeIds: string[], existingIds: string[]): UpcomingItem[] {
+  const excluded = new Set([...excludeIds.map(String), ...existingIds.map(String)]);
+  const fallbackTs = Date.now() + 7 * 86400_000;
+
+  return tracks
+    .filter((track) => track.id && track.title && !excluded.has(String(track.id)))
+    .sort((a, b) => (a?.sort_order ?? 0) - (b?.sort_order ?? 0))
+    .slice(0, TOTAL_TRACKS)
+    .map((track) => ({
+      id: String(track.id),
+      title: String(track.title),
+      cover: (track.cover_url as string) || null,
+      category: resolveCategory(track),
+      releaseAt: resolveReleaseTimestamp(track) ?? fallbackTs,
+    }));
+}
+
 function formatRemaining(ms: number) {
   if (ms <= 0) return { d: 0, h: 0, m: 0, s: 0 };
   const total = Math.floor(ms / 1000);
@@ -144,8 +161,16 @@ export function UpcomingReleaseBlock({
   excludeIds?: string[];
 }) {
   const items = useMemo(() => {
-    const exclude = new Set(excludeIds.map(String));
-    return pickMixedUpcoming(tracks).filter((it) => !exclude.has(it.id));
+    const mixedUpcoming = pickMixedUpcoming(tracks).filter((it) => !excludeIds.map(String).includes(it.id));
+    if (mixedUpcoming.length >= TOTAL_TRACKS) return mixedUpcoming.slice(0, TOTAL_TRACKS);
+
+    const fallback = pickFallbackItems(
+      tracks,
+      excludeIds,
+      mixedUpcoming.map((item) => item.id),
+    );
+
+    return [...mixedUpcoming, ...fallback].slice(0, TOTAL_TRACKS);
   }, [tracks, excludeIds]);
 
   const [now, setNow] = useState<number>(() => Date.now());
@@ -154,7 +179,7 @@ export function UpcomingReleaseBlock({
     return () => clearInterval(id);
   }, []);
 
-  const targetTs = items[0]?.releaseAt ?? Date.now() + 7 * 86400_000;
+  const targetTs = items.find((item) => item.releaseAt > now)?.releaseAt ?? Date.now() + 7 * 86400_000;
   const remaining = formatRemaining(targetTs - now);
 
   if (!items.length) return null;
@@ -207,7 +232,7 @@ export function UpcomingReleaseBlock({
           <div className="p-4 sm:p-5">
             <div className="mb-4 flex items-center justify-end">
               <p className="text-right text-[15px] text-foreground/80">
-                10 louvores exclusivos serão liberados para você
+                {items.length} louvores exclusivos serão liberados para você
               </p>
             </div>
 
