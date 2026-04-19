@@ -7,13 +7,13 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { getStudentShelves } from "@/lib/shelves.functions";
+import { getStudentVitrineData } from "@/lib/student-vitrine.functions";
 import type { VitrineCourse, VitrineShelf } from "@/components/vitrine/types";
 
 export function useCatalogProducts() {
   const query = useQuery({
     queryKey: ["catalog-products", "v1"],
-    queryFn: () => getStudentShelves(),
+    queryFn: () => getStudentVitrineData(),
     staleTime: 30_000,
     refetchOnWindowFocus: true,
   });

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { ModuleGuard } from "@/components/ModuleGuard";
 import { SafeBoundary } from "@/components/SafeBoundary";
-import { getStudentShelves } from "@/lib/shelves.functions";
+import { getStudentVitrineData } from "@/lib/student-vitrine.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { VitrinePageContent } from "@/components/vitrine/VitrinePageContent";
 import type { VitrineShelf } from "@/components/vitrine/types";
@@ -37,12 +37,15 @@ function VitrineErrorFallback({ error }: { error: Error }) {
 }
 
 function VitrinePage() {
+  const DEBUG_MINIMAL_VITRINE = false;
+  const shouldRunQuery = !DEBUG_MINIMAL_VITRINE;
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["student-shelves", "v2"],
-    queryFn: () => getStudentShelves(),
+    queryFn: () => getStudentVitrineData(),
     staleTime: 0,
     refetchOnWindowFocus: true,
     retry: 1,
+    enabled: shouldRunQuery,
   });
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -58,8 +61,22 @@ function VitrinePage() {
   useEffect(() => {
     console.log("[DEBUG][VITRINE] routeComponent=VitrinePage");
     console.log("[DEBUG][VITRINE] isLoading=", isLoading, "isError=", isError);
+    console.log("[DEBUG][VITRINE] payload=", data);
     if (isError) console.error("[VITRINE] query error:", error);
-  }, [isLoading, isError, error]);
+  }, [data, isLoading, isError, error]);
+
+  if (DEBUG_MINIMAL_VITRINE) {
+    return (
+      <ModuleGuard moduleKey="vitrine">
+        <StudentLayout>
+          <div className="min-h-screen bg-background px-6 py-10">
+            <h1 className="font-display text-2xl font-bold text-foreground">Vitrine</h1>
+            <p className="mt-2 text-sm text-muted-foreground">rota carregada</p>
+          </div>
+        </StudentLayout>
+      </ModuleGuard>
+    );
+  }
 
   return (
     <ModuleGuard moduleKey="vitrine">

@@ -1,0 +1,200 @@
+import { createServerFn } from '@tanstack/react-start';
+import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
+import { supabaseAdmin } from '@/integrations/supabase/client.server';
+
+type CourseRow = {
+  id: string;
+  title: string;
+  short_description: string | null;
+  full_description: string | null;
+  sales_description: string | null;
+  cover_image_url: string | null;
+  banner_image_url: string | null;
+  price: number;
+  promotional_price: number | null;
+  benefits: string[] | null;
+  total_lessons: number;
+  total_duration: string | null;
+  product_type: string;
+  category_id: string | null;
+  status: string;
+  sort_order: number;
+  launch_date: string | null;
+};
+
+type ShelfRow = {
+  id: string;
+  name: string;
+  sort_order: number;
+  mode: string;
+  auto_criteria: string | null;
+  show_in_vitrine: boolean;
+};
+
+type ShelfCourseRow = {
+  shelf_id: string;
+  course_id: string;
+  sort_order: number;
+};
+
+function safeCourse(course: any) {
+  if (!course?.id) return null;
+  return {
+    id: course.id,
+    title: course.title || 'Curso sem título',
+    short_description: course.short_description ?? null,
+    full_description: course.full_description ?? null,
+    sales_description: course.sales_description ?? null,
+    cover_image_url: course.cover_image_url ?? null,
+    banner_image_url: course.banner_image_url ?? null,
+    price: Number(course.price ?? 0),
+    promotional_price: course.promotional_price ?? null,
+    benefits: Array.isArray(course.benefits) ? course.benefits.filter(Boolean) : [],
+    total_lessons: Number(course.total_lessons ?? 0),
+    total_duration: course.total_duration ?? null,
+    product_type: course.product_type || 'curso_individual',
+    category_name: course.category_name ?? null,
+    checkout_url: course.checkout_url ?? null,
+    sales_page_url: course.sales_page_url ?? null,
+    banner_link_url: course.banner_link_url ?? null,
+    access_state: course.access_state ?? 'locked',
+    progress_pct: Number(course.progress_pct ?? 0),
+    launch_date: course.launch_date ?? null,
+  };
+}
+
+export const getStudentVitrineData = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+
+    const [
+      shelvesRes,
+      shelfCoursesRes,
+      coursesRes,
+      categoriesRes,
+      integrationsRes,
+      enrollmentsRes,
+      heroBannerRes,
+    ] = await Promise.all([
+      supabaseAdmin
+        .from('shelves')
+        .select('id, name, sort_order, mode, auto_criteria, show_in_vitrine')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true }),
+      supabaseAdmin
+        .from('shelf_courses')
+        .select('shelf_id, course_id, sort_order')
+        .order('sort_order', { ascending: true }),
+      supabaseAdmin
+        .from('courses')
+        .select('id, title, short_description, full_description, sales_description, cover_image_url, banner_image_url, price, promotional_price, benefits, total_lessons, total_duration, product_type, category_id, status, sort_order, launch_date')
+        .in('status', ['published', 'draft'])
+        .order('sort_order', { ascending: true }),
+      supabaseAdmin.from('categories').select('id, name'),
+      supabaseAdmin.from('course_integrations').select('course_id, checkout_url').eq('is_enabled', true),
+      supabase
+        .from('enrollments')
+        .select('course_id, status, expires_at, progress_percentage')
+        .eq('user_id', userId),
+      supabaseAdmin.from('platform_settings').select('value').eq('key', 'hero_banner').maybeSingle(),
+    ]);
+
+    if (shelvesRes.error) throw new Error(shelvesRes.error.message);
+    if (shelfCoursesRes.error) throw new Error(shelfCoursesRes.error.message);
+    if (coursesRes.error) throw new Error(coursesRes.error.message);
+    if (categoriesRes.error) throw new Error(categoriesRes.error.message);
+    if (integrationsRes.error) throw new Error(integrationsRes.error.message);
+    if (enrollmentsRes.error) throw new Error(enrollmentsRes.error.message);
+
+    const shelves = ((shelvesRes.data || []) as ShelfRow[]).filter((shelf) => shelf.show_in_vitrine !== false);
+    const shelfCourses = (shelfCoursesRes.data || []) as ShelfCourseRow[];
+    const courses = (coursesRes.data || []) as CourseRow[];
+    const categories = new Map((categoriesRes.data || []).map((item: any) => [item.id, item.name]));
+    const integrations = new Map((integrationsRes.data || []).map((item: any) => [item.course_id, item.checkout_url]));
+
+    const activeOwned = new Set<string>();
+    for (const enrollment of enrollmentsRes.data || []) {
+      const expired = enrollment.expires_at && new Date(enrollment.expires_at).getTime() < Date.now();
+      if (enrollment.status === 'active' && !expired) activeOwned.add(enrollment.course_id);
+    }
+
+    const courseMap = new Map(
+      courses.map((course) => {
+        const owned = activeOwned.has(course.id);
+        const launchDate = course.launch_date ? new Date(course.launch_date) : null;
+        const comingSoon = !owned && !!launchDate && launchDate.getTime() > Date.now();
+        const accessState = owned ? 'enrolled' : comingSoon ? 'coming_soon' : 'locked';
+
+        return [
+          course.id,
+          safeCourse({
+            ...course,
+            category_name: course.category_id ? categories.get(course.category_id) || null : null,
+            checkout_url: integrations.get(course.id) || null,
+            access_state: accessState,
+            progress_pct: 0,
+          }),
+        ];
+      }),
+    );
+
+    const linksByShelf = new Map<string, ShelfCourseRow[]>();
+    for (const link of shelfCourses) {
+      const list = linksByShelf.get(link.shelf_id) || [];
+      list.push(link);
+      linksByShelf.set(link.shelf_id, list);
+    }
+
+    const builtShelves = shelves.map((shelf) => {
+      const coursesForShelf = (linksByShelf.get(shelf.id) || [])
+        .map((link) => courseMap.get(link.course_id))
+        .filter(Boolean);
+
+      return {
+        id: shelf.id,
+        name: shelf.name || 'Prateleira',
+        sort_order: shelf.sort_order ?? 0,
+        shelf_type: 'admin' as const,
+        courses: coursesForShelf,
+      };
+    }).filter((shelf) => shelf.courses.length > 0);
+
+    const shownIds = new Set(builtShelves.flatMap((shelf) => shelf.courses.map((course: any) => course.id)));
+    const orphanCourses = courses
+      .filter((course) => course.status === 'published' && !shownIds.has(course.id))
+      .map((course) => courseMap.get(course.id))
+      .filter(Boolean);
+
+    if (orphanCourses.length > 0) {
+      builtShelves.push({
+        id: '__catalog__',
+        name: builtShelves.length ? 'Todos os Cursos' : 'Catálogo',
+        sort_order: 9999,
+        shelf_type: 'admin' as const,
+        courses: orphanCourses,
+      });
+    }
+
+    const hero = heroBannerRes.data?.value as any;
+    const configuredHero = hero?.enabled && typeof hero?.course_id === 'string' ? courseMap.get(hero.course_id) : null;
+    const fallbackHero = builtShelves.flatMap((shelf) => shelf.courses).find((course: any) => course?.banner_image_url || course?.cover_image_url) || null;
+    const featuredCourse = safeCourse(
+      configuredHero
+        ? {
+            ...configuredHero,
+            display_title: hero?.title || configuredHero.title,
+            display_subtitle: hero?.subtitle || configuredHero.short_description,
+            banner_image_url: hero?.image_url || configuredHero.banner_image_url || configuredHero.cover_image_url,
+            banner_link_url: hero?.link_url || configuredHero.banner_link_url || configuredHero.checkout_url,
+          }
+        : fallbackHero,
+    );
+
+    return {
+      shelves: builtShelves,
+      featuredCourse,
+      featuredCourses: featuredCourse ? [featuredCourse] : [],
+      promoBanners: [],
+    };
+  });
