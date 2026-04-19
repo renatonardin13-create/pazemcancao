@@ -642,19 +642,7 @@ function AdminUsersPage() {
                     </span>
                   </div>
                   <div className="flex items-center gap-2 lg:hidden shrink-0">
-                    {!isEnabledBuyer ? (
-                      <Badge className="bg-destructive/15 text-destructive/80 border-0 text-xs font-semibold">
-                        Bloqueado
-                      </Badge>
-                    ) : isTrial && expired ? (
-                      <Badge className="bg-amber-500/15 text-amber-400/80 border-0 text-xs font-semibold">
-                        Expirado
-                      </Badge>
-                    ) : (
-                      <Badge className="bg-emerald-500/15 text-emerald-400/80 border-0 text-xs font-semibold">
-                        Ativo
-                      </Badge>
-                    )}
+                    {renderStatusBadge(buyer)}
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <button className="flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground hover:bg-muted/20 transition-all">
