@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getPlatformSettings } from "@/lib/platform-settings.functions";
 import { getPlatformModules, type PlatformModule } from "@/lib/platform-modules.functions";
@@ -40,7 +39,6 @@ export function useProjectMode() {
   const {
     data: settingsData,
     isLoading: settingsLoading,
-    error: settingsError,
   } = useQuery({
     queryKey: ["platform-settings"],
     queryFn: () => getPlatformSettings(),
@@ -51,7 +49,6 @@ export function useProjectMode() {
   const {
     data: modulesData,
     isLoading: modulesLoading,
-    error: modulesError,
   } = useQuery({
     queryKey: ["platform-modules"],
     queryFn: () => getPlatformModules(),
@@ -63,12 +60,10 @@ export function useProjectMode() {
   const mode: ProjectMode = (settings.general?.project_mode as ProjectMode) || "hibrido";
   const dbModules: PlatformModule[] = modulesData?.modules || [];
 
-  // Build modules map: DB rows take priority, then mode defaults
   const defaults = MODE_DEFAULTS[mode];
   const modules: PlatformModules = { ...defaults };
   const moduleInfo: PlatformModuleInfoMap = {} as PlatformModuleInfoMap;
 
-  // Initialize with defaults
   for (const key of MODULE_KEYS) {
     moduleInfo[key] = {
       enabled: defaults[key],
@@ -77,7 +72,6 @@ export function useProjectMode() {
     };
   }
 
-  // Override with DB values
   if (dbModules.length > 0) {
     for (const mod of dbModules) {
       const key = mod.slug as ModuleKey;
@@ -92,40 +86,12 @@ export function useProjectMode() {
     }
   }
 
-  useEffect(() => {
-    console.log("[debug][useProjectMode] settings query", {
-      isLoading: settingsLoading,
-      hasData: Boolean(settingsData),
-      error: settingsError instanceof Error ? settingsError.message : settingsError,
-      settings: settingsData?.settings,
-    });
-  }, [settingsData, settingsError, settingsLoading]);
-
-  useEffect(() => {
-    console.log("[debug][useProjectMode] modules query", {
-      isLoading: modulesLoading,
-      count: dbModules.length,
-      error: modulesError instanceof Error ? modulesError.message : modulesError,
-      modules: dbModules,
-    });
-  }, [dbModules, modulesError, modulesLoading]);
-
-  useEffect(() => {
-    console.log("[debug][useProjectMode] derived state", {
-      mode,
-      isLoading: settingsLoading || modulesLoading,
-      modules,
-      moduleInfo,
-    });
-  }, [mode, moduleInfo, modules, modulesLoading, settingsLoading]);
-
   return {
     mode,
     isLoading: settingsLoading || modulesLoading,
     modules,
     moduleInfo,
     dbModules,
-    // convenience shortcuts (enabled = module active)
     showMusic: modules.louvores,
     showCourses: modules.cursos,
     showVitrine: modules.vitrine,
@@ -135,7 +101,6 @@ export function useProjectMode() {
     showComunidade: modules.comunidade,
     showBonus: modules.bonus,
     showLancamentos: modules.lancamentos,
-    // menu-specific shortcuts (all modules)
     showMusicInMenu: moduleInfo.louvores.visibleInMenu,
     showCoursesInMenu: moduleInfo.cursos.visibleInMenu,
     showVitrineInMenu: moduleInfo.vitrine.visibleInMenu,
@@ -145,7 +110,6 @@ export function useProjectMode() {
     showComunidadeInMenu: moduleInfo.comunidade.visibleInMenu,
     showBonusInMenu: moduleInfo.bonus.visibleInMenu,
     showLancamentosInMenu: moduleInfo.lancamentos.visibleInMenu,
-    // vitrine-specific shortcuts
     showMusicInVitrine: moduleInfo.louvores.visibleInVitrine,
     showCoursesInVitrine: moduleInfo.cursos.visibleInVitrine,
     showEbooksInVitrine: moduleInfo.ebooks.visibleInVitrine,
