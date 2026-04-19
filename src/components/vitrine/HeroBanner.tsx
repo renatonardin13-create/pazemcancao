@@ -1,6 +1,7 @@
 import { useNavigate } from "@tanstack/react-router";
-import { Play, Info } from "lucide-react";
+import { Play, Info, Lock } from "lucide-react";
 import type { VitrineCourse } from "./types";
+import { isCourseUnlocked } from "@/lib/course-access";
 
 interface Props {
   course: VitrineCourse;
@@ -8,7 +9,7 @@ interface Props {
 
 export function HeroBanner({ course }: Props) {
   const navigate = useNavigate();
-  const isOwned = course.access_state === "enrolled" || course.access_state === "owned";
+  const isOwned = isCourseUnlocked(course);
   const bg = course.banner_image_url || course.cover_image_url;
   const title = course.display_title || course.title;
   const subtitle = course.display_subtitle || course.short_description;
@@ -63,7 +64,7 @@ export function HeroBanner({ course }: Props) {
               onClick={handlePrimary}
               className="inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 font-semibold text-primary-foreground shadow-lg shadow-primary/30 transition-transform hover:scale-105"
             >
-              <Play className="h-5 w-5 fill-current" />
+              {isOwned ? <Play className="h-5 w-5 fill-current" /> : <Lock className="h-5 w-5" />}
               {isOwned ? "Assistir agora" : "Saiba mais"}
             </button>
             {isOwned && (
