@@ -102,7 +102,7 @@ function AuthenticatedLayout() {
       cancelled = true;
       clearTimeout(timeout);
     };
-  }, [isAuthenticated, isAdmin, user?.email, isMusicExperience]);
+  }, [isAuthenticated, isAdmin, user?.email, skipAccessGate]);
 
   // Redirect to login if not authenticated (after loading completes)
   useEffect(() => {
