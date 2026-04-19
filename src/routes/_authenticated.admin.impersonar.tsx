@@ -13,6 +13,13 @@ import { setImpersonationState } from "@/components/ImpersonationBanner";
 import { supabase } from "@/integrations/supabase/client";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export const Route = createFileRoute("/_authenticated/admin/impersonar")({
   component: ImpersonarPage,
