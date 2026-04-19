@@ -90,11 +90,11 @@ export function CoursePosterCard({ course }: Props) {
           {/* Title */}
           <div className="absolute inset-x-0 bottom-0 p-3">
             {/* Progress bar */}
-            {isInProgress && (
+            {isUnlocked && (isInProgress || isCompleted) && (
               <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/20">
                 <div
-                  className="h-full bg-primary"
-                  style={{ width: `${Math.min(100, Math.max(0, progress))}%` }}
+                  className={`h-full ${isCompleted ? "bg-emerald-400" : "bg-primary"}`}
+                  style={{ width: `${isCompleted ? 100 : Math.min(100, Math.max(0, progress))}%` }}
                 />
               </div>
             )}
