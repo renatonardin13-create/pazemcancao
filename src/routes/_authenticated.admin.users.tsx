@@ -385,7 +385,7 @@ function AdminUsersPage() {
     const s = getOverallStatus(buyer);
     return s === 'blocked' || s === 'refunded';
   }).length;
-  const onlineUsers = buyers.filter((buyer: any) => activeSessionEmails.has(buyer.email.toLowerCase())).length;
+  const onlineUsers = buyers.filter((buyer: any) => buyer.email && activeSessionEmails.has(buyer.email.toLowerCase())).length;
   const trialUsers = buyers.filter((buyer: any) => buyer.is_trial).length;
 
   const filteredBuyers = buyers.filter((buyer: any) => {
