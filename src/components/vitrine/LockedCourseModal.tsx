@@ -78,7 +78,12 @@ export function LockedCourseModal({ open, onOpenChange, course }: Props) {
 
             {/* Body */}
             <div className="space-y-4 px-6 py-5">
-              <p className="line-clamp-4 text-sm leading-relaxed text-white/75">{description}</p>
+              <div className="rounded-lg border border-white/5 bg-white/[0.02] px-3.5 py-3">
+                <div className="mb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-primary/70">
+                  Sobre este conteúdo
+                </div>
+                <p className="line-clamp-4 text-sm leading-relaxed text-white/80">{description}</p>
+              </div>
 
               {/* Meta */}
               <div className="flex flex-wrap gap-2">
