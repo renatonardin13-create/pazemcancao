@@ -180,7 +180,7 @@ export function StudentSidebar() {
           )
         )}
 
-        <div className="my-2 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+        <div className="my-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
         {showPerfil && (
           <Link
@@ -195,7 +195,7 @@ export function StudentSidebar() {
 
         {!adminLoading && isAdmin && (
           <>
-            <div className="my-2 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+            <div className="my-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
             <Link
               to="/admin"
               onClick={() => setMobileOpen(false)}
