@@ -338,7 +338,7 @@ function AdminUsersPage() {
       trial_expired: { label: 'Expirado',     cls: 'bg-amber-500/15 text-amber-400/80' },
       no_access:     { label: 'Sem acesso',   cls: 'bg-muted/30 text-muted-foreground' },
     };
-    const { label, cls } = map[status];
+    const { label, cls } = map[status] ?? map.no_access;
     return <Badge className={`${cls} border-0 text-xs font-semibold`}>{label}</Badge>;
   };
 
@@ -385,7 +385,7 @@ function AdminUsersPage() {
     const s = getOverallStatus(buyer);
     return s === 'blocked' || s === 'refunded';
   }).length;
-  const onlineUsers = buyers.filter((buyer: any) => activeSessionEmails.has(buyer.email.toLowerCase())).length;
+  const onlineUsers = buyers.filter((buyer: any) => buyer.email && activeSessionEmails.has(buyer.email.toLowerCase())).length;
   const trialUsers = buyers.filter((buyer: any) => buyer.is_trial).length;
 
   const filteredBuyers = buyers.filter((buyer: any) => {

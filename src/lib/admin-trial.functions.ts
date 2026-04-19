@@ -52,161 +52,162 @@ export const addStudent = createServerFn({ method: 'POST' })
     addStudentSchema.parse(input)
   )
   .handler(async ({ data, context }) => {
-    await verifyAdmin(context.supabase, context.userId);
-
-    const email = data.email.toLowerCase().trim();
-
-    // Check if buyer already exists — block duplicate
-    const { data: existing } = await supabaseAdmin
-      .from('approved_buyers')
-      .select('id')
-      .eq('email', email)
-      .maybeSingle();
-
-    if (existing) {
-      throw new Error('Já existe um aluno cadastrado com este e-mail.');
-    }
-
-    // Build buyer record
-    const isTrial = data.is_trial === true && (data.trialDays ?? 0) > 0;
-    let trialExpiresAt: string | null = null;
-    if (isTrial) {
-      const expiresAt = new Date();
-      expiresAt.setDate(expiresAt.getDate() + (data.trialDays ?? 7));
-      trialExpiresAt = expiresAt.toISOString();
-    }
-
-    // Create approved_buyer
-    const { data: inserted, error } = await supabaseAdmin
-      .from('approved_buyers')
-      .insert({
-        email,
-        nome: data.nome,
-        access_enabled: data.access_enabled,
-        status: isTrial ? 'trial' : 'approved',
-        is_trial: isTrial,
-        trial_expires_at: trialExpiresAt,
-        can_download: !isTrial,
-      })
-      .select('id')
-      .single();
-
-    if (error) throw new Error(`Erro ao criar registro do aluno: ${error.message}`);
-    const buyerId = inserted.id;
-
-    // Create auth user if needed — use getUserByEmail for reliable lookup
-    const generatedPassword = 'Paz' + Math.random().toString(36).slice(2, 8) + '!';
-
-    let authUserId: string;
-    let existingUser = null;
-
-    // Try to find user by email directly (more reliable than listUsers)
     try {
-      const { data: listData } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
-      existingUser = listData?.users?.find((u) => u.email?.toLowerCase() === email) ?? null;
-    } catch {
-      // Fallback: ignore list error
-    }
+      await verifyAdmin(context.supabase, context.userId);
 
-    if (!existingUser) {
-      const { data: created, error: authErr } = await supabaseAdmin.auth.admin.createUser({
-        email,
-        password: generatedPassword,
-        email_confirm: true,
-        user_metadata: { full_name: data.nome },
-      });
+      const email = data.email.toLowerCase().trim();
+      const nome = data.nome.trim();
+      if (!nome) throw new Error('Nome é obrigatório.');
 
-      if (authErr) {
-        // If user already exists but wasn't found in list, try to update instead
-        if (authErr.message?.includes('already been registered') || authErr.message?.includes('already exists')) {
-          const { data: retryList } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
-          existingUser = retryList?.users?.find((u) => u.email?.toLowerCase() === email) ?? null;
-          if (!existingUser) {
-            throw new Error(`Erro ao criar conta de autenticação: ${authErr.message}`);
+      // Block duplicate buyer
+      const { data: existing } = await supabaseAdmin
+        .from('approved_buyers')
+        .select('id')
+        .eq('email', email)
+        .maybeSingle();
+
+      if (existing) {
+        throw new Error('Já existe um aluno cadastrado com este e-mail.');
+      }
+
+      // Trial calculation
+      const isTrial = data.is_trial === true && (data.trialDays ?? 0) > 0;
+      let trialExpiresAt: string | null = null;
+      if (isTrial) {
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + (data.trialDays ?? 7));
+        trialExpiresAt = expiresAt.toISOString();
+      }
+
+      // ── Step 1: Create or find auth user FIRST (so we know user_id before any insert) ──
+      const generatedPassword = 'Paz' + Math.random().toString(36).slice(2, 8) + '!';
+      let authUserId: string | null = null;
+
+      // Find by email via listUsers (Supabase has no getUserByEmail)
+      try {
+        const { data: listData } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+        const found = listData?.users?.find((u) => u.email?.toLowerCase() === email);
+        if (found) authUserId = found.id;
+      } catch (e) {
+        console.error('[addStudent] listUsers failed:', e);
+      }
+
+      if (!authUserId) {
+        const { data: created, error: authErr } = await supabaseAdmin.auth.admin.createUser({
+          email,
+          password: generatedPassword,
+          email_confirm: true,
+          user_metadata: { full_name: nome },
+        });
+
+        if (authErr) {
+          // Race: user got created between list and create
+          if (/already.*registered|already.*exists/i.test(authErr.message || '')) {
+            const { data: retry } = await supabaseAdmin.auth.admin.listUsers({ perPage: 1000 });
+            const found = retry?.users?.find((u) => u.email?.toLowerCase() === email);
+            if (found) authUserId = found.id;
+          }
+          if (!authUserId) {
+            console.error('[addStudent] createUser failed:', authErr);
+            throw new Error(`Falha ao criar conta de autenticação: ${authErr.message}`);
           }
         } else {
-          throw new Error(`Erro ao criar conta de autenticação: ${authErr.message}`);
+          authUserId = created.user.id;
         }
       } else {
-        authUserId = created.user.id;
+        // Existing user — refresh password & ensure not banned
+        const { error: updateErr } = await supabaseAdmin.auth.admin.updateUserById(authUserId, {
+          password: generatedPassword,
+          email_confirm: true,
+          ban_duration: 'none',
+          user_metadata: { full_name: nome },
+        });
+        if (updateErr) console.error('[addStudent] updateUserById failed:', updateErr);
       }
-    }
 
-    if (existingUser) {
-      // Update password, confirm email, and ensure user is not banned
-      const { error: updateErr } = await supabaseAdmin.auth.admin.updateUserById(existingUser.id, {
-        password: generatedPassword,
-        email_confirm: true,
-        ban_duration: 'none',
-        user_metadata: { full_name: data.nome },
-      });
-      if (updateErr) {
-        console.error('Error updating auth user:', updateErr);
+      if (!authUserId) {
+        throw new Error('Não foi possível obter o ID da conta de autenticação.');
       }
-      authUserId = existingUser.id;
-    }
 
-    authUserId = authUserId!;
-
-    // Ensure profile exists (fallback in case trigger didn't fire)
-    await supabaseAdmin
-      .from('profiles')
-      .upsert(
-        { user_id: authUserId, display_name: data.nome },
-        { onConflict: 'user_id' }
-      );
-
-    // Clear any previous security blocks for this email
-    await supabaseAdmin
-      .from('user_access_logs')
-      .delete()
-      .eq('email', email)
-      .eq('is_blocked', true);
-
-    // Invalidate old sessions so user starts fresh
-    await supabaseAdmin
-      .from('active_sessions')
-      .update({ is_valid: false })
-      .eq('email', email);
-
-    // Create enrollments for selected courses
-    const selectedCourseIds = Array.from(new Set(data.courseIds ?? []));
-
-    if (selectedCourseIds.length > 0) {
-      const { data: validCourses, error: coursesError } = await supabaseAdmin
-        .from('courses')
+      // ── Step 2: Create approved_buyer record ──
+      const { data: inserted, error: buyerErr } = await supabaseAdmin
+        .from('approved_buyers')
+        .insert({
+          email,
+          nome,
+          access_enabled: data.access_enabled,
+          status: isTrial ? 'trial' : 'approved',
+          is_trial: isTrial,
+          trial_expires_at: trialExpiresAt,
+          can_download: !isTrial,
+        })
         .select('id')
-        .in('id', selectedCourseIds);
+        .single();
 
-      if (coursesError) throw new Error(coursesError.message);
+      if (buyerErr) {
+        console.error('[addStudent] approved_buyers insert failed:', buyerErr);
+        throw new Error(`Erro ao criar registro do aluno: ${buyerErr.message}`);
+      }
+      const buyerId = inserted.id;
 
-      const validCourseIds = new Set((validCourses || []).map((course: { id: string }) => course.id));
-      const invalidCourseIds = selectedCourseIds.filter((courseId) => !validCourseIds.has(courseId));
+      // ── Step 3: Ensure profile exists (idempotent) ──
+      const { error: profileErr } = await supabaseAdmin
+        .from('profiles')
+        .upsert(
+          { user_id: authUserId, display_name: nome },
+          { onConflict: 'user_id' }
+        );
+      if (profileErr) console.error('[addStudent] profiles upsert failed:', profileErr);
 
-      if (invalidCourseIds.length > 0) {
-        throw new Error('Um ou mais cursos selecionados não são válidos.');
+      // Clear stale security blocks / sessions (best-effort)
+      await supabaseAdmin.from('user_access_logs').delete().eq('email', email).eq('is_blocked', true);
+      await supabaseAdmin.from('active_sessions').update({ is_valid: false }).eq('email', email);
+
+      // ── Step 4: Enrollments ──
+      const selectedCourseIds = Array.from(new Set(data.courseIds ?? []));
+      if (selectedCourseIds.length > 0) {
+        const { data: validCourses, error: coursesError } = await supabaseAdmin
+          .from('courses')
+          .select('id')
+          .in('id', selectedCourseIds);
+
+        if (coursesError) {
+          console.error('[addStudent] courses validation failed:', coursesError);
+          throw new Error(coursesError.message);
+        }
+
+        const validCourseIds = new Set((validCourses || []).map((c: { id: string }) => c.id));
+        const invalid = selectedCourseIds.filter((id) => !validCourseIds.has(id));
+        if (invalid.length > 0) {
+          throw new Error('Um ou mais cursos selecionados não são válidos.');
+        }
+
+        const grantedAt = new Date().toISOString();
+        const enrollmentRows = selectedCourseIds.map((courseId) => ({
+          user_id: authUserId!,
+          course_id: courseId,
+          status: 'active',
+          access_origin: 'admin_manual',
+          email,
+          granted_at: grantedAt,
+        }));
+
+        const { error: enrollError } = await supabaseAdmin
+          .from('enrollments')
+          .upsert(enrollmentRows, { onConflict: 'user_id,course_id' });
+
+        if (enrollError) {
+          console.error('[addStudent] enrollments upsert failed:', enrollError);
+          throw new Error(`Erro ao liberar acesso aos cursos: ${enrollError.message}`);
+        }
       }
 
-      const grantedAt = new Date().toISOString();
-      const enrollmentRows = selectedCourseIds.map((courseId) => ({
-        user_id: authUserId,
-        course_id: courseId,
-        status: 'active',
-        access_origin: 'admin_manual',
-        email,
-        granted_at: grantedAt,
-      }));
-
-      const { error: enrollError } = await supabaseAdmin
-        .from('enrollments')
-        .upsert(enrollmentRows, { onConflict: 'user_id,course_id' });
-
-      if (enrollError) {
-        throw new Error(`Erro ao criar vínculos dos cursos: ${enrollError.message}`);
-      }
+      return { success: true, generatedPassword, buyerId, isTrial, trialExpiresAt };
+    } catch (err: any) {
+      console.error('[addStudent] handler error:', err?.message || err, err?.stack);
+      // Re-throw with a clean message so the client gets a proper toast (not generic boundary)
+      throw new Error(err?.message || 'Erro ao adicionar aluno.');
     }
-
-    return { success: true, generatedPassword, buyerId, isTrial, trialExpiresAt };
   });
 
 const trialSchema = z.object({
