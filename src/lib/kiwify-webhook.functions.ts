@@ -492,19 +492,23 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       .update({ access_enabled: false, status })
       .eq('email', customerEmail);
 
-    // Revoke all active enrollments for this email (or specific course if resolved)
+    // Map normalized status → enrollment status (preserve refunded/chargedback distinction)
+    const enrollmentStatus =
+      ['refunded', 'reembolso'].includes(status) ? 'refunded' :
+      ['chargedback', 'chargeback'].includes(status) ? 'chargedback' :
+      'cancelled';
+
     if (resolvedCourseId) {
       await supabaseAdmin
         .from('enrollments')
-        .update({ status: 'cancelled' })
+        .update({ status: enrollmentStatus })
         .eq('email', customerEmail)
         .eq('course_id', resolvedCourseId)
         .eq('status', 'active');
     } else {
-      // No specific course — revoke all active enrollments for this email
       await supabaseAdmin
         .from('enrollments')
-        .update({ status: 'cancelled' })
+        .update({ status: enrollmentStatus })
         .eq('email', customerEmail)
         .eq('status', 'active');
     }
