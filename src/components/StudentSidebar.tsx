@@ -171,7 +171,7 @@ export function StudentSidebar() {
         <LogoBrand size="lg" showSubtitle />
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-5 pt-6 pb-4 space-y-2">
+      <nav className="flex-1 overflow-y-auto px-4 pt-4 pb-3 space-y-1">
         {mainItems.map((cfg) =>
           cfg.hasSubmenu ? (
             <div key={cfg.key}>{renderLouvoresSubmenu()}</div>
@@ -180,7 +180,7 @@ export function StudentSidebar() {
           )
         )}
 
-        <div className="my-4 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+        <div className="my-2 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
         {showPerfil && (
           <Link
