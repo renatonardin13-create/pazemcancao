@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { AlertCircle, RefreshCw } from "lucide-react";
 import { ModuleGuard } from "@/components/ModuleGuard";
 import { SafeBoundary } from "@/components/SafeBoundary";
-import { getStudentShelves } from "@/lib/shelves.functions";
+import { getStudentVitrineData } from "@/lib/student-vitrine.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { VitrinePageContent } from "@/components/vitrine/VitrinePageContent";
 import type { VitrineShelf } from "@/components/vitrine/types";
@@ -37,11 +37,11 @@ function VitrineErrorFallback({ error }: { error: Error }) {
 }
 
 function VitrinePage() {
-  const DEBUG_MINIMAL_VITRINE = true;
+  const DEBUG_MINIMAL_VITRINE = false;
   const shouldRunQuery = !DEBUG_MINIMAL_VITRINE;
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["student-shelves", "v2"],
-    queryFn: () => getStudentShelves(),
+    queryFn: () => getStudentVitrineData(),
     staleTime: 0,
     refetchOnWindowFocus: true,
     retry: 1,
