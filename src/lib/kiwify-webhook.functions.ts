@@ -427,6 +427,7 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
 
       let linkedCourseId: string | null = null;
       if (resolvedCourseId && userResult.userId) {
+        const now = new Date().toISOString();
         const { error: enrollmentError } = await supabaseAdmin
           .from('enrollments')
           .upsert(
@@ -436,7 +437,10 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
               email: customerEmail,
               access_origin: 'webhook',
               status: 'active',
-              granted_at: new Date().toISOString(),
+              granted_at: now,
+              updated_at: now,
+              expires_at: null,
+              notes: 'webhook_approved',
             },
             { onConflict: 'user_id,course_id' }
           );
@@ -492,23 +496,28 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       .update({ access_enabled: false, status })
       .eq('email', customerEmail);
 
-    // Map normalized status → enrollment status (preserve refunded/chargedback distinction)
     const enrollmentStatus =
       ['refunded', 'reembolso'].includes(status) ? 'refunded' :
       ['chargedback', 'chargeback'].includes(status) ? 'chargedback' :
       'cancelled';
 
+    const enrollmentUpdate = {
+      status: enrollmentStatus,
+      updated_at: new Date().toISOString(),
+      notes: `webhook_${enrollmentStatus}`,
+    };
+
     if (resolvedCourseId) {
       await supabaseAdmin
         .from('enrollments')
-        .update({ status: enrollmentStatus })
+        .update(enrollmentUpdate)
         .eq('email', customerEmail)
         .eq('course_id', resolvedCourseId)
         .eq('status', 'active');
     } else {
       await supabaseAdmin
         .from('enrollments')
-        .update({ status: enrollmentStatus })
+        .update(enrollmentUpdate)
         .eq('email', customerEmail)
         .eq('status', 'active');
     }
@@ -525,17 +534,24 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
       .update({ access_enabled: false, status: 'expired' })
       .eq('email', customerEmail);
 
+    const expiredUpdate = {
+      status: 'expired',
+      expires_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+      notes: 'webhook_expired',
+    };
+
     if (resolvedCourseId) {
       await supabaseAdmin
         .from('enrollments')
-        .update({ status: 'expired', expires_at: new Date().toISOString() })
+        .update(expiredUpdate)
         .eq('email', customerEmail)
         .eq('course_id', resolvedCourseId)
         .eq('status', 'active');
     } else {
       await supabaseAdmin
         .from('enrollments')
-        .update({ status: 'expired', expires_at: new Date().toISOString() })
+        .update(expiredUpdate)
         .eq('email', customerEmail)
         .eq('status', 'active');
     }
