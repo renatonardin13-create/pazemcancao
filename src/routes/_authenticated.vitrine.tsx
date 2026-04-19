@@ -51,6 +51,7 @@ function VitrinePage() {
     : [];
 
   const featured = (data?.featuredCourse as VitrineCourse | null) || null;
+  const heroBanners = Array.isArray((data as any)?.heroBanners) ? (data as any).heroBanners : [];
 
   return (
     <ModuleGuard moduleKey="vitrine">
