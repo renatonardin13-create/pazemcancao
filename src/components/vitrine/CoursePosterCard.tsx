@@ -121,7 +121,7 @@ export function CoursePosterCard({ course }: Props) {
         </div>
       </button>
 
-      <LockedProductModal open={modalOpen} onOpenChange={setModalOpen} data={modalData} />
+      <LockedCourseModal open={modalOpen} onOpenChange={setModalOpen} course={course} />
     </>
   );
 }
