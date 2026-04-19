@@ -486,7 +486,11 @@ function MusicLibraryPage() {
                         <PosterShelfRow>
                           {group.items.map(dbTrackToPlayerTrack).map((pt, idx) => (
                             <PosterShelfItem key={`${group.key}-${pt.id}`}>
-                              <TrackCard track={pt} index={idx} />
+                              {group.key === "__destaques" ? (
+                                <HighlightTrackCard track={pt} />
+                              ) : (
+                                <TrackCard track={pt} index={idx} />
+                              )}
                             </PosterShelfItem>
                           ))}
                         </PosterShelfRow>
