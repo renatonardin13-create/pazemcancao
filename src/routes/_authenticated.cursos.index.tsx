@@ -66,6 +66,16 @@ function MeusCursosPage() {
   );
   const ownedIds = useMemo(() => new Set(myCourses.map((c) => c.id)), [myCourses]);
 
+  const sortedMyCourses = useMemo(() => {
+    const arr = [...myCourses];
+    if (sortBy === "title") {
+      arr.sort((a, b) => String(a.title || "").localeCompare(String(b.title || "")));
+    } else if (sortBy === "progress") {
+      arr.sort((a, b) => Number(b.progress_pct ?? 0) - Number(a.progress_pct ?? 0));
+    }
+    return arr;
+  }, [myCourses, sortBy]);
+
   const continueWatching: VitrineCourse[] = useMemo(
     () => (Array.isArray(continueData?.courses) ? continueData.courses : []).filter((c: VitrineCourse) => Boolean(c?.id) && ownedIds.has(c.id)),
     [continueData, ownedIds],
