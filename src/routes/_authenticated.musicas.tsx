@@ -454,7 +454,7 @@ function MusicLibraryPage() {
                     // Destaques: top por sort_order entre todas as faixas filtradas
                     const highlights = [...filteredTracks]
                       .sort((a: any, b: any) => (a?.sort_order ?? 0) - (b?.sort_order ?? 0))
-                      .slice(0, 6);
+                      .slice(0, 8);
                     if (highlights.length) {
                       groups.push({ key: "__destaques", name: "Destaques", slug: "", items: highlights });
                     }
