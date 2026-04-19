@@ -76,6 +76,7 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
       integrationsRes,
       enrollmentsRes,
       heroBannerRes,
+      heroBannersListRes,
     ] = await Promise.all([
       supabaseAdmin
         .from('shelves')
@@ -98,6 +99,11 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
         .select('course_id, status, expires_at, progress_percentage')
         .eq('user_id', userId),
       supabaseAdmin.from('platform_settings').select('value').eq('key', 'hero_banner').maybeSingle(),
+      (supabaseAdmin as any)
+        .from('vitrine_hero_banners')
+        .select('id, image_url, title, subtitle, description, primary_cta_label, primary_cta_url, secondary_cta_label, secondary_cta_url, is_active, sort_order')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true }),
     ]);
 
     if (shelvesRes.error) throw new Error(shelvesRes.error.message);
@@ -224,10 +230,13 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
         : fallbackHero,
     );
 
+    const heroBanners = Array.isArray(heroBannersListRes?.data) ? heroBannersListRes.data : [];
+
     return {
       shelves: builtShelves,
       featuredCourse,
       featuredCourses: featuredCourse ? [featuredCourse] : [],
+      heroBanners,
       promoBanners: [],
     };
   });
