@@ -3,6 +3,7 @@ import { useNavigate } from "@tanstack/react-router";
 import { BookOpen, BookOpenCheck, Clock3, Lock, Play, ShoppingCart } from "lucide-react";
 import { PosterCard } from "@/components/PosterCard";
 import { UnlockModal } from "@/components/UnlockModal";
+import { VitrineLockedModal } from "./VitrineLockedModal";
 import { isContentUnlocked, isContentComingSoon } from "@/lib/vitrine-access";
 import type { VitrineCourse } from "./types";
 
