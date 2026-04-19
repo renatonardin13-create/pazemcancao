@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ModuleGuard } from "@/components/ModuleGuard";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
-import { Users, Heart, Trash2, Send, Loader2 } from "lucide-react";
+import { Users, Heart, Trash2, Send, Loader2, MessageCircle, HandHeart, Sparkles, Share2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
@@ -28,12 +28,22 @@ type Post = {
   liked_by_me: boolean;
 };
 
+type FilterKey = "todos" | "oracao" | "testemunho" | "compartilhamento";
+
+const FILTERS: { key: FilterKey; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { key: "todos", label: "Todos", icon: MessageCircle },
+  { key: "oracao", label: "Pedidos de Oração", icon: HandHeart },
+  { key: "testemunho", label: "Testemunhos", icon: Sparkles },
+  { key: "compartilhamento", label: "Compartilhamentos", icon: Share2 },
+];
+
 function ComunidadePage() {
   const { user, isAdmin } = useAuth();
   const [posts, setPosts] = useState<Post[]>([]);
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [filter, setFilter] = useState<FilterKey>("todos");
 
   const loadPosts = async () => {
     const { data: postsData, error } = await supabase
@@ -135,91 +145,143 @@ function ComunidadePage() {
     loadPosts();
   };
 
+  // Client-side keyword-based filter (graceful: shows everything if no match exists)
+  const filteredPosts = (() => {
+    if (filter === "todos") return posts;
+    const keywords: Record<Exclude<FilterKey, "todos">, string[]> = {
+      oracao: ["oração", "oracao", "orem", "orai", "interceda", "intercessão"],
+      testemunho: ["testemunho", "testifico", "deus fez", "milagre", "gratidão", "gratidao"],
+      compartilhamento: ["compartilho", "compartilhando", "queria dividir", "queria compartilhar"],
+    };
+    const kws = keywords[filter];
+    return posts.filter((p) => {
+      const text = p.content.toLowerCase();
+      return kws.some((k) => text.includes(k));
+    });
+  })();
+
+  const myInitial = (user?.email?.charAt(0) || "M").toUpperCase();
+
   return (
     <ModuleGuard moduleKey="comunidade">
       <StudentLayout>
         <div className="min-h-screen flex flex-col bg-background">
-          <div className="flex-1 w-full pb-28">
-            <div className="mx-auto max-w-3xl px-5 sm:px-8 py-8 sm:py-12">
-              <div className="flex items-center gap-3 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-600">
-                <Users className="h-7 w-7 text-gold" />
+          <main className="flex-1 w-full pb-28">
+            <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+              {/* Header */}
+              <div className="flex items-center gap-3 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gold/10 border border-gold/20">
+                  <Users className="h-6 w-6 text-gold" />
+                </div>
                 <div>
-                  <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/90 tracking-tight">
+                  <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
                     Comunidade
                   </h1>
-                  <p className="text-[13px] text-muted-foreground/60 mt-0.5">
-                    Compartilhe com outros membros
+                  <p className="text-[13px] text-muted-foreground/70 mt-0.5">
+                    Espaço para compartilhar, orar e crescer com outros membros
                   </p>
                 </div>
               </div>
 
               {/* Composer */}
-              <div className="rounded-xl border border-border/40 bg-card/40 backdrop-blur p-4 mb-6">
-                <Textarea
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                  placeholder="Escreva uma mensagem para a comunidade..."
-                  maxLength={2000}
-                  rows={3}
-                  className="resize-none bg-background/50 border-border/40"
-                />
-                <div className="flex items-center justify-between mt-3">
-                  <span className="text-xs text-muted-foreground/60">
-                    {content.length}/2000
-                  </span>
-                  <Button
-                    onClick={handleSubmit}
-                    disabled={submitting || !content.trim()}
-                    size="sm"
-                    className="bg-gold hover:bg-gold/90 text-black"
-                  >
-                    {submitting ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <>
-                        <Send className="h-4 w-4 mr-2" />
-                        Publicar
-                      </>
-                    )}
-                  </Button>
+              <div className="rounded-2xl border border-border/40 bg-card/40 backdrop-blur-sm p-5 mb-6">
+                <div className="flex items-start gap-3">
+                  <Avatar className="h-10 w-10 shrink-0">
+                    <AvatarFallback className="bg-gold/20 text-gold text-sm font-bold">
+                      {myInitial}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 min-w-0">
+                    <Textarea
+                      value={content}
+                      onChange={(e) => setContent(e.target.value)}
+                      placeholder="Compartilhe um pedido, testemunho ou palavra com a comunidade..."
+                      maxLength={2000}
+                      rows={3}
+                      className="resize-none bg-background/40 border-border/40 focus-visible:ring-gold/30"
+                    />
+                    <div className="flex items-center justify-between mt-3">
+                      <span className="text-[11px] text-muted-foreground/60">
+                        {content.length}/2000
+                      </span>
+                      <Button
+                        onClick={handleSubmit}
+                        disabled={submitting || !content.trim()}
+                        size="sm"
+                        className="bg-gold hover:bg-gold/90 text-gold-foreground font-bold"
+                      >
+                        {submitting ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <>
+                            <Send className="h-4 w-4 mr-2" />
+                            Publicar
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
                 </div>
+              </div>
+
+              {/* Filters */}
+              <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-4 -mx-1 px-1 scrollbar-hide">
+                {FILTERS.map(({ key, label, icon: Icon }) => {
+                  const active = filter === key;
+                  return (
+                    <button
+                      key={key}
+                      onClick={() => setFilter(key)}
+                      className={`inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-colors ${
+                        active
+                          ? "border-gold/40 bg-gold/15 text-gold"
+                          : "border-border/40 bg-card/30 text-muted-foreground/80 hover:bg-card/60 hover:text-foreground"
+                      }`}
+                    >
+                      <Icon className="h-3.5 w-3.5" />
+                      {label}
+                    </button>
+                  );
+                })}
               </div>
 
               {/* Feed */}
               {loading ? (
-                <div className="flex justify-center py-12">
+                <div className="flex justify-center py-16">
                   <Loader2 className="h-6 w-6 animate-spin text-muted-foreground/50" />
                 </div>
-              ) : posts.length === 0 ? (
-                <div className="text-center py-16">
+              ) : filteredPosts.length === 0 ? (
+                <div className="text-center py-20 rounded-2xl border border-dashed border-border/40 bg-card/20">
                   <Users className="h-10 w-10 text-muted-foreground/30 mx-auto mb-4" />
-                  <p className="text-sm text-muted-foreground/60">
-                    Seja o primeiro a postar na comunidade.
+                  <p className="text-sm text-muted-foreground/70">
+                    {filter === "todos"
+                      ? "Seja o primeiro a postar na comunidade."
+                      : "Nenhum post nesta categoria ainda."}
                   </p>
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {posts.map((post) => {
+                  {filteredPosts.map((post) => {
                     const canDelete = user?.id === post.user_id || isAdmin;
                     return (
                       <article
                         key={post.id}
-                        className="rounded-xl border border-border/40 bg-card/30 p-4 hover:bg-card/50 transition-colors"
+                        className="rounded-2xl border border-border/40 bg-card/40 backdrop-blur-sm p-5 hover:border-border/60 hover:bg-card/55 transition-all"
                       >
                         <div className="flex items-start gap-3">
-                          <Avatar className="h-10 w-10 shrink-0">
+                          <Avatar className="h-11 w-11 shrink-0 ring-1 ring-border/40">
                             <AvatarImage src={post.author_avatar_url ?? undefined} />
-                            <AvatarFallback className="bg-gold/20 text-gold text-sm">
+                            <AvatarFallback className="bg-gold/20 text-gold text-sm font-bold">
                               {post.author_name.charAt(0).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-start justify-between gap-2">
                               <div className="min-w-0">
-                                <p className="text-sm font-medium text-foreground/90 truncate">
+                                <p className="text-sm font-semibold text-foreground truncate">
                                   {post.author_name}
                                 </p>
-                                <p className="text-xs text-muted-foreground/60">
+                                <p className="text-[11px] text-muted-foreground/60">
                                   {formatDistanceToNow(new Date(post.created_at), {
                                     addSuffix: true,
                                     locale: ptBR,
@@ -229,29 +291,31 @@ function ComunidadePage() {
                               {canDelete && (
                                 <button
                                   onClick={() => deletePost(post)}
-                                  className="text-muted-foreground/40 hover:text-destructive transition-colors p-1"
+                                  className="text-muted-foreground/40 hover:text-destructive transition-colors p-1 -mr-1"
                                   aria-label="Excluir post"
                                 >
                                   <Trash2 className="h-4 w-4" />
                                 </button>
                               )}
                             </div>
-                            <p className="text-sm text-foreground/85 mt-2 whitespace-pre-wrap break-words">
+                            <p className="text-[14px] leading-relaxed text-foreground/90 mt-2.5 whitespace-pre-wrap break-words">
                               {post.content}
                             </p>
-                            <button
-                              onClick={() => toggleLike(post)}
-                              className={`mt-3 inline-flex items-center gap-1.5 text-xs transition-colors ${
-                                post.liked_by_me
-                                  ? "text-gold"
-                                  : "text-muted-foreground/60 hover:text-foreground/80"
-                              }`}
-                            >
-                              <Heart
-                                className={`h-4 w-4 ${post.liked_by_me ? "fill-gold" : ""}`}
-                              />
-                              {post.likes_count}
-                            </button>
+                            <div className="flex items-center gap-4 mt-4 pt-3 border-t border-border/30">
+                              <button
+                                onClick={() => toggleLike(post)}
+                                className={`inline-flex items-center gap-1.5 text-xs font-medium transition-colors ${
+                                  post.liked_by_me
+                                    ? "text-gold"
+                                    : "text-muted-foreground/70 hover:text-foreground"
+                                }`}
+                              >
+                                <Heart
+                                  className={`h-4 w-4 ${post.liked_by_me ? "fill-gold" : ""}`}
+                                />
+                                {post.likes_count}
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </article>
@@ -260,7 +324,7 @@ function ComunidadePage() {
                 </div>
               )}
             </div>
-          </div>
+          </main>
           <FooterLinks />
         </div>
       </StudentLayout>
