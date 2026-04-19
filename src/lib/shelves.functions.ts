@@ -39,6 +39,46 @@ type CourseRecord = {
   launch_date?: string | null;
 };
 
+function sanitizeCourse(course: any) {
+  if (!course || typeof course !== 'object' || !course.id) return null;
+
+  return {
+    ...course,
+    title: course.title || 'Curso sem título',
+    short_description: course.short_description ?? null,
+    full_description: course.full_description ?? null,
+    sales_description: course.sales_description ?? null,
+    cover_image_url: course.cover_image_url ?? null,
+    banner_image_url: course.banner_image_url ?? null,
+    category_name: course.category_name ?? null,
+    checkout_url: course.checkout_url ?? null,
+    sales_page_url: course.sales_page_url ?? null,
+    banner_link_url: course.banner_link_url ?? null,
+    access_state: course.access_state ?? 'available',
+    benefits: Array.isArray(course.benefits) ? course.benefits.filter(Boolean) : [],
+    total_lessons: typeof course.total_lessons === 'number' ? course.total_lessons : 0,
+    total_duration: course.total_duration ?? null,
+    progress_pct: typeof course.progress_pct === 'number' ? course.progress_pct : 0,
+    badge_text: course.badge_text ?? undefined,
+  };
+}
+
+function sanitizeShelf(shelf: any) {
+  if (!shelf || typeof shelf !== 'object' || !shelf.id) return null;
+
+  const courses = Array.isArray(shelf.courses)
+    ? shelf.courses.map(sanitizeCourse).filter(Boolean)
+    : [];
+
+  return {
+    id: shelf.id,
+    name: shelf.name || 'Prateleira',
+    sort_order: typeof shelf.sort_order === 'number' ? shelf.sort_order : 0,
+    shelf_type: shelf.shelf_type === 'smart' ? 'smart' : 'admin',
+    courses,
+  };
+}
+
 function resolveAutoShelfCourses(
   shelf: ShelfRecord,
   publishedCourses: CourseRecord[],
@@ -456,10 +496,13 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       }
     }
 
+    const safeShelves = result.map(sanitizeShelf).filter(Boolean);
+    const safeFeaturedCourse = sanitizeCourse(featuredCourse);
+
     return {
-      shelves: result,
-      promoBanners: promoBanners || [],
-      featuredCourse,
-      featuredCourses,
+      shelves: safeShelves,
+      promoBanners: Array.isArray(promoBanners) ? promoBanners : [],
+      featuredCourse: safeFeaturedCourse,
+      featuredCourses: featuredCourses.map(sanitizeCourse).filter(Boolean),
     };
   });

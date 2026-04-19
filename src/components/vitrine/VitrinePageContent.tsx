@@ -21,14 +21,26 @@ export function VitrinePageContent({
   searchTerm,
   onSearchTermChange,
 }: VitrinePageContentProps) {
+  const safeShelves = useMemo(
+    () =>
+      (Array.isArray(shelves) ? shelves : []).filter(
+        (shelf) => shelf && typeof shelf.id === "string" && Array.isArray(shelf.courses),
+      ),
+    [shelves],
+  );
+
   const filteredShelves = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
 
-    return [...shelves]
+    return [...safeShelves]
       .sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0))
       .map((shelf) => {
         const dedupedCourses = Array.from(
-          new Map((shelf.courses || []).map((course) => [course.id, course])).values(),
+          new Map(
+            (shelf.courses || [])
+              .filter((course) => course && typeof course.id === "string")
+              .map((course) => [course.id, course]),
+          ).values(),
         );
 
         const courses = !term
@@ -41,21 +53,21 @@ export function VitrinePageContent({
 
         return { ...shelf, courses };
       })
-      .filter((shelf) => shelf.courses.length > 0);
-  }, [shelves, searchTerm]);
+      .filter((shelf) => Array.isArray(shelf.courses) && shelf.courses.length > 0);
+  }, [safeShelves, searchTerm]);
 
   useEffect(() => {
     const cardsRendered = filteredShelves.reduce((total, shelf) => total + shelf.courses.length, 0);
     console.log("[DEBUG][VITRINE] component=VitrinePageContent");
-    console.log("[DEBUG][VITRINE] shelvesReturned=", shelves.length);
-    console.log("[DEBUG][VITRINE] shelfNames=", shelves.map((shelf) => shelf.name));
+    console.log("[DEBUG][VITRINE] shelvesReturned=", safeShelves.length);
+    console.log("[DEBUG][VITRINE] shelfNames=", safeShelves.map((shelf) => shelf.name));
     console.log(
       "[DEBUG][VITRINE] coursesPerShelf=",
-      shelves.map((shelf) => ({ name: shelf.name, count: shelf.courses.length })),
+      safeShelves.map((shelf) => ({ name: shelf.name, count: shelf.courses.length })),
     );
     console.log(
       "[DEBUG][VITRINE] filters=",
-      shelves.map((shelf) => ({
+      safeShelves.map((shelf) => ({
         name: shelf.name,
         beforeDedup: shelf.courses.length,
         afterFilter:
@@ -63,7 +75,7 @@ export function VitrinePageContent({
       })),
     );
     console.log("[DEBUG][VITRINE] cardsRendered=", cardsRendered);
-  }, [filteredShelves, shelves]);
+  }, [filteredShelves, safeShelves]);
 
   return (
     <div className="min-h-screen bg-background pb-28">
@@ -91,7 +103,7 @@ export function VitrinePageContent({
         </div>
       </div>
 
-      {featuredCourse ? <VitrineFeaturedBanner course={featuredCourse} /> : null}
+      {featuredCourse && typeof featuredCourse.id === "string" ? <VitrineFeaturedBanner course={featuredCourse} /> : null}
 
       {isLoading ? (
         <div className="py-24 text-center">
