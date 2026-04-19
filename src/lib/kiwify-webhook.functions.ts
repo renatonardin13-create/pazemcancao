@@ -244,18 +244,53 @@ async function resolveCourseByProductId(externalProductId: string): Promise<stri
 
 export async function handleKiwifyWebhook(request: Request): Promise<Response> {
   let rawBody: any = null;
+  let rawText = '';
+
+  // ─── DIAGNOSTIC LOGGING (temporary) ───
+  const headersDump: Record<string, string> = {};
+  request.headers.forEach((v, k) => { headersDump[k] = v; });
+  console.log('[KIWIFY-WEBHOOK] Incoming request', {
+    method: request.method,
+    url: request.url,
+    headers: headersDump,
+  });
 
   try {
-    rawBody = await request.json();
-  } catch {
+    rawText = await request.text();
+    console.log('[KIWIFY-WEBHOOK] Raw body:', rawText.substring(0, 2000));
+
+    if (!rawText.trim()) {
+      throw new Error('Empty body');
+    }
+
+    const contentType = (request.headers.get('content-type') || '').toLowerCase();
+
+    // Try JSON first (Kiwify default)
+    try {
+      rawBody = JSON.parse(rawText);
+    } catch {
+      // Fallback: form-urlencoded (some Kiwify configs)
+      if (contentType.includes('application/x-www-form-urlencoded')) {
+        const params = new URLSearchParams(rawText);
+        rawBody = {};
+        params.forEach((value, key) => {
+          try { (rawBody as any)[key] = JSON.parse(value); }
+          catch { (rawBody as any)[key] = value; }
+        });
+      } else {
+        throw new Error('Body is not valid JSON or form-urlencoded');
+      }
+    }
+  } catch (parseErr: any) {
+    console.error('[KIWIFY-WEBHOOK] Parse error:', parseErr?.message, 'raw:', rawText.substring(0, 500));
     await logWebhookEvent({
       eventType: 'error',
       responseStatus: 400,
-      responseMessage: 'Invalid JSON body',
+      responseMessage: 'Invalid body',
       isSuccess: false,
-      errorDetails: 'Request body is not valid JSON',
+      errorDetails: `${parseErr?.message || 'parse error'} | raw=${rawText.substring(0, 300)}`,
     });
-    return jsonResponse({ error: 'Invalid JSON body' }, 400);
+    return jsonResponse({ error: 'Invalid body', details: parseErr?.message }, 400);
   }
 
   const requestUrl = new URL(request.url);
