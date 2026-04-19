@@ -191,7 +191,7 @@ function AuthenticatedLayout() {
     return <RestrictedAccessCard />;
   }
 
-  if (!isMusicExperience && !isAdmin && !accessData?.hasAccess) {
+  if (!skipAccessGate && !isAdmin && !accessData?.hasAccess) {
     const handleLogout = async () => {
       await logout();
       navigate({ to: "/login" });
