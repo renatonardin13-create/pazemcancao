@@ -447,13 +447,9 @@ function MusicLibraryPage() {
                     if (highlights.length) {
                       groups.push({ key: "__destaques", name: "Destaques", slug: "", items: highlights });
                     }
-
-                    for (const cat of categories) {
-                      const items = filteredTracks.filter(
-                        (t: any) => normalizeCategorySlug(t?.category) === cat.slug,
-                      );
-                      if (items.length) groups.push({ key: cat.slug, name: cat.name, slug: cat.slug, items });
-                    }
+                    // Visão geral / Todos: exibimos APENAS Destaques + bloco
+                    // "Liberação em 7 dias". As demais categorias ficam acessíveis
+                    // via chips no topo (não duplicamos como prateleiras aqui).
 
                     if (!groups.length) {
                       return (
