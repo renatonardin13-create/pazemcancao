@@ -2,8 +2,7 @@ import { ExternalLink, Lock, X, BookOpen, Clock, Tag } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import type { VitrineCourse } from "@/components/vitrine/types";
-
-const FALLBACK_SALES_URL = "https://pazemcancao.lovable.app";
+import { getCourseSalesPageUrl } from "@/lib/course-links";
 
 interface Props {
   open: boolean;
@@ -21,10 +20,11 @@ export function LockedCourseModal({ open, onOpenChange, course }: Props) {
   const duration = course.total_duration;
   const category = course.category_name;
 
-  const salesUrl =
-    course.sales_page_url || course.checkout_url || course.banner_link_url || FALLBACK_SALES_URL;
+  const salesUrl = getCourseSalesPageUrl(course);
+  const ctaDisabled = !salesUrl;
 
   const handleSales = () => {
+    if (!salesUrl) return;
     window.open(salesUrl, "_blank", "noopener,noreferrer");
   };
 
@@ -104,9 +104,10 @@ export function LockedCourseModal({ open, onOpenChange, course }: Props) {
                   size="lg"
                   className="h-12 w-full text-sm font-bold tracking-wide shadow-[0_10px_30px_-10px_rgba(212,175,55,0.6)]"
                   onClick={handleSales}
+                  disabled={ctaDisabled}
                 >
-                  Ir para página de vendas
-                  <ExternalLink className="h-4 w-4" />
+                  {ctaDisabled ? "Página de vendas indisponível" : "Ir para página de vendas"}
+                  {!ctaDisabled && <ExternalLink className="h-4 w-4" />}
                 </Button>
                 <Button
                   variant="ghost"
