@@ -229,58 +229,57 @@ export function UpcomingReleaseBlock({
             </div>
           </div>
 
-          <div className="p-4 sm:p-5">
-            <div className="mb-4 flex items-center justify-end">
-              <p className="text-right text-[15px] text-foreground/80">
+          <div className="min-w-0 p-4 sm:p-5">
+            <div className="mb-3 flex items-center justify-end">
+              <p className="truncate text-right text-[13px] text-foreground/80">
                 {items.length} louvores exclusivos serão liberados para você
               </p>
             </div>
 
-            <div className="flex gap-3 overflow-x-auto pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex gap-3 overflow-x-auto pb-2 pr-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
               {items.map((item) => (
                 <article
                   key={item.id}
-                  className="group relative flex h-[188px] w-[96px] shrink-0 flex-col overflow-hidden rounded-[14px] border border-gold/20 bg-card/70 shadow-[0_10px_24px_-16px_rgba(0,0,0,0.9)]"
+                  className="group flex w-[118px] shrink-0 flex-col gap-2"
                 >
-                  {item.cover ? (
-                    <img
-                      src={item.cover}
-                      alt={item.title}
-                      loading="lazy"
-                      className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-card to-background">
-                      <Music2 className="h-8 w-8 text-gold/50" />
+                  <div className="relative aspect-[9/13] w-full overflow-hidden rounded-[14px] border border-gold/20 bg-card/70 shadow-[0_10px_24px_-16px_rgba(0,0,0,0.9)]">
+                    {item.cover ? (
+                      <img
+                        src={item.cover}
+                        alt={item.title}
+                        loading="lazy"
+                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-card to-background">
+                        <Music2 className="h-8 w-8 text-gold/50" />
+                      </div>
+                    )}
+
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+
+                    <div className="absolute left-1.5 top-1.5 z-10 inline-flex max-w-[calc(100%-12px)] items-center gap-1 truncate rounded-md border border-white/10 bg-background/85 px-1.5 py-1 text-[8px] font-semibold leading-none text-foreground backdrop-blur-md">
+                      <CategoryIcon category={item.category} className="h-2.5 w-2.5 shrink-0 text-gold" />
+                      <span className="truncate">{item.category}</span>
                     </div>
-                  )}
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/10" />
-
-                  <div className="absolute left-1.5 top-1.5 z-10 inline-flex max-w-[calc(100%-12px)] items-center gap-1 truncate rounded-md border border-white/10 bg-background/85 px-1.5 py-1 text-[8px] font-semibold leading-none text-foreground backdrop-blur-md">
-                    <CategoryIcon category={item.category} className="h-2.5 w-2.5 shrink-0 text-gold" />
-                    <span className="truncate">{item.category}</span>
+                    <button
+                      type="button"
+                      disabled
+                      aria-label="Bloqueado"
+                      className="absolute bottom-1.5 right-1.5 flex h-6 w-6 items-center justify-center rounded-full border border-gold/60 bg-background/85 text-gold backdrop-blur-sm"
+                    >
+                      <Lock className="h-2.5 w-2.5" />
+                    </button>
                   </div>
 
-                  <div className="relative mt-auto flex flex-col px-2.5 pb-2.5 pt-16">
-                    <h3 className="line-clamp-3 text-[11px] font-extrabold uppercase leading-[1.12] tracking-tight text-foreground">
+                  <div className="px-0.5">
+                    <h3 className="line-clamp-2 text-[11px] font-extrabold uppercase leading-[1.15] tracking-tight text-foreground">
                       {item.title}
                     </h3>
-                    <p className="mt-2 text-[9px] leading-[1.2] text-foreground/75">
-                      Min. Paz
-                      <br />
-                      em Canção
+                    <p className="mt-1 text-[9px] leading-[1.2] text-foreground/65">
+                      Min. Paz em Canção
                     </p>
-                    <div className="mt-2 flex justify-end">
-                      <button
-                        type="button"
-                        disabled
-                        aria-label="Bloqueado"
-                        className="flex h-6 w-6 items-center justify-center rounded-full border border-gold/60 bg-background/85 text-gold backdrop-blur-sm"
-                      >
-                        <Play className="h-2.5 w-2.5 fill-current" />
-                      </button>
-                    </div>
                   </div>
                 </article>
               ))}
