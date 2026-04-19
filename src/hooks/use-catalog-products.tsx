@@ -19,10 +19,14 @@ export function useCatalogProducts() {
   });
 
   const safeShelves: VitrineShelf[] = useMemo(
-    () =>
-      (query.data?.shelves ?? []).filter(
-        (shelf): shelf is VitrineShelf => !!shelf && Array.isArray(shelf.courses),
-      ),
+    () => {
+      const rawShelves = Array.isArray(query.data?.shelves) ? query.data.shelves : [];
+
+      return rawShelves.flatMap((shelf) => {
+        if (!shelf || !Array.isArray(shelf.courses)) return [];
+        return [shelf as VitrineShelf];
+      });
+    },
     [query.data],
   );
 
@@ -32,7 +36,6 @@ export function useCatalogProducts() {
     for (const shelf of safeShelves) {
       for (const c of shelf.courses) {
         if (seen.has(c.id)) continue;
-        if (c.product_access_state === "hidden") continue;
         seen.add(c.id);
         out.push(c);
       }
