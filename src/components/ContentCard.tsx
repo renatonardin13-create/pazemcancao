@@ -294,9 +294,9 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
           overlay={overlay}
           centerAction={centerAction}
           actionTopRight={actionTopRight}
-          title={item.title}
-          subtitle={item.description || undefined}
-          meta={meta}
+          title=""
+          subtitle={undefined}
+          meta={null}
           progress={contentState === 'in_progress' && progressPercent > 0 ? progressPercent : null}
           locked={isLocked}
           highlight={isLastAccessed}
