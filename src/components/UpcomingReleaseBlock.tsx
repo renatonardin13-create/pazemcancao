@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { Lock, Music2, Play, Heart, Moon, Flame, Shield, Sparkles, Star, Sword } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight, Lock, Music2, Play, Heart, Moon, Flame, Shield, Sparkles, Star, Sword } from "lucide-react";
 
 /**
  * Bloco "Liberação em 7 dias" — coleção MISTA (não é categoria).
@@ -236,54 +236,7 @@ export function UpcomingReleaseBlock({
               </p>
             </div>
 
-            <div className="flex gap-4 overflow-x-auto pb-2 pr-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
-              {items.map((item) => (
-                <article
-                  key={item.id}
-                  className="group flex w-[160px] shrink-0 flex-col gap-2"
-                >
-                  <div className="relative aspect-[9/13] w-full overflow-hidden rounded-[16px] border border-gold/20 bg-card/70 shadow-[0_10px_24px_-16px_rgba(0,0,0,0.9)]">
-                    {item.cover ? (
-                      <img
-                        src={item.cover}
-                        alt={item.title}
-                        loading="lazy"
-                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-card to-background">
-                        <Music2 className="h-10 w-10 text-gold/50" />
-                      </div>
-                    )}
-
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/15 to-transparent" />
-
-                    <div className="absolute left-2 top-2 z-10 inline-flex max-w-[calc(100%-16px)] items-center gap-1 truncate rounded-md border border-white/10 bg-background/85 px-2 py-1 text-[9px] font-semibold leading-none text-foreground backdrop-blur-md">
-                      <CategoryIcon category={item.category} className="h-3 w-3 shrink-0 text-gold" />
-                      <span className="truncate">{item.category}</span>
-                    </div>
-
-                    <button
-                      type="button"
-                      disabled
-                      aria-label="Bloqueado"
-                      className="absolute bottom-2 right-2 flex h-8 w-8 items-center justify-center rounded-full border border-gold/60 bg-background/85 text-gold backdrop-blur-sm"
-                    >
-                      <Lock className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-
-                  <div className="px-0.5">
-                    <h3 className="line-clamp-2 text-[12px] font-extrabold uppercase leading-[1.2] tracking-tight text-foreground">
-                      {item.title}
-                    </h3>
-                    <p className="mt-1 text-[10px] leading-[1.2] text-foreground/60">
-                      Min. Paz em Canção
-                    </p>
-                  </div>
-                </article>
-              ))}
-            </div>
+            <CarouselRow items={items} />
           </div>
         </div>
       </div>
