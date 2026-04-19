@@ -37,6 +37,7 @@ function VitrineErrorFallback({ error }: { error: Error }) {
 }
 
 function VitrinePage() {
+  const DEBUG_MINIMAL_VITRINE = false;
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["student-shelves", "v2"],
     queryFn: () => getStudentShelves(),
@@ -58,8 +59,22 @@ function VitrinePage() {
   useEffect(() => {
     console.log("[DEBUG][VITRINE] routeComponent=VitrinePage");
     console.log("[DEBUG][VITRINE] isLoading=", isLoading, "isError=", isError);
+    console.log("[DEBUG][VITRINE] payload=", data);
     if (isError) console.error("[VITRINE] query error:", error);
   }, [isLoading, isError, error]);
+
+  if (DEBUG_MINIMAL_VITRINE) {
+    return (
+      <ModuleGuard moduleKey="vitrine">
+        <StudentLayout>
+          <div className="min-h-screen bg-background px-6 py-10">
+            <h1 className="font-display text-2xl font-bold text-foreground">Vitrine</h1>
+            <p className="mt-2 text-sm text-muted-foreground">rota carregada</p>
+          </div>
+        </StudentLayout>
+      </ModuleGuard>
+    );
+  }
 
   return (
     <ModuleGuard moduleKey="vitrine">
