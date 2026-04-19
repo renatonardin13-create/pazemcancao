@@ -8,7 +8,14 @@ export type CourseAccessState = "unlocked" | "coming_soon" | "locked";
  */
 export function getCourseAccessState(course: VitrineCourse): CourseAccessState {
   const state = course.access_state;
-  if (state === "enrolled" || state === "owned" || state === "unlocked") return "unlocked";
+  if (
+    state === "enrolled" ||
+    state === "owned" ||
+    state === "unlocked" ||
+    state === "in_progress" ||
+    state === "completed"
+  )
+    return "unlocked";
   if (state === "coming_soon") return "coming_soon";
   return "locked";
 }
