@@ -14,8 +14,12 @@ export function LockedCourseModal({ open, onOpenChange, course }: Props) {
   if (!course) return null;
 
   const cover = course.cover_image_url || course.banner_image_url;
-  const description =
+  const rawDescription =
     course.short_description || course.sales_description || course.full_description;
+  const description =
+    rawDescription && rawDescription.trim().length > 0
+      ? rawDescription
+      : "Um conteúdo preparado com cuidado para fortalecer sua caminhada. Conheça os detalhes e veja se faz sentido para este momento.";
   const lessons = Number(course.total_lessons || 0);
   const duration = course.total_duration;
   const category = course.category_name;
@@ -74,9 +78,7 @@ export function LockedCourseModal({ open, onOpenChange, course }: Props) {
 
             {/* Body */}
             <div className="space-y-4 px-6 py-5">
-              {description && (
-                <p className="line-clamp-4 text-sm leading-relaxed text-white/70">{description}</p>
-              )}
+              <p className="line-clamp-4 text-sm leading-relaxed text-white/75">{description}</p>
 
               {/* Meta */}
               <div className="flex flex-wrap gap-2">
@@ -106,7 +108,7 @@ export function LockedCourseModal({ open, onOpenChange, course }: Props) {
                   onClick={handleSales}
                   disabled={ctaDisabled}
                 >
-                  {ctaDisabled ? "Página de vendas indisponível" : "Ir para página de vendas"}
+                  {ctaDisabled ? "Em breve" : "Saiba mais sobre este conteúdo"}
                   {!ctaDisabled && <ExternalLink className="h-4 w-4" />}
                 </Button>
                 <Button
