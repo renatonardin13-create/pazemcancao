@@ -31,7 +31,8 @@ function AuthenticatedLayout() {
   // skeleton/empty-state elegantes, então liberamos o Outlet imediatamente
   // (assim como já fazemos para a experiência musical).
   const isVitrineRoute = location.pathname === "/vitrine" || location.pathname.startsWith("/vitrine/");
-  const skipAccessGate = isMusicExperience || isVitrineRoute;
+  const isCursosRoute = location.pathname === "/cursos" || location.pathname.startsWith("/cursos/");
+  const skipAccessGate = isMusicExperience || isVitrineRoute || isCursosRoute;
 
   // Admin acessando rota de aluno → redireciona para /admin (evita tela preta e conflito de contexto)
   useEffect(() => {
