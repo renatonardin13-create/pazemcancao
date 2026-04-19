@@ -119,6 +119,7 @@ function resolveAutoShelfCourses(
 export const getStudentShelves = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
+    try {
     const { supabase, userId } = context;
 
     // REGRA 8 — Não detectamos role admin aqui de propósito.
