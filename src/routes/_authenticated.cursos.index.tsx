@@ -49,6 +49,13 @@ function MeusCursosPage() {
     refetchOnWindowFocus: false,
   });
 
+  const { data: vitrineData } = useQuery({
+    queryKey: ["my-courses-library", "premium-catalog"],
+    queryFn: () => getStudentVitrineData(),
+    staleTime: 60_000,
+    refetchOnWindowFocus: false,
+  });
+
   const displayName = profileData?.profile?.display_name || user?.email?.split("@")[0] || "aluno";
   const firstName = displayName.split(" ")[0];
 
