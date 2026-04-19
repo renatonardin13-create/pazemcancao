@@ -230,10 +230,13 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
         : fallbackHero,
     );
 
+    const heroBanners = Array.isArray(heroBannersListRes?.data) ? heroBannersListRes.data : [];
+
     return {
       shelves: builtShelves,
       featuredCourse,
       featuredCourses: featuredCourse ? [featuredCourse] : [],
+      heroBanners,
       promoBanners: [],
     };
   });
