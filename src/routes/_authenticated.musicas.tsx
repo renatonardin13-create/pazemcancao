@@ -521,7 +521,7 @@ function MusicLibraryPage() {
               </section>
             )}
 
-            <UpcomingReleaseBlock />
+            <UpcomingReleaseBlock tracks={tracks} />
 
             {shouldShowPlaylistsSection && (
             <section>
