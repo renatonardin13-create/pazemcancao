@@ -91,6 +91,21 @@ function MeusCursosPage() {
     return Array.from(map.entries()).filter(([, list]) => list.length > 0);
   }, [myCourses]);
 
+  // Conteúdo Premium: cursos da vitrine que o aluno ainda NÃO possui
+  const premiumCourses: VitrineCourse[] = useMemo(() => {
+    const all: VitrineCourse[] = [];
+    const seen = new Set<string>();
+    const shelves = (vitrineData?.shelves || []) as { courses: VitrineCourse[] }[];
+    for (const shelf of shelves) {
+      for (const c of shelf.courses || []) {
+        if (!c?.id || ownedIds.has(c.id) || seen.has(c.id)) continue;
+        seen.add(c.id);
+        all.push(c);
+      }
+    }
+    return all;
+  }, [vitrineData, ownedIds]);
+
   const searchResults = useMemo(() => {
     const term = search.trim().toLowerCase();
     if (!term) return null;
