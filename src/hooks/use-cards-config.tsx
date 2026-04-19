@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getPlatformSettings } from "@/lib/platform-settings.functions";
 
@@ -34,7 +35,7 @@ export function getCardsConfigSync(): CardsConfig {
 }
 
 export function useCardsConfig(): CardsConfig {
-  const { data } = useQuery({
+  const { data, error, isLoading } = useQuery({
     queryKey: ["platform-settings", "cards_config"],
     queryFn: async () => {
       const res = await getPlatformSettings();
@@ -45,6 +46,17 @@ export function useCardsConfig(): CardsConfig {
   });
 
   const merged = { ...DEFAULT_CARDS_CONFIG, ...(data ?? {}) };
+
+  useEffect(() => {
+    console.log("[debug][useCardsConfig] cards_config query", {
+      isLoading,
+      hasData: Boolean(data),
+      error: error instanceof Error ? error.message : error,
+      data,
+      merged,
+    });
+  }, [data, error, isLoading, merged]);
+
   cachedConfig = merged;
   return merged;
 }

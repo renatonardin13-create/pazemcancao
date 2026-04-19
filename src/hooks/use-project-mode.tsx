@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getPlatformSettings } from "@/lib/platform-settings.functions";
 import { getPlatformModules, type PlatformModule } from "@/lib/platform-modules.functions";
@@ -36,14 +37,22 @@ export type PlatformModules = Record<ModuleKey, boolean>;
 export type PlatformModuleInfoMap = Record<ModuleKey, ModuleInfo>;
 
 export function useProjectMode() {
-  const { data: settingsData, isLoading: settingsLoading } = useQuery({
+  const {
+    data: settingsData,
+    isLoading: settingsLoading,
+    error: settingsError,
+  } = useQuery({
     queryKey: ["platform-settings"],
     queryFn: () => getPlatformSettings(),
     staleTime: 5 * 60_000,
     refetchOnWindowFocus: false,
   });
 
-  const { data: modulesData, isLoading: modulesLoading } = useQuery({
+  const {
+    data: modulesData,
+    isLoading: modulesLoading,
+    error: modulesError,
+  } = useQuery({
     queryKey: ["platform-modules"],
     queryFn: () => getPlatformModules(),
     staleTime: 5 * 60_000,
@@ -82,6 +91,33 @@ export function useProjectMode() {
       }
     }
   }
+
+  useEffect(() => {
+    console.log("[debug][useProjectMode] settings query", {
+      isLoading: settingsLoading,
+      hasData: Boolean(settingsData),
+      error: settingsError instanceof Error ? settingsError.message : settingsError,
+      settings: settingsData?.settings,
+    });
+  }, [settingsData, settingsError, settingsLoading]);
+
+  useEffect(() => {
+    console.log("[debug][useProjectMode] modules query", {
+      isLoading: modulesLoading,
+      count: dbModules.length,
+      error: modulesError instanceof Error ? modulesError.message : modulesError,
+      modules: dbModules,
+    });
+  }, [dbModules, modulesError, modulesLoading]);
+
+  useEffect(() => {
+    console.log("[debug][useProjectMode] derived state", {
+      mode,
+      isLoading: settingsLoading || modulesLoading,
+      modules,
+      moduleInfo,
+    });
+  }, [mode, moduleInfo, modules, modulesLoading, settingsLoading]);
 
   return {
     mode,
