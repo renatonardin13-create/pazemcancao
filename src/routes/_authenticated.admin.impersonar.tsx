@@ -72,18 +72,43 @@ function ImpersonarPage() {
     },
   });
 
+  const courseOptions = useMemo(() => {
+    const list = (buyersQuery.data ?? []) as any[];
+    const map = new Map<string, string>();
+    for (const b of list) {
+      for (const c of b.courses || []) {
+        if (c.course_id && !map.has(c.course_id)) {
+          map.set(c.course_id, c.course_title || "Curso");
+        }
+      }
+    }
+    return Array.from(map, ([id, title]) => ({ id, title })).sort((a, b) =>
+      a.title.localeCompare(b.title)
+    );
+  }, [buyersQuery.data]);
+
   const filteredBuyers = useMemo(() => {
     const list = (buyersQuery.data ?? []) as any[];
     const q = search.trim().toLowerCase();
-    if (!q) return list.slice(0, 50);
-    return list
-      .filter(
-        (b) =>
-          b.email?.toLowerCase().includes(q) ||
-          b.nome?.toLowerCase().includes(q)
-      )
-      .slice(0, 50);
-  }, [buyersQuery.data, search]);
+    const filtered = list.filter((b) => {
+      if (q && !(b.email?.toLowerCase().includes(q) || b.nome?.toLowerCase().includes(q))) {
+        return false;
+      }
+      if (statusFilter !== "all") {
+        if (statusFilter === "trial" && !b.is_trial) return false;
+        if (statusFilter === "blocked" && b.access_enabled !== false) return false;
+        if (statusFilter === "active" && (b.access_enabled === false || b.is_trial)) return false;
+      }
+      if (courseFilter !== "all") {
+        const has = (b.courses || []).some(
+          (c: any) => c.course_id === courseFilter && c.status === "active"
+        );
+        if (!has) return false;
+      }
+      return true;
+    });
+    return filtered.slice(0, 50);
+  }, [buyersQuery.data, search, statusFilter, courseFilter]);
 
   const handleStart = (email: string) => {
     if (!confirm(
