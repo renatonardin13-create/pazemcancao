@@ -165,7 +165,11 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
         />
       </div>
 
-      {(isLocked || isNotLaunched) && (
+      {isLocked && (
+        <VitrineLockedModal open={unlockOpen} onOpenChange={setUnlockOpen} course={course} />
+      )}
+
+      {isNotLaunched && (
         <UnlockModal
           open={unlockOpen}
           onOpenChange={setUnlockOpen}
@@ -174,12 +178,12 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
           title={course.title}
           description={course.sales_description || course.short_description || course.full_description}
           coverUrl={course.cover_image_url || undefined}
-          checkoutUrl={isNotLaunched ? null : salesUrl || null}
+          checkoutUrl={null}
           benefits={Array.isArray(course.benefits) ? course.benefits.filter(Boolean) : []}
           totalLessons={course.total_lessons}
           totalDuration={course.total_duration}
           categoryName={course.category_name}
-          comingSoon={isNotLaunched}
+          comingSoon
         />
       )}
     </>
