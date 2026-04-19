@@ -33,7 +33,7 @@ export function HeroBanner({ banners, fallbackCourse, rotationMs = 7000 }: Props
   }, [list.length, rotationMs]);
 
   if (list.length === 0) return null;
-  const item = list[Math.min(index, list.length - 1)];
+  const activeIndex = Math.min(index, list.length - 1);
 
   const handleNav = (url: string | null) => {
     if (!url) return;
@@ -46,7 +46,17 @@ export function HeroBanner({ banners, fallbackCourse, rotationMs = 7000 }: Props
 
   return (
     <section className="relative w-full overflow-hidden bg-gradient-to-br from-black via-zinc-950 to-black">
-      <div className="mx-auto grid w-full max-w-[1400px] grid-cols-1 items-center gap-6 px-4 py-10 sm:px-8 sm:py-14 lg:grid-cols-2 lg:gap-8 lg:px-12 lg:py-20">
+      <div className="relative grid">
+      {list.map((item, i) => (
+      <div
+        key={i}
+        aria-hidden={i !== activeIndex}
+        className={`mx-auto grid w-full max-w-[1400px] grid-cols-1 items-center gap-6 px-4 py-10 transition-opacity duration-700 ease-out sm:px-8 sm:py-14 lg:grid-cols-2 lg:gap-8 lg:px-12 lg:py-20 ${
+          i === activeIndex
+            ? "relative z-10 opacity-100"
+            : "pointer-events-none absolute inset-0 opacity-0"
+        }`}
+      >
         {/* Texto à esquerda */}
         <div className="relative z-10 order-2 max-w-xl space-y-5 lg:order-1">
           {item.subtitle && (
