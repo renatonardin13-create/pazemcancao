@@ -222,7 +222,7 @@ function MeusCursosPage() {
                 {inProgress.length > 0 && continueWatching.length === 0 && (
                   <ShelfRow title="Em andamento" courses={inProgress} />
                 )}
-                <ShelfRow title="Sua biblioteca" courses={sortedMyCourses} />
+                <ShelfRow title="Meus cursos" courses={sortedMyCourses} />
                 {newCourses.length > 0 && newCourses.length < myCourses.length && (
                   <ShelfRow title="Novos para começar" courses={newCourses} />
                 )}
