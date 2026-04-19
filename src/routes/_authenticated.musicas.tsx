@@ -598,13 +598,13 @@ function MusicLibraryPage() {
                       key={playlist.id}
                       type="button"
                       onClick={() => setActivePlaylistId(isActive ? null : playlist.id)}
-                      className={`group relative flex h-24 items-center gap-4 overflow-hidden rounded-2xl border p-3 text-left transition-all duration-300 hover:-translate-y-0.5 ${
+                      className={`group relative flex h-32 items-center gap-4 overflow-hidden rounded-2xl border p-3 text-left transition-all duration-300 hover:-translate-y-0.5 ${
                         isActive
                           ? "border-gold/50 bg-gradient-to-r from-gold/15 via-card/40 to-background shadow-[0_10px_30px_-10px_hsl(var(--primary)/0.5)]"
                           : "border-gold/20 bg-gradient-to-r from-card/60 via-card/30 to-background/60 hover:border-gold/40"
                       }`}
                     >
-                      <div className="relative h-full w-24 shrink-0 overflow-hidden rounded-xl">
+                      <div className="relative h-full w-28 shrink-0 overflow-hidden rounded-xl">
                         {playlist?.cover_url ? (
                           <img
                             src={playlist.cover_url}
@@ -614,12 +614,12 @@ function MusicLibraryPage() {
                           />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/30 to-primary/5">
-                            <Disc3 className="h-7 w-7 text-primary" />
+                            <Disc3 className="h-9 w-9 text-primary" />
                           </div>
                         )}
                       </div>
-                      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1">
-                        <h3 className="line-clamp-1 text-sm font-bold tracking-tight text-foreground">
+                      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5">
+                        <h3 className="line-clamp-2 text-sm font-bold tracking-tight text-foreground">
                           {playlist?.name || "Playlist"}
                         </h3>
                         <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground/70">
@@ -627,7 +627,7 @@ function MusicLibraryPage() {
                           <span>{playlist?.track_count || 0} faixas</span>
                         </div>
                       </div>
-                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-gold/40 bg-gold/10 text-gold transition group-hover:bg-gold/20">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gold/40 bg-gold/10 text-gold transition group-hover:bg-gold/20">
                         <Play className="h-4 w-4 fill-current" />
                       </div>
                     </button>
