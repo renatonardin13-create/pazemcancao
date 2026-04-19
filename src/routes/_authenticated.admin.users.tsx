@@ -318,10 +318,42 @@ function AdminUsersPage() {
     return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
   };
 
+  // Status geral coerente: usa overall_status do backend (calculado a partir de cursos ativos),
+  // com fallback para a flag access_enabled / trial.
+  const getOverallStatus = (buyer: any): 'active' | 'blocked' | 'refunded' | 'expired' | 'no_access' | 'trial_expired' => {
+    if (!buyer.access_enabled) return 'blocked';
+    if (buyer.is_trial && isTrialExpired(buyer)) return 'trial_expired';
+    const s = buyer.overall_status as string | undefined;
+    if (s === 'active' || s === 'refunded' || s === 'expired' || s === 'no_access' || s === 'blocked') {
+      return s as any;
+    }
+    return (buyer.course_count ?? 0) > 0 ? 'active' : 'no_access';
+  };
+
+  const renderStatusBadge = (buyer: any) => {
+    const status = getOverallStatus(buyer);
+    const map: Record<string, { label: string; cls: string }> = {
+      active:        { label: 'Ativo',        cls: 'bg-emerald-500/15 text-emerald-400/80' },
+      blocked:       { label: 'Bloqueado',    cls: 'bg-destructive/15 text-destructive/80' },
+      refunded:      { label: 'Reembolsado',  cls: 'bg-rose-500/15 text-rose-400/80' },
+      expired:       { label: 'Vencido',      cls: 'bg-amber-500/15 text-amber-400/80' },
+      trial_expired: { label: 'Expirado',     cls: 'bg-amber-500/15 text-amber-400/80' },
+      no_access:     { label: 'Sem acesso',   cls: 'bg-muted/30 text-muted-foreground' },
+    };
+    const { label, cls } = map[status];
+    return <Badge className={`${cls} border-0 text-xs font-semibold`}>{label}</Badge>;
+  };
+
   const totalUsers = buyers.length;
-  const enabledUsers = buyers.filter((buyer: any) => buyer.access_enabled).length;
-  const inactiveUsers = buyers.filter((buyer: any) => buyer.is_trial && isTrialExpired(buyer)).length;
-  const blockedUsers = buyers.filter((buyer: any) => !buyer.access_enabled).length;
+  const enabledUsers = buyers.filter((buyer: any) => getOverallStatus(buyer) === 'active').length;
+  const inactiveUsers = buyers.filter((buyer: any) => {
+    const s = getOverallStatus(buyer);
+    return s === 'no_access' || s === 'expired' || s === 'trial_expired';
+  }).length;
+  const blockedUsers = buyers.filter((buyer: any) => {
+    const s = getOverallStatus(buyer);
+    return s === 'blocked' || s === 'refunded';
+  }).length;
   const onlineUsers = buyers.filter((buyer: any) => activeSessionEmails.has(buyer.email.toLowerCase())).length;
   const trialUsers = buyers.filter((buyer: any) => buyer.is_trial).length;
 
