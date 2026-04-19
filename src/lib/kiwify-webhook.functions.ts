@@ -192,9 +192,16 @@ function extractEventId(payload: any, rawBody: any): string {
 
 function extractFields(rawBody: any) {
   const payload = rawBody.data || rawBody;
-  const status = (
+  // Kiwify envia o tipo do evento em webhook_event_type/event/event_type (ex.: subscription_canceled, refunded, test).
+  // Quando presente, ele tem prioridade sobre order_status para o roteamento.
+  const eventType = (
+    rawBody.webhook_event_type || rawBody.event || rawBody.event_type ||
+    payload.webhook_event_type || payload.event || payload.event_type || ''
+  ).toString().toLowerCase().trim();
+  const orderStatus = (
     payload.order_status || payload.status || rawBody.order_status || ''
   ).toLowerCase();
+  const status = eventType || orderStatus;
   const customerEmail = (
     payload.customer?.email ||
     payload.Customer?.email ||
