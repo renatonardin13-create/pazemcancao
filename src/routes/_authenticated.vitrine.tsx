@@ -37,7 +37,7 @@ function VitrineErrorFallback({ error }: { error: Error }) {
 }
 
 function VitrinePage() {
-  const DEBUG_MINIMAL_VITRINE = false;
+  const DEBUG_MINIMAL_VITRINE = true;
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["student-shelves", "v2"],
     queryFn: () => getStudentShelves(),
@@ -61,7 +61,7 @@ function VitrinePage() {
     console.log("[DEBUG][VITRINE] isLoading=", isLoading, "isError=", isError);
     console.log("[DEBUG][VITRINE] payload=", data);
     if (isError) console.error("[VITRINE] query error:", error);
-  }, [isLoading, isError, error]);
+  }, [data, isLoading, isError, error]);
 
   if (DEBUG_MINIMAL_VITRINE) {
     return (
