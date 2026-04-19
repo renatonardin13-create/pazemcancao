@@ -19,7 +19,7 @@ import {
   Rocket,
   type LucideIcon,
 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 /** Static lookup: slug → icon, route, prefix-match, submenu flag */
@@ -61,7 +61,7 @@ export function StudentSidebar() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const { data: tracksData } = useQuery({
+  const { data: tracksData, error: tracksError, isLoading: tracksLoading } = useQuery({
     queryKey: ["tracks-active"],
     queryFn: () => listActiveTracks(),
     staleTime: 60_000,
@@ -176,6 +176,35 @@ export function StudentSidebar() {
   // Separate perfil from main items (goes after separator)
   const mainItems = visibleMenuItems.filter((cfg) => cfg.key !== "perfil");
   const showPerfil = visibleMenuItems.some((cfg) => cfg.key === "perfil");
+
+  useEffect(() => {
+    console.log("[debug][StudentSidebar] auth/modules state", {
+      pathname: location.pathname,
+      adminLoading,
+      isAdmin,
+      modulesLoading,
+      dbModules,
+      moduleInfo,
+    });
+  }, [adminLoading, dbModules, isAdmin, location.pathname, moduleInfo, modulesLoading]);
+
+  useEffect(() => {
+    console.log("[debug][StudentSidebar] tracks query", {
+      isLoading: tracksLoading,
+      error: tracksError instanceof Error ? tracksError.message : tracksError,
+      tracksCount: allTracks.length,
+      visibleCategories,
+    });
+  }, [allTracks.length, tracksError, tracksLoading, visibleCategories]);
+
+  useEffect(() => {
+    console.log("[debug][StudentSidebar] menu state", {
+      visibleMenuItems,
+      mainItems,
+      showPerfil,
+      mobileOpen,
+    });
+  }, [mainItems, mobileOpen, showPerfil, visibleMenuItems]);
 
   const sidebarContent = (
     <div className="flex flex-col h-full">
