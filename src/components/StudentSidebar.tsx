@@ -116,7 +116,7 @@ export function StudentSidebar() {
 
   const navItemClass = (active: boolean) =>
     cn(
-      "flex items-center gap-4 rounded-2xl px-5 py-4 text-[16px] font-semibold tracking-tight transition-all duration-400 group/navitem",
+      "flex items-center gap-3 rounded-2xl px-4 py-2.5 text-[15px] font-semibold tracking-tight transition-all duration-400 group/navitem",
       active
         ? "text-gold bg-gold/[0.10] ring-1 ring-gold/15 shadow-[0_0_20px_-4px] shadow-gold/10"
         : "text-foreground/50 hover:text-foreground/80 hover:bg-white/[0.03] ring-1 ring-transparent hover:ring-white/[0.04]"
@@ -171,7 +171,7 @@ export function StudentSidebar() {
         <LogoBrand size="lg" showSubtitle />
       </div>
 
-      <nav className="flex-1 overflow-y-auto px-5 pt-6 pb-4 space-y-2">
+      <nav className="flex-1 overflow-y-auto px-4 pt-4 pb-3 space-y-1">
         {mainItems.map((cfg) =>
           cfg.hasSubmenu ? (
             <div key={cfg.key}>{renderLouvoresSubmenu()}</div>
@@ -180,7 +180,7 @@ export function StudentSidebar() {
           )
         )}
 
-        <div className="my-4 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+        <div className="my-2 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
         {showPerfil && (
           <Link
@@ -195,7 +195,7 @@ export function StudentSidebar() {
 
         {!adminLoading && isAdmin && (
           <>
-            <div className="my-4 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+            <div className="my-2 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
             <Link
               to="/admin"
               onClick={() => setMobileOpen(false)}
