@@ -8,7 +8,11 @@ interface VitrineShelfSectionProps {
 }
 
 export function VitrineShelfSection({ shelf }: VitrineShelfSectionProps) {
-  if (!shelf.courses.length) return null;
+  const courses = Array.isArray(shelf.courses)
+    ? shelf.courses.filter((course) => course && typeof course.id === "string")
+    : [];
+
+  if (!courses.length) return null;
 
   return (
     <section className="space-y-7 sm:space-y-9">
@@ -19,13 +23,13 @@ export function VitrineShelfSection({ shelf }: VitrineShelfSectionProps) {
           </h2>
           <div className="h-px flex-1 bg-gradient-to-r from-gold/15 to-transparent" />
           <span className="text-[10px] sm:text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground/45">
-            {shelf.courses.length} card{shelf.courses.length !== 1 ? "s" : ""}
+            {courses.length} card{courses.length !== 1 ? "s" : ""}
           </span>
         </div>
       </div>
 
       <PosterShelfRow>
-        {shelf.courses.map((course, index) => {
+        {courses.map((course, index) => {
           const isComingSoon = course.access_state === "coming_soon";
 
           return (
