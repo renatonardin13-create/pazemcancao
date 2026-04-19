@@ -199,6 +199,10 @@ function MeusCursosPage() {
                 ))}
               {completed.length > 0 && <ShelfRow title="Concluídos" courses={completed} />}
 
+              {premiumCourses.length > 0 && (
+                <ShelfRow title="Conteúdo Premium" courses={premiumCourses} />
+              )}
+
               {/* CTA explorar */}
               <div className="flex justify-center px-4 pt-6 sm:px-8 lg:px-12">
                 <Link
