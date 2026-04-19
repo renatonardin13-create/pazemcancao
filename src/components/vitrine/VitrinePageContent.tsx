@@ -1,11 +1,11 @@
 import { Store, Search } from "lucide-react";
-import { useMemo, useEffect } from "react";
-import { FooterLinks } from "@/components/FooterLinks";
+import { useEffect, useMemo } from "react";
 import { EmptyState } from "@/components/EmptyState";
+import { FooterLinks } from "@/components/FooterLinks";
 import { Input } from "@/components/ui/input";
 import { VitrineFeaturedBanner } from "./VitrineFeaturedBanner";
 import { VitrineShelfSection } from "./VitrineShelfSection";
-import type { VitrineShelf, VitrineCourse } from "./types";
+import type { VitrineCourse, VitrineShelf } from "./types";
 
 interface VitrinePageContentProps {
   shelves: VitrineShelf[];
@@ -44,17 +44,17 @@ export function VitrinePageContent({
           ).values(),
         );
 
-        const courses = !term
-          ? dedupedCourses
-          : dedupedCourses.filter((course) =>
+        const courses = term
+          ? dedupedCourses.filter((course) =>
               [course.title, course.short_description, course.sales_description]
                 .filter(Boolean)
-                .some((value) => value!.toLowerCase().includes(term)),
-            );
+                .some((value) => String(value).toLowerCase().includes(term)),
+            )
+          : dedupedCourses;
 
         return { ...shelf, courses };
       })
-      .filter((shelf) => Array.isArray(shelf.courses) && shelf.courses.length > 0);
+      .filter((shelf) => shelf.courses.length > 0);
   }, [safeShelves, searchTerm]);
 
   useEffect(() => {
@@ -122,7 +122,11 @@ export function VitrinePageContent({
             <EmptyState
               icon={Store}
               title={searchTerm ? "Nenhum curso encontrado" : "Sua vitrine está vazia"}
-              description={searchTerm ? "Tente buscar por outro nome." : "Quando houver cursos publicados, eles aparecerão aqui."}
+              description={
+                searchTerm
+                  ? "Tente buscar por outro nome."
+                  : "Quando houver cursos publicados, eles aparecerão aqui."
+              }
             />
           </div>
         ) : (
