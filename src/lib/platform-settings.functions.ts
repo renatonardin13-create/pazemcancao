@@ -5,12 +5,21 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 export const getPlatformSettings = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .handler(async () => {
-    // Use admin client — platform settings are global config, not user-specific
+    const hasServerConfig = Boolean(
+      process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY,
+    );
+
+    if (!hasServerConfig) {
+      return { settings: {} };
+    }
+
     const { data, error } = await supabaseAdmin
       .from('platform_settings')
       .select('key, value');
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      return { settings: {} };
+    }
 
     const settings: Record<string, any> = {};
     for (const row of data || []) {
@@ -23,6 +32,14 @@ export const updatePlatformSetting = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { key: string; value: Record<string, any> }) => input)
   .handler(async ({ data }) => {
+    const hasServerConfig = Boolean(
+      process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY,
+    );
+
+    if (!hasServerConfig) {
+      return { success: false, message: 'Configuração do servidor indisponível.' };
+    }
+
     const { error } = await supabaseAdmin
       .from('platform_settings')
       .upsert(
@@ -38,6 +55,14 @@ export const uploadPlatformAsset = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { bucket: string; path: string; base64: string; contentType: string }) => input)
   .handler(async ({ data }) => {
+    const hasServerConfig = Boolean(
+      process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY,
+    );
+
+    if (!hasServerConfig) {
+      throw new Error('Configuração do servidor indisponível.');
+    }
+
     const buffer = Uint8Array.from(atob(data.base64), (c) => c.charCodeAt(0));
 
     const { error } = await supabaseAdmin.storage

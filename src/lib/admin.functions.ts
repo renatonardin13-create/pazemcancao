@@ -7,7 +7,11 @@ const ADMIN_EMAIL = "renatonardin13@gmail.com";
 function getAdminClient() {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!url || !key) throw new Error("Missing server config");
+
+  if (!url || !key) {
+    return null;
+  }
+
   return createClient(url, key, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
@@ -23,9 +27,11 @@ export const assignAdminRole = createServerFn({ method: "POST" })
     const { userId } = context;
     const admin = getAdminClient();
 
-    // Verify caller is the admin email
-    const { data: callerData, error: callerErr } =
-      await admin.auth.admin.getUserById(userId);
+    if (!admin) {
+      return { success: false, message: "Configuração do servidor indisponível." };
+    }
+
+    const { data: callerData, error: callerErr } = await admin.auth.admin.getUserById(userId);
 
     if (callerErr || !callerData?.user?.email) {
       return { success: false, message: "Não foi possível verificar sua identidade." };
@@ -35,7 +41,6 @@ export const assignAdminRole = createServerFn({ method: "POST" })
       return { success: false, message: "Apenas o administrador principal pode executar esta ação." };
     }
 
-    // Assign admin role to self
     const { error } = await admin.from("user_roles").upsert(
       { user_id: userId, role: "admin" },
       { onConflict: "user_id,role" }
@@ -52,16 +57,18 @@ export const assignAdminRole = createServerFn({ method: "POST" })
 export const checkIsAdmin = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
-    const { userId } = context;
-    const admin = getAdminClient();
+    const { userId, claims } = context;
+    const email = typeof claims?.email === "string" ? claims.email.toLowerCase() : "";
 
-    // Check hardcoded email first
-    const { data: userData } = await admin.auth.admin.getUserById(userId);
-    if (userData?.user?.email?.toLowerCase() === ADMIN_EMAIL) {
+    if (email === ADMIN_EMAIL) {
       return { isAdmin: true };
     }
 
-    // Check user_roles table
+    const admin = getAdminClient();
+    if (!admin) {
+      return { isAdmin: false };
+    }
+
     const { data: roleData } = await admin
       .from("user_roles")
       .select("role")
