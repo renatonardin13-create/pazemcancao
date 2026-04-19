@@ -38,12 +38,14 @@ function VitrineErrorFallback({ error }: { error: Error }) {
 
 function VitrinePage() {
   const DEBUG_MINIMAL_VITRINE = true;
+  const shouldRunQuery = !DEBUG_MINIMAL_VITRINE;
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["student-shelves", "v2"],
     queryFn: () => getStudentShelves(),
     staleTime: 0,
     refetchOnWindowFocus: true,
     retry: 1,
+    enabled: shouldRunQuery,
   });
 
   const [searchTerm, setSearchTerm] = useState("");
