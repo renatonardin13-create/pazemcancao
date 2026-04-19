@@ -85,13 +85,7 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
           <Lock className="h-3 w-3 text-white/45" />
         </div>
       )
-    : course.category_name
-      ? (
-          <span className="rounded-full border border-white/[0.06] bg-black/25 px-2.5 py-1 text-[9px] font-medium uppercase tracking-[0.15em] text-white/35 backdrop-blur-md sm:text-[10px]">
-            {course.category_name}
-          </span>
-        )
-      : undefined;
+    : undefined;
 
   const overlay = isNotLaunched
     ? (
@@ -154,14 +148,9 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
           overlay={overlay}
           centerAction={centerAction}
           title={course.title}
-          subtitle={course.total_lessons ? `${course.total_lessons} aulas` : course.short_description || ""}
+          subtitle=""
           meta={
-            isLocked ? (
-              <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-gold/55 sm:text-[10px]">
-                <Lock className="mr-0.5 inline h-2.5 w-2.5" />
-                Premium
-              </span>
-            ) : progress > 0 ? (
+            !isLocked && progress > 0 ? (
               <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-gold/55 sm:text-[10px]">
                 {progress}%
               </span>
