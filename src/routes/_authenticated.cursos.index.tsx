@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { BookOpen, Search, ArrowRight, Sparkles } from "lucide-react";
+import { BookOpen, Search, ArrowRight } from "lucide-react";
 import { useMemo, useState } from "react";
 
 import { EmptyState } from "@/components/EmptyState";
