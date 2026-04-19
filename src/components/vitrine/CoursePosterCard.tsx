@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Lock, Play, CheckCircle2 } from "lucide-react";
 import type { VitrineCourse } from "./types";
-import { getCourseAccessState, formatBRL } from "@/lib/course-access";
-import { LockedProductModal, type LockedProductModalData } from "@/components/store/LockedProductModal";
+import { getCourseAccessState } from "@/lib/course-access";
+import { LockedCourseModal } from "./LockedCourseModal";
 
 interface Props {
   course: VitrineCourse;
