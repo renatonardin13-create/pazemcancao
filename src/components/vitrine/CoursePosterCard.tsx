@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Lock, Play, CheckCircle2 } from "lucide-react";
 import type { VitrineCourse } from "./types";
-import { getCourseAccessState, formatBRL } from "@/lib/course-access";
-import { LockedProductModal, type LockedProductModalData } from "@/components/store/LockedProductModal";
+import { getCourseAccessState } from "@/lib/course-access";
+import { LockedCourseModal } from "./LockedCourseModal";
 
 interface Props {
   course: VitrineCourse;
@@ -28,19 +28,6 @@ export function CoursePosterCard({ course }: Props) {
     setModalOpen(true);
   };
 
-  const modalData: LockedProductModalData = {
-    title: course.title,
-    description: course.short_description || course.sales_description,
-    coverUrl: cover,
-    price: formatBRL(course.promotional_price ?? course.price),
-    checkoutUrl: course.checkout_url || course.sales_page_url,
-    benefits: course.benefits,
-    totalLessons: course.total_lessons,
-    totalDuration: course.total_duration,
-    categoryName: course.category_name,
-    productType: course.product_type,
-    comingSoon: isComingSoon,
-  };
 
   const badge = isCompleted
     ? { label: "Concluído", className: "bg-emerald-500/90 text-white" }
@@ -134,7 +121,7 @@ export function CoursePosterCard({ course }: Props) {
         </div>
       </button>
 
-      <LockedProductModal open={modalOpen} onOpenChange={setModalOpen} data={modalData} />
+      <LockedCourseModal open={modalOpen} onOpenChange={setModalOpen} course={course} />
     </>
   );
 }
