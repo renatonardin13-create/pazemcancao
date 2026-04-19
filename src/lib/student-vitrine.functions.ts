@@ -185,7 +185,7 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
         const rawName = (course?.category_name || '').trim();
         const key = rawName ? `cat:${rawName.toLowerCase()}` : FALLBACK_KEY;
         const name = rawName || FALLBACK_NAME;
-        const bucket = groups.get(key) || { name, courses: [] };
+        const bucket = groups.get(key) || ({ name, courses: [] as any[] });
         bucket.courses.push(course);
         groups.set(key, bucket);
       }
