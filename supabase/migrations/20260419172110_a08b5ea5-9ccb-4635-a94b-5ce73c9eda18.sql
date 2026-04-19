@@ -1,0 +1,8 @@
+UPDATE public.playlists SET cover_url = 'https://nazfszmcpuvwbkxhmugm.supabase.co/storage/v1/object/public/covers/playlists/oracao.jpg' WHERE id = 'f7ac4e96-1357-462e-846d-aa6eadf95716';
+UPDATE public.playlists SET cover_url = 'https://nazfszmcpuvwbkxhmugm.supabase.co/storage/v1/object/public/covers/playlists/ansiedade.jpg' WHERE id = 'd1ea2e18-00bb-42ab-a6fc-eefe41537430';
+UPDATE public.playlists SET cover_url = 'https://nazfszmcpuvwbkxhmugm.supabase.co/storage/v1/object/public/covers/playlists/cura.jpg' WHERE id = '867ad48d-4bfc-4955-8bf2-69c1f675d1b5';
+UPDATE public.playlists SET cover_url = 'https://nazfszmcpuvwbkxhmugm.supabase.co/storage/v1/object/public/covers/playlists/guerra.jpg' WHERE id = '2c3ae678-f290-4995-96ae-7f758f42ffe3';
+UPDATE public.playlists SET cover_url = 'https://nazfszmcpuvwbkxhmugm.supabase.co/storage/v1/object/public/covers/playlists/dormir.jpg' WHERE id = '2c87e588-35a2-475f-9e43-2d455ef8282c';
+UPDATE public.playlists SET cover_url = 'https://nazfszmcpuvwbkxhmugm.supabase.co/storage/v1/object/public/covers/playlists/manha.jpg' WHERE id = '1868f823-6594-4e25-9c3d-6fa4b441f237';
+UPDATE public.playlists SET cover_url = 'https://nazfszmcpuvwbkxhmugm.supabase.co/storage/v1/object/public/covers/playlists/adoracao.jpg' WHERE id = 'c79a490c-06ef-498b-991f-0023a563b0ac';
+UPDATE public.playlists SET cover_url = 'https://nazfszmcpuvwbkxhmugm.supabase.co/storage/v1/object/public/covers/playlists/naodesista.jpg' WHERE id = 'b41e670c-ff2f-4976-a278-52c33158f1d3';
