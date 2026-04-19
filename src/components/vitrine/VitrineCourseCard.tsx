@@ -172,7 +172,6 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
           title={course.title}
           description={course.sales_description || course.short_description || course.full_description}
           coverUrl={course.cover_image_url || undefined}
-          price={course.promotional_price ?? course.price ? `R$ ${Number(course.promotional_price ?? course.price).toFixed(2).replace(".", ",")}` : undefined}
           checkoutUrl={isNotLaunched ? null : salesUrl || null}
           benefits={Array.isArray(course.benefits) ? course.benefits.filter(Boolean) : []}
           totalLessons={course.total_lessons}
