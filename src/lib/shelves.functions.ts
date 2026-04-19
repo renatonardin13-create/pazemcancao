@@ -521,4 +521,13 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       featuredCourse: safeFeaturedCourse,
       featuredCourses: featuredCourses.map(sanitizeCourse).filter(Boolean),
     };
+    } catch (err) {
+      console.error('[getStudentShelves] failed:', err);
+      return {
+        shelves: [],
+        promoBanners: [],
+        featuredCourse: null,
+        featuredCourses: [],
+      };
+    }
   });
