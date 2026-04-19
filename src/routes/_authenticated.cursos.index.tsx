@@ -29,6 +29,7 @@ export const Route = createFileRoute("/_authenticated/cursos/")({
 function MeusCursosPage() {
   const { user } = useAuth();
   const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState<"recent" | "progress" | "title">("recent");
 
   const { data: profileData } = useQuery({
     queryKey: ["my-profile"],
