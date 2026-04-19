@@ -16,6 +16,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { getMyProfile } from "@/lib/profile.functions";
 import { getMyCoursesData } from "@/lib/my-courses.functions";
 import { getContinueWatching } from "@/lib/continue-watching.functions";
+import { getStudentVitrineData } from "@/lib/student-vitrine.functions";
 
 export const Route = createFileRoute("/_authenticated/cursos/")({
   component: MeusCursosPage,
