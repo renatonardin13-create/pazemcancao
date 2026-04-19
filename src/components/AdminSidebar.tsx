@@ -14,6 +14,7 @@ import {
   ArrowLeft,
   Sparkles,
   Disc3,
+  Eye,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useProjectMode } from "@/hooks/use-project-mode";
@@ -44,6 +45,7 @@ const toolItems = [
   { title: "Vendas", url: "/admin/vendas", icon: DollarSign },
   { title: "Upsells", url: "/admin/upsells", icon: Sparkles },
   { title: "Integrações", url: "/admin/integrations", icon: Webhook },
+  { title: "Impersonar aluno", url: "/admin/impersonar", icon: Eye },
 ];
 
 const systemItems = [
