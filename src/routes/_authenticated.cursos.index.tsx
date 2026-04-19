@@ -140,36 +140,47 @@ function MeusCursosPage() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-              className="mb-10 sm:mb-12"
+              className="mb-12 sm:mb-14"
             >
-              <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-                <div className="flex flex-col gap-2 max-w-2xl">
-                  <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-primary/80">
+              <div className="flex flex-col gap-10 lg:flex-row lg:items-end lg:justify-between lg:gap-12">
+                {/* Lado esquerdo: título + subtítulo + busca */}
+                <div className="flex min-w-0 flex-1 flex-col gap-3 lg:max-w-2xl">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.24em] text-primary/80">
                     Olá, {firstName}
                   </span>
-                  <h1 className="font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-[2.75rem] lg:leading-[1.1]">
-                    Meus <span className="bg-gradient-to-r from-primary via-amber-300 to-primary bg-clip-text text-transparent">cursos</span>
+                  <h1 className="font-display text-4xl font-bold tracking-tight text-foreground sm:text-5xl lg:text-[3.25rem] lg:leading-[1.05]">
+                    Meus{" "}
+                    <span className="bg-gradient-to-r from-primary via-amber-300 to-primary bg-clip-text text-transparent">
+                      cursos
+                    </span>
                   </h1>
-                  <p className="text-sm text-muted-foreground/70 sm:text-[15px]">
+                  <p className="max-w-xl text-[15px] leading-relaxed text-muted-foreground/75 sm:text-base">
                     Tudo o que você liberou, reunido aqui para continuar de onde parou.
                   </p>
-                </div>
 
-                {myCourses.length > 0 && (
-                  <div className="flex w-full flex-col gap-2.5 sm:flex-row sm:items-center sm:justify-end lg:w-auto">
-                    <div className="relative w-full sm:w-72">
-                      <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/40" />
+                  {myCourses.length > 0 && (
+                    <div className="relative mt-4 w-full max-w-md">
+                      <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/40" />
                       <Input
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="Buscar nos seus cursos..."
-                        className="h-11 rounded-xl border-border/30 bg-card/40 pl-10 text-sm placeholder:text-muted-foreground/40 focus:border-primary/40 focus:ring-primary/15"
+                        className="h-12 rounded-xl border-border/30 bg-card/40 pl-11 text-sm placeholder:text-muted-foreground/40 focus:border-primary/40 focus:ring-primary/15"
                       />
                     </div>
+                  )}
+                </div>
+
+                {/* Lado direito: seletor */}
+                {myCourses.length > 0 && (
+                  <div className="flex shrink-0 items-center gap-3 lg:pb-1">
+                    <span className="hidden text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground/55 lg:inline">
+                      Ordenar por
+                    </span>
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value as typeof sortBy)}
-                      className="h-11 rounded-xl border border-border/30 bg-card/40 px-3.5 text-sm text-foreground/80 focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/15"
+                      className="h-11 min-w-[12rem] rounded-xl border border-border/30 bg-card/40 px-4 text-sm font-medium text-foreground/85 focus:border-primary/40 focus:outline-none focus:ring-1 focus:ring-primary/15"
                     >
                       <option value="recent">Mais recentes</option>
                       <option value="progress">Maior progresso</option>
