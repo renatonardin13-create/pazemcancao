@@ -145,6 +145,8 @@ export function HeroBanner({ banners, fallbackCourse, rotationMs = 7000 }: Props
           )}
         </div>
       </div>
+      ))}
+      </div>
 
       {/* brilhos decorativos */}
       <div className="pointer-events-none absolute inset-0 -z-0 overflow-hidden">
