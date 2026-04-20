@@ -216,16 +216,26 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
     }
 
     const hero = heroBannerRes.data?.value as any;
-    // Toggle "Exibir banner principal na vitrine". Default: ligado quando nunca configurado.
-    const heroEnabled = hero == null ? true : hero?.enabled !== false;
+    const rawHeroBanners = Array.isArray(heroBannersListRes?.data) ? heroBannersListRes.data : [];
+    const nowMs = Date.now();
+    const scheduledHeroBanners = rawHeroBanners.filter((b: any) => {
+      const startOk = !b.schedule_start_at || new Date(b.schedule_start_at).getTime() <= nowMs;
+      const endOk = !b.schedule_end_at || new Date(b.schedule_end_at).getTime() >= nowMs;
+      return startOk && endOk;
+    });
 
-    const configuredHero = heroEnabled && hero?.enabled && typeof hero?.course_id === 'string'
+    // Compatibilidade: configuração antiga do hero só controla o fallback legado.
+    // Banners reais cadastrados em vitrine_hero_banners têm prioridade e devem aparecer
+    // sempre que estiverem ativos/agendados corretamente.
+    const legacyHeroEnabled = hero == null ? true : hero?.enabled !== false;
+
+    const configuredHero = legacyHeroEnabled && hero?.enabled && typeof hero?.course_id === 'string'
       ? courseMap.get(hero.course_id)
       : null;
-    const fallbackHero = heroEnabled
+    const fallbackHero = legacyHeroEnabled
       ? (builtShelves.flatMap((shelf) => shelf.courses).find((course: any) => course?.banner_image_url || course?.cover_image_url) || null)
       : null;
-    const featuredCourse = heroEnabled
+    const featuredCourse = scheduledHeroBanners.length === 0 && legacyHeroEnabled
       ? safeCourse(
           configuredHero
             ? {
@@ -239,16 +249,7 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
         )
       : null;
 
-    const nowMs = Date.now();
-    const heroBanners = heroEnabled
-      ? (Array.isArray(heroBannersListRes?.data) ? heroBannersListRes.data : []).filter(
-          (b: any) => {
-            const startOk = !b.schedule_start_at || new Date(b.schedule_start_at).getTime() <= nowMs;
-            const endOk = !b.schedule_end_at || new Date(b.schedule_end_at).getTime() >= nowMs;
-            return startOk && endOk;
-          },
-        )
-      : [];
+    const heroBanners = scheduledHeroBanners;
 
     return {
       shelves: builtShelves,
