@@ -203,11 +203,9 @@ function VitrinePage() {
                     Nenhum conteúdo nesta categoria.
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+                  <div className="grid grid-cols-2 justify-items-center gap-x-4 gap-y-6 sm:grid-cols-3 sm:gap-x-5 sm:gap-y-7 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
                     {displayedCourses.map((course) => (
-                      <div key={course.id} className="flex justify-center">
-                        <CoursePosterCard course={course} />
-                      </div>
+                      <CoursePosterCard key={course.id} course={course} />
                     ))}
                   </div>
                 )}
