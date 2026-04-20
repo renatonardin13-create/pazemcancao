@@ -576,8 +576,50 @@ function AdminHeroBannersPage() {
                   checked={form.is_active}
                   onCheckedChange={(v) => setForm({ ...form, is_active: v })}
                 />
-              </div>
             </div>
+
+            {/* Agendamento de campanha */}
+            <div className="rounded-lg border border-border/30 bg-card/30 p-4 space-y-3">
+              <div>
+                <p className="text-sm font-semibold text-foreground/90">
+                  Agendamento de exibição
+                </p>
+                <p className="text-xs text-muted-foreground/60">
+                  Defina quando o banner deve aparecer (ideal para campanhas sazonais).
+                  Deixe em branco para exibir sempre que estiver ativo.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <Label>Início</Label>
+                  <Input
+                    type="datetime-local"
+                    value={form.schedule_start_at}
+                    onChange={(e) =>
+                      setForm({ ...form, schedule_start_at: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <Label>Fim</Label>
+                  <Input
+                    type="datetime-local"
+                    value={form.schedule_end_at}
+                    onChange={(e) =>
+                      setForm({ ...form, schedule_end_at: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+              {form.schedule_start_at &&
+                form.schedule_end_at &&
+                new Date(form.schedule_end_at) <= new Date(form.schedule_start_at) && (
+                  <p className="text-xs text-destructive">
+                    A data de fim deve ser posterior à data de início.
+                  </p>
+                )}
+            </div>
+          </div>
           </div>
 
           <div className="flex justify-end gap-2 border-t border-border/30 pt-4">
