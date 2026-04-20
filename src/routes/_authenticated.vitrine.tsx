@@ -48,6 +48,9 @@ const ALL_KEY = "all";
 function VitrinePage() {
   const [activeCategory, setActiveCategory] = useState<string>(ALL_KEY);
   const shelfRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const chipRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const shelvesAreaRef = useRef<HTMLDivElement | null>(null);
+  const isProgrammaticScrollRef = useRef(false);
 
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["student-shelves", "v3-netflix"],
@@ -70,8 +73,6 @@ function VitrinePage() {
   const featured = (data?.featuredCourse as VitrineCourse | null) || null;
   const heroBanners = Array.isArray((data as any)?.heroBanners) ? (data as any).heroBanners : [];
 
-
-
   // Categorias dinâmicas geradas a partir das prateleiras ativas/com itens
   const categories = useMemo(
     () =>
@@ -82,15 +83,13 @@ function VitrinePage() {
     [allShelves],
   );
 
-  const filteredShelves = useMemo(() => {
-    if (activeCategory === ALL_KEY) return allShelves;
-    return allShelves.filter((s) => s.id === activeCategory);
-  }, [allShelves, activeCategory]);
+  // Sempre renderiza todas as prateleiras — categoria apenas faz scroll
+  const filteredShelves = allShelves;
 
   const featuredList = useMemo(() => {
     const seen = new Set<string>();
     const out: VitrineCourse[] = [];
-    for (const shelf of filteredShelves) {
+    for (const shelf of allShelves) {
       for (const c of shelf.courses) {
         if (!c?.id || seen.has(c.id)) continue;
         seen.add(c.id);
@@ -99,22 +98,69 @@ function VitrinePage() {
       }
     }
     return out;
-  }, [filteredShelves]);
+  }, [allShelves]);
 
-  const handleCategoryClick = useCallback((key: string) => {
-    setActiveCategory(key);
-    if (key === ALL_KEY) {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      return;
+  const scrollChipIntoView = useCallback((key: string) => {
+    const chip = chipRefs.current[key];
+    if (chip) {
+      chip.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
     }
-    requestAnimationFrame(() => {
-      const el = shelfRefs.current[key];
-      if (el) {
-        const top = el.getBoundingClientRect().top + window.scrollY - 80;
-        window.scrollTo({ top, behavior: "smooth" });
-      }
-    });
   }, []);
+
+  const handleCategoryClick = useCallback(
+    (key: string) => {
+      setActiveCategory(key);
+      scrollChipIntoView(key);
+      isProgrammaticScrollRef.current = true;
+      window.setTimeout(() => {
+        isProgrammaticScrollRef.current = false;
+      }, 800);
+
+      if (key === ALL_KEY) {
+        const target = shelvesAreaRef.current;
+        if (target) {
+          const top = target.getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo({ top, behavior: "smooth" });
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+        return;
+      }
+      requestAnimationFrame(() => {
+        const el = shelfRefs.current[key];
+        if (el) {
+          const top = el.getBoundingClientRect().top + window.scrollY - 80;
+          window.scrollTo({ top, behavior: "smooth" });
+        }
+      });
+    },
+    [scrollChipIntoView],
+  );
+
+  // Atualiza o botão ativo conforme a prateleira visível durante o scroll manual
+  useEffect(() => {
+    if (!allShelves.length) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (isProgrammaticScrollRef.current) return;
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible.length > 0) {
+          const id = (visible[0].target as HTMLElement).dataset.shelfId;
+          if (id && id !== activeCategory) {
+            setActiveCategory(id);
+            scrollChipIntoView(id);
+          }
+        }
+      },
+      { rootMargin: "-90px 0px -55% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] },
+    );
+    Object.values(shelfRefs.current).forEach((el) => {
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, [allShelves, activeCategory, scrollChipIntoView]);
 
   return (
     <ModuleGuard moduleKey="vitrine">
