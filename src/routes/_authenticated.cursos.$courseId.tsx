@@ -7,7 +7,7 @@ export const Route = createFileRoute("/_authenticated/cursos/$courseId")({
       await requireProductAccess({ data: { courseId: params.courseId } });
     } catch {
       // Sem entitlement real → manda para a Vitrine (oferta).
-      throw redirect({ to: "/vitrine" });
+      throw redirect({ to: "/home" });
     }
   },
   component: () => <Outlet />,

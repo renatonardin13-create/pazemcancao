@@ -30,7 +30,7 @@ function AuthenticatedLayout() {
   // refém do loader bloqueante de checkBuyerAccess. A própria vitrine já tem
   // skeleton/empty-state elegantes, então liberamos o Outlet imediatamente
   // (assim como já fazemos para a experiência musical).
-  const isVitrineRoute = location.pathname === "/vitrine" || location.pathname.startsWith("/vitrine/");
+  const isVitrineRoute = location.pathname === "/home" || location.pathname.startsWith("/home/") || location.pathname === "/vitrine";
   const isCursosRoute = location.pathname === "/cursos" || location.pathname.startsWith("/cursos/");
   const skipAccessGate = isMusicExperience || isVitrineRoute || isCursosRoute;
 

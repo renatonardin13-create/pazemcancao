@@ -325,7 +325,7 @@ function LessonDetailPage() {
       <header className="sticky top-0 z-30 border-b border-border/10 bg-background/90 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-[1800px] items-center gap-4 px-5 py-3.5 sm:px-8">
           <Button variant="premiumOutline" size="sm" asChild className="shrink-0">
-            <Link to="/vitrine">
+            <Link to="/home">
               <ChevronLeft className="h-4 w-4" />
               <span className="hidden sm:inline">Voltar à vitrine</span>
             </Link>
