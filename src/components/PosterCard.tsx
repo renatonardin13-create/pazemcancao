@@ -173,31 +173,14 @@ export const PosterCard = memo(function PosterCard({
             - subtitle: SEMPRE 1 linha (line-clamp-1)
             - meta: altura reservada mesmo quando some no hover
           */}
-          <div className="absolute inset-x-0 bottom-0 z-10 px-3.5 pb-4 sm:px-4 sm:pb-5">
-            {cfg.showTitle && (
-              <h3
-                className={`line-clamp-2 min-h-[2.6em] text-sm font-bold leading-snug tracking-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] sm:text-[15px] ${
-                  locked ? "text-white/60" : "text-white"
-                }`}
-              >
-                {title}
-              </h3>
-            )}
+          {/* Acessibilidade: título disponível para SR mas oculto visualmente */}
+          <h3 className="sr-only">{title}</h3>
 
-            {(cfg.showCategory || cfg.showDesc) && (
-              <p
-                className={`mt-1.5 line-clamp-1 text-[10px] leading-relaxed sm:text-[11px] ${
-                  locked ? "text-white/25" : "text-white/35"
-                }`}
-              >
-                {subtitle ?? "\u00A0"}
-              </p>
-            )}
-
-            <div className="mt-2 flex h-4 items-center gap-3 opacity-80 md:opacity-0 md:group-hover/card:opacity-100 md:transition-opacity md:duration-400">
+          {meta && (
+            <div className="absolute inset-x-0 bottom-0 z-10 px-3.5 pb-3 sm:px-4 sm:pb-4 flex h-4 items-center gap-3 opacity-0 md:group-hover/card:opacity-100 md:transition-opacity md:duration-400">
               {meta}
             </div>
-          </div>
+          )}
 
           {hasProgress && (
             <div className="absolute bottom-0 left-0 right-0 z-20 h-[2.5px] bg-white/[0.06]">
