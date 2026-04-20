@@ -74,6 +74,7 @@ import {
   toggleHeroBannerActive,
   listCoursesForBannerSelector,
 } from "@/lib/admin-hero-banners.functions";
+import { getHeroBannerMetrics } from "@/lib/hero-banner-metrics.functions";
 import { HeroBanner } from "@/components/vitrine/HeroBanner";
 
 export const Route = createFileRoute("/_authenticated/admin/hero-banners")({
@@ -165,9 +166,17 @@ function AdminHeroBannersPage() {
     queryKey: ["admin-banner-courses"],
     queryFn: () => listCoursesForBannerSelector(),
   });
+  const [metricsDays, setMetricsDays] = useState<7 | 30 | 90>(30);
+  const { data: metricsData, isLoading: metricsLoading } = useQuery({
+    queryKey: ["admin-hero-banner-metrics", metricsDays],
+    queryFn: () => getHeroBannerMetrics({ data: { days: metricsDays } }),
+    staleTime: 60_000,
+  });
 
   const banners = data?.banners ?? [];
   const courses = coursesData?.courses ?? [];
+  const metrics: Array<{ bannerId: string; title: string; impressions: number; clicks: number; ctr: number }> =
+    (metricsData as any)?.metrics ?? [];
 
   const invalidate = () => {
     qc.invalidateQueries({ queryKey: ["admin-hero-banners"] });
@@ -318,6 +327,83 @@ function AdminHeroBannersPage() {
           <Plus className="mr-2 h-4 w-4" />
           Novo banner
         </Button>
+      </div>
+
+      {/* Métricas de cliques (CTR) por banner */}
+      <div className="rounded-xl border border-border/30 bg-card/30 p-4">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <h2 className="text-sm font-semibold text-foreground/90">
+              Métricas de cliques por banner
+            </h2>
+            <p className="text-xs text-muted-foreground/60">
+              Impressões, cliques e CTR (taxa de conversão) — últimos {metricsDays} dias.
+            </p>
+          </div>
+          <div className="flex gap-1 rounded-lg border border-border/40 bg-background/40 p-1">
+            {([7, 30, 90] as const).map((d) => (
+              <button
+                key={d}
+                onClick={() => setMetricsDays(d)}
+                className={`rounded-md px-2.5 py-1 text-xs font-medium transition ${
+                  metricsDays === d
+                    ? "bg-gold/20 text-gold"
+                    : "text-muted-foreground/70 hover:text-foreground"
+                }`}
+              >
+                {d}d
+              </button>
+            ))}
+          </div>
+        </div>
+        {metricsLoading ? (
+          <div className="flex items-center gap-2 py-4 text-xs text-muted-foreground/60">
+            <Loader2 className="h-3 w-3 animate-spin" /> Carregando métricas…
+          </div>
+        ) : metrics.length === 0 ? (
+          <p className="py-3 text-xs text-muted-foreground/60">
+            Nenhum dado ainda. As métricas aparecem conforme alunos visualizam e clicam nos banners.
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-xs">
+              <thead>
+                <tr className="border-b border-border/30 text-left text-muted-foreground/60">
+                  <th className="py-2 pr-4 font-medium">Banner</th>
+                  <th className="py-2 pr-4 text-right font-medium">Impressões</th>
+                  <th className="py-2 pr-4 text-right font-medium">Cliques</th>
+                  <th className="py-2 pr-4 text-right font-medium">CTR</th>
+                </tr>
+              </thead>
+              <tbody>
+                {metrics.map((m) => (
+                  <tr key={m.bannerId} className="border-b border-border/10 last:border-0">
+                    <td className="truncate py-2 pr-4 text-foreground/90">{m.title}</td>
+                    <td className="py-2 pr-4 text-right tabular-nums text-muted-foreground/80">
+                      {m.impressions.toLocaleString("pt-BR")}
+                    </td>
+                    <td className="py-2 pr-4 text-right tabular-nums text-muted-foreground/80">
+                      {m.clicks.toLocaleString("pt-BR")}
+                    </td>
+                    <td className="py-2 pr-4 text-right">
+                      <span
+                        className={`inline-flex rounded-md px-2 py-0.5 text-xs font-semibold tabular-nums ${
+                          m.ctr >= 5
+                            ? "bg-emerald-500/15 text-emerald-400"
+                            : m.ctr >= 1
+                            ? "bg-amber-500/15 text-amber-400"
+                            : "bg-muted/30 text-muted-foreground/70"
+                        }`}
+                      >
+                        {Number(m.ctr).toFixed(2)}%
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
 
       {isLoading ? (
