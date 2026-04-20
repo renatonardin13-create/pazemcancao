@@ -202,6 +202,43 @@ function BannerSlide({
   const tablet = banner.image_tablet_url || desktop;
   const mobile = banner.image_mobile_url || tablet;
 
+  // Modo "banner completo": quando o admin não preenche texto/CTAs/descrição,
+  // tratamos a imagem como peça única horizontal (sem split à direita).
+  // Isso evita cortar artes wide tipo 1920x600.
+  const hasText = !!(
+    banner.title?.trim() ||
+    banner.subtitle?.trim() ||
+    banner.description?.trim() ||
+    banner.primary_cta_label?.trim() ||
+    banner.secondary_cta_label?.trim()
+  );
+  const fullBleed = !hasText;
+
+  if (fullBleed) {
+    return (
+      <div
+        className={`relative w-full overflow-hidden ${banner.banner_clickable ? "cursor-pointer" : ""}`}
+        onClick={onClickArea}
+      >
+        <picture>
+          <source media="(max-width: 640px)" srcSet={mobile} />
+          <source media="(max-width: 1024px)" srcSet={tablet} />
+          <img
+            src={desktop}
+            alt={banner.title || "Banner"}
+            loading="eager"
+            decoding="async"
+            className="block h-auto w-full select-none"
+            draggable={false}
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = "none";
+            }}
+          />
+        </picture>
+      </div>
+    );
+  }
+
   return (
     <div
       className={`relative grid min-h-[260px] grid-cols-1 gap-0 overflow-hidden sm:min-h-[340px] lg:min-h-[420px] lg:grid-cols-2 ${
