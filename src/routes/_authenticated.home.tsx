@@ -16,7 +16,7 @@ import { ShelfRow } from "@/components/vitrine/ShelfRow";
 import { CoursePosterCard } from "@/components/vitrine/CoursePosterCard";
 import type { VitrineShelf, VitrineCourse } from "@/components/vitrine/types";
 
-export const Route = createFileRoute("/_authenticated/vitrine")({
+export const Route = createFileRoute("/_authenticated/home")({
   component: VitrinePage,
   errorComponent: VitrineErrorFallback,
 });
