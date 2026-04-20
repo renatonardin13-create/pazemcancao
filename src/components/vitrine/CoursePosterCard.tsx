@@ -47,7 +47,7 @@ export function CoursePosterCard({ course }: Props) {
     <>
       <button
         onClick={handleClick}
-        className="group relative flex w-[150px] shrink-0 snap-start flex-col gap-2 text-left transition-transform duration-300 hover:scale-[1.05] sm:w-[185px] md:w-[210px] lg:w-[225px] xl:w-[240px]"
+        className="group relative flex w-full max-w-[185px] min-w-0 snap-start flex-col gap-2 text-left transition-transform duration-300 hover:scale-[1.05]"
       >
         <div className="relative aspect-[9/13] w-full overflow-hidden rounded-lg border border-border/40 bg-gradient-to-br from-zinc-900 to-zinc-950 shadow-lg shadow-black/40 ring-1 ring-white/5 transition-shadow duration-300 group-hover:shadow-[0_10px_40px_-10px_rgba(212,175,55,0.4)] group-hover:ring-primary/40">
           {cover ? (
