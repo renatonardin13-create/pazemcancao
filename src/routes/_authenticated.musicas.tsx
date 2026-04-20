@@ -505,15 +505,18 @@ function MusicLibraryPage() {
                           )}
                         </div>
                         <PosterShelfRow>
-                          {group.items.map(dbTrackToPlayerTrack).map((pt, idx) => (
-                            <PosterShelfItem key={`${group.key}-${pt.id}`}>
-                              {group.key === "__destaques" ? (
-                                <HighlightTrackCard track={pt} />
-                              ) : (
-                                <TrackCard track={pt} index={idx} />
-                              )}
-                            </PosterShelfItem>
-                          ))}
+                          {(() => {
+                            const list = group.items.map(dbTrackToPlayerTrack);
+                            return list.map((pt, idx) => (
+                              <PosterShelfItem key={`${group.key}-${pt.id}`}>
+                                {group.key === "__destaques" ? (
+                                  <HighlightTrackCard track={pt} queue={list} />
+                                ) : (
+                                  <TrackCard track={pt} index={idx} queue={list} />
+                                )}
+                              </PosterShelfItem>
+                            ));
+                          })()}
                         </PosterShelfRow>
                         {group.key === "__destaques" && (
                           <div className="pt-4">
