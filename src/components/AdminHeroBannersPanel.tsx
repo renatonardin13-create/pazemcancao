@@ -512,39 +512,49 @@ function AdminHeroBannersPage() {
               />
             </div>
 
-            {/* CTA primário */}
-            <CtaEditor
-              title="Botão primário"
-              label={form.primary_cta_label}
-              type={form.primary_cta_type}
-              target={form.primary_cta_target}
-              courses={courses}
-              onChange={(p) =>
-                setForm({
-                  ...form,
-                  primary_cta_label: p.label,
-                  primary_cta_type: p.type,
-                  primary_cta_target: p.target,
-                })
-              }
-            />
+            {/* CTA primário com toggle de exibição */}
+            <div className="rounded-lg border border-border/30 bg-card/30 p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold text-foreground/90">
+                    Exibir botão principal no hero
+                  </p>
+                  <p className="text-xs text-muted-foreground/60">
+                    Quando desligado, o botão não aparece para o aluno.
+                  </p>
+                </div>
+                <Switch
+                  checked={!!form.primary_cta_label.trim()}
+                  onCheckedChange={(v) =>
+                    setForm({
+                      ...form,
+                      primary_cta_label: v ? form.primary_cta_label || "Saiba mais" : "",
+                      primary_cta_target: v ? form.primary_cta_target : "",
+                    })
+                  }
+                />
+              </div>
 
-            {/* CTA secundário */}
-            <CtaEditor
-              title="Botão secundário"
-              label={form.secondary_cta_label}
-              type={form.secondary_cta_type}
-              target={form.secondary_cta_target}
-              courses={courses}
-              onChange={(p) =>
-                setForm({
-                  ...form,
-                  secondary_cta_label: p.label,
-                  secondary_cta_type: p.type,
-                  secondary_cta_target: p.target,
-                })
-              }
-            />
+              {!!form.primary_cta_label.trim() && (
+                <CtaEditor
+                  title="Botão principal"
+                  label={form.primary_cta_label}
+                  type={form.primary_cta_type}
+                  target={form.primary_cta_target}
+                  courses={courses}
+                  onChange={(p) =>
+                    setForm({
+                      ...form,
+                      primary_cta_label: p.label,
+                      primary_cta_type: p.type,
+                      primary_cta_target: p.target,
+                    })
+                  }
+                />
+              )}
+            </div>
+
+            {/* Botão secundário removido — vitrine usa apenas 1 botão principal */}
 
             {/* Banner clicável */}
             <div className="rounded-lg border border-border/30 bg-card/30 p-4 space-y-3">
