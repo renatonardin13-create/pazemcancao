@@ -204,125 +204,114 @@ function BannerSlide({
   const tablet = banner.image_tablet_url || desktop;
   const mobile = banner.image_mobile_url || tablet;
 
-  // Padrão: banner completo (peça única horizontal, sem corte).
-  // Só ativa o layout dividido (texto+mídia lateral) se houver descrição
-  // OU algum CTA configurado. Título/subtítulo sozinhos não forçam split,
-  // pois a maioria das artes wide já traz a tipografia embutida na imagem.
-  const splitLayout = !!(
+  // Aspect-ratio: usa o configurado ou um fallback sensato (16/9) para
+  // garantir que o container tenha altura mesmo com object-contain.
+  const aspect = ratioToCss(banner.container_ratio) || "16 / 9";
+
+  // Fit: respeita o display_mode escolhido. "auto" => contain (mostra a
+  // imagem inteira sem cortar — comportamento padrão pedido pelo cliente).
+  const fit = modeToObjectFit(banner.display_mode) || "contain";
+
+  const hasContent = !!(
+    banner.subtitle?.trim() ||
     banner.description?.trim() ||
     banner.primary_cta_label?.trim() ||
     banner.secondary_cta_label?.trim()
   );
-  const fullBleed = !splitLayout;
-
-  if (fullBleed) {
-    const aspect = ratioToCss(banner.container_ratio);
-    const fit = modeToObjectFit(banner.display_mode);
-    const hasContainer = !!aspect;
-    return (
-      <div
-        className={`relative w-full overflow-hidden bg-zinc-950 ${banner.banner_clickable ? "cursor-pointer" : ""}`}
-        onClick={onClickArea}
-        style={hasContainer ? { aspectRatio: aspect } : undefined}
-      >
-        <picture>
-          <source media="(max-width: 640px)" srcSet={mobile} />
-          <source media="(max-width: 1024px)" srcSet={tablet} />
-          <img
-            src={desktop}
-            alt={banner.title || "Banner"}
-            loading="eager"
-            decoding="async"
-            className={
-              hasContainer
-                ? "absolute inset-0 block h-full w-full select-none"
-                : "block h-auto w-full select-none"
-            }
-            style={hasContainer ? { objectFit: fit || "cover" } : fit ? { objectFit: fit } : undefined}
-            draggable={false}
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).style.display = "none";
-            }}
-          />
-        </picture>
-      </div>
-    );
-  }
 
   return (
     <div
-      className={`relative grid min-h-[260px] grid-cols-1 gap-0 overflow-hidden sm:min-h-[340px] lg:min-h-[420px] lg:grid-cols-2 ${
-        banner.banner_clickable ? "cursor-pointer" : ""
-      }`}
+      className={`relative w-full overflow-hidden bg-zinc-950 ${banner.banner_clickable ? "cursor-pointer" : ""}`}
       onClick={onClickArea}
+      style={{ aspectRatio: aspect }}
     >
-      {/* Texto */}
-      <div className="relative z-10 order-2 flex flex-col justify-center gap-4 px-6 py-8 sm:px-10 sm:py-10 lg:order-1 lg:px-14">
-        <div className="pointer-events-none absolute -left-20 top-1/2 -z-10 h-[300px] w-[300px] -translate-y-1/2 rounded-full bg-gold/10 blur-[120px]" />
-        {banner.subtitle && (
-          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-gold/80">
-            {banner.subtitle}
-          </p>
-        )}
-        <h2 className="font-display text-3xl font-bold leading-tight tracking-tight text-white sm:text-4xl lg:text-5xl">
-          {banner.title}
-        </h2>
-        {banner.description && (
-          <p className="max-w-md text-sm leading-relaxed text-white/70 sm:text-base">
-            {banner.description}
-          </p>
-        )}
-        {(banner.primary_cta_label || banner.secondary_cta_label) && (
-          <div className="mt-2 flex flex-wrap gap-3">
-            {banner.primary_cta_label && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onPrimary();
-                }}
-                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-300 via-gold to-amber-500 px-6 py-3 text-sm font-bold text-black shadow-[0_8px_30px_-8px_rgba(212,175,55,0.6)] transition hover:scale-[1.02]"
-              >
-                {banner.primary_cta_label}
-                <ArrowRight className="h-4 w-4" />
-              </button>
-            )}
-            {banner.secondary_cta_label && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onSecondary();
-                }}
-                className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-white/5 px-6 py-3 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-white/10"
-              >
-                {banner.secondary_cta_type === "video" && <Play className="h-4 w-4" />}
-                {banner.secondary_cta_label}
-              </button>
-            )}
-          </div>
-        )}
-      </div>
+      {/* Camada 1: fundo blur da própria arte (preenche áreas vazias quando contain). */}
+      {fit === "contain" && (
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 z-0 scale-110 opacity-40 blur-2xl"
+          style={{
+            backgroundImage: `url(${desktop})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        />
+      )}
 
-      {/* Arte */}
-      <div className="relative order-1 lg:order-2">
-        <picture>
-          <source media="(max-width: 640px)" srcSet={mobile} />
-          <source media="(max-width: 1024px)" srcSet={tablet} />
-          <img
-            src={desktop}
-            alt={banner.title || "Banner"}
-            loading="eager"
-            decoding="async"
-            className="h-full min-h-[260px] w-full object-cover sm:min-h-[340px] lg:min-h-[420px] lg:max-h-[460px]"
-            draggable={false}
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).style.display = "none";
-            }}
-          />
-        </picture>
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/40 to-transparent lg:from-zinc-950/80 lg:via-zinc-950/20" />
-      </div>
+      {/* Camada 2: imagem principal do banner. */}
+      <picture>
+        <source media="(max-width: 640px)" srcSet={mobile} />
+        <source media="(max-width: 1024px)" srcSet={tablet} />
+        <img
+          src={desktop}
+          alt={banner.title || "Banner"}
+          loading="eager"
+          decoding="async"
+          className="absolute inset-0 z-10 block h-full w-full select-none"
+          style={{ objectFit: fit, objectPosition: "center" }}
+          draggable={false}
+          onError={(e) => {
+            (e.currentTarget as HTMLImageElement).style.display = "none";
+          }}
+        />
+      </picture>
+
+      {/* Camada 3: conteúdo textual + CTAs (sempre acima da imagem). */}
+      {hasContent && (
+        <>
+          <div className="pointer-events-none absolute inset-0 z-20 bg-gradient-to-r from-zinc-950/80 via-zinc-950/40 to-transparent" />
+          <div className="absolute inset-0 z-30 flex items-end sm:items-center">
+            <div className="flex max-w-2xl flex-col gap-3 px-6 py-6 sm:gap-4 sm:px-10 sm:py-8 lg:px-14">
+              {banner.subtitle && (
+                <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-gold/90 sm:text-[11px]">
+                  {banner.subtitle}
+                </p>
+              )}
+              {banner.title && (
+                <h2 className="font-display text-2xl font-bold leading-tight tracking-tight text-white drop-shadow-lg sm:text-3xl lg:text-5xl">
+                  {banner.title}
+                </h2>
+              )}
+              {banner.description && (
+                <p className="max-w-md text-sm leading-relaxed text-white/80 drop-shadow sm:text-base">
+                  {banner.description}
+                </p>
+              )}
+              {(banner.primary_cta_label || banner.secondary_cta_label) && (
+                <div className="pointer-events-auto mt-1 flex flex-wrap gap-2 sm:gap-3">
+                  {banner.primary_cta_label && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onPrimary();
+                      }}
+                      className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-300 via-gold to-amber-500 px-5 py-2.5 text-xs font-bold text-black shadow-[0_8px_30px_-8px_rgba(212,175,55,0.6)] transition hover:scale-[1.02] sm:px-6 sm:py-3 sm:text-sm"
+                    >
+                      {banner.primary_cta_type === "video" && <Play className="h-4 w-4" />}
+                      {banner.primary_cta_label}
+                      {banner.primary_cta_type !== "video" && <ArrowRight className="h-4 w-4" />}
+                    </button>
+                  )}
+                  {banner.secondary_cta_label && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSecondary();
+                      }}
+                      className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-white/10 px-5 py-2.5 text-xs font-semibold text-white backdrop-blur-md transition hover:bg-white/20 sm:px-6 sm:py-3 sm:text-sm"
+                    >
+                      {banner.secondary_cta_type === "video" && <Play className="h-4 w-4" />}
+                      {banner.secondary_cta_label}
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
