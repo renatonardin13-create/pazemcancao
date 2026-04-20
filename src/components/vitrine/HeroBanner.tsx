@@ -204,19 +204,61 @@ function BannerSlide({
   const tablet = banner.image_tablet_url || desktop;
   const mobile = banner.image_mobile_url || tablet;
 
-  // Aspect-ratio: usa o configurado ou um fallback sensato (16/9) para
-  // garantir que o container tenha altura mesmo com object-contain.
+  // Detecta dispositivo via JS para escolher a imagem correta com fallback
+  // explícito (mobile -> tablet -> desktop).
+  const [device, setDevice] = useState<"mobile" | "tablet" | "desktop">(() => {
+    if (typeof window === "undefined") return "desktop";
+    const w = window.innerWidth;
+    if (w < 640) return "mobile";
+    if (w < 1024) return "tablet";
+    return "desktop";
+  });
+  useEffect(() => {
+    const onResize = () => {
+      const w = window.innerWidth;
+      setDevice(w < 640 ? "mobile" : w < 1024 ? "tablet" : "desktop");
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  const imageSrc =
+    device === "mobile"
+      ? banner.image_mobile_url || banner.image_tablet_url || desktop
+      : device === "tablet"
+        ? banner.image_tablet_url || desktop
+        : desktop;
+
+  // Aspect-ratio configurado ou fallback 16/9 para garantir altura com contain.
   const aspect = ratioToCss(banner.container_ratio) || "16 / 9";
 
-  // Fit: respeita o display_mode escolhido. "auto" => contain (mostra a
-  // imagem inteira sem cortar — comportamento padrão pedido pelo cliente).
+  // "auto" => contain (mostra a imagem inteira, sem corte).
   const fit = modeToObjectFit(banner.display_mode) || "contain";
+
+  // CTA só renderiza se houver label E href resolvido (texto + url).
+  const primaryHref = banner.primary_cta_label?.trim()
+    ? resolveCtaHref(banner.primary_cta_type, banner.primary_cta_target, banner.primary_cta_url)
+    : null;
+  const secondaryHref = banner.secondary_cta_label?.trim()
+    ? resolveCtaHref(
+        banner.secondary_cta_type,
+        banner.secondary_cta_target,
+        banner.secondary_cta_url,
+      )
+    : null;
+  const hasPrimary =
+    !!banner.primary_cta_label?.trim() &&
+    (banner.primary_cta_type === "video" ? !!primaryHref : !!primaryHref);
+  const hasSecondary =
+    !!banner.secondary_cta_label?.trim() &&
+    (banner.secondary_cta_type === "video" ? !!secondaryHref : !!secondaryHref);
 
   const hasContent = !!(
     banner.subtitle?.trim() ||
+    banner.title?.trim() ||
     banner.description?.trim() ||
-    banner.primary_cta_label?.trim() ||
-    banner.secondary_cta_label?.trim()
+    hasPrimary ||
+    hasSecondary
   );
 
   return (
@@ -231,30 +273,31 @@ function BannerSlide({
           aria-hidden
           className="pointer-events-none absolute inset-0 z-0 scale-110 opacity-40 blur-2xl"
           style={{
-            backgroundImage: `url(${desktop})`,
+            backgroundImage: `url(${imageSrc})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
           }}
         />
       )}
 
-      {/* Camada 2: imagem principal do banner. */}
-      <picture>
-        <source media="(max-width: 640px)" srcSet={mobile} />
-        <source media="(max-width: 1024px)" srcSet={tablet} />
-        <img
-          src={desktop}
-          alt={banner.title || "Banner"}
-          loading="eager"
-          decoding="async"
-          className="absolute inset-0 z-10 block h-full w-full select-none"
-          style={{ objectFit: fit, objectPosition: "center" }}
-          draggable={false}
-          onError={(e) => {
-            (e.currentTarget as HTMLImageElement).style.display = "none";
-          }}
-        />
-      </picture>
+      {/* Camada 2: imagem principal — width/height 100%, contain, centro. */}
+      <img
+        src={imageSrc}
+        alt={banner.title || "Banner"}
+        loading="eager"
+        decoding="async"
+        className="absolute inset-0 z-10 block select-none"
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: fit,
+          objectPosition: "center",
+        }}
+        draggable={false}
+        onError={(e) => {
+          (e.currentTarget as HTMLImageElement).style.display = "none";
+        }}
+      />
 
       {/* Camada 3: conteúdo textual + CTAs (sempre acima da imagem). */}
       {hasContent && (
@@ -277,9 +320,12 @@ function BannerSlide({
                   {banner.description}
                 </p>
               )}
-              {(banner.primary_cta_label || banner.secondary_cta_label) && (
-                <div className="pointer-events-auto mt-1 flex flex-wrap gap-2 sm:gap-3">
-                  {banner.primary_cta_label && (
+              {(hasPrimary || hasSecondary) && (
+                <div
+                  className="pointer-events-auto relative z-40 mt-1 flex flex-wrap gap-2 sm:gap-3"
+                  style={{ pointerEvents: "auto" }}
+                >
+                  {hasPrimary && (
                     <button
                       type="button"
                       onClick={(e) => {
@@ -293,7 +339,7 @@ function BannerSlide({
                       {banner.primary_cta_type !== "video" && <ArrowRight className="h-4 w-4" />}
                     </button>
                   )}
-                  {banner.secondary_cta_label && (
+                  {hasSecondary && (
                     <button
                       type="button"
                       onClick={(e) => {
