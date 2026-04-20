@@ -4,12 +4,18 @@
  * curso em destaque (mantém compatibilidade com o hero atual).
  */
 export type CtaType = "url" | "product" | "video";
+export type DisplayMode = "fill" | "contain" | "cover" | "auto";
+export type ContainerRatio = "auto" | "21/9" | "16/9" | "3/1" | "2/1";
 
 export type HeroBannerModel = {
   id: string;
   image_url: string | null;
   image_tablet_url: string | null;
   image_mobile_url: string | null;
+  image_width: number | null;
+  image_height: number | null;
+  display_mode: DisplayMode;
+  container_ratio: ContainerRatio;
   title: string;
   subtitle: string | null;
   description: string | null;
@@ -35,6 +41,9 @@ function asCta(v: any): CtaType {
   return v === "product" || v === "video" ? v : "url";
 }
 
+const VALID_MODES: DisplayMode[] = ["fill", "contain", "cover", "auto"];
+const VALID_RATIOS: ContainerRatio[] = ["auto", "21/9", "16/9", "3/1", "2/1"];
+
 /** Resolve um CTA (type+target) para uma URL navegável. */
 export function resolveCtaHref(
   type: CtaType | null | undefined,
@@ -43,7 +52,7 @@ export function resolveCtaHref(
 ): string | null {
   const t = (target || "").trim();
   if (type === "product" && t) return `/produto/${t}`;
-  if (type === "video" && t) return null; // tratado como modal
+  if (type === "video" && t) return null;
   if (type === "url" && t) return t;
   return (fallbackUrl || "").trim() || null;
 }
@@ -52,11 +61,17 @@ export function resolveCtaHref(
 export function mapBannerToHeroModel(raw: RawBanner): HeroBannerModel | null {
   const image = raw.image_url || raw.banner_image || raw.hero_image || null;
   if (!image) return null;
+  const dm = raw.display_mode;
+  const cr = raw.container_ratio;
   return {
     id: raw.id || crypto.randomUUID(),
     image_url: image,
     image_tablet_url: raw.image_tablet_url || null,
     image_mobile_url: raw.image_mobile_url || null,
+    image_width: typeof raw.image_width === "number" ? raw.image_width : null,
+    image_height: typeof raw.image_height === "number" ? raw.image_height : null,
+    display_mode: (VALID_MODES.includes(dm) ? dm : "auto") as DisplayMode,
+    container_ratio: (VALID_RATIOS.includes(cr) ? cr : "auto") as ContainerRatio,
     title: (raw.title || "").trim() || "Conheça nosso catálogo",
     subtitle: raw.subtitle?.trim() || null,
     description: raw.description?.trim() || null,
@@ -97,6 +112,10 @@ export function fallbackHeroContent(course: any | null | undefined): HeroBannerM
     image_url: image,
     image_tablet_url: null,
     image_mobile_url: null,
+    image_width: null,
+    image_height: null,
+    display_mode: "auto",
+    container_ratio: "auto",
     title: course.display_title || course.title || "Curso em destaque",
     subtitle: course.display_subtitle || course.short_description || null,
     description: null,
@@ -115,4 +134,16 @@ export function fallbackHeroContent(course: any | null | undefined): HeroBannerM
     autoplay_interval_ms: 7000,
     source: "course-fallback",
   };
+}
+
+/** Converte ratio textual em aspect-ratio CSS (string). */
+export function ratioToCss(ratio: ContainerRatio): string | undefined {
+  if (ratio === "auto") return undefined;
+  return ratio.replace("/", " / ");
+}
+
+/** Converte display_mode em valor object-fit. */
+export function modeToObjectFit(mode: DisplayMode): "cover" | "contain" | "fill" | undefined {
+  if (mode === "auto") return undefined;
+  return mode;
 }
