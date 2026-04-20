@@ -294,16 +294,17 @@ function BannerUploadInline({
   onUploaded: (url: string) => void;
   label: string;
 }) {
-  // Reutiliza o ImageUploadField escondido + botão acionando o input via label
   return (
-    <div className="inline-block">
+    <div className="w-full">
       <ImageUploadField
         label={label}
+        hint="JPG, PNG ou WebP — recomendado 1920x600 (3:1)."
         value=""
         onChange={onUploaded}
         folder="hero-banners"
-        compact
-        buttonOnly
+        bucket="covers"
+        aspectClass="aspect-[3/1]"
+        uploadLabel="Arraste a imagem aqui ou clique para enviar"
       />
     </div>
   );
