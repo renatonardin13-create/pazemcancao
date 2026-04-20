@@ -51,6 +51,11 @@ export function HeroBanner({ banners, fallbackCourse }: Props) {
     return () => clearInterval(id);
   }, [autoplayOn, interval, list.length]);
 
+  // Registra impressão sempre que o slide ativo mudar (1x por slide visível)
+  useEffect(() => {
+    if (active?.id) track(active.id, "impression");
+  }, [active?.id]);
+
   if (list.length === 0) return null;
 
   const go = (dir: 1 | -1) =>
@@ -66,10 +71,13 @@ export function HeroBanner({ banners, fallbackCourse }: Props) {
   };
 
   const handleCta = (
+    bannerId: string,
     type: HeroBannerModel["primary_cta_type"],
     target: string | null,
     url: string | null,
+    kind: "primary" | "secondary",
   ) => {
+    track(bannerId, "click", `cta_${kind}`);
     if (type === "video" && target) {
       setVideoUrl(target);
       return;
@@ -80,6 +88,7 @@ export function HeroBanner({ banners, fallbackCourse }: Props) {
 
   const handleBannerClick = (b: HeroBannerModel) => {
     if (!b.banner_clickable) return;
+    track(b.id, "click", "banner");
     if (b.banner_click_type === "video" && b.banner_click_target) {
       setVideoUrl(b.banner_click_target);
       return;
