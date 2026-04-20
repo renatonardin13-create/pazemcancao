@@ -845,9 +845,27 @@ function SortableBannerRow({
               Inativo
             </Badge>
           )}
+          {(() => {
+            const s = getScheduleStatus(b);
+            if (!s) return null;
+            const cls =
+              s.tone === "scheduled"
+                ? "bg-blue-500/15 text-blue-400"
+                : s.tone === "expired"
+                ? "bg-red-500/15 text-red-400"
+                : "bg-amber-500/15 text-amber-400";
+            return <Badge className={cls}>{s.label}</Badge>;
+          })()}
         </div>
         <p className="truncate text-xs text-muted-foreground/60">
           {b.subtitle || b.description || "Sem descrição"}
+          {b.schedule_start_at || b.schedule_end_at ? (
+            <span className="ml-2 text-muted-foreground/50">
+              · {b.schedule_start_at ? new Date(b.schedule_start_at).toLocaleDateString("pt-BR") : "—"}
+              {" → "}
+              {b.schedule_end_at ? new Date(b.schedule_end_at).toLocaleDateString("pt-BR") : "—"}
+            </span>
+          ) : null}
         </p>
       </div>
 
