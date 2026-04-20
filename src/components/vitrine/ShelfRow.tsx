@@ -1,5 +1,5 @@
-import { PosterShelfRow, PosterShelfItem } from "@/components/PosterShelfRow";
 import { VitrineCourseCard } from "./VitrineCourseCard";
+import { POSTER_GRID } from "@/lib/card-grid";
 import type { VitrineCourse } from "./types";
 
 interface Props {
@@ -8,8 +8,9 @@ interface Props {
 }
 
 /**
- * Prateleira horizontal de cursos — usa o mesmo PosterShelfRow/Item
- * que os louvores e conteúdos para garantir tamanho 9:13 idêntico.
+ * Listagem de cursos em GRID 9:13 — mesmo padrão visual usado em
+ * "Todos os louvores" e na vitrine, garantindo cards com tamanho idêntico
+ * em toda a plataforma.
  */
 export function ShelfRow({ title, courses }: Props) {
   const safeCourses = Array.isArray(courses)
@@ -19,18 +20,16 @@ export function ShelfRow({ title, courses }: Props) {
   if (!safeCourses.length) return null;
 
   return (
-    <section className="space-y-3">
-      <h2 className="px-4 font-display text-xl font-bold text-foreground sm:px-8 lg:px-12">
+    <section className="space-y-4">
+      <h2 className="font-display text-xl font-bold tracking-tight text-foreground">
         {title}
       </h2>
 
-      <PosterShelfRow>
+      <div className={POSTER_GRID}>
         {safeCourses.map((course, index) => (
-          <PosterShelfItem key={course.id}>
-            <VitrineCourseCard course={course} index={index} />
-          </PosterShelfItem>
+          <VitrineCourseCard key={course.id} course={course} index={index} />
         ))}
-      </PosterShelfRow>
+      </div>
     </section>
   );
 }
