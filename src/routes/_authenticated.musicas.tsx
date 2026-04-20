@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { TrackCard } from "@/components/TrackCard";
 import { HighlightTrackCard } from "@/components/HighlightTrackCard";
 import { UpcomingReleaseBlock } from "@/components/UpcomingReleaseBlock";
+import { InspirationalBlock } from "@/components/InspirationalBlock";
 import { POSTER_GRID } from "@/lib/card-grid";
 import { PosterShelfRow, PosterShelfItem } from "@/components/PosterShelfRow";
 import { listAllTracks } from "@/lib/tracks.functions";
