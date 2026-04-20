@@ -140,26 +140,62 @@ function VitrinePage() {
   // Atualiza o botão ativo conforme a prateleira visível durante o scroll manual
   useEffect(() => {
     if (!allShelves.length) return;
+
+    const visibilityMap = new Map<string, number>();
+    let rafId = 0;
+
+    const computeActive = () => {
+      rafId = 0;
+      if (isProgrammaticScrollRef.current) return;
+
+      // "Todos" quando estamos acima da área de prateleiras
+      const area = shelvesAreaRef.current;
+      if (area) {
+        const areaTop = area.getBoundingClientRect().top;
+        if (areaTop > 120) {
+          if (activeCategory !== ALL_KEY) {
+            setActiveCategory(ALL_KEY);
+            scrollChipIntoView(ALL_KEY);
+          }
+          return;
+        }
+      }
+
+      let bestId: string | null = null;
+      let bestRatio = 0;
+      visibilityMap.forEach((ratio, id) => {
+        if (ratio > bestRatio) {
+          bestRatio = ratio;
+          bestId = id;
+        }
+      });
+
+      if (bestId && bestRatio > 0.05 && bestId !== activeCategory) {
+        setActiveCategory(bestId);
+        scrollChipIntoView(bestId);
+      }
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
-        if (isProgrammaticScrollRef.current) return;
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
-        if (visible.length > 0) {
-          const id = (visible[0].target as HTMLElement).dataset.shelfId;
-          if (id && id !== activeCategory) {
-            setActiveCategory(id);
-            scrollChipIntoView(id);
-          }
+        for (const e of entries) {
+          const id = (e.target as HTMLElement).dataset.shelfId;
+          if (!id) continue;
+          visibilityMap.set(id, e.isIntersecting ? e.intersectionRatio : 0);
         }
+        if (!rafId) rafId = window.requestAnimationFrame(computeActive);
       },
-      { rootMargin: "-90px 0px -55% 0px", threshold: [0, 0.25, 0.5, 0.75, 1] },
+      { rootMargin: "-100px 0px -50% 0px", threshold: [0, 0.1, 0.25, 0.5, 0.75, 1] },
     );
+
     Object.values(shelfRefs.current).forEach((el) => {
       if (el) observer.observe(el);
     });
-    return () => observer.disconnect();
+
+    return () => {
+      observer.disconnect();
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, [allShelves, activeCategory, scrollChipIntoView]);
 
   return (
