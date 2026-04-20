@@ -2,22 +2,22 @@ import { Play, Pause, Music } from "lucide-react";
 import { usePlayer } from "@/hooks/use-player";
 import type { Track } from "@/lib/sample-tracks";
 import { getTrackReleaseMeta } from "@/lib/track-release";
+import { PosterCard } from "@/components/PosterCard";
 
 interface HighlightTrackCardProps {
   track: Track;
+  /** Compatibilidade — não é renderizado (cards mostram apenas a capa). */
   subtitle?: string;
   /** Lista de contexto p/ auto-next ao terminar a faixa. */
   queue?: Track[];
 }
 
-function splitTitle(title: string) {
-  const words = title.trim().split(/\s+/);
-  if (words.length <= 2) return { line1: words.join(" "), line2: "" };
-  const mid = Math.ceil(words.length / 2);
-  return { line1: words.slice(0, mid).join(" "), line2: words.slice(mid).join(" ") };
-}
-
-export function HighlightTrackCard({ track, subtitle, queue }: HighlightTrackCardProps) {
+/**
+ * HighlightTrackCard — usa o PosterCard master (5:8) para ficar idêntico
+ * aos demais cards de /home, /musicas e /cursos. Sem texto sobreposto:
+ * apenas capa + botão play + badge "Em breve" quando aplicável.
+ */
+export function HighlightTrackCard({ track, queue }: HighlightTrackCardProps) {
   const { currentTrack, playing, toggle } = usePlayer();
   const isThis = currentTrack?.id === track.id;
   const isPlaying = isThis && playing;
@@ -25,7 +25,6 @@ export function HighlightTrackCard({ track, subtitle, queue }: HighlightTrackCar
   const release = getTrackReleaseMeta(track as any);
   const isComingSoon = release.isComingSoon;
   const locked = (track as any).isLocked || isComingSoon;
-  const { line1, line2 } = splitTitle(track.title);
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -34,46 +33,59 @@ export function HighlightTrackCard({ track, subtitle, queue }: HighlightTrackCar
     toggle(track, queue);
   };
 
-  return (
+  const fallback = (
+    <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/[0.06] bg-white/[0.04]">
+      <Music className="h-7 w-7 text-white/25" />
+    </div>
+  );
+
+  const badgeTopLeft = isComingSoon ? (
+    <span className="rounded-full border border-gold/50 bg-background/85 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-gold backdrop-blur-md">
+      Em breve
+    </span>
+  ) : undefined;
+
+  const centerAction = !locked ? (
     <button
       type="button"
       onClick={handleClick}
-      className="group relative h-[180px] w-[260px] shrink-0 overflow-hidden rounded-[22px] border border-gold/25 bg-card/40 text-left shadow-[0_10px_40px_-18px_rgba(0,0,0,0.85)] transition-all duration-500 hover:-translate-y-1 hover:border-gold/50"
+      className={`pointer-events-auto flex items-center justify-center rounded-full px-5 py-2.5 shadow-[0_4px_24px_rgba(0,0,0,0.4)] md:transition-all md:duration-500 ${
+        isPlaying
+          ? "scale-100 bg-gold/95 opacity-100"
+          : "scale-[0.5] bg-gold/95 opacity-0 md:group-hover/card:scale-100 md:group-hover/card:opacity-100"
+      }`}
     >
-      {track.coverUrl ? (
-        <img
-          src={track.coverUrl}
-          alt={track.title}
-          loading="lazy"
-          className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
-        />
+      {isPlaying ? (
+        <Pause className="h-5 w-5 fill-gold-foreground text-gold-foreground" />
       ) : (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-primary/20 via-background to-background">
-          <Music className="h-10 w-10 text-primary/50" />
-        </div>
-      )}
-
-      {/* Vinheta sutil para legibilidade do play/badge sobre a capa */}
-      <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/20" />
-
-
-      <div className="absolute bottom-3 right-3">
-        <div
-          className={`flex h-9 w-9 items-center justify-center rounded-full border transition-all duration-300 ${
-            isPlaying
-              ? "border-gold bg-gold text-background"
-              : "border-gold/60 bg-background/80 text-gold backdrop-blur-md group-hover:scale-110"
-          }`}
-        >
-          {isPlaying ? <Pause className="h-3.5 w-3.5" /> : <Play className="h-3.5 w-3.5 fill-current" />}
-        </div>
-      </div>
-
-      {isComingSoon && (
-        <div className="absolute left-3 top-3 rounded-full border border-gold/50 bg-background/85 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.18em] text-gold backdrop-blur-md">
-          Em breve
-        </div>
+        <Play className="h-5 w-5 fill-gold-foreground text-gold-foreground" />
       )}
     </button>
+  ) : undefined;
+
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={handleClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleClick(e as unknown as React.MouseEvent);
+        }
+      }}
+      className="group/card relative block cursor-pointer"
+    >
+      <PosterCard
+        cover={track.coverUrl}
+        coverAlt={track.title}
+        fallback={fallback}
+        badgeTopLeft={badgeTopLeft}
+        centerAction={centerAction}
+        title=""
+        subtitle={undefined}
+        locked={locked}
+      />
+    </div>
   );
 }

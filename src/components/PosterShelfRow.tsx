@@ -1,6 +1,7 @@
 import { useRef, useState, useCallback, useEffect, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useDragScroll } from "@/hooks/use-drag-scroll";
+import { POSTER_SHELF_ITEM } from "@/lib/card-grid";
 
 /**
  * Prateleira horizontal padrão para cards 9:13 (Louvores, Conteúdos, Cursos).
@@ -103,9 +104,9 @@ export function PosterShelfRow({ children }: { children: ReactNode }) {
  * nas prateleiras de cursos para manter consistência total.
  */
 export function PosterShelfItem({ children }: { children: ReactNode }) {
-  // mobile: ~2 cards visíveis · tablet: ~3 · desktop: 4-5 · wide: 5-6
+  // Usa o mesmo padrão master (160→300px) das demais prateleiras.
   return (
-    <div className="flex-shrink-0 snap-start w-[150px] sm:w-[185px] md:w-[210px] lg:w-[225px] xl:w-[240px]">
+    <div className={POSTER_SHELF_ITEM}>
       {children}
     </div>
   );
