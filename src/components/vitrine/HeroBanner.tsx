@@ -130,10 +130,10 @@ export function HeroBanner({ banners, fallbackCourse }: Props) {
                   banner={b}
                   onClickArea={() => handleBannerClick(b)}
                   onPrimary={() =>
-                    handleCta(b.primary_cta_type, b.primary_cta_target, b.primary_cta_url)
+                    handleCta(b.id, b.primary_cta_type, b.primary_cta_target, b.primary_cta_url, "primary")
                   }
                   onSecondary={() =>
-                    handleCta(b.secondary_cta_type, b.secondary_cta_target, b.secondary_cta_url)
+                    handleCta(b.id, b.secondary_cta_type, b.secondary_cta_target, b.secondary_cta_url, "secondary")
                   }
                 />
               </div>
