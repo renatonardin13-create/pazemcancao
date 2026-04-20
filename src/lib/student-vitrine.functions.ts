@@ -216,28 +216,39 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
     }
 
     const hero = heroBannerRes.data?.value as any;
-    const configuredHero = hero?.enabled && typeof hero?.course_id === 'string' ? courseMap.get(hero.course_id) : null;
-    const fallbackHero = builtShelves.flatMap((shelf) => shelf.courses).find((course: any) => course?.banner_image_url || course?.cover_image_url) || null;
-    const featuredCourse = safeCourse(
-      configuredHero
-        ? {
-            ...configuredHero,
-            display_title: hero?.title || configuredHero.title,
-            display_subtitle: hero?.subtitle || configuredHero.short_description,
-            banner_image_url: hero?.image_url || configuredHero.banner_image_url || configuredHero.cover_image_url,
-            banner_link_url: hero?.link_url || configuredHero.banner_link_url || configuredHero.checkout_url,
-          }
-        : fallbackHero,
-    );
+    // Toggle "Exibir banner principal na vitrine". Default: ligado quando nunca configurado.
+    const heroEnabled = hero == null ? true : hero?.enabled !== false;
+
+    const configuredHero = heroEnabled && hero?.enabled && typeof hero?.course_id === 'string'
+      ? courseMap.get(hero.course_id)
+      : null;
+    const fallbackHero = heroEnabled
+      ? (builtShelves.flatMap((shelf) => shelf.courses).find((course: any) => course?.banner_image_url || course?.cover_image_url) || null)
+      : null;
+    const featuredCourse = heroEnabled
+      ? safeCourse(
+          configuredHero
+            ? {
+                ...configuredHero,
+                display_title: hero?.title || configuredHero.title,
+                display_subtitle: hero?.subtitle || configuredHero.short_description,
+                banner_image_url: hero?.image_url || configuredHero.banner_image_url || configuredHero.cover_image_url,
+                banner_link_url: hero?.link_url || configuredHero.banner_link_url || configuredHero.checkout_url,
+              }
+            : fallbackHero,
+        )
+      : null;
 
     const nowMs = Date.now();
-    const heroBanners = (Array.isArray(heroBannersListRes?.data) ? heroBannersListRes.data : []).filter(
-      (b: any) => {
-        const startOk = !b.schedule_start_at || new Date(b.schedule_start_at).getTime() <= nowMs;
-        const endOk = !b.schedule_end_at || new Date(b.schedule_end_at).getTime() >= nowMs;
-        return startOk && endOk;
-      },
-    );
+    const heroBanners = heroEnabled
+      ? (Array.isArray(heroBannersListRes?.data) ? heroBannersListRes.data : []).filter(
+          (b: any) => {
+            const startOk = !b.schedule_start_at || new Date(b.schedule_start_at).getTime() <= nowMs;
+            const endOk = !b.schedule_end_at || new Date(b.schedule_end_at).getTime() >= nowMs;
+            return startOk && endOk;
+          },
+        )
+      : [];
 
     return {
       shelves: builtShelves,
