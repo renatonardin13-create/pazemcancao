@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+
 import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -77,11 +77,8 @@ import {
 import { getHeroBannerMetrics } from "@/lib/hero-banner-metrics.functions";
 import { HeroBanner } from "@/components/vitrine/HeroBanner";
 
-export const Route = createFileRoute("/_authenticated/admin/hero-banners")({
-  component: AdminHeroBannersPage,
-});
-
 export { AdminHeroBannersPage };
+export default AdminHeroBannersPage;
 
 type CtaType = "url" | "product" | "video";
 
