@@ -388,8 +388,15 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
     const adminShelves = [];
 
     for (const shelf of shelves) {
-      const linkedCourses = (shelfCourseMap.get(shelf.id) || [])
-        .map((link) => courseMap.get(link.course_id))
+      const links = shelfCourseMap.get(shelf.id) || [];
+      const featuredMap = new Map(links.map((l) => [l.course_id, !!l.is_featured]));
+
+      const linkedCourses = links
+        .map((link) => {
+          const course = courseMap.get(link.course_id);
+          if (!course) return null;
+          return { ...course, is_featured: featuredMap.get(link.course_id) || false };
+        })
         .filter(Boolean);
 
       const dedupedLinkedCourses = Array.from(new Map(linkedCourses.map((course: any) => [course.id, course])).values());
@@ -404,6 +411,9 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
         adminShelves.push({
           id: shelf.id,
           name: shelf.name,
+          public_title: shelf.public_title || null,
+          description: shelf.description || null,
+          display_mode: (shelf.display_mode as any) || 'auto',
           sort_order: shelf.sort_order,
           shelf_type: 'admin' as const,
           courses,
