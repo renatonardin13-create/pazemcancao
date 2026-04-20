@@ -363,6 +363,16 @@ export default function AdminVitrinePage() {
     onError: (err: any) => toastError(err),
   });
 
+  const duplicateMut = useMutation({
+    mutationFn: (id: string) => duplicateShelf({ data: { id } }),
+    onSuccess: () => {
+      toast.success("Prateleira duplicada (inativa). Ative quando quiser.");
+      queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
+      invalidatePreview();
+    },
+    onError: (err: any) => toastError(err),
+  });
+
   const setCoursesMut = useMutation({
     mutationFn: (input: { shelfId: string; courseIds: string[] }) =>
       setShelfCourses({ data: input }),
