@@ -555,10 +555,13 @@ export default function AdminVitrinePage() {
     e.preventDefault();
     const payload = {
       name: formName,
+      public_title: formPublicTitle.trim() || null,
+      description: formDescription.trim() || null,
       is_active: formActive,
       show_in_vitrine: formShowInVitrine,
       mode: formMode,
       auto_criteria: formMode === "auto" ? formCriteria : undefined,
+      display_mode: formDisplayMode as "auto" | "grid" | "carousel",
       sort_order: formOrder,
     };
 
