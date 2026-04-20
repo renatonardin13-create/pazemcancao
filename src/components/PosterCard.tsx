@@ -122,13 +122,17 @@ export const PosterCard = memo(function PosterCard({
       />
 
       <div
-        className={`relative overflow-hidden rounded-[14px] sm:rounded-[16px] bg-card/5 shadow-md shadow-black/25 ring-1 md:transition-all md:duration-500 md:ease-out md:group-hover/card:scale-[1.05] md:group-hover/card:shadow-[0_18px_48px_-10px_rgba(212,175,55,0.28)] ${
+        className={`relative overflow-hidden bg-card/5 shadow-md shadow-black/25 ring-1 md:transition-all md:duration-500 md:ease-out md:group-hover/card:scale-[1.05] md:group-hover/card:shadow-[0_18px_48px_-10px_rgba(212,175,55,0.28)] ${
           cfg.hoverGold ? "md:group-hover/card:ring-gold/40" : ""
         } ${
           highlight ? "ring-gold/30 shadow-[0_2px_32px_-8px] shadow-gold/15" : cfg.showBorder ? "ring-white/[0.04]" : "ring-transparent"
         }`}
+        style={{ borderRadius: radius }}
       >
-        <div className={`relative aspect-[15/23] overflow-hidden bg-gradient-to-br ${gradientClass}`}>
+        <div
+          className={`relative overflow-hidden bg-gradient-to-br ${gradientClass}`}
+          style={{ aspectRatio, borderRadius: radius }}
+        >
           {/* Capa */}
           {showImage ? (
             <OptimizedImage
