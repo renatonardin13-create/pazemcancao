@@ -1,6 +1,7 @@
 import { useRef, useState, useCallback, useEffect, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useDragScroll } from "@/hooks/use-drag-scroll";
+import { POSTER_SHELF_ITEM } from "@/lib/card-grid";
 
 /**
  * Prateleira horizontal padrão para cards 9:13 (Louvores, Conteúdos, Cursos).
