@@ -202,17 +202,16 @@ function BannerSlide({
   const tablet = banner.image_tablet_url || desktop;
   const mobile = banner.image_mobile_url || tablet;
 
-  // Modo "banner completo": quando o admin não preenche texto/CTAs/descrição,
-  // tratamos a imagem como peça única horizontal (sem split à direita).
-  // Isso evita cortar artes wide tipo 1920x600.
-  const hasText = !!(
-    banner.title?.trim() ||
-    banner.subtitle?.trim() ||
+  // Padrão: banner completo (peça única horizontal, sem corte).
+  // Só ativa o layout dividido (texto+mídia lateral) se houver descrição
+  // OU algum CTA configurado. Título/subtítulo sozinhos não forçam split,
+  // pois a maioria das artes wide já traz a tipografia embutida na imagem.
+  const splitLayout = !!(
     banner.description?.trim() ||
     banner.primary_cta_label?.trim() ||
     banner.secondary_cta_label?.trim()
   );
-  const fullBleed = !hasText;
+  const fullBleed = !splitLayout;
 
   if (fullBleed) {
     return (
