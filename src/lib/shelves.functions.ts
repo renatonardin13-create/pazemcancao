@@ -442,6 +442,9 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       result.push({
         id: '__all_courses__',
         name: sortedAdminShelves.length > 0 ? 'Todos os Cursos' : 'Catálogo',
+        public_title: null,
+        description: null,
+        display_mode: 'auto' as any,
         sort_order: 9999,
         shelf_type: 'admin' as const,
         courses: orphanCourses,
