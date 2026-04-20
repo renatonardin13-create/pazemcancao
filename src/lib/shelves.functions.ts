@@ -10,12 +10,16 @@ type ShelfRecord = {
   auto_criteria: string | null;
   sort_order: number;
   show_in_vitrine?: boolean;
+  public_title?: string | null;
+  description?: string | null;
+  display_mode?: string | null;
 };
 
 type ShelfCourseLink = {
   shelf_id: string;
   course_id: string;
   sort_order: number;
+  is_featured?: boolean;
 };
 
 type CourseRecord = {
