@@ -10,6 +10,8 @@ import { UnlockModal } from "@/components/UnlockModal";
 interface TrackCardProps {
   track: Track;
   index: number;
+  /** Lista de contexto p/ auto-next ao terminar a faixa. */
+  queue?: Track[];
 }
 
 const categoryGradients: Record<string, string> = {
