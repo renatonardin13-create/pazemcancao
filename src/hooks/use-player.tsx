@@ -13,7 +13,7 @@ interface PlayerState {
   queueIndex: number;
   play: (track: Track) => void;
   pause: () => void;
-  toggle: (track: Track) => void;
+  toggle: (track: Track, queue?: Track[]) => void;
   seek: (percent: number) => void;
   stop: () => void;
   next: () => void;
