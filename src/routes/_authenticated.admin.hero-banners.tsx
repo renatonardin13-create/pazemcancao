@@ -103,6 +103,8 @@ type FormState = {
   autoplay_interval_ms: number;
   is_active: boolean;
   sort_order: number;
+  schedule_start_at: string;
+  schedule_end_at: string;
 };
 
 const emptyForm: FormState = {
@@ -125,6 +127,8 @@ const emptyForm: FormState = {
   autoplay_interval_ms: 7000,
   is_active: true,
   sort_order: 0,
+  schedule_start_at: "",
+  schedule_end_at: "",
 };
 
 function AdminHeroBannersPage() {
@@ -230,6 +234,8 @@ function AdminHeroBannersPage() {
       autoplay_interval_ms: Number(b.autoplay_interval_ms) || 7000,
       is_active: b.is_active !== false,
       sort_order: b.sort_order ?? 0,
+      schedule_start_at: b.schedule_start_at ? toLocalInput(b.schedule_start_at) : "",
+      schedule_end_at: b.schedule_end_at ? toLocalInput(b.schedule_end_at) : "",
     });
     setDialogOpen(true);
   };
