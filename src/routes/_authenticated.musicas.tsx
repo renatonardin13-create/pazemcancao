@@ -435,11 +435,14 @@ function MusicLibraryPage() {
                 // mesma categoria aparecem logo abaixo num bloco em destaque.
                 regularTracks.length > 0 ? (
                   <PosterShelfRow>
-                    {regularTracks.map(dbTrackToPlayerTrack).map((pt, idx) => (
-                      <PosterShelfItem key={pt.id}>
-                        <TrackCard track={pt} index={idx} />
-                      </PosterShelfItem>
-                    ))}
+                    {(() => {
+                      const list = regularTracks.map(dbTrackToPlayerTrack);
+                      return list.map((pt, idx) => (
+                        <PosterShelfItem key={pt.id}>
+                          <TrackCard track={pt} index={idx} queue={list} />
+                        </PosterShelfItem>
+                      ));
+                    })()}
                   </PosterShelfRow>
                 ) : (
                   <div className="rounded-2xl border border-dashed border-border/40 px-4 py-8 text-center text-sm text-muted-foreground/70">
@@ -502,15 +505,18 @@ function MusicLibraryPage() {
                           )}
                         </div>
                         <PosterShelfRow>
-                          {group.items.map(dbTrackToPlayerTrack).map((pt, idx) => (
-                            <PosterShelfItem key={`${group.key}-${pt.id}`}>
-                              {group.key === "__destaques" ? (
-                                <HighlightTrackCard track={pt} />
-                              ) : (
-                                <TrackCard track={pt} index={idx} />
-                              )}
-                            </PosterShelfItem>
-                          ))}
+                          {(() => {
+                            const list = group.items.map(dbTrackToPlayerTrack);
+                            return list.map((pt, idx) => (
+                              <PosterShelfItem key={`${group.key}-${pt.id}`}>
+                                {group.key === "__destaques" ? (
+                                  <HighlightTrackCard track={pt} queue={list} />
+                                ) : (
+                                  <TrackCard track={pt} index={idx} queue={list} />
+                                )}
+                              </PosterShelfItem>
+                            ));
+                          })()}
                         </PosterShelfRow>
                         {group.key === "__destaques" && (
                           <div className="pt-4">
@@ -538,9 +544,12 @@ function MusicLibraryPage() {
                   </div>
 
                   <div className={POSTER_GRID}>
-                    {filteredTracks.map(dbTrackToPlayerTrack).map((pt, idx) => (
-                      <TrackCard key={`all-${pt.id}`} track={pt} index={idx} />
-                    ))}
+                    {(() => {
+                      const list = filteredTracks.map(dbTrackToPlayerTrack);
+                      return list.map((pt, idx) => (
+                        <TrackCard key={`all-${pt.id}`} track={pt} index={idx} queue={list} />
+                      ));
+                    })()}
                   </div>
                 </section>
               )}
@@ -564,11 +573,14 @@ function MusicLibraryPage() {
                     </span>
                   </div>
                   <PosterShelfRow>
-                    {bonusTracks.map(dbTrackToPlayerTrack).map((pt, idx) => (
-                      <PosterShelfItem key={`bonus-${pt.id}`}>
-                        <TrackCard track={pt} index={idx} />
-                      </PosterShelfItem>
-                    ))}
+                    {(() => {
+                      const list = bonusTracks.map(dbTrackToPlayerTrack);
+                      return list.map((pt, idx) => (
+                        <PosterShelfItem key={`bonus-${pt.id}`}>
+                          <TrackCard track={pt} index={idx} queue={list} />
+                        </PosterShelfItem>
+                      ));
+                    })()}
                   </PosterShelfRow>
                 </div>
               </section>

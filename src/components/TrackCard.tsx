@@ -10,6 +10,8 @@ import { UnlockModal } from "@/components/UnlockModal";
 interface TrackCardProps {
   track: Track;
   index: number;
+  /** Lista de contexto p/ auto-next ao terminar a faixa. */
+  queue?: Track[];
 }
 
 const categoryGradients: Record<string, string> = {
@@ -39,7 +41,7 @@ function formatReleaseDate(date: string | null | undefined) {
   });
 }
 
-export const TrackCard = memo(function TrackCard({ track, index }: TrackCardProps) {
+export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackCardProps) {
   const { currentTrack, playing, progress, toggle } = usePlayer();
   const [unlockOpen, setUnlockOpen] = useState(false);
   const isThis = currentTrack?.id === track.id;
@@ -60,7 +62,7 @@ export const TrackCard = memo(function TrackCard({ track, index }: TrackCardProp
     e.preventDefault();
     e.stopPropagation();
     if (isRestricted) return;
-    toggle(track);
+    toggle(track, queue);
   };
 
   const handleDownload = async (e: React.MouseEvent) => {

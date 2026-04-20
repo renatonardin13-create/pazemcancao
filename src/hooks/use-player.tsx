@@ -13,7 +13,7 @@ interface PlayerState {
   queueIndex: number;
   play: (track: Track) => void;
   pause: () => void;
-  toggle: (track: Track) => void;
+  toggle: (track: Track, queue?: Track[]) => void;
   seek: (percent: number) => void;
   stop: () => void;
   next: () => void;
@@ -133,7 +133,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     setPlaying(false);
   }, []);
 
-  const toggle = useCallback((track: Track) => {
+  const toggle = useCallback((track: Track, contextQueue?: Track[]) => {
     const isSame = currentTrack?.id === track.id;
     if (isSame && playing) {
       pause();
@@ -141,6 +141,18 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       audioRef.current.play().catch(() => {});
       setPlaying(true);
     } else {
+      // Se a página passou uma lista de contexto, usa-a como fila para auto-next.
+      if (contextQueue && contextQueue.length > 0) {
+        const playable = contextQueue.filter((t) => Boolean(t?.audioUrl));
+        const idx = playable.findIndex((item) => item.id === track.id);
+        const safeIdx = idx >= 0 ? idx : 0;
+        queueRef.current = playable;
+        queueIndexRef.current = safeIdx;
+        setQueueState(playable);
+        setQueueIndex(safeIdx);
+        startAudio(playable[safeIdx], true);
+        return;
+      }
       const idx = queueRef.current.findIndex((item) => item.id === track.id);
       if (idx >= 0) {
         queueIndexRef.current = idx;

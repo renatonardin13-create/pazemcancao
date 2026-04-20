@@ -6,6 +6,8 @@ import { getTrackReleaseMeta } from "@/lib/track-release";
 interface HighlightTrackCardProps {
   track: Track;
   subtitle?: string;
+  /** Lista de contexto p/ auto-next ao terminar a faixa. */
+  queue?: Track[];
 }
 
 function splitTitle(title: string) {
@@ -15,7 +17,7 @@ function splitTitle(title: string) {
   return { line1: words.slice(0, mid).join(" "), line2: words.slice(mid).join(" ") };
 }
 
-export function HighlightTrackCard({ track, subtitle }: HighlightTrackCardProps) {
+export function HighlightTrackCard({ track, subtitle, queue }: HighlightTrackCardProps) {
   const { currentTrack, playing, toggle } = usePlayer();
   const isThis = currentTrack?.id === track.id;
   const isPlaying = isThis && playing;
@@ -29,7 +31,7 @@ export function HighlightTrackCard({ track, subtitle }: HighlightTrackCardProps)
     e.preventDefault();
     e.stopPropagation();
     if (locked) return;
-    toggle(track);
+    toggle(track, queue);
   };
 
   return (
