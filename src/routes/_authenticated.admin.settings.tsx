@@ -12,8 +12,9 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, Settings, Upload, Palette, Globe, Link2, Bell, Wrench, RefreshCw, Save, Download, UploadCloud, AlertTriangle, Loader2, LayoutGrid, Music, GraduationCap, Layers, GalleryHorizontalEnd } from "lucide-react";
+import { ArrowLeft, Settings, Upload, Palette, Globe, Link2, Bell, Wrench, RefreshCw, Save, Download, UploadCloud, AlertTriangle, Loader2, LayoutGrid, Music, GraduationCap, Layers, GalleryHorizontalEnd, Sparkles } from "lucide-react";
 import { AdminHeroBannersPage } from "@/components/AdminHeroBannersPanel";
+import { AdminInspirationalBlock } from "@/components/AdminInspirationalBlock";
 import { MODULE_KEYS, type ModuleKey, type PlatformModules } from "@/hooks/use-project-mode";
 import { toast } from "sonner";
 
@@ -102,6 +103,9 @@ function SettingsPage() {
           <TabsTrigger value="modules" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
             <LayoutGrid className="h-3.5 w-3.5" /> Módulos
           </TabsTrigger>
+          <TabsTrigger value="inspirational" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
+            <Sparkles className="h-3.5 w-3.5" /> Inspiração
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="branding" className="mt-4">
@@ -127,6 +131,9 @@ function SettingsPage() {
         </TabsContent>
         <TabsContent value="modules" className="mt-4">
           <ModulesTab />
+        </TabsContent>
+        <TabsContent value="inspirational" className="mt-4">
+          <AdminInspirationalBlock initial={settings.inspirational_block || {}} />
         </TabsContent>
       </Tabs>
     </div>
