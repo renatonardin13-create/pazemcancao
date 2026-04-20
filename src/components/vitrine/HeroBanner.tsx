@@ -5,6 +5,8 @@ import {
   fallbackHeroContent,
   getActiveHeroBanners,
   resolveCtaHref,
+  ratioToCss,
+  modeToObjectFit,
   type HeroBannerModel,
 } from "@/lib/vitrine-hero";
 import { logHeroBannerEvent } from "@/lib/hero-banner-metrics.functions";
@@ -214,10 +216,14 @@ function BannerSlide({
   const fullBleed = !splitLayout;
 
   if (fullBleed) {
+    const aspect = ratioToCss(banner.container_ratio);
+    const fit = modeToObjectFit(banner.display_mode);
+    const hasContainer = !!aspect;
     return (
       <div
-        className={`relative w-full overflow-hidden ${banner.banner_clickable ? "cursor-pointer" : ""}`}
+        className={`relative w-full overflow-hidden bg-zinc-950 ${banner.banner_clickable ? "cursor-pointer" : ""}`}
         onClick={onClickArea}
+        style={hasContainer ? { aspectRatio: aspect } : undefined}
       >
         <picture>
           <source media="(max-width: 640px)" srcSet={mobile} />
@@ -227,7 +233,12 @@ function BannerSlide({
             alt={banner.title || "Banner"}
             loading="eager"
             decoding="async"
-            className="block h-auto w-full select-none"
+            className={
+              hasContainer
+                ? "absolute inset-0 block h-full w-full select-none"
+                : "block h-auto w-full select-none"
+            }
+            style={hasContainer ? { objectFit: fit || "cover" } : fit ? { objectFit: fit } : undefined}
             draggable={false}
             onError={(e) => {
               (e.currentTarget as HTMLImageElement).style.display = "none";
