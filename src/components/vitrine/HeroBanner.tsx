@@ -339,7 +339,7 @@ function BannerSlide({
                       {banner.primary_cta_type !== "video" && <ArrowRight className="h-4 w-4" />}
                     </button>
                   )}
-                  {banner.secondary_cta_label && (
+                  {hasSecondary && (
                     <button
                       type="button"
                       onClick={(e) => {
