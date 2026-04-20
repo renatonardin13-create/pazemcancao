@@ -148,7 +148,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
     if (shelfIds.length > 0) {
       const { data: shelfCourseRows, error: shelfCoursesErr } = await supabaseAdmin
         .from('shelf_courses')
-        .select('shelf_id, course_id, sort_order')
+        .select('shelf_id, course_id, sort_order, is_featured')
         .in('shelf_id', shelfIds)
         .order('sort_order', { ascending: true });
 
