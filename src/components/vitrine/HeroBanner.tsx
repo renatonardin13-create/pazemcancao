@@ -7,6 +7,19 @@ import {
   resolveCtaHref,
   type HeroBannerModel,
 } from "@/lib/vitrine-hero";
+import { logHeroBannerEvent } from "@/lib/hero-banner-metrics.functions";
+
+// Dispara evento (impressão/click) sem bloquear UI nem quebrar em caso de erro
+function track(bannerId: string, eventType: "impression" | "click", ctaKind?: string) {
+  if (!bannerId) return;
+  try {
+    logHeroBannerEvent({ data: { bannerId, eventType, ctaKind: ctaKind || null } }).catch(
+      () => {},
+    );
+  } catch {
+    /* noop */
+  }
+}
 
 interface Props {
   banners?: any[] | null;
