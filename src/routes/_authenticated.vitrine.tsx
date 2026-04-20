@@ -212,6 +212,9 @@ function VitrinePage() {
                     return (
                       <button
                         key={key}
+                        ref={(el) => {
+                          chipRefs.current[key] = el;
+                        }}
                         onClick={() => handleCategoryClick(key)}
                         className={[
                           "inline-flex shrink-0 items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition-all",
