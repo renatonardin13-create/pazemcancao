@@ -1550,14 +1550,25 @@ export type Database = {
       }
       vitrine_hero_banners: {
         Row: {
+          autoplay: boolean
+          autoplay_interval_ms: number
+          banner_click_target: string | null
+          banner_click_type: string | null
+          banner_clickable: boolean
           created_at: string
           description: string | null
           id: string
+          image_mobile_url: string | null
+          image_tablet_url: string | null
           image_url: string
           is_active: boolean
           primary_cta_label: string | null
+          primary_cta_target: string | null
+          primary_cta_type: string
           primary_cta_url: string | null
           secondary_cta_label: string | null
+          secondary_cta_target: string | null
+          secondary_cta_type: string
           secondary_cta_url: string | null
           sort_order: number
           subtitle: string | null
@@ -1565,14 +1576,25 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          autoplay?: boolean
+          autoplay_interval_ms?: number
+          banner_click_target?: string | null
+          banner_click_type?: string | null
+          banner_clickable?: boolean
           created_at?: string
           description?: string | null
           id?: string
+          image_mobile_url?: string | null
+          image_tablet_url?: string | null
           image_url: string
           is_active?: boolean
           primary_cta_label?: string | null
+          primary_cta_target?: string | null
+          primary_cta_type?: string
           primary_cta_url?: string | null
           secondary_cta_label?: string | null
+          secondary_cta_target?: string | null
+          secondary_cta_type?: string
           secondary_cta_url?: string | null
           sort_order?: number
           subtitle?: string | null
@@ -1580,14 +1602,25 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          autoplay?: boolean
+          autoplay_interval_ms?: number
+          banner_click_target?: string | null
+          banner_click_type?: string | null
+          banner_clickable?: boolean
           created_at?: string
           description?: string | null
           id?: string
+          image_mobile_url?: string | null
+          image_tablet_url?: string | null
           image_url?: string
           is_active?: boolean
           primary_cta_label?: string | null
+          primary_cta_target?: string | null
+          primary_cta_type?: string
           primary_cta_url?: string | null
           secondary_cta_label?: string | null
+          secondary_cta_target?: string | null
+          secondary_cta_type?: string
           secondary_cta_url?: string | null
           sort_order?: number
           subtitle?: string | null
