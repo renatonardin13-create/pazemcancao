@@ -181,10 +181,13 @@ export default function AdminVitrinePage() {
 
   // Form state
   const [formName, setFormName] = useState("");
+  const [formPublicTitle, setFormPublicTitle] = useState("");
+  const [formDescription, setFormDescription] = useState("");
   const [formActive, setFormActive] = useState(true);
   const [formShowInVitrine, setFormShowInVitrine] = useState(true);
   const [formMode, setFormMode] = useState<string>("manual");
   const [formCriteria, setFormCriteria] = useState("recent");
+  const [formDisplayMode, setFormDisplayMode] = useState<string>("auto");
   const [formOrder, setFormOrder] = useState(0);
 
   // Course selection state
