@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { ShelfRow } from "@/components/vitrine/ShelfRow";
 import { CoursePosterCard } from "@/components/vitrine/CoursePosterCard";
 import type { VitrineCourse } from "@/components/vitrine/types";
+import { CardScopeProvider } from "@/hooks/use-cards-config";
 // CoursePosterCard re-exportado abaixo para compatibilidade.
 import { useAuth } from "@/hooks/use-auth";
 import { getMyProfile } from "@/lib/profile.functions";
@@ -30,8 +31,16 @@ import { getContinueWatching } from "@/lib/continue-watching.functions";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/cursos/")({
-  component: MeusCursosPage,
+  component: MeusCursosPageWithScope,
 });
+
+function MeusCursosPageWithScope() {
+  return (
+    <CardScopeProvider scope="cursos">
+      <MeusCursosPage />
+    </CardScopeProvider>
+  );
+}
 
 type StatusFilter = "all" | "in_progress" | "not_started" | "completed" | "recent";
 

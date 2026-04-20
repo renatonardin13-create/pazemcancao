@@ -8,12 +8,21 @@ import { StudentLayout } from "@/components/StudentLayout";
 import { HeroBanner } from "@/components/vitrine/HeroBanner";
 import { VitrineCourseCard } from "@/components/vitrine/VitrineCourseCard";
 import { POSTER_GRID } from "@/lib/card-grid";
+import { CardScopeProvider } from "@/hooks/use-cards-config";
 import type { VitrineShelf, VitrineCourse } from "@/components/vitrine/types";
 
 export const Route = createFileRoute("/_authenticated/home")({
-  component: VitrinePage,
+  component: VitrinePageWithScope,
   errorComponent: VitrineErrorFallback,
 });
+
+function VitrinePageWithScope() {
+  return (
+    <CardScopeProvider scope="home">
+      <VitrinePage />
+    </CardScopeProvider>
+  );
+}
 
 function VitrineErrorFallback({ error }: { error: Error }) {
   return (

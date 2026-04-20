@@ -12,9 +12,10 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, Settings, Upload, Palette, Globe, Link2, Bell, Wrench, RefreshCw, Save, Download, UploadCloud, AlertTriangle, Loader2, LayoutGrid, Music, GraduationCap, Layers, GalleryHorizontalEnd, Sparkles } from "lucide-react";
+import { ArrowLeft, Settings, Upload, Palette, Globe, Link2, Bell, Wrench, RefreshCw, Save, Download, UploadCloud, AlertTriangle, Loader2, LayoutGrid, Music, GraduationCap, Layers, GalleryHorizontalEnd, Sparkles, LayoutPanelTop } from "lucide-react";
 import { AdminHeroBannersPage } from "@/components/AdminHeroBannersPanel";
 import { AdminInspirationalBlock } from "@/components/AdminInspirationalBlock";
+import { AdminCardsConfigTab } from "@/components/AdminCardsConfigTab";
 import { MODULE_KEYS, type ModuleKey, type PlatformModules } from "@/hooks/use-project-mode";
 import { toast } from "sonner";
 
@@ -106,6 +107,9 @@ function SettingsPage() {
           <TabsTrigger value="inspirational" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
             <Sparkles className="h-3.5 w-3.5" /> Inspiração
           </TabsTrigger>
+          <TabsTrigger value="cards" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
+            <LayoutPanelTop className="h-3.5 w-3.5" /> Cards
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="branding" className="mt-4">
@@ -134,6 +138,9 @@ function SettingsPage() {
         </TabsContent>
         <TabsContent value="inspirational" className="mt-4">
           <AdminInspirationalBlock initial={settings.inspirational_block || {}} />
+        </TabsContent>
+        <TabsContent value="cards" className="mt-4">
+          <AdminCardsConfigTab initial={settings.cards_config || {}} />
         </TabsContent>
       </Tabs>
     </div>
