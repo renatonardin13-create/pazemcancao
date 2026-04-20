@@ -252,7 +252,7 @@ function VitrinePage() {
               )}
 
               {/* PRATELEIRAS */}
-              <div className="space-y-10 py-10 sm:py-12">
+              <div ref={shelvesAreaRef} className="space-y-10 py-10 sm:py-12">
                 {filteredShelves.length === 0 ? (
                   <div className="mx-auto max-w-2xl px-6 py-10 text-center text-sm text-muted-foreground">
                     Nenhum conteúdo nesta categoria.
@@ -261,6 +261,7 @@ function VitrinePage() {
                   filteredShelves.map((shelf) => (
                     <div
                       key={shelf.id}
+                      data-shelf-id={shelf.id}
                       ref={(el) => {
                         shelfRefs.current[shelf.id] = el;
                       }}
