@@ -1,6 +1,6 @@
 import { memo, useState, type ReactNode } from "react";
 import { OptimizedImage } from "@/components/OptimizedImage";
-import { getCardsConfigSync } from "@/hooks/use-cards-config";
+import { getCardsConfigSync, useCardScope, getCardSizingFor } from "@/hooks/use-cards-config";
 
 /**
  * PosterCard — Card Master.
@@ -88,17 +88,24 @@ export const PosterCard = memo(function PosterCard({
   aboveCard,
 }: PosterCardProps) {
   const cfg = getCardsConfigSync();
+  const scope = useCardScope();
+  const sizing = getCardSizingFor(scope);
   const hasProgress = cfg.showProgress && typeof progress === "number" && progress > 0;
   const gradientOpacity = Math.max(0, Math.min(100, cfg.cardGradient)) / 100;
   const [imgFailed, setImgFailed] = useState(false);
   const showImage = typeof cover === "string" && cover && !imgFailed;
 
+  // aspect-ratio derivado do tamanho desktop configurado (mantém proporção em mobile)
+  const aspectRatio = `${sizing.card_width} / ${sizing.card_height}`;
+  const radius = `${sizing.card_border_radius}px`;
+
   return (
     <div
-      className="relative animate-in fade-in slide-in-from-bottom-4 duration-500"
+      className="relative animate-in fade-in slide-in-from-bottom-4 duration-500 mx-auto w-full"
       style={{
         animationDelay: `${Math.min(index * 80, 400)}ms`,
         animationFillMode: "both",
+        maxWidth: `${sizing.card_width}px`,
       }}
     >
       {aboveCard}
