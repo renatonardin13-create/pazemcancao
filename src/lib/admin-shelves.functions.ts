@@ -149,7 +149,7 @@ export const updateShelf = createServerFn({ method: 'POST' })
     await verifyAdmin(context.supabase, context.userId);
 
     const { id, public_title, description, ...rest } = data;
-    const updates: Record<string, any> = { ...rest };
+    const updates: any = { ...rest };
     if (public_title !== undefined) updates.public_title = public_title?.trim() || null;
     if (description !== undefined) updates.description = description?.trim() || null;
 
