@@ -10,7 +10,13 @@ interface VitrineShelfSectionProps {
 
 export function VitrineShelfSection({ shelf }: VitrineShelfSectionProps) {
   const courses = Array.isArray(shelf.courses)
-    ? shelf.courses.filter((course) => course && typeof course.id === "string")
+    ? shelf.courses.filter(
+        (course) =>
+          course &&
+          typeof course.id === "string" &&
+          typeof course.title === "string" &&
+          course.title.trim().length > 0,
+      )
     : [];
 
   if (!courses.length) return null;

@@ -15,10 +15,12 @@ interface Props {
 
 export function HeroBanner({ banners, fallbackCourse }: Props) {
   const list: HeroBannerModel[] = (() => {
-    const fromTable = getActiveHeroBanners(banners as any[] | undefined);
+    const fromTable = getActiveHeroBanners(banners as any[] | undefined).filter(
+      (b) => b && typeof b.image_url === "string" && b.image_url.trim().length > 0,
+    );
     if (fromTable.length > 0) return fromTable;
     const fb = fallbackHeroContent(fallbackCourse);
-    return fb ? [fb] : [];
+    return fb && fb.image_url && fb.image_url.trim().length > 0 ? [fb] : [];
   })();
 
   const [index, setIndex] = useState(0);
@@ -240,9 +242,14 @@ function BannerSlide({
           <source media="(max-width: 1024px)" srcSet={tablet} />
           <img
             src={desktop}
-            alt={banner.title}
-            className="h-full max-h-[420px] w-full object-cover"
+            alt={banner.title || "Banner"}
+            loading="eager"
+            decoding="async"
+            className="h-full min-h-[260px] w-full object-cover sm:min-h-[340px] lg:min-h-[420px] lg:max-h-[460px]"
             draggable={false}
+            onError={(e) => {
+              (e.currentTarget as HTMLImageElement).style.display = "none";
+            }}
           />
         </picture>
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-zinc-950 via-zinc-950/40 to-transparent lg:from-zinc-950/80 lg:via-zinc-950/20" />
