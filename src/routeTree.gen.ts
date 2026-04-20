@@ -49,6 +49,7 @@ import { Route as AuthenticatedAdminJourneysRouteImport } from './routes/_authen
 import { Route as AuthenticatedAdminIntegrationsRouteImport } from './routes/_authenticated.admin.integrations'
 import { Route as AuthenticatedAdminIntegracoesRouteImport } from './routes/_authenticated.admin.integracoes'
 import { Route as AuthenticatedAdminImpersonarRouteImport } from './routes/_authenticated.admin.impersonar'
+import { Route as AuthenticatedAdminHeroBannersRouteImport } from './routes/_authenticated.admin.hero-banners'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated.admin.dashboard'
 import { Route as AuthenticatedAdminCursosRouteImport } from './routes/_authenticated.admin.cursos'
 import { Route as AuthenticatedAdminCoursesRouteImport } from './routes/_authenticated.admin.courses'
@@ -280,6 +281,12 @@ const AuthenticatedAdminImpersonarRoute =
     path: '/impersonar',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminHeroBannersRoute =
+  AuthenticatedAdminHeroBannersRouteImport.update({
+    id: '/hero-banners',
+    path: '/hero-banners',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminDashboardRoute =
   AuthenticatedAdminDashboardRouteImport.update({
     id: '/dashboard',
@@ -371,6 +378,7 @@ export interface FileRoutesByFullPath {
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/admin/cursos': typeof AuthenticatedAdminCursosRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/hero-banners': typeof AuthenticatedAdminHeroBannersRoute
   '/admin/impersonar': typeof AuthenticatedAdminImpersonarRoute
   '/admin/integracoes': typeof AuthenticatedAdminIntegracoesRoute
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
@@ -419,6 +427,7 @@ export interface FileRoutesByTo {
   '/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
   '/admin/cursos': typeof AuthenticatedAdminCursosRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/hero-banners': typeof AuthenticatedAdminHeroBannersRoute
   '/admin/impersonar': typeof AuthenticatedAdminImpersonarRoute
   '/admin/integracoes': typeof AuthenticatedAdminIntegracoesRoute
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
@@ -472,6 +481,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/_authenticated/admin/cursos': typeof AuthenticatedAdminCursosRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/_authenticated/admin/hero-banners': typeof AuthenticatedAdminHeroBannersRoute
   '/_authenticated/admin/impersonar': typeof AuthenticatedAdminImpersonarRoute
   '/_authenticated/admin/integracoes': typeof AuthenticatedAdminIntegracoesRoute
   '/_authenticated/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
@@ -526,6 +536,7 @@ export interface FileRouteTypes {
     | '/admin/courses'
     | '/admin/cursos'
     | '/admin/dashboard'
+    | '/admin/hero-banners'
     | '/admin/impersonar'
     | '/admin/integracoes'
     | '/admin/integrations'
@@ -574,6 +585,7 @@ export interface FileRouteTypes {
     | '/admin/conteudos'
     | '/admin/cursos'
     | '/admin/dashboard'
+    | '/admin/hero-banners'
     | '/admin/impersonar'
     | '/admin/integracoes'
     | '/admin/integrations'
@@ -626,6 +638,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/courses'
     | '/_authenticated/admin/cursos'
     | '/_authenticated/admin/dashboard'
+    | '/_authenticated/admin/hero-banners'
     | '/_authenticated/admin/impersonar'
     | '/_authenticated/admin/integracoes'
     | '/_authenticated/admin/integrations'
@@ -947,6 +960,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminImpersonarRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/hero-banners': {
+      id: '/_authenticated/admin/hero-banners'
+      path: '/hero-banners'
+      fullPath: '/admin/hero-banners'
+      preLoaderRoute: typeof AuthenticatedAdminHeroBannersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/dashboard': {
       id: '/_authenticated/admin/dashboard'
       path: '/dashboard'
@@ -1053,6 +1073,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCoursesRoute: typeof AuthenticatedAdminCoursesRouteWithChildren
   AuthenticatedAdminCursosRoute: typeof AuthenticatedAdminCursosRoute
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
+  AuthenticatedAdminHeroBannersRoute: typeof AuthenticatedAdminHeroBannersRoute
   AuthenticatedAdminImpersonarRoute: typeof AuthenticatedAdminImpersonarRoute
   AuthenticatedAdminIntegracoesRoute: typeof AuthenticatedAdminIntegracoesRoute
   AuthenticatedAdminIntegrationsRoute: typeof AuthenticatedAdminIntegrationsRoute
@@ -1076,6 +1097,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCoursesRoute: AuthenticatedAdminCoursesRouteWithChildren,
   AuthenticatedAdminCursosRoute: AuthenticatedAdminCursosRoute,
   AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
+  AuthenticatedAdminHeroBannersRoute: AuthenticatedAdminHeroBannersRoute,
   AuthenticatedAdminImpersonarRoute: AuthenticatedAdminImpersonarRoute,
   AuthenticatedAdminIntegracoesRoute: AuthenticatedAdminIntegracoesRoute,
   AuthenticatedAdminIntegrationsRoute: AuthenticatedAdminIntegrationsRoute,
