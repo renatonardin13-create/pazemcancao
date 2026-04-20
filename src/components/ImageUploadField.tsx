@@ -6,6 +6,17 @@ import { toast } from "sonner";
 import { toastError } from "@/lib/toast-utils";
 import { Progress } from "@/components/ui/progress";
 import { ImageFieldHint } from "@/components/ImageFieldHint";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface ImageUploadFieldProps {
   label: string;
