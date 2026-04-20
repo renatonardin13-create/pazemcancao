@@ -22,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { ShelfRow } from "@/components/vitrine/ShelfRow";
 import { CoursePosterCard } from "@/components/vitrine/CoursePosterCard";
 import type { VitrineCourse } from "@/components/vitrine/types";
+// CoursePosterCard re-exportado abaixo para compatibilidade.
 import { useAuth } from "@/hooks/use-auth";
 import { getMyProfile } from "@/lib/profile.functions";
 import { getMyCoursesData } from "@/lib/my-courses.functions";
