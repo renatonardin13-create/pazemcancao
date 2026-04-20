@@ -694,3 +694,119 @@ function CtaEditor({
     </div>
   );
 }
+
+function SortableBannerRow({
+  banner: b,
+  idx,
+  total,
+  onMove,
+  onPreview,
+  onToggle,
+  onDuplicate,
+  onEdit,
+  onDelete,
+}: {
+  banner: any;
+  idx: number;
+  total: number;
+  onMove: (idx: number, dir: -1 | 1) => void;
+  onPreview: () => void;
+  onToggle: () => void;
+  onDuplicate: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
+    useSortable({ id: b.id });
+
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.6 : 1,
+    zIndex: isDragging ? 50 : "auto",
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="group flex items-center gap-3 rounded-xl border border-border/30 bg-card/20 p-3 transition hover:border-gold/30"
+    >
+      <div className="flex flex-col items-center gap-1">
+        <button
+          onClick={() => onMove(idx, -1)}
+          disabled={idx === 0}
+          className="rounded p-1 text-muted-foreground/50 hover:text-gold disabled:opacity-20"
+          title="Mover para cima"
+        >
+          <ArrowUp className="h-3.5 w-3.5" />
+        </button>
+        <button
+          {...attributes}
+          {...listeners}
+          className="cursor-grab rounded p-1 text-muted-foreground/40 hover:text-gold active:cursor-grabbing"
+          title="Arrastar para reordenar"
+          aria-label="Arrastar para reordenar"
+        >
+          <GripVertical className="h-4 w-4" />
+        </button>
+        <button
+          onClick={() => onMove(idx, 1)}
+          disabled={idx === total - 1}
+          className="rounded p-1 text-muted-foreground/50 hover:text-gold disabled:opacity-20"
+          title="Mover para baixo"
+        >
+          <ArrowDown className="h-3.5 w-3.5" />
+        </button>
+      </div>
+
+      <div className="h-16 w-28 shrink-0 overflow-hidden rounded-lg bg-zinc-900">
+        {b.image_url ? (
+          <img src={b.image_url} alt={b.title} className="h-full w-full object-cover" />
+        ) : null}
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <div className="flex items-center gap-2">
+          <p className="truncate text-sm font-semibold text-foreground/90">
+            {b.title || "(sem título)"}
+          </p>
+          {b.is_active ? (
+            <Badge className="bg-emerald-500/15 text-emerald-400">Ativo</Badge>
+          ) : (
+            <Badge variant="outline" className="text-muted-foreground/60">
+              Inativo
+            </Badge>
+          )}
+        </div>
+        <p className="truncate text-xs text-muted-foreground/60">
+          {b.subtitle || b.description || "Sem descrição"}
+        </p>
+      </div>
+
+      <div className="flex items-center gap-1">
+        <Button size="sm" variant="ghost" onClick={onPreview} title="Pré-visualizar">
+          <Eye className="h-4 w-4" />
+        </Button>
+        <Button size="sm" variant="ghost" onClick={onToggle} title={b.is_active ? "Desativar" : "Ativar"}>
+          {b.is_active ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+        </Button>
+        <Button size="sm" variant="ghost" onClick={onDuplicate} title="Duplicar">
+          <Copy className="h-4 w-4" />
+        </Button>
+        <Button size="sm" variant="ghost" onClick={onEdit} title="Editar">
+          <Pencil className="h-4 w-4" />
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={onDelete}
+          title="Excluir"
+          className="text-destructive hover:text-destructive"
+        >
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
+    </div>
+  );
+}
