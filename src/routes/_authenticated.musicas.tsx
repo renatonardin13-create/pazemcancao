@@ -573,11 +573,14 @@ function MusicLibraryPage() {
                     </span>
                   </div>
                   <PosterShelfRow>
-                    {bonusTracks.map(dbTrackToPlayerTrack).map((pt, idx) => (
-                      <PosterShelfItem key={`bonus-${pt.id}`}>
-                        <TrackCard track={pt} index={idx} />
-                      </PosterShelfItem>
-                    ))}
+                    {(() => {
+                      const list = bonusTracks.map(dbTrackToPlayerTrack);
+                      return list.map((pt, idx) => (
+                        <PosterShelfItem key={`bonus-${pt.id}`}>
+                          <TrackCard track={pt} index={idx} queue={list} />
+                        </PosterShelfItem>
+                      ));
+                    })()}
                   </PosterShelfRow>
                 </div>
               </section>
