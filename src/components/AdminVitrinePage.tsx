@@ -438,21 +438,28 @@ export default function AdminVitrinePage() {
   const openCreate = () => {
     setEditingShelf(null);
     setFormName("");
+    setFormPublicTitle("");
+    setFormDescription("");
     setFormActive(true);
     setFormShowInVitrine(true);
     setFormMode("manual");
     setFormCriteria("recent");
+    setFormDisplayMode("auto");
     setFormOrder(shelves.length);
+    setSelectedCourseIds([]);
     setDialogOpen(true);
   };
 
   const openEdit = (shelf: any) => {
     setEditingShelf(shelf);
     setFormName(shelf.name);
+    setFormPublicTitle(shelf.public_title || "");
+    setFormDescription(shelf.description || "");
     setFormActive(shelf.is_active);
     setFormShowInVitrine(shelf.show_in_vitrine !== false);
     setFormMode(shelf.mode);
     setFormCriteria(shelf.auto_criteria || "recent");
+    setFormDisplayMode(shelf.display_mode || "auto");
     setFormOrder(shelf.sort_order);
     // Load existing courses for manual shelves
     if (shelf.mode === "manual") {
