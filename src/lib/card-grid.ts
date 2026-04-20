@@ -1,13 +1,13 @@
 /**
- * Padrão único de cards 5:9 (300x540 no desktop) em toda a plataforma.
+ * Padrão único de cards 5:8 (300x480 no desktop) em toda a plataforma.
  *
  * Aplicado em: TrackCard, ContentCard, CourseShelfCard, VitrineCourseCard,
  * "Em destaque", "Seus Cursos", "Recentemente acessados", "Continuar assistindo".
  *
  * Regras:
- *  - aspect-ratio fixo 5/9 (definido no PosterCard)
+ *  - aspect-ratio fixo 5/8 (definido no PosterCard)
  *  - largura mínima por breakpoint (cards nunca encolhem)
- *  - mobile/tablet reduzem proporcionalmente, mantendo 5:9
+ *  - mobile/tablet reduzem proporcionalmente, mantendo 5:8
  *
  * Largura por breakpoint (referência 300px no desktop):
  *  - mobile  (<640px):  160px
