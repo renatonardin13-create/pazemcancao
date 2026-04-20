@@ -241,10 +241,10 @@ function BannerSlide({
     banner.secondary_cta_target,
     banner.secondary_cta_url,
   );
-  const hasPrimary = !!(banner.primary_cta_label?.trim() &&
-    (primaryHref || banner.primary_cta_type === "video"));
-  const hasSecondary = !!(banner.secondary_cta_label?.trim() &&
-    (secondaryHref || banner.secondary_cta_type === "video"));
+  const hasPrimary = !!(banner.primary_cta_label?.trim() && primaryHref);
+  // Botão secundário (vídeo/trailer) removido conforme regra da vitrine.
+  const hasSecondary = false;
+  void secondaryHref;
 
   const aspect = ratioToCss(banner.container_ratio);
   const fit = modeToObjectFit(banner.display_mode) ?? "contain";
