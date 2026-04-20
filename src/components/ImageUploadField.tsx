@@ -187,22 +187,27 @@ export function ImageUploadField({
                 </div>
               </div>
             )}
-            {/* Hover actions (only when idle) */}
+            {/* Always-visible remove button (top-right) */}
             {!isUploading && uploadState !== "success" && (
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center">
+              <button
+                type="button"
+                onClick={() => { onChange(""); setPreviewUrl(null); setLastFile(null); }}
+                title="Remover imagem"
+                aria-label="Remover imagem"
+                className="absolute top-2 right-2 z-10 p-1.5 rounded-lg bg-destructive text-destructive-foreground shadow-lg hover:bg-destructive/90 transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+            {/* Hover overlay with "Trocar" action */}
+            {!isUploading && uploadState !== "success" && (
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors flex items-center justify-center pointer-events-none">
                 <button
                   type="button"
                   onClick={() => inputRef.current?.click()}
-                  className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 rounded-lg bg-background/80 text-foreground text-xs font-medium mr-2"
+                  className="opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1.5 rounded-lg bg-background/80 text-foreground text-xs font-medium pointer-events-auto"
                 >
                   Trocar
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { onChange(""); setPreviewUrl(null); }}
-                  className="absolute top-2 right-2 p-1.5 rounded-lg bg-destructive text-destructive-foreground transition-colors"
-                >
-                  <X className="h-4 w-4" />
                 </button>
               </div>
             )}
