@@ -320,9 +320,12 @@ function BannerSlide({
                   {banner.description}
                 </p>
               )}
-              {(banner.primary_cta_label || banner.secondary_cta_label) && (
-                <div className="pointer-events-auto mt-1 flex flex-wrap gap-2 sm:gap-3">
-                  {banner.primary_cta_label && (
+              {(hasPrimary || hasSecondary) && (
+                <div
+                  className="pointer-events-auto relative z-40 mt-1 flex flex-wrap gap-2 sm:gap-3"
+                  style={{ pointerEvents: "auto" }}
+                >
+                  {hasPrimary && (
                     <button
                       type="button"
                       onClick={(e) => {
