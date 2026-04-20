@@ -1,16 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   AlertCircle,
   RefreshCw,
   Loader2,
   LayoutGrid,
-  GraduationCap,
-  BookOpen,
-  Users,
-  Gift,
-  Star,
   ChevronRight,
 } from "lucide-react";
 import { ModuleGuard } from "@/components/ModuleGuard";
@@ -48,36 +43,11 @@ function VitrineErrorFallback({ error }: { error: Error }) {
   );
 }
 
-type CategoryKey = "all" | "curso" | "ebook" | "mentoria" | "pacote" | "novidades";
-
-const CATEGORIES: { key: CategoryKey; label: string; icon: typeof LayoutGrid }[] = [
-  { key: "all", label: "Todos", icon: LayoutGrid },
-  { key: "curso", label: "Cursos", icon: GraduationCap },
-  { key: "ebook", label: "E-books", icon: BookOpen },
-  { key: "mentoria", label: "Mentorias", icon: Users },
-  { key: "pacote", label: "Pacotes", icon: Gift },
-  { key: "novidades", label: "Novidades", icon: Star },
-];
-
-function matchesCategory(course: VitrineCourse, key: CategoryKey): boolean {
-  if (key === "all") return true;
-  const type = (course.product_type || "").toLowerCase();
-  if (key === "novidades") {
-    if (course.launch_date) {
-      const days = (Date.now() - new Date(course.launch_date).getTime()) / 86400000;
-      return days >= 0 && days <= 30;
-    }
-    return false;
-  }
-  if (key === "curso") return type.includes("curso");
-  if (key === "ebook") return type.includes("ebook") || type.includes("e-book");
-  if (key === "mentoria") return type.includes("mentoria");
-  if (key === "pacote") return type.includes("pacote") || type.includes("assinatura") || type.includes("combo");
-  return false;
-}
+const ALL_KEY = "all";
 
 function VitrinePage() {
-  const [activeCategory, setActiveCategory] = useState<CategoryKey>("all");
+  const [activeCategory, setActiveCategory] = useState<string>(ALL_KEY);
+  const shelfRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["student-shelves", "v3-netflix"],
@@ -100,35 +70,51 @@ function VitrinePage() {
   const featured = (data?.featuredCourse as VitrineCourse | null) || null;
   const heroBanners = Array.isArray((data as any)?.heroBanners) ? (data as any).heroBanners : [];
 
-  const allCourses: VitrineCourse[] = useMemo(() => {
+
+
+  // Categorias dinâmicas geradas a partir das prateleiras ativas/com itens
+  const categories = useMemo(
+    () =>
+      allShelves.map((shelf) => ({
+        key: shelf.id,
+        label: (shelf.public_title?.trim() || shelf.name || "Sem título").trim(),
+      })),
+    [allShelves],
+  );
+
+  const filteredShelves = useMemo(() => {
+    if (activeCategory === ALL_KEY) return allShelves;
+    return allShelves.filter((s) => s.id === activeCategory);
+  }, [allShelves, activeCategory]);
+
+  const featuredList = useMemo(() => {
     const seen = new Set<string>();
     const out: VitrineCourse[] = [];
-    for (const shelf of allShelves) {
+    for (const shelf of filteredShelves) {
       for (const c of shelf.courses) {
         if (!c?.id || seen.has(c.id)) continue;
         seen.add(c.id);
         out.push(c);
+        if (out.length >= 10) return out;
       }
     }
     return out;
-  }, [allShelves]);
+  }, [filteredShelves]);
 
-  const filteredCourses = useMemo(
-    () => allCourses.filter((c) => matchesCategory(c, activeCategory)),
-    [allCourses, activeCategory],
-  );
-
-  const filteredShelves = useMemo(() => {
-    if (activeCategory === "all") return allShelves;
-    return allShelves
-      .map((shelf) => ({
-        ...shelf,
-        courses: shelf.courses.filter((c) => matchesCategory(c, activeCategory)),
-      }))
-      .filter((s) => s.courses.length > 0);
-  }, [allShelves, activeCategory]);
-
-  const featuredList = useMemo(() => filteredCourses.slice(0, 10), [filteredCourses]);
+  const handleCategoryClick = useCallback((key: string) => {
+    setActiveCategory(key);
+    if (key === ALL_KEY) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+    requestAnimationFrame(() => {
+      const el = shelfRefs.current[key];
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
+    });
+  }, []);
 
   return (
     <ModuleGuard moduleKey="vitrine">
@@ -174,12 +160,13 @@ function VitrinePage() {
                   Explorar por categoria
                 </h2>
                 <div className="scrollbar-hide -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
-                  {CATEGORIES.map(({ key, label, icon: Icon }) => {
+                  {[{ key: ALL_KEY, label: "Todos" }, ...categories].map(({ key, label }) => {
                     const active = activeCategory === key;
+                    const Icon = key === ALL_KEY ? LayoutGrid : null;
                     return (
                       <button
                         key={key}
-                        onClick={() => setActiveCategory(key)}
+                        onClick={() => handleCategoryClick(key)}
                         className={[
                           "inline-flex shrink-0 items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition-all",
                           active
@@ -187,7 +174,7 @@ function VitrinePage() {
                             : "border-border/40 bg-card/40 text-muted-foreground hover:border-gold/30 hover:text-foreground",
                         ].join(" ")}
                       >
-                        <Icon className="h-4 w-4" />
+                        {Icon ? <Icon className="h-4 w-4" /> : null}
                         {label}
                       </button>
                     );
@@ -201,7 +188,7 @@ function VitrinePage() {
                   <div className="mb-4 flex items-center justify-between">
                     <h2 className="font-display text-xl font-bold text-foreground">Em destaque</h2>
                     <button
-                      onClick={() => setActiveCategory("all")}
+                      onClick={() => handleCategoryClick(ALL_KEY)}
                       className="inline-flex items-center gap-1 text-sm font-medium text-gold/80 hover:text-gold"
                     >
                       Ver todos <ChevronRight className="h-4 w-4" />
@@ -223,7 +210,18 @@ function VitrinePage() {
                   </div>
                 ) : (
                   filteredShelves.map((shelf) => (
-                    <ShelfRow key={shelf.id} title={shelf.name} courses={shelf.courses} />
+                    <div
+                      key={shelf.id}
+                      ref={(el) => {
+                        shelfRefs.current[shelf.id] = el;
+                      }}
+                      className="scroll-mt-24"
+                    >
+                      <ShelfRow
+                        title={shelf.public_title?.trim() || shelf.name}
+                        courses={shelf.courses}
+                      />
+                    </div>
                   ))
                 )}
               </div>
