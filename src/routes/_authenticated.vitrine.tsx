@@ -70,18 +70,7 @@ function VitrinePage() {
   const featured = (data?.featuredCourse as VitrineCourse | null) || null;
   const heroBanners = Array.isArray((data as any)?.heroBanners) ? (data as any).heroBanners : [];
 
-  const allCourses: VitrineCourse[] = useMemo(() => {
-    const seen = new Set<string>();
-    const out: VitrineCourse[] = [];
-    for (const shelf of allShelves) {
-      for (const c of shelf.courses) {
-        if (!c?.id || seen.has(c.id)) continue;
-        seen.add(c.id);
-        out.push(c);
-      }
-    }
-    return out;
-  }, [allShelves]);
+
 
   // Categorias dinâmicas geradas a partir das prateleiras ativas/com itens
   const categories = useMemo(
