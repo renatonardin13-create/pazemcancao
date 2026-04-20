@@ -61,6 +61,7 @@ import {
   createShelf,
   updateShelf,
   deleteShelf,
+  duplicateShelf,
   setShelfCourses,
   reorderShelves,
   reorderShelfCourses,
