@@ -6,7 +6,8 @@ import { ModuleGuard } from "@/components/ModuleGuard";
 import { getStudentVitrineData } from "@/lib/student-vitrine.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { HeroBanner } from "@/components/vitrine/HeroBanner";
-import { CoursePosterCard } from "@/components/vitrine/CoursePosterCard";
+import { VitrineCourseCard } from "@/components/vitrine/VitrineCourseCard";
+import { POSTER_GRID } from "@/lib/card-grid";
 import type { VitrineShelf, VitrineCourse } from "@/components/vitrine/types";
 
 export const Route = createFileRoute("/_authenticated/home")({
@@ -203,9 +204,9 @@ function VitrinePage() {
                     Nenhum conteúdo nesta categoria.
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 justify-items-center gap-x-4 gap-y-6 sm:grid-cols-3 sm:gap-x-5 sm:gap-y-7 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
-                    {displayedCourses.map((course) => (
-                      <CoursePosterCard key={course.id} course={course} />
+                  <div className={POSTER_GRID}>
+                    {displayedCourses.map((course, index) => (
+                      <VitrineCourseCard key={course.id} course={course} index={index} />
                     ))}
                   </div>
                 )}
