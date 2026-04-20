@@ -549,6 +549,41 @@ export type Database = {
         }
         Relationships: []
       }
+      hero_banner_events: {
+        Row: {
+          banner_id: string
+          created_at: string
+          cta_kind: string | null
+          email: string | null
+          event_type: string
+          id: string
+        }
+        Insert: {
+          banner_id: string
+          created_at?: string
+          cta_kind?: string | null
+          email?: string | null
+          event_type: string
+          id?: string
+        }
+        Update: {
+          banner_id?: string
+          created_at?: string
+          cta_kind?: string | null
+          email?: string | null
+          event_type?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hero_banner_events_banner_id_fkey"
+            columns: ["banner_id"]
+            isOneToOne: false
+            referencedRelation: "vitrine_hero_banners"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       impersonation_logs: {
         Row: {
           admin_email: string
@@ -1740,6 +1775,7 @@ export type Database = {
     }
     Functions: {
       get_analytics_summary: { Args: { p_days?: number }; Returns: Json }
+      get_hero_banner_metrics: { Args: { p_days?: number }; Returns: Json }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
