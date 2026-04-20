@@ -53,17 +53,9 @@ export function HighlightTrackCard({ track, subtitle, queue }: HighlightTrackCar
         </div>
       )}
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/30" />
+      {/* Vinheta sutil para legibilidade do play/badge sobre a capa */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/20" />
 
-      <div className="relative flex h-full flex-col items-center justify-center px-4 pb-12 pt-5 text-center">
-        <h3 className="font-display text-[17px] font-extrabold uppercase leading-[1.05] tracking-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)]">
-          <span className="block">{line1}</span>
-          {line2 ? <span className="mt-0.5 block text-gold">{line2}</span> : null}
-        </h3>
-        <p className="mt-2 line-clamp-2 text-[11px] text-white/75">
-          {subtitle || track.description || "Ministério Paz em Canção"}
-        </p>
-      </div>
 
       <div className="absolute bottom-3 right-3">
         <div
