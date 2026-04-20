@@ -435,11 +435,14 @@ function MusicLibraryPage() {
                 // mesma categoria aparecem logo abaixo num bloco em destaque.
                 regularTracks.length > 0 ? (
                   <PosterShelfRow>
-                    {regularTracks.map(dbTrackToPlayerTrack).map((pt, idx) => (
-                      <PosterShelfItem key={pt.id}>
-                        <TrackCard track={pt} index={idx} />
-                      </PosterShelfItem>
-                    ))}
+                    {(() => {
+                      const list = regularTracks.map(dbTrackToPlayerTrack);
+                      return list.map((pt, idx) => (
+                        <PosterShelfItem key={pt.id}>
+                          <TrackCard track={pt} index={idx} queue={list} />
+                        </PosterShelfItem>
+                      ));
+                    })()}
                   </PosterShelfRow>
                 ) : (
                   <div className="rounded-2xl border border-dashed border-border/40 px-4 py-8 text-center text-sm text-muted-foreground/70">
