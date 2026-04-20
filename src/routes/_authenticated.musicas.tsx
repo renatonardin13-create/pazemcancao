@@ -365,9 +365,9 @@ function MusicLibraryPage() {
               </div>
             </section>
 
+            <InspirationalBlock />
+
             <section>
-              <div className="mb-4 flex items-center gap-2">
-                <ListMusic className="h-4 w-4 text-primary/70" />
                 <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">Categorias</h2>
               </div>
 
