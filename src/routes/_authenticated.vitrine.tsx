@@ -165,7 +165,7 @@ function VitrinePage() {
             <>
               {/* HERO com slides automáticos quando há múltiplos banners */}
               {(heroBanners.length > 0 || featured) && (
-                <HeroBanner banners={heroBanners} fallbackCourse={featured} rotationMs={6000} />
+                <HeroBanner banners={heroBanners} fallbackCourse={featured} />
               )}
 
               {/* CHIPS DE CATEGORIA */}
