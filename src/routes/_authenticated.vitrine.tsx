@@ -1,16 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   AlertCircle,
   RefreshCw,
   Loader2,
   LayoutGrid,
-  GraduationCap,
-  BookOpen,
-  Users,
-  Gift,
-  Star,
   ChevronRight,
 } from "lucide-react";
 import { ModuleGuard } from "@/components/ModuleGuard";
@@ -48,36 +43,11 @@ function VitrineErrorFallback({ error }: { error: Error }) {
   );
 }
 
-type CategoryKey = "all" | "curso" | "ebook" | "mentoria" | "pacote" | "novidades";
-
-const CATEGORIES: { key: CategoryKey; label: string; icon: typeof LayoutGrid }[] = [
-  { key: "all", label: "Todos", icon: LayoutGrid },
-  { key: "curso", label: "Cursos", icon: GraduationCap },
-  { key: "ebook", label: "E-books", icon: BookOpen },
-  { key: "mentoria", label: "Mentorias", icon: Users },
-  { key: "pacote", label: "Pacotes", icon: Gift },
-  { key: "novidades", label: "Novidades", icon: Star },
-];
-
-function matchesCategory(course: VitrineCourse, key: CategoryKey): boolean {
-  if (key === "all") return true;
-  const type = (course.product_type || "").toLowerCase();
-  if (key === "novidades") {
-    if (course.launch_date) {
-      const days = (Date.now() - new Date(course.launch_date).getTime()) / 86400000;
-      return days >= 0 && days <= 30;
-    }
-    return false;
-  }
-  if (key === "curso") return type.includes("curso");
-  if (key === "ebook") return type.includes("ebook") || type.includes("e-book");
-  if (key === "mentoria") return type.includes("mentoria");
-  if (key === "pacote") return type.includes("pacote") || type.includes("assinatura") || type.includes("combo");
-  return false;
-}
+const ALL_KEY = "all";
 
 function VitrinePage() {
-  const [activeCategory, setActiveCategory] = useState<CategoryKey>("all");
+  const [activeCategory, setActiveCategory] = useState<string>(ALL_KEY);
+  const shelfRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["student-shelves", "v3-netflix"],
