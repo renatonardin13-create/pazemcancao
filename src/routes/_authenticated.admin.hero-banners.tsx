@@ -258,6 +258,21 @@ function AdminHeroBannersPage() {
 
   const previewList = useMemo(() => (previewOpen ? [previewOpen] : []), [previewOpen]);
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = banners.findIndex((b: any) => b.id === active.id);
+    const newIndex = banners.findIndex((b: any) => b.id === over.id);
+    if (oldIndex < 0 || newIndex < 0) return;
+    const next = arrayMove(banners, oldIndex, newIndex);
+    reorderMut.mutate(next.map((b: any) => b.id));
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
