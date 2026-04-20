@@ -137,6 +137,12 @@ function VitrinePage() {
     [scrollChipIntoView],
   );
 
+  // Mantém ref do activeCategory para não recriar observer a cada mudança
+  const activeCategoryRef = useRef(activeCategory);
+  useEffect(() => {
+    activeCategoryRef.current = activeCategory;
+  }, [activeCategory]);
+
   // Atualiza o botão ativo conforme a prateleira visível durante o scroll manual
   useEffect(() => {
     if (!allShelves.length) return;
@@ -148,12 +154,11 @@ function VitrinePage() {
       rafId = 0;
       if (isProgrammaticScrollRef.current) return;
 
-      // "Todos" quando estamos acima da área de prateleiras
       const area = shelvesAreaRef.current;
       if (area) {
         const areaTop = area.getBoundingClientRect().top;
         if (areaTop > 120) {
-          if (activeCategory !== ALL_KEY) {
+          if (activeCategoryRef.current !== ALL_KEY) {
             setActiveCategory(ALL_KEY);
             scrollChipIntoView(ALL_KEY);
           }
@@ -170,7 +175,7 @@ function VitrinePage() {
         }
       });
 
-      if (bestId && bestRatio > 0.05 && bestId !== activeCategory) {
+      if (bestId && bestRatio > 0.05 && bestId !== activeCategoryRef.current) {
         setActiveCategory(bestId);
         scrollChipIntoView(bestId);
       }
@@ -196,7 +201,7 @@ function VitrinePage() {
       observer.disconnect();
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [allShelves, activeCategory, scrollChipIntoView]);
+  }, [allShelves, scrollChipIntoView]);
 
   return (
     <ModuleGuard moduleKey="vitrine">
