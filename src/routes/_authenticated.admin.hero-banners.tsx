@@ -82,6 +82,25 @@ export const Route = createFileRoute("/_authenticated/admin/hero-banners")({
 
 type CtaType = "url" | "product" | "video";
 
+// Converte ISO/UTC para o formato esperado por <input type="datetime-local">
+function toLocalInput(iso: string): string {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+// Status visual de agendamento de um banner
+function getScheduleStatus(b: { schedule_start_at?: string | null; schedule_end_at?: string | null }) {
+  const now = Date.now();
+  const start = b.schedule_start_at ? new Date(b.schedule_start_at).getTime() : null;
+  const end = b.schedule_end_at ? new Date(b.schedule_end_at).getTime() : null;
+  if (start && start > now) return { label: "Agendado", tone: "scheduled" as const };
+  if (end && end < now) return { label: "Expirado", tone: "expired" as const };
+  if (start || end) return { label: "Em campanha", tone: "live" as const };
+  return null;
+}
+
 type FormState = {
   id?: string;
   title: string;
