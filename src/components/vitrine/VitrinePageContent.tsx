@@ -57,26 +57,7 @@ export function VitrinePageContent({
       .filter((shelf) => shelf.courses.length > 0);
   }, [safeShelves, searchTerm]);
 
-  useEffect(() => {
-    const cardsRendered = filteredShelves.reduce((total, shelf) => total + shelf.courses.length, 0);
-    console.log("[DEBUG][VITRINE] component=VitrinePageContent");
-    console.log("[DEBUG][VITRINE] shelvesReturned=", safeShelves.length);
-    console.log("[DEBUG][VITRINE] shelfNames=", safeShelves.map((shelf) => shelf.name));
-    console.log(
-      "[DEBUG][VITRINE] coursesPerShelf=",
-      safeShelves.map((shelf) => ({ name: shelf.name, count: shelf.courses.length })),
-    );
-    console.log(
-      "[DEBUG][VITRINE] filters=",
-      safeShelves.map((shelf) => ({
-        name: shelf.name,
-        beforeDedup: shelf.courses.length,
-        afterFilter:
-          filteredShelves.find((filteredShelf) => filteredShelf.id === shelf.id)?.courses.length ?? 0,
-      })),
-    );
-    console.log("[DEBUG][VITRINE] cardsRendered=", cardsRendered);
-  }, [filteredShelves, safeShelves]);
+  // (debug logs removidos para produção)
 
   return (
     <div className="min-h-screen bg-background">
@@ -110,12 +91,20 @@ export function VitrinePageContent({
         ) : null}
 
         {isLoading ? (
-          <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12">
-            <EmptyState
-              icon={Store}
-              title="Carregando vitrine"
-              description="Estamos preparando seus cursos e prateleiras."
-            />
+          <div className="mx-auto w-full max-w-[1400px] space-y-10 px-4 sm:px-8 lg:px-12">
+            {[0, 1].map((row) => (
+              <div key={row} className="space-y-4">
+                <div className="h-5 w-48 animate-pulse rounded bg-card/40" />
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 sm:gap-4 lg:gap-5">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="aspect-[9/13] animate-pulse rounded-2xl bg-card/40"
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         ) : filteredShelves.length === 0 ? (
           <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12">
