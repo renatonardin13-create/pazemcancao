@@ -6,6 +6,17 @@ import { toast } from "sonner";
 import { toastError } from "@/lib/toast-utils";
 import { Progress } from "@/components/ui/progress";
 import { ImageFieldHint } from "@/components/ImageFieldHint";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 interface ImageUploadFieldProps {
   label: string;
@@ -189,15 +200,35 @@ export function ImageUploadField({
             )}
             {/* Always-visible remove button (top-right) */}
             {!isUploading && uploadState !== "success" && (
-              <button
-                type="button"
-                onClick={() => { onChange(""); setPreviewUrl(null); setLastFile(null); }}
-                title="Remover imagem"
-                aria-label="Remover imagem"
-                className="absolute top-2 right-2 z-10 p-1.5 rounded-lg bg-destructive text-destructive-foreground shadow-lg hover:bg-destructive/90 transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <button
+                    type="button"
+                    title="Remover imagem"
+                    aria-label="Remover imagem"
+                    className="absolute top-2 right-2 z-10 p-1.5 rounded-lg bg-destructive text-destructive-foreground shadow-lg hover:bg-destructive/90 transition-colors"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Remover imagem?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Esta ação não pode ser desfeita. A imagem será removida deste campo.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => { onChange(""); setPreviewUrl(null); setLastFile(null); }}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      Remover
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             )}
             {/* Hover overlay with "Trocar" action */}
             {!isUploading && uploadState !== "success" && (
