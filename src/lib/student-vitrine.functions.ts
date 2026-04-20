@@ -101,7 +101,7 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
       supabaseAdmin.from('platform_settings').select('value').eq('key', 'hero_banner').maybeSingle(),
       (supabaseAdmin as any)
         .from('vitrine_hero_banners')
-        .select('id, image_url, title, subtitle, description, primary_cta_label, primary_cta_url, secondary_cta_label, secondary_cta_url, is_active, sort_order')
+        .select('id, image_url, image_tablet_url, image_mobile_url, title, subtitle, description, primary_cta_label, primary_cta_url, primary_cta_type, primary_cta_target, secondary_cta_label, secondary_cta_url, secondary_cta_type, secondary_cta_target, banner_clickable, banner_click_type, banner_click_target, autoplay, autoplay_interval_ms, is_active, sort_order')
         .eq('is_active', true)
         .order('sort_order', { ascending: true }),
     ]);
