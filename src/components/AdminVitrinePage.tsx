@@ -1205,7 +1205,7 @@ export default function AdminVitrinePage() {
           >
             <div className="px-6 pb-4 space-y-4">
               <div className="space-y-1.5">
-                <Label className="text-xs font-semibold text-foreground/60">Nome da Prateleira</Label>
+                <Label className="text-xs font-semibold text-foreground/60">Nome interno da Prateleira</Label>
                 <Input
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
@@ -1214,6 +1214,43 @@ export default function AdminVitrinePage() {
                   className="bg-card/20 border-border/30"
                 />
               </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-foreground/60">Título público (opcional)</Label>
+                <Input
+                  value={formPublicTitle}
+                  onChange={(e) => setFormPublicTitle(e.target.value)}
+                  placeholder="Ex: Novidades da semana"
+                  className="bg-card/20 border-border/30"
+                />
+                <p className="text-[10px] text-muted-foreground/50">Substitui o nome interno na vitrine pública. Se vazio, usa o nome.</p>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-foreground/60">Descrição (opcional)</Label>
+                <Input
+                  value={formDescription}
+                  onChange={(e) => setFormDescription(e.target.value)}
+                  placeholder="Pequena descrição abaixo do título"
+                  maxLength={200}
+                  className="bg-card/20 border-border/30"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-foreground/60">Modo de exibição</Label>
+                <Select value={formDisplayMode} onValueChange={setFormDisplayMode}>
+                  <SelectTrigger className="bg-card/20 border-border/30">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="auto">Automático (grade se &lt;4, carrossel se ≥4)</SelectItem>
+                    <SelectItem value="grid">Grade fixa</SelectItem>
+                    <SelectItem value="carousel">Carrossel horizontal</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
 
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold text-foreground/60">Tipo</Label>
