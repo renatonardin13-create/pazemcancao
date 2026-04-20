@@ -1170,6 +1170,7 @@ export type Database = {
           course_id: string
           created_at: string
           id: string
+          is_featured: boolean
           shelf_id: string
           sort_order: number
         }
@@ -1177,6 +1178,7 @@ export type Database = {
           course_id: string
           created_at?: string
           id?: string
+          is_featured?: boolean
           shelf_id: string
           sort_order?: number
         }
@@ -1184,6 +1186,7 @@ export type Database = {
           course_id?: string
           created_at?: string
           id?: string
+          is_featured?: boolean
           shelf_id?: string
           sort_order?: number
         }
@@ -1208,10 +1211,13 @@ export type Database = {
         Row: {
           auto_criteria: string | null
           created_at: string
+          description: string | null
+          display_mode: string
           id: string
           is_active: boolean
           mode: string
           name: string
+          public_title: string | null
           show_in_vitrine: boolean
           sort_order: number
           updated_at: string
@@ -1219,10 +1225,13 @@ export type Database = {
         Insert: {
           auto_criteria?: string | null
           created_at?: string
+          description?: string | null
+          display_mode?: string
           id?: string
           is_active?: boolean
           mode?: string
           name: string
+          public_title?: string | null
           show_in_vitrine?: boolean
           sort_order?: number
           updated_at?: string
@@ -1230,10 +1239,13 @@ export type Database = {
         Update: {
           auto_criteria?: string | null
           created_at?: string
+          description?: string | null
+          display_mode?: string
           id?: string
           is_active?: boolean
           mode?: string
           name?: string
+          public_title?: string | null
           show_in_vitrine?: boolean
           sort_order?: number
           updated_at?: string

@@ -37,16 +37,19 @@ export const listShelves = createServerFn({ method: 'POST' })
 // ── Create shelf ──
 const createShelfSchema = z.object({
   name: z.string().min(1).max(255).trim(),
+  public_title: z.string().max(255).trim().nullable().optional(),
+  description: z.string().max(500).trim().nullable().optional(),
   is_active: z.boolean(),
   show_in_vitrine: z.boolean().optional(),
   mode: z.enum(['manual', 'auto']),
   auto_criteria: z.string().max(50).optional(),
+  display_mode: z.enum(['auto', 'grid', 'carousel']).optional(),
   sort_order: z.number().min(0).max(999).optional(),
 });
 
 export const createShelf = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { name: string; is_active: boolean; show_in_vitrine?: boolean; mode: string; auto_criteria?: string; sort_order?: number }) =>
+  .inputValidator((input: { name: string; public_title?: string | null; description?: string | null; is_active: boolean; show_in_vitrine?: boolean; mode: string; auto_criteria?: string; display_mode?: string; sort_order?: number }) =>
     createShelfSchema.parse(input)
   )
   .handler(async ({ data, context }) => {
@@ -56,10 +59,13 @@ export const createShelf = createServerFn({ method: 'POST' })
       .from('shelves')
       .insert({
         name: data.name,
+        public_title: data.public_title?.trim() || null,
+        description: data.description?.trim() || null,
         is_active: data.is_active,
         show_in_vitrine: data.show_in_vitrine ?? true,
         mode: data.mode,
         auto_criteria: data.mode === 'auto' ? (data.auto_criteria || 'recent') : null,
+        display_mode: data.display_mode ?? 'auto',
         sort_order: data.sort_order ?? 0,
       })
       .select('id')
@@ -69,31 +75,110 @@ export const createShelf = createServerFn({ method: 'POST' })
     return { id: shelf.id };
   });
 
+// ── Duplicate shelf (copy with linked courses) ──
+export const duplicateShelf = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { id: string }) =>
+    z.object({ id: z.string().uuid() }).parse(input)
+  )
+  .handler(async ({ data, context }) => {
+    await verifyAdmin(context.supabase, context.userId);
+
+    const { data: original, error: fetchErr } = await supabaseAdmin
+      .from('shelves')
+      .select('*')
+      .eq('id', data.id)
+      .single();
+    if (fetchErr || !original) throw new Error(fetchErr?.message || 'Prateleira não encontrada');
+
+    const { data: created, error: insertErr } = await supabaseAdmin
+      .from('shelves')
+      .insert({
+        name: `${original.name} (cópia)`,
+        public_title: original.public_title,
+        description: original.description,
+        is_active: false,
+        show_in_vitrine: original.show_in_vitrine,
+        mode: original.mode,
+        auto_criteria: original.auto_criteria,
+        display_mode: original.display_mode,
+        sort_order: (original.sort_order ?? 0) + 1,
+      })
+      .select('id')
+      .single();
+    if (insertErr || !created) throw new Error(insertErr?.message || 'Falha ao duplicar');
+
+    const { data: links } = await supabaseAdmin
+      .from('shelf_courses')
+      .select('course_id, sort_order, is_featured')
+      .eq('shelf_id', data.id);
+
+    if (links && links.length > 0) {
+      const rows = links.map((l: any) => ({
+        shelf_id: created.id,
+        course_id: l.course_id,
+        sort_order: l.sort_order,
+        is_featured: l.is_featured ?? false,
+      }));
+      await supabaseAdmin.from('shelf_courses').insert(rows);
+    }
+
+    return { id: created.id };
+  });
+
 // ── Update shelf ──
 const updateShelfSchema = z.object({
   id: z.string().uuid(),
   name: z.string().min(1).max(255).trim().optional(),
+  public_title: z.string().max(255).trim().nullable().optional(),
+  description: z.string().max(500).trim().nullable().optional(),
   is_active: z.boolean().optional(),
   show_in_vitrine: z.boolean().optional(),
   mode: z.enum(['manual', 'auto']).optional(),
   auto_criteria: z.string().max(50).optional(),
+  display_mode: z.enum(['auto', 'grid', 'carousel']).optional(),
   sort_order: z.number().min(0).max(999).optional(),
 });
 
 export const updateShelf = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { id: string; name?: string; is_active?: boolean; show_in_vitrine?: boolean; mode?: string; auto_criteria?: string; sort_order?: number }) =>
+  .inputValidator((input: { id: string; name?: string; public_title?: string | null; description?: string | null; is_active?: boolean; show_in_vitrine?: boolean; mode?: string; auto_criteria?: string; display_mode?: string; sort_order?: number }) =>
     updateShelfSchema.parse(input)
   )
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
-    const { id, ...updates } = data;
+    const { id, public_title, description, ...rest } = data;
+    const updates: any = { ...rest };
+    if (public_title !== undefined) updates.public_title = public_title?.trim() || null;
+    if (description !== undefined) updates.description = description?.trim() || null;
+
     const { error } = await supabaseAdmin
       .from('shelves')
       .update(updates)
       .eq('id', id);
 
+    if (error) throw new Error(error.message);
+    return { success: true };
+  });
+
+// ── Toggle featured flag of a course inside a shelf ──
+export const setShelfCourseFeatured = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { shelfId: string; courseId: string; isFeatured: boolean }) =>
+    z.object({
+      shelfId: z.string().uuid(),
+      courseId: z.string().uuid(),
+      isFeatured: z.boolean(),
+    }).parse(input)
+  )
+  .handler(async ({ data, context }) => {
+    await verifyAdmin(context.supabase, context.userId);
+    const { error } = await supabaseAdmin
+      .from('shelf_courses')
+      .update({ is_featured: data.isFeatured })
+      .eq('shelf_id', data.shelfId)
+      .eq('course_id', data.courseId);
     if (error) throw new Error(error.message);
     return { success: true };
   });

@@ -20,6 +20,7 @@ export type VitrineCourse = {
   badge_text?: string;
   launch_date?: string | null;
   is_enrolled?: boolean;
+  is_featured?: boolean;
   display_title?: string;
   display_subtitle?: string;
   banner_link_url?: string | null;
@@ -28,6 +29,9 @@ export type VitrineCourse = {
 export type VitrineShelf = {
   id: string;
   name: string;
+  public_title?: string | null;
+  description?: string | null;
+  display_mode?: "auto" | "grid" | "carousel";
   sort_order: number;
   shelf_type?: "admin" | "smart";
   courses: VitrineCourse[];

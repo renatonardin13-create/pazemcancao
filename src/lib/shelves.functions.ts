@@ -10,12 +10,16 @@ type ShelfRecord = {
   auto_criteria: string | null;
   sort_order: number;
   show_in_vitrine?: boolean;
+  public_title?: string | null;
+  description?: string | null;
+  display_mode?: string | null;
 };
 
 type ShelfCourseLink = {
   shelf_id: string;
   course_id: string;
   sort_order: number;
+  is_featured?: boolean;
 };
 
 type CourseRecord = {
@@ -144,7 +148,7 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
     if (shelfIds.length > 0) {
       const { data: shelfCourseRows, error: shelfCoursesErr } = await supabaseAdmin
         .from('shelf_courses')
-        .select('shelf_id, course_id, sort_order')
+        .select('shelf_id, course_id, sort_order, is_featured')
         .in('shelf_id', shelfIds)
         .order('sort_order', { ascending: true });
 
@@ -384,8 +388,15 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
     const adminShelves = [];
 
     for (const shelf of shelves) {
-      const linkedCourses = (shelfCourseMap.get(shelf.id) || [])
-        .map((link) => courseMap.get(link.course_id))
+      const links = shelfCourseMap.get(shelf.id) || [];
+      const featuredMap = new Map(links.map((l) => [l.course_id, !!l.is_featured]));
+
+      const linkedCourses = links
+        .map((link) => {
+          const course = courseMap.get(link.course_id);
+          if (!course) return null;
+          return { ...course, is_featured: featuredMap.get(link.course_id) || false };
+        })
         .filter(Boolean);
 
       const dedupedLinkedCourses = Array.from(new Map(linkedCourses.map((course: any) => [course.id, course])).values());
@@ -400,6 +411,9 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
         adminShelves.push({
           id: shelf.id,
           name: shelf.name,
+          public_title: shelf.public_title || null,
+          description: shelf.description || null,
+          display_mode: (shelf.display_mode as any) || 'auto',
           sort_order: shelf.sort_order,
           shelf_type: 'admin' as const,
           courses,
@@ -428,6 +442,9 @@ export const getStudentShelves = createServerFn({ method: 'POST' })
       result.push({
         id: '__all_courses__',
         name: sortedAdminShelves.length > 0 ? 'Todos os Cursos' : 'Catálogo',
+        public_title: null,
+        description: null,
+        display_mode: 'auto' as any,
         sort_order: 9999,
         shelf_type: 'admin' as const,
         courses: orphanCourses,

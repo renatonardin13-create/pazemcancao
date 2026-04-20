@@ -61,6 +61,7 @@ import {
   createShelf,
   updateShelf,
   deleteShelf,
+  duplicateShelf,
   setShelfCourses,
   reorderShelves,
   reorderShelfCourses,
@@ -180,10 +181,13 @@ export default function AdminVitrinePage() {
 
   // Form state
   const [formName, setFormName] = useState("");
+  const [formPublicTitle, setFormPublicTitle] = useState("");
+  const [formDescription, setFormDescription] = useState("");
   const [formActive, setFormActive] = useState(true);
   const [formShowInVitrine, setFormShowInVitrine] = useState(true);
   const [formMode, setFormMode] = useState<string>("manual");
   const [formCriteria, setFormCriteria] = useState("recent");
+  const [formDisplayMode, setFormDisplayMode] = useState<string>("auto");
   const [formOrder, setFormOrder] = useState(0);
 
   // Course selection state
@@ -359,6 +363,16 @@ export default function AdminVitrinePage() {
     onError: (err: any) => toastError(err),
   });
 
+  const duplicateMut = useMutation({
+    mutationFn: (id: string) => duplicateShelf({ data: { id } }),
+    onSuccess: () => {
+      toast.success("Prateleira duplicada (inativa). Ative quando quiser.");
+      queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
+      invalidatePreview();
+    },
+    onError: (err: any) => toastError(err),
+  });
+
   const setCoursesMut = useMutation({
     mutationFn: (input: { shelfId: string; courseIds: string[] }) =>
       setShelfCourses({ data: input }),
@@ -434,21 +448,28 @@ export default function AdminVitrinePage() {
   const openCreate = () => {
     setEditingShelf(null);
     setFormName("");
+    setFormPublicTitle("");
+    setFormDescription("");
     setFormActive(true);
     setFormShowInVitrine(true);
     setFormMode("manual");
     setFormCriteria("recent");
+    setFormDisplayMode("auto");
     setFormOrder(shelves.length);
+    setSelectedCourseIds([]);
     setDialogOpen(true);
   };
 
   const openEdit = (shelf: any) => {
     setEditingShelf(shelf);
     setFormName(shelf.name);
+    setFormPublicTitle(shelf.public_title || "");
+    setFormDescription(shelf.description || "");
     setFormActive(shelf.is_active);
     setFormShowInVitrine(shelf.show_in_vitrine !== false);
     setFormMode(shelf.mode);
     setFormCriteria(shelf.auto_criteria || "recent");
+    setFormDisplayMode(shelf.display_mode || "auto");
     setFormOrder(shelf.sort_order);
     // Load existing courses for manual shelves
     if (shelf.mode === "manual") {
@@ -534,10 +555,13 @@ export default function AdminVitrinePage() {
     e.preventDefault();
     const payload = {
       name: formName,
+      public_title: formPublicTitle.trim() || null,
+      description: formDescription.trim() || null,
       is_active: formActive,
       show_in_vitrine: formShowInVitrine,
       mode: formMode,
       auto_criteria: formMode === "auto" ? formCriteria : undefined,
+      display_mode: formDisplayMode as "auto" | "grid" | "carousel",
       sort_order: formOrder,
     };
 
@@ -1157,10 +1181,13 @@ export default function AdminVitrinePage() {
               e.preventDefault();
               const payload = {
                 name: formName,
+                public_title: formPublicTitle.trim() || null,
+                description: formDescription.trim() || null,
                 is_active: formActive,
                 show_in_vitrine: formShowInVitrine,
                 mode: formMode,
                 auto_criteria: formMode === "auto" ? formCriteria : undefined,
+                display_mode: formDisplayMode as "auto" | "grid" | "carousel",
                 sort_order: formOrder,
               };
               if (editingShelf) {
@@ -1178,7 +1205,7 @@ export default function AdminVitrinePage() {
           >
             <div className="px-6 pb-4 space-y-4">
               <div className="space-y-1.5">
-                <Label className="text-xs font-semibold text-foreground/60">Nome da Prateleira</Label>
+                <Label className="text-xs font-semibold text-foreground/60">Nome interno da Prateleira</Label>
                 <Input
                   value={formName}
                   onChange={(e) => setFormName(e.target.value)}
@@ -1187,6 +1214,43 @@ export default function AdminVitrinePage() {
                   className="bg-card/20 border-border/30"
                 />
               </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-foreground/60">Título público (opcional)</Label>
+                <Input
+                  value={formPublicTitle}
+                  onChange={(e) => setFormPublicTitle(e.target.value)}
+                  placeholder="Ex: Novidades da semana"
+                  className="bg-card/20 border-border/30"
+                />
+                <p className="text-[10px] text-muted-foreground/50">Substitui o nome interno na vitrine pública. Se vazio, usa o nome.</p>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-foreground/60">Descrição (opcional)</Label>
+                <Input
+                  value={formDescription}
+                  onChange={(e) => setFormDescription(e.target.value)}
+                  placeholder="Pequena descrição abaixo do título"
+                  maxLength={200}
+                  className="bg-card/20 border-border/30"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs font-semibold text-foreground/60">Modo de exibição</Label>
+                <Select value={formDisplayMode} onValueChange={setFormDisplayMode}>
+                  <SelectTrigger className="bg-card/20 border-border/30">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="auto">Automático (grade se &lt;4, carrossel se ≥4)</SelectItem>
+                    <SelectItem value="grid">Grade fixa</SelectItem>
+                    <SelectItem value="carousel">Carrossel horizontal</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
 
               <div className="space-y-1.5">
                 <Label className="text-xs font-semibold text-foreground/60">Tipo</Label>
