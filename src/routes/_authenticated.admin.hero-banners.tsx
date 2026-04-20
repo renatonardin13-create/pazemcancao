@@ -307,97 +307,33 @@ function AdminHeroBannersPage() {
           </p>
         </div>
       ) : (
-        <div className="space-y-3">
-          {banners.map((b: any, idx: number) => (
-            <div
-              key={b.id}
-              className="group flex items-center gap-3 rounded-xl border border-border/30 bg-card/20 p-3 transition hover:border-gold/30"
-            >
-              <div className="flex flex-col gap-1">
-                <button
-                  onClick={() => moveBanner(idx, -1)}
-                  disabled={idx === 0}
-                  className="rounded p-1 text-muted-foreground/50 hover:text-gold disabled:opacity-20"
-                >
-                  <ArrowUp className="h-3.5 w-3.5" />
-                </button>
-                <GripVertical className="h-3.5 w-3.5 text-muted-foreground/30" />
-                <button
-                  onClick={() => moveBanner(idx, 1)}
-                  disabled={idx === banners.length - 1}
-                  className="rounded p-1 text-muted-foreground/50 hover:text-gold disabled:opacity-20"
-                >
-                  <ArrowDown className="h-3.5 w-3.5" />
-                </button>
-              </div>
-
-              <div className="h-16 w-28 shrink-0 overflow-hidden rounded-lg bg-zinc-900">
-                {b.image_url ? (
-                  <img src={b.image_url} alt={b.title} className="h-full w-full object-cover" />
-                ) : null}
-              </div>
-
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-2">
-                  <p className="truncate text-sm font-semibold text-foreground/90">
-                    {b.title || "(sem título)"}
-                  </p>
-                  {b.is_active ? (
-                    <Badge className="bg-emerald-500/15 text-emerald-400">Ativo</Badge>
-                  ) : (
-                    <Badge variant="outline" className="text-muted-foreground/60">
-                      Inativo
-                    </Badge>
-                  )}
-                </div>
-                <p className="truncate text-xs text-muted-foreground/60">
-                  {b.subtitle || b.description || "Sem descrição"}
-                </p>
-              </div>
-
-              <div className="flex items-center gap-1">
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => setPreviewOpen(b)}
-                  title="Pré-visualizar"
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() =>
-                    toggleMut.mutate({ id: b.id, is_active: !b.is_active })
-                  }
-                  title={b.is_active ? "Desativar" : "Ativar"}
-                >
-                  {b.is_active ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => duplicateMut.mutate(b.id)}
-                  title="Duplicar"
-                >
-                  <Copy className="h-4 w-4" />
-                </Button>
-                <Button size="sm" variant="ghost" onClick={() => openEdit(b)} title="Editar">
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  onClick={() => setDeleteTarget(b)}
-                  title="Excluir"
-                  className="text-destructive hover:text-destructive"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </div>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={banners.map((b: any) => b.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div className="space-y-3">
+              {banners.map((b: any, idx: number) => (
+                <SortableBannerRow
+                  key={b.id}
+                  banner={b}
+                  idx={idx}
+                  total={banners.length}
+                  onMove={moveBanner}
+                  onPreview={() => setPreviewOpen(b)}
+                  onToggle={() => toggleMut.mutate({ id: b.id, is_active: !b.is_active })}
+                  onDuplicate={() => duplicateMut.mutate(b.id)}
+                  onEdit={() => openEdit(b)}
+                  onDelete={() => setDeleteTarget(b)}
+                />
+              ))}
             </div>
-          ))}
-        </div>
+          </SortableContext>
+        </DndContext>
       )}
 
       {/* Dialog de criação/edição */}
