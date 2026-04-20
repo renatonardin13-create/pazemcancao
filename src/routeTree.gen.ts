@@ -20,6 +20,7 @@ import { Route as AuthenticatedTrilhasRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated.perfil'
 import { Route as AuthenticatedMusicasRouteImport } from './routes/_authenticated.musicas'
 import { Route as AuthenticatedLancamentosRouteImport } from './routes/_authenticated.lancamentos'
+import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated.home'
 import { Route as AuthenticatedEbooksRouteImport } from './routes/_authenticated.ebooks'
 import { Route as AuthenticatedDownloadsRouteImport } from './routes/_authenticated.downloads'
 import { Route as AuthenticatedCursosRouteImport } from './routes/_authenticated.cursos'
@@ -117,6 +118,11 @@ const AuthenticatedLancamentosRoute =
     path: '/lancamentos',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedEbooksRoute = AuthenticatedEbooksRouteImport.update({
   id: '/ebooks',
   path: '/ebooks',
@@ -367,6 +373,7 @@ export interface FileRoutesByFullPath {
   '/cursos': typeof AuthenticatedCursosRouteWithChildren
   '/downloads': typeof AuthenticatedDownloadsRoute
   '/ebooks': typeof AuthenticatedEbooksRoute
+  '/home': typeof AuthenticatedHomeRoute
   '/lancamentos': typeof AuthenticatedLancamentosRoute
   '/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/perfil': typeof AuthenticatedPerfilRoute
@@ -417,6 +424,7 @@ export interface FileRoutesByTo {
   '/comunidade': typeof AuthenticatedComunidadeRoute
   '/downloads': typeof AuthenticatedDownloadsRoute
   '/ebooks': typeof AuthenticatedEbooksRoute
+  '/home': typeof AuthenticatedHomeRoute
   '/lancamentos': typeof AuthenticatedLancamentosRoute
   '/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/perfil': typeof AuthenticatedPerfilRoute
@@ -470,6 +478,7 @@ export interface FileRoutesById {
   '/_authenticated/cursos': typeof AuthenticatedCursosRouteWithChildren
   '/_authenticated/downloads': typeof AuthenticatedDownloadsRoute
   '/_authenticated/ebooks': typeof AuthenticatedEbooksRoute
+  '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/lancamentos': typeof AuthenticatedLancamentosRoute
   '/_authenticated/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
@@ -525,6 +534,7 @@ export interface FileRouteTypes {
     | '/cursos'
     | '/downloads'
     | '/ebooks'
+    | '/home'
     | '/lancamentos'
     | '/musicas'
     | '/perfil'
@@ -575,6 +585,7 @@ export interface FileRouteTypes {
     | '/comunidade'
     | '/downloads'
     | '/ebooks'
+    | '/home'
     | '/lancamentos'
     | '/musicas'
     | '/perfil'
@@ -627,6 +638,7 @@ export interface FileRouteTypes {
     | '/_authenticated/cursos'
     | '/_authenticated/downloads'
     | '/_authenticated/ebooks'
+    | '/_authenticated/home'
     | '/_authenticated/lancamentos'
     | '/_authenticated/musicas'
     | '/_authenticated/perfil'
@@ -755,6 +767,13 @@ declare module '@tanstack/react-router' {
       path: '/lancamentos'
       fullPath: '/lancamentos'
       preLoaderRoute: typeof AuthenticatedLancamentosRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/home': {
+      id: '/_authenticated/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof AuthenticatedHomeRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/ebooks': {
@@ -1183,6 +1202,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCursosRoute: typeof AuthenticatedCursosRouteWithChildren
   AuthenticatedDownloadsRoute: typeof AuthenticatedDownloadsRoute
   AuthenticatedEbooksRoute: typeof AuthenticatedEbooksRoute
+  AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedLancamentosRoute: typeof AuthenticatedLancamentosRoute
   AuthenticatedMusicasRoute: typeof AuthenticatedMusicasRouteWithChildren
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
@@ -1200,6 +1220,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCursosRoute: AuthenticatedCursosRouteWithChildren,
   AuthenticatedDownloadsRoute: AuthenticatedDownloadsRoute,
   AuthenticatedEbooksRoute: AuthenticatedEbooksRoute,
+  AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedLancamentosRoute: AuthenticatedLancamentosRoute,
   AuthenticatedMusicasRoute: AuthenticatedMusicasRouteWithChildren,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,

@@ -199,7 +199,7 @@ function MeusCursosPage() {
                 icon={BookOpen}
                 title="Sua biblioteca está esperando você"
                 description="Você ainda não possui cursos liberados. Conheça o catálogo completo na Vitrine."
-                actionTo="/vitrine"
+                actionTo="/home"
                 actionLabel="Ir para a Vitrine"
               />
             ) : searchResults !== null ? (
@@ -248,7 +248,7 @@ function MeusCursosPage() {
                       </p>
                     </div>
                     <Link
-                      to="/vitrine"
+                      to="/home"
                       className="group inline-flex shrink-0 items-center gap-2 rounded-full border border-primary/30 bg-primary/[0.08] px-5 py-2.5 text-sm font-semibold text-primary transition-all duration-300 hover:border-primary/50 hover:bg-primary/[0.12]"
                     >
                       Ir para a Vitrine

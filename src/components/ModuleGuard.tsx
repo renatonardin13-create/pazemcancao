@@ -19,7 +19,7 @@ export function ModuleGuard({ moduleKey, children }: ModuleGuardProps) {
 
   useEffect(() => {
     if (!isLoading && !enabled) {
-      navigate({ to: "/vitrine" });
+      navigate({ to: "/home" });
     }
   }, [isLoading, enabled, navigate]);
 

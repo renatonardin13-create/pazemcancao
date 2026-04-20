@@ -24,7 +24,7 @@ import { cn } from "@/lib/utils";
 
 /** Static lookup: slug → icon, route, prefix-match, submenu flag */
 const SLUG_META: Record<string, { icon: LucideIcon; to: string; matchPrefix?: boolean; hasSubmenu?: boolean }> = {
-  vitrine:     { icon: Store,          to: "/vitrine" },
+  vitrine:     { icon: Store,          to: "/home" },
   cursos:      { icon: GraduationCap,  to: "/cursos",      matchPrefix: true },
   louvores:    { icon: Music2,         to: "/musicas",     matchPrefix: true, hasSubmenu: true },
   ebooks:      { icon: BookOpen,       to: "/ebooks" },
