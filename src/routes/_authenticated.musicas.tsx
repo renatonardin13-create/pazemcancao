@@ -544,9 +544,12 @@ function MusicLibraryPage() {
                   </div>
 
                   <div className={POSTER_GRID}>
-                    {filteredTracks.map(dbTrackToPlayerTrack).map((pt, idx) => (
-                      <TrackCard key={`all-${pt.id}`} track={pt} index={idx} />
-                    ))}
+                    {(() => {
+                      const list = filteredTracks.map(dbTrackToPlayerTrack);
+                      return list.map((pt, idx) => (
+                        <TrackCard key={`all-${pt.id}`} track={pt} index={idx} queue={list} />
+                      ));
+                    })()}
                   </div>
                 </section>
               )}
