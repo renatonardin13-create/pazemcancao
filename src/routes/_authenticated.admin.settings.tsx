@@ -132,6 +132,9 @@ function SettingsPage() {
         <TabsContent value="modules" className="mt-4">
           <ModulesTab />
         </TabsContent>
+        <TabsContent value="inspirational" className="mt-4">
+          <AdminInspirationalBlock initial={settings.inspirational_block || {}} />
+        </TabsContent>
       </Tabs>
     </div>
   );
