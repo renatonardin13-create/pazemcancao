@@ -81,6 +81,8 @@ export const Route = createFileRoute("/_authenticated/admin/hero-banners")({
   component: AdminHeroBannersPage,
 });
 
+export { AdminHeroBannersPage };
+
 type CtaType = "url" | "product" | "video";
 
 // Converte ISO/UTC para o formato esperado por <input type="datetime-local">

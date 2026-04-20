@@ -37,7 +37,6 @@ const allContentItems = [
   { title: "Playlists", url: "/admin/playlists", icon: Disc3, module: "louvores" as const },
   { title: "Cursos", url: "/admin/courses", icon: BookOpen, module: "cursos" as const },
   { title: "Vitrine", url: "/admin/shelves", icon: Layout, module: "vitrine" as const },
-  { title: "Banners da Home", url: "/admin/hero-banners", icon: GalleryHorizontalEnd, module: "vitrine" as const },
   { title: "Categorias", url: "/admin/categories", icon: FolderOpen, module: "louvores" as const },
   { title: "Trilhas", url: "/admin/journeys", icon: Compass, module: "trilhas" as const },
 ];

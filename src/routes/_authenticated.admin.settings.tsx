@@ -12,7 +12,8 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, Settings, Upload, Palette, Globe, Link2, Bell, Wrench, RefreshCw, Save, Download, UploadCloud, AlertTriangle, Loader2, LayoutGrid, Music, GraduationCap, Layers } from "lucide-react";
+import { ArrowLeft, Settings, Upload, Palette, Globe, Link2, Bell, Wrench, RefreshCw, Save, Download, UploadCloud, AlertTriangle, Loader2, LayoutGrid, Music, GraduationCap, Layers, GalleryHorizontalEnd } from "lucide-react";
+import { AdminHeroBannersPage } from "@/routes/_authenticated.admin.hero-banners";
 import { MODULE_KEYS, type ModuleKey, type PlatformModules } from "@/hooks/use-project-mode";
 import { toast } from "sonner";
 
@@ -95,6 +96,9 @@ function SettingsPage() {
           <TabsTrigger value="advanced" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
             <Wrench className="h-3.5 w-3.5" /> Avançado
           </TabsTrigger>
+          <TabsTrigger value="hero-banners" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
+            <GalleryHorizontalEnd className="h-3.5 w-3.5" /> Banner Principal
+          </TabsTrigger>
           <TabsTrigger value="modules" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
             <LayoutGrid className="h-3.5 w-3.5" /> Módulos
           </TabsTrigger>
@@ -117,6 +121,9 @@ function SettingsPage() {
         </TabsContent>
         <TabsContent value="advanced" className="mt-4">
           <AdvancedTab settings={settings.advanced || {}} onSave={(v) => mutation.mutate({ key: "advanced", value: v })} saving={mutation.isPending} />
+        </TabsContent>
+        <TabsContent value="hero-banners" className="mt-4">
+          <AdminHeroBannersPage />
         </TabsContent>
         <TabsContent value="modules" className="mt-4">
           <ModulesTab />
