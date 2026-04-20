@@ -82,6 +82,25 @@ export const Route = createFileRoute("/_authenticated/admin/hero-banners")({
 
 type CtaType = "url" | "product" | "video";
 
+// Converte ISO/UTC para o formato esperado por <input type="datetime-local">
+function toLocalInput(iso: string): string {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
+// Status visual de agendamento de um banner
+function getScheduleStatus(b: { schedule_start_at?: string | null; schedule_end_at?: string | null }) {
+  const now = Date.now();
+  const start = b.schedule_start_at ? new Date(b.schedule_start_at).getTime() : null;
+  const end = b.schedule_end_at ? new Date(b.schedule_end_at).getTime() : null;
+  if (start && start > now) return { label: "Agendado", tone: "scheduled" as const };
+  if (end && end < now) return { label: "Expirado", tone: "expired" as const };
+  if (start || end) return { label: "Em campanha", tone: "live" as const };
+  return null;
+}
+
 type FormState = {
   id?: string;
   title: string;
@@ -103,6 +122,8 @@ type FormState = {
   autoplay_interval_ms: number;
   is_active: boolean;
   sort_order: number;
+  schedule_start_at: string;
+  schedule_end_at: string;
 };
 
 const emptyForm: FormState = {
@@ -125,6 +146,8 @@ const emptyForm: FormState = {
   autoplay_interval_ms: 7000,
   is_active: true,
   sort_order: 0,
+  schedule_start_at: "",
+  schedule_end_at: "",
 };
 
 function AdminHeroBannersPage() {
@@ -230,6 +253,8 @@ function AdminHeroBannersPage() {
       autoplay_interval_ms: Number(b.autoplay_interval_ms) || 7000,
       is_active: b.is_active !== false,
       sort_order: b.sort_order ?? 0,
+      schedule_start_at: b.schedule_start_at ? toLocalInput(b.schedule_start_at) : "",
+      schedule_end_at: b.schedule_end_at ? toLocalInput(b.schedule_end_at) : "",
     });
     setDialogOpen(true);
   };
@@ -551,8 +576,50 @@ function AdminHeroBannersPage() {
                   checked={form.is_active}
                   onCheckedChange={(v) => setForm({ ...form, is_active: v })}
                 />
-              </div>
             </div>
+
+            {/* Agendamento de campanha */}
+            <div className="rounded-lg border border-border/30 bg-card/30 p-4 space-y-3">
+              <div>
+                <p className="text-sm font-semibold text-foreground/90">
+                  Agendamento de exibição
+                </p>
+                <p className="text-xs text-muted-foreground/60">
+                  Defina quando o banner deve aparecer (ideal para campanhas sazonais).
+                  Deixe em branco para exibir sempre que estiver ativo.
+                </p>
+              </div>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <div>
+                  <Label>Início</Label>
+                  <Input
+                    type="datetime-local"
+                    value={form.schedule_start_at}
+                    onChange={(e) =>
+                      setForm({ ...form, schedule_start_at: e.target.value })
+                    }
+                  />
+                </div>
+                <div>
+                  <Label>Fim</Label>
+                  <Input
+                    type="datetime-local"
+                    value={form.schedule_end_at}
+                    onChange={(e) =>
+                      setForm({ ...form, schedule_end_at: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
+              {form.schedule_start_at &&
+                form.schedule_end_at &&
+                new Date(form.schedule_end_at) <= new Date(form.schedule_start_at) && (
+                  <p className="text-xs text-destructive">
+                    A data de fim deve ser posterior à data de início.
+                  </p>
+                )}
+            </div>
+          </div>
           </div>
 
           <div className="flex justify-end gap-2 border-t border-border/30 pt-4">
@@ -778,9 +845,27 @@ function SortableBannerRow({
               Inativo
             </Badge>
           )}
+          {(() => {
+            const s = getScheduleStatus(b);
+            if (!s) return null;
+            const cls =
+              s.tone === "scheduled"
+                ? "bg-blue-500/15 text-blue-400"
+                : s.tone === "expired"
+                ? "bg-red-500/15 text-red-400"
+                : "bg-amber-500/15 text-amber-400";
+            return <Badge className={cls}>{s.label}</Badge>;
+          })()}
         </div>
         <p className="truncate text-xs text-muted-foreground/60">
           {b.subtitle || b.description || "Sem descrição"}
+          {b.schedule_start_at || b.schedule_end_at ? (
+            <span className="ml-2 text-muted-foreground/50">
+              · {b.schedule_start_at ? new Date(b.schedule_start_at).toLocaleDateString("pt-BR") : "—"}
+              {" → "}
+              {b.schedule_end_at ? new Date(b.schedule_end_at).toLocaleDateString("pt-BR") : "—"}
+            </span>
+          ) : null}
         </p>
       </div>
 

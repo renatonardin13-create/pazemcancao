@@ -1578,6 +1578,8 @@ export type Database = {
           primary_cta_target: string | null
           primary_cta_type: string
           primary_cta_url: string | null
+          schedule_end_at: string | null
+          schedule_start_at: string | null
           secondary_cta_label: string | null
           secondary_cta_target: string | null
           secondary_cta_type: string
@@ -1604,6 +1606,8 @@ export type Database = {
           primary_cta_target?: string | null
           primary_cta_type?: string
           primary_cta_url?: string | null
+          schedule_end_at?: string | null
+          schedule_start_at?: string | null
           secondary_cta_label?: string | null
           secondary_cta_target?: string | null
           secondary_cta_type?: string
@@ -1630,6 +1634,8 @@ export type Database = {
           primary_cta_target?: string | null
           primary_cta_type?: string
           primary_cta_url?: string | null
+          schedule_end_at?: string | null
+          schedule_start_at?: string | null
           secondary_cta_label?: string | null
           secondary_cta_target?: string | null
           secondary_cta_type?: string

@@ -43,6 +43,8 @@ function sanitizeBannerInput(raw: any) {
     autoplay_interval_ms: Math.max(2000, Math.min(60000, Number(raw.autoplay_interval_ms) || 7000)),
     is_active: raw.is_active !== false,
     sort_order: Number(raw.sort_order) || 0,
+    schedule_start_at: raw.schedule_start_at ? new Date(raw.schedule_start_at).toISOString() : null,
+    schedule_end_at: raw.schedule_end_at ? new Date(raw.schedule_end_at).toISOString() : null,
   };
 }
 
