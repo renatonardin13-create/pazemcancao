@@ -1,5 +1,5 @@
 import { Store, Search } from "lucide-react";
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { EmptyState } from "@/components/EmptyState";
 import { FooterLinks } from "@/components/FooterLinks";
 import { Input } from "@/components/ui/input";
