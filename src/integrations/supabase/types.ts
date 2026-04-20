@@ -1602,12 +1602,16 @@ export type Database = {
           banner_click_target: string | null
           banner_click_type: string | null
           banner_clickable: boolean
+          container_ratio: string
           created_at: string
           description: string | null
+          display_mode: string
           id: string
+          image_height: number | null
           image_mobile_url: string | null
           image_tablet_url: string | null
           image_url: string
+          image_width: number | null
           is_active: boolean
           primary_cta_label: string | null
           primary_cta_target: string | null
@@ -1630,12 +1634,16 @@ export type Database = {
           banner_click_target?: string | null
           banner_click_type?: string | null
           banner_clickable?: boolean
+          container_ratio?: string
           created_at?: string
           description?: string | null
+          display_mode?: string
           id?: string
+          image_height?: number | null
           image_mobile_url?: string | null
           image_tablet_url?: string | null
           image_url: string
+          image_width?: number | null
           is_active?: boolean
           primary_cta_label?: string | null
           primary_cta_target?: string | null
@@ -1658,12 +1666,16 @@ export type Database = {
           banner_click_target?: string | null
           banner_click_type?: string | null
           banner_clickable?: boolean
+          container_ratio?: string
           created_at?: string
           description?: string | null
+          display_mode?: string
           id?: string
+          image_height?: number | null
           image_mobile_url?: string | null
           image_tablet_url?: string | null
           image_url?: string
+          image_width?: number | null
           is_active?: boolean
           primary_cta_label?: string | null
           primary_cta_target?: string | null
