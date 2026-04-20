@@ -20,6 +20,7 @@ import { HighlightTrackCard } from "@/components/HighlightTrackCard";
 import { UpcomingReleaseBlock } from "@/components/UpcomingReleaseBlock";
 import { InspirationalBlock } from "@/components/InspirationalBlock";
 import { POSTER_GRID } from "@/lib/card-grid";
+import { CardScopeProvider } from "@/hooks/use-cards-config";
 import { PosterShelfRow, PosterShelfItem } from "@/components/PosterShelfRow";
 import { listAllTracks } from "@/lib/tracks.functions";
 import { listPlaylistsWithCounts, getPlaylistWithTracks } from "@/lib/playlists.functions";
@@ -44,10 +45,18 @@ export const Route = createFileRoute("/_authenticated/musicas")({
   validateSearch: (search: Record<string, unknown>): { categoria?: string } => ({
     categoria: typeof search.categoria === "string" ? search.categoria : undefined,
   }),
-  component: MusicLibraryPage,
+  component: MusicLibraryPageWithScope,
   errorComponent: MusicLibraryError,
   pendingComponent: MusicLibraryPending,
 });
+
+function MusicLibraryPageWithScope() {
+  return (
+    <CardScopeProvider scope="musicas">
+      <MusicLibraryPage />
+    </CardScopeProvider>
+  );
+}
 
 function MusicLibraryPending() {
   return (
