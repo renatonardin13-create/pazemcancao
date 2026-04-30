@@ -3,6 +3,7 @@ import { LogOut, Settings, UserCircle, Headphones, GraduationCap, Menu, X } from
 import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useProjectMode } from "@/hooks/use-project-mode";
+import { useArea } from "@/providers/AreaProvider";
 import { NotificationBell } from "./NotificationBell";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
@@ -14,16 +15,19 @@ interface AppHeaderProps {
 export function AppHeader({ showLogout = true }: AppHeaderProps) {
   const { logout, isAdmin, adminLoading } = useAuth();
   const { showMusicInMenu, showCoursesInMenu, showPerfilInMenu } = useProjectMode();
+  const { currentArea } = useArea();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
   const navItems = useMemo(() => {
     const items: { to: string; icon: typeof Headphones; label: string }[] = [];
-    if (showMusicInMenu) items.push({ to: "/musicas", icon: Headphones, label: "Músicas" });
+    const prefix = currentArea ? `/area/${currentArea.slug}` : "";
+    
+    if (showMusicInMenu) items.push({ to: prefix ? `${prefix}/musicas` : "/musicas", icon: Headphones, label: "Músicas" });
     if (showCoursesInMenu) items.push({ to: "/cursos", icon: GraduationCap, label: "Cursos" });
     if (showPerfilInMenu) items.push({ to: "/perfil", icon: UserCircle, label: "Perfil" });
     return items;
-  }, [showMusicInMenu, showCoursesInMenu, showPerfilInMenu]);
+  }, [showMusicInMenu, showCoursesInMenu, showPerfilInMenu, currentArea]);
 
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + "/");
 
@@ -38,7 +42,7 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
   return (
     <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-2xl border-b border-border/15">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 sm:px-6 h-14 sm:h-16">
-        <LogoBrand size="md" showSubtitle />
+        <LogoBrand size="md" showSubtitle linkTo={currentArea ? `/area/${currentArea.slug}` : "/home"} />
 
         {/* Desktop nav */}
         <div className="hidden sm:flex items-center gap-1">

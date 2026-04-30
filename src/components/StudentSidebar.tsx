@@ -129,14 +129,16 @@ export function StudentSidebar() {
     const currentCategoria = typeof currentCategoriaRaw === "string" ? currentCategoriaRaw.trim().toLowerCase() : "";
     const validCategorySlugs = new Set(visibleCategories.map((cat: any) => String(cat.slug || cat.name).trim().toLowerCase()));
     const hasValidCategory = Boolean(currentCategoria) && validCategorySlugs.has(currentCategoria);
-    const isOnMusicas = isActivePrefix("/musicas");
+    
+    const targetTo = currentArea ? `/area/${currentArea.slug}/musicas` : "/musicas";
+    
+    const isOnMusicas = isActivePrefix(targetTo);
     const isGeneralActive = isOnMusicas && !hasValidCategory;
 
     return (
       <div>
         <Link
-          to="/musicas"
-          search={{}}
+          to={targetTo as any}
           onClick={() => setMobileOpen(false)}
           className={cn(navItemClass(isGeneralActive), "w-full")}
         >
@@ -149,12 +151,21 @@ export function StudentSidebar() {
 
   const renderMenuItem = (cfg: { key: string; label: string; icon: LucideIcon; to: string; matchPrefix: boolean }) => {
     const Icon = cfg.icon;
-    const active = cfg.matchPrefix ? isActivePrefix(cfg.to) : isActive(cfg.to);
+    
+    // Adjust route if in a specific area
+    let targetTo = cfg.to;
+    if (currentArea) {
+      if (cfg.key === 'vitrine') targetTo = `/area/${currentArea.slug}`;
+      else if (cfg.key === 'louvores') targetTo = `/area/${currentArea.slug}/musicas`;
+      // Other modules could also have area-specific routes if we create them
+    }
+
+    const active = cfg.matchPrefix ? isActivePrefix(targetTo) : isActive(targetTo);
 
     return (
       <Link
         key={cfg.key}
-        to={cfg.to}
+        to={targetTo as any}
         onClick={() => setMobileOpen(false)}
         className={navItemClass(active)}
       >
