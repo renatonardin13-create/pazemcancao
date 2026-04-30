@@ -119,33 +119,52 @@ export function AdminAreasPanel() {
     setIsDialogOpen(true);
   };
 
-  const handleOpenEdit = (area: Area) => {
-    setEditingArea(area);
-    setFormData({
-      name: area.name || "",
-      short_label: (area as any).short_label || "",
-      slug: area.slug || "",
-      description: area.description || "",
-      primary_color: area.primary_color || "#D4A853",
-      domain: area.domain || "",
-      status: (area as any).status || "draft",
-      language: area.language || "pt",
-    });
-    setIsDialogOpen(true);
+  const generateSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
   };
 
-  const handleCloseDialog = () => {
-    setIsDialogOpen(false);
-    setEditingArea(null);
-    resetForm();
+  const handleNameChange = (name: string) => {
+    setFormData(prev => ({
+      ...prev,
+      name,
+      slug: editingArea ? prev.slug : (prev.slug === generateSlug(prev.name) || !prev.slug ? generateSlug(name) : prev.slug)
+    }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    let finalSlug = formData.slug || generateSlug(formData.name);
+    if (!finalSlug) {
+      toast.error("Por favor, informe um nome ou slug para a área.");
+      return;
+    }
+
+    const { data: existingArea } = await supabase
+      .from("areas")
+      .select("id")
+      .eq("slug", finalSlug)
+      .neq("id", editingArea?.id || "00000000-0000-0000-0000-000000000000")
+      .maybeSingle();
+
+    if (existingArea) {
+      toast.error("Este slug já está em uso. Por favor, escolha outro.");
+      return;
+    }
+
+    const dataToSave = { ...formData, slug: finalSlug };
+
     if (editingArea) {
-      updateMutation.mutate({ id: editingArea.id, data: formData });
+      updateMutation.mutate({ id: editingArea.id, data: dataToSave });
     } else {
-      createMutation.mutate(formData);
+      createMutation.mutate(dataToSave);
     }
   };
 
