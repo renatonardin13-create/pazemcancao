@@ -15,6 +15,17 @@ export const getAreas = async () => {
   return data || [];
 };
 
+export const getArea = async (id: string) => {
+  const { data, error } = await supabase
+    .from("areas")
+    .select("*")
+    .eq("id", id)
+    .single();
+
+  if (error) throw error;
+  return data;
+};
+
 export const createArea = async (area: AreaInsert) => {
   const { data, error } = await supabase
     .from("areas")
