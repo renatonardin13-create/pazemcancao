@@ -138,7 +138,9 @@ export type Database = {
           primary_color: string | null
           secondary_color: string | null
           settings: Json | null
+          short_label: string | null
           slug: string
+          status: string | null
           surface_color: string | null
         }
         Insert: {
@@ -158,7 +160,9 @@ export type Database = {
           primary_color?: string | null
           secondary_color?: string | null
           settings?: Json | null
+          short_label?: string | null
           slug: string
+          status?: string | null
           surface_color?: string | null
         }
         Update: {
@@ -178,7 +182,9 @@ export type Database = {
           primary_color?: string | null
           secondary_color?: string | null
           settings?: Json | null
+          short_label?: string | null
           slug?: string
+          status?: string | null
           surface_color?: string | null
         }
         Relationships: []
