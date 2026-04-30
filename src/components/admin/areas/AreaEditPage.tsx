@@ -621,3 +621,27 @@ function ProductsTab({ areaId, courses, areaContents }: any) {
     </Card>
   );
 }
+function CardsTab({ area, onSave, saving }: any) {
+  const settings = area.settings as Record<string, any> || {};
+  
+  const handleSave = (config: any) => {
+    onSave({
+      settings: {
+        ...settings,
+        cards_config: config
+      }
+    });
+  };
+
+  return (
+    <Card className="bg-card/40 backdrop-blur-sm border-border/20 rounded-[2rem] overflow-hidden shadow-2xl">
+      <CardContent className="p-8">
+        <AdminCardsConfigTab 
+          initial={settings.cards_config || {}} 
+          onSave={handleSave}
+          isLoading={saving}
+        />
+      </CardContent>
+    </Card>
+  );
+}
