@@ -5,11 +5,34 @@ import { useAuth } from "@/hooks/use-auth";
 import { ContentCard } from "@/components/ContentCard";
 import { TrackCard } from "@/components/TrackCard";
 import { Search, Filter, Music, BookOpen, GraduationCap, LayoutGrid } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useArea } from "@/providers/AreaProvider";
-import { useEffect } from "react";
+import type { Track } from "@/lib/sample-tracks";
+
+function getStoragePublicUrl(storagePath: string | null | undefined) {
+  if (!storagePath) return "";
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  return `${supabaseUrl}/storage/v1/object/public/tracks/${storagePath}`;
+}
+
+function dbTrackToPlayerTrack(track: any): Track {
+  const audioUrl = getStoragePublicUrl(track?.storage_path);
+  return {
+    id: String(track?.id ?? ""),
+    title: track?.title || "Música sem título",
+    duration: track?.duration || "0:00",
+    category: track?.category || "Sem categoria",
+    audioUrl,
+    downloadUrl: track?.download_url || audioUrl,
+    description: track?.description || "",
+    coverUrl: track?.cover_url || undefined,
+    isBonus: Boolean(track?.is_bonus),
+    bonusReleaseDate: track?.bonus_release_date ?? null,
+    isLocked: track?.is_active === false,
+  };
+}
 
 export const Route = createFileRoute("/_authenticated/area/$slug/")({
   component: AreaDashboard,
@@ -72,7 +95,7 @@ function AreaDashboard() {
     },
   });
 
-  const { data: tracks = [] } = useQuery({
+  const { data: rawTracks = [] } = useQuery({
     queryKey: ["area-tracks", area?.id],
     enabled: !!area?.id,
     queryFn: async () => {
@@ -86,6 +109,8 @@ function AreaDashboard() {
       return data;
     },
   });
+
+  const tracks = useMemo(() => rawTracks.map(dbTrackToPlayerTrack), [rawTracks]);
 
   const filteredContents = useMemo(() => {
     return contents.filter((item) => {
