@@ -35,11 +35,12 @@ function AreaLayout() {
     queryKey: ["membership", area?.id, user?.id],
     enabled: !!area?.id && !!user?.id && !isAdmin,
     queryFn: async () => {
+      if (!area?.id || !user?.id) return null;
       const { data, error } = await supabase
         .from("memberships")
         .select("*")
-        .eq("area_id", area?.id)
-        .eq("user_id", user?.id)
+        .eq("area_id", area.id)
+        .eq("user_id", user.id)
         .maybeSingle();
       
       if (error) throw error;
@@ -113,7 +114,7 @@ function AreaLayout() {
       <div className="flex-1 flex flex-col min-w-0">
         <AppHeader />
         <main className="flex-1 overflow-y-auto">
-          <Outlet context={{ areaId: area.id, primaryColor: area.primary_color }} />
+          <Outlet />
         </main>
       </div>
       <GlobalPlayer />
