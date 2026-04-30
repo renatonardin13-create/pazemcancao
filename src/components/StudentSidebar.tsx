@@ -2,7 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { listActiveTracks } from "@/lib/tracks.functions";
-import { useArea } from "@/providers/AreaProvider";
+// useArea removed
 import { useProjectMode } from "@/hooks/use-project-mode";
 import { LogoBrand } from "./LogoBrand";
 import {
@@ -59,13 +59,13 @@ const LOUVOR_CATEGORY_LABELS: Record<(typeof OFFICIAL_LOUVOR_CATEGORIES)[number]
 export function StudentSidebar() {
   const { logout, isAdmin, adminLoading } = useAuth();
   const { dbModules } = useProjectMode();
-  const { currentArea } = useArea();
+  // currentArea removed
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const { data: tracksData } = useQuery({
-    queryKey: ["tracks-active", currentArea?.id],
-    queryFn: () => listActiveTracks({ data: { areaId: currentArea?.id } }),
+    queryKey: ["tracks-active"],
+    queryFn: () => listActiveTracks({ data: {} }),
     staleTime: 60_000,
   });
 
@@ -130,7 +130,7 @@ export function StudentSidebar() {
     const validCategorySlugs = new Set(visibleCategories.map((cat: any) => String(cat.slug || cat.name).trim().toLowerCase()));
     const hasValidCategory = Boolean(currentCategoria) && validCategorySlugs.has(currentCategoria);
     
-    const targetTo = currentArea ? `/area/${currentArea.slug}/musicas` : "/musicas";
+    const targetTo = "/musicas";
     
     const isOnMusicas = isActivePrefix(targetTo);
     const isGeneralActive = isOnMusicas && !hasValidCategory;
@@ -154,11 +154,7 @@ export function StudentSidebar() {
     
     // Adjust route if in a specific area
     let targetTo = cfg.to;
-    if (currentArea) {
-      if (cfg.key === 'vitrine') targetTo = `/area/${currentArea.slug}`;
-      else if (cfg.key === 'louvores') targetTo = `/area/${currentArea.slug}/musicas`;
-      // Other modules could also have area-specific routes if we create them
-    }
+    // Area specific logic removed
 
     const active = cfg.matchPrefix ? isActivePrefix(targetTo) : isActive(targetTo);
 
