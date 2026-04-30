@@ -17,6 +17,7 @@ function AreaLayout() {
   const { slug } = useParams({ from: "/_authenticated/area/$slug" });
   const { user, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
+  const { switchArea, currentArea } = useArea();
 
   const { data: area, isLoading: areaLoading, error: areaError } = useQuery({
     queryKey: ["area", slug],
