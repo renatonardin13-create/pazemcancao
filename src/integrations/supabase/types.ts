@@ -382,24 +382,30 @@ export type Database = {
           area_id: string | null
           created_at: string | null
           id: string
+          status: string | null
           title: string
           type: string | null
+          updated_at: string | null
           url: string | null
         }
         Insert: {
           area_id?: string | null
           created_at?: string | null
           id?: string
+          status?: string | null
           title: string
           type?: string | null
+          updated_at?: string | null
           url?: string | null
         }
         Update: {
           area_id?: string | null
           created_at?: string | null
           id?: string
+          status?: string | null
           title?: string
           type?: string | null
+          updated_at?: string | null
           url?: string | null
         }
         Relationships: [
