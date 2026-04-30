@@ -139,7 +139,6 @@ export function StudentSidebar() {
       <div>
         <Link
           to={targetTo as any}
-          search={{}}
           onClick={() => setMobileOpen(false)}
           className={cn(navItemClass(isGeneralActive), "w-full")}
         >
