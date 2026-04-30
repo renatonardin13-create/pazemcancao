@@ -82,6 +82,7 @@ const STATUS_CLASS: Record<ReturnType<typeof getStatus>, string> = {
 function MeusCursosPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { currentArea } = useArea();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
 
