@@ -46,10 +46,11 @@ function AreaDashboard() {
     queryKey: ["categories", area?.id],
     enabled: !!area?.id,
     queryFn: async () => {
+      if (!area?.id) return [];
       const { data, error } = await supabase
         .from("categories")
         .select("*")
-        .eq("area_id", area?.id)
+        .eq("area_id", area.id)
         .order("sort_order", { ascending: true });
       if (error) throw error;
       return data;
@@ -60,10 +61,11 @@ function AreaDashboard() {
     queryKey: ["area-contents", area?.id],
     enabled: !!area?.id,
     queryFn: async () => {
+      if (!area?.id) return [];
       const { data, error } = await supabase
         .from("contents")
         .select("*, categories(name)")
-        .eq("area_id", area?.id)
+        .eq("area_id", area.id)
         .order("sort_order", { ascending: true });
       if (error) throw error;
       return data;
@@ -74,10 +76,11 @@ function AreaDashboard() {
     queryKey: ["area-tracks", area?.id],
     enabled: !!area?.id,
     queryFn: async () => {
+      if (!area?.id) return [];
       const { data, error } = await supabase
         .from("tracks")
         .select("*")
-        .eq("area_id", area?.id)
+        .eq("area_id", area.id)
         .order("sort_order", { ascending: true });
       if (error) throw error;
       return data;
