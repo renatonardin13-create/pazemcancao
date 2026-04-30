@@ -14,7 +14,6 @@ import {
 import { useMemo, useState } from "react";
 
 import { EmptyState } from "@/components/EmptyState";
-import { useArea } from "@/providers/AreaProvider";
 import { CardGridSkeleton } from "@/components/LoadingSkeletons";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
@@ -83,7 +82,6 @@ const STATUS_CLASS: Record<ReturnType<typeof getStatus>, string> = {
 function MeusCursosPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { currentArea } = useArea();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
 
@@ -94,8 +92,8 @@ function MeusCursosPage() {
   });
 
   const { data: myData, isLoading } = useQuery({
-    queryKey: ["my-courses-library", "v2", currentArea?.id],
-    queryFn: () => getMyCoursesData({ data: { areaId: currentArea?.id } }),
+    queryKey: ["my-courses-library", "v2", undefined],
+    queryFn: () => getMyCoursesData({ data: { areaId: undefined } }),
     staleTime: 30_000,
   });
 

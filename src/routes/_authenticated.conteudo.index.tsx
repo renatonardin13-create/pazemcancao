@@ -3,7 +3,6 @@ import { Progress } from "@/components/ui/progress";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useCallback, useState, useEffect } from "react";
-import { useArea } from "@/providers/AreaProvider";
 import { trackContentView, trackContentDownload } from "@/lib/progress.functions";
 import { listContentItems } from "@/lib/content.functions";
 import { listFavorites, toggleFavorite } from "@/lib/favorites.functions";
@@ -83,19 +82,18 @@ function getInspirationPhrase(): string {
 function ContentPage() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  const { currentArea } = useArea();
 
   const handleTrackView = useCallback((contentId: string) => {
-    trackContentView({ data: { contentId, areaId: currentArea?.id } }).then(() => {
+    trackContentView({ data: { contentId, areaId: undefined } }).then(() => {
       queryClient.invalidateQueries({ queryKey: ["content-items"] });
     });
-  }, [queryClient, currentArea?.id]);
+  }, [queryClient, undefined]);
 
   const handleTrackDownload = useCallback((contentId: string) => {
-    trackContentDownload({ data: { contentId, areaId: currentArea?.id } }).then(() => {
+    trackContentDownload({ data: { contentId, areaId: undefined } }).then(() => {
       queryClient.invalidateQueries({ queryKey: ["content-items"] });
     });
-  }, [queryClient, currentArea?.id]);
+  }, [queryClient, undefined]);
 
   // RC1: dedupe ids across "Top semana" → "Mais acessados" → "Lançamentos" → "Recomendado"
   const [weeklyTopIds, setWeeklyTopIds] = useState<string[]>([]);
@@ -108,8 +106,8 @@ function ContentPage() {
   );
 
   const { data, isLoading } = useQuery({
-    queryKey: ["content-items", currentArea?.id],
-    queryFn: () => listContentItems({ data: { areaId: currentArea?.id } }),
+    queryKey: ["content-items", undefined],
+    queryFn: () => listContentItems({ data: { areaId: undefined } }),
     refetchOnWindowFocus: true,
     staleTime: 60_000,
   });

@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useCallback, useRef, useEffect, type ReactNode } from "react";
 import type { Track } from "@/lib/sample-tracks";
 import { logPlay } from "@/lib/analytics.functions";
-import { useArea } from "@/providers/AreaProvider";
+// useArea removed
 
 interface PlayerState {
   currentTrack: Track | null;
@@ -42,7 +42,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const queueRef = useRef<Track[]>([]);
   const queueIndexRef = useRef(-1);
   const playLoggedRef = useRef<string | null>(null);
-  const { currentArea } = useArea();
+  // currentArea removed
 
   // Keep refs in sync
   useEffect(() => { queueRef.current = queue; }, [queue]);
@@ -93,7 +93,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
             data: {
               trackId: String(track.id),
               durationSeconds: Math.round(audio!.currentTime),
-              areaId: currentArea?.id || undefined
+              areaId: undefined
             }
           }).catch(() => {});
         }

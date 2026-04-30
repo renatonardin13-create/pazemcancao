@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { AlertCircle, RefreshCw, Loader2, LayoutGrid, ChevronRight } from "lucide-react";
-import { useArea } from "@/providers/AreaProvider";
 import { ModuleGuard } from "@/components/ModuleGuard";
 import { getStudentVitrineData } from "@/lib/student-vitrine.functions";
 import { StudentLayout } from "@/components/StudentLayout";
@@ -53,11 +52,10 @@ const FEATURED_LIMIT = 10;
 function VitrinePage() {
   const [activeCategory, setActiveCategory] = useState<string>(ALL_KEY);
   const [showAll, setShowAll] = useState(false);
-  const { currentArea } = useArea();
 
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ["student-shelves", "v4-clean", currentArea?.id],
-    queryFn: () => getStudentVitrineData({ data: { areaId: currentArea?.id } }),
+    queryKey: ["student-shelves", "v4-clean", undefined],
+    queryFn: () => getStudentVitrineData({ data: { areaId: undefined } }),
     staleTime: 30_000,
     refetchOnWindowFocus: false,
     retry: 1,
