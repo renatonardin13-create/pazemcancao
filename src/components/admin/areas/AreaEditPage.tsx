@@ -554,10 +554,16 @@ function ModulesTab({ areaId, areaContents }: any) {
     title: "",
     type: "course",
     url: "",
+    category_id: "",
+  });
+
+  const { data: categories } = useQuery({
+    queryKey: ["area-categories", areaId],
+    queryFn: () => getCategoriesByArea(areaId),
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: any) => addAreaContent(areaId, data.title, data.type, data.url),
+    mutationFn: (data: any) => addAreaContent(areaId, data.title, data.type, data.url, data.category_id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["area-contents", areaId] });
       toast.success("Módulo adicionado!");
@@ -599,7 +605,7 @@ function ModulesTab({ areaId, areaContents }: any) {
 
   const handleOpenCreate = () => {
     setEditingModule(null);
-    setFormData({ title: "", type: "course", url: "" });
+    setFormData({ title: "", type: "course", url: "", category_id: "" });
     setIsDialogOpen(true);
   };
 
@@ -608,7 +614,8 @@ function ModulesTab({ areaId, areaContents }: any) {
     setFormData({ 
       title: module.title, 
       type: module.type, 
-      url: module.url || "" 
+      url: module.url || "",
+      category_id: module.category_id || "",
     });
     setIsDialogOpen(true);
   };
@@ -674,6 +681,8 @@ function ModulesTab({ areaId, areaContents }: any) {
             <thead>
               <tr className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 px-6">
                 <th className="pb-4 pl-6">Módulo</th>
+                <th className="pb-4">Categoria</th>
+                <th className="pb-4">Data</th>
                 <th className="pb-4">Tipo</th>
                 <th className="pb-4 text-center">Status</th>
                 <th className="pb-4 text-right pr-6">Ações</th>
@@ -689,6 +698,16 @@ function ModulesTab({ areaId, areaContents }: any) {
                       </div>
                       <span className="font-bold text-foreground tracking-tight">{content.title}</span>
                     </div>
+                  </td>
+                  <td className="py-4 border-y border-border/10">
+                    <span className="text-xs font-medium text-muted-foreground">
+                      {content.categories?.name || "Sem categoria"}
+                    </span>
+                  </td>
+                  <td className="py-4 border-y border-border/10">
+                    <span className="text-[10px] font-mono text-muted-foreground/60">
+                      {new Date(content.created_at).toLocaleDateString('pt-BR')}
+                    </span>
                   </td>
                   <td className="py-4 border-y border-border/10 uppercase text-[10px] font-black tracking-widest text-muted-foreground/60">
                     {content.type}
@@ -733,7 +752,7 @@ function ModulesTab({ areaId, areaContents }: any) {
               ))}
               {filteredContents.length === 0 && (
                 <tr>
-                  <td colSpan={4} className="py-20 text-center text-muted-foreground/40 font-bold uppercase tracking-widest text-xs italic">
+                  <td colSpan={6} className="py-20 text-center text-muted-foreground/40 font-bold uppercase tracking-widest text-xs italic">
                     Nenhum módulo encontrado
                   </td>
                 </tr>
@@ -768,23 +787,44 @@ function ModulesTab({ areaId, areaContents }: any) {
                   />
                 </div>
 
-                <div className="space-y-2.5">
-                  <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/70">
-                    Tipo de Conteúdo
-                  </Label>
-                  <Select 
-                    value={formData.type} 
-                    onValueChange={(value) => setFormData({ ...formData, type: value })}
-                  >
-                    <SelectTrigger className="h-12 bg-black/20 border-border/30 focus:border-gold/50 rounded-xl">
-                      <SelectValue placeholder="Selecione o tipo" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-card border-border/40">
-                      <SelectItem value="course">Curso / Vídeo</SelectItem>
-                      <SelectItem value="music">Música / Playlist</SelectItem>
-                      <SelectItem value="ebook">Ebook / PDF</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2.5">
+                    <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/70">
+                      Tipo de Conteúdo
+                    </Label>
+                    <Select 
+                      value={formData.type} 
+                      onValueChange={(value) => setFormData({ ...formData, type: value })}
+                    >
+                      <SelectTrigger className="h-12 bg-black/20 border-border/30 focus:border-gold/50 rounded-xl">
+                        <SelectValue placeholder="Tipo" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-card border-border/40">
+                        <SelectItem value="course">Curso / Vídeo</SelectItem>
+                        <SelectItem value="music">Música / Playlist</SelectItem>
+                        <SelectItem value="ebook">Ebook / PDF</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/70">
+                      Categoria
+                    </Label>
+                    <Select 
+                      value={formData.category_id} 
+                      onValueChange={(value) => setFormData({ ...formData, category_id: value })}
+                    >
+                      <SelectTrigger className="h-12 bg-black/20 border-border/30 focus:border-gold/50 rounded-xl">
+                        <SelectValue placeholder="Selecione" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-card border-border/40">
+                        {categories?.map((cat: any) => (
+                          <SelectItem key={cat.id} value={cat.id}>{cat.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 <div className="space-y-2.5">
