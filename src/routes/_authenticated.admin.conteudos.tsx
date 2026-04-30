@@ -63,7 +63,7 @@ function AdminContentPage() {
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
-  const [filterArea, setFilterArea] = useState("all");
+  // filterArea removed
 
   // Form state
   const [title, setTitle] = useState("");
@@ -113,11 +113,7 @@ function AdminContentPage() {
     staleTime: 60_000,
   });
 
-  const { data: areasData } = useQuery({
-    queryKey: ["admin-areas"],
-    queryFn: () => getAreas(),
-    staleTime: 5 * 60_000,
-  });
+  // areasData query removed
 
   const categoryOptions = useMemo(() => {
     const base = [{ value: "__none__", label: "Nenhuma (padrão por tipo)" }];
@@ -307,9 +303,8 @@ function AdminContentPage() {
     if (typeFilter !== "all") {
       list = list.filter((i: any) => i.content_type === typeFilter);
     }
-    if (filterArea !== "all") {
-      list = list.filter((i: any) => i.area_id === filterArea);
-    }
+    // filterArea removed
+    return list;
     return list;
   }, [data?.items, search, typeFilter]);
 
@@ -362,17 +357,7 @@ function AdminContentPage() {
             <SelectItem value="material">📄 Materiais</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={filterArea} onValueChange={setFilterArea}>
-          <SelectTrigger className="w-full sm:w-[220px] h-12 bg-card/15 border-border/25 rounded-2xl focus:border-gold/30 transition-all text-sm">
-            <SelectValue placeholder="Filtrar por área" />
-          </SelectTrigger>
-          <SelectContent className="bg-card border-border/40 rounded-xl">
-            <SelectItem value="all">Todas as áreas</SelectItem>
-            {areasData?.map((area: any) => (
-              <SelectItem key={area.id} value={area.id}>{area.name}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        {/* filterArea removed */}
       </div>
 
       {/* Form Dialog */}
@@ -384,19 +369,7 @@ function AdminContentPage() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-2">
-            <div className="space-y-2">
-              <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">Ambiente (Área)</Label>
-              <Select value={areaId} onValueChange={setAreaId} disabled={isSubmitting}>
-                <SelectTrigger className="bg-card/15 border-border/30 text-sm">
-                  <SelectValue placeholder="Selecione um ambiente..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {areasData?.map((area: any) => (
-                    <SelectItem key={area.id} value={area.id}>{area.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {/* areaId removed */}
 
             <div className="space-y-2">
               <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">Tipo</Label>

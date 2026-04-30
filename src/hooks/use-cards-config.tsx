@@ -80,14 +80,8 @@ function mergeSizing(raw: any): CardsConfig["sizing"] {
 export function useCardsConfig(): CardsConfig {
   
   const { data } = useQuery({
-    queryKey: ["platform-settings", "cards_config", undefined],
+    queryKey: ["platform-settings", "cards_config"],
     queryFn: async () => {
-      // Prioritize area settings if available
-      const areaSettings = currentArea?.settings as Record<string, any> | undefined;
-      if (areaSettings?.cards_config) {
-        return areaSettings.cards_config as Partial<CardsConfig>;
-      }
-      
       const res = await getPlatformSettings();
       return (res?.settings?.cards_config ?? {}) as Partial<CardsConfig>;
     },
