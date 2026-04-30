@@ -248,7 +248,7 @@ function AuthenticatedLayout() {
   return (
     <SafeBoundary fallbackTitle="Erro ao carregar a área do aluno">
       <AreaProvider>
-        <Outlet />
+        <CardsConfigLoader />
       </AreaProvider>
     </SafeBoundary>
   );
