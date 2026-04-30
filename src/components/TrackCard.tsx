@@ -244,6 +244,7 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
         progress={isPlaying && !isRestricted ? progress : null}
         locked={isRestricted}
         index={index}
+        highlight={isPlaying}
       />
     </Link>
   );
