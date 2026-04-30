@@ -3,6 +3,7 @@ import { Progress } from "@/components/ui/progress";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useCallback, useState, useEffect } from "react";
+import { useArea } from "@/providers/AreaProvider";
 import { trackContentView, trackContentDownload } from "@/lib/progress.functions";
 import { listContentItems } from "@/lib/content.functions";
 import { listFavorites, toggleFavorite } from "@/lib/favorites.functions";
@@ -105,9 +106,11 @@ function ContentPage() {
     [weeklyTopIds, allTimeTopIds, newItemsIds],
   );
 
+  const { currentArea } = useArea();
+
   const { data, isLoading } = useQuery({
-    queryKey: ["content-items"],
-    queryFn: () => listContentItems(),
+    queryKey: ["content-items", currentArea?.id],
+    queryFn: () => listContentItems({ data: { areaId: currentArea?.id } }),
     refetchOnWindowFocus: true,
     staleTime: 60_000,
   });
