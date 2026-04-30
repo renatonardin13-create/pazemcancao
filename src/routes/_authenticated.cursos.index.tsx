@@ -14,6 +14,7 @@ import {
 import { useMemo, useState } from "react";
 
 import { EmptyState } from "@/components/EmptyState";
+import { useArea } from "@/providers/AreaProvider";
 import { CardGridSkeleton } from "@/components/LoadingSkeletons";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
