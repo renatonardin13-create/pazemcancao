@@ -209,6 +209,7 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
             progress={null}
             locked={isRestricted}
             index={index}
+            highlight={isPlaying}
           />
         </div>
         <UnlockModal
