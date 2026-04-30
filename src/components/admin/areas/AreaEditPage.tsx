@@ -137,19 +137,76 @@ export function AreaEditPage() {
 }
 
 function GeneralTab({ area, onSave, saving }: any) {
-  const [data, setData] = useState({ name: area.name, slug: area.slug, description: area.description, domain: area.domain });
+  const [data, setData] = useState({ 
+    name: area.name, 
+    slug: area.slug, 
+    description: area.description || "", 
+    domain: area.domain || "" 
+  });
+
   return (
-    <Card className="bg-card/40 border-border/20">
-      <CardContent className="p-6 space-y-4">
-        <Label>Nome da Área</Label>
-        <Input value={data.name} onChange={(e) => setData({ ...data, name: e.target.value })} />
-        <Label>Slug</Label>
-        <Input value={data.slug} onChange={(e) => setData({ ...data, slug: e.target.value })} />
-        <Label>Descrição</Label>
-        <Textarea value={data.description} onChange={(e) => setData({ ...data, description: e.target.value })} />
-        <Label>Domínio</Label>
-        <Input value={data.domain} onChange={(e) => setData({ ...data, domain: e.target.value })} />
-        <Button onClick={() => onSave(data)} disabled={saving}><Save className="h-4 w-4 mr-2"/>Salvar</Button>
+    <Card className="bg-card/40 backdrop-blur-sm border-border/20 rounded-[2rem] overflow-hidden shadow-2xl">
+      <CardContent className="p-8 space-y-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-3">
+            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">Nome da Área</Label>
+            <div className="relative group">
+              <Type className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/30 group-focus-within:text-gold transition-colors" />
+              <Input 
+                className="pl-12 h-14 bg-black/20 border-border/30 rounded-2xl focus:border-gold/50 transition-all text-lg font-bold" 
+                value={data.name} 
+                onChange={(e) => setData({ ...data, name: e.target.value })} 
+              />
+            </div>
+          </div>
+          
+          <div className="space-y-3">
+            <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">Identificador (Slug)</Label>
+            <div className="relative group">
+              <Link2 className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/30 group-focus-within:text-gold transition-colors" />
+              <Input 
+                className="pl-12 h-14 bg-black/20 border-border/30 rounded-2xl focus:border-gold/50 transition-all font-mono" 
+                value={data.slug} 
+                onChange={(e) => setData({ ...data, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })} 
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">Descrição do Ecossistema</Label>
+          <Textarea 
+            className="bg-black/20 border-border/30 rounded-2xl focus:border-gold/50 transition-all min-h-[120px] p-6 text-base leading-relaxed" 
+            value={data.description} 
+            onChange={(e) => setData({ ...data, description: e.target.value })} 
+            placeholder="Descreva o propósito desta área de membros..."
+          />
+        </div>
+
+        <div className="space-y-3">
+          <Label className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">Domínio Próprio</Label>
+          <div className="relative group">
+            <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/30 group-focus-within:text-gold transition-colors" />
+            <Input 
+              className="pl-12 h-14 bg-black/20 border-border/30 rounded-2xl focus:border-gold/50 transition-all" 
+              value={data.domain} 
+              placeholder="ex: alunos.seu-dominio.com"
+              onChange={(e) => setData({ ...data, domain: e.target.value })} 
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end pt-4 border-t border-border/10">
+          <Button 
+            size="lg"
+            onClick={() => onSave(data)} 
+            disabled={saving}
+            className="h-14 px-10 rounded-2xl bg-gold hover:bg-gold/90 text-black font-black gap-2 transition-all active:scale-95 shadow-xl shadow-gold/5"
+          >
+            {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
+            Salvar Alterações
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );
