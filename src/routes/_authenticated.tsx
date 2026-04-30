@@ -15,8 +15,6 @@ export const Route = createFileRoute("/_authenticated")({
 
 function AuthenticatedLayout() {
   const { isAuthenticated, loading, adminLoading, isAdmin, logout, user, blocked, blockMessage } = useAuth();
-  // Carrega cards_config global do admin (popula cache para PosterCard)
-  useCardsConfig();
   const navigate = useNavigate();
   const location = useLocation();
 
