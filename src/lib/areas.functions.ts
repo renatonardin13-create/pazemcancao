@@ -69,18 +69,26 @@ export const deleteArea = async (id: string) => {
 export const getAreaContents = async (areaId: string) => {
   const { data, error } = await supabase
     .from("contents")
-    .select("*")
-    .eq("area_id", areaId);
+    .select("*, categories(name)")
+    .eq("area_id", areaId)
+    .order("created_at", { ascending: false });
 
   if (error) throw error;
   return data || [];
 };
 
-export const addAreaContent = async (areaId: string, title: string, type: string, url: string) => {
+export const addAreaContent = async (areaId: string, title: string, type: string, url: string, categoryId?: string) => {
   const { data, error } = await supabase
     .from("contents")
-    .insert({ area_id: areaId, title, type, url })
-    .select()
+    .insert({ 
+      area_id: areaId, 
+      title, 
+      type, 
+      url, 
+      category_id: categoryId,
+      status: 'active' 
+    })
+    .select("*, categories(name)")
     .single();
 
   if (error) throw error;
@@ -97,7 +105,7 @@ export const updateAreaContent = async (id: string, updates: any) => {
     .from("contents")
     .update(updates)
     .eq("id", id)
-    .select()
+    .select("*, categories(name)")
     .single();
 
   if (error) throw error;
