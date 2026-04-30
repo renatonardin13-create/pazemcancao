@@ -83,6 +83,7 @@ function getInspirationPhrase(): string {
 function ContentPage() {
   const { user } = useAuth();
   const queryClient = useQueryClient();
+  const { currentArea } = useArea();
 
   const handleTrackView = useCallback((contentId: string) => {
     trackContentView({ data: { contentId, areaId: currentArea?.id } }).then(() => {
@@ -105,8 +106,6 @@ function ContentPage() {
     () => new Set([...weeklyTopIds, ...allTimeTopIds, ...newItemsIds]),
     [weeklyTopIds, allTimeTopIds, newItemsIds],
   );
-
-  const { currentArea } = useArea();
 
   const { data, isLoading } = useQuery({
     queryKey: ["content-items", currentArea?.id],
