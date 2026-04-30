@@ -12,7 +12,7 @@ export const getAreas = async () => {
     .order("created_at", { ascending: false });
 
   if (error) throw error;
-  return data;
+  return data || [];
 };
 
 export const createArea = async (area: AreaInsert) => {
