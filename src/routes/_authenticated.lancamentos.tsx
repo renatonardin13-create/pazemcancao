@@ -9,6 +9,7 @@ import { listContentItems } from "@/lib/content.functions";
 import { listFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { trackContentView, trackContentDownload } from "@/lib/progress.functions";
 import { useMemo, useCallback } from "react";
+import { useArea } from "@/providers/AreaProvider";
 import { Rocket } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/lancamentos")({
@@ -17,10 +18,11 @@ export const Route = createFileRoute("/_authenticated/lancamentos")({
 
 function LancamentosPage() {
   const queryClient = useQueryClient();
+  const { currentArea } = useArea();
 
   const { data, isLoading } = useQuery({
-    queryKey: ["content-items"],
-    queryFn: () => listContentItems(),
+    queryKey: ["content-items", currentArea?.id],
+    queryFn: () => listContentItems({ data: { areaId: currentArea?.id } }),
     staleTime: 60_000,
   });
 
