@@ -91,3 +91,15 @@ export const removeAreaContent = async (id: string) => {
   const { error } = await supabase.from("contents").delete().eq("id", id);
   if (error) throw error;
 };
+
+export const updateAreaContent = async (id: string, updates: any) => {
+  const { data, error } = await supabase
+    .from("contents")
+    .update(updates)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) throw error;
+  return data;
+};

@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { useParams, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getArea, updateArea, getAreaContents, addAreaContent, removeAreaContent } from "@/lib/areas.functions";
+import { getArea, updateArea, getAreaContents, addAreaContent, removeAreaContent, updateAreaContent } from "@/lib/areas.functions";
 import { listAdminCourses } from "@/lib/admin-courses.functions";
 import { uploadPlatformAsset } from "@/lib/platform-settings.functions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { 
   Loader2, ArrowLeft, Save, Globe, Palette, Type, Layout, 
   Upload, Languages, LogIn, Package, CheckCircle2, Circle, X, Eye, Link2, Plus,
-  LayoutPanelTop
+  LayoutPanelTop, Search, Edit3, Trash2, Music, Video, BookOpen, MoreVertical
 } from "lucide-react";
 import { AdminCardsConfigTab } from "@/components/AdminCardsConfigTab";
 
@@ -101,7 +101,7 @@ export function AreaEditPage() {
               { id: "colors", label: "Cores", icon: Palette },
               { id: "language", label: "Idioma", icon: Languages },
               { id: "login", label: "Login", icon: LogIn },
-              { id: "products", label: "Produtos", icon: Package },
+              { id: "products", label: "Módulos", icon: Package },
               { id: "cards", label: "Cards", icon: LayoutPanelTop },
             ].map((tab) => (
               <TabsTrigger 
@@ -132,7 +132,7 @@ export function AreaEditPage() {
           <LoginTab area={area} onSave={(data: any) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
         </TabsContent>
         <TabsContent value="products">
-          <ProductsTab areaId={areaId} courses={coursesData?.courses || []} areaContents={areaContents || []} />
+          <ModulesTab areaId={areaId} areaContents={areaContents || []} />
         </TabsContent>
         <TabsContent value="cards">
           <CardsTab area={area} onSave={(data: any) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
@@ -530,92 +530,135 @@ function LoginTab({ area, onSave, saving }: any) {
   );
 }
 
-function ProductsTab({ areaId, courses, areaContents }: any) {
+function ModulesTab({ areaId, areaContents }: any) {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
 
-  const addMutation = useMutation({
-    mutationFn: (courseId: string) => addAreaContent(areaId, "Course", "course", courseId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["area-contents", areaId] });
-      toast.success("Produto vinculado!");
-    }
-  });
-
-  const removeMutation = useMutation({
+  const deleteMutation = useMutation({
     mutationFn: (id: string) => removeAreaContent(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["area-contents", areaId] });
-      toast.success("Produto removido!");
+      toast.success("Módulo removido!");
     }
   });
 
-  const filteredCourses = courses.filter((c: any) => 
+  const toggleStatusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string, status: string }) => 
+      updateAreaContent(id, { status: status === 'active' ? 'inactive' : 'active' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["area-contents", areaId] });
+      toast.success("Status atualizado!");
+    }
+  });
+
+  const filteredContents = areaContents.filter((c: any) => 
     c.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const getTypeIcon = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'music':
+      case 'música':
+        return <Music className="h-5 w-5 text-gold" />;
+      case 'course':
+      case 'curso':
+      case 'vídeo':
+        return <Video className="h-5 w-5 text-blue-400" />;
+      case 'ebook':
+        return <BookOpen className="h-5 w-5 text-green-400" />;
+      default:
+        return <Package className="h-5 w-5 text-muted-foreground" />;
+    }
+  };
 
   return (
     <Card className="bg-card/40 backdrop-blur-sm border-border/20 rounded-[2rem] overflow-hidden shadow-2xl">
       <CardContent className="p-8 space-y-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1">
-            <h3 className="text-xl font-black uppercase italic tracking-tighter text-gold">Produtos Vinculados</h3>
-            <p className="text-xs font-medium text-muted-foreground/60 uppercase tracking-widest">Gerencie quais cursos estão disponíveis nesta área</p>
+            <h3 className="text-2xl font-black uppercase italic tracking-tighter text-foreground">Gestão de Módulos</h3>
+            <p className="text-xs font-medium text-muted-foreground/60 uppercase tracking-widest">Controle os recursos disponíveis nesta área</p>
           </div>
-          <div className="relative w-full md:w-80">
-            <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
-            <Input 
-              placeholder="Buscar curso..." 
-              className="pl-11 h-12 bg-black/20 border-border/30 rounded-xl focus:border-gold/50"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
+          <Button 
+            className="bg-gold hover:bg-gold/90 text-black font-black px-6 rounded-xl h-12 gap-2 shadow-lg shadow-gold/10"
+            onClick={() => toast.info("Funcionalidade de adição em breve")}
+          >
+            <Plus className="h-5 w-5" /> Adicionar Módulo
+          </Button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {filteredCourses.map((course: any) => {
-            const content = areaContents.find((c: any) => c.url === course.id);
-            const isLinked = !!content;
-            
-            return (
-              <div 
-                key={course.id} 
-                className={`flex items-center justify-between p-5 rounded-[1.5rem] border-2 transition-all duration-300 ${
-                  isLinked ? 'border-gold/20 bg-gold/5 shadow-lg shadow-gold/5' : 'border-border/10 bg-black/20 hover:border-border/30'
-                }`}
-              >
-                <div className="flex items-center gap-4">
-                  <div className={`h-12 w-12 rounded-xl border border-white/10 overflow-hidden bg-background flex items-center justify-center`}>
-                    {course.cover_image_url ? (
-                      <img src={course.cover_image_url} className="h-full w-full object-cover" />
-                    ) : (
-                      <Package className="h-6 w-6 text-muted-foreground/30" />
-                    )}
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-sm line-clamp-1">{course.title}</h4>
-                    <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/40 italic">
-                      {course.status === 'published' ? 'Publicado' : 'Rascunho'}
-                    </p>
-                  </div>
-                </div>
+        <div className="relative">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40" />
+          <Input 
+            placeholder="Pesquisar por nome..." 
+            className="pl-12 h-14 bg-black/40 border-border/30 rounded-2xl focus:border-gold/50 transition-all"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
 
-                <Button 
-                  size="sm"
-                  variant={isLinked ? "outline" : "default"}
-                  onClick={() => isLinked ? removeMutation.mutate(content.id) : addMutation.mutate(course.id)}
-                  disabled={addMutation.isPending || removeMutation.isPending}
-                  className={`h-10 rounded-xl px-4 font-black text-[10px] uppercase tracking-tighter transition-all ${
-                    isLinked ? 'border-destructive/20 text-destructive hover:bg-destructive/10' : 'bg-gold hover:bg-gold/90 text-black'
-                  }`}
-                >
-                  {isLinked ? <X className="h-3.5 w-3.5 mr-1.5" /> : <Plus className="h-3.5 w-3.5 mr-1.5" />}
-                  {isLinked ? 'Remover' : 'Vincular'}
-                </Button>
-              </div>
-            );
-          })}
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-separate border-spacing-y-3">
+            <thead>
+              <tr className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 px-6">
+                <th className="pb-4 pl-6">Módulo</th>
+                <th className="pb-4">Tipo</th>
+                <th className="pb-4 text-center">Status</th>
+                <th className="pb-4 text-right pr-6">Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredContents.map((content: any) => (
+                <tr key={content.id} className="group bg-black/20 hover:bg-black/40 transition-all">
+                  <td className="py-4 pl-6 rounded-l-2xl border-y border-l border-border/10">
+                    <div className="flex items-center gap-4">
+                      <div className="h-12 w-12 rounded-xl bg-background/50 border border-border/20 flex items-center justify-center group-hover:border-gold/30 transition-colors">
+                        {getTypeIcon(content.type)}
+                      </div>
+                      <span className="font-bold text-foreground tracking-tight">{content.title}</span>
+                    </div>
+                  </td>
+                  <td className="py-4 border-y border-border/10 uppercase text-[10px] font-black tracking-widest text-muted-foreground/60">
+                    {content.type}
+                  </td>
+                  <td className="py-4 border-y border-border/10 text-center">
+                    <button 
+                      onClick={() => toggleStatusMutation.mutate({ id: content.id, status: content.status || 'active' })}
+                      className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+                        (content.status || 'active') === 'active' 
+                        ? 'bg-green-500/10 text-green-500 hover:bg-green-500/20' 
+                        : 'bg-muted/10 text-muted-foreground hover:bg-muted/20'
+                      }`}
+                    >
+                      {(content.status || 'active') === 'active' ? 'Ativo' : 'Inativo'}
+                    </button>
+                  </td>
+                  <td className="py-4 pr-6 rounded-r-2xl border-y border-r border-border/10 text-right">
+                    <div className="flex items-center justify-end gap-2">
+                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg hover:bg-gold/10 hover:text-gold">
+                        <Edit3 className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-9 w-9 rounded-lg hover:bg-destructive/10 hover:text-destructive"
+                        onClick={() => deleteMutation.mutate(content.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+              {filteredContents.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="py-20 text-center text-muted-foreground/40 font-bold uppercase tracking-widest text-xs italic">
+                    Nenhum módulo encontrado
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </CardContent>
     </Card>
