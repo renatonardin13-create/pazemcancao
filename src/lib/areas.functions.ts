@@ -111,3 +111,14 @@ export const updateAreaContent = async (id: string, updates: any) => {
   if (error) throw error;
   return data;
 };
+
+export const getCategoriesByArea = async (areaId: string) => {
+  const { data, error } = await supabase
+    .from("categories")
+    .select("*")
+    .eq("area_id", areaId)
+    .order("sort_order", { ascending: true });
+
+  if (error) throw error;
+  return data || [];
+};
