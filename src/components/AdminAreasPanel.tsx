@@ -118,6 +118,26 @@ export function AdminAreasPanel() {
     resetForm();
     setIsDialogOpen(true);
   };
+  const handleOpenEdit = (area: Area) => {
+    setEditingArea(area);
+    setFormData({
+      name: area.name || "",
+      short_label: (area as any).short_label || "",
+      slug: area.slug || "",
+      description: area.description || "",
+      primary_color: area.primary_color || "#D4A853",
+      domain: area.domain || "",
+      status: (area as any).status || "draft",
+      language: area.language || "pt",
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setEditingArea(null);
+    resetForm();
+  };
 
   const generateSlug = (name: string) => {
     return name
