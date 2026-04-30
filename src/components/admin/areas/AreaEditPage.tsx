@@ -51,7 +51,7 @@ export function AreaEditPage() {
 
   const { data: tracksData } = useQuery({
     queryKey: ["admin-tracks"],
-    queryFn: () => listAdminTracks({ pageSize: 1000 }),
+    queryFn: () => listAdminTracks({ data: { pageSize: 1000 } }),
   });
 
   const { data: areaContents } = useQuery({
