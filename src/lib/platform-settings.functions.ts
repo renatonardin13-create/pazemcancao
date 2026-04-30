@@ -31,14 +31,28 @@ export const getPlatformSettings = createServerFn({ method: 'POST' })
 export const updatePlatformSetting = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { key: string; value: Record<string, any> }) => input)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    const admin = supabaseAdmin;
+
+    // Security Check: Only admins can update platform settings
+    const { data: adminRole } = await admin
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    const { data: userData } = await admin.auth.admin.getUserById(userId);
+    const isAdminEmail = userData?.user?.email?.toLowerCase() === 'renatonardin13@gmail.com';
+
+    if (!adminRole && !isAdminEmail) {
+      throw new Error('Não autorizado: Apenas administradores podem alterar configurações da plataforma.');
+    }
+
     const hasServerConfig = Boolean(
       process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY,
     );
-
-    if (!hasServerConfig) {
-      return { success: false, message: 'Configuração do servidor indisponível.' };
-    }
 
     const { error } = await supabaseAdmin
       .from('platform_settings')
@@ -54,14 +68,28 @@ export const updatePlatformSetting = createServerFn({ method: 'POST' })
 export const uploadPlatformAsset = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { bucket: string; path: string; base64: string; contentType: string }) => input)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    const admin = supabaseAdmin;
+
+    // Security Check: Only admins can upload platform assets
+    const { data: adminRole } = await admin
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    const { data: userData } = await admin.auth.admin.getUserById(userId);
+    const isAdminEmail = userData?.user?.email?.toLowerCase() === 'renatonardin13@gmail.com';
+
+    if (!adminRole && !isAdminEmail) {
+      throw new Error('Não autorizado');
+    }
+
     const hasServerConfig = Boolean(
       process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY,
     );
-
-    if (!hasServerConfig) {
-      throw new Error('Configuração do servidor indisponível.');
-    }
 
     const buffer = Uint8Array.from(atob(data.base64), (c) => c.charCodeAt(0));
 

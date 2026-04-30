@@ -38,9 +38,11 @@ const FIELDS: Array<{ key: keyof CardSizing; label: string; min: number; max: nu
 
 interface Props {
   initial: Partial<CardsConfig>;
+  onSave?: (config: CardsConfig) => void;
+  isLoading?: boolean;
 }
 
-export function AdminCardsConfigTab({ initial }: Props) {
+export function AdminCardsConfigTab({ initial, onSave, isLoading }: Props) {
   const queryClient = useQueryClient();
 
   const initialSizing = useMemo<Record<CardScopeKey, CardSizing>>(() => {
@@ -55,11 +57,16 @@ export function AdminCardsConfigTab({ initial }: Props) {
   const [sizing, setSizing] = useState<Record<CardScopeKey, CardSizing>>(initialSizing);
 
   const mutation = useMutation({
-    mutationFn: (value: Record<string, any>) =>
-      updatePlatformSetting({ data: { key: "cards_config", value } }),
+    mutationFn: async (value: Record<string, any>) => {
+      if (onSave) {
+        return onSave(value as CardsConfig);
+      }
+      return updatePlatformSetting({ data: { key: "cards_config", value } });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["platform-settings"] });
       queryClient.invalidateQueries({ queryKey: ["platform-settings", "cards_config"] });
+      queryClient.invalidateQueries({ queryKey: ["area"] });
       toast.success("Tamanhos de cards salvos!");
     },
     onError: (err: any) => toastError(err),
@@ -161,8 +168,8 @@ export function AdminCardsConfigTab({ initial }: Props) {
       </div>
 
       <div className="flex justify-end">
-        <Button onClick={save} disabled={mutation.isPending} className="gap-2">
-          {mutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+        <Button onClick={save} disabled={mutation.isPending || isLoading} className="gap-2">
+          {mutation.isPending || isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
           Salvar configuração de cards
         </Button>
       </div>

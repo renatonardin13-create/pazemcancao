@@ -13,8 +13,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { 
   Loader2, ArrowLeft, Save, Globe, Palette, Type, Layout, 
-  Upload, Languages, LogIn, Package, CheckCircle2, Circle, X, Eye, Link2, Plus
+  Upload, Languages, LogIn, Package, CheckCircle2, Circle, X, Eye, Link2, Plus,
+  LayoutPanelTop
 } from "lucide-react";
+import { AdminCardsConfigTab } from "@/components/AdminCardsConfigTab";
 
 export function AreaEditPage() {
   const { areaId } = useParams({ from: "/_authenticated/admin/areas/$areaId" });
@@ -100,6 +102,7 @@ export function AreaEditPage() {
               { id: "language", label: "Idioma", icon: Languages },
               { id: "login", label: "Login", icon: LogIn },
               { id: "products", label: "Produtos", icon: Package },
+              { id: "cards", label: "Cards", icon: LayoutPanelTop },
             ].map((tab) => (
               <TabsTrigger 
                 key={tab.id}
@@ -130,6 +133,9 @@ export function AreaEditPage() {
         </TabsContent>
         <TabsContent value="products">
           <ProductsTab areaId={areaId} courses={coursesData?.courses || []} areaContents={areaContents || []} />
+        </TabsContent>
+        <TabsContent value="cards">
+          <CardsTab area={area} onSave={(data: any) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
         </TabsContent>
       </Tabs>
     </div>
@@ -611,6 +617,30 @@ function ProductsTab({ areaId, courses, areaContents }: any) {
             );
           })}
         </div>
+      </CardContent>
+    </Card>
+  );
+}
+function CardsTab({ area, onSave, saving }: any) {
+  const settings = area.settings as Record<string, any> || {};
+  
+  const handleSave = (config: any) => {
+    onSave({
+      settings: {
+        ...settings,
+        cards_config: config
+      }
+    });
+  };
+
+  return (
+    <Card className="bg-card/40 backdrop-blur-sm border-border/20 rounded-[2rem] overflow-hidden shadow-2xl">
+      <CardContent className="p-8">
+        <AdminCardsConfigTab 
+          initial={settings.cards_config || {}} 
+          onSave={handleSave}
+          isLoading={saving}
+        />
       </CardContent>
     </Card>
   );
