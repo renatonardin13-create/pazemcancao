@@ -98,6 +98,39 @@ export type Database = {
         }
         Relationships: []
       }
+      areas: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          domain: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          primary_color: string | null
+          slug: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          domain?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          primary_color?: string | null
+          slug: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          domain?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          primary_color?: string | null
+          slug?: string
+        }
+        Relationships: []
+      }
       categories: {
         Row: {
           color: string | null
@@ -299,6 +332,41 @@ export type Database = {
             columns: ["unlock_rule_content_id"]
             isOneToOne: false
             referencedRelation: "content_items"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contents: {
+        Row: {
+          area_id: string | null
+          created_at: string | null
+          id: string
+          title: string
+          type: string | null
+          url: string | null
+        }
+        Insert: {
+          area_id?: string | null
+          created_at?: string | null
+          id?: string
+          title: string
+          type?: string | null
+          url?: string | null
+        }
+        Update: {
+          area_id?: string | null
+          created_at?: string | null
+          id?: string
+          title?: string
+          type?: string | null
+          url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contents_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
             referencedColumns: ["id"]
           },
         ]
@@ -813,6 +881,38 @@ export type Database = {
             columns: ["module_id"]
             isOneToOne: false
             referencedRelation: "modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      memberships: {
+        Row: {
+          area_id: string | null
+          created_at: string | null
+          id: string
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          area_id?: string | null
+          created_at?: string | null
+          id?: string
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          area_id?: string | null
+          created_at?: string | null
+          id?: string
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "memberships_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
             referencedColumns: ["id"]
           },
         ]
