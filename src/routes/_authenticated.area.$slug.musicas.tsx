@@ -1,4 +1,4 @@
-import { createFileRoute, useParams, Link } from "@tanstack/react-router";
+import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { TrackCard } from "@/components/TrackCard";
@@ -7,10 +7,34 @@ import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { usePlayer } from "@/hooks/use-player";
+import type { Track } from "@/lib/sample-tracks";
 
 export const Route = createFileRoute("/_authenticated/area/$slug/musicas")({
   component: AreaMusicLibrary,
 });
+
+function getStoragePublicUrl(storagePath: string | null | undefined) {
+  if (!storagePath) return "";
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  return `${supabaseUrl}/storage/v1/object/public/tracks/${storagePath}`;
+}
+
+function dbTrackToPlayerTrack(track: any): Track {
+  const audioUrl = getStoragePublicUrl(track?.storage_path);
+  return {
+    id: String(track?.id ?? ""),
+    title: track?.title || "Música sem título",
+    duration: track?.duration || "0:00",
+    category: track?.category || "Sem categoria",
+    audioUrl,
+    downloadUrl: track?.download_url || audioUrl,
+    description: track?.description || "",
+    coverUrl: track?.cover_url || undefined,
+    isBonus: Boolean(track?.is_bonus),
+    bonusReleaseDate: track?.bonus_release_date ?? null,
+    isLocked: track?.is_active === false,
+  };
+}
 
 function AreaMusicLibrary() {
   const { slug } = useParams({ from: "/_authenticated/area/$slug/musicas" });
@@ -30,7 +54,7 @@ function AreaMusicLibrary() {
     },
   });
 
-  const { data: tracks = [], isLoading } = useQuery({
+  const { data: rawTracks = [], isLoading } = useQuery({
     queryKey: ["area-tracks", area?.id],
     enabled: !!area?.id,
     queryFn: async () => {
@@ -44,6 +68,8 @@ function AreaMusicLibrary() {
       return data;
     },
   });
+
+  const tracks = useMemo(() => rawTracks.map(dbTrackToPlayerTrack), [rawTracks]);
 
   const filteredTracks = useMemo(() => {
     return tracks.filter((track) =>
@@ -62,8 +88,10 @@ function AreaMusicLibrary() {
 
   const handlePlayAll = () => {
     if (filteredTracks.length > 0) {
-      // Convert to player format if needed, but TrackCard handle it via queue
-      // For now let's just use the first track
+      const playable = filteredTracks.filter(t => t.audioUrl && !t.isLocked);
+      if (playable.length > 0) {
+        setQueue(playable, 0);
+      }
     }
   };
 
@@ -99,7 +127,11 @@ function AreaMusicLibrary() {
                 className="bg-background/40 border-white/5 pl-10 h-12 rounded-xl"
               />
             </div>
-            <Button onClick={handlePlayAll} className="h-12 px-6 gap-2 rounded-xl shadow-lg shadow-primary/20 w-full sm:w-auto">
+            <Button 
+              onClick={handlePlayAll} 
+              disabled={filteredTracks.filter(t => t.audioUrl && !t.isLocked).length === 0}
+              className="h-12 px-6 gap-2 rounded-xl shadow-lg shadow-primary/20 w-full sm:w-auto"
+            >
               <Play className="h-4 w-4 fill-current" /> Tocar Tudo
             </Button>
           </div>
