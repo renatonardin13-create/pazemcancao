@@ -25,7 +25,7 @@ function AdminTracksPage() {
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [filterCategory, setFilterCategory] = useState("all");
   const [filterStatus, setFilterStatus] = useState<"all" | "active" | "inactive">("all");
-  const [filterArea, setFilterArea] = useState("all");
+  // filterArea removed
   const [page, setPage] = useState(1);
   const queryClient = useQueryClient();
 
@@ -41,23 +41,18 @@ function AdminTracksPage() {
   };
 
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-tracks", page, debouncedSearch, filterCategory, filterStatus, filterArea],
-    queryFn: () => listAdminTracks({ data: { page, pageSize: PAGE_SIZE, search: debouncedSearch, category: filterCategory, status: filterStatus, areaId: filterArea } }),
+    queryKey: ["admin-tracks", page, debouncedSearch, filterCategory, filterStatus],
+    queryFn: () => listAdminTracks({ data: { page, pageSize: PAGE_SIZE, search: debouncedSearch, category: filterCategory, status: filterStatus } }),
     staleTime: 30_000,
   });
 
   const { data: catData } = useQuery({
-    queryKey: ["admin-track-categories", filterArea],
-    queryFn: () => listAdminTrackCategories({ data: { areaId: filterArea } }),
+    queryKey: ["admin-track-categories"],
+    queryFn: () => listAdminTrackCategories({ data: {} }),
     staleTime: 60_000,
   });
 
-  const { data: areasData } = useQuery({
-    queryKey: ["areas"],
-    staleTime: 5 * 60_000,
-  });
-
-  const areas = areasData || [];
+  // areasData query removed
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteTrack({ data: { id } }),
@@ -160,16 +155,7 @@ function AdminTracksPage() {
           <option value="active">Ativos</option>
           <option value="inactive">Inativos</option>
         </select>
-        <select
-          value={filterArea}
-          onChange={(e) => { setFilterArea(e.target.value); setPage(1); }}
-          className="h-9 px-3 rounded-xl border border-border/30 bg-card/20 text-xs font-semibold uppercase tracking-wider text-foreground/60 focus:outline-none focus:border-gold/25 transition-colors"
-        >
-          <option value="all">Todas as áreas</option>
-          {areas.map((area: any) => (
-            <option key={area.id} value={area.id}>{area.name}</option>
-          ))}
-        </select>
+        {/* filterArea removed */}
         <span className="text-xs text-muted-foreground/60 self-center">
           {total} música{total !== 1 ? 's' : ''}
         </span>

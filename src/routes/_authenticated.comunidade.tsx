@@ -48,12 +48,8 @@ function ComunidadePage() {
   const loadPosts = async () => {
     let query = supabase
       .from("community_posts")
-      .select("id, user_id, author_name, author_avatar_url, content, created_at, area_id");
+      .select("id, user_id, author_name, author_avatar_url, content, created_at");
     
-    if (undefined) {
-      query = query.eq("area_id", currentArea.id);
-    }
-
     const { data: postsData, error } = await query
       .order("created_at", { ascending: false })
       .limit(100);
@@ -98,7 +94,7 @@ function ComunidadePage() {
       supabase.removeChannel(channel);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id, undefined]);
+  }, [user?.id]);
 
   const handleSubmit = async () => {
     if (!user || !content.trim()) return;
@@ -112,7 +108,6 @@ function ComunidadePage() {
       author_name: authorName,
       author_avatar_url: (user.user_metadata?.avatar_url as string | undefined) ?? null,
       content: content.trim(),
-      area_id: undefined || null,
     });
     setSubmitting(false);
     if (error) {
@@ -152,7 +147,6 @@ function ComunidadePage() {
     loadPosts();
   };
 
-  // Client-side keyword-based filter (graceful: shows everything if no match exists)
   const filteredPosts = (() => {
     if (filter === "todos") return posts;
     const keywords: Record<Exclude<FilterKey, "todos">, string[]> = {
