@@ -76,10 +76,19 @@ function mergeSizing(raw: any): CardsConfig["sizing"] {
   };
 }
 
+import { useArea } from "@/providers/AreaProvider";
+
 export function useCardsConfig(): CardsConfig {
+  const { currentArea } = useArea();
+  
   const { data } = useQuery({
-    queryKey: ["platform-settings", "cards_config"],
+    queryKey: ["platform-settings", "cards_config", currentArea?.id],
     queryFn: async () => {
+      // Prioritize area settings if available
+      if (currentArea?.settings?.cards_config) {
+        return currentArea.settings.cards_config as Partial<CardsConfig>;
+      }
+      
       const res = await getPlatformSettings();
       return (res?.settings?.cards_config ?? {}) as Partial<CardsConfig>;
     },
