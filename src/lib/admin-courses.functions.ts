@@ -69,6 +69,7 @@ export const createCourse = createServerFn({ method: 'POST' })
     cover_image_url?: string;
     banner_image_url?: string;
     category_id?: string;
+    area_id?: string;
     price?: number;
     status?: string;
     course_type?: string;
@@ -101,6 +102,7 @@ export const createCourse = createServerFn({ method: 'POST' })
         price: data.price ?? 0,
         promotional_price: (data as any).promotional_price ?? null,
         status: data.status || 'draft',
+        area_id: data.area_id || null,
         course_type: normalizeCourseType(data.course_type),
         launch_date: data.launch_date || null,
       })
@@ -121,6 +123,7 @@ export const updateCourse = createServerFn({ method: 'POST' })
     cover_image_url?: string | null;
     banner_image_url?: string | null;
     category_id?: string | null;
+    area_id?: string | null;
     price?: number;
     promotional_price?: number | null;
     status?: string;
