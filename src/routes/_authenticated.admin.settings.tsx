@@ -111,6 +111,9 @@ function SettingsPage() {
           <TabsTrigger value="cards" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
             <LayoutPanelTop className="h-3.5 w-3.5" /> Cards
           </TabsTrigger>
+          <TabsTrigger value="areas" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
+            <Landmark className="h-3.5 w-3.5" /> Áreas
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="branding" className="mt-4">
