@@ -7,6 +7,7 @@ import { useEffect, ReactNode } from "react";
 import { StudentSidebar } from "@/components/StudentSidebar";
 import { AppHeader } from "@/components/AppHeader";
 import { GlobalPlayer } from "@/components/GlobalPlayer";
+import { useArea } from "@/providers/AreaProvider";
 
 export const Route = createFileRoute("/_authenticated/area/$slug")({
   component: AreaLayout,
