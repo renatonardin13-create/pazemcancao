@@ -4,7 +4,8 @@ import { buildEntitlements, deriveProductVisualAccessState, resolveProductAccess
 
 export const getMyCoursesData = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { areaId?: string }) => input)
+  .handler(async ({ data: inputData, context }) => {
     const { supabase, userId } = context;
 
     // Get all enrollments for the authenticated user (not just active — we filter below)
