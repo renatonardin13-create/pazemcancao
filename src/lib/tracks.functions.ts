@@ -5,8 +5,8 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 export const listActiveTracks = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { areaId?: string }) => input)
-  .handler(async ({ data: inputData }) => {
-    let query = supabaseAdmin
+  .handler(async ({ data: inputData, context }) => {
+    let query = context.supabase
       .from('tracks')
       .select('*')
       .eq('is_active', true);
@@ -25,8 +25,8 @@ export const listActiveTracks = createServerFn({ method: 'POST' })
 export const listAllTracks = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { areaId?: string }) => input)
-  .handler(async ({ data: inputData }) => {
-    let query = supabaseAdmin
+  .handler(async ({ data: inputData, context }) => {
+    let query = context.supabase
       .from('tracks')
       .select('*');
 
@@ -43,8 +43,8 @@ export const listAllTracks = createServerFn({ method: 'POST' })
 export const listCategories = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { areaId?: string }) => input)
-  .handler(async ({ data: inputData }) => {
-    let query = supabaseAdmin
+  .handler(async ({ data: inputData, context }) => {
+    let query = context.supabase
       .from('categories')
       .select('id, name, slug, icon, sort_order');
 
@@ -65,7 +65,7 @@ export const getTrackById = createServerFn({ method: 'POST' })
     // Não filtrar por is_active — a biblioteca (/musicas) usa listAllTracks
     // e exibe faixas mesmo inativas (com badge "Em breve"). A página de
     // detalhe deve permanecer consistente com a lista.
-    const { data: track, error } = await supabaseAdmin
+    const { data: track, error } = await context.supabase
       .from('tracks')
       .select('*')
       .eq('id', data.id)
