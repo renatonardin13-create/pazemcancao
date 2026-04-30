@@ -50,7 +50,7 @@ function AreaDashboard() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
 
-  const { data: area } = useQuery({
+  const { data: area, isLoading: areaLoading, error: areaError, refetch: refetchArea } = useQuery({
     queryKey: ["area", slug],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -70,7 +70,7 @@ function AreaDashboard() {
     }
   }, [area, currentArea?.id, switchArea]);
 
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [], isLoading: categoriesLoading, error: categoriesError } = useQuery({
     queryKey: ["categories", area?.id],
     enabled: !!area?.id,
     queryFn: async () => {
@@ -85,7 +85,7 @@ function AreaDashboard() {
     },
   });
 
-  const { data: contents = [] } = useQuery({
+  const { data: contents = [], isLoading: contentsLoading, error: contentsError } = useQuery({
     queryKey: ["area-contents", area?.id],
     enabled: !!area?.id,
     queryFn: async () => {
@@ -100,7 +100,7 @@ function AreaDashboard() {
     },
   });
 
-  const { data: rawTracks = [] } = useQuery({
+  const { data: rawTracks = [], isLoading: tracksLoading, error: tracksError } = useQuery({
     queryKey: ["area-tracks", area?.id],
     enabled: !!area?.id,
     queryFn: async () => {
@@ -139,11 +139,34 @@ function AreaDashboard() {
     return groups;
   }, [tracks]);
 
+  if (areaError || categoriesError || contentsError || tracksError) {
+    return (
+      <div className="p-12 max-w-2xl mx-auto space-y-6">
+        <Alert variant="destructive" className="bg-destructive/10 border-destructive/20 text-destructive rounded-2xl p-6">
+          <AlertCircle className="h-6 w-6" />
+          <AlertTitle className="text-lg font-bold ml-2">Ops! Algo deu errado</AlertTitle>
+          <AlertDescription className="mt-2 text-sm opacity-90">
+            Não conseguimos carregar todos os dados desta área. Por favor, verifique sua conexão ou tente novamente mais tarde.
+          </AlertDescription>
+        </Alert>
+        <Button 
+          onClick={() => refetchArea()} 
+          className="w-full h-14 rounded-2xl gap-2 font-bold text-lg"
+          variant="outline"
+        >
+          <RefreshCw className="h-5 w-5" /> Tentar novamente
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6 space-y-10 pb-32">
       {/* Welcome & Banner Section */}
       <section className="relative overflow-hidden rounded-3xl min-h-[300px] sm:min-h-[400px] flex flex-col justify-end p-8 sm:p-12 shadow-2xl border border-white/5">
-        {area?.banner_url ? (
+        {areaLoading ? (
+          <Skeleton className="absolute inset-0 bg-white/5" />
+        ) : area?.banner_url ? (
           <div 
             className="absolute inset-0 bg-cover bg-center transition-transform duration-[2s] hover:scale-105"
             style={{ backgroundImage: `url(${area.banner_url})` }}
@@ -158,9 +181,16 @@ function AreaDashboard() {
             <h1 className="text-4xl sm:text-6xl font-bold tracking-tight text-white drop-shadow-sm">
               Bem-vindo, <span className="text-primary">{user?.user_metadata?.full_name || user?.email?.split('@')[0]}</span>!
             </h1>
-            <p className="text-lg sm:text-xl text-muted-foreground/90 font-medium leading-relaxed max-w-lg">
-              {area?.description || "Sua jornada de paz e espiritualidade começa aqui. Explore os louvores e conteúdos exclusivos preparados para você."}
-            </p>
+            {areaLoading ? (
+              <div className="space-y-2 mt-4">
+                <Skeleton className="h-6 w-64 bg-white/10" />
+                <Skeleton className="h-6 w-48 bg-white/10" />
+              </div>
+            ) : (
+              <p className="text-lg sm:text-xl text-muted-foreground/90 font-medium leading-relaxed max-w-lg">
+                {area?.description || "Sua jornada de paz e espiritualidade começa aqui. Explore os louvores e conteúdos exclusivos preparados para você."}
+              </p>
+            )}
           </div>
           
           <div className="flex flex-wrap items-center gap-4 pt-6">
@@ -175,7 +205,19 @@ function AreaDashboard() {
       </section>
 
       {/* Featured Content Row */}
-      {featuredContent.length > 0 && (
+      {contentsLoading ? (
+        <section className="space-y-6">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-6 w-6 rounded-full bg-white/5" />
+            <Skeleton className="h-8 w-64 bg-white/5" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-72 w-full rounded-2xl bg-white/5" />
+            ))}
+          </div>
+        </section>
+      ) : featuredContent.length > 0 && (
         <section className="space-y-6">
           <div className="flex items-center justify-between px-1">
             <h2 className="text-2xl font-bold flex items-center gap-3">
@@ -212,29 +254,37 @@ function AreaDashboard() {
           </div>
 
           <div className="flex items-center gap-3 overflow-x-auto pb-2 w-full md:w-auto no-scrollbar scroll-smooth">
-            <button
-              onClick={() => setSelectedCategory("all")}
-              className={`px-6 py-3 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-300 ${
-                selectedCategory === "all"
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105"
-                  : "bg-muted/30 text-muted-foreground hover:bg-muted/50 border border-white/5"
-              }`}
-            >
-              Todos
-            </button>
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`px-6 py-3 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-300 ${
-                  selectedCategory === cat.id
-                    ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105"
-                    : "bg-muted/30 text-muted-foreground hover:bg-muted/50 border border-white/5"
-                }`}
-              >
-                {cat.name}
-              </button>
-            ))}
+            {categoriesLoading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-12 w-24 rounded-full bg-white/5 shrink-0" />
+              ))
+            ) : (
+              <>
+                <button
+                  onClick={() => setSelectedCategory("all")}
+                  className={`px-6 py-3 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-300 ${
+                    selectedCategory === "all"
+                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105"
+                      : "bg-muted/30 text-muted-foreground hover:bg-muted/50 border border-white/5"
+                  }`}
+                >
+                  Todos
+                </button>
+                {categories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(cat.id)}
+                    className={`px-6 py-3 rounded-full text-sm font-bold whitespace-nowrap transition-all duration-300 ${
+                      selectedCategory === cat.id
+                        ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105"
+                        : "bg-muted/30 text-muted-foreground hover:bg-muted/50 border border-white/5"
+                    }`}
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </>
+            )}
           </div>
         </div>
 
@@ -249,7 +299,13 @@ function AreaDashboard() {
           </TabsList>
 
           <TabsContent value="all" className="mt-0 focus-visible:ring-0">
-            {filteredContents.length === 0 && (
+            {contentsLoading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <Skeleton key={i} className="h-64 w-full rounded-2xl bg-white/5" />
+                ))}
+              </div>
+            ) : filteredContents.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-32 text-center space-y-6">
                 <div className="h-20 w-20 rounded-full bg-muted/20 flex items-center justify-center">
                   <LayoutGrid className="h-10 w-10 text-muted-foreground/30" />
@@ -259,23 +315,37 @@ function AreaDashboard() {
                   <p className="text-muted-foreground max-w-sm mx-auto">Tente buscar por outro termo ou selecione uma categoria diferente.</p>
                 </div>
               </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+                {filteredContents.map((item, index) => (
+                  <ContentCard
+                    key={item.id}
+                    item={item}
+                    index={index}
+                    hasAccess={true}
+                    gradient="from-primary/10 to-transparent"
+                    TypeIcon={item.type === 'ebook' ? BookOpen : GraduationCap}
+                  />
+                ))}
+              </div>
             )}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-8">
-              {filteredContents.map((item, index) => (
-                <ContentCard
-                  key={item.id}
-                  item={item}
-                  index={index}
-                  hasAccess={true}
-                  gradient="from-primary/10 to-transparent"
-                  TypeIcon={item.type === 'ebook' ? BookOpen : GraduationCap}
-                />
-              ))}
-            </div>
           </TabsContent>
 
           <TabsContent value="music" className="mt-0 space-y-16 focus-visible:ring-0">
-            {Object.entries(tracksByCategory).length === 0 ? (
+            {tracksLoading ? (
+              <div className="space-y-12">
+                {Array.from({ length: 2 }).map((_, i) => (
+                  <div key={i} className="space-y-6">
+                    <Skeleton className="h-8 w-48 bg-white/5" />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+                      {Array.from({ length: 5 }).map((_, j) => (
+                        <Skeleton key={j} className="h-64 w-full rounded-2xl bg-white/5" />
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : Object.entries(tracksByCategory).length === 0 ? (
               <div className="flex flex-col items-center justify-center py-32 text-center space-y-6">
                 <div className="h-20 w-20 rounded-full bg-muted/20 flex items-center justify-center">
                   <Music className="h-10 w-10 text-muted-foreground/30" />
