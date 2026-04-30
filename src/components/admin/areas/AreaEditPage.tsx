@@ -441,7 +441,7 @@ function LoginTab({ area, onSave, saving }: any) {
   const bgInputRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = async (file: File) => {
-    setUploading(true);
+    setUploading('bg');
     const reader = new FileReader();
     reader.onload = async (e) => {
       try {
