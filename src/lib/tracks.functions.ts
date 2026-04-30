@@ -4,12 +4,18 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 export const listActiveTracks = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async () => {
-    const { data: tracks, error } = await supabaseAdmin
+  .inputValidator((input: { areaId?: string }) => input)
+  .handler(async ({ data: inputData }) => {
+    let query = supabaseAdmin
       .from('tracks')
       .select('*')
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true });
+      .eq('is_active', true);
+
+    if (inputData?.areaId) {
+      query = query.eq('area_id', inputData.areaId);
+    }
+
+    const { data: tracks, error } = await query.order('sort_order', { ascending: true });
 
     if (error) throw new Error(error.message);
     return { tracks: tracks || [] };
@@ -18,11 +24,17 @@ export const listActiveTracks = createServerFn({ method: 'POST' })
 /** Returns ALL tracks regardless of is_active — used for the full catalog view */
 export const listAllTracks = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async () => {
-    const { data: tracks, error } = await supabaseAdmin
+  .inputValidator((input: { areaId?: string }) => input)
+  .handler(async ({ data: inputData }) => {
+    let query = supabaseAdmin
       .from('tracks')
-      .select('*')
-      .order('sort_order', { ascending: true });
+      .select('*');
+
+    if (inputData?.areaId) {
+      query = query.eq('area_id', inputData.areaId);
+    }
+
+    const { data: tracks, error } = await query.order('sort_order', { ascending: true });
 
     if (error) throw new Error(error.message);
     return { tracks: tracks || [] };
@@ -30,11 +42,17 @@ export const listAllTracks = createServerFn({ method: 'POST' })
 
 export const listCategories = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async () => {
-    const { data: categories, error } = await supabaseAdmin
+  .inputValidator((input: { areaId?: string }) => input)
+  .handler(async ({ data: inputData }) => {
+    let query = supabaseAdmin
       .from('categories')
-      .select('id, name, slug, icon, sort_order')
-      .order('sort_order', { ascending: true });
+      .select('id, name, slug, icon, sort_order');
+
+    if (inputData?.areaId) {
+      query = query.eq('area_id', inputData.areaId);
+    }
+
+    const { data: categories, error } = await query.order('sort_order', { ascending: true });
 
     if (error) throw new Error(error.message);
     return { categories: categories || [] };
