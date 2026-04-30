@@ -806,13 +806,18 @@ function ModulesTab({ areaId, areaContents, courses, tracks }: any) {
                   <td className="py-4 border-y border-border/10 text-center">
                     <button 
                       onClick={() => toggleStatusMutation.mutate({ id: content.id, status: content.status || 'active' })}
-                      className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+                      disabled={toggleStatusMutation.isPending}
+                      className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2 mx-auto ${
                         (content.status || 'active') === 'active' 
                         ? 'bg-green-500/10 text-green-500 hover:bg-green-500/20' 
                         : 'bg-muted/10 text-muted-foreground hover:bg-muted/20'
-                      }`}
+                      } disabled:opacity-50 disabled:cursor-not-allowed`}
                     >
-                      {(content.status || 'active') === 'active' ? 'Ativo' : 'Inativo'}
+                      {toggleStatusMutation.isPending && toggleStatusMutation.variables?.id === content.id ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        (content.status || 'active') === 'active' ? 'Ativo' : 'Inativo'
+                      )}
                     </button>
                   </td>
                   <td className="py-4 pr-6 rounded-r-2xl border-y border-r border-border/10 text-right">
@@ -822,6 +827,7 @@ function ModulesTab({ areaId, areaContents, courses, tracks }: any) {
                         size="icon" 
                         className="h-9 w-9 rounded-lg hover:bg-gold/10 hover:text-gold"
                         onClick={() => handleOpenEdit(content)}
+                        disabled={updateModuleMutation.isPending || deleteMutation.isPending}
                       >
                         <Edit3 className="h-4 w-4" />
                       </Button>
@@ -829,13 +835,18 @@ function ModulesTab({ areaId, areaContents, courses, tracks }: any) {
                         variant="ghost" 
                         size="icon" 
                         className="h-9 w-9 rounded-lg hover:bg-destructive/10 hover:text-destructive"
+                        disabled={deleteMutation.isPending && deleteMutation.variables === content.id}
                         onClick={() => {
                           if (confirm("Deseja realmente remover este módulo?")) {
                             deleteMutation.mutate(content.id);
                           }
                         }}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        {deleteMutation.isPending && deleteMutation.variables === content.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Trash2 className="h-4 w-4" />
+                        )}
                       </Button>
                     </div>
                   </td>
@@ -943,8 +954,11 @@ function ModulesTab({ areaId, areaContents, courses, tracks }: any) {
                 <Button 
                   type="submit" 
                   disabled={createMutation.isPending || updateModuleMutation.isPending}
-                  className="bg-gold hover:bg-gold/90 text-black font-black px-8 h-11 rounded-xl shadow-lg shadow-gold/10"
+                  className="bg-gold hover:bg-gold/90 text-black font-black px-8 h-11 rounded-xl shadow-lg shadow-gold/10 gap-2"
                 >
+                  {(createMutation.isPending || updateModuleMutation.isPending) && (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  )}
                   {editingModule ? "Salvar Alterações" : "Adicionar Módulo"}
                 </Button>
               </DialogFooter>
