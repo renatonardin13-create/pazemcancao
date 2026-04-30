@@ -380,6 +380,7 @@ export type Database = {
       contents: {
         Row: {
           area_id: string | null
+          category_id: string | null
           created_at: string | null
           id: string
           status: string | null
@@ -390,6 +391,7 @@ export type Database = {
         }
         Insert: {
           area_id?: string | null
+          category_id?: string | null
           created_at?: string | null
           id?: string
           status?: string | null
@@ -400,6 +402,7 @@ export type Database = {
         }
         Update: {
           area_id?: string | null
+          category_id?: string | null
           created_at?: string | null
           id?: string
           status?: string | null
@@ -414,6 +417,13 @@ export type Database = {
             columns: ["area_id"]
             isOneToOne: false
             referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contents_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
             referencedColumns: ["id"]
           },
         ]
