@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { getDashboardStats } from "@/lib/admin-dashboard.functions";
 import { getDashboardAnalytics } from "@/lib/analytics.functions";
-import { useArea } from "@/providers/AreaProvider";
+// useArea removed
 import {
   Users, Activity, BarChart3, Music, Headphones, Download,
   TrendingUp, DollarSign, BookOpen, Clock, GraduationCap,
@@ -26,11 +26,11 @@ const PERIOD_OPTIONS = [
 
 export function AdminDashboard() {
   const [days, setDays] = useState(30);
-  const { currentArea } = useArea();
+  // currentArea removed
 
   const { data, isLoading, error: statsError, refetch: refetchStats } = useQuery({
-    queryKey: ["admin-dashboard", currentArea?.id],
-    queryFn: () => getDashboardStats({ data: { areaId: currentArea?.id } }),
+    queryKey: ["admin-dashboard"],
+    queryFn: () => getDashboardStats({ data: {} }),
     staleTime: 60_000,
     retry: 1,
   });
