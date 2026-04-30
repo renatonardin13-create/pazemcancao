@@ -51,10 +51,20 @@ function AreaLayout() {
   useEffect(() => {
     if (area?.primary_color) {
       document.documentElement.style.setProperty("--primary", area.primary_color);
-      // Generate some variations if needed, or just use the primary
+      document.documentElement.style.setProperty("--gold", area.primary_color);
+      document.documentElement.style.setProperty("--sidebar-primary", area.primary_color);
+      document.documentElement.style.setProperty("--ring", area.primary_color);
+      
+      // Update gold-soft (usually primary with 10% opacity)
+      const softColor = `${area.primary_color}1a`; // 1a is ~10% in hex
+      document.documentElement.style.setProperty("--gold-soft", softColor);
     }
     return () => {
       document.documentElement.style.removeProperty("--primary");
+      document.documentElement.style.removeProperty("--gold");
+      document.documentElement.style.removeProperty("--sidebar-primary");
+      document.documentElement.style.removeProperty("--ring");
+      document.documentElement.style.removeProperty("--gold-soft");
     };
   }, [area?.primary_color]);
 
