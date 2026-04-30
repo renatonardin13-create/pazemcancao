@@ -163,6 +163,7 @@ export type Database = {
       }
       categories: {
         Row: {
+          area_id: string | null
           color: string | null
           created_at: string
           description: string | null
@@ -175,6 +176,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          area_id?: string | null
           color?: string | null
           created_at?: string
           description?: string | null
@@ -187,6 +189,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          area_id?: string | null
           color?: string | null
           created_at?: string
           description?: string | null
@@ -198,7 +201,15 @@ export type Database = {
           sort_order?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "categories_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       community_post_likes: {
         Row: {
@@ -1452,6 +1463,7 @@ export type Database = {
       }
       tracks: {
         Row: {
+          area_id: string | null
           bonus_release_date: string | null
           category: string
           cover_url: string | null
@@ -1468,6 +1480,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          area_id?: string | null
           bonus_release_date?: string | null
           category?: string
           cover_url?: string | null
@@ -1484,6 +1497,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          area_id?: string | null
           bonus_release_date?: string | null
           category?: string
           cover_url?: string | null
@@ -1499,7 +1513,15 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "tracks_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       transactions: {
         Row: {
