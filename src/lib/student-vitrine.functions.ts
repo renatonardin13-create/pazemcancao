@@ -65,7 +65,8 @@ function safeCourse(course: any) {
 
 export const getStudentVitrineData = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { areaId?: string }) => input)
+  .handler(async ({ data: inputData, context }) => {
     const { supabase, userId } = context;
 
     const [
