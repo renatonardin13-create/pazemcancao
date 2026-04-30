@@ -257,14 +257,6 @@ export function AdminAreasPanel() {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  onClick={() => handleDelete(area.id)}
-                  className="h-10 rounded-xl border-border/30 hover:border-destructive/30 hover:bg-destructive/5 hover:text-destructive transition-all gap-2 text-[10px] font-black uppercase tracking-tighter"
-                >
-                  <Trash2 className="h-3.5 w-3.5" /> Excluir
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
                   onClick={() => handleViewAsAdmin(area)}
                   className="h-10 rounded-xl border-border/30 hover:border-gold/30 hover:bg-gold/5 hover:text-gold transition-all gap-2 text-[10px] font-black uppercase tracking-tighter"
                 >
@@ -274,9 +266,9 @@ export function AdminAreasPanel() {
                   variant="outline" 
                   size="sm" 
                   onClick={() => handleViewAsUser(area)}
-                  className="h-10 rounded-xl border-border/30 hover:border-white/20 hover:bg-white/5 transition-all gap-2 text-[10px] font-black uppercase tracking-tighter"
+                  className="col-span-2 h-10 rounded-xl border-border/30 hover:border-white/20 hover:bg-white/5 transition-all gap-2 text-[10px] font-black uppercase tracking-tighter"
                 >
-                  <Eye className="h-3.5 w-3.5" /> Aluno
+                  <Eye className="h-3.5 w-3.5" /> Ver como Aluno
                 </Button>
               </div>
             </CardContent>

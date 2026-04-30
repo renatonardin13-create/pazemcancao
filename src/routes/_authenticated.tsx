@@ -9,14 +9,17 @@ import { toast } from "sonner";
 import { SafeBoundary } from "@/components/SafeBoundary";
 import { AreaProvider } from "@/providers/AreaProvider";
 
+function CardsConfigLoader() {
+  useCardsConfig();
+  return <Outlet />;
+}
+
 export const Route = createFileRoute("/_authenticated")({
   component: AuthenticatedLayout,
 });
 
 function AuthenticatedLayout() {
   const { isAuthenticated, loading, adminLoading, isAdmin, logout, user, blocked, blockMessage } = useAuth();
-  // Carrega cards_config global do admin (popula cache para PosterCard)
-  useCardsConfig();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -245,7 +248,7 @@ function AuthenticatedLayout() {
   return (
     <SafeBoundary fallbackTitle="Erro ao carregar a área do aluno">
       <AreaProvider>
-        <Outlet />
+        <CardsConfigLoader />
       </AreaProvider>
     </SafeBoundary>
   );
