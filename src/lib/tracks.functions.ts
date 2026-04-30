@@ -61,7 +61,7 @@ export const listCategories = createServerFn({ method: 'POST' })
 export const getTrackById = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { id: string }) => input)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     // Não filtrar por is_active — a biblioteca (/musicas) usa listAllTracks
     // e exibe faixas mesmo inativas (com badge "Em breve"). A página de
     // detalhe deve permanecer consistente com a lista.
