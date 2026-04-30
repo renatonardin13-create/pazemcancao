@@ -35,27 +35,10 @@ export const createContentItem = createServerFn({ method: 'POST' })
     title: string;
     description?: string;
     content_type: string;
+    area_id?: string;
     cover_url?: string;
     file_url?: string;
-    video_url?: string;
-    sales_page_url?: string;
-    is_free?: boolean;
-    release_days?: number | null;
-    access_mode?: string;
-    display_category?: string;
-    badge_text?: string;
-    show_as_card?: boolean;
-    card_cover_url?: string;
-    sort_order?: number;
-    journey_group?: string;
-    journey_order?: number;
-    unlock_rule_type?: string;
-    unlock_rule_content_id?: string | null;
-    is_featured?: boolean;
-    featured_priority?: number;
-    release_mode?: string;
-    initial_free_count?: number;
-    locked_final_count?: number;
+...
     locked_label?: string | null;
     launch_mode?: string;
   }) => input)
@@ -77,30 +60,13 @@ export const createContentItem = createServerFn({ method: 'POST' })
         title: data.title,
         description: data.description || null,
         content_type: data.content_type,
+        area_id: data.area_id || null,
         cover_url: data.cover_url || null,
         file_url: data.file_url || null,
-        video_url: data.video_url || null,
-        sales_page_url: data.sales_page_url || null,
-        is_free: data.is_free || false,
-        release_days: data.release_days ?? null,
-        access_mode: accessMode,
-        display_category: data.display_category || null,
-        badge_text: data.badge_text || null,
-        show_as_card: data.show_as_card ?? true,
-        card_cover_url: data.card_cover_url || null,
-        is_active: true,
-        sort_order: data.sort_order ?? ((maxOrder?.sort_order ?? 0) + 1),
-        journey_group: data.journey_group || null,
-        journey_order: data.journey_order ?? 0,
-        unlock_rule_type: data.unlock_rule_type || 'none',
-        unlock_rule_content_id: data.unlock_rule_content_id || null,
-        is_featured: data.is_featured ?? false,
-        featured_priority: data.featured_priority ?? 0,
-        release_mode: data.release_mode || 'liberar_tudo',
-        initial_free_count: data.initial_free_count ?? 0,
+...
         locked_final_count: data.locked_final_count ?? 0,
         locked_label: data.locked_label || null,
-        launch_mode: data.launch_mode || 'none',
+        launch_mode: data.launch_mode || "none",
       } as any)
       .select()
       .single();
@@ -116,27 +82,9 @@ export const updateContentItem = createServerFn({ method: 'POST' })
     title?: string;
     description?: string;
     content_type?: string;
+    area_id?: string;
     cover_url?: string;
-    file_url?: string;
-    video_url?: string;
-    sales_page_url?: string;
-    is_free?: boolean;
-    is_active?: boolean;
-    release_days?: number | null;
-    access_mode?: string;
-    display_category?: string;
-    badge_text?: string;
-    show_as_card?: boolean;
-    card_cover_url?: string;
-    sort_order?: number;
-    journey_group?: string;
-    journey_order?: number;
-    unlock_rule_type?: string;
-    unlock_rule_content_id?: string | null;
-    is_featured?: boolean;
-    featured_priority?: number;
-    release_mode?: string;
-    initial_free_count?: number;
+...
     locked_final_count?: number;
     locked_label?: string | null;
     launch_mode?: string;
