@@ -153,7 +153,12 @@ export function AreaEditPage() {
           <LoginTab area={area} onSave={(data: any) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
         </TabsContent>
         <TabsContent value="products">
-          <ModulesTab areaId={areaId} areaContents={areaContents || []} />
+          <ModulesTab 
+            areaId={areaId} 
+            areaContents={areaContents || []} 
+            courses={coursesData?.courses || []}
+            tracks={tracksData?.tracks || []}
+          />
         </TabsContent>
         <TabsContent value="cards">
           <CardsTab area={area} onSave={(data: any) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
