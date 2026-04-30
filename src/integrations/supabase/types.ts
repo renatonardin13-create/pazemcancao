@@ -616,24 +616,35 @@ export type Database = {
       }
       download_logs: {
         Row: {
+          area_id: string | null
           downloaded_at: string
           email: string
           id: string
           track_id: string
         }
         Insert: {
+          area_id?: string | null
           downloaded_at?: string
           email: string
           id?: string
           track_id: string
         }
         Update: {
+          area_id?: string | null
           downloaded_at?: string
           email?: string
           id?: string
           track_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "download_logs_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       enrollments: {
         Row: {
@@ -1184,6 +1195,7 @@ export type Database = {
       }
       play_logs: {
         Row: {
+          area_id: string | null
           duration_seconds: number
           email: string
           id: string
@@ -1191,6 +1203,7 @@ export type Database = {
           track_id: string
         }
         Insert: {
+          area_id?: string | null
           duration_seconds?: number
           email: string
           id?: string
@@ -1198,13 +1211,22 @@ export type Database = {
           track_id: string
         }
         Update: {
+          area_id?: string | null
           duration_seconds?: number
           email?: string
           id?: string
           played_at?: string
           track_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "play_logs_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       playlist_tracks: {
         Row: {
@@ -2071,7 +2093,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_analytics_summary: { Args: { p_days?: number }; Returns: Json }
+      get_analytics_summary:
+        | { Args: { p_days?: number }; Returns: Json }
+        | { Args: { p_area_id?: string; p_days: number }; Returns: Json }
       get_hero_banner_metrics: { Args: { p_days?: number }; Returns: Json }
       has_role: {
         Args: {
