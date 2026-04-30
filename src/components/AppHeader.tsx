@@ -3,7 +3,6 @@ import { LogOut, Settings, UserCircle, Headphones, GraduationCap, Menu, X } from
 import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useProjectMode } from "@/hooks/use-project-mode";
-// useArea removed
 import { NotificationBell } from "./NotificationBell";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
@@ -15,7 +14,6 @@ interface AppHeaderProps {
 export function AppHeader({ showLogout = true }: AppHeaderProps) {
   const { logout, isAdmin, adminLoading } = useAuth();
   const { showMusicInMenu, showCoursesInMenu, showPerfilInMenu } = useProjectMode();
-  // currentArea removed
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
@@ -23,11 +21,11 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
     const items: { to: string; icon: typeof Headphones; label: string }[] = [];
     const prefix = "";
     
-    if (showMusicInMenu) items.push({ to: prefix ? `${prefix}/musicas` : "/musicas", icon: Headphones, label: "Músicas" });
+    if (showMusicInMenu) items.push({ to: "/musicas", icon: Headphones, label: "Músicas" });
     if (showCoursesInMenu) items.push({ to: "/cursos", icon: GraduationCap, label: "Cursos" });
     if (showPerfilInMenu) items.push({ to: "/perfil", icon: UserCircle, label: "Perfil" });
     return items;
-  }, [showMusicInMenu, showCoursesInMenu, showPerfilInMenu, currentArea]);
+  }, [showMusicInMenu, showCoursesInMenu, showPerfilInMenu]);
 
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + "/");
 
