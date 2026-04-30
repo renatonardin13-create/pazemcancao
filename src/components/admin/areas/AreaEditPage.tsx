@@ -101,7 +101,7 @@ export function AreaEditPage() {
               { id: "colors", label: "Cores", icon: Palette },
               { id: "language", label: "Idioma", icon: Languages },
               { id: "login", label: "Login", icon: LogIn },
-              { id: "products", label: "Produtos", icon: Package },
+              { id: "products", label: "Módulos", icon: Package },
               { id: "cards", label: "Cards", icon: LayoutPanelTop },
             ].map((tab) => (
               <TabsTrigger 
