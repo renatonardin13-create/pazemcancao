@@ -49,24 +49,69 @@ export function AreaEditPage() {
   if (!area) return <div>Área não encontrada</div>;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex items-center gap-4 mb-8">
-        <Link to="/admin/settings" search={{ tab: "areas" }} className="h-10 w-10 flex items-center justify-center rounded-xl border border-border/40 hover:bg-white/5 transition-all"><ArrowLeft className="h-5 w-5" /></Link>
-        <div>
-          <h1 className="text-3xl font-black tracking-tight">{area.name}</h1>
-          <p className="text-muted-foreground">Configure e personalize esta área de membros</p>
+    <div className="max-w-6xl mx-auto space-y-6 pb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      {/* Header */}
+      <div className="relative rounded-[2.5rem] border border-gold/10 bg-gradient-to-br from-card/80 via-card/50 to-card/30 p-8 overflow-hidden shadow-2xl backdrop-blur-xl group">
+        <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-gold/5 blur-[100px] group-hover:bg-gold/10 transition-all duration-1000" />
+        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div className="flex items-center gap-5">
+            <Link 
+              to="/admin/settings" 
+              search={{ tab: "areas" }}
+              className="h-12 w-12 flex items-center justify-center rounded-2xl border border-border/30 bg-background/30 text-muted-foreground/50 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all duration-300"
+            >
+              <ArrowLeft className="h-6 w-6" />
+            </Link>
+            <div className="space-y-1">
+              <h1 className="text-4xl font-black tracking-tight text-foreground uppercase italic flex items-center gap-3">
+                <Layout className="h-8 w-8 text-gold" />
+                {area.name}
+              </h1>
+              <p className="text-sm font-medium text-muted-foreground/60 tracking-wide uppercase">
+                ID do Ecossistema: <span className="text-gold/80 font-mono">#{areaId.split("-")[0]}</span>
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button 
+              variant="outline" 
+              onClick={() => window.open(`/${area.slug}`, "_blank")}
+              className="h-12 rounded-2xl border-border/30 hover:bg-white/5 gap-2 px-6 font-bold"
+            >
+              <Eye className="h-5 w-5" /> Preview Aluno
+            </Button>
+            <Button 
+              className="h-12 rounded-2xl bg-gold hover:bg-gold/90 text-black gap-2 px-8 font-black shadow-lg shadow-gold/10"
+              onClick={() => setActiveTab("general")}
+            >
+              Configurações
+            </Button>
+          </div>
         </div>
       </div>
 
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="bg-card/40 border border-border/20 p-1 rounded-2xl h-auto flex-wrap">
-          <TabsTrigger value="general">Geral</TabsTrigger>
-          <TabsTrigger value="branding">Branding</TabsTrigger>
-          <TabsTrigger value="colors">Cores</TabsTrigger>
-          <TabsTrigger value="language">Idioma</TabsTrigger>
-          <TabsTrigger value="login">Login</TabsTrigger>
-          <TabsTrigger value="products">Produtos</TabsTrigger>
-        </TabsList>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-8">
+        <div className="sticky top-4 z-40">
+          <TabsList className="bg-card/60 backdrop-blur-md border border-border/20 p-1.5 rounded-[1.5rem] h-auto flex flex-wrap shadow-2xl">
+            {[
+              { id: "general", label: "Geral", icon: Globe },
+              { id: "branding", label: "Branding", icon: Layout },
+              { id: "colors", label: "Cores", icon: Palette },
+              { id: "language", label: "Idioma", icon: Languages },
+              { id: "login", label: "Login", icon: LogIn },
+              { id: "products", label: "Produtos", icon: Package },
+            ].map((tab) => (
+              <TabsTrigger 
+                key={tab.id}
+                value={tab.id}
+                className="data-[state=active]:bg-gold/10 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-xl px-6 py-3 gap-2.5 text-xs font-black uppercase tracking-widest transition-all"
+              >
+                <tab.icon className="h-4 w-4" />
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
 
         <TabsContent value="general">
           <GeneralTab area={area} onSave={(data: any) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
