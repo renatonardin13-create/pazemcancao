@@ -27,7 +27,7 @@ export function AdminAreasPanel() {
   });
 
   const createMutation = useMutation({
-    mutationFn: createArea,
+    mutationFn: (data: any) => createArea(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["areas"] });
       toast.success("Área criada com sucesso!");
