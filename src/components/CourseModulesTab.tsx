@@ -537,19 +537,27 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                     <button
                       type="button"
                       className="p-0.5 text-muted-foreground/50 hover:text-gold/60 disabled:opacity-15 transition-colors"
-                      disabled={modIndex === 0}
+                      disabled={modIndex === 0 || reorderModM.isPending}
                       onClick={() => moveModule(modIndex, "up")}
                     >
-                      <ChevronUp className="h-3.5 w-3.5" />
+                      {reorderModM.isPending && reorderModM.variables?.[0]?.id === mod.id ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <ChevronUp className="h-3.5 w-3.5" />
+                      )}
                     </button>
                     <GripVertical className="h-3.5 w-3.5 text-muted-foreground/50 cursor-grab active:cursor-grabbing" />
                     <button
                       type="button"
                       className="p-0.5 text-muted-foreground/50 hover:text-gold/60 disabled:opacity-15 transition-colors"
-                      disabled={modIndex === modules.length - 1}
+                      disabled={modIndex === modules.length - 1 || reorderModM.isPending}
                       onClick={() => moveModule(modIndex, "down")}
                     >
-                      <ChevronDown className="h-3.5 w-3.5" />
+                      {reorderModM.isPending && reorderModM.variables?.[0]?.id === mod.id ? (
+                        <Loader2 className="h-3 w-3 animate-spin" />
+                      ) : (
+                        <ChevronDown className="h-3.5 w-3.5" />
+                      )}
                     </button>
                   </div>
 
