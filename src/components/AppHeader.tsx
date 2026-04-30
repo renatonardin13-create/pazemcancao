@@ -42,7 +42,7 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
   return (
     <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-2xl border-b border-border/15">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 sm:px-6 h-14 sm:h-16">
-        <LogoBrand size="md" showSubtitle linkTo={currentArea ? `/area/${currentArea.slug}` : "/home"} />
+        <LogoBrand size="md" showSubtitle linkTo="/home" />
 
         {/* Desktop nav */}
         <div className="hidden sm:flex items-center gap-1">
