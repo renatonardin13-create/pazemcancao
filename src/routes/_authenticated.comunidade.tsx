@@ -44,6 +44,7 @@ function ComunidadePage() {
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [filter, setFilter] = useState<FilterKey>("todos");
   const { currentArea } = useArea();
 
   const loadPosts = async () => {
