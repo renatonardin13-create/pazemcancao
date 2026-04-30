@@ -2,7 +2,8 @@ import { createFileRoute, Outlet, useParams, useNavigate } from "@tanstack/react
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { Loader2, ShieldAlert, LogOut } from "lucide-react";
+import { Loader2, ShieldAlert, LogOut, AlertCircle } from "lucide-react";
+import { SafeBoundary } from "@/components/SafeBoundary";
 import { useEffect, ReactNode } from "react";
 import { StudentSidebar } from "@/components/StudentSidebar";
 import { AppHeader } from "@/components/AppHeader";
@@ -10,7 +11,11 @@ import { GlobalPlayer } from "@/components/GlobalPlayer";
 import { useArea } from "@/providers/AreaProvider";
 
 export const Route = createFileRoute("/_authenticated/area/$slug")({
-  component: AreaLayout,
+  component: () => (
+    <SafeBoundary fallbackTitle="Erro ao carregar o ambiente">
+      <AreaLayout />
+    </SafeBoundary>
+  ),
 });
 
 function AreaLayout() {
@@ -78,8 +83,31 @@ function AreaLayout() {
 
   if (areaLoading || (membershipLoading && !isAdmin)) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="flex min-h-screen bg-background">
+        <div className="w-64 border-r border-white/5 bg-card/20 hidden md:block">
+          <div className="p-6 space-y-4">
+            <div className="h-8 w-32 bg-white/5 rounded-lg animate-pulse" />
+            <div className="space-y-2 pt-8">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="h-10 w-full bg-white/5 rounded-xl animate-pulse" />
+              ))}
+            </div>
+          </div>
+        </div>
+        <div className="flex-1">
+          <header className="h-20 border-b border-white/5 px-8 flex items-center justify-between">
+            <div className="h-6 w-48 bg-white/5 rounded-lg animate-pulse" />
+            <div className="h-10 w-10 bg-white/5 rounded-full animate-pulse" />
+          </header>
+          <div className="p-8 space-y-8">
+            <div className="h-[400px] w-full bg-white/5 rounded-3xl animate-pulse" />
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="h-64 w-full bg-white/5 rounded-2xl animate-pulse" />
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
