@@ -28,22 +28,44 @@ export function AdminDashboard() {
   const [days, setDays] = useState(30);
   const { currentArea } = useArea();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error: statsError, refetch: refetchStats } = useQuery({
     queryKey: ["admin-dashboard", currentArea?.id],
     queryFn: () => getDashboardStats({ data: { areaId: currentArea?.id } }),
     staleTime: 60_000,
+    retry: 1,
   });
 
-  const { data: rawAnalytics, isLoading: analyticsLoading } = useQuery({
+  const { data: rawAnalytics, isLoading: analyticsLoading, error: analyticsError } = useQuery({
     queryKey: ["admin-analytics", days],
     queryFn: () => getDashboardAnalytics({ data: { days } }),
     staleTime: 60_000,
+    retry: 1,
   });
 
   const analytics = rawAnalytics as any;
 
   const formatCurrency = (val: number) =>
     val.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+  if (statsError || analyticsError) {
+    return (
+      <div className="flex flex-col items-center justify-center p-12 text-center space-y-6 bg-card/40 border border-border/20 rounded-[2rem]">
+        <div className="h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center">
+          <TrendingUp className="h-10 w-10 text-destructive/50" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold">Erro ao carregar dados</h2>
+          <p className="text-muted-foreground max-w-sm mx-auto">Não foi possível carregar as estatísticas do dashboard. Verifique sua conexão.</p>
+        </div>
+        <button 
+          onClick={() => refetchStats()} 
+          className="px-8 h-12 rounded-xl bg-gold text-black font-bold hover:scale-105 transition-all"
+        >
+          Tentar novamente
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-7xl mx-auto space-y-4 sm:space-y-6">

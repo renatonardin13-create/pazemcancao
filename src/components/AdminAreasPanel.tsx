@@ -31,7 +31,8 @@ import {
   ExternalLink, 
   Layout, 
   MoreVertical,
-  Link2
+  Link2,
+  RefreshCw
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -67,9 +68,10 @@ export function AdminAreasPanel() {
     language: "pt",
   });
 
-  const { data: areas, isLoading } = useQuery({
+  const { data: areas, isLoading, error, refetch } = useQuery({
     queryKey: ["areas"],
     queryFn: getAreas,
+    retry: 1,
   });
 
   const createMutation = useMutation({
@@ -204,6 +206,27 @@ export function AdminAreasPanel() {
     // Navigate to user view of the area
     window.open(`/${area.slug}`, "_blank");
   };
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-center space-y-6 bg-card/40 border border-border/20 rounded-[2rem]">
+        <div className="h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center">
+          <Globe className="h-10 w-10 text-destructive/50" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold">Erro ao carregar áreas</h2>
+          <p className="text-muted-foreground max-w-sm mx-auto">Não foi possível carregar a lista de áreas de membros.</p>
+        </div>
+        <Button 
+          onClick={() => refetch()} 
+          variant="outline"
+          className="px-8 h-12 rounded-xl gap-2"
+        >
+          <RefreshCw className="h-4 w-4" /> Tentar novamente
+        </Button>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (

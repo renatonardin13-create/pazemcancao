@@ -6,6 +6,9 @@ import { Music, Search, Play, Headphones, ListMusic } from "lucide-react";
 import { useState, useMemo } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle, RefreshCw } from "lucide-react";
 import { usePlayer } from "@/hooks/use-player";
 import type { Track } from "@/lib/sample-tracks";
 
@@ -39,9 +42,9 @@ function dbTrackToPlayerTrack(track: any): Track {
 function AreaMusicLibrary() {
   const { slug } = useParams({ from: "/_authenticated/area/$slug/musicas" });
   const [searchTerm, setSearchTerm] = useState("");
-  const { setQueue, toggle } = usePlayer();
+  const { setQueue } = usePlayer();
 
-  const { data: area } = useQuery({
+  const { data: area, isLoading: areaLoading, error: areaError, refetch: refetchArea } = useQuery({
     queryKey: ["area", slug],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -54,7 +57,7 @@ function AreaMusicLibrary() {
     },
   });
 
-  const { data: rawTracks = [], isLoading } = useQuery({
+  const { data: rawTracks = [], isLoading: tracksLoading, error: tracksError } = useQuery({
     queryKey: ["area-tracks", area?.id],
     enabled: !!area?.id,
     queryFn: async () => {
@@ -95,10 +98,23 @@ function AreaMusicLibrary() {
     }
   };
 
-  if (isLoading) {
+  if (areaError || tracksError) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      <div className="p-12 max-w-2xl mx-auto space-y-6">
+        <Alert variant="destructive" className="bg-destructive/10 border-destructive/20 text-destructive rounded-2xl p-6">
+          <AlertCircle className="h-6 w-6" />
+          <AlertTitle className="text-lg font-bold ml-2">Ops! Algo deu errado</AlertTitle>
+          <AlertDescription className="mt-2 text-sm opacity-90">
+            Não conseguimos carregar a biblioteca de louvores. Por favor, tente novamente.
+          </AlertDescription>
+        </Alert>
+        <Button 
+          onClick={() => refetchArea()} 
+          className="w-full h-14 rounded-2xl gap-2 font-bold text-lg"
+          variant="outline"
+        >
+          <RefreshCw className="h-5 w-5" /> Tentar novamente
+        </Button>
       </div>
     );
   }
@@ -113,8 +129,16 @@ function AreaMusicLibrary() {
               <Headphones className="h-4 w-4" />
               <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Music Experience</span>
             </div>
-            <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Sua Biblioteca</h1>
-            <p className="text-muted-foreground">Explore os louvores exclusivos desta área.</p>
+            {areaLoading ? (
+              <Skeleton className="h-10 w-64 bg-white/5" />
+            ) : (
+              <h1 className="text-3xl font-bold tracking-tight md:text-4xl">Sua Biblioteca</h1>
+            )}
+            {areaLoading ? (
+              <Skeleton className="h-5 w-48 bg-white/5" />
+            ) : (
+              <p className="text-muted-foreground">Explore os louvores exclusivos desta área.</p>
+            )}
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
@@ -129,7 +153,7 @@ function AreaMusicLibrary() {
             </div>
             <Button 
               onClick={handlePlayAll} 
-              disabled={filteredTracks.filter(t => t.audioUrl && !t.isLocked).length === 0}
+              disabled={tracksLoading || filteredTracks.filter(t => t.audioUrl && !t.isLocked).length === 0}
               className="h-12 px-6 gap-2 rounded-xl shadow-lg shadow-primary/20 w-full sm:w-auto"
             >
               <Play className="h-4 w-4 fill-current" /> Tocar Tudo
@@ -139,7 +163,13 @@ function AreaMusicLibrary() {
       </section>
 
       {/* Categories Filter */}
-      {categories.length > 0 && (
+      {tracksLoading ? (
+        <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <Skeleton key={i} className="h-10 w-24 rounded-full bg-white/5 shrink-0" />
+          ))}
+        </div>
+      ) : categories.length > 0 && (
         <section className="space-y-4">
           <div className="flex items-center gap-2 text-muted-foreground">
             <ListMusic className="h-4 w-4" />
@@ -156,7 +186,13 @@ function AreaMusicLibrary() {
 
       {/* Tracks Grid */}
       <section className="space-y-6">
-        {filteredTracks.length === 0 ? (
+        {tracksLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <Skeleton key={i} className="h-64 w-full rounded-2xl bg-white/5" />
+            ))}
+          </div>
+        ) : filteredTracks.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center opacity-50">
             <Music className="h-12 w-12 mb-4" />
             <p>Nenhuma música encontrada.</p>
