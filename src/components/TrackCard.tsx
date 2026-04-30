@@ -90,15 +90,18 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
     <div
       className={`flex h-16 w-16 items-center justify-center rounded-2xl border backdrop-blur-sm transition-all duration-700 ${
         isPlaying
-          ? "border-gold/25 bg-gold/15 scale-110"
+          ? "border-gold/50 bg-gold/20 scale-110 shadow-[0_0_20px_rgba(212,175,55,0.3)]"
           : "border-white/[0.06] bg-white/[0.04] md:group-hover/card:scale-105 md:group-hover/card:bg-white/[0.07]"
       }`}
     >
       <Music
         className={`h-7 w-7 transition-colors duration-500 ${
-          isPlaying ? "text-gold/70" : "text-white/25 md:group-hover/card:text-white/40"
+          isPlaying ? "text-gold" : "text-white/25 md:group-hover/card:text-white/40"
         }`}
       />
+      {isPlaying && (
+        <div className="absolute inset-0 rounded-2xl border border-gold/50 animate-ping opacity-20" />
+      )}
     </div>
   );
 
