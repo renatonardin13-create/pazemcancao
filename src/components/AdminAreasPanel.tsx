@@ -43,6 +43,7 @@ import {
 
 export function AdminAreasPanel() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingArea, setEditingArea] = useState<Area | null>(null);
   const [formData, setFormData] = useState({
