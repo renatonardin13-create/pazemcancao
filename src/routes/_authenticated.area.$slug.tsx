@@ -83,24 +83,27 @@ function AreaLayout() {
   if (!hasAccess) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background relative overflow-hidden">
-        <div className="relative max-w-sm text-center px-8">
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_50%_40%_at_50%_40%,var(--color-gold)/0.025,transparent_70%)]" />
+        <div className="relative max-w-sm text-center px-8 animate-in fade-in slide-in-from-bottom-6 duration-1000">
+          <div className="mx-auto mb-10 w-px h-16 bg-gradient-to-b from-transparent via-gold/15 to-transparent" />
           <div className="mx-auto mb-8 flex items-center justify-center">
-            <ShieldAlert className="h-8 w-8 text-destructive/60" />
+            <ShieldAlert className="h-10 w-10 text-destructive/40" />
           </div>
           <h2 className="font-display text-2xl font-bold text-foreground/85 tracking-tight">
             Acesso Restrito
           </h2>
+          <div className="mx-auto mt-5 h-px w-10 bg-gradient-to-r from-transparent via-gold/12 to-transparent" />
           <p className="mt-6 text-[14px] leading-[2] text-muted-foreground/60 font-light">
-            Você não tem permissão para acessar esta área de membros. 
-            Entre em contato com o administrador se você acredita que isso é um erro.
+            Você não tem permissão para acessar esta área de membros.<br />
+            Certifique-se de estar usando o e-mail correto ou entre em contato com o suporte.
           </p>
           <div className="mt-10 flex flex-col items-center gap-4">
             <button
               onClick={() => logout()}
-              className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/70 hover:text-muted-foreground/55 transition-colors"
+              className="flex items-center gap-2 text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground/70 hover:text-muted-foreground/55 transition-colors duration-500"
             >
               <LogOut className="h-3 w-3" />
-              Sair
+              Sair da Conta
             </button>
           </div>
         </div>
