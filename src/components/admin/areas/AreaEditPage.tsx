@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { useParams, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getArea, updateArea, getAreaContents, addAreaContent, removeAreaContent, updateAreaContent, getCategoriesByArea } from "@/lib/areas.functions";
+import { getArea, updateArea, getAreaContents, addAreaContent, removeAreaContent, updateAreaContent, getCategoriesByArea, reorderAreaContents } from "@/lib/areas.functions";
 import { listAdminCourses } from "@/lib/admin-courses.functions";
 import { uploadPlatformAsset } from "@/lib/platform-settings.functions";
 import { listAdminTracks } from "@/lib/admin-tracks.functions";
@@ -15,7 +15,8 @@ import { toast } from "sonner";
 import { 
   Loader2, ArrowLeft, Save, Globe, Palette, Type, Layout, 
   Upload, Languages, LogIn, Package, CheckCircle2, Circle, X, Eye, Link2, Plus,
-  LayoutPanelTop, Search, Edit3, Trash2, Music, Video, BookOpen, MoreVertical
+  LayoutPanelTop, Search, Edit3, Trash2, Music, Video, BookOpen, MoreVertical,
+  ChevronUp, ChevronDown, GripVertical
 } from "lucide-react";
 import { AdminCardsConfigTab } from "@/components/AdminCardsConfigTab";
 import {
@@ -650,6 +651,35 @@ function ModulesTab({ areaId, areaContents, courses, tracks }: any) {
       toast.success("Status atualizado!");
     }
   });
+  
+  const reorderMutation = useMutation({
+    mutationFn: (items: { id: string; sort_order: number }[]) => reorderAreaContents(items),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["area-contents", areaId] });
+      toast.success("Ordem atualizada!");
+    },
+    onError: (error: any) => toast.error(`Erro ao ordenar: ${error.message}`),
+  });
+
+  const moveModule = (index: number, direction: "up" | "down") => {
+    const items = [...filteredContents];
+    if (direction === "up" && index === 0) return;
+    if (direction === "down" && index === items.length - 1) return;
+
+    const swapIndex = direction === "up" ? index - 1 : index + 1;
+    
+    // Create the reorder payload
+    // We swap sort_orders
+    const currentItem = items[index];
+    const swapItem = items[swapIndex];
+    
+    const reorderData = [
+      { id: currentItem.id, sort_order: swapItem.sort_order || 0 },
+      { id: swapItem.id, sort_order: currentItem.sort_order || 0 }
+    ];
+    
+    reorderMutation.mutate(reorderData);
+  };
 
   const filteredContents = areaContents.filter((c: any) => {
     const matchesSearch = c.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -768,7 +798,8 @@ function ModulesTab({ areaId, areaContents, courses, tracks }: any) {
           <table className="w-full text-left border-separate border-spacing-y-3">
             <thead>
               <tr className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 px-6">
-                <th className="pb-4 pl-6">Módulo</th>
+                <th className="pb-4 pl-6 w-12 text-center">#</th>
+                <th className="pb-4">Módulo</th>
                 <th className="pb-4">Categoria</th>
                 <th className="pb-4">Data</th>
                 <th className="pb-4">Tipo</th>
@@ -777,9 +808,27 @@ function ModulesTab({ areaId, areaContents, courses, tracks }: any) {
               </tr>
             </thead>
             <tbody>
-              {filteredContents.map((content: any) => (
+              {filteredContents.map((content: any, index: number) => (
                 <tr key={content.id} className="group bg-black/20 hover:bg-black/40 transition-all">
                   <td className="py-4 pl-6 rounded-l-2xl border-y border-l border-border/10">
+                    <div className="flex flex-col items-center gap-1">
+                      <button 
+                        onClick={() => moveModule(index, "up")}
+                        disabled={index === 0 || reorderMutation.isPending}
+                        className="p-1 hover:text-gold disabled:opacity-20 transition-colors"
+                      >
+                        <ChevronUp className="h-4 w-4" />
+                      </button>
+                      <button 
+                        onClick={() => moveModule(index, "down")}
+                        disabled={index === filteredContents.length - 1 || reorderMutation.isPending}
+                        className="p-1 hover:text-gold disabled:opacity-20 transition-colors"
+                      >
+                        <ChevronDown className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </td>
+                  <td className="py-4 border-y border-border/10">
                     <div className="flex items-center gap-4">
                       <div className="h-12 w-12 rounded-xl bg-background/50 border border-border/20 flex items-center justify-center group-hover:border-gold/30 transition-colors">
                         {getTypeIcon(content.type)}
@@ -854,7 +903,7 @@ function ModulesTab({ areaId, areaContents, courses, tracks }: any) {
               ))}
               {filteredContents.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="py-20 text-center text-muted-foreground/40 font-bold uppercase tracking-widest text-xs italic">
+                  <td colSpan={7} className="py-20 text-center text-muted-foreground/40 font-bold uppercase tracking-widest text-xs italic">
                     Nenhum módulo encontrado
                   </td>
                 </tr>
