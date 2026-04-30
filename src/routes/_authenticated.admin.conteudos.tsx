@@ -64,6 +64,7 @@ function AdminContentPage() {
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [filterArea, setFilterArea] = useState("all");
 
   // Form state
   const [title, setTitle] = useState("");
@@ -307,6 +308,9 @@ function AdminContentPage() {
     if (typeFilter !== "all") {
       list = list.filter((i: any) => i.content_type === typeFilter);
     }
+    if (filterArea !== "all") {
+      list = list.filter((i: any) => i.area_id === filterArea);
+    }
     return list;
   }, [data?.items, search, typeFilter]);
 
@@ -357,6 +361,17 @@ function AdminContentPage() {
             <SelectItem value="video">🎬 Videoaulas</SelectItem>
             <SelectItem value="free_lesson">🎓 Aulas Gratuitas</SelectItem>
             <SelectItem value="material">📄 Materiais</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select value={filterArea} onValueChange={setFilterArea}>
+          <SelectTrigger className="w-full sm:w-[220px] h-12 bg-card/15 border-border/25 rounded-2xl focus:border-gold/30 transition-all text-sm">
+            <SelectValue placeholder="Filtrar por área" />
+          </SelectTrigger>
+          <SelectContent className="bg-card border-border/40 rounded-xl">
+            <SelectItem value="all">Todas as áreas</SelectItem>
+            {areasData?.map((area: any) => (
+              <SelectItem key={area.id} value={area.id}>{area.name}</SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
