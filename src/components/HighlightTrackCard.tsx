@@ -85,6 +85,7 @@ export function HighlightTrackCard({ track, queue }: HighlightTrackCardProps) {
         title=""
         subtitle={undefined}
         locked={locked}
+        highlight={isPlaying}
       />
     </div>
   );
