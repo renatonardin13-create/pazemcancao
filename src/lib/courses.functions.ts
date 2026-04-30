@@ -26,13 +26,19 @@ export const listPublishedCourses = createServerFn({ method: 'POST' })
 
 export const listCategories = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { areaId?: string }) => input)
+  .handler(async ({ data: inputData, context }) => {
     const { supabase } = context;
 
-    const { data: categories, error } = await supabase
+    let query = supabase
       .from('categories')
-      .select('*')
-      .order('sort_order', { ascending: true });
+      .select('*');
+
+    if (inputData?.areaId) {
+      query = query.eq('area_id', inputData.areaId);
+    }
+
+    const { data: categories, error } = await query.order('sort_order', { ascending: true });
 
     if (error) throw new Error(error.message);
 
