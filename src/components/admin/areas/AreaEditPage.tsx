@@ -134,6 +134,9 @@ export function AreaEditPage() {
         <TabsContent value="products">
           <ProductsTab areaId={areaId} courses={coursesData?.courses || []} areaContents={areaContents || []} />
         </TabsContent>
+        <TabsContent value="cards">
+          <CardsTab area={area} onSave={(data: any) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
+        </TabsContent>
       </Tabs>
     </div>
   );
