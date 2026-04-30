@@ -40,6 +40,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { supabase } from "@/integrations/supabase/client";
 
 export function AdminAreasPanel() {
   const queryClient = useQueryClient();
@@ -48,10 +58,13 @@ export function AdminAreasPanel() {
   const [editingArea, setEditingArea] = useState<Area | null>(null);
   const [formData, setFormData] = useState({
     name: "",
+    short_label: "",
     slug: "",
     description: "",
     primary_color: "#D4A853",
     domain: "",
+    status: "draft",
+    language: "pt",
   });
 
   const { data: areas, isLoading } = useQuery({
@@ -91,10 +104,13 @@ export function AdminAreasPanel() {
   const resetForm = () => {
     setFormData({
       name: "",
+      short_label: "",
       slug: "",
       description: "",
       primary_color: "#D4A853",
       domain: "",
+      status: "draft",
+      language: "pt",
     });
   };
 
@@ -103,12 +119,19 @@ export function AdminAreasPanel() {
     resetForm();
     setIsDialogOpen(true);
   };
-
   const handleOpenEdit = (area: Area) => {
-    navigate({
-      to: "/admin/areas/$areaId",
-      params: { areaId: area.id }
+    setEditingArea(area);
+    setFormData({
+      name: area.name || "",
+      short_label: (area as any).short_label || "",
+      slug: area.slug || "",
+      description: area.description || "",
+      primary_color: area.primary_color || "#D4A853",
+      domain: area.domain || "",
+      status: (area as any).status || "draft",
+      language: area.language || "pt",
     });
+    setIsDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
@@ -117,12 +140,52 @@ export function AdminAreasPanel() {
     resetForm();
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const generateSlug = (name: string) => {
+    return name
+      .toLowerCase()
+      .trim()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-|-$/g, '');
+  };
+
+  const handleNameChange = (name: string) => {
+    setFormData(prev => ({
+      ...prev,
+      name,
+      slug: editingArea ? prev.slug : (prev.slug === generateSlug(prev.name) || !prev.slug ? generateSlug(name) : prev.slug)
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    let finalSlug = formData.slug || generateSlug(formData.name);
+    if (!finalSlug) {
+      toast.error("Por favor, informe um nome ou slug para a área.");
+      return;
+    }
+
+    const { data: existingArea } = await supabase
+      .from("areas")
+      .select("id")
+      .eq("slug", finalSlug)
+      .neq("id", editingArea?.id || "00000000-0000-0000-0000-000000000000")
+      .maybeSingle();
+
+    if (existingArea) {
+      toast.error("Este slug já está em uso. Por favor, escolha outro.");
+      return;
+    }
+
+    const dataToSave = { ...formData, slug: finalSlug };
+
     if (editingArea) {
-      updateMutation.mutate({ id: editingArea.id, data: formData });
+      updateMutation.mutate({ id: editingArea.id, data: dataToSave });
     } else {
-      createMutation.mutate(formData);
+      createMutation.mutate(dataToSave);
     }
   };
 
@@ -294,128 +357,234 @@ export function AdminAreasPanel() {
 
       {/* Create/Edit Modal */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[600px] bg-card border-border/40 shadow-2xl rounded-[2rem]">
-          <form onSubmit={handleSubmit}>
-            <DialogHeader className="pt-4 pb-2">
-              <DialogTitle className="text-2xl font-black">
-                {editingArea ? "Editar Configurações" : "Criar Nova Área"}
-              </DialogTitle>
-              <DialogDescription>
-                Configure os detalhes fundamentais para esta área da sua plataforma.
-              </DialogDescription>
+        <DialogContent className="sm:max-w-[700px] bg-[#0A0A0A] border-white/5 shadow-2xl rounded-[2.5rem] p-0 overflow-hidden border">
+          <form onSubmit={handleSubmit} className="flex flex-col h-full max-h-[90vh]">
+            <DialogHeader className="p-8 pb-4 bg-gradient-to-b from-white/[0.02] to-transparent">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="h-10 w-10 rounded-2xl bg-gold/10 flex items-center justify-center border border-gold/20">
+                  <Layout className="h-5 w-5 text-gold" />
+                </div>
+                <div>
+                  <DialogTitle className="text-2xl font-black tracking-tight text-white">
+                    {editingArea ? "Editar Configurações" : "Criar Nova Área"}
+                  </DialogTitle>
+                  <DialogDescription className="text-muted-foreground/50">
+                    Configure os detalhes fundamentais para esta área da sua plataforma.
+                  </DialogDescription>
+                </div>
+              </div>
             </DialogHeader>
 
-            <div className="space-y-6 py-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="space-y-2.5">
-                  <Label htmlFor="name" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/70">
-                    Nome da Área
-                  </Label>
-                  <div className="relative group">
-                    <Type className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-gold transition-colors" />
-                    <Input
-                      id="name"
-                      placeholder="Ex: Alunos, VIP, Mentoria"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="pl-11 h-12 bg-black/20 border-border/30 focus:border-gold/50 rounded-xl transition-all"
-                      required
-                    />
+            <ScrollArea className="flex-1 px-8 py-2">
+              <div className="space-y-10 py-4">
+                {/* Section: Identidade */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2">
+                    <div className="h-5 w-1 bg-gold rounded-full" />
+                    <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-gold/80">Identidade da área</h3>
                   </div>
-                </div>
-
-                <div className="space-y-2.5">
-                  <Label htmlFor="slug" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/70">
-                    URL (Slug)
-                  </Label>
-                  <div className="relative group">
-                    <Link2 className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-gold transition-colors" />
-                    <Input
-                      id="slug"
-                      placeholder="ex-alunos"
-                      value={formData.slug}
-                      onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })}
-                      className="pl-11 h-12 bg-black/20 border-border/30 focus:border-gold/50 rounded-xl transition-all font-mono text-sm"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2.5">
-                  <Label htmlFor="domain" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/70">
-                    Domínio Próprio (Opcional)
-                  </Label>
-                  <div className="relative group">
-                    <Globe className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-gold transition-colors" />
-                    <Input
-                      id="domain"
-                      placeholder="alunos.meusite.com.br"
-                      value={formData.domain}
-                      onChange={(e) => setFormData({ ...formData, domain: e.target.value })}
-                      className="pl-11 h-12 bg-black/20 border-border/30 focus:border-gold/50 rounded-xl transition-all"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2.5">
-                  <Label htmlFor="primary_color" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/70">
-                    Cor de Identidade
-                  </Label>
-                  <div className="flex gap-3">
-                    <div className="relative group flex-1">
-                      <Palette className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-gold transition-colors" />
-                      <Input
-                        id="primary_color"
-                        value={formData.primary_color}
-                        onChange={(e) => setFormData({ ...formData, primary_color: e.target.value })}
-                        className="pl-11 h-12 bg-black/20 border-border/30 focus:border-gold/50 rounded-xl transition-all font-mono"
-                      />
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2.5">
+                      <Label htmlFor="name" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 ml-1">
+                        Título da Área <span className="text-gold">*</span>
+                      </Label>
+                      <div className="relative group">
+                        <Type className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30 group-focus-within:text-gold transition-colors" />
+                        <Input
+                          id="name"
+                          placeholder="Ex: Alunos Premium"
+                          value={formData.name}
+                          onChange={(e) => handleNameChange(e.target.value)}
+                          className="pl-12 h-14 bg-white/[0.03] border-white/5 focus:border-gold/50 focus:bg-white/[0.05] rounded-[1.25rem] transition-all text-white placeholder:text-muted-foreground/20"
+                          required
+                        />
+                      </div>
                     </div>
-                    <input
-                      type="color"
-                      value={formData.primary_color}
-                      onChange={(e) => setFormData({ ...formData, primary_color: e.target.value })}
-                      className="h-12 w-14 rounded-xl border border-border/30 bg-black/20 cursor-pointer p-1 transition-all hover:scale-105"
+
+                    <div className="space-y-2.5">
+                      <Label htmlFor="short_label" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 ml-1">
+                        Rótulo Curto
+                      </Label>
+                      <div className="relative group">
+                        <Type className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30 group-focus-within:text-gold transition-colors" />
+                        <Input
+                          id="short_label"
+                          placeholder="Ex: Alunos"
+                          value={formData.short_label}
+                          onChange={(e) => setFormData({ ...formData, short_label: e.target.value })}
+                          className="pl-12 h-14 bg-white/[0.03] border-white/5 focus:border-gold/50 focus:bg-white/[0.05] rounded-[1.25rem] transition-all text-white placeholder:text-muted-foreground/20"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    <Label htmlFor="description" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 ml-1">
+                      Descrição
+                    </Label>
+                    <Textarea
+                      id="description"
+                      placeholder="Descreva o propósito desta área..."
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      className="min-h-[100px] bg-white/[0.03] border-white/5 focus:border-gold/50 focus:bg-white/[0.05] rounded-[1.25rem] transition-all text-white placeholder:text-muted-foreground/20 p-4 resize-none"
                     />
                   </div>
                 </div>
-              </div>
 
-              <div className="space-y-2.5">
-                <Label htmlFor="description" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/70">
-                  Descrição do Ecossistema
-                </Label>
-                <Textarea
-                  id="description"
-                  placeholder="Explique brevemente quem tem acesso a esta área e qual o conteúdo principal..."
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  rows={4}
-                  className="bg-black/20 border-border/30 focus:border-gold/50 rounded-xl resize-none transition-all p-4"
-                />
-              </div>
-            </div>
+                <Separator className="bg-white/5" />
 
-            <DialogFooter className="sm:justify-end gap-3 pb-4">
+                {/* Section: Endereço */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2">
+                    <div className="h-5 w-1 bg-gold rounded-full" />
+                    <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-gold/80">Endereço da área</h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2.5">
+                      <Label htmlFor="slug" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 ml-1">
+                        Subdomínio (Slug) <span className="text-gold">*</span>
+                      </Label>
+                      <div className="relative group">
+                        <Link2 className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30 group-focus-within:text-gold transition-colors" />
+                        <Input
+                          id="slug"
+                          placeholder="ex-alunos"
+                          value={formData.slug}
+                          onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '') })}
+                          className="pl-12 h-14 bg-white/[0.03] border-white/5 focus:border-gold/50 focus:bg-white/[0.05] rounded-[1.25rem] transition-all text-white font-mono text-sm"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2.5">
+                      <Label htmlFor="domain" className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 ml-1">
+                        Domínio Root (Opcional)
+                      </Label>
+                      <div className="relative group">
+                        <Globe className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30 group-focus-within:text-gold transition-colors" />
+                        <Input
+                          id="domain"
+                          placeholder="meusite.com.br"
+                          value={formData.domain}
+                          onChange={(e) => setFormData({ ...formData, domain: e.target.value })}
+                          className="pl-12 h-14 bg-white/[0.03] border-white/5 focus:border-gold/50 focus:bg-white/[0.05] rounded-[1.25rem] transition-all text-white"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* URL Preview */}
+                  <div className="p-4 rounded-2xl bg-gold/5 border border-gold/10 space-y-2">
+                    <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gold/60">
+                      <Eye className="h-3 w-3" /> Preview da URL
+                    </div>
+                    <p className="text-sm font-mono text-gold truncate">
+                      https://<span className="font-bold underline">{formData.slug || "slug"}</span>.{formData.domain || "lovable"}.com
+                    </p>
+                  </div>
+                </div>
+
+                <Separator className="bg-white/5" />
+
+                {/* Section: Configurações & Visual */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-2">
+                      <div className="h-5 w-1 bg-gold rounded-full" />
+                      <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-gold/80">Configurações</h3>
+                    </div>
+
+                    <div className="space-y-4">
+                      <div className="space-y-2.5">
+                        <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 ml-1">Status</Label>
+                        <Select 
+                          value={formData.status} 
+                          onValueChange={(value) => setFormData({ ...formData, status: value })}
+                        >
+                          <SelectTrigger className="h-14 bg-white/[0.03] border-white/5 focus:border-gold/50 rounded-[1.25rem] text-white">
+                            <SelectValue placeholder="Selecione o status" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#0A0A0A] border-white/10 text-white rounded-xl">
+                            <SelectItem value="draft" className="focus:bg-gold/10 focus:text-gold">Rascunho</SelectItem>
+                            <SelectItem value="active" className="focus:bg-gold/10 focus:text-gold">Ativo</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-2.5">
+                        <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 ml-1">Idioma Padrão</Label>
+                        <Select 
+                          value={formData.language} 
+                          onValueChange={(value) => setFormData({ ...formData, language: value })}
+                        >
+                          <SelectTrigger className="h-14 bg-white/[0.03] border-white/5 focus:border-gold/50 rounded-[1.25rem] text-white">
+                            <SelectValue placeholder="Selecione o idioma" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#0A0A0A] border-white/10 text-white rounded-xl">
+                            <SelectItem value="pt" className="focus:bg-gold/10 focus:text-gold">Português</SelectItem>
+                            <SelectItem value="en" className="focus:bg-gold/10 focus:text-gold">English</SelectItem>
+                            <SelectItem value="es" className="focus:bg-gold/10 focus:text-gold">Español</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div className="flex items-center gap-2">
+                      <div className="h-5 w-1 bg-gold rounded-full" />
+                      <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-gold/80">Visual</h3>
+                    </div>
+
+                    <div className="space-y-2.5">
+                      <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 ml-1">Cor Primária</Label>
+                      <div className="flex gap-3">
+                        <div className="relative group flex-1">
+                          <Palette className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/30 group-focus-within:text-gold transition-colors" />
+                          <Input
+                            value={formData.primary_color}
+                            onChange={(e) => setFormData({ ...formData, primary_color: e.target.value })}
+                            className="pl-12 h-14 bg-white/[0.03] border-white/5 focus:border-gold/50 rounded-[1.25rem] transition-all text-white font-mono"
+                          />
+                        </div>
+                        <div className="relative h-14 w-14 rounded-[1.25rem] border border-white/5 bg-white/[0.03] p-1.5 transition-all hover:scale-105 overflow-hidden">
+                          <input
+                            type="color"
+                            value={formData.primary_color}
+                            onChange={(e) => setFormData({ ...formData, primary_color: e.target.value })}
+                            className="absolute inset-0 h-full w-full cursor-pointer bg-transparent border-none p-0 scale-150"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ScrollArea>
+
+            <DialogFooter className="p-8 pt-4 bg-gradient-to-t from-white/[0.02] to-transparent border-t border-white/5 sm:justify-end gap-3">
               <Button
                 type="button"
                 variant="ghost"
                 onClick={handleCloseDialog}
-                className="hover:bg-white/5 rounded-xl h-11 px-6 font-medium"
+                className="hover:bg-white/5 text-muted-foreground hover:text-white rounded-xl h-14 px-8 font-bold transition-all"
               >
                 Cancelar
               </Button>
               <Button 
                 type="submit" 
                 disabled={createMutation.isPending || updateMutation.isPending}
-                className="bg-gold hover:bg-gold/90 text-black font-bold h-11 px-8 rounded-xl shadow-lg shadow-gold/10 transition-all active:scale-95"
+                className="bg-gold hover:bg-gold/90 text-black font-black h-14 px-10 rounded-xl shadow-lg shadow-gold/20 transition-all active:scale-95 disabled:opacity-50 disabled:scale-100"
               >
                 {createMutation.isPending || updateMutation.isPending ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
-                  <Save className="h-4 w-4 mr-2" />
+                  editingArea ? "Salvar Alterações" : "Criar Área"
                 )}
-                {editingArea ? "Salvar Alterações" : "Criar Área"}
               </Button>
             </DialogFooter>
           </form>
