@@ -33,6 +33,12 @@ function AreaLayout() {
     },
   });
 
+  useEffect(() => {
+    if (area?.id && currentArea?.id !== area.id) {
+      switchArea(area.id);
+    }
+  }, [area?.id, currentArea?.id, switchArea]);
+
   const { data: membership, isLoading: membershipLoading } = useQuery({
     queryKey: ["membership", area?.id, user?.id],
     enabled: !!area?.id && !!user?.id && !isAdmin,
