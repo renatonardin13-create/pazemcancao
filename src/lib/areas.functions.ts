@@ -71,6 +71,7 @@ export const getAreaContents = async (areaId: string) => {
     .from("contents")
     .select("*, categories(name)")
     .eq("area_id", areaId)
+    .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false });
 
   if (error) throw error;
@@ -78,6 +79,16 @@ export const getAreaContents = async (areaId: string) => {
 };
 
 export const addAreaContent = async (areaId: string, title: string, type: string, url: string, categoryId?: string) => {
+  // Get max sort_order
+  const { data: existing } = await supabase
+    .from("contents")
+    .select("sort_order")
+    .eq("area_id", areaId)
+    .order("sort_order", { ascending: false })
+    .limit(1);
+  
+  const nextOrder = existing && existing.length > 0 ? (existing[0].sort_order || 0) + 1 : 0;
+
   const { data, error } = await supabase
     .from("contents")
     .insert({ 
@@ -86,7 +97,8 @@ export const addAreaContent = async (areaId: string, title: string, type: string
       type, 
       url, 
       category_id: categoryId,
-      status: 'active' 
+      status: 'active',
+      sort_order: nextOrder
     })
     .select("*, categories(name)")
     .single();
@@ -110,6 +122,19 @@ export const updateAreaContent = async (id: string, updates: any) => {
 
   if (error) throw error;
   return data;
+};
+
+export const reorderAreaContents = async (items: { id: string; sort_order: number }[]) => {
+  const promises = items.map(item => 
+    supabase
+      .from("contents")
+      .update({ sort_order: item.sort_order })
+      .eq("id", item.id)
+  );
+  
+  const results = await Promise.all(promises);
+  const firstError = results.find(r => r.error);
+  if (firstError) throw firstError.error;
 };
 
 export const getCategoriesByArea = async (areaId: string) => {
