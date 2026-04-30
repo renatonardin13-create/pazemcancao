@@ -7,14 +7,12 @@
  */
 import { useQuery } from "@tanstack/react-query";
 import { getMyCoursesData } from "@/lib/my-courses.functions";
-import { useArea } from "@/providers/AreaProvider";
 
 export function useOwnedProducts() {
-  const { currentArea } = useArea();
 
   const query = useQuery({
-    queryKey: ["owned-products", "v2-access-state", currentArea?.id],
-    queryFn: () => getMyCoursesData({ data: { areaId: currentArea?.id } }),
+    queryKey: ["owned-products", "v2-access-state", undefined],
+    queryFn: () => getMyCoursesData({ data: { areaId: undefined } }),
     staleTime: 30_000,
   });
 

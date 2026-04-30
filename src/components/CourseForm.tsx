@@ -1,7 +1,6 @@
 import { useState, useEffect, forwardRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { listAdminCategories } from "@/lib/admin-courses.functions";
-import { getAreas } from "@/lib/areas.functions";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";

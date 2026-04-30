@@ -76,13 +76,11 @@ function mergeSizing(raw: any): CardsConfig["sizing"] {
   };
 }
 
-import { useArea } from "@/providers/AreaProvider";
 
 export function useCardsConfig(): CardsConfig {
-  const { currentArea } = useArea();
   
   const { data } = useQuery({
-    queryKey: ["platform-settings", "cards_config", currentArea?.id],
+    queryKey: ["platform-settings", "cards_config", undefined],
     queryFn: async () => {
       // Prioritize area settings if available
       const areaSettings = currentArea?.settings as Record<string, any> | undefined;

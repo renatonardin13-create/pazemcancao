@@ -11,7 +11,6 @@ import {
 } from "@/lib/admin-content.functions";
 import { listAdminCategories } from "@/lib/admin-categories.functions";
 import { listAdminJourneys } from "@/lib/admin-journeys.functions";
-import { getAreas } from "@/lib/areas.functions";
 import {
   BookOpen, Video, GraduationCap, FileText, Plus, Trash2,
   ToggleLeft, ToggleRight, Pencil, Loader2, ExternalLink, Search,

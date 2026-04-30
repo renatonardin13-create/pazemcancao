@@ -54,7 +54,6 @@ function AdminTracksPage() {
 
   const { data: areasData } = useQuery({
     queryKey: ["areas"],
-    queryFn: () => import("@/lib/areas.functions").then(m => m.getAreas()),
     staleTime: 5 * 60_000,
   });
 

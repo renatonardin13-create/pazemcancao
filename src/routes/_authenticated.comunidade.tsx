@@ -12,7 +12,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useArea } from "@/providers/AreaProvider";
 
 export const Route = createFileRoute("/_authenticated/comunidade")({
   component: ComunidadePage,
@@ -45,14 +44,13 @@ function ComunidadePage() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [filter, setFilter] = useState<FilterKey>("todos");
-  const { currentArea } = useArea();
 
   const loadPosts = async () => {
     let query = supabase
       .from("community_posts")
       .select("id, user_id, author_name, author_avatar_url, content, created_at, area_id");
     
-    if (currentArea?.id) {
+    if (undefined) {
       query = query.eq("area_id", currentArea.id);
     }
 
@@ -100,7 +98,7 @@ function ComunidadePage() {
       supabase.removeChannel(channel);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.id, currentArea?.id]);
+  }, [user?.id, undefined]);
 
   const handleSubmit = async () => {
     if (!user || !content.trim()) return;
@@ -114,7 +112,7 @@ function ComunidadePage() {
       author_name: authorName,
       author_avatar_url: (user.user_metadata?.avatar_url as string | undefined) ?? null,
       content: content.trim(),
-      area_id: currentArea?.id || null,
+      area_id: undefined || null,
     });
     setSubmitting(false);
     if (error) {
