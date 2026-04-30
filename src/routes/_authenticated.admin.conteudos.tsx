@@ -13,7 +13,7 @@ import { listAdminCategories } from "@/lib/admin-categories.functions";
 import { listAdminJourneys } from "@/lib/admin-journeys.functions";
 import {
   BookOpen, Video, GraduationCap, FileText, Plus, Trash2,
-  ToggleLeft, ToggleRight, Pencil, Loader2, ExternalLink,
+  ToggleLeft, ToggleRight, Pencil, Loader2, ExternalLink, Search,
 } from "lucide-react";
 import { AdminActionButtons } from "@/components/AdminActionButtons";
 import { Badge } from "@/components/ui/badge";
@@ -61,6 +61,8 @@ function AdminContentPage() {
   const [formOpen, setFormOpen] = useState(false);
   const [editItem, setEditItem] = useState<any>(null);
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
+  const [search, setSearch] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
 
   // Form state
   const [title, setTitle] = useState("");
@@ -285,7 +287,18 @@ function AdminContentPage() {
     onError: (err) => toastError(err, "Erro ao excluir conteúdo"),
   });
 
-  const items = data?.items || [];
+  const items = useMemo(() => {
+    let list = data?.items || [];
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      list = list.filter((i: any) => i.title.toLowerCase().includes(q));
+    }
+    if (typeFilter !== "all") {
+      list = list.filter((i: any) => i.content_type === typeFilter);
+    }
+    return list;
+  }, [data?.items, search, typeFilter]);
+
   const isSubmitting = saveMutation.isPending || uploading;
 
   return (
@@ -310,6 +323,31 @@ function AdminContentPage() {
             Novo Conteúdo
           </button>
         </div>
+      </div>
+      
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/30" />
+          <Input 
+            placeholder="Buscar conteúdos por nome..." 
+            className="pl-12 h-12 bg-card/15 border-border/25 rounded-2xl focus:border-gold/30 transition-all text-sm"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <Select value={typeFilter} onValueChange={setTypeFilter}>
+          <SelectTrigger className="w-full sm:w-[220px] h-12 bg-card/15 border-border/25 rounded-2xl focus:border-gold/30 transition-all text-sm">
+            <SelectValue placeholder="Filtrar por tipo" />
+          </SelectTrigger>
+          <SelectContent className="bg-card border-border/40 rounded-xl">
+            <SelectItem value="all">Todos os tipos</SelectItem>
+            <SelectItem value="ebook">📚 E-books</SelectItem>
+            <SelectItem value="video">🎬 Videoaulas</SelectItem>
+            <SelectItem value="free_lesson">🎓 Aulas Gratuitas</SelectItem>
+            <SelectItem value="material">📄 Materiais</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Form Dialog */}
