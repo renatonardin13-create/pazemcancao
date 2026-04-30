@@ -4,14 +4,20 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 export const listPublishedCourses = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { areaId?: string }) => input)
+  .handler(async ({ data: inputData, context }) => {
     const { supabase } = context;
 
-    const { data: courses, error } = await supabase
+    let query = supabase
       .from('courses')
       .select('*, categories(name, slug, icon)')
-      .eq('status', 'published')
-      .order('sort_order', { ascending: true });
+      .eq('status', 'published');
+
+    if (inputData?.areaId) {
+      query = query.eq('area_id', inputData.areaId);
+    }
+
+    const { data: courses, error } = await query.order('sort_order', { ascending: true });
 
     if (error) throw new Error(error.message);
 

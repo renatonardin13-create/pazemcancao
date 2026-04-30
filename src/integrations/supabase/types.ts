@@ -468,6 +468,7 @@ export type Database = {
       courses: {
         Row: {
           access_count: number
+          area_id: string | null
           banner_image_url: string | null
           benefits: string[]
           category_id: string | null
@@ -491,6 +492,7 @@ export type Database = {
         }
         Insert: {
           access_count?: number
+          area_id?: string | null
           banner_image_url?: string | null
           benefits?: string[]
           category_id?: string | null
@@ -514,6 +516,7 @@ export type Database = {
         }
         Update: {
           access_count?: number
+          area_id?: string | null
           banner_image_url?: string | null
           benefits?: string[]
           category_id?: string | null
@@ -536,6 +539,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "courses_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "courses_category_id_fkey"
             columns: ["category_id"]
@@ -1951,6 +1961,7 @@ export type Database = {
         Args: { p_course_id: string }
         Returns: undefined
       }
+      is_admin: { Args: { uid: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

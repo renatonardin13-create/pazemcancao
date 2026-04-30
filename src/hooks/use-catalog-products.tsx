@@ -8,12 +8,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { getStudentVitrineData } from "@/lib/student-vitrine.functions";
+import { useArea } from "@/providers/AreaProvider";
 import type { VitrineCourse, VitrineShelf } from "@/components/vitrine/types";
 
 export function useCatalogProducts() {
+  const { currentArea } = useArea();
+
   const query = useQuery({
-    queryKey: ["catalog-products", "v1"],
-    queryFn: () => getStudentVitrineData(),
+    queryKey: ["catalog-products", "v1", currentArea?.id],
+    queryFn: () => getStudentVitrineData({ data: { areaId: currentArea?.id } }),
     staleTime: 30_000,
     refetchOnWindowFocus: true,
   });
