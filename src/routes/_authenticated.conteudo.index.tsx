@@ -85,16 +85,16 @@ function ContentPage() {
   const queryClient = useQueryClient();
 
   const handleTrackView = useCallback((contentId: string) => {
-    trackContentView({ data: { contentId } }).then(() => {
+    trackContentView({ data: { contentId, areaId: currentArea?.id } }).then(() => {
       queryClient.invalidateQueries({ queryKey: ["content-items"] });
     });
-  }, [queryClient]);
+  }, [queryClient, currentArea?.id]);
 
   const handleTrackDownload = useCallback((contentId: string) => {
-    trackContentDownload({ data: { contentId } }).then(() => {
+    trackContentDownload({ data: { contentId, areaId: currentArea?.id } }).then(() => {
       queryClient.invalidateQueries({ queryKey: ["content-items"] });
     });
-  }, [queryClient]);
+  }, [queryClient, currentArea?.id]);
 
   // RC1: dedupe ids across "Top semana" → "Mais acessados" → "Lançamentos" → "Recomendado"
   const [weeklyTopIds, setWeeklyTopIds] = useState<string[]>([]);
