@@ -168,8 +168,8 @@ export function AdminCardsConfigTab({ initial, onSave, isLoading }: Props) {
       </div>
 
       <div className="flex justify-end">
-        <Button onClick={save} disabled={mutation.isPending} className="gap-2">
-          {mutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+        <Button onClick={save} disabled={mutation.isPending || isLoading} className="gap-2">
+          {mutation.isPending || isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
           Salvar configuração de cards
         </Button>
       </div>
