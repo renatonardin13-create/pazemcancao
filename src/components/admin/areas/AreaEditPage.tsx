@@ -437,7 +437,7 @@ function LoginTab({ area, onSave, saving }: any) {
     subtitle: area.login_subtitle || "Faça login para acessar o conteúdo exclusivo.",
     background: area.login_background_url || "" 
   });
-  const [uploading, setUploading] = useState(false);
+  const [uploading, setUploading] = useState<string | null>(null);
   const bgInputRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = async (file: File) => {
