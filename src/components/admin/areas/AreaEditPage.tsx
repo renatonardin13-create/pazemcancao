@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { getArea, updateArea, getAreaContents, addAreaContent, removeAreaContent, updateAreaContent, getCategoriesByArea } from "@/lib/areas.functions";
 import { listAdminCourses } from "@/lib/admin-courses.functions";
 import { uploadPlatformAsset } from "@/lib/platform-settings.functions";
+import { listAdminTracks } from "@/lib/admin-tracks.functions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -46,6 +47,11 @@ export function AreaEditPage() {
   const { data: coursesData } = useQuery({
     queryKey: ["admin-courses"],
     queryFn: () => listAdminCourses(),
+  });
+
+  const { data: tracksData } = useQuery({
+    queryKey: ["admin-tracks"],
+    queryFn: () => listAdminTracks({ data: { pageSize: 1000 } }),
   });
 
   const { data: areaContents } = useQuery({
@@ -147,7 +153,12 @@ export function AreaEditPage() {
           <LoginTab area={area} onSave={(data: any) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
         </TabsContent>
         <TabsContent value="products">
-          <ModulesTab areaId={areaId} areaContents={areaContents || []} />
+          <ModulesTab 
+            areaId={areaId} 
+            areaContents={areaContents || []} 
+            courses={coursesData?.courses || []}
+            tracks={tracksData?.tracks || []}
+          />
         </TabsContent>
         <TabsContent value="cards">
           <CardsTab area={area} onSave={(data: any) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
@@ -545,7 +556,47 @@ function LoginTab({ area, onSave, saving }: any) {
   );
 }
 
-function ModulesTab({ areaId, areaContents }: any) {
+function ModulePreview({ content, courses, tracks }: { content: any, courses: any[], tracks: any[] }) {
+  const url = content.url;
+  if (!url) return null;
+
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(url);
+  let previewData = null;
+  
+  if (isUuid) {
+    if (content.type === 'course' || content.type === 'ebook') {
+      previewData = courses.find(c => c.id === url);
+    } else if (content.type === 'music') {
+      previewData = tracks.find(t => t.id === url);
+    }
+  }
+
+  if (!previewData) return null;
+
+  const thumbnail = (content.type === 'course' || content.type === 'ebook') 
+    ? previewData.cover_image_url 
+    : previewData.cover_url;
+
+  return (
+    <div className="flex items-center gap-2 mt-1.5 px-2 py-1 rounded-lg bg-black/20 w-fit border border-white/5 shadow-inner">
+      {thumbnail ? (
+        <img src={thumbnail} className="h-6 w-10 object-cover rounded shadow-sm border border-white/10" alt="" />
+      ) : (
+        <div className="h-6 w-10 bg-background/50 rounded flex items-center justify-center border border-white/5">
+          <Eye className="h-3 w-3 text-muted-foreground/30" />
+        </div>
+      )}
+      <div className="flex flex-col">
+        <span className="text-[9px] font-black uppercase tracking-widest text-gold/60 leading-none mb-0.5">Vínculo</span>
+        <span className="text-[10px] font-bold text-muted-foreground truncate max-w-[150px] leading-none">
+          {previewData.title}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function ModulesTab({ areaId, areaContents, courses, tracks }: any) {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -696,7 +747,10 @@ function ModulesTab({ areaId, areaContents }: any) {
                       <div className="h-12 w-12 rounded-xl bg-background/50 border border-border/20 flex items-center justify-center group-hover:border-gold/30 transition-colors">
                         {getTypeIcon(content.type)}
                       </div>
-                      <span className="font-bold text-foreground tracking-tight">{content.title}</span>
+                      <div className="flex flex-col">
+                        <span className="font-bold text-foreground tracking-tight">{content.title}</span>
+                        <ModulePreview content={content} courses={courses} tracks={tracks} />
+                      </div>
                     </div>
                   </td>
                   <td className="py-4 border-y border-border/10">
