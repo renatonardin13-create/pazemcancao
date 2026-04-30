@@ -118,7 +118,7 @@ function BrandingTab({ area, onSave, saving }: any) {
     const reader = new FileReader();
     reader.onload = async (e) => {
       const base64 = (e.target?.result as string).split(",")[1];
-      const res = await uploadPlatformAsset({ bucket: "covers", path: `areas/${area.id}-logo.png`, base64, contentType: file.type });
+      const res = await uploadPlatformAsset({ data: { bucket: "covers", path: `areas/${area.id}-logo.png`, base64, contentType: file.type } });
       setLogoUrl(res.url);
       onSave({ logo_url: res.url });
       setUploading(false);
