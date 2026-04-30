@@ -556,7 +556,7 @@ function LoginTab({ area, onSave, saving }: any) {
   );
 }
 
-function ModulesTab({ areaId, areaContents }: any) {
+function ModulesTab({ areaId, areaContents, courses, tracks }: any) {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
