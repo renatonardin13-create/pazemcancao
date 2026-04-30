@@ -9,6 +9,7 @@ import { listFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { trackContentView, trackContentDownload } from "@/lib/progress.functions";
 import { POSTER_GRID } from "@/lib/card-grid";
 import { useMemo, useCallback } from "react";
+import { useArea } from "@/providers/AreaProvider";
 import { Gift } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/bonus")({
@@ -17,10 +18,11 @@ export const Route = createFileRoute("/_authenticated/bonus")({
 
 function BonusPage() {
   const queryClient = useQueryClient();
+  const { currentArea } = useArea();
 
   const { data, isLoading } = useQuery({
-    queryKey: ["content-items"],
-    queryFn: () => listContentItems(),
+    queryKey: ["content-items", currentArea?.id],
+    queryFn: () => listContentItems({ data: { areaId: currentArea?.id } }),
     staleTime: 60_000,
   });
 
