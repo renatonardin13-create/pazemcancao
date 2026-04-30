@@ -39,12 +39,13 @@ function AuthenticatedLayout() {
   const isCursosRoute = location.pathname === "/cursos" || location.pathname.startsWith("/cursos/");
   const skipAccessGate = isMusicExperience || isVitrineRoute || isCursosRoute || isAreaRoute;
 
-  // Admin acessando rota de aluno → redireciona para /admin (evita tela preta e conflito de contexto)
+  // Admin acessando rota de aluno → redireciona para /admin (exceto para música e vitrine)
   useEffect(() => {
-    if (!loading && isAuthenticated && isAdmin && !isAdminRoute && !isAreaRoute) {
+    const isAllowedForAdmin = isMusicExperience || isVitrineRoute || isCursosRoute || isAreaRoute;
+    if (!loading && isAuthenticated && isAdmin && !isAdminRoute && !isAreaRoute && !isAllowedForAdmin) {
       navigate({ to: "/admin" });
     }
-  }, [loading, isAuthenticated, isAdmin, isAdminRoute, navigate]);
+  }, [loading, isAuthenticated, isAdmin, isAdminRoute, isMusicExperience, isVitrineRoute, isCursosRoute, isAreaRoute, navigate]);
 
   useEffect(() => {
     if (!isAuthenticated) {
