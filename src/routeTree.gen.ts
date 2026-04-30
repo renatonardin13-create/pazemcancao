@@ -61,6 +61,7 @@ import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_auth
 import { Route as AuthenticatedCursosCourseIdIndexRouteImport } from './routes/_authenticated.cursos.$courseId.index'
 import { Route as AuthenticatedAreaSlugIndexRouteImport } from './routes/_authenticated.area.$slug.index'
 import { Route as AuthenticatedAdminCoursesIndexRouteImport } from './routes/_authenticated.admin.courses.index'
+import { Route as AuthenticatedAreaSlugMusicasRouteImport } from './routes/_authenticated.area.$slug.musicas'
 import { Route as AuthenticatedAdminCoursesNewRouteImport } from './routes/_authenticated.admin.courses.new'
 import { Route as AuthenticatedAdminCoursesCourseIdRouteImport } from './routes/_authenticated.admin.courses.$courseId'
 import { Route as AuthenticatedAdminAreasAreaIdRouteImport } from './routes/_authenticated.admin.areas.$areaId'
@@ -355,6 +356,12 @@ const AuthenticatedAdminCoursesIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedAdminCoursesRoute,
   } as any)
+const AuthenticatedAreaSlugMusicasRoute =
+  AuthenticatedAreaSlugMusicasRouteImport.update({
+    id: '/musicas',
+    path: '/musicas',
+    getParentRoute: () => AuthenticatedAreaSlugRoute,
+  } as any)
 const AuthenticatedAdminCoursesNewRoute =
   AuthenticatedAdminCoursesNewRouteImport.update({
     id: '/new',
@@ -432,6 +439,7 @@ export interface FileRoutesByFullPath {
   '/admin/areas/$areaId': typeof AuthenticatedAdminAreasAreaIdRoute
   '/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
   '/admin/courses/new': typeof AuthenticatedAdminCoursesNewRoute
+  '/area/$slug/musicas': typeof AuthenticatedAreaSlugMusicasRoute
   '/admin/courses/': typeof AuthenticatedAdminCoursesIndexRoute
   '/area/$slug/': typeof AuthenticatedAreaSlugIndexRoute
   '/cursos/$courseId/': typeof AuthenticatedCursosCourseIdIndexRoute
@@ -483,6 +491,7 @@ export interface FileRoutesByTo {
   '/admin/areas/$areaId': typeof AuthenticatedAdminAreasAreaIdRoute
   '/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
   '/admin/courses/new': typeof AuthenticatedAdminCoursesNewRoute
+  '/area/$slug/musicas': typeof AuthenticatedAreaSlugMusicasRoute
   '/admin/courses': typeof AuthenticatedAdminCoursesIndexRoute
   '/area/$slug': typeof AuthenticatedAreaSlugIndexRoute
   '/cursos/$courseId': typeof AuthenticatedCursosCourseIdIndexRoute
@@ -542,6 +551,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/areas/$areaId': typeof AuthenticatedAdminAreasAreaIdRoute
   '/_authenticated/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
   '/_authenticated/admin/courses/new': typeof AuthenticatedAdminCoursesNewRoute
+  '/_authenticated/area/$slug/musicas': typeof AuthenticatedAreaSlugMusicasRoute
   '/_authenticated/admin/courses/': typeof AuthenticatedAdminCoursesIndexRoute
   '/_authenticated/area/$slug/': typeof AuthenticatedAreaSlugIndexRoute
   '/_authenticated/cursos/$courseId/': typeof AuthenticatedCursosCourseIdIndexRoute
@@ -601,6 +611,7 @@ export interface FileRouteTypes {
     | '/admin/areas/$areaId'
     | '/admin/courses/$courseId'
     | '/admin/courses/new'
+    | '/area/$slug/musicas'
     | '/admin/courses/'
     | '/area/$slug/'
     | '/cursos/$courseId/'
@@ -652,6 +663,7 @@ export interface FileRouteTypes {
     | '/admin/areas/$areaId'
     | '/admin/courses/$courseId'
     | '/admin/courses/new'
+    | '/area/$slug/musicas'
     | '/admin/courses'
     | '/area/$slug'
     | '/cursos/$courseId'
@@ -710,6 +722,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/areas/$areaId'
     | '/_authenticated/admin/courses/$courseId'
     | '/_authenticated/admin/courses/new'
+    | '/_authenticated/area/$slug/musicas'
     | '/_authenticated/admin/courses/'
     | '/_authenticated/area/$slug/'
     | '/_authenticated/cursos/$courseId/'
@@ -1092,6 +1105,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCoursesIndexRouteImport
       parentRoute: typeof AuthenticatedAdminCoursesRoute
     }
+    '/_authenticated/area/$slug/musicas': {
+      id: '/_authenticated/area/$slug/musicas'
+      path: '/musicas'
+      fullPath: '/area/$slug/musicas'
+      preLoaderRoute: typeof AuthenticatedAreaSlugMusicasRouteImport
+      parentRoute: typeof AuthenticatedAreaSlugRoute
+    }
     '/_authenticated/admin/courses/new': {
       id: '/_authenticated/admin/courses/new'
       path: '/new'
@@ -1254,10 +1274,12 @@ const AuthenticatedMusicasRouteWithChildren =
   AuthenticatedMusicasRoute._addFileChildren(AuthenticatedMusicasRouteChildren)
 
 interface AuthenticatedAreaSlugRouteChildren {
+  AuthenticatedAreaSlugMusicasRoute: typeof AuthenticatedAreaSlugMusicasRoute
   AuthenticatedAreaSlugIndexRoute: typeof AuthenticatedAreaSlugIndexRoute
 }
 
 const AuthenticatedAreaSlugRouteChildren: AuthenticatedAreaSlugRouteChildren = {
+  AuthenticatedAreaSlugMusicasRoute: AuthenticatedAreaSlugMusicasRoute,
   AuthenticatedAreaSlugIndexRoute: AuthenticatedAreaSlugIndexRoute,
 }
 
