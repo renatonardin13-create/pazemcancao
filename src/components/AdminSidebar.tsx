@@ -15,12 +15,9 @@ import {
   Sparkles,
   Disc3,
   Eye,
-  GalleryHorizontalEnd,
-  ChevronDown,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useProjectMode } from "@/hooks/use-project-mode";
-import { useArea } from "@/providers/AreaProvider";
 import { useMemo } from "react";
 import {
   Sidebar,
@@ -61,7 +58,6 @@ export function AdminSidebar() {
   const location = useLocation();
   const currentPath = location.pathname;
   const { modules } = useProjectMode();
-  const { currentArea, areas, switchArea, isLoading: areasLoading } = useArea();
 
   const contentItems = useMemo(
     () => allContentItems.filter((item) => modules[item.module]),
@@ -107,26 +103,7 @@ export function AdminSidebar() {
           )}
         </div>
         
-        {/* Area Selector */}
-        {!collapsed && areas.length > 0 && (
-          <div className="px-4 py-3">
-            <p className={groupLabelClass}>Ambiente Selecionado</p>
-            <div className="relative mt-1 group">
-              <select
-                value={currentArea?.id || ""}
-                onChange={(e) => switchArea(e.target.value)}
-                className="w-full appearance-none rounded-xl border border-sidebar-border/50 bg-sidebar-accent/30 py-2 pl-3 pr-8 text-xs font-semibold text-sidebar-foreground/80 focus:border-gold/30 focus:outline-none focus:ring-1 focus:ring-gold/20 transition-all cursor-pointer hover:bg-sidebar-accent/50"
-              >
-                {areas.map((a) => (
-                  <option key={a.id} value={a.id}>
-                    {a.name}
-                  </option>
-                ))}
-              </select>
-              <ChevronDown className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-sidebar-foreground/30 group-hover:text-gold/50 transition-colors" />
-            </div>
-          </div>
-        )}
+        {/* Area Selector removed */}
 
         {/* Dashboard */}
         <SidebarGroup className="py-1">
