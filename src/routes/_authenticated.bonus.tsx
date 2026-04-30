@@ -9,6 +9,7 @@ import { listFavorites, toggleFavorite } from "@/lib/favorites.functions";
 import { trackContentView, trackContentDownload } from "@/lib/progress.functions";
 import { POSTER_GRID } from "@/lib/card-grid";
 import { useMemo, useCallback } from "react";
+import { useArea } from "@/providers/AreaProvider";
 import { Gift } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/bonus")({
@@ -17,10 +18,11 @@ export const Route = createFileRoute("/_authenticated/bonus")({
 
 function BonusPage() {
   const queryClient = useQueryClient();
+  const { currentArea } = useArea();
 
   const { data, isLoading } = useQuery({
-    queryKey: ["content-items"],
-    queryFn: () => listContentItems(),
+    queryKey: ["content-items", currentArea?.id],
+    queryFn: () => listContentItems({ data: { areaId: currentArea?.id } }),
     staleTime: 60_000,
   });
 
@@ -47,16 +49,16 @@ function BonusPage() {
   const hasAnyBonus = bonusItems.length > 0;
 
   const handleTrackView = useCallback((contentId: string) => {
-    trackContentView({ data: { contentId } }).then(() => {
+    trackContentView({ data: { contentId, areaId: currentArea?.id } }).then(() => {
       queryClient.invalidateQueries({ queryKey: ["content-items"] });
     });
-  }, [queryClient]);
+  }, [queryClient, currentArea?.id]);
 
   const handleTrackDownload = useCallback((contentId: string) => {
-    trackContentDownload({ data: { contentId } }).then(() => {
+    trackContentDownload({ data: { contentId, areaId: currentArea?.id } }).then(() => {
       queryClient.invalidateQueries({ queryKey: ["content-items"] });
     });
-  }, [queryClient]);
+  }, [queryClient, currentArea?.id]);
 
   const handleToggleFavorite = useCallback((contentId: string, currentlyFav: boolean) => {
     toggleFavorite({ data: { contentId, isFavorite: currentlyFav } }).then(() => {

@@ -178,8 +178,8 @@ function MusicLibraryPage() {
   const categoriesFailed = false;
 
   const { data: playlistsData, isError: playlistsFailed } = useQuery({
-    queryKey: ["music-library-playlists"],
-    queryFn: () => listPlaylistsWithCounts(),
+    queryKey: ["music-library-playlists", currentArea?.id],
+    queryFn: () => listPlaylistsWithCounts({ data: { areaId: currentArea?.id } }),
     staleTime: 60_000,
   });
 

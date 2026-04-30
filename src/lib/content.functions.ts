@@ -4,7 +4,8 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 export const listContentItems = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { areaId?: string }) => input)
+  .handler(async ({ data: inputData, context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
     const email = userData?.user?.email?.toLowerCase();
 
@@ -30,11 +31,16 @@ export const listContentItems = createServerFn({ method: 'POST' })
 
     const isBuyer = !!buyer;
 
-    const { data, error } = await supabaseAdmin
+    let query = supabaseAdmin
       .from('content_items')
       .select('*')
-      .eq('is_active', true)
-      .order('sort_order', { ascending: true });
+      .eq('is_active', true);
+
+    if (inputData?.areaId) {
+      query = query.eq('area_id', inputData.areaId);
+    }
+
+    const { data, error } = await query.order('sort_order', { ascending: true });
 
     if (error) throw new Error(error.message);
 
