@@ -130,7 +130,7 @@ function StrategicShelf({ playlist, shelfIdx }: { playlist: StrategicPlaylist; s
         >
           {tracks.map((track, idx) => (
             <div key={track.id} className={POSTER_SHELF_ITEM}>
-              <TrackCard track={track} index={idx} />
+              <TrackCard track={track} index={idx} queue={tracks} />
             </div>
           ))}
         </div>
