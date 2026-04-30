@@ -20,6 +20,10 @@ interface AddTrackFormProps {
 
 export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
   const queryClient = useQueryClient();
+  const { data: areas = [] } = useQuery({
+    queryKey: ["areas"],
+    queryFn: () => import("@/lib/areas.functions").then(m => m.getAreas()),
+  });
   const { data: catData } = useQuery({
     queryKey: ["admin-categories"],
     queryFn: () => listAdminCategories(),
@@ -29,6 +33,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
   const [category, setCategory] = useState("");
   const [duration, setDuration] = useState("");
   const [description, setDescription] = useState("");
+  const [areaId, setAreaId] = useState("");
   const [mp3File, setMp3File] = useState<File | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
@@ -86,6 +91,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
           category,
           duration: duration || "0:00",
           storage_path: fileName,
+          area_id: areaId || undefined,
           download_url: urlData.publicUrl,
           description: description || undefined,
           cover_url: coverUrl,
@@ -113,6 +119,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
     setCategory("");
     setDuration("");
     setDescription("");
+    setAreaId("");
     setMp3File(null);
     setCoverFile(null);
     setCoverPreview(null);
@@ -203,6 +210,22 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
             <SelectContent>
               {categories.map((c: string) => (
                 <SelectItem key={c} value={c}>{c}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        <div className="space-y-2">
+          <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">
+            Área
+          </Label>
+          <Select value={areaId} onValueChange={setAreaId} disabled={isSubmitting}>
+            <SelectTrigger className="bg-card/15 border-border/30 text-sm">
+              <SelectValue placeholder="Selecione a área" />
+            </SelectTrigger>
+            <SelectContent>
+              {areas.map((area: any) => (
+                <SelectItem key={area.id} value={area.id}>{area.name}</SelectItem>
               ))}
             </SelectContent>
           </Select>
