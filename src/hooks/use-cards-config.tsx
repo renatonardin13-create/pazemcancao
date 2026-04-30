@@ -85,8 +85,9 @@ export function useCardsConfig(): CardsConfig {
     queryKey: ["platform-settings", "cards_config", currentArea?.id],
     queryFn: async () => {
       // Prioritize area settings if available
-      if (currentArea?.settings?.cards_config) {
-        return currentArea.settings.cards_config as Partial<CardsConfig>;
+      const areaSettings = currentArea?.settings as Record<string, any> | undefined;
+      if (areaSettings?.cards_config) {
+        return areaSettings.cards_config as Partial<CardsConfig>;
       }
       
       const res = await getPlatformSettings();
