@@ -1758,6 +1758,7 @@ export type Database = {
       }
       user_content_progress: {
         Row: {
+          area_id: string | null
           completed_at: string | null
           content_id: string
           created_at: string
@@ -1770,6 +1771,7 @@ export type Database = {
           viewed_at: string | null
         }
         Insert: {
+          area_id?: string | null
           completed_at?: string | null
           content_id: string
           created_at?: string
@@ -1782,6 +1784,7 @@ export type Database = {
           viewed_at?: string | null
         }
         Update: {
+          area_id?: string | null
           completed_at?: string | null
           content_id?: string
           created_at?: string
@@ -1794,6 +1797,13 @@ export type Database = {
           viewed_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "user_content_progress_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "user_content_progress_content_id_fkey"
             columns: ["content_id"]
