@@ -548,6 +548,33 @@ function LoginTab({ area, onSave, saving }: any) {
 function ModulesTab({ areaId, areaContents }: any) {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingModule, setEditingModule] = useState<any>(null);
+  const [formData, setFormData] = useState({
+    title: "",
+    type: "course",
+    url: "",
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (data: any) => addAreaContent(areaId, data.title, data.type, data.url),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["area-contents", areaId] });
+      toast.success("Módulo adicionado!");
+      handleCloseDialog();
+    },
+    onError: (error: any) => toast.error(`Erro ao adicionar: ${error.message}`),
+  });
+
+  const updateModuleMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string, data: any }) => updateAreaContent(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["area-contents", areaId] });
+      toast.success("Módulo atualizado!");
+      handleCloseDialog();
+    },
+    onError: (error: any) => toast.error(`Erro ao atualizar: ${error.message}`),
+  });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => removeAreaContent(id),
@@ -569,6 +596,36 @@ function ModulesTab({ areaId, areaContents }: any) {
   const filteredContents = areaContents.filter((c: any) => 
     c.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleOpenCreate = () => {
+    setEditingModule(null);
+    setFormData({ title: "", type: "course", url: "" });
+    setIsDialogOpen(true);
+  };
+
+  const handleOpenEdit = (module: any) => {
+    setEditingModule(module);
+    setFormData({ 
+      title: module.title, 
+      type: module.type, 
+      url: module.url || "" 
+    });
+    setIsDialogOpen(true);
+  };
+
+  const handleCloseDialog = () => {
+    setIsDialogOpen(false);
+    setEditingModule(null);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editingModule) {
+      updateModuleMutation.mutate({ id: editingModule.id, data: formData });
+    } else {
+      createMutation.mutate(formData);
+    }
+  };
 
   const getTypeIcon = (type: string) => {
     switch (type.toLowerCase()) {
@@ -596,7 +653,7 @@ function ModulesTab({ areaId, areaContents }: any) {
           </div>
           <Button 
             className="bg-gold hover:bg-gold/90 text-black font-black px-6 rounded-xl h-12 gap-2 shadow-lg shadow-gold/10"
-            onClick={() => toast.info("Funcionalidade de adição em breve")}
+            onClick={handleOpenCreate}
           >
             <Plus className="h-5 w-5" /> Adicionar Módulo
           </Button>
@@ -650,14 +707,23 @@ function ModulesTab({ areaId, areaContents }: any) {
                   </td>
                   <td className="py-4 pr-6 rounded-r-2xl border-y border-r border-border/10 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <Button variant="ghost" size="icon" className="h-9 w-9 rounded-lg hover:bg-gold/10 hover:text-gold">
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-9 w-9 rounded-lg hover:bg-gold/10 hover:text-gold"
+                        onClick={() => handleOpenEdit(content)}
+                      >
                         <Edit3 className="h-4 w-4" />
                       </Button>
                       <Button 
                         variant="ghost" 
                         size="icon" 
                         className="h-9 w-9 rounded-lg hover:bg-destructive/10 hover:text-destructive"
-                        onClick={() => deleteMutation.mutate(content.id)}
+                        onClick={() => {
+                          if (confirm("Deseja realmente remover este módulo?")) {
+                            deleteMutation.mutate(content.id);
+                          }
+                        }}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
@@ -675,6 +741,85 @@ function ModulesTab({ areaId, areaContents }: any) {
             </tbody>
           </table>
         </div>
+
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogContent className="sm:max-w-[500px] bg-card border-border/40 shadow-2xl rounded-[2rem]">
+            <form onSubmit={handleSubmit}>
+              <DialogHeader className="pt-4 pb-2">
+                <DialogTitle className="text-2xl font-black">
+                  {editingModule ? "Editar Módulo" : "Novo Módulo"}
+                </DialogTitle>
+                <DialogDescription>
+                  Configure os detalhes do módulo para esta área.
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-6 py-6 px-6">
+                <div className="space-y-2.5">
+                  <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/70">
+                    Título do Módulo
+                  </Label>
+                  <Input
+                    placeholder="Ex: Curso de Marketing, Playlist VIP"
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    className="h-12 bg-black/20 border-border/30 focus:border-gold/50 rounded-xl transition-all"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2.5">
+                  <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/70">
+                    Tipo de Conteúdo
+                  </Label>
+                  <Select 
+                    value={formData.type} 
+                    onValueChange={(value) => setFormData({ ...formData, type: value })}
+                  >
+                    <SelectTrigger className="h-12 bg-black/20 border-border/30 focus:border-gold/50 rounded-xl">
+                      <SelectValue placeholder="Selecione o tipo" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border/40">
+                      <SelectItem value="course">Curso / Vídeo</SelectItem>
+                      <SelectItem value="music">Música / Playlist</SelectItem>
+                      <SelectItem value="ebook">Ebook / PDF</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2.5">
+                  <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/70">
+                    Link / ID (Opcional)
+                  </Label>
+                  <Input
+                    placeholder="ID do curso ou URL externa"
+                    value={formData.url}
+                    onChange={(e) => setFormData({ ...formData, url: e.target.value })}
+                    className="h-12 bg-black/20 border-border/30 focus:border-gold/50 rounded-xl transition-all"
+                  />
+                </div>
+              </div>
+
+              <DialogFooter className="sm:justify-end gap-3 pb-6 px-6">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={handleCloseDialog}
+                  className="hover:bg-white/5 rounded-xl h-11 px-6 font-medium"
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  type="submit" 
+                  disabled={createMutation.isPending || updateModuleMutation.isPending}
+                  className="bg-gold hover:bg-gold/90 text-black font-black px-8 h-11 rounded-xl shadow-lg shadow-gold/10"
+                >
+                  {editingModule ? "Salvar Alterações" : "Adicionar Módulo"}
+                </Button>
+              </DialogFooter>
+            </form>
+          </DialogContent>
+        </Dialog>
       </CardContent>
     </Card>
   );
