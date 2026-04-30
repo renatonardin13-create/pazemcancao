@@ -371,6 +371,20 @@ function AdminContentPage() {
           </DialogHeader>
           <div className="space-y-4 pt-2">
             <div className="space-y-2">
+              <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">Ambiente (Área)</Label>
+              <Select value={areaId} onValueChange={setAreaId} disabled={isSubmitting}>
+                <SelectTrigger className="bg-card/15 border-border/30 text-sm">
+                  <SelectValue placeholder="Selecione um ambiente..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {areasData?.map((area: any) => (
+                    <SelectItem key={area.id} value={area.id}>{area.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
               <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">Tipo</Label>
               <Select value={contentType} onValueChange={setContentType} disabled={isSubmitting}>
                 <SelectTrigger className="bg-card/15 border-border/30 text-sm">
