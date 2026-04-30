@@ -4,7 +4,7 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 export const trackContentView = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { contentId: string }) => input)
+  .inputValidator((input: { contentId: string; areaId?: string }) => input)
   .handler(async ({ data, context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
     const email = userData?.user?.email?.toLowerCase();
@@ -18,6 +18,7 @@ export const trackContentView = createServerFn({ method: 'POST' })
           content_id: data.contentId,
           viewed_at: new Date().toISOString(),
           started_at: new Date().toISOString(),
+          area_id: data.areaId,
         },
         { onConflict: 'user_email,content_id' }
       );
@@ -27,7 +28,7 @@ export const trackContentView = createServerFn({ method: 'POST' })
 
 export const trackContentComplete = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { contentId: string }) => input)
+  .inputValidator((input: { contentId: string; areaId?: string }) => input)
   .handler(async ({ data, context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
     const email = userData?.user?.email?.toLowerCase();
@@ -42,6 +43,7 @@ export const trackContentComplete = createServerFn({ method: 'POST' })
           completed_at: new Date().toISOString(),
           viewed_at: new Date().toISOString(),
           started_at: new Date().toISOString(),
+          area_id: data.areaId,
         },
         { onConflict: 'user_email,content_id' }
       );
@@ -51,7 +53,7 @@ export const trackContentComplete = createServerFn({ method: 'POST' })
 
 export const trackContentDownload = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { contentId: string }) => input)
+  .inputValidator((input: { contentId: string; areaId?: string }) => input)
   .handler(async ({ data, context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
     const email = userData?.user?.email?.toLowerCase();
@@ -66,6 +68,7 @@ export const trackContentDownload = createServerFn({ method: 'POST' })
           downloaded_at: new Date().toISOString(),
           viewed_at: new Date().toISOString(),
           started_at: new Date().toISOString(),
+          area_id: data.areaId,
         },
         { onConflict: 'user_email,content_id' }
       );
@@ -75,7 +78,7 @@ export const trackContentDownload = createServerFn({ method: 'POST' })
 
 export const updateWatchPosition = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { contentId: string; positionSeconds: number }) => input)
+  .inputValidator((input: { contentId: string; positionSeconds: number; areaId?: string }) => input)
   .handler(async ({ data, context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
     const email = userData?.user?.email?.toLowerCase();
@@ -90,6 +93,7 @@ export const updateWatchPosition = createServerFn({ method: 'POST' })
           last_position_seconds: data.positionSeconds,
           viewed_at: new Date().toISOString(),
           started_at: new Date().toISOString(),
+          area_id: data.areaId,
         },
         { onConflict: 'user_email,content_id' }
       );
@@ -99,15 +103,22 @@ export const updateWatchPosition = createServerFn({ method: 'POST' })
 
 export const getUserProgress = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { areaId?: string }) => input)
+  .handler(async ({ data: inputData, context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
     const email = userData?.user?.email?.toLowerCase();
     if (!email) return { progress: [] };
 
-    const { data: progress } = await supabaseAdmin
+    let query = supabaseAdmin
       .from('user_content_progress' as any)
       .select('*')
       .eq('user_email', email);
+
+    if (inputData?.areaId) {
+      query = query.eq('area_id', inputData.areaId);
+    }
+
+    const { data: progress } = await query;
 
     return { progress: progress || [] };
   });
