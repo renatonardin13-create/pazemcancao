@@ -12,10 +12,11 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, Settings, Upload, Palette, Globe, Link2, Bell, Wrench, RefreshCw, Save, Download, UploadCloud, AlertTriangle, Loader2, LayoutGrid, Music, GraduationCap, Layers, GalleryHorizontalEnd, Sparkles, LayoutPanelTop } from "lucide-react";
+import { ArrowLeft, Settings, Upload, Palette, Globe, Link2, Bell, Wrench, RefreshCw, Save, Download, UploadCloud, AlertTriangle, Loader2, LayoutGrid, Music, GraduationCap, Layers, GalleryHorizontalEnd, Sparkles, LayoutPanelTop, Landmark } from "lucide-react";
 import { AdminHeroBannersPage } from "@/components/AdminHeroBannersPanel";
 import { AdminInspirationalBlock } from "@/components/AdminInspirationalBlock";
 import { AdminCardsConfigTab } from "@/components/AdminCardsConfigTab";
+import { AdminAreasPanel } from "@/components/AdminAreasPanel";
 import { MODULE_KEYS, type ModuleKey, type PlatformModules } from "@/hooks/use-project-mode";
 import { toast } from "sonner";
 
@@ -110,6 +111,9 @@ function SettingsPage() {
           <TabsTrigger value="cards" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
             <LayoutPanelTop className="h-3.5 w-3.5" /> Cards
           </TabsTrigger>
+          <TabsTrigger value="areas" className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-4 gap-1.5">
+            <Landmark className="h-3.5 w-3.5" /> Áreas
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="branding" className="mt-4">
@@ -141,6 +145,9 @@ function SettingsPage() {
         </TabsContent>
         <TabsContent value="cards" className="mt-4">
           <AdminCardsConfigTab initial={settings.cards_config || {}} />
+        </TabsContent>
+        <TabsContent value="areas" className="mt-4">
+          <AdminAreasPanel />
         </TabsContent>
       </Tabs>
     </div>
