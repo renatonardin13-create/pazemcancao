@@ -3,7 +3,7 @@ import { LogOut, Settings, UserCircle, Headphones, GraduationCap, Menu, X } from
 import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useProjectMode } from "@/hooks/use-project-mode";
-import { useArea } from "@/providers/AreaProvider";
+// useArea removed
 import { NotificationBell } from "./NotificationBell";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
@@ -15,13 +15,13 @@ interface AppHeaderProps {
 export function AppHeader({ showLogout = true }: AppHeaderProps) {
   const { logout, isAdmin, adminLoading } = useAuth();
   const { showMusicInMenu, showCoursesInMenu, showPerfilInMenu } = useProjectMode();
-  const { currentArea } = useArea();
+  // currentArea removed
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
 
   const navItems = useMemo(() => {
     const items: { to: string; icon: typeof Headphones; label: string }[] = [];
-    const prefix = currentArea ? `/area/${currentArea.slug}` : "";
+    const prefix = "";
     
     if (showMusicInMenu) items.push({ to: prefix ? `${prefix}/musicas` : "/musicas", icon: Headphones, label: "Músicas" });
     if (showCoursesInMenu) items.push({ to: "/cursos", icon: GraduationCap, label: "Cursos" });
