@@ -129,13 +129,16 @@ export function StudentSidebar() {
     const currentCategoria = typeof currentCategoriaRaw === "string" ? currentCategoriaRaw.trim().toLowerCase() : "";
     const validCategorySlugs = new Set(visibleCategories.map((cat: any) => String(cat.slug || cat.name).trim().toLowerCase()));
     const hasValidCategory = Boolean(currentCategoria) && validCategorySlugs.has(currentCategoria);
-    const isOnMusicas = isActivePrefix("/musicas");
+    
+    const targetTo = currentArea ? `/area/${currentArea.slug}/musicas` : "/musicas";
+    
+    const isOnMusicas = isActivePrefix(targetTo);
     const isGeneralActive = isOnMusicas && !hasValidCategory;
 
     return (
       <div>
         <Link
-          to="/musicas"
+          to={targetTo as any}
           search={{}}
           onClick={() => setMobileOpen(false)}
           className={cn(navItemClass(isGeneralActive), "w-full")}
