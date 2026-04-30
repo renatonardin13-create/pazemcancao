@@ -88,28 +88,38 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
       heroBannerRes,
       heroBannersListRes,
     ] = await Promise.all([
-      supabaseAdmin
-        .from('shelves')
-        .select('id, name, sort_order, mode, auto_criteria, show_in_vitrine')
-        .eq('is_active', true)
-        .order('sort_order', { ascending: true }),
+      (() => {
+        let q = supabaseAdmin
+          .from('shelves')
+          .select('id, name, sort_order, mode, auto_criteria, show_in_vitrine')
+          .eq('is_active', true);
+        if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        return q.order('sort_order', { ascending: true });
+      })(),
       supabaseAdmin
         .from('shelf_courses')
         .select('shelf_id, course_id, sort_order')
         .order('sort_order', { ascending: true }),
       coursesQuery.order('sort_order', { ascending: true }),
-      supabaseAdmin.from('categories').select('id, name'),
+      (() => {
+        let q = supabaseAdmin.from('categories').select('id, name');
+        if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        return q;
+      })(),
       supabaseAdmin.from('course_integrations').select('course_id, checkout_url').eq('is_enabled', true),
       supabase
         .from('enrollments')
         .select('course_id, status, expires_at, progress_percentage')
         .eq('user_id', userId),
       supabaseAdmin.from('platform_settings').select('value').eq('key', 'hero_banner').maybeSingle(),
-      (supabaseAdmin as any)
-        .from('vitrine_hero_banners')
-        .select('id, image_url, image_tablet_url, image_mobile_url, title, subtitle, description, primary_cta_label, primary_cta_url, primary_cta_type, primary_cta_target, secondary_cta_label, secondary_cta_url, secondary_cta_type, secondary_cta_target, banner_clickable, banner_click_type, banner_click_target, autoplay, autoplay_interval_ms, is_active, sort_order, schedule_start_at, schedule_end_at')
-        .eq('is_active', true)
-        .order('sort_order', { ascending: true }),
+      (() => {
+        let q = (supabaseAdmin as any)
+          .from('vitrine_hero_banners')
+          .select('id, image_url, image_tablet_url, image_mobile_url, title, subtitle, description, primary_cta_label, primary_cta_url, primary_cta_type, primary_cta_target, secondary_cta_label, secondary_cta_url, secondary_cta_type, secondary_cta_target, banner_clickable, banner_click_type, banner_click_target, autoplay, autoplay_interval_ms, is_active, sort_order, schedule_start_at, schedule_end_at')
+          .eq('is_active', true);
+        if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        return q.order('sort_order', { ascending: true });
+      })(),
     ]);
 
     if (shelvesRes.error) throw new Error(shelvesRes.error.message);
