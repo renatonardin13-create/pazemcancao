@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { 
   Loader2, ArrowLeft, Save, Globe, Palette, Type, Layout, 
   Upload, Languages, LogIn, Package, CheckCircle2, Circle, X, Eye, Link2, Plus,
-  LayoutPanelTop
+  LayoutPanelTop, Search, Edit3, Trash2, Music, Video, BookOpen, MoreVertical
 } from "lucide-react";
 import { AdminCardsConfigTab } from "@/components/AdminCardsConfigTab";
 
