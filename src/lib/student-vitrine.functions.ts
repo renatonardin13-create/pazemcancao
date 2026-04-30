@@ -88,11 +88,16 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
         .from('shelf_courses')
         .select('shelf_id, course_id, sort_order')
         .order('sort_order', { ascending: true }),
-      supabaseAdmin
+      let coursesQuery = supabaseAdmin
         .from('courses')
         .select('id, title, short_description, full_description, sales_description, cover_image_url, banner_image_url, price, promotional_price, benefits, total_lessons, total_duration, product_type, category_id, status, sort_order, launch_date')
-        .in('status', ['published', 'draft'])
-        .order('sort_order', { ascending: true }),
+        .in('status', ['published', 'draft']);
+
+      if (inputData?.areaId) {
+        coursesQuery = coursesQuery.eq('area_id', inputData.areaId);
+      }
+
+      coursesQuery.order('sort_order', { ascending: true }),
       supabaseAdmin.from('categories').select('id, name'),
       supabaseAdmin.from('course_integrations').select('course_id, checkout_url').eq('is_enabled', true),
       supabase
