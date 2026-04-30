@@ -747,7 +747,10 @@ function ModulesTab({ areaId, areaContents, courses, tracks }: any) {
                       <div className="h-12 w-12 rounded-xl bg-background/50 border border-border/20 flex items-center justify-center group-hover:border-gold/30 transition-colors">
                         {getTypeIcon(content.type)}
                       </div>
-                      <span className="font-bold text-foreground tracking-tight">{content.title}</span>
+                      <div className="flex flex-col">
+                        <span className="font-bold text-foreground tracking-tight">{content.title}</span>
+                        <ModulePreview content={content} courses={courses} tracks={tracks} />
+                      </div>
                     </div>
                   </td>
                   <td className="py-4 border-y border-border/10">
