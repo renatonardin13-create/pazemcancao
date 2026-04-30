@@ -146,6 +146,9 @@ function SettingsPage() {
         <TabsContent value="cards" className="mt-4">
           <AdminCardsConfigTab initial={settings.cards_config || {}} />
         </TabsContent>
+        <TabsContent value="areas" className="mt-4">
+          <AdminAreasPanel />
+        </TabsContent>
       </Tabs>
     </div>
   );
