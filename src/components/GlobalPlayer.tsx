@@ -96,11 +96,9 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
                   <span className="text-[10px] sm:text-xs font-medium text-white/40 uppercase tracking-wider truncate">
                     {currentTrack.category}
                   </span>
-                  {hasQueue && (
-                    <span className="text-[10px] sm:text-xs text-gold/60 tabular-nums">
-                      {queueIndex + 1} de {queue.length}
-                    </span>
-                  )}
+                  <span className="text-[10px] sm:text-xs text-gold/60 tabular-nums">
+                    {formatSecs(currentTime)} / {duration > 0 ? formatSecs(duration) : currentTrack.duration}
+                  </span>
                 </div>
               </div>
 
