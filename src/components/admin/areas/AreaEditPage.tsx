@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { 
   Loader2, ArrowLeft, Save, Globe, Palette, Type, Layout, 
-  Upload, Languages, LogIn, Package, CheckCircle2, Circle, X, Eye, Link2
+  Upload, Languages, LogIn, Package, CheckCircle2, Circle, X, Eye, Link2, Plus
 } from "lucide-react";
 
 export function AreaEditPage() {
