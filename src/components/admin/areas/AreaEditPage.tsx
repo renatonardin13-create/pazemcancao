@@ -13,8 +13,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { 
   Loader2, ArrowLeft, Save, Globe, Palette, Type, Layout, 
-  Upload, Languages, LogIn, Package, CheckCircle2, Circle, X, Eye, Link2, Plus
+  Upload, Languages, LogIn, Package, CheckCircle2, Circle, X, Eye, Link2, Plus,
+  LayoutPanelTop
 } from "lucide-react";
+import { AdminCardsConfigTab } from "@/components/AdminCardsConfigTab";
 
 export function AreaEditPage() {
   const { areaId } = useParams({ from: "/_authenticated/admin/areas/$areaId" });
