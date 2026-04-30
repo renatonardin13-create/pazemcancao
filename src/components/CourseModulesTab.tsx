@@ -600,8 +600,17 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                   {/* Module actions */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground shrink-0">
-                        <MoreHorizontal className="h-4 w-4" />
+                      <Button 
+                        variant="ghost" 
+                        size="icon" 
+                        className="h-7 w-7 text-muted-foreground hover:text-foreground shrink-0"
+                        disabled={deleteModM.isPending || createModM.isPending}
+                      >
+                        {deleteModM.isPending && deleteModM.variables === mod.id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <MoreHorizontal className="h-4 w-4" />
+                        )}
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="w-44">
@@ -610,24 +619,34 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                         Editar módulo
                       </DropdownMenuItem>
                       <DropdownMenuItem
+                        disabled={createModM.isPending}
                         onClick={() => {
                           createModM.mutate({ title: `${mod.title} (cópia)`, description: mod.description || undefined });
                         }}
                         className="gap-2"
                       >
-                        <Copy className="h-3.5 w-3.5" />
+                        {createModM.isPending && createModM.variables?.title?.includes('(cópia)') ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <Copy className="h-3.5 w-3.5" />
+                        )}
                         Duplicar módulo
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
                         className="gap-2 text-destructive focus:text-destructive"
+                        disabled={deleteModM.isPending}
                         onClick={() => {
                           if (confirm("Excluir este módulo e todas suas aulas?")) {
                             deleteModM.mutate(mod.id);
                           }
                         }}
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
+                        {deleteModM.isPending && deleteModM.variables === mod.id ? (
+                          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        ) : (
+                          <Trash2 className="h-3.5 w-3.5" />
+                        )}
                         Excluir módulo
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -707,8 +726,17 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                             {/* Lesson actions */}
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-foreground shrink-0">
-                                  <MoreHorizontal className="h-4 w-4" />
+                                <Button 
+                                  variant="ghost" 
+                                  size="icon" 
+                                  className="h-7 w-7 text-muted-foreground hover:text-foreground shrink-0"
+                                  disabled={deleteLesM.isPending || createLesM.isPending}
+                                >
+                                  {deleteLesM.isPending && deleteLesM.variables === lesson.id ? (
+                                    <Loader2 className="h-4 w-4 animate-spin" />
+                                  ) : (
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  )}
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end" className="w-48">
@@ -721,6 +749,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                                   Editar Aula
                                 </DropdownMenuItem>
                                 <DropdownMenuItem
+                                  disabled={createLesM.isPending}
                                   onClick={() => {
                                     createLesM.mutate({
                                       moduleId: mod.id,
@@ -735,7 +764,11 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                                   }}
                                   className="gap-2"
                                 >
-                                  <Copy className="h-3.5 w-3.5" />
+                                  {createLesM.isPending && createLesM.variables?.title?.includes('(cópia)') ? (
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                  ) : (
+                                    <Copy className="h-3.5 w-3.5" />
+                                  )}
                                   Duplicar Aula
                                 </DropdownMenuItem>
                                 <DropdownMenuItem className="gap-2">
@@ -745,13 +778,18 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem
                                   className="gap-2 text-destructive focus:text-destructive"
+                                  disabled={deleteLesM.isPending}
                                   onClick={() => {
                                     if (confirm("Excluir esta aula?")) {
                                       deleteLesM.mutate(lesson.id);
                                     }
                                   }}
                                 >
-                                  <Trash2 className="h-3.5 w-3.5" />
+                                  {deleteLesM.isPending && deleteLesM.variables === lesson.id ? (
+                                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                  ) : (
+                                    <Trash2 className="h-3.5 w-3.5" />
+                                  )}
                                   Excluir Aula
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
