@@ -426,6 +426,7 @@ export type Database = {
           category_id: string | null
           created_at: string | null
           id: string
+          sort_order: number
           status: string | null
           title: string
           type: string | null
@@ -437,6 +438,7 @@ export type Database = {
           category_id?: string | null
           created_at?: string | null
           id?: string
+          sort_order?: number
           status?: string | null
           title: string
           type?: string | null
@@ -448,6 +450,7 @@ export type Database = {
           category_id?: string | null
           created_at?: string | null
           id?: string
+          sort_order?: number
           status?: string | null
           title?: string
           type?: string | null
