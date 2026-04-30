@@ -11,6 +11,7 @@ import {
 } from "@/lib/admin-content.functions";
 import { listAdminCategories } from "@/lib/admin-categories.functions";
 import { listAdminJourneys } from "@/lib/admin-journeys.functions";
+import { getAreas } from "@/lib/areas.functions";
 import {
   BookOpen, Video, GraduationCap, FileText, Plus, Trash2,
   ToggleLeft, ToggleRight, Pencil, Loader2, ExternalLink, Search,
@@ -77,6 +78,7 @@ function AdminContentPage() {
   const [showAsCard, setShowAsCard] = useState(true);
   const [sortOrder, setSortOrder] = useState<string>("");
   const [journeyGroup, setJourneyGroup] = useState("");
+  const [areaId, setAreaId] = useState("");
   const [journeyOrder, setJourneyOrder] = useState<string>("");
   const [unlockRuleType, setUnlockRuleType] = useState("none");
   const [unlockRuleContentId, setUnlockRuleContentId] = useState("");
@@ -109,6 +111,12 @@ function AdminContentPage() {
     queryKey: ["admin-journeys"],
     queryFn: () => listAdminJourneys(),
     staleTime: 60_000,
+  });
+
+  const { data: areasData } = useQuery({
+    queryKey: ["admin-areas"],
+    queryFn: () => getAreas(),
+    staleTime: 5 * 60_000,
   });
 
   const categoryOptions = useMemo(() => {
@@ -144,6 +152,7 @@ function AdminContentPage() {
     setShowAsCard(true);
     setSortOrder("");
     setJourneyGroup("");
+    setAreaId("");
     setJourneyOrder("");
     setUnlockRuleType("none");
     setUnlockRuleContentId("");
@@ -173,6 +182,7 @@ function AdminContentPage() {
     setShowAsCard(item.show_as_card !== false);
     setSortOrder(item.sort_order != null ? String(item.sort_order) : "");
     setJourneyGroup(item.journey_group || "");
+    setAreaId(item.area_id || "");
     setJourneyOrder(item.journey_order != null ? String(item.journey_order) : "");
     setUnlockRuleType(item.unlock_rule_type || "none");
     setUnlockRuleContentId(item.unlock_rule_content_id || "");
@@ -225,6 +235,7 @@ function AdminContentPage() {
         title: title.trim(),
         description: description.trim() || undefined,
         content_type: contentType,
+        area_id: areaId || undefined,
         cover_url,
         file_url,
         video_url: videoUrl.trim() || undefined,
