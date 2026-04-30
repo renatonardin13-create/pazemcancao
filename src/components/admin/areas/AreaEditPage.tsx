@@ -69,19 +69,19 @@ export function AreaEditPage() {
         </TabsList>
 
         <TabsContent value="general">
-          <GeneralTab area={area} onSave={(data) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
+          <GeneralTab area={area} onSave={(data: any) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
         </TabsContent>
         <TabsContent value="branding">
-          <BrandingTab area={area} onSave={(data) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
+          <BrandingTab area={area} onSave={(data: any) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
         </TabsContent>
         <TabsContent value="colors">
-          <ColorsTab area={area} onSave={(data) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
+          <ColorsTab area={area} onSave={(data: any) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
         </TabsContent>
         <TabsContent value="language">
-          <LanguageTab area={area} onSave={(data) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
+          <LanguageTab area={area} onSave={(data: any) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
         </TabsContent>
         <TabsContent value="login">
-          <LoginTab area={area} onSave={(data) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
+          <LoginTab area={area} onSave={(data: any) => updateMutation.mutate(data)} saving={updateMutation.isPending} />
         </TabsContent>
         <TabsContent value="products">
           <ProductsTab areaId={areaId} courses={coursesData?.courses || []} areaContents={areaContents || []} />
