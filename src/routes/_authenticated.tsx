@@ -7,6 +7,7 @@ import { useEffect, useState, useRef } from "react";
 import { LogOut, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 import { SafeBoundary } from "@/components/SafeBoundary";
+import { AreaProvider } from "@/providers/AreaProvider";
 
 export const Route = createFileRoute("/_authenticated")({
   component: AuthenticatedLayout,
@@ -243,7 +244,9 @@ function AuthenticatedLayout() {
 
   return (
     <SafeBoundary fallbackTitle="Erro ao carregar a área do aluno">
-      <Outlet />
+      <AreaProvider>
+        <Outlet />
+      </AreaProvider>
     </SafeBoundary>
   );
 }

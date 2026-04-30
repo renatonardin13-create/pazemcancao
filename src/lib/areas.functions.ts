@@ -15,6 +15,17 @@ export const getAreas = async () => {
   return data || [];
 };
 
+export const getMyAreas = async () => {
+  const { data, error } = await supabase
+    .from("memberships")
+    .select("*, areas(*)")
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+  // @ts-ignore - Supabase join typing can be tricky
+  return (data || []).map((m) => m.areas).filter(Boolean) as Area[];
+};
+
 export const getArea = async (id: string) => {
   const { data, error } = await supabase
     .from("areas")

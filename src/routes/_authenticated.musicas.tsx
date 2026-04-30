@@ -13,6 +13,7 @@ import {
 import { ModuleGuard } from "@/components/ModuleGuard";
 import { StudentLayout } from "@/components/StudentLayout";
 import { SafeBoundary } from "@/components/SafeBoundary";
+import { useArea } from "@/providers/AreaProvider";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TrackCard } from "@/components/TrackCard";
@@ -159,6 +160,7 @@ function MusicLibraryPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [activePlaylistId, setActivePlaylistId] = useState<string | null>(null);
   const [showAllTracks, setShowAllTracks] = useState(false);
+  const { currentArea } = useArea();
 
   const { currentTrack, playing, toggle, setQueue } = usePlayer();
 
@@ -166,8 +168,8 @@ function MusicLibraryPage() {
   // programada / inativas) para exibir badge "Em breve" — a reprodução é
   // bloqueada no TrackCard quando a faixa não está liberada.
   const { data: tracksData, isLoading: tracksLoading, isError: tracksFailed } = useQuery({
-    queryKey: ["music-library-tracks"],
-    queryFn: () => listAllTracks(),
+    queryKey: ["music-library-tracks", currentArea?.id],
+    queryFn: () => listAllTracks({ data: { areaId: currentArea?.id } }),
     staleTime: 30_000,
     retry: 2,
   });

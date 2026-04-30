@@ -9,6 +9,7 @@ import { usePlayer } from "@/hooks/use-player";
 import { motion } from "framer-motion";
 import type { Track } from "@/lib/sample-tracks";
 import { StudentLayout } from "@/components/StudentLayout";
+import { useArea } from "@/providers/AreaProvider";
 import { UpsellSection } from "@/components/UpsellSection";
 import { CrossSellSection } from "@/components/CrossSellSection";
 
@@ -69,6 +70,7 @@ function dbTrackToPlayerTrack(track: any): Track {
 
 function MusicDetailPage() {
   const { trackId } = Route.useParams();
+  const { currentArea } = useArea();
 
   const { data: accessData, isLoading: accessLoading } = useQuery({
     queryKey: ["buyer-access"],
@@ -87,8 +89,8 @@ function MusicDetailPage() {
   });
 
   const { data: allTracksData } = useQuery({
-    queryKey: ["all-tracks"],
-    queryFn: () => listAllTracks(),
+    queryKey: ["all-tracks", currentArea?.id],
+    queryFn: () => listAllTracks({ data: { areaId: currentArea?.id } }),
   });
 
   const { currentTrack, playing, progress, toggle } = usePlayer();

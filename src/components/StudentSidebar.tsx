@@ -2,6 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { listActiveTracks } from "@/lib/tracks.functions";
+import { useArea } from "@/providers/AreaProvider";
 import { useProjectMode } from "@/hooks/use-project-mode";
 import { LogoBrand } from "./LogoBrand";
 import {
@@ -58,12 +59,13 @@ const LOUVOR_CATEGORY_LABELS: Record<(typeof OFFICIAL_LOUVOR_CATEGORIES)[number]
 export function StudentSidebar() {
   const { logout, isAdmin, adminLoading } = useAuth();
   const { dbModules } = useProjectMode();
+  const { currentArea } = useArea();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const { data: tracksData } = useQuery({
-    queryKey: ["tracks-active"],
-    queryFn: () => listActiveTracks(),
+    queryKey: ["tracks-active", currentArea?.id],
+    queryFn: () => listActiveTracks({ data: { areaId: currentArea?.id } }),
     staleTime: 60_000,
   });
 
