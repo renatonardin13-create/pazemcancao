@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       active_sessions: {
         Row: {
+          area_id: string | null
           created_at: string
           device_fingerprint: string | null
           email: string
@@ -27,6 +28,7 @@ export type Database = {
           user_agent: string | null
         }
         Insert: {
+          area_id?: string | null
           created_at?: string
           device_fingerprint?: string | null
           email: string
@@ -38,6 +40,7 @@ export type Database = {
           user_agent?: string | null
         }
         Update: {
+          area_id?: string | null
           created_at?: string
           device_fingerprint?: string | null
           email?: string
@@ -48,11 +51,20 @@ export type Database = {
           session_token?: string
           user_agent?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "active_sessions_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       approved_buyers: {
         Row: {
           access_enabled: boolean
+          area_id: string | null
           can_download: boolean
           created_at: string
           email: string
@@ -68,6 +80,7 @@ export type Database = {
         }
         Insert: {
           access_enabled?: boolean
+          area_id?: string | null
           can_download?: boolean
           created_at?: string
           email: string
@@ -83,6 +96,7 @@ export type Database = {
         }
         Update: {
           access_enabled?: boolean
+          area_id?: string | null
           can_download?: boolean
           created_at?: string
           email?: string
@@ -96,7 +110,15 @@ export type Database = {
           status?: string
           trial_expires_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "approved_buyers_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       areas: {
         Row: {
@@ -616,6 +638,7 @@ export type Database = {
       enrollments: {
         Row: {
           access_origin: string
+          area_id: string | null
           completed_at: string | null
           course_id: string
           created_at: string
@@ -632,6 +655,7 @@ export type Database = {
         }
         Insert: {
           access_origin?: string
+          area_id?: string | null
           completed_at?: string | null
           course_id: string
           created_at?: string
@@ -648,6 +672,7 @@ export type Database = {
         }
         Update: {
           access_origin?: string
+          area_id?: string | null
           completed_at?: string | null
           course_id?: string
           created_at?: string
@@ -663,6 +688,13 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "enrollments_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "enrollments_course_id_fkey"
             columns: ["course_id"]
@@ -1606,6 +1638,7 @@ export type Database = {
       transactions: {
         Row: {
           amount: number
+          area_id: string | null
           buyer_email: string
           buyer_name: string
           course_id: string | null
@@ -1621,6 +1654,7 @@ export type Database = {
         }
         Insert: {
           amount?: number
+          area_id?: string | null
           buyer_email: string
           buyer_name: string
           course_id?: string | null
@@ -1636,6 +1670,7 @@ export type Database = {
         }
         Update: {
           amount?: number
+          area_id?: string | null
           buyer_email?: string
           buyer_name?: string
           course_id?: string | null
@@ -1650,6 +1685,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "transactions_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "transactions_course_id_fkey"
             columns: ["course_id"]
