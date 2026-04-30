@@ -35,6 +35,7 @@ export const createContentItem = createServerFn({ method: 'POST' })
     title: string;
     description?: string;
     content_type: string;
+    area_id?: string;
     cover_url?: string;
     file_url?: string;
     video_url?: string;
@@ -77,6 +78,7 @@ export const createContentItem = createServerFn({ method: 'POST' })
         title: data.title,
         description: data.description || null,
         content_type: data.content_type,
+        area_id: data.area_id || null,
         cover_url: data.cover_url || null,
         file_url: data.file_url || null,
         video_url: data.video_url || null,
@@ -116,6 +118,7 @@ export const updateContentItem = createServerFn({ method: 'POST' })
     title?: string;
     description?: string;
     content_type?: string;
+    area_id?: string;
     cover_url?: string;
     file_url?: string;
     video_url?: string;

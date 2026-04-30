@@ -1,6 +1,7 @@
 import { useState, useEffect, forwardRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { listAdminCategories } from "@/lib/admin-courses.functions";
+import { getAreas } from "@/lib/areas.functions";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -58,6 +59,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   const [bannerUrl, setBannerUrl] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [price, setPrice] = useState("0");
+  const [areaId, setAreaId] = useState("");
   const [promotionalPrice, setPromotionalPrice] = useState("");
   const [status, setStatus] = useState("draft");
   const [courseType, setCourseType] = useState("video");
@@ -70,6 +72,13 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
     queryFn: () => listAdminCategories(),
   });
 
+  const { data: areasData } = useQuery({
+    queryKey: ["admin-areas"],
+    queryFn: () => getAreas(),
+  });
+
+  const areas = areasData || [];
+
   const categories = categoriesData?.categories || [];
 
   useEffect(() => {
@@ -81,6 +90,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       setBannerUrl(initialValues.banner_image_url || "");
       setCategoryId(initialValues.category_id || "");
       setPrice(String(initialValues.price ?? 0));
+      setAreaId(initialValues.area_id || "");
       setPromotionalPrice(initialValues.promotional_price != null ? String(initialValues.promotional_price) : "");
       setStatus(initialValues.status || "draft");
       setCourseType(normalizeCourseType(initialValues.course_type));
@@ -115,6 +125,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       cover_image_url: coverUrl.trim() || null,
       banner_image_url: bannerUrl.trim() || null,
       category_id: categoryId || null,
+      area_id: areaId || null,
       price: parseFloat(price) || 0,
       promotional_price: promotionalPrice.trim() ? parseFloat(promotionalPrice) : null,
       status,
@@ -194,6 +205,24 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   <SelectContent>
                     <SelectItem value="draft">Rascunho</SelectItem>
                     <SelectItem value="published">Publicado</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className={labelClass}>Ambiente (Área)</Label>
+                <Select value={areaId} onValueChange={setAreaId}>
+                  <SelectTrigger className={inputClass}>
+                    <SelectValue placeholder="Selecione a área" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {areas.map((area: any) => (
+                      <SelectItem key={area.id} value={area.id}>
+                        {area.name}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </div>

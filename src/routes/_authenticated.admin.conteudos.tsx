@@ -11,6 +11,7 @@ import {
 } from "@/lib/admin-content.functions";
 import { listAdminCategories } from "@/lib/admin-categories.functions";
 import { listAdminJourneys } from "@/lib/admin-journeys.functions";
+import { getAreas } from "@/lib/areas.functions";
 import {
   BookOpen, Video, GraduationCap, FileText, Plus, Trash2,
   ToggleLeft, ToggleRight, Pencil, Loader2, ExternalLink, Search,
@@ -63,6 +64,7 @@ function AdminContentPage() {
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState("all");
+  const [filterArea, setFilterArea] = useState("all");
 
   // Form state
   const [title, setTitle] = useState("");
@@ -77,6 +79,7 @@ function AdminContentPage() {
   const [showAsCard, setShowAsCard] = useState(true);
   const [sortOrder, setSortOrder] = useState<string>("");
   const [journeyGroup, setJourneyGroup] = useState("");
+  const [areaId, setAreaId] = useState("");
   const [journeyOrder, setJourneyOrder] = useState<string>("");
   const [unlockRuleType, setUnlockRuleType] = useState("none");
   const [unlockRuleContentId, setUnlockRuleContentId] = useState("");
@@ -109,6 +112,12 @@ function AdminContentPage() {
     queryKey: ["admin-journeys"],
     queryFn: () => listAdminJourneys(),
     staleTime: 60_000,
+  });
+
+  const { data: areasData } = useQuery({
+    queryKey: ["admin-areas"],
+    queryFn: () => getAreas(),
+    staleTime: 5 * 60_000,
   });
 
   const categoryOptions = useMemo(() => {
@@ -144,6 +153,7 @@ function AdminContentPage() {
     setShowAsCard(true);
     setSortOrder("");
     setJourneyGroup("");
+    setAreaId("");
     setJourneyOrder("");
     setUnlockRuleType("none");
     setUnlockRuleContentId("");
@@ -173,6 +183,7 @@ function AdminContentPage() {
     setShowAsCard(item.show_as_card !== false);
     setSortOrder(item.sort_order != null ? String(item.sort_order) : "");
     setJourneyGroup(item.journey_group || "");
+    setAreaId(item.area_id || "");
     setJourneyOrder(item.journey_order != null ? String(item.journey_order) : "");
     setUnlockRuleType(item.unlock_rule_type || "none");
     setUnlockRuleContentId(item.unlock_rule_content_id || "");
@@ -225,6 +236,7 @@ function AdminContentPage() {
         title: title.trim(),
         description: description.trim() || undefined,
         content_type: contentType,
+        area_id: areaId || undefined,
         cover_url,
         file_url,
         video_url: videoUrl.trim() || undefined,
@@ -296,6 +308,9 @@ function AdminContentPage() {
     if (typeFilter !== "all") {
       list = list.filter((i: any) => i.content_type === typeFilter);
     }
+    if (filterArea !== "all") {
+      list = list.filter((i: any) => i.area_id === filterArea);
+    }
     return list;
   }, [data?.items, search, typeFilter]);
 
@@ -348,6 +363,17 @@ function AdminContentPage() {
             <SelectItem value="material">📄 Materiais</SelectItem>
           </SelectContent>
         </Select>
+        <Select value={filterArea} onValueChange={setFilterArea}>
+          <SelectTrigger className="w-full sm:w-[220px] h-12 bg-card/15 border-border/25 rounded-2xl focus:border-gold/30 transition-all text-sm">
+            <SelectValue placeholder="Filtrar por área" />
+          </SelectTrigger>
+          <SelectContent className="bg-card border-border/40 rounded-xl">
+            <SelectItem value="all">Todas as áreas</SelectItem>
+            {areasData?.map((area: any) => (
+              <SelectItem key={area.id} value={area.id}>{area.name}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Form Dialog */}
@@ -359,6 +385,20 @@ function AdminContentPage() {
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">Ambiente (Área)</Label>
+              <Select value={areaId} onValueChange={setAreaId} disabled={isSubmitting}>
+                <SelectTrigger className="bg-card/15 border-border/30 text-sm">
+                  <SelectValue placeholder="Selecione um ambiente..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {areasData?.map((area: any) => (
+                    <SelectItem key={area.id} value={area.id}>{area.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="space-y-2">
               <Label className="text-xs uppercase tracking-[0.2em] text-muted-foreground/70">Tipo</Label>
               <Select value={contentType} onValueChange={setContentType} disabled={isSubmitting}>
