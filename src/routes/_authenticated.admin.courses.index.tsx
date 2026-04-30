@@ -54,6 +54,7 @@ function AdminCoursesPage() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [typeFilter, setTypeFilter] = useState("all");
   const [page, setPage] = useState(1);
 
   const { data, isLoading } = useQuery({
@@ -94,6 +95,9 @@ function AdminCoursesPage() {
     if (statusFilter !== "all") {
       list = list.filter((c: any) => c.status === statusFilter);
     }
+    if (typeFilter !== "all") {
+      list = list.filter((c: any) => c.course_type === typeFilter);
+    }
     return list;
   }, [allCourses, search, statusFilter]);
 
@@ -125,12 +129,22 @@ function AdminCoursesPage() {
                 className="pl-9 h-10 w-full sm:w-52 bg-background/40 border-border/20 rounded-xl text-sm placeholder:text-muted-foreground/70"
               />
             </div>
-            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
-              <SelectTrigger className="w-[150px] h-10 bg-background/40 border-border/20 rounded-xl text-sm">
-                <SelectValue />
+            <Select value={typeFilter} onValueChange={(v) => { setTypeFilter(v); setPage(1); }}>
+              <SelectTrigger className="w-[130px] h-10 bg-background/40 border-border/20 rounded-xl text-sm">
+                <SelectValue placeholder="Tipo" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Todos</SelectItem>
+                <SelectItem value="all">Todos Tipos</SelectItem>
+                <SelectItem value="video">Vídeos</SelectItem>
+                <SelectItem value="ebook">eBooks</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
+              <SelectTrigger className="w-[130px] h-10 bg-background/40 border-border/20 rounded-xl text-sm">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Todos Status</SelectItem>
                 <SelectItem value="published">Publicado</SelectItem>
                 <SelectItem value="draft">Rascunho</SelectItem>
                 <SelectItem value="archived">Arquivado</SelectItem>
