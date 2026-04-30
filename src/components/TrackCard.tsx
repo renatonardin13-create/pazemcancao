@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { memo, useState } from "react";
 import type { Track } from "@/lib/sample-tracks";
 import { usePlayer } from "@/hooks/use-player";
+import { motion, AnimatePresence } from "framer-motion";
 import { getTrackReleaseMeta } from "@/lib/track-release";
 import { PosterCard } from "@/components/PosterCard";
 import { UnlockModal } from "@/components/UnlockModal";
@@ -89,15 +90,18 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
     <div
       className={`flex h-16 w-16 items-center justify-center rounded-2xl border backdrop-blur-sm transition-all duration-700 ${
         isPlaying
-          ? "border-gold/25 bg-gold/15 scale-110"
+          ? "border-gold/50 bg-gold/20 scale-110 shadow-[0_0_20px_rgba(212,175,55,0.3)]"
           : "border-white/[0.06] bg-white/[0.04] md:group-hover/card:scale-105 md:group-hover/card:bg-white/[0.07]"
       }`}
     >
       <Music
         className={`h-7 w-7 transition-colors duration-500 ${
-          isPlaying ? "text-gold/70" : "text-white/25 md:group-hover/card:text-white/40"
+          isPlaying ? "text-gold" : "text-white/25 md:group-hover/card:text-white/40"
         }`}
       />
+      {isPlaying && (
+        <div className="absolute inset-0 rounded-2xl border border-gold/50 animate-ping opacity-20" />
+      )}
     </div>
   );
 
@@ -205,6 +209,7 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
             progress={null}
             locked={isRestricted}
             index={index}
+            highlight={isPlaying}
           />
         </div>
         <UnlockModal
@@ -239,6 +244,7 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
         progress={isPlaying && !isRestricted ? progress : null}
         locked={isRestricted}
         index={index}
+        highlight={isPlaying}
       />
     </Link>
   );

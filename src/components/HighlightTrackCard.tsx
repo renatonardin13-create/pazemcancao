@@ -34,8 +34,18 @@ export function HighlightTrackCard({ track, queue }: HighlightTrackCardProps) {
   };
 
   const fallback = (
-    <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/[0.06] bg-white/[0.04]">
-      <Music className="h-7 w-7 text-white/25" />
+    <div
+      className={`flex h-16 w-16 items-center justify-center rounded-2xl border backdrop-blur-sm transition-all duration-700 ${
+        isPlaying
+          ? "border-gold/50 bg-gold/20 scale-110 shadow-[0_0_20px_rgba(212,175,55,0.3)]"
+          : "border-white/[0.06] bg-white/[0.04] md:group-hover/card:scale-105 md:group-hover/card:bg-white/[0.07]"
+      }`}
+    >
+      <Music
+        className={`h-7 w-7 transition-colors duration-500 ${
+          isPlaying ? "text-gold" : "text-white/25 md:group-hover/card:text-white/40"
+        }`}
+      />
     </div>
   );
 
@@ -85,6 +95,7 @@ export function HighlightTrackCard({ track, queue }: HighlightTrackCardProps) {
         title=""
         subtitle={undefined}
         locked={locked}
+        highlight={isPlaying}
       />
     </div>
   );
