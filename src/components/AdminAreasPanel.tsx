@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { getAreas, createArea, updateArea, deleteArea, type Area } from "@/lib/areas.functions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,6 +43,7 @@ import {
 
 export function AdminAreasPanel() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingArea, setEditingArea] = useState<Area | null>(null);
   const [formData, setFormData] = useState({
@@ -103,15 +105,10 @@ export function AdminAreasPanel() {
   };
 
   const handleOpenEdit = (area: Area) => {
-    setEditingArea(area);
-    setFormData({
-      name: area.name,
-      slug: area.slug,
-      description: area.description || "",
-      primary_color: area.primary_color || "#D4A853",
-      domain: area.domain || "",
+    navigate({
+      to: "/admin/areas/$areaId",
+      params: { areaId: area.id }
     });
-    setIsDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
@@ -252,18 +249,34 @@ export function AdminAreasPanel() {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  onClick={() => handleViewAsAdmin(area)}
-                  className="h-10 rounded-xl border-border/30 hover:border-gold/30 hover:bg-gold/5 hover:text-gold transition-all gap-2 text-xs font-bold"
+                  onClick={() => handleOpenEdit(area)}
+                  className="h-10 rounded-xl border-border/30 hover:border-gold/30 hover:bg-gold/5 hover:text-gold transition-all gap-2 text-[10px] font-black uppercase tracking-tighter"
                 >
-                  <Shield className="h-3.5 w-3.5" /> Ver como Admin
+                  <Edit2 className="h-3.5 w-3.5" /> Editar
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleDelete(area.id)}
+                  className="h-10 rounded-xl border-border/30 hover:border-destructive/30 hover:bg-destructive/5 hover:text-destructive transition-all gap-2 text-[10px] font-black uppercase tracking-tighter"
+                >
+                  <Trash2 className="h-3.5 w-3.5" /> Excluir
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => handleViewAsAdmin(area)}
+                  className="h-10 rounded-xl border-border/30 hover:border-gold/30 hover:bg-gold/5 hover:text-gold transition-all gap-2 text-[10px] font-black uppercase tracking-tighter"
+                >
+                  <Shield className="h-3.5 w-3.5" /> Admin
                 </Button>
                 <Button 
                   variant="outline" 
                   size="sm" 
                   onClick={() => handleViewAsUser(area)}
-                  className="h-10 rounded-xl border-border/30 hover:border-white/20 hover:bg-white/5 transition-all gap-2 text-xs font-bold"
+                  className="h-10 rounded-xl border-border/30 hover:border-white/20 hover:bg-white/5 transition-all gap-2 text-[10px] font-black uppercase tracking-tighter"
                 >
-                  <Eye className="h-3.5 w-3.5" /> Ver como Aluno
+                  <Eye className="h-3.5 w-3.5" /> Aluno
                 </Button>
               </div>
             </CardContent>

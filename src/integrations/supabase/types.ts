@@ -100,34 +100,64 @@ export type Database = {
       }
       areas: {
         Row: {
+          background_color: string | null
+          banner_url: string | null
           created_at: string | null
           description: string | null
           domain: string | null
+          favicon_url: string | null
           id: string
+          language: string | null
+          login_background_url: string | null
+          login_subtitle: string | null
+          login_title: string | null
           logo_url: string | null
           name: string
           primary_color: string | null
+          secondary_color: string | null
+          settings: Json | null
           slug: string
+          surface_color: string | null
         }
         Insert: {
+          background_color?: string | null
+          banner_url?: string | null
           created_at?: string | null
           description?: string | null
           domain?: string | null
+          favicon_url?: string | null
           id?: string
+          language?: string | null
+          login_background_url?: string | null
+          login_subtitle?: string | null
+          login_title?: string | null
           logo_url?: string | null
           name: string
           primary_color?: string | null
+          secondary_color?: string | null
+          settings?: Json | null
           slug: string
+          surface_color?: string | null
         }
         Update: {
+          background_color?: string | null
+          banner_url?: string | null
           created_at?: string | null
           description?: string | null
           domain?: string | null
+          favicon_url?: string | null
           id?: string
+          language?: string | null
+          login_background_url?: string | null
+          login_subtitle?: string | null
+          login_title?: string | null
           logo_url?: string | null
           name?: string
           primary_color?: string | null
+          secondary_color?: string | null
+          settings?: Json | null
           slug?: string
+          surface_color?: string | null
         }
         Relationships: []
       }
