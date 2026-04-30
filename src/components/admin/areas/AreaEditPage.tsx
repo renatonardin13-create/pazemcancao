@@ -17,6 +17,21 @@ import {
   LayoutPanelTop, Search, Edit3, Trash2, Music, Video, BookOpen, MoreVertical
 } from "lucide-react";
 import { AdminCardsConfigTab } from "@/components/AdminCardsConfigTab";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export function AreaEditPage() {
   const { areaId } = useParams({ from: "/_authenticated/admin/areas/$areaId" });
