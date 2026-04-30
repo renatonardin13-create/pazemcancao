@@ -920,7 +920,7 @@ function ModulesTab({ areaId, areaContents, courses, tracks }: any) {
 
                 <div className="space-y-2.5">
                   <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground/70">
-                    Link / ID (Opcional)
+                    Link / ID {(formData.type === 'course' || formData.type === 'ebook') ? '*' : '(Opcional)'}
                   </Label>
                   <Input
                     placeholder="ID do curso ou URL externa"
