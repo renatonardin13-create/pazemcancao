@@ -105,15 +105,10 @@ export function AdminAreasPanel() {
   };
 
   const handleOpenEdit = (area: Area) => {
-    setEditingArea(area);
-    setFormData({
-      name: area.name,
-      slug: area.slug,
-      description: area.description || "",
-      primary_color: area.primary_color || "#D4A853",
-      domain: area.domain || "",
+    navigate({
+      to: "/admin/areas/$areaId",
+      params: { areaId: area.id }
     });
-    setIsDialogOpen(true);
   };
 
   const handleCloseDialog = () => {
