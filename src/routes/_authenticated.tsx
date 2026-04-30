@@ -7,7 +7,7 @@ import { useEffect, useState, useRef } from "react";
 import { LogOut, ShieldAlert } from "lucide-react";
 import { toast } from "sonner";
 import { SafeBoundary } from "@/components/SafeBoundary";
-import { AreaProvider } from "@/providers/AreaProvider";
+// AreaProvider movido para __root.tsx para ser global e acessível pelo PlayerProvider.
 
 function CardsConfigLoader() {
   useCardsConfig();
@@ -247,9 +247,7 @@ function AuthenticatedLayout() {
 
   return (
     <SafeBoundary fallbackTitle="Erro ao carregar a área do aluno">
-      <AreaProvider>
-        <CardsConfigLoader />
-      </AreaProvider>
+      <CardsConfigLoader />
     </SafeBoundary>
   );
 }

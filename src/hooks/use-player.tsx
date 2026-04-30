@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useCallback, useRef, useEffect, type ReactNode } from "react";
 import type { Track } from "@/lib/sample-tracks";
 import { logPlay } from "@/lib/analytics.functions";
+import { useArea } from "@/providers/AreaProvider";
 
 interface PlayerState {
   currentTrack: Track | null;
@@ -41,6 +42,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const queueRef = useRef<Track[]>([]);
   const queueIndexRef = useRef(-1);
   const playLoggedRef = useRef<string | null>(null);
+  const { currentArea } = useArea();
 
   // Keep refs in sync
   useEffect(() => { queueRef.current = queue; }, [queue]);
@@ -87,7 +89,13 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         // Log play after 30 seconds
         if (audio!.currentTime >= 30 && playLoggedRef.current !== String(track.id)) {
           playLoggedRef.current = String(track.id);
-          logPlay({ data: { trackId: String(track.id), durationSeconds: Math.round(audio!.currentTime) } }).catch(() => {});
+          logPlay({
+            data: {
+              trackId: String(track.id),
+              durationSeconds: Math.round(audio!.currentTime),
+              areaId: currentArea?.id || undefined
+            }
+          }).catch(() => {});
         }
       }
     };
