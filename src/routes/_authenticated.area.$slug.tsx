@@ -7,6 +7,7 @@ import { useEffect, ReactNode } from "react";
 import { StudentSidebar } from "@/components/StudentSidebar";
 import { AppHeader } from "@/components/AppHeader";
 import { GlobalPlayer } from "@/components/GlobalPlayer";
+import { useArea } from "@/providers/AreaProvider";
 
 export const Route = createFileRoute("/_authenticated/area/$slug")({
   component: AreaLayout,
@@ -16,6 +17,7 @@ function AreaLayout() {
   const { slug } = useParams({ from: "/_authenticated/area/$slug" });
   const { user, isAdmin, logout } = useAuth();
   const navigate = useNavigate();
+  const { switchArea, currentArea } = useArea();
 
   const { data: area, isLoading: areaLoading, error: areaError } = useQuery({
     queryKey: ["area", slug],
@@ -30,6 +32,12 @@ function AreaLayout() {
       return data;
     },
   });
+
+  useEffect(() => {
+    if (area?.id && currentArea?.id !== area.id) {
+      switchArea(area.id);
+    }
+  }, [area?.id, currentArea?.id, switchArea]);
 
   const { data: membership, isLoading: membershipLoading } = useQuery({
     queryKey: ["membership", area?.id, user?.id],
@@ -51,10 +59,20 @@ function AreaLayout() {
   useEffect(() => {
     if (area?.primary_color) {
       document.documentElement.style.setProperty("--primary", area.primary_color);
-      // Generate some variations if needed, or just use the primary
+      document.documentElement.style.setProperty("--gold", area.primary_color);
+      document.documentElement.style.setProperty("--sidebar-primary", area.primary_color);
+      document.documentElement.style.setProperty("--ring", area.primary_color);
+      
+      // Update gold-soft (usually primary with 10% opacity)
+      const softColor = `${area.primary_color}1a`; // 1a is ~10% in hex
+      document.documentElement.style.setProperty("--gold-soft", softColor);
     }
     return () => {
       document.documentElement.style.removeProperty("--primary");
+      document.documentElement.style.removeProperty("--gold");
+      document.documentElement.style.removeProperty("--sidebar-primary");
+      document.documentElement.style.removeProperty("--ring");
+      document.documentElement.style.removeProperty("--gold-soft");
     };
   }, [area?.primary_color]);
 
