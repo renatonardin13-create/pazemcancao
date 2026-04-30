@@ -681,6 +681,27 @@ function ModulesTab({ areaId, areaContents, courses, tracks }: any) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!formData.title.trim()) {
+      toast.error("O título do módulo é obrigatório");
+      return;
+    }
+
+    if (formData.type === 'course' || formData.type === 'ebook') {
+      if (!formData.url.trim()) {
+        toast.error(`O campo Link / ID é obrigatório para o tipo ${formData.type === 'course' ? 'Curso' : 'E-book'}`);
+        return;
+      }
+
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(formData.url);
+      const isUrl = /^https?:\/\/.+/i.test(formData.url);
+
+      if (!isUuid && !isUrl) {
+        toast.error("Informe um ID válido ou uma URL (começando com http:// ou https://)");
+        return;
+      }
+    }
+
     if (editingModule) {
       updateModuleMutation.mutate({ id: editingModule.id, data: formData });
     } else {
