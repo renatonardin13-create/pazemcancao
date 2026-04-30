@@ -31,14 +31,28 @@ export const getPlatformSettings = createServerFn({ method: 'POST' })
 export const updatePlatformSetting = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { key: string; value: Record<string, any> }) => input)
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+    const admin = supabaseAdmin;
+
+    // Security Check: Only admins can update platform settings
+    const { data: adminRole } = await admin
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    const { data: userData } = await admin.auth.admin.getUserById(userId);
+    const isAdminEmail = userData?.user?.email?.toLowerCase() === 'renatonardin13@gmail.com';
+
+    if (!adminRole && !isAdminEmail) {
+      throw new Error('Não autorizado: Apenas administradores podem alterar configurações da plataforma.');
+    }
+
     const hasServerConfig = Boolean(
       process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY,
     );
-
-    if (!hasServerConfig) {
-      return { success: false, message: 'Configuração do servidor indisponível.' };
-    }
 
     const { error } = await supabaseAdmin
       .from('platform_settings')
