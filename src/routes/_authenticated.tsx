@@ -9,6 +9,11 @@ import { toast } from "sonner";
 import { SafeBoundary } from "@/components/SafeBoundary";
 import { AreaProvider } from "@/providers/AreaProvider";
 
+function CardsConfigLoader() {
+  useCardsConfig();
+  return <Outlet />;
+}
+
 export const Route = createFileRoute("/_authenticated")({
   component: AuthenticatedLayout,
 });
