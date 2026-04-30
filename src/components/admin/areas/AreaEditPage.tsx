@@ -556,6 +556,46 @@ function LoginTab({ area, onSave, saving }: any) {
   );
 }
 
+function ModulePreview({ content, courses, tracks }: { content: any, courses: any[], tracks: any[] }) {
+  const url = content.url;
+  if (!url) return null;
+
+  const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(url);
+  let previewData = null;
+  
+  if (isUuid) {
+    if (content.type === 'course' || content.type === 'ebook') {
+      previewData = courses.find(c => c.id === url);
+    } else if (content.type === 'music') {
+      previewData = tracks.find(t => t.id === url);
+    }
+  }
+
+  if (!previewData) return null;
+
+  const thumbnail = (content.type === 'course' || content.type === 'ebook') 
+    ? previewData.cover_image_url 
+    : previewData.cover_url;
+
+  return (
+    <div className="flex items-center gap-2 mt-1.5 px-2 py-1 rounded-lg bg-black/20 w-fit border border-white/5 shadow-inner">
+      {thumbnail ? (
+        <img src={thumbnail} className="h-6 w-10 object-cover rounded shadow-sm border border-white/10" alt="" />
+      ) : (
+        <div className="h-6 w-10 bg-background/50 rounded flex items-center justify-center border border-white/5">
+          <Eye className="h-3 w-3 text-muted-foreground/30" />
+        </div>
+      )}
+      <div className="flex flex-col">
+        <span className="text-[9px] font-black uppercase tracking-widest text-gold/60 leading-none mb-0.5">Vínculo</span>
+        <span className="text-[10px] font-bold text-muted-foreground truncate max-w-[150px] leading-none">
+          {previewData.title}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function ModulesTab({ areaId, areaContents, courses, tracks }: any) {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
