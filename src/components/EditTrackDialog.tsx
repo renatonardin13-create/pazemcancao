@@ -30,7 +30,7 @@ interface EditTrackDialogProps {
     cover_url: string | null;
     is_bonus?: boolean;
     bonus_release_date?: string | null;
-    area_id?: string | null;
+    // area_id removed
   };
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -42,17 +42,14 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
     queryKey: ["admin-categories"],
     queryFn: () => listAdminCategories(),
   });
-  const { data: areas = [] } = useQuery({
-    queryKey: ["areas"],
-    queryFn: () => import("@/lib/areas.functions").then(m => m.getAreas()),
-  });
+  // areas query removed
   const categories = (catData?.categories || []).map((c: any) => c.name);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [title, setTitle] = useState(track.title);
   const [category, setCategory] = useState(track.category);
   const [description, setDescription] = useState(track.description || "");
-  const [areaId, setAreaId] = useState(track.area_id || "");
+  // areaId state removed
   const [isBonus, setIsBonus] = useState(track.is_bonus || false);
   const [bonusDays, setBonusDays] = useState<string>(() => {
     if (!track.bonus_release_date) return "";
@@ -145,7 +142,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
           category,
           description: description.trim() || undefined,
           cover_url: cover_url === null ? "" : (cover_url || undefined),
-          area_id: areaId || undefined,
+          // area_id removed
           is_bonus: isBonus,
           bonus_release_date: computedReleaseDate,
         },
@@ -290,22 +287,7 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
             </Select>
           </div>
 
-          {/* Area */}
-          <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-foreground/80">
-              Área
-            </Label>
-            <Select value={areaId} onValueChange={setAreaId} disabled={isSubmitting}>
-              <SelectTrigger className="bg-background/50 border-border/20 text-sm h-10">
-                <SelectValue placeholder="Selecione a área" />
-              </SelectTrigger>
-              <SelectContent>
-                {areas.map((area: any) => (
-                  <SelectItem key={area.id} value={area.id}>{area.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+          {/* area selection removed */}
 
           {/* Description */}
           <div className="space-y-1.5">
