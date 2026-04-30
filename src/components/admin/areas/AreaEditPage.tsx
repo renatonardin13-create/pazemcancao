@@ -599,6 +599,7 @@ function ModulePreview({ content, courses, tracks }: { content: any, courses: an
 function ModulesTab({ areaId, areaContents, courses, tracks }: any) {
   const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
+  const [typeFilter, setTypeFilter] = useState("all");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingModule, setEditingModule] = useState<any>(null);
   const [formData, setFormData] = useState({
@@ -650,9 +651,11 @@ function ModulesTab({ areaId, areaContents, courses, tracks }: any) {
     }
   });
 
-  const filteredContents = areaContents.filter((c: any) => 
-    c.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredContents = areaContents.filter((c: any) => {
+    const matchesSearch = c.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = typeFilter === "all" || c.type.toLowerCase() === typeFilter.toLowerCase();
+    return matchesSearch && matchesType;
+  });
 
   const handleOpenCreate = () => {
     setEditingModule(null);
@@ -717,14 +720,27 @@ function ModulesTab({ areaId, areaContents, courses, tracks }: any) {
           </Button>
         </div>
 
-        <div className="relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40" />
-          <Input 
-            placeholder="Pesquisar por nome..." 
-            className="pl-12 h-14 bg-black/40 border-border/30 rounded-2xl focus:border-gold/50 transition-all"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+        <div className="flex flex-col sm:flex-row gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40" />
+            <Input 
+              placeholder="Pesquisar por nome..." 
+              className="pl-12 h-14 bg-black/40 border-border/30 rounded-2xl focus:border-gold/50 transition-all"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <Select value={typeFilter} onValueChange={setTypeFilter}>
+            <SelectTrigger className="w-full sm:w-[220px] h-14 bg-black/40 border-border/30 rounded-2xl focus:border-gold/50 transition-all">
+              <SelectValue placeholder="Filtrar por tipo" />
+            </SelectTrigger>
+            <SelectContent className="bg-card border-border/40 rounded-xl">
+              <SelectItem value="all">Todos os tipos</SelectItem>
+              <SelectItem value="course">Cursos</SelectItem>
+              <SelectItem value="music">Músicas</SelectItem>
+              <SelectItem value="ebook">E-books</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="overflow-x-auto">
