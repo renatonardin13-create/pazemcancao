@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { useParams, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getArea, updateArea, getAreaContents, addAreaContent, removeAreaContent, updateAreaContent } from "@/lib/areas.functions";
+import { getArea, updateArea, getAreaContents, addAreaContent, removeAreaContent, updateAreaContent, getCategoriesByArea } from "@/lib/areas.functions";
 import { listAdminCourses } from "@/lib/admin-courses.functions";
 import { uploadPlatformAsset } from "@/lib/platform-settings.functions";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
