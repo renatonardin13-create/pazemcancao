@@ -48,10 +48,13 @@ export function AdminAreasPanel() {
   const [editingArea, setEditingArea] = useState<Area | null>(null);
   const [formData, setFormData] = useState({
     name: "",
+    short_label: "",
     slug: "",
     description: "",
     primary_color: "#D4A853",
     domain: "",
+    status: "draft",
+    language: "pt",
   });
 
   const { data: areas, isLoading } = useQuery({
@@ -91,10 +94,13 @@ export function AdminAreasPanel() {
   const resetForm = () => {
     setFormData({
       name: "",
+      short_label: "",
       slug: "",
       description: "",
       primary_color: "#D4A853",
       domain: "",
+      status: "draft",
+      language: "pt",
     });
   };
 
