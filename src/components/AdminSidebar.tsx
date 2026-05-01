@@ -106,11 +106,11 @@ export function AdminSidebar() {
           )}
         </div>
 
-        {/* Visão Geral */}
+        {/* Gestão */}
         <SidebarGroup className="py-1">
           {!collapsed && (
             <SidebarGroupLabel className={groupLabelClass}>
-              Visão Geral
+              Gestão
             </SidebarGroupLabel>
           )}
           <SidebarGroupContent>
@@ -164,44 +164,16 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Vendas */}
+        {/* Financeiro */}
         <SidebarGroup className="py-1">
           {!collapsed && (
             <SidebarGroupLabel className={groupLabelClass}>
-              Vendas
+              Financeiro
             </SidebarGroupLabel>
           )}
           <SidebarGroupContent>
             <SidebarMenu>
               {salesItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive(item.url)}
-                    tooltip={item.title}
-                    className="h-10 transition-all duration-200"
-                  >
-                    <Link to={item.url}>
-                      <item.icon className="h-4 w-4 shrink-0" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Integrações */}
-        <SidebarGroup className="py-1">
-          {!collapsed && (
-            <SidebarGroupLabel className={groupLabelClass}>
-              Integrações
-            </SidebarGroupLabel>
-          )}
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {integrationItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
