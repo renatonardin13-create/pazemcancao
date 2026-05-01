@@ -96,7 +96,7 @@ function NewCoursePage() {
                 Criar Novo Produto
               </h1>
               <p className="text-xs text-muted-foreground/50 mt-0.5">
-                Configure seu curso, adicione módulos e aulas
+                Configure seu produto, adicione módulos e aulas
               </p>
             </div>
           </div>
