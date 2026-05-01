@@ -92,7 +92,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
   const handleSave = () => {
     const url = checkoutUrl.trim();
     if (isEnabled && !externalProductId.trim()) {
-      toast.error("Informe o ID do Produto Externo antes de salvar.");
+      toast.error("Informe o código do produto na plataforma antes de salvar.");
       return;
     }
     if (url && !/^https?:\/\/.+\..+/i.test(url)) {
@@ -107,7 +107,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
   const handleCopyWebhook = () => {
     navigator.clipboard.writeText(webhookUrl);
     setCopied(true);
-    toast.success("URL do webhook copiada!");
+    toast.success("Link de automação copiado!");
     setTimeout(() => setCopied(false), 2000);
   };
 
@@ -144,9 +144,9 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
           {/* Enable toggle */}
           <div className="flex items-center justify-between rounded-lg border border-border/30 p-4">
             <div>
-              <Label className="text-sm font-medium">Habilitar integração externa</Label>
+              <Label className="text-sm font-medium">Habilitar conexão externa</Label>
               <p className="text-xs text-muted-foreground/50 mt-0.5">
-                Ative para vincular a um produto de plataforma de pagamento
+                Ative para vincular a um pagamento externo
               </p>
             </div>
             <Switch checked={isEnabled} onCheckedChange={setIsEnabled} />
@@ -179,7 +179,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
 
               {/* External Product ID */}
               <div className="space-y-2">
-                <Label className="text-sm font-medium">ID do Produto Externo *</Label>
+                <Label className="text-sm font-medium">Código do Produto na Plataforma *</Label>
                 <Input
                   value={externalProductId}
                   onChange={(e) => setExternalProductId(e.target.value)}
@@ -194,7 +194,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
               {/* External Product Name */}
               <div className="space-y-2">
                 <Label className="text-sm font-medium">
-                  Nome do Produto Externo (opcional)
+                  Nome do produto (opcional)
                 </Label>
                 <Input
                   value={externalProductName}
@@ -228,14 +228,14 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <KeyRound className="h-3.5 w-3.5 text-muted-foreground/70" />
-                  <Label className="text-sm font-medium">Token de Integração</Label>
+                  <Label className="text-sm font-medium">Chave de segurança da plataforma</Label>
                 </div>
                 <div className="flex gap-2 min-w-0">
                   <Input
                     type={showToken ? "text" : "password"}
                     value={integrationToken}
                     onChange={(e) => setIntegrationToken(e.target.value)}
-                    placeholder="Cole o token da plataforma aqui"
+                    placeholder="Cole a chave da plataforma aqui"
                     className="bg-card/20 border-border/30 font-mono text-sm min-w-0"
                   />
                   <Button
@@ -244,7 +244,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                     size="icon"
                     onClick={() => setShowToken(!showToken)}
                     className="shrink-0"
-                    title={showToken ? "Ocultar token" : "Mostrar token"}
+                    title={showToken ? "Ocultar chave" : "Mostrar chave"}
                   >
                     {showToken ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </Button>
@@ -255,7 +255,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                     onClick={() => {
                       navigator.clipboard.writeText(integrationToken);
                       setCopiedToken(true);
-                      toast.success("Token copiado!");
+                      toast.success("Chave copiada!");
                       setTimeout(() => setCopiedToken(false), 2000);
                     }}
                     className="shrink-0"
@@ -299,7 +299,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                 <Zap className="h-5 w-5 text-gold/60" />
               </div>
               <div>
-                <CardTitle className="text-base">Webhook de Vendas</CardTitle>
+                <CardTitle className="text-base">Liberação automática de acesso</CardTitle>
                 <p className="text-xs text-muted-foreground/50 mt-0.5">
                   Configure webhooks para liberar acesso automaticamente após a compra
                 </p>
@@ -310,7 +310,7 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
             {/* Webhook URL */}
             <div className="space-y-2">
               <Label className="text-xs font-medium text-muted-foreground/70">
-                URL do Webhook (Gerada Automaticamente)
+                Link para automação (Gerado automaticamente)
               </Label>
               <div className="flex gap-2 min-w-0">
                 <Input
@@ -333,25 +333,25 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground/70">
-                Cole esta URL nas configurações de webhook da plataforma de pagamento
+                Cole este link nas configurações da sua plataforma de pagamento
               </p>
             </div>
 
             {/* Webhook status toggle */}
             <div className="flex items-center justify-between rounded-lg border border-border/30 p-4">
               <div>
-                <Label className="text-sm font-medium">Status do Webhook</Label>
+                <Label className="text-sm font-medium">Status da automação</Label>
                 <p className="text-xs text-muted-foreground/50 mt-0.5">
                   {webhookActive
-                    ? "Webhook ativo e recebendo notificações"
-                    : "Webhook desativado"}
+                    ? "Automação ativa e pronta para liberar acessos"
+                    : "Automação desativada"}
                 </p>
               </div>
               <Switch 
                 checked={webhookActive} 
                 onCheckedChange={(checked) => {
                   if (checked && !integrationToken.trim()) {
-                    toast.error("Você precisa inserir um Token de Integração para ativar o webhook.");
+                    toast.error("Você precisa inserir uma Chave de Segurança para ativar a automação.");
                     return;
                   }
                   setWebhookActive(checked);

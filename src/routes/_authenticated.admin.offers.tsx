@@ -30,7 +30,7 @@ function OffersPage() {
   const handleCopyWebhook = (courseId: string) => {
     const url = `https://pazemcancao.lovable.app/api/webhook/kiwify?course=${courseId}`;
     navigator.clipboard.writeText(url);
-    toast.success("URL do webhook copiada!");
+    toast.success("Link de automação copiado!");
   };
 
   return (
@@ -72,8 +72,8 @@ function OffersPage() {
                 <TableHeader>
                   <TableRow className="border-border/20">
                     <TableHead>Produto</TableHead>
-                    <TableHead>Gateway</TableHead>
-                    <TableHead>ID no Gateway</TableHead>
+                    <TableHead>Plataforma</TableHead>
+                    <TableHead>Cód. Produto</TableHead>
                     <TableHead>Tipo</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Ações</TableHead>
@@ -105,8 +105,8 @@ function OffersPage() {
                 <TableHeader>
                   <TableRow className="border-border/20">
                     <TableHead>Produto</TableHead>
-                    <TableHead>Gateway</TableHead>
-                    <TableHead>ID no Gateway</TableHead>
+                    <TableHead>Plataforma</TableHead>
+                    <TableHead>Cód. Produto</TableHead>
                     <TableHead>Tipo</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead className="text-right">Ações</TableHead>
@@ -143,7 +143,7 @@ function OffersPage() {
                             size="icon" 
                             className="h-8 w-8" 
                             onClick={() => handleCopyWebhook(offer.course_id)}
-                            title="Copiar Webhook"
+                            title="Copiar Link de Automação"
                           >
                             <Copy className="h-3.5 w-3.5" />
                           </Button>
@@ -163,12 +163,12 @@ function OffersPage() {
         <EduCard 
           step="1"
           title="Cliente Paga"
-          description="O cliente realiza o pagamento no checkout do gateway (ex: PerfectPay)."
+          description="O cliente realiza o pagamento no checkout da sua plataforma."
         />
         <EduCard 
           step="2"
-          title="Gateway Notifica"
-          description="O gateway envia uma notificação automática (webhook) para o nosso sistema."
+          title="Plataforma Notifica"
+          description="A plataforma envia uma notificação automática para o nosso sistema."
         />
         <EduCard 
           step="3"

@@ -72,8 +72,8 @@ export function AdminGuidedOnboarding({ stats }: AdminGuidedOnboardingProps) {
     },
     {
       id: "gateway",
-      title: "5. Configurar gateway",
-      description: "Conecte com Hotmart, Kiwify, PerfectPay ou Cakto.",
+      title: "5. Conectar pagamento",
+      description: "Conecte com sua plataforma de vendas preferida.",
       icon: Settings,
       path: "/admin/integrations",
       completed: stats.gatewayConfigured,
@@ -83,13 +83,13 @@ export function AdminGuidedOnboarding({ stats }: AdminGuidedOnboardingProps) {
     },
     {
       id: "webhook",
-      title: "6. Ativar webhook",
-      description: "Receba notificações de vendas em tempo real.",
+      title: "6. Ativar liberação automática",
+      description: "Garanta o acesso imediato dos alunos após a compra.",
       icon: Zap,
       path: "/admin/integrations",
       completed: stats.webhookActivated,
       blocked: !stats.webhookToken || !stats.gatewayConfigured,
-      blockingMessage: "Gere um token de segurança e configure o gateway.",
+      blockingMessage: "Defina uma chave de segurança e conecte seu pagamento.",
       nextStepLabel: "Ativar notificações"
     },
     {
@@ -100,7 +100,7 @@ export function AdminGuidedOnboarding({ stats }: AdminGuidedOnboardingProps) {
       path: "/admin/users",
       completed: stats.totalStudents > 0,
       blocked: !stats.webhookActivated,
-      blockingMessage: "Ative o webhook para automação completa.",
+      blockingMessage: "Ative a liberação automática para facilitar o acesso.",
       nextStepLabel: "Ver alunos"
     },
   ];
