@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 export function ContinueWatchingSection() {
   const { data, isLoading } = useQuery({
     queryKey: ["continue-watching"],
-    queryFn: () => getContinueWatching({ data: {} }),
+    queryFn: () => getContinueWatching(),
   });
 
   if (isLoading || !data?.courses || data.courses.length === 0) {
