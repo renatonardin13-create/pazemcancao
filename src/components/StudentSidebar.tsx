@@ -114,7 +114,8 @@ export function StudentSidebar() {
   }, [dbModules]);
 
   const isActive = (path: string) => location.pathname === path;
-  const isActivePrefix = (path: string) => location.pathname.startsWith(path);
+  const isActivePrefix = (path: string) => 
+    location.pathname === path || location.pathname.startsWith(path + "/");
 
   const navItemClass = (active: boolean) =>
     cn(
