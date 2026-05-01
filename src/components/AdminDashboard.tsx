@@ -5,6 +5,7 @@ import { Link } from "@tanstack/react-router";
 import { getDashboardStats } from "@/lib/admin-dashboard.functions";
 import { getDashboardAnalytics } from "@/lib/analytics.functions";
 import { AdminGuidedOnboarding } from "./AdminGuidedOnboarding";
+import { AdminEmptyStateOnboarding } from "./AdminEmptyStateOnboarding";
 import {
   Users, Activity, BarChart3, Music, Headphones, Download,
   TrendingUp, DollarSign, BookOpen, Clock, GraduationCap,
