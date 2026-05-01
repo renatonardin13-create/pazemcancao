@@ -53,6 +53,8 @@ function AdminCategoriesPage() {
   const [editingTag, setEditingTag] = useState<any>(null);
   const [editTagValues, setEditTagValues] = useState({ name: "", slug: "", description: "", color: "" });
   const [newTag, setNewTag] = useState({ name: "", slug: "", description: "", color: PICKER_COLORS[0] });
+  const [deleteCatId, setDeleteCatId] = useState<string | null>(null);
+  const [deleteTagId, setDeleteTagId] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
 
