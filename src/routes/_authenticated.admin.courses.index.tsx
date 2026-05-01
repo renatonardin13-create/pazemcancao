@@ -126,7 +126,7 @@ function AdminCoursesPage() {
               Produtos
             </h1>
             <p className="text-xs text-muted-foreground/50 mt-0.5">
-              Gerencie seu catálogo e conteúdo de cursos.
+              Gerencie seu catálogo de produtos e conteúdos.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
