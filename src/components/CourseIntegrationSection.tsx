@@ -346,7 +346,16 @@ export function CourseIntegrationSection({ courseId }: CourseIntegrationSectionP
                     : "Webhook desativado"}
                 </p>
               </div>
-              <Switch checked={webhookActive} onCheckedChange={setWebhookActive} />
+              <Switch 
+                checked={webhookActive} 
+                onCheckedChange={(checked) => {
+                  if (checked && !integrationToken.trim()) {
+                    toast.error("Você precisa inserir um Token de Integração para ativar o webhook.");
+                    return;
+                  }
+                  setWebhookActive(checked);
+                }} 
+              />
             </div>
           </CardContent>
         </Card>

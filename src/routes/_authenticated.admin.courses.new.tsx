@@ -2,12 +2,14 @@ import { toastError } from "@/lib/toast-utils";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { CourseForm } from "@/components/CourseForm";
 import { createCourse } from "@/lib/admin-courses.functions";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { listAdminCategories } from "@/lib/admin-categories.functions";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import { ArrowLeft, Save, Loader2, AlertCircle, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useRef, useState } from "react";
+import { motion } from "framer-motion";
 
 export const Route = createFileRoute("/_authenticated/admin/courses/new")({
   component: NewCoursePage,
@@ -18,6 +20,13 @@ function NewCoursePage() {
   const queryClient = useQueryClient();
   const formRef = useRef<HTMLFormElement>(null);
   const [activeTab, setActiveTab] = useState("detalhes");
+
+  const { data: catData, isLoading: catLoading } = useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: () => listAdminCategories(),
+  });
+
+  const categories = catData?.categories || [];
 
   const mutation = useMutation({
     mutationFn: (values: any) => createCourse({ data: values }),
@@ -33,6 +42,35 @@ function NewCoursePage() {
   const handleSave = () => {
     formRef.current?.requestSubmit();
   };
+
+  if (!catLoading && categories.length === 0) {
+    return (
+      <div className="max-w-xl mx-auto py-20 px-6 text-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="bg-card border border-border/30 rounded-3xl p-10 space-y-6 shadow-2xl shadow-black/20"
+        >
+          <div className="mx-auto w-20 h-20 rounded-2xl bg-gold/10 flex items-center justify-center text-gold">
+            <Layers className="h-10 w-10" />
+          </div>
+          <div className="space-y-2">
+            <h2 className="text-2xl font-black text-foreground">Seção Necessária</h2>
+            <p className="text-muted-foreground">
+              Você precisa criar pelo menos uma <strong>Seção (Categoria)</strong> antes de cadastrar um produto. Isso é essencial para a organização do seu catálogo.
+            </p>
+          </div>
+          <Link
+            to="/admin/categories"
+            className="inline-flex h-14 px-8 items-center justify-center rounded-2xl bg-gold text-black font-black text-sm hover:scale-105 transition-all shadow-lg shadow-gold/20 gap-2"
+          >
+            Criar Seção Agora
+            <ArrowLeft className="h-4 w-4 rotate-180" />
+          </Link>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto space-y-4">
