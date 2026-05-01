@@ -527,6 +527,7 @@ export type Database = {
           integration_token: string | null
           is_enabled: boolean
           notes: string | null
+          payment_type: string | null
           platform: string
           updated_at: string
           webhook_active: boolean
@@ -541,6 +542,7 @@ export type Database = {
           integration_token?: string | null
           is_enabled?: boolean
           notes?: string | null
+          payment_type?: string | null
           platform?: string
           updated_at?: string
           webhook_active?: boolean
@@ -555,6 +557,7 @@ export type Database = {
           integration_token?: string | null
           is_enabled?: boolean
           notes?: string | null
+          payment_type?: string | null
           platform?: string
           updated_at?: string
           webhook_active?: boolean
