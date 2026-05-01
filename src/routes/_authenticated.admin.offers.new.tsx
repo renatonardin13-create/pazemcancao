@@ -55,7 +55,7 @@ function NewOfferPage() {
 
   const handleSave = () => {
     if (!formData.course_id) return toast.error("Selecione um produto");
-    if (!formData.external_product_id) return toast.error("Informe o ID do produto no gateway");
+    if (!formData.external_product_id) return toast.error("Informe o código do produto na plataforma de pagamento");
     mutation.mutate(formData);
   };
 
@@ -130,7 +130,7 @@ function NewOfferPage() {
             </div>
             <CardContent className="p-6 grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Gateway</Label>
+                <Label>Plataforma de pagamento</Label>
                 <Select value={formData.platform} onValueChange={(v) => setFormData(p => ({ ...p, platform: v }))}>
                   <SelectTrigger className="h-12 bg-background/50">
                     <SelectValue />
@@ -162,12 +162,12 @@ function NewOfferPage() {
           <Card className="bg-card border-border/30 overflow-hidden">
             <div className="bg-muted/30 px-6 py-3 border-b border-border/20 flex items-center gap-2">
               <Sparkles className="h-4 w-4 text-gold" />
-              <h3 className="text-xs font-black uppercase tracking-widest text-foreground/70">3. Identificação no Gateway</h3>
+              <h3 className="text-xs font-black uppercase tracking-widest text-foreground/70">3. Vínculo com o pagamento</h3>
             </div>
             <CardContent className="p-6 space-y-4">
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Label>ID do Produto no Gateway</Label>
+                  <Label>Código do produto na plataforma</Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -195,14 +195,14 @@ function NewOfferPage() {
                         <HelpCircle className="h-3.5 w-3.5 text-muted-foreground/50 cursor-help" />
                       </TooltipTrigger>
                       <TooltipContent>
-                        <p>Usado para validar se a requisição partiu realmente do seu gateway</p>
+                        <p>Usado para validar se a requisição partiu realmente da sua plataforma de pagamento</p>
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
                 </div>
                 <Input 
                   type="password" 
-                  placeholder="Token secreto da plataforma" 
+                  placeholder="Chave secreta da plataforma" 
                   className="h-12 bg-background/50" 
                   value={formData.integration_token}
                   onChange={e => setFormData(p => ({ ...p, integration_token: e.target.value }))}
@@ -211,7 +211,7 @@ function NewOfferPage() {
               <div className="flex gap-2 p-3 bg-muted/20 rounded-lg border border-border/30">
                 <HelpCircle className="h-4 w-4 text-gold shrink-0" />
                 <p className="text-[10px] text-muted-foreground leading-relaxed">
-                  Esses dados são usados para identificar pagamentos vindos do gateway e garantir que o acesso seja liberado apenas para compras legítimas.
+                  Esses dados são usados para identificar pagamentos vindos da plataforma e garantir que o acesso seja liberado apenas para compras legítimas.
                 </p>
               </div>
             </CardContent>
@@ -221,17 +221,17 @@ function NewOfferPage() {
           <Card className="bg-card border-border/30 overflow-hidden">
             <div className="bg-muted/30 px-6 py-3 border-b border-border/20 flex items-center gap-2">
               <Zap className="h-4 w-4 text-gold" />
-              <h3 className="text-xs font-black uppercase tracking-widest text-foreground/70">4. Automação</h3>
+              <h3 className="text-xs font-black uppercase tracking-widest text-foreground/70">4. Liberação automática</h3>
             </div>
             <CardContent className="p-6 space-y-4">
               <div className="space-y-2">
-                <Label>URL do Webhook</Label>
+                <Label>Link para automação de acesso</Label>
                 <div className="flex gap-2">
                   <Input readOnly value={webhookUrl} className="h-12 bg-muted/20 font-mono text-xs cursor-not-allowed" />
                   <Button variant="outline" className="h-12 px-4" onClick={() => {
                     if (!formData.course_id) return toast.error("Selecione um produto primeiro");
                     navigator.clipboard.writeText(webhookUrl);
-                    toast.success("Webhook copiado!");
+                    toast.success("Link de automação copiado!");
                   }}>
                     <Copy className="h-4 w-4" />
                   </Button>
@@ -242,8 +242,8 @@ function NewOfferPage() {
                   <CheckCircle2 className="h-4 w-4" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-emerald-400">Webhook Ativo</h4>
-                  <p className="text-[10px] text-muted-foreground leading-relaxed">Ao salvar, este webhook estará pronto para receber notificações e liberar acessos automaticamente.</p>
+                  <h4 className="text-sm font-bold text-emerald-400">Acesso automático ativado</h4>
+                  <p className="text-[10px] text-muted-foreground leading-relaxed">Ao salvar, este link estará pronto para receber notificações e liberar acessos automaticamente.</p>
                 </div>
               </div>
             </CardContent>
@@ -269,8 +269,8 @@ function NewOfferPage() {
                 />
                 <StepItem 
                   num="2" 
-                  title="Gateway envia notificação" 
-                  text="Assim que o pagamento é aprovado, o gateway avisa nosso sistema via Webhook." 
+                  title="Pagamento aprovado" 
+                  text="Assim que o pagamento é aprovado, a plataforma avisa nosso sistema para liberar o acesso." 
                 />
                 <StepItem 
                   num="3" 
