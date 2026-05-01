@@ -188,7 +188,7 @@ function NewOfferPage() {
               </div>
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <Label>Token de Autenticação (Opcional)</Label>
+                  <Label>Chave de segurança (Opcional)</Label>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
