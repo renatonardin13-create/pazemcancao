@@ -2,7 +2,10 @@ import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
-const normalizeCourseType = (value?: string) => (value === 'video' ? 'video' : 'ebook');
+const normalizeCourseType = (value?: string) => {
+  if (value === 'aula' || value === 'material' || value === 'bonus') return value;
+  return 'aula';
+};
 
 export const listAdminCourses = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
