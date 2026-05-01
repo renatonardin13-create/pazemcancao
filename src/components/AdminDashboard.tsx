@@ -5,6 +5,7 @@ import { Link } from "@tanstack/react-router";
 import { getDashboardStats } from "@/lib/admin-dashboard.functions";
 import { getDashboardAnalytics } from "@/lib/analytics.functions";
 import { AdminGuidedOnboarding } from "./AdminGuidedOnboarding";
+import { AdminEmptyStateOnboarding } from "./AdminEmptyStateOnboarding";
 import {
   Users, Activity, BarChart3, Music, Headphones, Download,
   TrendingUp, DollarSign, BookOpen, Clock, GraduationCap,
@@ -65,6 +66,10 @@ export function AdminDashboard() {
         </button>
       </div>
     );
+  }
+
+  if (!isLoading && data && data.totalAreas === 0) {
+    return <AdminEmptyStateOnboarding />;
   }
 
   return (
