@@ -333,7 +333,7 @@ function AdminCategoriesPage() {
       <Dialog open={showCatForm} onOpenChange={setShowCatForm}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="font-display">Nova Categoria</DialogTitle>
+            <DialogTitle className="font-display">Nova Seção</DialogTitle>
           </DialogHeader>
           <form
             onSubmit={(e) => {
