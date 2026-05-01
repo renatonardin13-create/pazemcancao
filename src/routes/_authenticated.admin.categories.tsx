@@ -358,8 +358,8 @@ function AdminCategoriesPage() {
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setShowCatForm(false)}>Cancelar</Button>
-              <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" disabled={createCatMutation.isPending}>
-                {createCatMutation.isPending ? "Salvando..." : "Salvar"}
+              <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" loading={createCatMutation.isPending}>
+                Salvar
               </Button>
             </div>
           </form>
@@ -395,8 +395,8 @@ function AdminCategoriesPage() {
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setEditingCat(null)}>Cancelar</Button>
-              <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" disabled={updateCatMutation.isPending}>
-                {updateCatMutation.isPending ? "Salvando..." : "Salvar"}
+              <Button type="submit" className="flex-1 bg-gold/90 text-gold-foreground hover:bg-gold" loading={updateCatMutation.isPending}>
+                Salvar
               </Button>
             </div>
           </form>

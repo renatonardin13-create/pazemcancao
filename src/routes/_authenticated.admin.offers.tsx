@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Plus, ShoppingCart, ArrowLeft, ExternalLink, Copy, CheckCircle2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
+import { TableSkeleton } from "@/components/LoadingSkeletons";
 
 export const Route = createFileRoute("/_authenticated/admin/offers")({
   component: OffersPage,
