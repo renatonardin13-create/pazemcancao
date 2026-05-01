@@ -2,6 +2,9 @@ import { toastError } from "@/lib/toast-utils";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listAdminCourses, deleteCourse, updateCourse } from "@/lib/admin-courses.functions";
+import { listAdminCategories } from "@/lib/admin-categories.functions";
+import { EmptyState } from "@/components/EmptyState";
+import { FolderOpen } from "lucide-react";
 import { useState, useMemo } from "react";
 import { StatusBadge } from "@/components/StatusBadge";
 import {
