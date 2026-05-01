@@ -1,4 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { ArrowLeft, ScrollText, Copy, Settings, Lightbulb, Box, Zap } from "lucide-react";
+import { motion } from "framer-motion";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { getIntegrationsDashboard } from "@/lib/admin-integrations.functions";
