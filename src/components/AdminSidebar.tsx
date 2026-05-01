@@ -15,6 +15,8 @@ import {
   Sparkles,
   Disc3,
   Eye,
+  FileText,
+  GalleryHorizontalEnd,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useProjectMode } from "@/hooks/use-project-mode";
