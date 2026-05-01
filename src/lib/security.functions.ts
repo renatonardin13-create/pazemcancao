@@ -143,6 +143,17 @@ export const registerLogin = createServerFn({ method: 'POST' })
       is_blocked: false,
     });
 
+    // 5.1. Log to central audit_logs
+    await admin.from('audit_logs').insert({
+      user_id: userId,
+      action: 'USER_LOGIN',
+      entity_type: 'auth',
+      entity_id: userId,
+      ip_address: ipAddress,
+      user_agent: userAgent,
+      details: { email, deviceFingerprint }
+    });
+
     // 6. Update approved_buyers login timestamps
     const now = new Date().toISOString();
     await admin
