@@ -71,6 +71,92 @@ function NewAreaPage() {
     setSlug(value);
   };
 
+  if (showSuccess) {
+    const areaUrl = `https://${slug}.suaplataforma.com.br`;
+
+    const handleCopyUrl = () => {
+      navigator.clipboard.writeText(areaUrl);
+      toast.success("URL copiada!");
+    };
+
+    return (
+      <div className="max-w-2xl mx-auto py-12 px-4">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center space-y-8"
+        >
+          <div className="relative inline-block">
+            <div className="absolute inset-0 bg-gold/20 blur-3xl rounded-full" />
+            <div className="relative h-24 w-24 bg-gold rounded-full flex items-center justify-center mx-auto shadow-2xl shadow-gold/40 border-4 border-background">
+              <PartyPopper className="h-12 w-12 text-black" />
+            </div>
+          </div>
+
+          <div className="space-y-3">
+            <h1 className="text-4xl font-black tracking-tight">Área Criada com Sucesso!</h1>
+            <p className="text-muted-foreground text-lg">
+              Sua nova área <strong>{name}</strong> já está online e pronta para receber seus alunos.
+            </p>
+          </div>
+
+          <Card className="bg-card border-border/30 overflow-hidden shadow-2xl relative">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gold" />
+            <CardContent className="p-8 space-y-6">
+              <div className="space-y-2 text-left">
+                <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Link de Acesso</Label>
+                <div className="flex items-center gap-2 p-4 bg-background/50 border border-border/20 rounded-xl group hover:border-gold/50 transition-colors">
+                  <Globe className="h-5 w-5 text-gold shrink-0" />
+                  <span className="text-lg font-medium truncate flex-1">{areaUrl}</span>
+                  <div className="flex items-center gap-1">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={handleCopyUrl}
+                      className="h-9 w-9 rounded-lg hover:bg-gold/10 hover:text-gold"
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      asChild
+                      className="h-9 w-9 rounded-lg hover:bg-gold/10 hover:text-gold"
+                    >
+                      <a href={areaUrl} target="_blank" rel="noreferrer">
+                        <ExternalLink className="h-4 w-4" />
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <Button
+                  variant="outline"
+                  onClick={() => navigate({ to: "/admin" })}
+                  className="h-14 font-bold border-border/50 hover:bg-background"
+                >
+                  Ir para o Dashboard
+                </Button>
+                <Button
+                  onClick={() => navigate({ to: "/admin/courses" })}
+                  className="h-14 bg-gold text-black font-black text-lg shadow-xl shadow-gold/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                >
+                  Ir para o Catálogo
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          <p className="text-sm text-muted-foreground italic">
+            Dica: Adicione seu primeiro produto para que seus alunos tenham o que acessar.
+          </p>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       {/* Header */}
