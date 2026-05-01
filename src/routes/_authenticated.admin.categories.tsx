@@ -18,6 +18,7 @@ import {
 } from "@/lib/admin-tags.functions";
 import { FolderOpen, Plus, Trash2, Pencil, GripVertical, Tag } from "lucide-react";
 import { useState, useCallback } from "react";
+import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
