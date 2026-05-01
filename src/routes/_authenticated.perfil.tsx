@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ModuleGuard } from "@/components/ModuleGuard";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getMyProfile, updateMyProfile, changePassword } from "@/lib/profile.functions";
+import { getMyProfile, updateMyProfile, changePassword, deleteMyAccount } from "@/lib/profile.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
+import { ConfirmationDialog } from "@/components/ConfirmationDialog";
+import { useAuth } from "@/hooks/use-auth";
 import {
   User,
   Mail,
@@ -20,6 +22,7 @@ import {
   Clock,
   Shield,
   UserCircle2,
+  Trash2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
