@@ -370,7 +370,7 @@ function AdminCategoriesPage() {
       <Dialog open={!!editingCat} onOpenChange={(v) => { if (!v) setEditingCat(null); }}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="font-display">Editar Categoria</DialogTitle>
+            <DialogTitle className="font-display">Editar Seção</DialogTitle>
           </DialogHeader>
           <form
             onSubmit={(e) => {
