@@ -85,11 +85,11 @@ export function AdminDashboard() {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/10 border border-gold/20 text-[10px] font-bold uppercase tracking-widest text-gold mb-2">
               <Sparkles className="h-3 w-3" /> Dashboard Premium
             </div>
-            <h1 className="font-display text-3xl sm:text-4xl font-black text-foreground tracking-tight leading-none">
-              Bem-vindo, <span className="text-gold">Admin</span>
+            <h1 className="font-display text-4xl sm:text-5xl font-black text-foreground tracking-tight leading-none">
+              Bem-vindo, <span className="text-gold drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">Admin</span>
             </h1>
-            <p className="text-sm text-muted-foreground/80 max-w-md">
-              Sua plataforma está em crescimento. Veja o que aconteceu nas últimas <span className="text-foreground font-medium">{days} dias</span>.
+            <p className="text-base sm:text-lg text-muted-foreground/70 max-w-lg mt-4 leading-relaxed">
+              Sua plataforma está em pleno crescimento. Veja o que aconteceu nas últimas <span className="text-foreground font-bold">{days} dias</span>.
             </p>
           </div>
 
