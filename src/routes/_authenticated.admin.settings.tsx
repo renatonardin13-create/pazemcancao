@@ -511,9 +511,9 @@ function NotificationsTab({ settings, onSave, saving }: { settings: any; onSave:
       <CardContent className="p-6 space-y-5">
         <div>
           <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-            <Bell className="h-5 w-5" /> Configuração de Alertas de Webhook
+            <Bell className="h-5 w-5" /> Avisos de erros no pagamento
           </h3>
-          <p className="text-sm text-muted-foreground">Configure notificações automáticas por email quando houver falhas nos webhooks</p>
+          <p className="text-sm text-muted-foreground">Receba um aviso se houver algum problema na liberação automática de acesso</p>
         </div>
 
         <div className="rounded-lg bg-amber-500/10 border border-amber-500/20 p-4">
@@ -534,7 +534,7 @@ function NotificationsTab({ settings, onSave, saving }: { settings: any; onSave:
         <div>
           <Label className="text-sm font-semibold">Email para Alertas</Label>
           <Input value={alertEmail} onChange={(e) => setAlertEmail(e.target.value)} className="mt-1.5" type="email" />
-          <p className="text-xs text-muted-foreground/60 mt-1">Email que receberá as notificações de falhas nos webhooks</p>
+          <p className="text-xs text-muted-foreground/60 mt-1">Email que receberá os alertas de falhas na liberação de acesso</p>
         </div>
 
         <div>
@@ -543,8 +543,8 @@ function NotificationsTab({ settings, onSave, saving }: { settings: any; onSave:
             <label className="flex items-start gap-3 cursor-pointer">
               <Checkbox checked={onError} onCheckedChange={(v) => setOnError(!!v)} className="mt-0.5" />
               <div>
-                <p className="text-sm font-medium">⚠ Alertar em cada erro de webhook</p>
-                <p className="text-xs text-muted-foreground">Você receberá um email imediatamente após cada falha detectada</p>
+                <p className="text-sm font-medium">⚠ Avisar sobre falhas na liberação de acesso</p>
+                <p className="text-xs text-muted-foreground">Você receberá um email imediatamente após cada falha de conexão detectada</p>
               </div>
             </label>
             <label className="flex items-start gap-3 cursor-pointer">
