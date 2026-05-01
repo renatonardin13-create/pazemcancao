@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { TableSkeleton } from "@/components/LoadingSkeletons";
 import { FolderOpen } from "lucide-react";
 import { useState, useMemo } from "react";
+import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { StatusBadge } from "@/components/StatusBadge";
 import {
   Plus,
