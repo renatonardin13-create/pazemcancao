@@ -394,15 +394,7 @@ function AdminCoursesPage() {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           className="flex items-center gap-2 text-destructive focus:text-destructive"
-                          onClick={() => {
-                            if (
-                              confirm(
-                                "Tem certeza que deseja excluir este produto?"
-                              )
-                            ) {
-                              deleteM.mutate(course.id);
-                            }
-                          }}
+                          onClick={() => setDeleteId(course.id)}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                           Excluir
