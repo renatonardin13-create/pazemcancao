@@ -62,7 +62,7 @@ function NewCoursePage() {
           <div className="space-y-2">
             <h2 className="text-2xl font-black text-foreground">Seção Necessária</h2>
             <p className="text-muted-foreground">
-              Você precisa criar pelo menos uma <strong>Seção (Categoria)</strong> antes de cadastrar um produto. Isso é essencial para a organização do seu catálogo.
+              Você precisa criar pelo menos uma <strong>Seção</strong> antes de cadastrar um produto. Isso é essencial para a organização do seu catálogo.
             </p>
           </div>
           <Link
