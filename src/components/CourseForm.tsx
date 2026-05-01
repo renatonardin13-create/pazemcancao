@@ -366,7 +366,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
             ) : (
               <Save className="h-3.5 w-3.5 mr-1.5" />
             )}
-            {initialValues ? "Salvar Alterações" : "Criar Curso"}
+            {initialValues ? "Salvar Alterações" : "Criar Produto"}
           </Button>
         </div>
       )}
