@@ -24,6 +24,7 @@ function NewAreaPage() {
   const [status, setStatus] = useState("active");
   const [isSlugAvailable, setIsSlugAvailable] = useState<boolean | null>(null);
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   // Debounced slug check
   useEffect(() => {
@@ -52,7 +53,7 @@ function NewAreaPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-dashboard"] });
       toast.success("Área de membros criada com sucesso!");
-      navigate({ to: "/admin/courses" });
+      setShowSuccess(true);
     },
     onError: (err: any) => {
       toast.error(err.message || "Erro ao criar área");
