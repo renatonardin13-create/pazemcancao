@@ -141,61 +141,62 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
         {/* ===== LEFT: Informações + Configurações ===== */}
         <div className="space-y-5 order-1 lg:col-start-1">
-          <CardSection title="Informações do Curso">
+          <CardSection title="Informações do Produto">
             <div className="space-y-1.5">
               <Label htmlFor="title" className={labelClass}>
-                Título do Curso <span className="text-gold">*</span>
+                Nome do Produto <span className="text-gold">*</span>
               </Label>
               <Input
                 id="title"
                 value={title}
-                onChange={(e) => { setTitle(e.target.value); if (touched.title) setErrors((prev) => { const n = { ...prev }; delete n.title; return n; }); }}
-                onBlur={() => { setTouched((p) => ({ ...p, title: true })); if (!title.trim()) setErrors((p) => ({ ...p, title: "O título do curso é obrigatório" })); }}
-                placeholder="Ex: Curso Completo de Marketing Digital"
+                onChange={(e) => { 
+                  setTitle(e.target.value); 
+                  if (touched.title) setErrors((prev) => { const n = { ...prev }; delete n.title; return n; }); 
+                }}
+                onBlur={() => { 
+                  setTouched((p) => ({ ...p, title: true })); 
+                  if (!title.trim()) setErrors((p) => ({ ...p, title: "O nome do produto é obrigatório" })); 
+                }}
+                placeholder="Ex: Método Venda Expressa"
                 className={`${inputClass} ${errors.title ? "border-destructive" : ""}`}
               />
               {errors.title && <p className="text-[0.8rem] font-medium text-destructive">{errors.title}</p>}
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="shortDesc" className={labelClass}>Descrição Curta</Label>
+              <Label htmlFor="shortDesc" className={labelClass}>Descrição (opcional)</Label>
               <Textarea
                 id="shortDesc"
                 value={shortDesc}
                 onChange={(e) => setShortDesc(e.target.value)}
-                placeholder="Uma breve descrição do curso (aparece na vitrine)"
+                placeholder="Breve descrição do produto"
                 rows={3}
-                className="bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm resize-none"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="fullDesc" className={labelClass}>Descrição Completa</Label>
-              <Textarea
-                id="fullDesc"
-                value={fullDesc}
-                onChange={(e) => setFullDesc(e.target.value)}
-                placeholder="Descrição detalhada do curso (aparece na página do curso)"
-                rows={4}
                 className="bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm resize-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label className={labelClass}>Categoria</Label>
-                <Select value={categoryId} onValueChange={setCategoryId}>
-                  <SelectTrigger className={inputClass}>
-                    <SelectValue placeholder="Selecione uma categoria" />
+                <Label className={labelClass}>Seção <span className="text-gold">*</span></Label>
+                <Select 
+                  value={categoryId} 
+                  onValueChange={(val) => {
+                    setCategoryId(val);
+                    if (errors.categoryId) setErrors((prev) => { const n = { ...prev }; delete n.categoryId; return n; });
+                  }}
+                >
+                  <SelectTrigger className={`${inputClass} ${errors.categoryId ? "border-destructive" : ""}`}>
+                    <SelectValue placeholder="Selecione uma seção" />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((cat: any) => (
                       <SelectItem key={cat.id} value={cat.id}>
-                        {cat.icon || "📁"} {cat.name}
+                        {cat.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                {errors.categoryId && <p className="text-[0.8rem] font-medium text-destructive">{errors.categoryId}</p>}
               </div>
               <div className="space-y-1.5">
                 <Label className={labelClass}>Status</Label>
@@ -210,8 +211,6 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 </Select>
               </div>
             </div>
-
-            {/* area selection removed */}
           </CardSection>
 
           <CardSection title="Configurações">
