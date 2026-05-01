@@ -376,7 +376,7 @@ function AdminCoursesPage() {
                         <DropdownMenuItem
                           className="flex items-center gap-2"
                           onClick={() =>
-                            toggleStatusM.mutate({ id: course.id, currentStatus: course.status })
+                            setStatusId({ id: course.id, status: course.status })
                           }
                         >
                           {course.status === "published" ? (
