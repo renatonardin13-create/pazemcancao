@@ -2152,6 +2152,10 @@ export type Database = {
     }
     Functions: {
       delete_user_account: { Args: never; Returns: undefined }
+      delete_user_account_v2: {
+        Args: { target_user_id: string }
+        Returns: undefined
+      }
       get_analytics_summary:
         | { Args: { p_days?: number }; Returns: Json }
         | { Args: { p_area_id?: string; p_days: number }; Returns: Json }
