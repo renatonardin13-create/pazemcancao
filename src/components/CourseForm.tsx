@@ -26,10 +26,9 @@ const inputClass = "h-11 bg-background/50 border-border/20 focus:border-gold/40 
 const labelClass = "text-sm font-semibold text-foreground/80";
 
 const COURSE_TYPE_OPTIONS = [
-  { value: "video", label: "Vídeo", icon: Video },
-  { value: "ebook", label: "PDF", icon: FileText },
-  { value: "file", label: "Arquivo", icon: File },
-  { value: "link", label: "Link", icon: LinkIcon },
+  { value: "aula", label: "Aula", icon: Video },
+  { value: "material", label: "Material", icon: FileText },
+  { value: "bonus", label: "Bônus", icon: Sparkles },
 ] as const;
 
 const normalizeCourseType = (value?: string) => (value === "video" ? "video" : "ebook");
