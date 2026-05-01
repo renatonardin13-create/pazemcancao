@@ -10,7 +10,7 @@ import {
   Users, Activity, BarChart3, Music, Headphones, Download,
   TrendingUp, DollarSign, BookOpen, Clock, GraduationCap,
   ArrowUpRight, ArrowDownRight, CalendarDays, Zap,
-  Search, Plus, Settings, Bell, UserCircle, Sparkles
+  Search, Plus, Settings, Bell, UserCircle, Sparkles, ExternalLink
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -88,18 +88,29 @@ export function AdminDashboard() {
             <h1 className="font-display text-4xl sm:text-5xl font-black text-foreground tracking-tight leading-none">
               Bem-vindo, <span className="text-gold drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">Admin</span>
             </h1>
-            <p className="text-base sm:text-lg text-muted-foreground/70 max-w-lg mt-4 leading-relaxed">
-              Sua plataforma está em pleno crescimento. Veja o que aconteceu nas últimas <span className="text-foreground font-bold">{days} dias</span>.
-            </p>
+            <div className="flex flex-wrap items-center gap-4 mt-4">
+              <p className="text-base sm:text-lg text-muted-foreground/70 leading-relaxed">
+                Sua plataforma está em pleno crescimento. Veja o que aconteceu nas últimas <span className="text-foreground font-bold">{days} dias</span>.
+              </p>
+              {(data?.totalAreas ?? 0) > 0 && (
+                <Link
+                  to="/home"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-background/40 border border-gold/20 text-xs font-bold text-gold hover:bg-gold/10 transition-all group"
+                >
+                  <ExternalLink className="h-3.5 w-3.5 group-hover:scale-110 transition-transform" />
+                  Ver Área do Aluno
+                </Link>
+              )}
+            </div>
           </div>
 
           <div className="flex items-center gap-3 flex-wrap">
             <Link
               to="/admin/courses/new"
-              className="flex items-center gap-2 h-12 px-6 rounded-2xl bg-gold text-background text-sm font-black hover:shadow-xl hover:shadow-gold/20 hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+              className="flex items-center gap-2 h-12 px-6 rounded-2xl bg-gold text-background text-sm font-black hover:shadow-xl hover:shadow-gold/20 hover:scale-[1.05] active:scale-[0.95] transition-all duration-300"
             >
               <Plus className="h-5 w-5" />
-              Novo Curso
+              Novo Produto
             </Link>
 
             <Link
