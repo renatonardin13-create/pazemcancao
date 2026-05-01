@@ -321,7 +321,7 @@ function AdminCategoriesPage() {
                     <button onClick={() => startEditTag(tag)} className="p-1.5 text-muted-foreground hover:text-gold transition-colors rounded-lg hover:bg-muted/10" title="Editar">
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
-                    <button onClick={() => { if (confirm("Remover esta tag?")) deleteTagMutation.mutate(tag.id); }} className="p-1.5 text-muted-foreground/60 hover:text-destructive/60 transition-colors rounded-lg hover:bg-muted/10" title="Remover">
+                    <button onClick={() => setDeleteTagId(tag.id)} className="p-1.5 text-muted-foreground/60 hover:text-destructive/60 transition-colors rounded-lg hover:bg-muted/10" title="Remover">
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
