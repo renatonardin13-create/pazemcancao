@@ -381,6 +381,46 @@ function ProfilePage() {
                         </Button>
                       </div>
                     </div>
+
+                    {/* Danger Zone */}
+                    <div className="rounded-2xl border border-destructive/20 bg-destructive/5 backdrop-blur-sm p-6 sm:p-7 space-y-5">
+                      <div className="flex items-center gap-2">
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                        <h3 className="text-base font-bold text-destructive">
+                          Zona de perigo
+                        </h3>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <p className="text-[13px] text-muted-foreground/70">
+                          Ao excluir sua conta, todos os seus dados, progresso em cursos e acessos serão removidos permanentemente. Esta ação não pode ser desfeita.
+                        </p>
+                        
+                        <Button
+                          variant="destructive"
+                          onClick={() => setIsDeleteDialogOpen(true)}
+                          className="font-bold"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Excluir minha conta
+                        </Button>
+                      </div>
+                    </div>
+
+                    <ConfirmationDialog
+                      isOpen={isDeleteDialogOpen}
+                      onClose={() => setIsDeleteDialogOpen(false)}
+                      onConfirm={() => {
+                        setIsDeleteDialogOpen(false);
+                        deleteAccountMutation.mutate();
+                      }}
+                      title="Excluir conta permanentemente?"
+                      description="Esta ação é irreversível. Você perderá acesso a todos os seus cursos e seu progresso será apagado de acordo com a LGPD."
+                      confirmText="Sim, excluir conta"
+                      cancelText="Cancelar"
+                      variant="destructive"
+                      isLoading={deleteAccountMutation.isPending}
+                    />
                   </motion.section>
                 </div>
               </>
