@@ -80,7 +80,6 @@ export function AdminSidebar() {
   const currentPath = location.pathname;
   const { modules } = useProjectMode();
 
-  const { modules } = useProjectMode();
 
   const isActive = (path: string) =>
     path === "/admin"
