@@ -2151,6 +2151,11 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      delete_user_account: { Args: never; Returns: undefined }
+      delete_user_account_v2: {
+        Args: { target_user_id: string }
+        Returns: undefined
+      }
       get_analytics_summary:
         | { Args: { p_days?: number }; Returns: Json }
         | { Args: { p_area_id?: string; p_days: number }; Returns: Json }
@@ -2168,6 +2173,7 @@ export type Database = {
       }
       is_admin: { Args: { uid: string }; Returns: boolean }
       is_area_member: { Args: { _area_id: string }; Returns: boolean }
+      redact_json: { Args: { data: Json }; Returns: Json }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"

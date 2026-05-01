@@ -118,3 +118,23 @@ export const changePassword = createServerFn({ method: 'POST' })
     if (error) throw new Error(error.message);
     return { success: true };
   });
+
+export const deleteMyAccount = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    const { supabase, userId } = context;
+
+    // 1. Delete DB records
+    // We use RPC v2 which we created earlier.
+    // Note: To use RPC v2 from context.supabase (which is a user client), we need it to have permissions.
+    // But since it's SECURITY DEFINER and we revoked PUBLIC, only service_role can call it.
+    // So we use supabaseAdmin here.
+    const { error: dbError } = await supabaseAdmin.rpc('delete_user_account_v2', { target_user_id: userId });
+    if (dbError) throw new Error(dbError.message);
+
+    // 2. Delete Auth user
+    const { error: authError } = await supabaseAdmin.auth.admin.deleteUser(userId);
+    if (authError) throw new Error(authError.message);
+
+    return { success: true };
+  });

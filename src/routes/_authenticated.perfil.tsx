@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ModuleGuard } from "@/components/ModuleGuard";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getMyProfile, updateMyProfile, changePassword } from "@/lib/profile.functions";
+import { getMyProfile, updateMyProfile, changePassword, deleteMyAccount } from "@/lib/profile.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
+import { ConfirmationDialog } from "@/components/ConfirmationDialog";
+import { useAuth } from "@/hooks/use-auth";
 import {
   User,
   Mail,
@@ -20,6 +22,7 @@ import {
   Clock,
   Shield,
   UserCircle2,
+  Trash2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -29,6 +32,8 @@ export const Route = createFileRoute("/_authenticated/perfil")({
 
 function ProfilePage() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const { data, isLoading } = useQuery({
     queryKey: ["my-profile"],
@@ -39,6 +44,7 @@ function ProfilePage() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
     if (data?.profile) {
@@ -67,6 +73,16 @@ function ProfilePage() {
       toast.success("Senha alterada com sucesso!");
     },
     onError: (e: Error) => toast.error(e.message),
+  });
+
+  const deleteAccountMutation = useMutation({
+    mutationFn: () => deleteMyAccount(),
+    onSuccess: () => {
+      toast.success("Sua conta foi excluída permanentemente.");
+      logout();
+      navigate({ to: "/login" });
+    },
+    onError: (e: Error) => toast.error("Erro ao excluir conta: " + e.message),
   });
 
   const handlePasswordChange = () => {
@@ -365,6 +381,44 @@ function ProfilePage() {
                         </Button>
                       </div>
                     </div>
+
+                    {/* Danger Zone */}
+                    <div className="rounded-2xl border border-destructive/20 bg-destructive/5 backdrop-blur-sm p-6 sm:p-7 space-y-5">
+                      <div className="flex items-center gap-2">
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                        <h3 className="text-base font-bold text-destructive">
+                          Zona de perigo
+                        </h3>
+                      </div>
+                      
+                      <div className="space-y-3">
+                        <p className="text-[13px] text-muted-foreground/70">
+                          Ao excluir sua conta, todos os seus dados, progresso em cursos e acessos serão removidos permanentemente. Esta ação não pode ser desfeita.
+                        </p>
+                        
+                        <Button
+                          variant="destructive"
+                          onClick={() => setIsDeleteDialogOpen(true)}
+                          className="font-bold"
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Excluir minha conta
+                        </Button>
+                      </div>
+                    </div>
+
+                    <ConfirmationDialog
+                      isOpen={isDeleteDialogOpen}
+                      onOpenChange={setIsDeleteDialogOpen}
+                      onConfirm={() => {
+                        deleteAccountMutation.mutate();
+                      }}
+                      title="Excluir conta permanentemente?"
+                      description="Esta ação é irreversível. Você perderá acesso a todos os seus cursos e seu progresso será apagado de acordo com a LGPD."
+                      confirmText={deleteAccountMutation.isPending ? "Excluindo..." : "Sim, excluir conta"}
+                      cancelText="Cancelar"
+                      variant="destructive"
+                    />
                   </motion.section>
                 </div>
               </>
