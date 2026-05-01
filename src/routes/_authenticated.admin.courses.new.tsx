@@ -93,7 +93,7 @@ function NewCoursePage() {
             </Link>
             <div>
               <h1 className="font-display text-xl font-black text-foreground tracking-tight">
-                Criar Novo Curso
+                Criar Novo Produto
               </h1>
               <p className="text-xs text-muted-foreground/50 mt-0.5">
                 Configure seu curso, adicione módulos e aulas
