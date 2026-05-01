@@ -68,6 +68,10 @@ export function AdminDashboard() {
     );
   }
 
+  if (!isLoading && data && data.totalAreas === 0) {
+    return <AdminEmptyStateOnboarding />;
+  }
+
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       {/* Header bar */}
