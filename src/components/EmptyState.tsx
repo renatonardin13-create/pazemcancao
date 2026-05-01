@@ -29,42 +29,42 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center text-center rounded-2xl border border-dashed border-border/25 bg-card/5",
-        compact ? "py-10 px-6" : "py-16 px-8",
+        "flex flex-col items-center justify-center text-center rounded-3xl border border-dashed border-border/20 bg-gradient-to-b from-card/30 to-transparent",
+        compact ? "py-10 px-6" : "py-20 px-10",
         className
       )}
     >
       <div
         className={cn(
-          "flex items-center justify-center rounded-2xl bg-muted/10 border border-border/15",
-          compact ? "h-12 w-12 mb-3" : "h-14 w-14 mb-4"
+          "flex items-center justify-center rounded-2xl bg-muted/5 border border-border/10 shadow-inner",
+          compact ? "h-14 w-14 mb-4" : "h-20 w-20 mb-6"
         )}
       >
-        <Icon className={cn("text-muted-foreground/40", compact ? "h-5 w-5" : "h-6 w-6")} />
+        <Icon className={cn("text-muted-foreground/30", compact ? "h-6 w-6" : "h-10 w-10")} />
       </div>
 
-      <h3 className={cn("font-semibold text-foreground/80", compact ? "text-sm" : "text-base")}>
+      <h3 className={cn("font-display font-black tracking-tight text-foreground/90", compact ? "text-base" : "text-xl")}>
         {title}
       </h3>
 
       {description && (
-        <p className={cn("text-muted-foreground/60 mt-1.5 max-w-sm", compact ? "text-xs" : "text-sm")}>
+        <p className={cn("text-muted-foreground/50 mt-2 max-w-sm leading-relaxed", compact ? "text-xs" : "text-sm")}>
           {description}
         </p>
       )}
 
       {actionLabel && (actionTo || onAction) && (
-        <div className="mt-5">
+        <div className="mt-8">
           {actionTo ? (
-            <Button asChild size="sm">
+            <Button asChild size={compact ? "sm" : "lg"} className="rounded-xl font-bold px-8 shadow-xl hover:shadow-gold/20 transition-all hover:scale-[1.02]">
               <Link to={actionTo}>
-                {ActionIcon && <ActionIcon className="h-4 w-4 mr-1.5" />}
+                {ActionIcon && <ActionIcon className="h-4 w-4 mr-2" />}
                 {actionLabel}
               </Link>
             </Button>
           ) : (
-            <Button size="sm" onClick={onAction}>
-              {ActionIcon && <ActionIcon className="h-4 w-4 mr-1.5" />}
+            <Button size={compact ? "sm" : "lg"} onClick={onAction} className="rounded-xl font-bold px-8 shadow-xl hover:shadow-gold/20 transition-all hover:scale-[1.02]">
+              {ActionIcon && <ActionIcon className="h-4 w-4 mr-2" />}
               {actionLabel}
             </Button>
           )}

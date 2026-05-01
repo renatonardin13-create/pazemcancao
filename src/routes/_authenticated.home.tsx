@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
-import { AlertCircle, RefreshCw, Loader2, LayoutGrid, ChevronRight } from "lucide-react";
+import { AlertCircle, RefreshCw, Loader2, LayoutGrid, ChevronRight, Sparkles } from "lucide-react";
 import { ModuleGuard } from "@/components/ModuleGuard";
 import { getStudentVitrineData } from "@/lib/student-vitrine.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { HeroBanner } from "@/components/vitrine/HeroBanner";
 import { VitrineCourseCard } from "@/components/vitrine/VitrineCourseCard";
+import { ContinueWatchingSection } from "@/components/ContinueWatchingSection";
 import { POSTER_GRID } from "@/lib/card-grid";
 import { CardScopeProvider } from "@/hooks/use-cards-config";
 import type { VitrineShelf, VitrineCourse } from "@/components/vitrine/types";
@@ -157,6 +158,8 @@ function VitrinePage() {
               {(heroBanners.length > 0 || featured) && (
                 <HeroBanner banners={heroBanners} fallbackCourse={featured} />
               )}
+
+              <ContinueWatchingSection />
 
               {/* Chips de categoria */}
               {categories.length > 0 && (
