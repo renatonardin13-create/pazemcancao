@@ -33,8 +33,8 @@ function NewCoursePage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
       queryClient.invalidateQueries({ queryKey: ["student-shelves"] });
-      toast.success("Curso criado com sucesso!");
-      navigate({ to: "/admin/courses" });
+      toast.success("Produto criado com sucesso!");
+      navigate({ to: "/admin/courses", search: { created: "true" } });
     },
     onError: (e: Error) => toastError(e),
   });
