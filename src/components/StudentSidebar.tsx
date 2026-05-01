@@ -2,7 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { listActiveTracks } from "@/lib/tracks.functions";
-// useArea removed
+import { listCategories } from "@/lib/courses.functions";
 import { useProjectMode } from "@/hooks/use-project-mode";
 import { LogoBrand } from "./LogoBrand";
 import {
