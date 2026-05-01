@@ -65,6 +65,13 @@ function AdminCoursesPage() {
     queryFn: () => listAdminCourses(),
   });
 
+  const { data: catData, isLoading: catLoading } = useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: () => listAdminCategories(),
+  });
+
+  const categories = catData?.categories || [];
+
   const deleteM = useMutation({
     mutationFn: (id: string) => deleteCourse({ data: { id } }),
     onSuccess: () => {
