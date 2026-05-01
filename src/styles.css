@@ -58,6 +58,16 @@
   --color-player-completed: var(--player-completed);
   --font-display: var(--font-display);
   --font-body: var(--font-body);
+
+  /* Premium Shadows */
+  --shadow-premium: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.2);
+  --shadow-premium-hover: 0 20px 40px -12px rgba(0, 0, 0, 0.6), 0 8px 12px -6px rgba(0, 0, 0, 0.3);
+  --shadow-premium-gold: 0 10px 30px -10px oklch(0.78 0.11 68 / 0.3), 0 4px 6px -4px oklch(0.78 0.11 68 / 0.1);
+  
+  /* Consistent Spacing */
+  --spacing-section: 4rem;
+  --spacing-block: 2rem;
+  --spacing-inner: 1.5rem;
 }
 
 :root {
