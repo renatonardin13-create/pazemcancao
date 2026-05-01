@@ -347,7 +347,7 @@ function AdminCoursesPage() {
                           onClick={() => {
                             if (
                               confirm(
-                                "Tem certeza que deseja excluir este curso?"
+                                "Tem certeza que deseja excluir este produto?"
                               )
                             ) {
                               deleteM.mutate(course.id);
