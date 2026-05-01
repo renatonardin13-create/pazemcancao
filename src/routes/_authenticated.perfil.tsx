@@ -86,9 +86,6 @@ function ProfilePage() {
   });
 
   const handlePasswordChange = () => {
-...
-    passwordMutation.mutate();
-  };
     if (newPassword.length < 6) {
       toast.error("A senha deve ter pelo menos 6 caracteres.");
       return;
