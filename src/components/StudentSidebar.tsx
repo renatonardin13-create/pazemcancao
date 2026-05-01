@@ -168,7 +168,7 @@ export function StudentSidebar() {
                 <Link
                   key={cat.id}
                   to={targetTo as any}
-                  search={{ categoria: cat.slug }}
+                  search={{ categoria: cat.slug } as any}
                   onClick={() => setMobileOpen(false)}
                   className={cn(
                     "flex items-center py-1.5 text-[13px] font-medium transition-colors",
