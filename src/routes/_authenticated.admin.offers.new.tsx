@@ -187,7 +187,19 @@ function NewOfferPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Token de Autenticação (Opcional)</Label>
+                <div className="flex items-center gap-2">
+                  <Label>Token de Autenticação (Opcional)</Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-3.5 w-3.5 text-muted-foreground/50 cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Usado para validar se a requisição partiu realmente do seu gateway</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
                 <Input 
                   type="password" 
                   placeholder="Token secreto da plataforma" 
