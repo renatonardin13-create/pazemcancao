@@ -190,7 +190,7 @@ function AdminCoursesPage() {
           <Video className="h-10 w-10 text-gold/45 mx-auto mb-4" />
           <p className="text-sm text-muted-foreground/50 font-medium">
             {allCourses.length === 0
-              ? "Nenhum curso cadastrado ainda."
+              ? "Nenhum produto cadastrado ainda."
               : "Nenhum curso encontrado com esses filtros."}
           </p>
           {allCourses.length === 0 && (
