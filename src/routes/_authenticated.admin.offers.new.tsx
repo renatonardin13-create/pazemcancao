@@ -53,7 +53,7 @@ function NewOfferPage() {
   };
 
   const webhookUrl = formData.course_id 
-    ? `https://pazemcancao.lovable.app/api/webhook/kiwify?course=${formData.course_id}`
+    ? `https://nazfszmcpuvwbkxhmugm.supabase.co/functions/v1/payment-webhook?provider=${formData.platform}&course=${formData.course_id}`
     : "Selecione um produto primeiro";
 
   if (!coursesLoading && courses.length === 0) {
