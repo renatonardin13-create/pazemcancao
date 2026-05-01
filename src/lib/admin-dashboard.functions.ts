@@ -23,6 +23,7 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
     }
 
     const [
+      { count: totalAreas },
       { count: totalCategories },
       { count: totalTracks },
       { count: activeTracks },
@@ -32,7 +33,10 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
       { count: activeCourses },
       { count: pendingEnrollments },
       { data: revenueData },
+      { data: webhookSettings },
+      { count: totalIntegrations },
     ] = await Promise.all([
+      supabaseAdmin.from('areas').select('*', { count: 'exact', head: true }),
       (() => {
         let q = supabaseAdmin.from('categories').select('*', { count: 'exact', head: true });
         if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
@@ -78,6 +82,8 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
         if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
         return q;
       })(),
+      supabaseAdmin.from('webhook_settings').select('*').limit(1),
+      supabaseAdmin.from('course_integrations').select('*', { count: 'exact', head: true }),
     ]);
 
     // Fetch top courses by enrollment count
@@ -119,6 +125,7 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
     const totalRevenue = (revenueData || []).reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
     return {
+      totalAreas: totalAreas || 0,
       totalCategories: totalCategories || 0,
       totalTracks: totalTracks || 0,
       activeTracks: activeTracks || 0,
@@ -129,5 +136,8 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
       pendingEnrollments: pendingEnrollments || 0,
       totalRevenue,
       topCourses,
+      webhookActivated: !!webhookSettings?.[0]?.is_active,
+      webhookToken: webhookSettings?.[0]?.auth_token || '',
+      gatewayConfigured: (totalIntegrations || 0) > 0,
     };
   });
