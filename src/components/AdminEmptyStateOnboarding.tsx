@@ -40,9 +40,9 @@ export function AdminEmptyStateOnboarding() {
             <Sparkles className="h-3 w-3" /> Bem-vindo ao seu novo SaaS
           </motion.div>
           <h1 className="text-4xl sm:text-6xl font-black text-foreground tracking-tight leading-tight">
-            Comece sua plataforma em <span className="text-gold">poucos passos</span>
+            Comece sua plataforma em <span className="text-gold animate-pulse">poucos passos</span>
           </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Configure sua área de membros e comece a vender hoje mesmo. Tudo o que você precisa em um único lugar.
           </p>
         </div>
