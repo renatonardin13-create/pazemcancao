@@ -153,8 +153,13 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Conteúdo Sections */}
+        {/* Conteúdo */}
         <SidebarGroup className="py-1">
+          {!collapsed && (
+            <SidebarGroupLabel className={groupLabelClass}>
+              Conteúdo
+            </SidebarGroupLabel>
+          )}
           <SidebarGroupContent>
             <SidebarMenu>
               {contentGroups
