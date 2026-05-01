@@ -68,6 +68,11 @@ const salesItems = [
   { title: "Transações", url: "/admin/transactions", icon: Receipt },
 ];
 
+const integrationItems = [
+  { title: "Webhooks", url: "/admin/integrations", icon: Shield },
+  { title: "Templates", url: "/admin/settings", icon: Settings },
+];
+
 const systemItems = [
   { title: "Configurações", url: "/admin/settings", icon: Settings },
   { title: "Sair", url: "/login", icon: LogOut },
