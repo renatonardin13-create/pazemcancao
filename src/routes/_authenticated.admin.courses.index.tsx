@@ -68,6 +68,8 @@ function AdminCoursesPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
   const [page, setPage] = useState(1);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [statusId, setStatusId] = useState<{ id: string; status: string } | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-courses"],
