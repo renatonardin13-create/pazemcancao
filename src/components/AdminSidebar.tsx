@@ -67,10 +67,10 @@ export function AdminSidebar() {
   const { modules } = useProjectMode();
 
 
-  const isActive = (path: string) =>
-    path === "/admin"
-      ? currentPath === "/admin"
-      : currentPath.startsWith(path);
+  const isActive = (path: string) => {
+    if (path === "/admin") return currentPath === "/admin";
+    return currentPath === path || currentPath.startsWith(path + "/");
+  };
 
   const groupLabelClass =
     "text-[10px] uppercase tracking-[0.25em] text-sidebar-foreground/30 font-bold px-4 mb-1";
