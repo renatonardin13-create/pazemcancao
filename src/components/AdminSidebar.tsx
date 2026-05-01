@@ -49,13 +49,13 @@ const contentGroups = [
 
 const salesItems = [
   { title: "Transações", url: "/admin/transactions", icon: Receipt },
-  { title: "Vendas", url: "/admin/vendas", icon: CreditCard },
+  { title: "Planos", url: "/admin/vendas", icon: CreditCard },
   { title: "Cupons", url: "/admin/coupons", icon: Tag },
 ];
 
 const systemItems = [
   { title: "Webhooks", url: "/admin/integrations", icon: Shield },
-  { title: "Configurações", url: "/admin/settings", icon: Settings },
+  { title: "Configurações Gerais", url: "/admin/settings", icon: Settings },
   { title: "Sair", url: "/login", icon: LogOut },
 ];
 
