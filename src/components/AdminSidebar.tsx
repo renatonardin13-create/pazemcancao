@@ -40,6 +40,8 @@ const allContentItems = [
   { title: "Vitrine", url: "/admin/shelves", icon: Layout, module: "vitrine" as const },
   { title: "Categorias", url: "/admin/categories", icon: FolderOpen, module: "louvores" as const },
   { title: "Trilhas", url: "/admin/journeys", icon: Compass, module: "trilhas" as const },
+  { title: "Conteúdos", url: "/admin/conteudos", icon: FileText, module: "ebooks" as const },
+  { title: "Banners", url: "/admin/hero-banners", icon: GalleryHorizontalEnd, module: "lancamentos" as const },
 ];
 
 const toolItems = [
