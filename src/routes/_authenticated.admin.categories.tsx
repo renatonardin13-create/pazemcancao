@@ -85,7 +85,7 @@ function AdminCategoriesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
       invalidateStudentCaches();
-      toast.success("Categoria atualizada");
+      toast.success("Seção atualizada");
       setEditingCat(null);
     },
     onError: (err: any) => toastError(err),
