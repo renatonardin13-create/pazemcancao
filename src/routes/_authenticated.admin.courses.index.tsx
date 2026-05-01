@@ -55,11 +55,6 @@ import {
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/courses/")({
-  validateSearch: (search: Record<string, unknown>) => {
-    return {
-      created: search.created === "true",
-    };
-  },
   component: AdminCoursesPage,
 });
 
