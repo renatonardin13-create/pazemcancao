@@ -24,10 +24,10 @@ import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 
 /** Static lookup: slug → icon, route, prefix-match, submenu flag */
-const SLUG_META: Record<string, { icon: LucideIcon; to: string; matchPrefix?: boolean; hasSubmenu?: boolean }> = {
+const SLUG_META: Record<string, { icon: LucideIcon; to: string; matchPrefix?: boolean }> = {
   vitrine:     { icon: Store,          to: "/home" },
-  cursos:      { icon: GraduationCap,  to: "/cursos",      matchPrefix: true, hasSubmenu: true },
-  louvores:    { icon: Music2,         to: "/musicas",     matchPrefix: true, hasSubmenu: true },
+  cursos:      { icon: GraduationCap,  to: "/cursos",      matchPrefix: true },
+  louvores:    { icon: Music2,         to: "/musicas",     matchPrefix: true },
   ebooks:      { icon: BookOpen,       to: "/ebooks" },
   trilhas:     { icon: RouteIcon,      to: "/trilhas" },
   lancamentos: { icon: Rocket,         to: "/lancamentos" },
@@ -108,7 +108,6 @@ export function StudentSidebar() {
           icon: meta.icon,
           to: meta.to,
           matchPrefix: meta.matchPrefix || false,
-          hasSubmenu: meta.hasSubmenu || false,
         };
       })
       .filter((x): x is NonNullable<typeof x> => x !== null);
@@ -124,68 +123,6 @@ export function StudentSidebar() {
         ? "text-gold bg-gold/[0.10] ring-1 ring-gold/15 shadow-[0_0_20px_-4px] shadow-gold/10"
         : "text-foreground/50 hover:text-foreground/80 hover:bg-white/[0.03] ring-1 ring-transparent hover:ring-white/[0.04]"
     );
-
-  const renderSubmenu = (cfg: { key: string; label: string; icon: LucideIcon; to: string; matchPrefix: boolean }) => {
-    const Icon = cfg.icon;
-    const targetTo = cfg.to;
-    const isOnPage = isActivePrefix(targetTo);
-    
-    let categoriesToShow: { id: string; name: string; slug: string }[] = [];
-    const searchParams = new URLSearchParams(location.search);
-    const currentCategory = searchParams.get("categoria")?.trim().toLowerCase() || "";
-
-    if (cfg.key === "louvores") {
-      categoriesToShow = visibleCategories;
-    } else if (cfg.key === "cursos") {
-      categoriesToShow = (categoriesData?.categories || [])
-        .filter(cat => !OFFICIAL_LOUVOR_CATEGORIES.includes(cat.slug as any) && cat.slug !== 'ebook' && cat.slug !== 'lancamento')
-        .map(cat => ({
-          id: cat.id,
-          name: cat.name,
-          slug: cat.slug
-        }));
-    }
-
-    const hasActiveCategory = Boolean(currentCategory) && categoriesToShow.some(c => c.slug === currentCategory);
-    const isMainActive = isOnPage && !hasActiveCategory;
-
-    return (
-      <div className="space-y-0.5" key={cfg.key}>
-        <Link
-          to={targetTo as any}
-          onClick={() => setMobileOpen(false)}
-          className={cn(navItemClass(isMainActive), "w-full")}
-        >
-          <Icon className="h-[22px] w-[22px] shrink-0" />
-          {cfg.label}
-        </Link>
-        
-        {isOnPage && categoriesToShow.length > 0 && (
-          <div className="ml-9 mt-1 space-y-1 border-l border-white/[0.06] pl-3 animate-in slide-in-from-left-2 duration-300">
-            {categoriesToShow.map((cat) => {
-              const active = currentCategory === cat.slug;
-              return (
-                <Link
-                  key={cat.id}
-                  to={targetTo as any}
-                  search={{ categoria: cat.slug } as any}
-                  onClick={() => setMobileOpen(false)}
-                  className={cn(
-                    "flex items-center py-1.5 text-[13px] font-medium transition-colors",
-                    active 
-                      ? "text-gold" 
-                      : "text-foreground/40 hover:text-foreground/60"
-                  )}
-                >
-                  {cat.name}
-                </Link>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    );
-  };
 
   const renderMenuItem = (cfg: { key: string; label: string; icon: LucideIcon; to: string; matchPrefix: boolean }) => {
     const Icon = cfg.icon;
@@ -215,13 +152,7 @@ export function StudentSidebar() {
       </div>
 
       <nav className="flex-1 overflow-y-auto px-4 pt-2 pb-2 space-y-0.5">
-        {mainItems.map((cfg) =>
-          cfg.hasSubmenu ? (
-            renderSubmenu(cfg)
-          ) : (
-            renderMenuItem(cfg)
-          )
-        )}
+        {mainItems.map((cfg) => renderMenuItem(cfg))}
 
         <div className="my-1 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
 
