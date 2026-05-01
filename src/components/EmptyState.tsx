@@ -29,15 +29,15 @@ export function EmptyState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center text-center rounded-3xl border border-dashed border-border/20 bg-gradient-to-b from-card/30 to-transparent",
+        "flex flex-col items-center justify-center text-center rounded-[3rem] border border-dashed border-gold/10 bg-gradient-to-b from-card/50 to-card/10 shadow-premium backdrop-blur-sm",
         compact ? "py-10 px-6" : "py-20 px-10",
         className
       )}
     >
       <div
         className={cn(
-          "flex items-center justify-center rounded-2xl bg-muted/5 border border-border/10 shadow-inner",
-          compact ? "h-14 w-14 mb-4" : "h-20 w-20 mb-6"
+          "flex items-center justify-center rounded-[2rem] bg-gold/5 border border-gold/10 shadow-premium-gold",
+          compact ? "h-16 w-16 mb-6" : "h-24 w-24 mb-8"
         )}
       >
         <Icon className={cn("text-muted-foreground/30", compact ? "h-6 w-6" : "h-10 w-10")} />

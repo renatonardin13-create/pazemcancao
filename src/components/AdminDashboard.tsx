@@ -75,7 +75,7 @@ export function AdminDashboard() {
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       {/* Header bar */}
-      <div className="relative rounded-[2rem] border border-gold/10 bg-gradient-to-br from-card via-card/80 to-card/50 backdrop-blur-xl p-6 sm:p-8 overflow-hidden shadow-2xl shadow-black/20">
+      <div className="relative rounded-[2.5rem] border border-gold/15 bg-gradient-to-br from-card via-card/90 to-card/60 backdrop-blur-2xl p-8 sm:p-12 overflow-hidden shadow-premium">
         {/* Decorative elements */}
         <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-gold/10 blur-[100px] animate-pulse" />
         <div className="pointer-events-none absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-gold/5 blur-[80px]" />
@@ -85,11 +85,11 @@ export function AdminDashboard() {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold/10 border border-gold/20 text-[10px] font-bold uppercase tracking-widest text-gold mb-2">
               <Sparkles className="h-3 w-3" /> Dashboard Premium
             </div>
-            <h1 className="font-display text-3xl sm:text-4xl font-black text-foreground tracking-tight leading-none">
-              Bem-vindo, <span className="text-gold">Admin</span>
+            <h1 className="font-display text-4xl sm:text-5xl font-black text-foreground tracking-tight leading-none">
+              Bem-vindo, <span className="text-gold drop-shadow-[0_0_15px_rgba(212,175,55,0.3)]">Admin</span>
             </h1>
-            <p className="text-sm text-muted-foreground/80 max-w-md">
-              Sua plataforma está em crescimento. Veja o que aconteceu nas últimas <span className="text-foreground font-medium">{days} dias</span>.
+            <p className="text-base sm:text-lg text-muted-foreground/70 max-w-lg mt-4 leading-relaxed">
+              Sua plataforma está em pleno crescimento. Veja o que aconteceu nas últimas <span className="text-foreground font-bold">{days} dias</span>.
             </p>
           </div>
 
@@ -163,7 +163,7 @@ export function AdminDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.05 }}
-          className="relative rounded-2xl border border-emerald-400/25 bg-gradient-to-br from-emerald-400/[0.08] via-card to-card p-4 sm:p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-400/10 hover:border-emerald-400/35 group overflow-hidden shadow-lg shadow-black/10">
+          className="relative rounded-[2rem] border border-emerald-400/25 bg-gradient-to-br from-emerald-400/[0.08] via-card to-card p-6 sm:p-8 transition-all duration-500 hover:shadow-premium-hover hover:border-emerald-400/40 hover:-translate-y-2 group overflow-hidden shadow-premium">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-emerald-400/[0.07] blur-[50px] group-hover:bg-emerald-400/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -202,7 +202,7 @@ export function AdminDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.1 }}
-          className="relative rounded-2xl border border-gold/25 bg-gradient-to-br from-gold/[0.08] via-card to-card p-4 sm:p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-gold/10 hover:border-gold/35 group overflow-hidden shadow-lg shadow-black/10">
+          className="relative rounded-[2rem] border border-gold/25 bg-gradient-to-br from-gold/[0.08] via-card to-card p-6 sm:p-8 transition-all duration-500 hover:shadow-premium-hover hover:border-gold/40 hover:-translate-y-2 group overflow-hidden shadow-premium">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-gold/[0.07] blur-[50px] group-hover:bg-gold/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -241,7 +241,7 @@ export function AdminDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.15 }}
-          className="relative rounded-2xl border border-blue-400/25 bg-gradient-to-br from-blue-400/[0.08] via-card to-card p-4 sm:p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-blue-400/10 hover:border-blue-400/35 group overflow-hidden shadow-lg shadow-black/10">
+          className="relative rounded-[2rem] border border-blue-400/25 bg-gradient-to-br from-blue-400/[0.08] via-card to-card p-6 sm:p-8 transition-all duration-500 hover:shadow-premium-hover hover:border-blue-400/40 hover:-translate-y-2 group overflow-hidden shadow-premium">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-blue-400/[0.07] blur-[50px] group-hover:bg-blue-400/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">
@@ -282,7 +282,7 @@ export function AdminDashboard() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4, delay: 0.2 }}
-          className="relative rounded-2xl border border-amber-400/25 bg-gradient-to-br from-amber-400/[0.08] via-card to-card p-4 sm:p-6 transition-all duration-300 hover:shadow-2xl hover:shadow-amber-400/10 hover:border-amber-400/35 group overflow-hidden shadow-lg shadow-black/10">
+          className="relative rounded-[2rem] border border-amber-400/25 bg-gradient-to-br from-amber-400/[0.08] via-card to-card p-6 sm:p-8 transition-all duration-500 hover:shadow-premium-hover hover:border-amber-400/40 hover:-translate-y-2 group overflow-hidden shadow-premium">
           <div className="pointer-events-none absolute -top-12 -right-12 h-44 w-44 rounded-full bg-amber-400/[0.07] blur-[50px] group-hover:bg-amber-400/[0.12] transition-all duration-500" />
           <div className="flex items-center justify-between mb-4">
             <span className="text-xs uppercase tracking-[0.18em] text-muted-foreground/60 font-bold">

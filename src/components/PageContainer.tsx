@@ -15,7 +15,7 @@ export function PageContainer({ children, maxWidth = "lg", className = "" }: Pag
   };
 
   return (
-    <div className={`mx-auto ${widths[maxWidth]} px-4 sm:px-6 lg:px-8 ${className}`}>
+    <div className={`mx-auto ${widths[maxWidth]} px-4 sm:px-8 lg:px-12 py-8 sm:py-12 lg:py-16 ${className}`}>
       {children}
     </div>
   );

@@ -31,14 +31,14 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
 
   const navLinkClass = (active: boolean) =>
     cn(
-      "flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold transition-all duration-200",
+      "flex items-center gap-2 rounded-xl px-4 py-2 text-xs font-bold transition-all duration-300",
       active
-        ? "text-gold bg-gold/10 shadow-sm shadow-gold/5"
-        : "text-muted-foreground/60 hover:text-foreground/80 hover:bg-muted/10"
+        ? "text-gold bg-gold/15 shadow-premium-gold border border-gold/20"
+        : "text-muted-foreground/60 hover:text-gold hover:bg-gold/5 hover:border-gold/10 border border-transparent"
     );
 
   return (
-    <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-2xl border-b border-border/15">
+    <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-3xl border-b border-border/10 shadow-premium">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 sm:px-6 h-14 sm:h-16">
         <LogoBrand size="md" showSubtitle linkTo="/home" />
 
