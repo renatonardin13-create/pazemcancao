@@ -39,27 +39,11 @@ const mainItems = [
 ];
 
 const contentGroups = [
-  {
-    title: "Louvores",
-    icon: Music,
-    module: "louvores" as const,
-    subItems: [
-      { title: "Todos os louvores", url: "/admin/tracks" },
-      { title: "Categorias", url: "/admin/categories" },
-    ],
-  },
+  { title: "Louvores", url: "/admin/tracks", icon: Music, module: "louvores" as const },
   { title: "Trilhas", url: "/admin/journeys", icon: Compass, module: "trilhas" as const },
   { title: "Ebooks", url: "/admin/conteudos", icon: BookOpen, module: "ebooks" as const },
   { title: "Lançamentos", url: "/admin/hero-banners", icon: Sparkles, module: "lancamentos" as const },
-  {
-    title: "Cursos",
-    icon: GraduationCap,
-    module: "cursos" as const,
-    subItems: [
-      { title: "Todos os cursos", url: "/admin/courses" },
-      { title: "Categorias", url: "/admin/categories" },
-    ],
-  },
+  { title: "Cursos", url: "/admin/courses", icon: GraduationCap, module: "cursos" as const },
 ];
 
 const salesItems = [
@@ -172,31 +156,11 @@ export function AdminSidebar() {
                       tooltip={item.title}
                       className="h-10 transition-all duration-200"
                     >
-                      {item.url ? (
-                        <Link to={item.url}>
-                          <item.icon className="h-4 w-4 shrink-0" />
-                          <span>{item.title}</span>
-                        </Link>
-                      ) : (
-                        <div className="flex items-center gap-2">
-                          <item.icon className="h-4 w-4 shrink-0" />
-                          <span>{item.title}</span>
-                        </div>
-                      )}
+                      <Link to={item.url}>
+                        <item.icon className="h-4 w-4 shrink-0" />
+                        <span>{item.title}</span>
+                      </Link>
                     </SidebarMenuButton>
-                    {item.subItems && !collapsed && (
-                      <SidebarMenuSub>
-                        {item.subItems.map((subItem) => (
-                          <SidebarMenuSubItem key={subItem.title}>
-                            <SidebarMenuSubButton asChild isActive={isActive(subItem.url)}>
-                              <Link to={subItem.url}>
-                                <span>{subItem.title}</span>
-                              </Link>
-                            </SidebarMenuSubButton>
-                          </SidebarMenuSubItem>
-                        ))}
-                      </SidebarMenuSub>
-                    )}
                   </SidebarMenuItem>
                 ))}
             </SidebarMenu>
