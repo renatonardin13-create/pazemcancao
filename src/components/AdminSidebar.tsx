@@ -130,7 +130,7 @@ export function AdminSidebar() {
                 >
                   <Link to="/admin/users">
                     <Users className="h-4 w-4 shrink-0" />
-                    <span>Usuários</span>
+                    <span className="font-semibold">Usuários</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
