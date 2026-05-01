@@ -25,14 +25,14 @@ import { cn } from "@/lib/utils";
 
 /** Static lookup: slug → icon, route, prefix-match, submenu flag */
 const SLUG_META: Record<string, { icon: LucideIcon; to: string; matchPrefix?: boolean }> = {
-  vitrine:     { icon: Store,          to: "/home" },
+  vitrine:     { icon: Store,          to: "/home",        matchPrefix: true },
   cursos:      { icon: GraduationCap,  to: "/cursos",      matchPrefix: true },
   louvores:    { icon: Music2,         to: "/musicas",     matchPrefix: true },
-  ebooks:      { icon: BookOpen,       to: "/ebooks" },
-  trilhas:     { icon: RouteIcon,      to: "/trilhas" },
-  lancamentos: { icon: Rocket,         to: "/lancamentos" },
-  comunidade:  { icon: Users,          to: "/comunidade" },
-  perfil:      { icon: UserCircle,     to: "/perfil" },
+  ebooks:      { icon: BookOpen,       to: "/ebooks",      matchPrefix: true },
+  trilhas:     { icon: RouteIcon,      to: "/trilhas",     matchPrefix: true },
+  lancamentos: { icon: Rocket,         to: "/lancamentos", matchPrefix: true },
+  comunidade:  { icon: Users,          to: "/comunidade",  matchPrefix: true },
+  perfil:      { icon: UserCircle,     to: "/perfil",      matchPrefix: true },
 };
 
 const OFFICIAL_LOUVOR_CATEGORIES = [
