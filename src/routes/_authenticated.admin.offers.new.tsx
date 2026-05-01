@@ -1,4 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { EmptyState } from "@/components/EmptyState";
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listAdminCourses } from "@/lib/admin-courses.functions";
@@ -56,34 +57,17 @@ function NewOfferPage() {
     ? `https://nazfszmcpuvwbkxhmugm.supabase.co/functions/v1/payment-webhook?provider=${formData.platform}&course=${formData.course_id}`
     : "Selecione um produto primeiro";
 
-  if (!coursesLoading && courses.length === 0) {
     return (
       <div className="max-w-xl mx-auto py-20 px-6 text-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-card border border-border/30 rounded-3xl p-10 space-y-6 shadow-2xl shadow-black/20"
-        >
-          <div className="mx-auto w-20 h-20 rounded-2xl bg-gold/10 flex items-center justify-center text-gold">
-            <Box className="h-10 w-10" />
-          </div>
-          <div className="space-y-2">
-            <h2 className="text-2xl font-black text-foreground">Nenhum produto disponível</h2>
-            <p className="text-muted-foreground">
-              Você precisa criar um produto antes de configurar uma oferta.
-            </p>
-          </div>
-          <Link
-            to="/admin/courses/new"
-            className="inline-flex h-14 px-8 items-center justify-center rounded-2xl bg-gold text-black font-black text-sm hover:scale-105 transition-all shadow-lg shadow-gold/20 gap-2"
-          >
-            Criar Produto Agora
-            <ArrowLeft className="h-4 w-4 rotate-180" />
-          </Link>
-        </motion.div>
+        <EmptyState
+          icon={Box}
+          title="Nenhum produto disponível"
+          description="Você precisa criar um produto antes de configurar uma oferta"
+          actionLabel="Criar produto"
+          actionTo="/admin/courses/new"
+        />
       </div>
     );
-  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-20">
@@ -98,8 +82,8 @@ function NewOfferPage() {
             <p className="text-xs text-muted-foreground/50">Configure a venda do seu produto</p>
           </div>
         </div>
-        <Button size="sm" onClick={handleSave} disabled={mutation.isPending}>
-          {mutation.isPending ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
+        <Button size="sm" onClick={handleSave} loading={mutation.isPending}>
+          <Save className="h-4 w-4 mr-2" />
           Salvar Oferta
         </Button>
       </div>

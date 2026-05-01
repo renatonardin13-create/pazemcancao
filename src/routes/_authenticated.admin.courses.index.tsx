@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listAdminCourses, deleteCourse, updateCourse } from "@/lib/admin-courses.functions";
 import { listAdminCategories } from "@/lib/admin-categories.functions";
 import { EmptyState } from "@/components/EmptyState";
+import { TableSkeleton } from "@/components/LoadingSkeletons";
 import { FolderOpen } from "lucide-react";
 import { useState, useMemo } from "react";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -204,12 +205,24 @@ function AdminCoursesPage() {
         </div>
       </div>
 
-      {/* Content */}
       {isLoading || catLoading ? (
-        <div className="text-center py-16">
-          <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
-            Carregando...
-          </p>
+        <div className="rounded-2xl border border-border/30 bg-card overflow-hidden shadow-lg shadow-black/10">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-border/25 hover:bg-transparent">
+                <TableHead className="w-[72px]">Capa</TableHead>
+                <TableHead>Nome do Produto</TableHead>
+                <TableHead className="hidden sm:table-cell w-[90px]">Tipo</TableHead>
+                <TableHead className="w-[100px]">Status</TableHead>
+                <TableHead className="hidden md:table-cell w-[80px] text-center">Módulos</TableHead>
+                <TableHead className="hidden md:table-cell w-[80px] text-center">Aulas</TableHead>
+                <TableHead className="w-[60px] text-right">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableSkeleton rows={5} cols={7} />
+            </TableBody>
+          </Table>
         </div>
       ) : categories.length === 0 ? (
         <EmptyState
