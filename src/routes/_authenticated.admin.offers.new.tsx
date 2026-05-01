@@ -57,6 +57,7 @@ function NewOfferPage() {
     ? `https://nazfszmcpuvwbkxhmugm.supabase.co/functions/v1/payment-webhook?provider=${formData.platform}&course=${formData.course_id}`
     : "Selecione um produto primeiro";
 
+  if (!coursesLoading && courses.length === 0) {
     return (
       <div className="max-w-xl mx-auto py-20 px-6 text-center">
         <EmptyState
@@ -68,6 +69,7 @@ function NewOfferPage() {
         />
       </div>
     );
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-20">
