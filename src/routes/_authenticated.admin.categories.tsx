@@ -354,7 +354,7 @@ function AdminCategoriesPage() {
             </div>
             <div className="space-y-2">
               <Label>Descrição (opcional)</Label>
-              <Textarea value={newCat.description} onChange={(e) => setNewCat((p) => ({ ...p, description: e.target.value }))} placeholder="Breve descrição da categoria" rows={3} className="resize-none" />
+              <Textarea value={newCat.description} onChange={(e) => setNewCat((p) => ({ ...p, description: e.target.value }))} placeholder="Breve descrição da seção" rows={3} className="resize-none" />
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setShowCatForm(false)}>Cancelar</Button>
