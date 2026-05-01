@@ -10,6 +10,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ArrowLeft, Save, Loader2, Copy, ShoppingCart, HelpCircle, AlertCircle, Sparkles, Box, Zap, CheckCircle2 } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 
@@ -160,7 +166,19 @@ function NewOfferPage() {
             </div>
             <CardContent className="p-6 space-y-4">
               <div className="space-y-2">
-                <Label>ID do Produto no Gateway</Label>
+                <div className="flex items-center gap-2">
+                  <Label>ID do Produto no Gateway</Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-3.5 w-3.5 text-muted-foreground/50 cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>O ID único gerado pela plataforma de vendas (ex: PP123456 na PerfectPay)</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
                 <Input 
                   placeholder="Ex: PP123456" 
                   className="h-12 bg-background/50" 
@@ -169,7 +187,19 @@ function NewOfferPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Token de Autenticação (Opcional)</Label>
+                <div className="flex items-center gap-2">
+                  <Label>Token de Autenticação (Opcional)</Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-3.5 w-3.5 text-muted-foreground/50 cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Usado para validar se a requisição partiu realmente do seu gateway</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
                 <Input 
                   type="password" 
                   placeholder="Token secreto da plataforma" 

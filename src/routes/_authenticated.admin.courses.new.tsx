@@ -9,6 +9,12 @@ import { toast } from "sonner";
 import { ArrowLeft, Save, Loader2, AlertCircle, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 
@@ -149,9 +155,20 @@ function NewCoursePage() {
                   Organize a estrutura do seu curso de forma hierárquica
                 </p>
               </div>
-              <Button variant="outline" size="sm" disabled>
-                + Criar Módulo
-              </Button>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <span>
+                      <Button variant="outline" size="sm" disabled>
+                        + Criar Módulo
+                      </Button>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Salve o produto primeiro para gerenciar módulos</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             <div className="rounded-xl border border-dashed border-gold/30 bg-gold/[0.03] p-8 text-center">
               <p className="text-sm text-muted-foreground/60">

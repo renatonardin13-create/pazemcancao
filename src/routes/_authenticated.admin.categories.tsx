@@ -18,6 +18,7 @@ import {
 } from "@/lib/admin-tags.functions";
 import { FolderOpen, Plus, Trash2, Pencil, GripVertical, Tag } from "lucide-react";
 import { useState, useCallback } from "react";
+import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -52,6 +53,8 @@ function AdminCategoriesPage() {
   const [editingTag, setEditingTag] = useState<any>(null);
   const [editTagValues, setEditTagValues] = useState({ name: "", slug: "", description: "", color: "" });
   const [newTag, setNewTag] = useState({ name: "", slug: "", description: "", color: PICKER_COLORS[0] });
+  const [deleteCatId, setDeleteCatId] = useState<string | null>(null);
+  const [deleteTagId, setDeleteTagId] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -269,7 +272,7 @@ function AdminCategoriesPage() {
                     <button onClick={() => startEditCat(cat)} className="p-1.5 text-muted-foreground hover:text-gold transition-colors rounded-lg hover:bg-muted/10" title="Editar">
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
-                    <button onClick={() => { if (confirm("Remover esta seção?")) deleteCatMutation.mutate(cat.id); }} className="p-1.5 text-muted-foreground/60 hover:text-destructive/60 transition-colors rounded-lg hover:bg-muted/10" title="Remover">
+                    <button onClick={() => setDeleteCatId(cat.id)} className="p-1.5 text-muted-foreground/60 hover:text-destructive/60 transition-colors rounded-lg hover:bg-muted/10" title="Remover">
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
@@ -318,7 +321,7 @@ function AdminCategoriesPage() {
                     <button onClick={() => startEditTag(tag)} className="p-1.5 text-muted-foreground hover:text-gold transition-colors rounded-lg hover:bg-muted/10" title="Editar">
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
-                    <button onClick={() => { if (confirm("Remover esta tag?")) deleteTagMutation.mutate(tag.id); }} className="p-1.5 text-muted-foreground/60 hover:text-destructive/60 transition-colors rounded-lg hover:bg-muted/10" title="Remover">
+                    <button onClick={() => setDeleteTagId(tag.id)} className="p-1.5 text-muted-foreground/60 hover:text-destructive/60 transition-colors rounded-lg hover:bg-muted/10" title="Remover">
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
@@ -476,6 +479,31 @@ function AdminCategoriesPage() {
           </form>
         </DialogContent>
       </Dialog>
+      <ConfirmationDialog
+        isOpen={!!deleteCatId}
+        onOpenChange={(open) => !open && setDeleteCatId(null)}
+        onConfirm={() => {
+          if (deleteCatId) {
+            deleteCatMutation.mutate(deleteCatId);
+            setDeleteCatId(null);
+          }
+        }}
+        title="Excluir Seção"
+        description="Tem certeza que deseja excluir esta seção? Isso não afetará os produtos vinculados, mas eles ficarão sem seção."
+      />
+
+      <ConfirmationDialog
+        isOpen={!!deleteTagId}
+        onOpenChange={(open) => !open && setDeleteTagId(null)}
+        onConfirm={() => {
+          if (deleteTagId) {
+            deleteTagMutation.mutate(deleteTagId);
+            setDeleteTagId(null);
+          }
+        }}
+        title="Excluir Tag"
+        description="Tem certeza que deseja excluir esta tag?"
+      />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { TableSkeleton } from "@/components/LoadingSkeletons";
 import { FolderOpen } from "lucide-react";
 import { useState, useMemo } from "react";
+import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { StatusBadge } from "@/components/StatusBadge";
 import {
   Plus,
@@ -67,6 +68,8 @@ function AdminCoursesPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
   const [page, setPage] = useState(1);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [statusId, setStatusId] = useState<{ id: string; status: string } | null>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-courses"],
@@ -373,7 +376,7 @@ function AdminCoursesPage() {
                         <DropdownMenuItem
                           className="flex items-center gap-2"
                           onClick={() =>
-                            toggleStatusM.mutate({ id: course.id, currentStatus: course.status })
+                            setStatusId({ id: course.id, status: course.status })
                           }
                         >
                           {course.status === "published" ? (
@@ -391,15 +394,7 @@ function AdminCoursesPage() {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem
                           className="flex items-center gap-2 text-destructive focus:text-destructive"
-                          onClick={() => {
-                            if (
-                              confirm(
-                                "Tem certeza que deseja excluir este produto?"
-                              )
-                            ) {
-                              deleteM.mutate(course.id);
-                            }
-                          }}
+                          onClick={() => setDeleteId(course.id)}
                         >
                           <Trash2 className="h-3.5 w-3.5" />
                           Excluir
@@ -448,6 +443,33 @@ function AdminCoursesPage() {
           )}
         </div>
       )}
+      <ConfirmationDialog
+        isOpen={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        onConfirm={() => {
+          if (deleteId) {
+            deleteM.mutate(deleteId);
+            setDeleteId(null);
+          }
+        }}
+        title="Excluir Produto"
+        description="Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita."
+      />
+
+      <ConfirmationDialog
+        isOpen={!!statusId}
+        onOpenChange={(open) => !open && setStatusId(null)}
+        onConfirm={() => {
+          if (statusId) {
+            toggleStatusM.mutate({ id: statusId.id, currentStatus: statusId.status });
+            setStatusId(null);
+          }
+        }}
+        variant="default"
+        title="Alterar Status"
+        description={`Deseja realmente ${statusId?.status === "published" ? "despublicar" : "publicar"} este produto?`}
+        confirmText="Confirmar"
+      />
     </div>
   );
 }
