@@ -197,7 +197,7 @@ function AdminCoursesPage() {
             <Button asChild size="sm" className="mt-4">
               <Link to="/admin/courses/new">
                 <Plus className="h-4 w-4 mr-1" />
-                Criar primeiro curso
+                Criar primeiro produto
               </Link>
             </Button>
           )}
