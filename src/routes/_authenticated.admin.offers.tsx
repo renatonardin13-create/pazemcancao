@@ -67,19 +67,35 @@ function OffersPage() {
       <Card className="bg-card border-border/30">
         <CardContent className="p-6">
           {isLoading ? (
-            <div className="text-center py-12 text-muted-foreground">Carregando ofertas...</div>
+            <div className="rounded-lg border border-border/20 overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="border-border/20">
+                    <TableHead>Produto</TableHead>
+                    <TableHead>Gateway</TableHead>
+                    <TableHead>ID no Gateway</TableHead>
+                    <TableHead>Tipo</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableSkeleton rows={3} cols={6} />
+                </TableBody>
+              </Table>
+            </div>
           ) : !offers || offers.length === 0 ? (
             <div className="text-center py-20 space-y-4">
               <div className="mx-auto w-16 h-16 rounded-full bg-muted/20 flex items-center justify-center text-muted-foreground/40">
                 <ShoppingCart className="h-8 w-8" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-foreground">Nenhuma oferta criada</h3>
-                <p className="text-sm text-muted-foreground">Comece criando sua primeira oferta para vender seus produtos.</p>
+                <h3 className="text-lg font-bold text-foreground">Nenhum produto disponível</h3>
+                <p className="text-sm text-muted-foreground">Você precisa criar um produto antes de configurar uma oferta</p>
               </div>
-              <Link to="/admin/offers/new">
+              <Link to="/admin/courses/new">
                 <Button variant="outline" className="border-gold/30 text-gold hover:bg-gold/10">
-                  Criar Primeira Oferta
+                  Criar Produto
                 </Button>
               </Link>
             </div>
