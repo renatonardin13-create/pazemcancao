@@ -324,7 +324,30 @@ function IntegrationsPage() {
               </AccordionContent>
             </AccordionItem>
 
-            <AccordionItem value="cakto" className="border border-border/30 rounded-lg px-4">
+            <AccordionItem value="perfectpay" className="border border-border/30 rounded-lg px-4">
+              <AccordionTrigger className="hover:no-underline py-4">
+                <div className="flex items-center gap-3">
+                  <span className="h-2.5 w-2.5 rounded-full bg-red-500" />
+                  <span className="font-semibold text-foreground">PerfectPay</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pb-4">
+                <ol className="space-y-2.5 text-sm text-muted-foreground">
+                  <li>1. Acesse o <span className="font-bold text-foreground">Painel PerfectPay</span> → Meus Produtos</li>
+                  <li>2. Selecione seu produto → <span className="font-bold text-foreground">Postback (Webhook)</span></li>
+                  <li>3. Clique em <span className="font-bold text-foreground">Adicionar Novo</span></li>
+                  <li>4. Cole a URL do webhook do MemberHero</li>
+                  <li>5. Selecione os eventos: <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">sale_approved</code> e <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">billet_paid</code></li>
+                  <li>6. Salve a configuração</li>
+                </ol>
+                <div className="mt-4 rounded-lg bg-muted/10 border border-border/30 px-4 py-2.5">
+                  <p className="text-xs text-muted-foreground">
+                    <span className="font-semibold text-foreground/70">Dica:</span> O email virá no campo <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">customer_email</code>
+                  </p>
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+
               <AccordionTrigger className="hover:no-underline py-4">
                 <div className="flex items-center gap-3">
                   <span className="h-2.5 w-2.5 rounded-full bg-purple-500" />
