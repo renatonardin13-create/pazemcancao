@@ -40,7 +40,7 @@ const mainItems = [
 
 const contentGroups = [
   { title: "Louvores", url: "/admin/tracks", icon: Music, module: "louvores" as const },
-  { title: "Cursos", url: "/admin/courses", icon: GraduationCap, module: "cursos" as const },
+  { title: "Produtos", url: "/admin/courses", icon: GraduationCap, module: "cursos" as const },
   { title: "Trilhas", url: "/admin/journeys", icon: Compass, module: "trilhas" as const },
   { title: "Ebooks", url: "/admin/conteudos", icon: BookOpen, module: "ebooks" as const },
   { title: "Lançamentos", url: "/admin/hero-banners", icon: Sparkles, module: "lancamentos" as const },
