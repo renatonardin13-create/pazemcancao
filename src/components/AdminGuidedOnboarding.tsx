@@ -114,47 +114,56 @@ export function AdminGuidedOnboarding({ stats }: AdminGuidedOnboardingProps) {
   const progress = (completedCount / steps.length) * 100;
 
   return (
-    <div className="mb-8 space-y-6">
+    <div className="mb-10 space-y-6">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-foreground">Fluxo de Configuração</h2>
-          <p className="text-sm text-muted-foreground">Complete os passos lineares para ativar sua plataforma de vendas.</p>
+          <h2 className="text-xl font-bold text-foreground">Sua Jornada de Configuração</h2>
+          <p className="text-sm text-muted-foreground">Complete os passos para transformar sua área em um negócio lucrativo.</p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="flex-1 md:w-48 h-2 bg-secondary rounded-full overflow-hidden">
+          <div className="flex-1 md:w-64 h-2.5 bg-secondary/50 rounded-full overflow-hidden border border-border/10">
             <motion.div 
               initial={{ width: 0 }}
               animate={{ width: `${progress}%` }}
-              className="h-full bg-gold"
+              className="h-full bg-gradient-to-r from-gold/80 to-gold"
             />
           </div>
-          <span className="text-sm font-bold text-gold">{completedCount}/{steps.length} concluídos</span>
+          <span className="text-sm font-bold text-gold tabular-nums">{completedCount}/{steps.length} concluídos</span>
         </div>
       </div>
 
       {/* Destaque do próximo passo */}
       {!currentStep.completed && (
         <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="bg-gold/10 border border-gold/20 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative group overflow-hidden bg-gradient-to-br from-gold/15 via-gold/5 to-transparent border border-gold/25 rounded-[2rem] p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-2xl shadow-gold/5"
         >
-          <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-full bg-gold/20 flex items-center justify-center text-gold">
-              <currentStep.icon className="h-6 w-6" />
+          {/* Decorative background glow */}
+          <div className="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-gold/10 blur-[80px] group-hover:bg-gold/20 transition-all duration-700" />
+          
+          <div className="flex items-center gap-6 relative z-10">
+            <div className="h-16 w-16 rounded-2xl bg-gold/20 flex items-center justify-center text-gold border border-gold/30 shadow-inner group-hover:scale-110 transition-transform duration-500">
+              <currentStep.icon className="h-8 w-8" />
             </div>
-            <div>
-              <p className="text-xs font-bold text-gold uppercase tracking-wider">Próximo Passo</p>
-              <h3 className="text-lg font-bold text-foreground">{currentStep.title}</h3>
-              <p className="text-sm text-muted-foreground">{currentStep.description}</p>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="px-2 py-0.5 rounded-md bg-gold text-[10px] font-black text-black uppercase tracking-tighter animate-pulse">
+                  Próxima Ação
+                </span>
+              </div>
+              <h3 className="text-2xl font-black text-foreground tracking-tight">{currentStep.title}</h3>
+              <p className="text-base text-muted-foreground/80 font-medium max-w-md leading-relaxed">
+                {currentStep.description}
+              </p>
             </div>
           </div>
           <Link
             to={currentStep.path}
-            className="w-full md:w-auto px-6 h-12 rounded-xl bg-gold text-black font-bold flex items-center justify-center gap-2 hover:scale-105 transition-all shadow-lg shadow-gold/20"
+            className="w-full md:w-auto px-10 h-14 rounded-2xl bg-gold text-black font-black text-lg flex items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-xl shadow-gold/30 hover:shadow-gold/40 relative z-10"
           >
             {currentStep.nextStepLabel}
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-6 w-6 group-hover:translate-x-1 transition-transform" />
           </Link>
         </motion.div>
       )}
