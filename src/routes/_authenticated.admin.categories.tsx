@@ -232,7 +232,7 @@ function AdminCategoriesPage() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display text-base font-semibold text-foreground/85 flex items-center gap-2">
               <FolderOpen className="h-4 w-4 text-gold/60" />
-              Categorias
+              Seções
             </h2>
             <Button
               onClick={() => { setShowCatForm(true); setNewCat({ name: "", slug: "", description: "", icon: "", color: PICKER_COLORS[0] }); }}
@@ -240,7 +240,7 @@ function AdminCategoriesPage() {
               size="sm"
             >
               <Plus className="h-3.5 w-3.5" />
-              Nova Categoria
+              Nova Seção
             </Button>
           </div>
 
