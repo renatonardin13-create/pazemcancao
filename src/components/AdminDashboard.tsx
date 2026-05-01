@@ -75,7 +75,7 @@ export function AdminDashboard() {
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       {/* Header bar */}
-      <div className="relative rounded-[2rem] border border-gold/10 bg-gradient-to-br from-card via-card/80 to-card/50 backdrop-blur-xl p-6 sm:p-8 overflow-hidden shadow-2xl shadow-black/20">
+      <div className="relative rounded-[2.5rem] border border-gold/15 bg-gradient-to-br from-card via-card/90 to-card/60 backdrop-blur-2xl p-8 sm:p-12 overflow-hidden shadow-premium">
         {/* Decorative elements */}
         <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-gold/10 blur-[100px] animate-pulse" />
         <div className="pointer-events-none absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-gold/5 blur-[80px]" />
