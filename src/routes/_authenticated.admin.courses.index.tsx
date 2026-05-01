@@ -170,13 +170,21 @@ function AdminCoursesPage() {
         </div>
       </div>
 
-      {/* Table */}
-      {isLoading ? (
+      {/* Content */}
+      {isLoading || catLoading ? (
         <div className="text-center py-16">
           <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
             Carregando...
           </p>
         </div>
+      ) : categories.length === 0 ? (
+        <EmptyState
+          icon={FolderOpen}
+          title="Nenhum conteúdo criado ainda"
+          description="Para vender, você precisa primeiro criar uma seção. Seções organizam seus conteúdos (ex: Módulo 1, Bônus, Aulas)"
+          actionLabel="Criar primeira seção"
+          actionTo="/admin/categories"
+        />
       ) : filtered.length === 0 ? (
         <div className="text-center py-20 rounded-2xl border border-border/30 bg-card shadow-lg shadow-black/10">
           <Video className="h-10 w-10 text-gold/45 mx-auto mb-4" />
