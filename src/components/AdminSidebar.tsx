@@ -231,11 +231,39 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Configurações */}
+        {/* Integrações */}
         <SidebarGroup className="py-1">
           {!collapsed && (
             <SidebarGroupLabel className={groupLabelClass}>
-              Configurações
+              Integrações
+            </SidebarGroupLabel>
+          )}
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {integrationItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive(item.url)}
+                    tooltip={item.title}
+                    className="h-10 transition-all duration-200"
+                  >
+                    <Link to={item.url}>
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Sistema */}
+        <SidebarGroup className="py-1">
+          {!collapsed && (
+            <SidebarGroupLabel className={groupLabelClass}>
+              Sistema
             </SidebarGroupLabel>
           )}
           <SidebarGroupContent>
