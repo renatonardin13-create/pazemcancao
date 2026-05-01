@@ -347,7 +347,7 @@ function IntegrationsPage() {
                 </div>
               </AccordionContent>
             </AccordionItem>
-
+            <AccordionItem value="cakto" className="border border-border/30 rounded-lg px-4">
               <AccordionTrigger className="hover:no-underline py-4">
                 <div className="flex items-center gap-3">
                   <span className="h-2.5 w-2.5 rounded-full bg-purple-500" />
