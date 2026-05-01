@@ -125,8 +125,13 @@ export function AdminSidebar() {
           )}
         </div>
 
-        {/* Dashboard & Users */}
+        {/* Visão Geral */}
         <SidebarGroup className="py-1">
+          {!collapsed && (
+            <SidebarGroupLabel className={groupLabelClass}>
+              Visão Geral
+            </SidebarGroupLabel>
+          )}
           <SidebarGroupContent>
             <SidebarMenu>
               {mainItems.map((item) => (
