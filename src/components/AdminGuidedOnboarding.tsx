@@ -51,24 +51,28 @@ export function AdminGuidedOnboarding({ stats }: AdminGuidedOnboardingProps) {
     {
       id: "product",
       title: "3. Criar produto",
-      description: "Adicione seu curso ou conteúdo principal.",
+      description: stats.totalAreas > 0 && stats.totalCourses === 0 
+        ? "Você já criou sua área. Agora adicione seu primeiro produto."
+        : "Adicione seu curso ou conteúdo principal.",
       icon: Box,
       path: "/admin/courses/new",
       completed: stats.totalCourses > 0,
       blocked: stats.totalCategories === 0,
       blockingMessage: "Crie pelo menos uma seção primeiro.",
-      nextStepLabel: "Adicionar curso"
+      nextStepLabel: "Criar produto"
     },
     {
       id: "offer",
       title: "4. Criar oferta",
-      description: "Configure o preço e acesso do seu produto.",
+      description: stats.totalCourses > 0 
+        ? "Seu produto está pronto. Agora conecte o pagamento para vender."
+        : "Configure o preço e acesso do seu produto.",
       icon: ShoppingCart,
       path: "/admin/courses",
-      completed: stats.totalCourses > 0, // Simplified: if product exists, assume offer config
+      completed: stats.gatewayConfigured, // Link completion to gateway for "offer" logic if that's the goal
       blocked: stats.totalCourses === 0,
       blockingMessage: "Crie um produto primeiro.",
-      nextStepLabel: "Configurar vendas"
+      nextStepLabel: "Criar oferta"
     },
     {
       id: "gateway",
