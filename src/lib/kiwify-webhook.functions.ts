@@ -352,9 +352,9 @@ export async function handleKiwifyWebhook(request: Request): Promise<Response> {
   // ACTION: expire   → marca acesso como expirado (enrollment expired, access_enabled=false)
   //   Statuses: expired, expirado, expiracao, subscription_expired
 
-  const approvedStatuses = ['paid', 'approved', 'completed', 'compra_aprovada', 'subscription_renewed', 'subscription_renew', 'renewed'];
-  const pendingStatuses = ['pending', 'waiting_payment', 'pagamento_pendente', 'waiting', 'billet_printed'];
-  const revokeStatuses = ['refunded', 'chargedback', 'chargeback', 'cancelled', 'compra_cancelada', 'reembolso', 'dispute'];
+  const approvedStatuses = ['paid', 'approved', 'completed', 'compra_aprovada', 'sale_approved', 'billet_paid', 'subscription_renewed', 'subscription_renew', 'renewed'];
+  const pendingStatuses = ['pending', 'waiting_payment', 'pagamento_pendente', 'waiting', 'billet_printed', 'sale_pending'];
+  const revokeStatuses = ['refunded', 'chargedback', 'chargeback', 'cancelled', 'compra_cancelada', 'reembolso', 'dispute', 'sale_refunded', 'sale_chargeback'];
   const expiredStatuses = ['expired', 'expirado', 'expiracao', 'subscription_expired', 'subscription_canceled', 'subscription_cancelled', 'subscription_late'];
   const testStatuses = ['test', 'webhook_test', 'kiwify_test'];
 
