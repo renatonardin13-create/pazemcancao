@@ -92,7 +92,7 @@ export function AdminDashboard() {
               <p className="text-base sm:text-lg text-muted-foreground/70 leading-relaxed">
                 Sua plataforma está em pleno crescimento. Veja o que aconteceu nas últimas <span className="text-foreground font-bold">{days} dias</span>.
               </p>
-              {data?.totalAreas > 0 && (
+              {(data?.totalAreas ?? 0) > 0 && (
                 <Link
                   to="/home"
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-background/40 border border-gold/20 text-xs font-bold text-gold hover:bg-gold/10 transition-all group"
