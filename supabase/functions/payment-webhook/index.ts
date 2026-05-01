@@ -16,7 +16,7 @@ serve(async (req) => {
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
   )
 
-  let logEntry: any = null
+  let logId: string | null = null
 
   try {
     const url = new URL(req.url)
@@ -34,7 +34,6 @@ serve(async (req) => {
           body[key] = value
         })
       } catch (e) {
-        // Fallback if not form data
         const text = await req.text()
         body = { raw: text }
       }
@@ -42,114 +41,165 @@ serve(async (req) => {
     
     console.log(`Received webhook from ${provider}:`, body)
 
-    // 1. Initial Logging
-    const { data: log, error: logError } = await supabaseAdmin
-      .from('webhook_logs')
-      .insert({
-        provider,
-        payload: body,
-        event_type: body.sale_status || body.event || body.order_status || 'webhook_received',
-        response_status: 200,
-        email: body.customer_email || body.email || body.customer?.email,
-        external_product_id: body.product_id || body.product?.id
-      })
-      .select()
-      .single()
-
-    logEntry = log
-    if (logError) console.error('Error logging webhook:', logError)
-
-    // 2. Identify Product and Validate Token
+    // Extract common fields based on provider
     let externalProductId = ''
+    let uniqueEventId = ''
+    let saleStatus = ''
     let receivedToken = ''
-    let isApproved = false
     let customerEmail = ''
     let customerName = ''
 
     if (provider === 'perfectpay') {
       externalProductId = body.product_id
+      uniqueEventId = body.sale_id
+      saleStatus = body.sale_status
       receivedToken = body.token
-      isApproved = body.sale_status === 'approved'
       customerEmail = body.customer_email
       customerName = body.customer_name
     } else if (provider === 'kiwify') {
       externalProductId = body.product_id
-      receivedToken = url.searchParams.get('token') || body.token
-      isApproved = body.order_status === 'paid' || body.status === 'paid'
+      uniqueEventId = body.order_id || body.sale_id
+      saleStatus = body.order_status || body.status
+      receivedToken = url.searchParams.get('token') || body.token || body.signature
       customerEmail = body.customer?.email || body.email
       customerName = body.customer?.name || body.name
     }
 
-    if (!externalProductId) {
-      throw new Error('Missing external_product_id')
+    // 1. Initial Logging in webhook_logs
+    const { data: log, error: logError } = await supabaseAdmin
+      .from('webhook_logs')
+      .insert({
+        provider,
+        payload: body,
+        event_type: saleStatus || 'webhook_received',
+        email: customerEmail,
+        external_product_id: externalProductId,
+        order_id: uniqueEventId
+      })
+      .select()
+      .single()
+
+    if (logError) console.error('Error logging webhook:', logError)
+    logId = log?.id
+
+    // 2. Validate mandatory fields
+    if (!externalProductId || !uniqueEventId) {
+      const msg = !externalProductId ? 'Missing product_id' : 'Missing unique event ID (sale_id/order_id)'
+      await updateLog(logId, 400, msg)
+      return new Response(JSON.stringify({ error: msg }), { status: 400 })
     }
 
-    // Find the offer config
+    // 3. Duplicate Check: "Pagamento duplicado -> ignorar"
+    const { data: existingProcess, error: checkError } = await supabaseAdmin
+      .from('processed_webhooks')
+      .select('id, status')
+      .eq('unique_event_id', uniqueEventId)
+      .eq('provider', provider)
+      .maybeSingle()
+
+    if (existingProcess && existingProcess.status === 'completed') {
+      console.log(`Duplicate event ${uniqueEventId} already processed. Ignoring.`)
+      await updateLog(logId, 200, 'Duplicate event already processed. Ignored.', true)
+      return new Response(JSON.stringify({ success: true, message: 'Already processed' }), { status: 200 })
+    }
+
+    // 4. Identify Offer and Validate Token: "Identificar oferta pelo ID do gateway" & "Validar token"
     const { data: offer, error: offerError } = await supabaseAdmin
       .from('course_integrations')
-      .select('course_id, integration_token, is_enabled')
+      .select('*, courses(area_id)')
       .eq('external_product_id', externalProductId)
       .eq('platform', provider)
       .eq('is_enabled', true)
       .maybeSingle()
 
     if (offerError || !offer) {
-      await updateLog(logEntry?.id, 404, `Offer not found for product ${externalProductId} on ${provider}`)
-      return new Response(JSON.stringify({ error: 'Offer not found' }), { status: 404 })
+      const msg = `Offer not found for product ${externalProductId} on ${provider}`
+      console.error(msg)
+      await updateLog(logId, 404, msg)
+      // "Produto inexistente -> log de erro"
+      return new Response(JSON.stringify({ error: 'Product/Offer not found' }), { status: 404 })
     }
 
-    // 3. Security Check: Validate Token
+    // "Token inválido -> bloquear"
     if (offer.integration_token && offer.integration_token !== receivedToken) {
-      await updateLog(logEntry?.id, 401, 'Invalid authentication token')
+      const msg = 'Invalid authentication token'
+      console.error(msg)
+      await updateLog(logId, 401, msg)
       return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 })
     }
 
-    // 4. Action: Grant Access if Approved
-    if (isApproved && customerEmail) {
-      console.log(`Processing approval for ${customerEmail} - Course: ${offer.course_id}`)
-      
-      const { data: { users } } = await supabaseAdmin.auth.admin.listUsers()
-      let user = users.find(u => u.email?.toLowerCase() === customerEmail.toLowerCase())
-      let userId = user?.id
+    // 5. Verify status: "Verificar status do pagamento"
+    const isApproved = (provider === 'perfectpay' && saleStatus === 'approved') || 
+                       (provider === 'kiwify' && (saleStatus === 'paid' || saleStatus === 'approved'))
 
-      if (!userId) {
-        const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
-          email: customerEmail,
-          email_confirm: true,
-          user_metadata: { full_name: customerName },
-          password: Math.random().toString(36).slice(-12)
-        })
-        
-        if (createError) {
-          if (createError.message.includes('already registered')) {
-            const { data: { users: retryUsers } } = await supabaseAdmin.auth.admin.listUsers()
-            userId = retryUsers.find(u => u.email?.toLowerCase() === customerEmail.toLowerCase())?.id
-          } else {
-            throw createError
-          }
-        } else {
-          userId = newUser.user?.id
-        }
-      }
-
-      if (userId) {
-        const { error: enrollError } = await supabaseAdmin
-          .from('enrollments')
-          .upsert({
-            user_id: userId,
-            course_id: offer.course_id,
-            status: 'active',
-            email: customerEmail,
-            access_origin: 'webhook',
-            granted_at: new Date().toISOString()
-          }, { onConflict: 'user_id, course_id' })
-
-        if (enrollError) throw enrollError
-        await updateLog(logEntry?.id, 200, 'Access granted successfully', true)
-      }
-    } else {
-      await updateLog(logEntry?.id, 200, `Webhook received but not processed (Status: ${body.sale_status || body.order_status || 'unknown'})`)
+    if (!isApproved) {
+      const msg = `Payment not approved (Status: ${saleStatus})`
+      console.log(msg)
+      await updateLog(logId, 200, msg)
+      return new Response(JSON.stringify({ success: true, message: msg }), { status: 200 })
     }
+
+    // 6. Action: "Liberar acesso ao produto vinculado"
+    console.log(`Processing approval for ${customerEmail} - Product ID: ${offer.course_id}`)
+    
+    // Find or Create User
+    const { data: { users }, error: listError } = await supabaseAdmin.auth.admin.listUsers()
+    if (listError) throw listError
+
+    let user = users.find(u => u.email?.toLowerCase() === customerEmail.toLowerCase())
+    let userId = user?.id
+
+    if (!userId) {
+      const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
+        email: customerEmail,
+        email_confirm: true,
+        user_metadata: { full_name: customerName },
+        password: Math.random().toString(36).slice(-12)
+      })
+      
+      if (createError) {
+        if (createError.message.includes('already registered')) {
+          // Double check if user exists (race condition)
+          const { data: { users: retryUsers } } = await supabaseAdmin.auth.admin.listUsers()
+          userId = retryUsers.find(u => u.email?.toLowerCase() === customerEmail.toLowerCase())?.id
+        } else {
+          throw createError
+        }
+      } else {
+        userId = newUser.user?.id
+      }
+    }
+
+    if (!userId) throw new Error('Could not create or find user')
+
+    // "Associar usuário ao produto" & "Garantir que ele veja na área de membros"
+    const { error: enrollError } = await supabaseAdmin
+      .from('enrollments')
+      .upsert({
+        user_id: userId,
+        course_id: offer.course_id,
+        area_id: offer.courses?.area_id, // Ensure visibility in the specific area
+        status: 'active',
+        email: customerEmail,
+        access_origin: 'webhook',
+        granted_at: new Date().toISOString()
+      }, { onConflict: 'user_id, course_id' })
+
+    if (enrollError) throw enrollError
+
+    // Mark as processed
+    await supabaseAdmin
+      .from('processed_webhooks')
+      .insert({
+        unique_event_id: uniqueEventId,
+        provider,
+        email: customerEmail,
+        event_type: saleStatus,
+        status: 'completed',
+        payload: body
+      })
+
+    await updateLog(logId, 200, 'Access granted successfully', true)
 
     return new Response(JSON.stringify({ success: true }), { 
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -158,8 +208,8 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Webhook processing error:', error)
-    if (logEntry?.id) {
-      await updateLog(logEntry.id, 500, error.message)
+    if (logId) {
+      await updateLog(logId, 500, error.message)
     }
     return new Response(JSON.stringify({ error: error.message }), { 
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -167,7 +217,7 @@ serve(async (req) => {
     })
   }
 
-  async function updateLog(id: string | undefined, status: number, message: string, success: boolean = false) {
+  async function updateLog(id: string | null, status: number, message: string, success: boolean = false) {
     if (!id) return
     await supabaseAdmin
       .from('webhook_logs')
