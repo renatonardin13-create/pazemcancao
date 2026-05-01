@@ -40,24 +40,21 @@ const mainItems = [
 
 const contentGroups = [
   { title: "Louvores", url: "/admin/tracks", icon: Music, module: "louvores" as const },
+  { title: "Cursos", url: "/admin/courses", icon: GraduationCap, module: "cursos" as const },
   { title: "Trilhas", url: "/admin/journeys", icon: Compass, module: "trilhas" as const },
   { title: "Ebooks", url: "/admin/conteudos", icon: BookOpen, module: "ebooks" as const },
   { title: "Lançamentos", url: "/admin/hero-banners", icon: Sparkles, module: "lancamentos" as const },
-  { title: "Cursos", url: "/admin/courses", icon: GraduationCap, module: "cursos" as const },
+  { title: "Comunidade", url: "/comunidade", icon: Users, module: "comunidade" as const },
 ];
 
 const salesItems = [
-  { title: "Planos", url: "/admin/vendas", icon: CreditCard },
-  { title: "Cupons", url: "/admin/coupons", icon: Tag },
   { title: "Transações", url: "/admin/transactions", icon: Receipt },
-];
-
-const integrationItems = [
-  { title: "Webhooks", url: "/admin/integrations", icon: Shield },
-  { title: "Templates", url: "/admin/settings", icon: Settings },
+  { title: "Vendas", url: "/admin/vendas", icon: CreditCard },
+  { title: "Cupons", url: "/admin/coupons", icon: Tag },
 ];
 
 const systemItems = [
+  { title: "Webhooks", url: "/admin/integrations", icon: Shield },
   { title: "Configurações", url: "/admin/settings", icon: Settings },
   { title: "Sair", url: "/login", icon: LogOut },
 ];
@@ -109,11 +106,11 @@ export function AdminSidebar() {
           )}
         </div>
 
-        {/* Visão Geral */}
+        {/* Gestão */}
         <SidebarGroup className="py-1">
           {!collapsed && (
             <SidebarGroupLabel className={groupLabelClass}>
-              Visão Geral
+              Gestão
             </SidebarGroupLabel>
           )}
           <SidebarGroupContent>
@@ -167,44 +164,16 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Vendas */}
+        {/* Financeiro */}
         <SidebarGroup className="py-1">
           {!collapsed && (
             <SidebarGroupLabel className={groupLabelClass}>
-              Vendas
+              Financeiro
             </SidebarGroupLabel>
           )}
           <SidebarGroupContent>
             <SidebarMenu>
               {salesItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive(item.url)}
-                    tooltip={item.title}
-                    className="h-10 transition-all duration-200"
-                  >
-                    <Link to={item.url}>
-                      <item.icon className="h-4 w-4 shrink-0" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Integrações */}
-        <SidebarGroup className="py-1">
-          {!collapsed && (
-            <SidebarGroupLabel className={groupLabelClass}>
-              Integrações
-            </SidebarGroupLabel>
-          )}
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {integrationItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
