@@ -68,8 +68,8 @@ export function AdminGuidedOnboarding({ stats }: AdminGuidedOnboardingProps) {
         ? "Seu produto está pronto. Agora conecte o pagamento para vender."
         : "Configure o preço e acesso do seu produto.",
       icon: ShoppingCart,
-      path: "/admin/courses",
-      completed: stats.gatewayConfigured, // Link completion to gateway for "offer" logic if that's the goal
+      path: "/admin/offers",
+      completed: stats.gatewayConfigured, // stats.gatewayConfigured is (totalIntegrations > 0)
       blocked: stats.totalCourses === 0,
       blockingMessage: "Crie um produto primeiro.",
       nextStepLabel: "Criar oferta"
