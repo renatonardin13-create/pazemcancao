@@ -6,24 +6,24 @@ import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 active:scale-[0.97] relative overflow-hidden",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 active:scale-[0.98] relative overflow-hidden",
   {
     variants: {
       variant: {
         default:
           "bg-primary text-primary-foreground shadow-lg shadow-primary/15 hover:brightness-110 hover:shadow-xl hover:shadow-primary/20",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
+          "bg-destructive text-destructive-foreground shadow-sm hover:brightness-110 hover:bg-destructive/90",
         outline:
-          "border border-border/50 bg-card/30 backdrop-blur-sm shadow-sm hover:bg-card/60 hover:border-gold/20 hover:text-foreground",
+          "border border-border/50 bg-card/30 backdrop-blur-sm shadow-sm hover:bg-card/60 hover:border-gold/20 hover:text-foreground hover:brightness-110",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        ghost: "hover:bg-muted/30 hover:text-foreground",
+          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 hover:brightness-110",
+        ghost: "hover:bg-muted/30 hover:text-foreground hover:brightness-110",
         link: "text-primary underline-offset-4 hover:underline",
         premium:
-          "bg-gradient-to-r from-gold/90 to-gold/70 text-background font-bold tracking-wide shadow-lg shadow-gold/15 hover:from-gold hover:to-gold/80 hover:shadow-xl hover:shadow-gold/25 border border-gold/30",
+          "bg-gradient-to-r from-gold/90 to-gold/70 text-background font-bold tracking-wide shadow-lg shadow-gold/15 hover:from-gold hover:to-gold/80 hover:shadow-xl hover:shadow-gold/25 border border-gold/30 hover:brightness-110",
         premiumOutline:
-          "border border-gold/30 bg-card/40 backdrop-blur-sm text-gold/90 font-semibold tracking-wide hover:bg-gold/10 hover:border-gold/50 hover:text-gold",
+          "border border-gold/30 bg-card/40 backdrop-blur-sm text-gold/90 font-semibold tracking-wide hover:bg-gold/10 hover:border-gold/50 hover:text-gold hover:brightness-110",
       },
       size: {
         default: "h-10 px-5 py-2",
