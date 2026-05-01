@@ -409,17 +409,15 @@ function ProfilePage() {
 
                     <ConfirmationDialog
                       isOpen={isDeleteDialogOpen}
-                      onClose={() => setIsDeleteDialogOpen(false)}
+                      onOpenChange={setIsDeleteDialogOpen}
                       onConfirm={() => {
-                        setIsDeleteDialogOpen(false);
                         deleteAccountMutation.mutate();
                       }}
                       title="Excluir conta permanentemente?"
                       description="Esta ação é irreversível. Você perderá acesso a todos os seus cursos e seu progresso será apagado de acordo com a LGPD."
-                      confirmText="Sim, excluir conta"
+                      confirmText={deleteAccountMutation.isPending ? "Excluindo..." : "Sim, excluir conta"}
                       cancelText="Cancelar"
                       variant="destructive"
-                      isLoading={deleteAccountMutation.isPending}
                     />
                   </motion.section>
                 </div>
