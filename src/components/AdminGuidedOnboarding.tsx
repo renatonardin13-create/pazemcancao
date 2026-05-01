@@ -73,7 +73,7 @@ export function AdminGuidedOnboarding({ stats }: AdminGuidedOnboardingProps) {
     {
       id: "gateway",
       title: "5. Configurar gateway",
-      description: "Conecte com Hotmart, Kiwify ou Cakto.",
+      description: "Conecte com Hotmart, Kiwify, PerfectPay ou Cakto.",
       icon: Settings,
       path: "/admin/integrations",
       completed: stats.gatewayConfigured,
