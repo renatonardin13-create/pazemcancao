@@ -2,6 +2,9 @@ import { toastError } from "@/lib/toast-utils";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { listAdminCourses, deleteCourse, updateCourse } from "@/lib/admin-courses.functions";
+import { listAdminCategories } from "@/lib/admin-categories.functions";
+import { EmptyState } from "@/components/EmptyState";
+import { FolderOpen } from "lucide-react";
 import { useState, useMemo } from "react";
 import { StatusBadge } from "@/components/StatusBadge";
 import {
@@ -62,6 +65,13 @@ function AdminCoursesPage() {
     queryFn: () => listAdminCourses(),
   });
 
+  const { data: catData, isLoading: catLoading } = useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: () => listAdminCategories(),
+  });
+
+  const categories = catData?.categories || [];
+
   const deleteM = useMutation({
     mutationFn: (id: string) => deleteCourse({ data: { id } }),
     onSuccess: () => {
@@ -113,10 +123,10 @@ function AdminCoursesPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative z-10">
           <div>
             <h1 className="font-display text-2xl font-black text-foreground tracking-tight">
-              Cursos
+              Produtos
             </h1>
             <p className="text-xs text-muted-foreground/50 mt-0.5">
-              Gerencie seu catálogo e conteúdo de cursos.
+              Gerencie seu catálogo de produtos e conteúdos.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5">
@@ -153,33 +163,41 @@ function AdminCoursesPage() {
             <Button asChild className="h-10 px-5 rounded-xl bg-gradient-to-r from-gold to-gold/85 text-background font-bold hover:shadow-lg hover:shadow-gold/20 transition-all">
               <Link to="/admin/courses/new">
                 <Plus className="h-4 w-4 mr-1.5" />
-                Novo Curso
+                Novo Produto
               </Link>
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Table */}
-      {isLoading ? (
+      {/* Content */}
+      {isLoading || catLoading ? (
         <div className="text-center py-16">
           <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
             Carregando...
           </p>
         </div>
+      ) : categories.length === 0 ? (
+        <EmptyState
+          icon={FolderOpen}
+          title="Nenhum conteúdo criado ainda"
+          description="Para vender, você precisa primeiro criar uma seção. Seções organizam seus conteúdos (ex: Módulo 1, Bônus, Aulas)"
+          actionLabel="Criar primeira seção"
+          actionTo="/admin/categories"
+        />
       ) : filtered.length === 0 ? (
         <div className="text-center py-20 rounded-2xl border border-border/30 bg-card shadow-lg shadow-black/10">
           <Video className="h-10 w-10 text-gold/45 mx-auto mb-4" />
           <p className="text-sm text-muted-foreground/50 font-medium">
             {allCourses.length === 0
-              ? "Nenhum curso cadastrado ainda."
+              ? "Nenhum produto cadastrado ainda."
               : "Nenhum curso encontrado com esses filtros."}
           </p>
           {allCourses.length === 0 && (
             <Button asChild size="sm" className="mt-4">
               <Link to="/admin/courses/new">
                 <Plus className="h-4 w-4 mr-1" />
-                Criar primeiro curso
+                Criar primeiro produto
               </Link>
             </Button>
           )}
@@ -193,7 +211,7 @@ function AdminCoursesPage() {
                   Capa
                 </TableHead>
                 <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/60">
-                  Nome do Curso
+                  Nome do Produto
                 </TableHead>
                 <TableHead className="hidden sm:table-cell text-xs uppercase tracking-widest text-muted-foreground/60 w-[90px]">
                   Tipo
@@ -302,7 +320,7 @@ function AdminCoursesPage() {
                             className="flex items-center gap-2"
                           >
                             <Pencil className="h-3.5 w-3.5" />
-                            Gerenciar Curso
+                            Gerenciar Produto
                           </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem
@@ -329,7 +347,7 @@ function AdminCoursesPage() {
                           onClick={() => {
                             if (
                               confirm(
-                                "Tem certeza que deseja excluir este curso?"
+                                "Tem certeza que deseja excluir este produto?"
                               )
                             ) {
                               deleteM.mutate(course.id);

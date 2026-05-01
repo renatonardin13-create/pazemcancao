@@ -72,7 +72,7 @@ function AdminCategoriesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
       invalidateStudentCaches();
-      toast.success("Categoria criada");
+      toast.success("Seção criada com sucesso");
       setShowCatForm(false);
       setNewCat({ name: "", slug: "", description: "", icon: "", color: PICKER_COLORS[0] });
     },
@@ -85,7 +85,7 @@ function AdminCategoriesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
       invalidateStudentCaches();
-      toast.success("Categoria atualizada");
+      toast.success("Seção atualizada");
       setEditingCat(null);
     },
     onError: (err: any) => toastError(err),
@@ -96,7 +96,7 @@ function AdminCategoriesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
       invalidateStudentCaches();
-      toast.success("Categoria removida");
+      toast.success("Seção removida");
     },
     onError: (err: any) => toastError(err),
   });
@@ -217,10 +217,10 @@ function AdminCategoriesPage() {
         <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gold/[0.05] blur-[60px]" />
         <div className="relative z-10">
           <h1 className="font-display text-2xl font-black text-foreground tracking-tight">
-            Categorias e Tags
+            Seções e Tags
           </h1>
           <p className="text-xs text-muted-foreground/50 mt-0.5">
-            Organize seus cursos com categorias e tags personalizadas
+            Organize seus cursos com seções e tags personalizadas
           </p>
         </div>
       </div>
@@ -232,7 +232,7 @@ function AdminCategoriesPage() {
           <div className="flex items-center justify-between mb-4">
             <h2 className="font-display text-base font-semibold text-foreground/85 flex items-center gap-2">
               <FolderOpen className="h-4 w-4 text-gold/60" />
-              Categorias
+              Seções
             </h2>
             <Button
               onClick={() => { setShowCatForm(true); setNewCat({ name: "", slug: "", description: "", icon: "", color: PICKER_COLORS[0] }); }}
@@ -240,7 +240,7 @@ function AdminCategoriesPage() {
               size="sm"
             >
               <Plus className="h-3.5 w-3.5" />
-              Nova Categoria
+              Nova Seção
             </Button>
           </div>
 
@@ -249,8 +249,10 @@ function AdminCategoriesPage() {
           ) : !categories.length ? (
             <EmptyState
               icon={FolderOpen}
-              title="Nenhuma categoria cadastrada"
-              description="Crie categorias para organizar seus conteúdos e músicas."
+              title="Nenhum conteúdo criado ainda"
+              description="Para vender, você precisa primeiro criar uma seção. Seções organizam seus conteúdos (ex: Módulo 1, Bônus, Aulas)"
+              actionLabel="Criar primeira seção"
+              onAction={() => setShowCatForm(true)}
               compact
             />
           ) : (
@@ -267,7 +269,7 @@ function AdminCategoriesPage() {
                     <button onClick={() => startEditCat(cat)} className="p-1.5 text-muted-foreground hover:text-gold transition-colors rounded-lg hover:bg-muted/10" title="Editar">
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
-                    <button onClick={() => { if (confirm("Remover esta categoria?")) deleteCatMutation.mutate(cat.id); }} className="p-1.5 text-muted-foreground/60 hover:text-destructive/60 transition-colors rounded-lg hover:bg-muted/10" title="Remover">
+                    <button onClick={() => { if (confirm("Remover esta seção?")) deleteCatMutation.mutate(cat.id); }} className="p-1.5 text-muted-foreground/60 hover:text-destructive/60 transition-colors rounded-lg hover:bg-muted/10" title="Remover">
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
@@ -331,7 +333,7 @@ function AdminCategoriesPage() {
       <Dialog open={showCatForm} onOpenChange={setShowCatForm}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="font-display">Nova Categoria</DialogTitle>
+            <DialogTitle className="font-display">Nova Seção</DialogTitle>
           </DialogHeader>
           <form
             onSubmit={(e) => {
@@ -352,7 +354,7 @@ function AdminCategoriesPage() {
             </div>
             <div className="space-y-2">
               <Label>Descrição (opcional)</Label>
-              <Textarea value={newCat.description} onChange={(e) => setNewCat((p) => ({ ...p, description: e.target.value }))} placeholder="Breve descrição da categoria" rows={3} className="resize-none" />
+              <Textarea value={newCat.description} onChange={(e) => setNewCat((p) => ({ ...p, description: e.target.value }))} placeholder="Breve descrição da seção" rows={3} className="resize-none" />
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setShowCatForm(false)}>Cancelar</Button>
@@ -368,7 +370,7 @@ function AdminCategoriesPage() {
       <Dialog open={!!editingCat} onOpenChange={(v) => { if (!v) setEditingCat(null); }}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle className="font-display">Editar Categoria</DialogTitle>
+            <DialogTitle className="font-display">Editar Seção</DialogTitle>
           </DialogHeader>
           <form
             onSubmit={(e) => {
@@ -389,7 +391,7 @@ function AdminCategoriesPage() {
             </div>
             <div className="space-y-2">
               <Label>Descrição (opcional)</Label>
-              <Textarea value={editCatValues.description} onChange={(e) => setEditCatValues((p) => ({ ...p, description: e.target.value }))} placeholder="Breve descrição da categoria" rows={3} className="resize-none" />
+              <Textarea value={editCatValues.description} onChange={(e) => setEditCatValues((p) => ({ ...p, description: e.target.value }))} placeholder="Breve descrição da seção" rows={3} className="resize-none" />
             </div>
             <div className="flex gap-3 pt-2">
               <Button type="button" variant="outline" className="flex-1" onClick={() => setEditingCat(null)}>Cancelar</Button>
