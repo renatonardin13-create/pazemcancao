@@ -80,7 +80,7 @@ export function AdminEmptyStateOnboarding() {
           className="pt-8"
         >
           <Link
-            to="/admin/settings"
+            to="/admin/areas/new"
             className="group relative inline-flex items-center justify-center h-16 px-10 rounded-2xl bg-gold text-black font-black text-lg hover:shadow-2xl hover:shadow-gold/30 hover:scale-105 active:scale-95 transition-all duration-300"
           >
             Começar agora
