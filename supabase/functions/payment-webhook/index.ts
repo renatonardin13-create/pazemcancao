@@ -158,6 +158,9 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Webhook processing error:', error)
+    if (typeof logEntry !== 'undefined' && logEntry?.id) {
+      await updateLog(logEntry.id, 500, error.message)
+    }
     return new Response(JSON.stringify({ error: error.message }), { 
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500 
