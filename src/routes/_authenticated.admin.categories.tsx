@@ -72,7 +72,7 @@ function AdminCategoriesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
       invalidateStudentCaches();
-      toast.success("Categoria criada");
+      toast.success("Seção criada com sucesso");
       setShowCatForm(false);
       setNewCat({ name: "", slug: "", description: "", icon: "", color: PICKER_COLORS[0] });
     },
