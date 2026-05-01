@@ -123,7 +123,7 @@ function AdminCoursesPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 relative z-10">
           <div>
             <h1 className="font-display text-2xl font-black text-foreground tracking-tight">
-              Cursos
+              Produtos
             </h1>
             <p className="text-xs text-muted-foreground/50 mt-0.5">
               Gerencie seu catálogo e conteúdo de cursos.
