@@ -2,7 +2,7 @@ import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useQuery } from "@tanstack/react-query";
 import { listActiveTracks } from "@/lib/tracks.functions";
-// useArea removed
+import { listCategories } from "@/lib/courses.functions";
 import { useProjectMode } from "@/hooks/use-project-mode";
 import { LogoBrand } from "./LogoBrand";
 import {
@@ -26,13 +26,10 @@ import { cn } from "@/lib/utils";
 /** Static lookup: slug → icon, route, prefix-match, submenu flag */
 const SLUG_META: Record<string, { icon: LucideIcon; to: string; matchPrefix?: boolean; hasSubmenu?: boolean }> = {
   vitrine:     { icon: Store,          to: "/home" },
-  cursos:      { icon: GraduationCap,  to: "/cursos",      matchPrefix: true },
+  cursos:      { icon: GraduationCap,  to: "/cursos",      matchPrefix: true, hasSubmenu: true },
   louvores:    { icon: Music2,         to: "/musicas",     matchPrefix: true, hasSubmenu: true },
   ebooks:      { icon: BookOpen,       to: "/ebooks" },
   trilhas:     { icon: RouteIcon,      to: "/trilhas" },
-  // RC4: bônus musical fica DENTRO da categoria em /musicas — sidebar só
-  // exibe extras gerais (cursos, ebooks, lançamentos). Mantemos a entrada
-  // "bonus" no banco para compatibilidade, mas escondemos do menu lateral.
   lancamentos: { icon: Rocket,         to: "/lancamentos" },
   comunidade:  { icon: Users,          to: "/comunidade" },
   perfil:      { icon: UserCircle,     to: "/perfil" },
@@ -59,7 +56,6 @@ const LOUVOR_CATEGORY_LABELS: Record<(typeof OFFICIAL_LOUVOR_CATEGORIES)[number]
 export function StudentSidebar() {
   const { logout, isAdmin, adminLoading } = useAuth();
   const { dbModules } = useProjectMode();
-  // currentArea removed
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -67,6 +63,12 @@ export function StudentSidebar() {
     queryKey: ["tracks-active"],
     queryFn: () => listActiveTracks({ data: {} }),
     staleTime: 60_000,
+  });
+
+  const { data: categoriesData } = useQuery({
+    queryKey: ["all-categories"],
+    queryFn: () => listCategories({ data: {} }),
+    staleTime: 5 * 60_000,
   });
 
   const allTracks = tracksData?.tracks || [];
@@ -91,7 +93,6 @@ export function StudentSidebar() {
     }));
   }, [allTracks]);
 
-  // Build the ordered list of visible menu items dynamically from DB modules
   const visibleMenuItems = useMemo(() => {
     if (dbModules.length === 0) return [];
 
@@ -124,38 +125,71 @@ export function StudentSidebar() {
         : "text-foreground/50 hover:text-foreground/80 hover:bg-white/[0.03] ring-1 ring-transparent hover:ring-white/[0.04]"
     );
 
-  const renderLouvoresSubmenu = () => {
-    const currentCategoriaRaw = (location.search as any)?.categoria as string | undefined;
-    const currentCategoria = typeof currentCategoriaRaw === "string" ? currentCategoriaRaw.trim().toLowerCase() : "";
-    const validCategorySlugs = new Set(visibleCategories.map((cat: any) => String(cat.slug || cat.name).trim().toLowerCase()));
-    const hasValidCategory = Boolean(currentCategoria) && validCategorySlugs.has(currentCategoria);
+  const renderSubmenu = (cfg: { key: string; label: string; icon: LucideIcon; to: string; matchPrefix: boolean }) => {
+    const Icon = cfg.icon;
+    const targetTo = cfg.to;
+    const isOnPage = isActivePrefix(targetTo);
     
-    const targetTo = "/musicas";
-    
-    const isOnMusicas = isActivePrefix(targetTo);
-    const isGeneralActive = isOnMusicas && !hasValidCategory;
+    let categoriesToShow: { id: string; name: string; slug: string }[] = [];
+    const searchParams = new URLSearchParams(location.search);
+    const currentCategory = searchParams.get("categoria")?.trim().toLowerCase() || "";
+
+    if (cfg.key === "louvores") {
+      categoriesToShow = visibleCategories;
+    } else if (cfg.key === "cursos") {
+      categoriesToShow = (categoriesData?.categories || [])
+        .filter(cat => !OFFICIAL_LOUVOR_CATEGORIES.includes(cat.slug as any) && cat.slug !== 'ebook' && cat.slug !== 'lancamento')
+        .map(cat => ({
+          id: cat.id,
+          name: cat.name,
+          slug: cat.slug
+        }));
+    }
+
+    const hasActiveCategory = Boolean(currentCategory) && categoriesToShow.some(c => c.slug === currentCategory);
+    const isMainActive = isOnPage && !hasActiveCategory;
 
     return (
-      <div>
+      <div className="space-y-0.5" key={cfg.key}>
         <Link
           to={targetTo as any}
           onClick={() => setMobileOpen(false)}
-          className={cn(navItemClass(isGeneralActive), "w-full")}
+          className={cn(navItemClass(isMainActive), "w-full")}
         >
-          <Music2 className="h-[22px] w-[22px] shrink-0" />
-          Louvores
+          <Icon className="h-[22px] w-[22px] shrink-0" />
+          {cfg.label}
         </Link>
+        
+        {isOnPage && categoriesToShow.length > 0 && (
+          <div className="ml-9 mt-1 space-y-1 border-l border-white/[0.06] pl-3 animate-in slide-in-from-left-2 duration-300">
+            {categoriesToShow.map((cat) => {
+              const active = currentCategory === cat.slug;
+              return (
+                <Link
+                  key={cat.id}
+                  to={targetTo as any}
+                  search={{ categoria: cat.slug } as any}
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    "flex items-center py-1.5 text-[13px] font-medium transition-colors",
+                    active 
+                      ? "text-gold" 
+                      : "text-foreground/40 hover:text-foreground/60"
+                  )}
+                >
+                  {cat.name}
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </div>
     );
   };
 
   const renderMenuItem = (cfg: { key: string; label: string; icon: LucideIcon; to: string; matchPrefix: boolean }) => {
     const Icon = cfg.icon;
-    
-    // Adjust route if in a specific area
-    let targetTo = cfg.to;
-    // Area specific logic removed
-
+    const targetTo = cfg.to;
     const active = cfg.matchPrefix ? isActivePrefix(targetTo) : isActive(targetTo);
 
     return (
@@ -183,7 +217,7 @@ export function StudentSidebar() {
       <nav className="flex-1 overflow-y-auto px-4 pt-2 pb-2 space-y-0.5">
         {mainItems.map((cfg) =>
           cfg.hasSubmenu ? (
-            <div key={cfg.key}>{renderLouvoresSubmenu()}</div>
+            renderSubmenu(cfg)
           ) : (
             renderMenuItem(cfg)
           )

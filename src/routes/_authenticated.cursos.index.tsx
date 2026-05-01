@@ -31,6 +31,9 @@ import { getContinueWatching } from "@/lib/continue-watching.functions";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/cursos/")({
+  validateSearch: (search: Record<string, unknown>): { categoria?: string } => ({
+    categoria: typeof search.categoria === "string" ? search.categoria : undefined,
+  }),
   component: MeusCursosPageWithScope,
 });
 
