@@ -41,7 +41,6 @@ const allContentItems = [
 ];
 
 const toolItems = [
-  { title: "Usuários", url: "/admin/users", icon: Users },
   { title: "Vendas", url: "/admin/vendas", icon: DollarSign },
   { title: "Upsells", url: "/admin/upsells", icon: Sparkles },
   { title: "Integrações", url: "/admin/integrations", icon: Webhook },
@@ -105,7 +104,7 @@ export function AdminSidebar() {
         
         {/* Area Selector removed */}
 
-        {/* Dashboard */}
+        {/* Dashboard & Users */}
         <SidebarGroup className="py-1">
           <SidebarGroupContent>
             <SidebarMenu>
@@ -119,6 +118,19 @@ export function AdminSidebar() {
                   <Link to="/admin">
                     <LayoutDashboard className="h-4 w-4 shrink-0" />
                     <span className="font-semibold">Dashboard</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isActive("/admin/users")}
+                  tooltip="Usuários"
+                  className="h-10 transition-all duration-200"
+                >
+                  <Link to="/admin/users">
+                    <Users className="h-4 w-4 shrink-0" />
+                    <span>Usuários</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
