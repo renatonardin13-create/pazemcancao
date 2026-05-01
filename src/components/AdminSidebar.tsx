@@ -67,10 +67,10 @@ export function AdminSidebar() {
   const { modules } = useProjectMode();
 
 
-  const isActive = (path: string) =>
-    path === "/admin"
-      ? currentPath === "/admin"
-      : currentPath.startsWith(path);
+  const isActive = (path: string) => {
+    if (path === "/admin") return currentPath === "/admin";
+    return currentPath === path || currentPath.startsWith(path + "/");
+  };
 
   const groupLabelClass =
     "text-[10px] uppercase tracking-[0.25em] text-sidebar-foreground/30 font-bold px-4 mb-1";
@@ -121,7 +121,10 @@ export function AdminSidebar() {
                     asChild
                     isActive={isActive(item.url)}
                     tooltip={item.title}
-                    className="h-10 transition-all duration-200"
+                    className={cn(
+                      "h-10 transition-all duration-200",
+                      isActive(item.url) && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
+                    )}
                   >
                     <Link to={item.url}>
                       <item.icon className="h-4 w-4 shrink-0" />
@@ -151,7 +154,10 @@ export function AdminSidebar() {
                       asChild
                       isActive={isActive(item.url || "")}
                       tooltip={item.title}
-                      className="h-10 transition-all duration-200"
+                      className={cn(
+                        "h-10 transition-all duration-200",
+                        isActive(item.url || "") && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
+                      )}
                     >
                       <Link to={item.url}>
                         <item.icon className="h-4 w-4 shrink-0" />
@@ -179,7 +185,10 @@ export function AdminSidebar() {
                     asChild
                     isActive={isActive(item.url)}
                     tooltip={item.title}
-                    className="h-10 transition-all duration-200"
+                    className={cn(
+                      "h-10 transition-all duration-200",
+                      isActive(item.url) && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
+                    )}
                   >
                     <Link to={item.url}>
                       <item.icon className="h-4 w-4 shrink-0" />
@@ -207,7 +216,10 @@ export function AdminSidebar() {
                     asChild
                     isActive={isActive(item.url)}
                     tooltip={item.title}
-                    className="h-10 transition-all duration-200"
+                    className={cn(
+                      "h-10 transition-all duration-200",
+                      isActive(item.url) && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
+                    )}
                   >
                     <Link to={item.url}>
                       <item.icon className="h-4 w-4 shrink-0" />
