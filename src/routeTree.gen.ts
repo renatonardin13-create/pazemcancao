@@ -41,6 +41,7 @@ import { Route as AuthenticatedAdminVendasRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated.admin.usuarios'
 import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated.admin.users'
 import { Route as AuthenticatedAdminUpsellsRouteImport } from './routes/_authenticated.admin.upsells'
+import { Route as AuthenticatedAdminTransactionsRouteImport } from './routes/_authenticated.admin.transactions'
 import { Route as AuthenticatedAdminTracksRouteImport } from './routes/_authenticated.admin.tracks'
 import { Route as AuthenticatedAdminShelvesRouteImport } from './routes/_authenticated.admin.shelves'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated.admin.settings'
@@ -54,6 +55,7 @@ import { Route as AuthenticatedAdminHeroBannersRouteImport } from './routes/_aut
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated.admin.dashboard'
 import { Route as AuthenticatedAdminCursosRouteImport } from './routes/_authenticated.admin.cursos'
 import { Route as AuthenticatedAdminCoursesRouteImport } from './routes/_authenticated.admin.courses'
+import { Route as AuthenticatedAdminCouponsRouteImport } from './routes/_authenticated.admin.coupons'
 import { Route as AuthenticatedAdminConteudosRouteImport } from './routes/_authenticated.admin.conteudos'
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated.admin.configuracoes'
 import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated.admin.categories'
@@ -233,6 +235,12 @@ const AuthenticatedAdminUpsellsRoute =
     path: '/upsells',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminTransactionsRoute =
+  AuthenticatedAdminTransactionsRouteImport.update({
+    id: '/transactions',
+    path: '/transactions',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminTracksRoute =
   AuthenticatedAdminTracksRouteImport.update({
     id: '/tracks',
@@ -311,6 +319,12 @@ const AuthenticatedAdminCoursesRoute =
     path: '/courses',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminCouponsRoute =
+  AuthenticatedAdminCouponsRouteImport.update({
+    id: '/coupons',
+    path: '/coupons',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminConteudosRoute =
   AuthenticatedAdminConteudosRouteImport.update({
     id: '/conteudos',
@@ -382,6 +396,7 @@ export interface FileRoutesByFullPath {
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
+  '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/admin/cursos': typeof AuthenticatedAdminCursosRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
@@ -395,6 +410,7 @@ export interface FileRoutesByFullPath {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/shelves': typeof AuthenticatedAdminShelvesRoute
   '/admin/tracks': typeof AuthenticatedAdminTracksRoute
+  '/admin/transactions': typeof AuthenticatedAdminTransactionsRoute
   '/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
@@ -433,6 +449,7 @@ export interface FileRoutesByTo {
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
+  '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
   '/admin/cursos': typeof AuthenticatedAdminCursosRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/hero-banners': typeof AuthenticatedAdminHeroBannersRoute
@@ -445,6 +462,7 @@ export interface FileRoutesByTo {
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/shelves': typeof AuthenticatedAdminShelvesRoute
   '/admin/tracks': typeof AuthenticatedAdminTracksRoute
+  '/admin/transactions': typeof AuthenticatedAdminTransactionsRoute
   '/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
   '/admin/users': typeof AuthenticatedAdminUsersRoute
   '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
@@ -487,6 +505,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/_authenticated/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
+  '/_authenticated/admin/coupons': typeof AuthenticatedAdminCouponsRoute
   '/_authenticated/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/_authenticated/admin/cursos': typeof AuthenticatedAdminCursosRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
@@ -500,6 +519,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/shelves': typeof AuthenticatedAdminShelvesRoute
   '/_authenticated/admin/tracks': typeof AuthenticatedAdminTracksRoute
+  '/_authenticated/admin/transactions': typeof AuthenticatedAdminTransactionsRoute
   '/_authenticated/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
   '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
   '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
@@ -543,6 +563,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/configuracoes'
     | '/admin/conteudos'
+    | '/admin/coupons'
     | '/admin/courses'
     | '/admin/cursos'
     | '/admin/dashboard'
@@ -556,6 +577,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/shelves'
     | '/admin/tracks'
+    | '/admin/transactions'
     | '/admin/upsells'
     | '/admin/users'
     | '/admin/usuarios'
@@ -594,6 +616,7 @@ export interface FileRouteTypes {
     | '/admin/categories'
     | '/admin/configuracoes'
     | '/admin/conteudos'
+    | '/admin/coupons'
     | '/admin/cursos'
     | '/admin/dashboard'
     | '/admin/hero-banners'
@@ -606,6 +629,7 @@ export interface FileRouteTypes {
     | '/admin/settings'
     | '/admin/shelves'
     | '/admin/tracks'
+    | '/admin/transactions'
     | '/admin/upsells'
     | '/admin/users'
     | '/admin/usuarios'
@@ -647,6 +671,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/categories'
     | '/_authenticated/admin/configuracoes'
     | '/_authenticated/admin/conteudos'
+    | '/_authenticated/admin/coupons'
     | '/_authenticated/admin/courses'
     | '/_authenticated/admin/cursos'
     | '/_authenticated/admin/dashboard'
@@ -660,6 +685,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/shelves'
     | '/_authenticated/admin/tracks'
+    | '/_authenticated/admin/transactions'
     | '/_authenticated/admin/upsells'
     | '/_authenticated/admin/users'
     | '/_authenticated/admin/usuarios'
@@ -916,6 +942,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminUpsellsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/transactions': {
+      id: '/_authenticated/admin/transactions'
+      path: '/transactions'
+      fullPath: '/admin/transactions'
+      preLoaderRoute: typeof AuthenticatedAdminTransactionsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/tracks': {
       id: '/_authenticated/admin/tracks'
       path: '/tracks'
@@ -1007,6 +1040,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCoursesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/coupons': {
+      id: '/_authenticated/admin/coupons'
+      path: '/coupons'
+      fullPath: '/admin/coupons'
+      preLoaderRoute: typeof AuthenticatedAdminCouponsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/conteudos': {
       id: '/_authenticated/admin/conteudos'
       path: '/conteudos'
@@ -1089,6 +1129,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCategoriesRoute: typeof AuthenticatedAdminCategoriesRoute
   AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
   AuthenticatedAdminConteudosRoute: typeof AuthenticatedAdminConteudosRoute
+  AuthenticatedAdminCouponsRoute: typeof AuthenticatedAdminCouponsRoute
   AuthenticatedAdminCoursesRoute: typeof AuthenticatedAdminCoursesRouteWithChildren
   AuthenticatedAdminCursosRoute: typeof AuthenticatedAdminCursosRoute
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
@@ -1102,6 +1143,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminShelvesRoute: typeof AuthenticatedAdminShelvesRoute
   AuthenticatedAdminTracksRoute: typeof AuthenticatedAdminTracksRoute
+  AuthenticatedAdminTransactionsRoute: typeof AuthenticatedAdminTransactionsRoute
   AuthenticatedAdminUpsellsRoute: typeof AuthenticatedAdminUpsellsRoute
   AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
   AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
@@ -1113,6 +1155,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCategoriesRoute: AuthenticatedAdminCategoriesRoute,
   AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
   AuthenticatedAdminConteudosRoute: AuthenticatedAdminConteudosRoute,
+  AuthenticatedAdminCouponsRoute: AuthenticatedAdminCouponsRoute,
   AuthenticatedAdminCoursesRoute: AuthenticatedAdminCoursesRouteWithChildren,
   AuthenticatedAdminCursosRoute: AuthenticatedAdminCursosRoute,
   AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
@@ -1126,6 +1169,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminShelvesRoute: AuthenticatedAdminShelvesRoute,
   AuthenticatedAdminTracksRoute: AuthenticatedAdminTracksRoute,
+  AuthenticatedAdminTransactionsRoute: AuthenticatedAdminTransactionsRoute,
   AuthenticatedAdminUpsellsRoute: AuthenticatedAdminUpsellsRoute,
   AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
   AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,

@@ -2,21 +2,18 @@ import { Link, useLocation } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   Users,
-  FolderOpen,
   Settings,
   Shield,
   Music,
-  Webhook,
   BookOpen,
   Compass,
-  Layout,
-  DollarSign,
   ArrowLeft,
   Sparkles,
-  Disc3,
-  Eye,
-  FileText,
-  GalleryHorizontalEnd,
+  CreditCard,
+  Tag,
+  Receipt,
+  LogOut,
+  GraduationCap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useProjectMode } from "@/hooks/use-project-mode";
@@ -30,29 +27,50 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const allContentItems = [
-  { title: "Músicas", url: "/admin/tracks", icon: Music, module: "louvores" as const },
-  { title: "Playlists", url: "/admin/playlists", icon: Disc3, module: "louvores" as const },
-  { title: "Cursos", url: "/admin/courses", icon: BookOpen, module: "cursos" as const },
-  { title: "Vitrine", url: "/admin/shelves", icon: Layout, module: "vitrine" as const },
-  { title: "Categorias", url: "/admin/categories", icon: FolderOpen, module: "louvores" as const },
-  { title: "Trilhas", url: "/admin/journeys", icon: Compass, module: "trilhas" as const },
-  { title: "Conteúdos", url: "/admin/conteudos", icon: FileText, module: "ebooks" as const },
-  { title: "Banners", url: "/admin/hero-banners", icon: GalleryHorizontalEnd, module: "lancamentos" as const },
+const mainItems = [
+  { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
+  { title: "Usuários", url: "/admin/users", icon: Users },
 ];
 
-const toolItems = [
-  { title: "Vendas", url: "/admin/vendas", icon: DollarSign },
-  { title: "Upsells", url: "/admin/upsells", icon: Sparkles },
-  { title: "Integrações", url: "/admin/integrations", icon: Webhook },
-  { title: "Impersonar aluno", url: "/admin/impersonar", icon: Eye },
+const contentGroups = [
+  {
+    title: "Louvores",
+    icon: Music,
+    module: "louvores" as const,
+    subItems: [
+      { title: "Todos os louvores", url: "/admin/tracks" },
+      { title: "Categorias", url: "/admin/categories" },
+    ],
+  },
+  { title: "Trilhas", url: "/admin/journeys", icon: Compass, module: "trilhas" as const },
+  { title: "Ebooks", url: "/admin/conteudos", icon: BookOpen, module: "ebooks" as const },
+  { title: "Lançamentos", url: "/admin/hero-banners", icon: Sparkles, module: "lancamentos" as const },
+  {
+    title: "Cursos",
+    icon: GraduationCap,
+    module: "cursos" as const,
+    subItems: [
+      { title: "Todos os cursos", url: "/admin/courses" },
+      { title: "Categorias", url: "/admin/categories" },
+    ],
+  },
+];
+
+const salesItems = [
+  { title: "Planos", url: "/admin/vendas", icon: CreditCard },
+  { title: "Cupons", url: "/admin/coupons", icon: Tag },
+  { title: "Transações", url: "/admin/transactions", icon: Receipt },
 ];
 
 const systemItems = [
   { title: "Configurações", url: "/admin/settings", icon: Settings },
+  { title: "Sair", url: "/login", icon: LogOut },
 ];
 
 export function AdminSidebar() {
@@ -62,10 +80,6 @@ export function AdminSidebar() {
   const currentPath = location.pathname;
   const { modules } = useProjectMode();
 
-  const contentItems = useMemo(
-    () => allContentItems.filter((item) => modules[item.module]),
-    [modules]
-  );
 
   const isActive = (path: string) =>
     path === "/admin"
@@ -105,56 +119,85 @@ export function AdminSidebar() {
             </div>
           )}
         </div>
-        
-        {/* Area Selector removed */}
 
         {/* Dashboard & Users */}
         <SidebarGroup className="py-1">
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  isActive={isActive("/admin")}
-                  tooltip="Dashboard"
-                  className="h-10 transition-all duration-200"
-                >
-                  <Link to="/admin">
-                    <LayoutDashboard className="h-4 w-4 shrink-0" />
-                    <span className="font-semibold">Dashboard</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  isActive={isActive("/admin/users")}
-                  tooltip="Usuários"
-                  className="h-10 transition-all duration-200"
-                >
-                  <Link to="/admin/users">
-                    <Users className="h-4 w-4 shrink-0" />
-                    <span className="font-semibold">Usuários</span>
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
+              {mainItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive(item.url)}
+                    tooltip={item.title}
+                    className="h-10 transition-all duration-200"
+                  >
+                    <Link to={item.url}>
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      <span className="font-semibold">{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Separator */}
-        <div className="mx-4 h-px bg-sidebar-border/40 my-1" />
+        {/* Conteúdo Sections */}
+        <SidebarGroup className="py-1">
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {contentGroups
+                .filter((item) => !item.module || modules[item.module])
+                .map((item) => (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      isActive={isActive(item.url || "")}
+                      tooltip={item.title}
+                      className="h-10 transition-all duration-200"
+                    >
+                      {item.url ? (
+                        <Link to={item.url}>
+                          <item.icon className="h-4 w-4 shrink-0" />
+                          <span>{item.title}</span>
+                        </Link>
+                      ) : (
+                        <div className="flex items-center gap-2">
+                          <item.icon className="h-4 w-4 shrink-0" />
+                          <span>{item.title}</span>
+                        </div>
+                      )}
+                    </SidebarMenuButton>
+                    {item.subItems && !collapsed && (
+                      <SidebarMenuSub>
+                        {item.subItems.map((subItem) => (
+                          <SidebarMenuSubItem key={subItem.title}>
+                            <SidebarMenuSubButton asChild isActive={isActive(subItem.url)}>
+                              <Link to={subItem.url}>
+                                <span>{subItem.title}</span>
+                              </Link>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
+                        ))}
+                      </SidebarMenuSub>
+                    )}
+                  </SidebarMenuItem>
+                ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
 
-        {/* Conteúdo */}
+        {/* Planos e Vendas */}
         <SidebarGroup className="py-1">
           {!collapsed && (
             <SidebarGroupLabel className={groupLabelClass}>
-              Conteúdo
+              Planos e Vendas
             </SidebarGroupLabel>
           )}
           <SidebarGroupContent>
             <SidebarMenu>
-              {contentItems.map((item) => (
+              {salesItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton
                     asChild
@@ -173,45 +216,11 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Separator */}
-        <div className="mx-4 h-px bg-sidebar-border/40 my-1" />
-
-        {/* Ferramentas */}
+        {/* Configurações */}
         <SidebarGroup className="py-1">
           {!collapsed && (
             <SidebarGroupLabel className={groupLabelClass}>
-              Ferramentas
-            </SidebarGroupLabel>
-          )}
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {toolItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive(item.url)}
-                    tooltip={item.title}
-                    className="h-10 transition-all duration-200"
-                  >
-                    <Link to={item.url}>
-                      <item.icon className="h-4 w-4 shrink-0" />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Separator */}
-        <div className="mx-4 h-px bg-sidebar-border/40 my-1" />
-
-        {/* Sistema */}
-        <SidebarGroup className="py-1">
-          {!collapsed && (
-            <SidebarGroupLabel className={groupLabelClass}>
-              Sistema
+              Configurações
             </SidebarGroupLabel>
           )}
           <SidebarGroupContent>
