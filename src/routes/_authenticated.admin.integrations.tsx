@@ -22,6 +22,7 @@ export const Route = createFileRoute("/_authenticated/admin/integrations")({
 const platformColors: Record<string, { bg: string; text: string; dot: string }> = {
   hotmart: { bg: "bg-orange-500/15 text-orange-400 border-orange-500/30", text: "text-orange-400", dot: "bg-orange-500" },
   kiwify: { bg: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30", text: "text-emerald-400", dot: "bg-emerald-500" },
+  perfectpay: { bg: "bg-red-500/15 text-red-400 border-red-500/30", text: "text-red-400", dot: "bg-red-500" },
   cakto: { bg: "bg-blue-500/15 text-blue-400 border-blue-500/30", text: "text-blue-400", dot: "bg-blue-500" },
 };
 
