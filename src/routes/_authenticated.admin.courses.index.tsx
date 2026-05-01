@@ -84,7 +84,7 @@ function AdminCoursesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
       queryClient.invalidateQueries({ queryKey: ["student-shelves"] });
-      toast.success("Curso excluído com sucesso");
+      toast.success("Produto excluído com sucesso");
     },
     onError: (e: Error) => toastError(e),
   });
