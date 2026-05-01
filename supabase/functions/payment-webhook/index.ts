@@ -16,6 +16,8 @@ serve(async (req) => {
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
   )
 
+  let logEntry: any = null
+
   try {
     const url = new URL(req.url)
     const provider = url.searchParams.get('provider') || 'perfectpay'
@@ -23,19 +25,25 @@ serve(async (req) => {
     let body: any = {}
     const contentType = req.headers.get('content-type') || ''
     
-    if (contentType.includes('application/json')) {
+    if (contentType && contentType.includes('application/json')) {
       body = await req.json()
     } else {
-      const formData = await req.formData()
-      formData.forEach((value, key) => {
-        body[key] = value
-      })
+      try {
+        const formData = await req.formData()
+        formData.forEach((value, key) => {
+          body[key] = value
+        })
+      } catch (e) {
+        // Fallback if not form data
+        const text = await req.text()
+        body = { raw: text }
+      }
     }
     
     console.log(`Received webhook from ${provider}:`, body)
 
     // 1. Initial Logging
-    const { data: logEntry, error: logError } = await supabaseAdmin
+    const { data: log, error: logError } = await supabaseAdmin
       .from('webhook_logs')
       .insert({
         provider,
@@ -48,10 +56,10 @@ serve(async (req) => {
       .select()
       .single()
 
+    logEntry = log
     if (logError) console.error('Error logging webhook:', logError)
 
     // 2. Identify Product and Validate Token
-    // We expect external_product_id and a token/password
     let externalProductId = ''
     let receivedToken = ''
     let isApproved = false
@@ -66,7 +74,6 @@ serve(async (req) => {
       customerName = body.customer_name
     } else if (provider === 'kiwify') {
       externalProductId = body.product_id
-      // Kiwify uses signature or other methods, but here we might check a token in query or body
       receivedToken = url.searchParams.get('token') || body.token
       isApproved = body.order_status === 'paid' || body.status === 'paid'
       customerEmail = body.customer?.email || body.email
@@ -101,34 +108,31 @@ serve(async (req) => {
     if (isApproved && customerEmail) {
       console.log(`Processing approval for ${customerEmail} - Course: ${offer.course_id}`)
       
-      // Find or Create User
-      const { data: { users }, error: listError } = await supabaseAdmin.auth.admin.listUsers()
+      const { data: { users } } = await supabaseAdmin.auth.admin.listUsers()
       let user = users.find(u => u.email?.toLowerCase() === customerEmail.toLowerCase())
       let userId = user?.id
 
       if (!userId) {
-        console.log('Creating new user...')
         const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
           email: customerEmail,
           email_confirm: true,
           user_metadata: { full_name: customerName },
-          password: Math.random().toString(36).slice(-12) // Random password
+          password: Math.random().toString(36).slice(-12)
         })
         
         if (createError) {
-          console.error('Error creating user:', createError)
-          // If user already exists but listUsers didn't catch it (race condition?)
           if (createError.message.includes('already registered')) {
-            // Try to find again or handle accordingly
+            const { data: { users: retryUsers } } = await supabaseAdmin.auth.admin.listUsers()
+            userId = retryUsers.find(u => u.email?.toLowerCase() === customerEmail.toLowerCase())?.id
           } else {
             throw createError
           }
+        } else {
+          userId = newUser.user?.id
         }
-        userId = newUser.user?.id
       }
 
       if (userId) {
-        // Create Enrollment
         const { error: enrollError } = await supabaseAdmin
           .from('enrollments')
           .upsert({
@@ -140,15 +144,11 @@ serve(async (req) => {
             granted_at: new Date().toISOString()
           }, { onConflict: 'user_id, course_id' })
 
-        if (enrollError) {
-          console.error('Error creating enrollment:', enrollError)
-          throw enrollError
-        }
-
+        if (enrollError) throw enrollError
         await updateLog(logEntry?.id, 200, 'Access granted successfully', true)
       }
     } else {
-      await updateLog(logEntry?.id, 200, `Webhook received but not processed (Status: ${body.sale_status || body.status})`)
+      await updateLog(logEntry?.id, 200, `Webhook received but not processed (Status: ${body.sale_status || body.order_status || 'unknown'})`)
     }
 
     return new Response(JSON.stringify({ success: true }), { 
@@ -158,7 +158,7 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Webhook processing error:', error)
-    if (typeof logEntry !== 'undefined' && logEntry?.id) {
+    if (logEntry?.id) {
       await updateLog(logEntry.id, 500, error.message)
     }
     return new Response(JSON.stringify({ error: error.message }), { 
