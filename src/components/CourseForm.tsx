@@ -98,8 +98,11 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    if (!title.trim()) newErrors.title = "O título do curso é obrigatório";
-    else if (title.trim().length < 3) newErrors.title = "O título deve ter pelo menos 3 caracteres";
+    if (!title.trim()) newErrors.title = "O nome do produto é obrigatório";
+    else if (title.trim().length < 3) newErrors.title = "O nome deve ter pelo menos 3 caracteres";
+    
+    if (!categoryId) newErrors.categoryId = "A seção é obrigatória";
+
     if (promotionalPrice.trim() && parseFloat(promotionalPrice) >= parseFloat(price))
       newErrors.promotionalPrice = "Preço promocional deve ser menor que o preço normal";
     return newErrors;
