@@ -249,8 +249,10 @@ function AdminCategoriesPage() {
           ) : !categories.length ? (
             <EmptyState
               icon={FolderOpen}
-              title="Nenhuma categoria cadastrada"
-              description="Crie categorias para organizar seus conteúdos e músicas."
+              title="Nenhum conteúdo criado ainda"
+              description="Para vender, você precisa primeiro criar uma seção. Seções organizam seus conteúdos (ex: Módulo 1, Bônus, Aulas)"
+              actionLabel="Criar primeira seção"
+              onAction={() => setShowCatForm(true)}
               compact
             />
           ) : (
