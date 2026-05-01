@@ -41,7 +41,6 @@ const allContentItems = [
 ];
 
 const toolItems = [
-  { title: "Usuários", url: "/admin/users", icon: Users },
   { title: "Vendas", url: "/admin/vendas", icon: DollarSign },
   { title: "Upsells", url: "/admin/upsells", icon: Sparkles },
   { title: "Integrações", url: "/admin/integrations", icon: Webhook },
