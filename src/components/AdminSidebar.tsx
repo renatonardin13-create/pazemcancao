@@ -68,6 +68,11 @@ const salesItems = [
   { title: "Transações", url: "/admin/transactions", icon: Receipt },
 ];
 
+const integrationItems = [
+  { title: "Webhooks", url: "/admin/integrations", icon: Shield },
+  { title: "Templates", url: "/admin/settings", icon: Settings },
+];
+
 const systemItems = [
   { title: "Configurações", url: "/admin/settings", icon: Settings },
   { title: "Sair", url: "/login", icon: LogOut },
@@ -120,8 +125,13 @@ export function AdminSidebar() {
           )}
         </div>
 
-        {/* Dashboard & Users */}
+        {/* Visão Geral */}
         <SidebarGroup className="py-1">
+          {!collapsed && (
+            <SidebarGroupLabel className={groupLabelClass}>
+              Visão Geral
+            </SidebarGroupLabel>
+          )}
           <SidebarGroupContent>
             <SidebarMenu>
               {mainItems.map((item) => (
@@ -143,8 +153,13 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Conteúdo Sections */}
+        {/* Conteúdo */}
         <SidebarGroup className="py-1">
+          {!collapsed && (
+            <SidebarGroupLabel className={groupLabelClass}>
+              Conteúdo
+            </SidebarGroupLabel>
+          )}
           <SidebarGroupContent>
             <SidebarMenu>
               {contentGroups
@@ -188,11 +203,11 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Planos e Vendas */}
+        {/* Vendas */}
         <SidebarGroup className="py-1">
           {!collapsed && (
             <SidebarGroupLabel className={groupLabelClass}>
-              Planos e Vendas
+              Vendas
             </SidebarGroupLabel>
           )}
           <SidebarGroupContent>
@@ -216,11 +231,39 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Configurações */}
+        {/* Integrações */}
         <SidebarGroup className="py-1">
           {!collapsed && (
             <SidebarGroupLabel className={groupLabelClass}>
-              Configurações
+              Integrações
+            </SidebarGroupLabel>
+          )}
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {integrationItems.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={isActive(item.url)}
+                    tooltip={item.title}
+                    className="h-10 transition-all duration-200"
+                  >
+                    <Link to={item.url}>
+                      <item.icon className="h-4 w-4 shrink-0" />
+                      <span>{item.title}</span>
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        {/* Sistema */}
+        <SidebarGroup className="py-1">
+          {!collapsed && (
+            <SidebarGroupLabel className={groupLabelClass}>
+              Sistema
             </SidebarGroupLabel>
           )}
           <SidebarGroupContent>
