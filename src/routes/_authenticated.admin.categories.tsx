@@ -96,7 +96,7 @@ function AdminCategoriesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
       invalidateStudentCaches();
-      toast.success("Categoria removida");
+      toast.success("Seção removida");
     },
     onError: (err: any) => toastError(err),
   });
