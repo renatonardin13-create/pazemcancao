@@ -479,6 +479,31 @@ function AdminCategoriesPage() {
           </form>
         </DialogContent>
       </Dialog>
+      <ConfirmationDialog
+        isOpen={!!deleteCatId}
+        onOpenChange={(open) => !open && setDeleteCatId(null)}
+        onConfirm={() => {
+          if (deleteCatId) {
+            deleteCatMutation.mutate(deleteCatId);
+            setDeleteCatId(null);
+          }
+        }}
+        title="Excluir Seção"
+        description="Tem certeza que deseja excluir esta seção? Isso não afetará os produtos vinculados, mas eles ficarão sem seção."
+      />
+
+      <ConfirmationDialog
+        isOpen={!!deleteTagId}
+        onOpenChange={(open) => !open && setDeleteTagId(null)}
+        onConfirm={() => {
+          if (deleteTagId) {
+            deleteTagMutation.mutate(deleteTagId);
+            setDeleteTagId(null);
+          }
+        }}
+        title="Excluir Tag"
+        description="Tem certeza que deseja excluir esta tag?"
+      />
     </div>
   );
 }
