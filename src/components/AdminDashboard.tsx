@@ -4,12 +4,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { getDashboardStats } from "@/lib/admin-dashboard.functions";
 import { getDashboardAnalytics } from "@/lib/analytics.functions";
-// useArea removed
+import { AdminGuidedOnboarding } from "./AdminGuidedOnboarding";
 import {
   Users, Activity, BarChart3, Music, Headphones, Download,
   TrendingUp, DollarSign, BookOpen, Clock, GraduationCap,
   ArrowUpRight, ArrowDownRight, CalendarDays, Zap,
-  Search, Plus, Settings, Bell, UserCircle,
+  Search, Plus, Settings, Bell, UserCircle, Sparkles
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
