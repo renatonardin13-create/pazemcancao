@@ -185,7 +185,10 @@ export function AdminSidebar() {
                     asChild
                     isActive={isActive(item.url)}
                     tooltip={item.title}
-                    className="h-10 transition-all duration-200"
+                    className={cn(
+                      "h-10 transition-all duration-200",
+                      isActive(item.url) && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
+                    )}
                   >
                     <Link to={item.url}>
                       <item.icon className="h-4 w-4 shrink-0" />
