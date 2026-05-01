@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Globe, ArrowLeft, Loader2, Check, AlertCircle, Sparkles, Layout, BookOpen, GraduationCap } from "lucide-react";
+import { Globe, ArrowLeft, Loader2, Check, AlertCircle, Sparkles, Layout, BookOpen, GraduationCap, Copy, ExternalLink, PartyPopper } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
