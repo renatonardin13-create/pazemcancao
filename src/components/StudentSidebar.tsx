@@ -136,7 +136,7 @@ export function StudentSidebar() {
     const isGeneralActive = isOnMusicas && !hasValidCategory;
 
     return (
-      <div>
+      <div className="space-y-0.5">
         <Link
           to={targetTo as any}
           onClick={() => setMobileOpen(false)}
@@ -145,6 +145,30 @@ export function StudentSidebar() {
           <Music2 className="h-[22px] w-[22px] shrink-0" />
           Louvores
         </Link>
+        
+        {isOnMusicas && visibleCategories.length > 0 && (
+          <div className="ml-9 mt-1 space-y-1 border-l border-white/[0.06] pl-3 animate-in slide-in-from-left-2 duration-300">
+            {visibleCategories.map((cat) => {
+              const active = currentCategoria === cat.slug;
+              return (
+                <Link
+                  key={cat.id}
+                  to="/musicas"
+                  search={{ categoria: cat.slug }}
+                  onClick={() => setMobileOpen(false)}
+                  className={cn(
+                    "flex items-center py-1.5 text-[13px] font-medium transition-colors",
+                    active 
+                      ? "text-gold" 
+                      : "text-foreground/40 hover:text-foreground/60"
+                  )}
+                >
+                  {cat.name}
+                </Link>
+              );
+            })}
+          </div>
+        )}
       </div>
     );
   };
