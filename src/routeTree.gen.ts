@@ -46,6 +46,7 @@ import { Route as AuthenticatedAdminTracksRouteImport } from './routes/_authenti
 import { Route as AuthenticatedAdminShelvesRouteImport } from './routes/_authenticated.admin.shelves'
 import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated.admin.settings'
 import { Route as AuthenticatedAdminPlaylistsRouteImport } from './routes/_authenticated.admin.playlists'
+import { Route as AuthenticatedAdminOffersRouteImport } from './routes/_authenticated.admin.offers'
 import { Route as AuthenticatedAdminMusicasRouteImport } from './routes/_authenticated.admin.musicas'
 import { Route as AuthenticatedAdminJourneysRouteImport } from './routes/_authenticated.admin.journeys'
 import { Route as AuthenticatedAdminIntegrationsRouteImport } from './routes/_authenticated.admin.integrations'
@@ -266,6 +267,12 @@ const AuthenticatedAdminPlaylistsRoute =
     path: '/playlists',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminOffersRoute =
+  AuthenticatedAdminOffersRouteImport.update({
+    id: '/offers',
+    path: '/offers',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminMusicasRoute =
   AuthenticatedAdminMusicasRouteImport.update({
     id: '/musicas',
@@ -413,6 +420,7 @@ export interface FileRoutesByFullPath {
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/admin/journeys': typeof AuthenticatedAdminJourneysRoute
   '/admin/musicas': typeof AuthenticatedAdminMusicasRoute
+  '/admin/offers': typeof AuthenticatedAdminOffersRoute
   '/admin/playlists': typeof AuthenticatedAdminPlaylistsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/shelves': typeof AuthenticatedAdminShelvesRoute
@@ -466,6 +474,7 @@ export interface FileRoutesByTo {
   '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/admin/journeys': typeof AuthenticatedAdminJourneysRoute
   '/admin/musicas': typeof AuthenticatedAdminMusicasRoute
+  '/admin/offers': typeof AuthenticatedAdminOffersRoute
   '/admin/playlists': typeof AuthenticatedAdminPlaylistsRoute
   '/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/admin/shelves': typeof AuthenticatedAdminShelvesRoute
@@ -524,6 +533,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
   '/_authenticated/admin/journeys': typeof AuthenticatedAdminJourneysRoute
   '/_authenticated/admin/musicas': typeof AuthenticatedAdminMusicasRoute
+  '/_authenticated/admin/offers': typeof AuthenticatedAdminOffersRoute
   '/_authenticated/admin/playlists': typeof AuthenticatedAdminPlaylistsRoute
   '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
   '/_authenticated/admin/shelves': typeof AuthenticatedAdminShelvesRoute
@@ -583,6 +593,7 @@ export interface FileRouteTypes {
     | '/admin/integrations'
     | '/admin/journeys'
     | '/admin/musicas'
+    | '/admin/offers'
     | '/admin/playlists'
     | '/admin/settings'
     | '/admin/shelves'
@@ -636,6 +647,7 @@ export interface FileRouteTypes {
     | '/admin/integrations'
     | '/admin/journeys'
     | '/admin/musicas'
+    | '/admin/offers'
     | '/admin/playlists'
     | '/admin/settings'
     | '/admin/shelves'
@@ -693,6 +705,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/integrations'
     | '/_authenticated/admin/journeys'
     | '/_authenticated/admin/musicas'
+    | '/_authenticated/admin/offers'
     | '/_authenticated/admin/playlists'
     | '/_authenticated/admin/settings'
     | '/_authenticated/admin/shelves'
@@ -990,6 +1003,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminPlaylistsRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/offers': {
+      id: '/_authenticated/admin/offers'
+      path: '/offers'
+      fullPath: '/admin/offers'
+      preLoaderRoute: typeof AuthenticatedAdminOffersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/musicas': {
       id: '/_authenticated/admin/musicas'
       path: '/musicas'
@@ -1159,6 +1179,7 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminIntegrationsRoute: typeof AuthenticatedAdminIntegrationsRoute
   AuthenticatedAdminJourneysRoute: typeof AuthenticatedAdminJourneysRoute
   AuthenticatedAdminMusicasRoute: typeof AuthenticatedAdminMusicasRoute
+  AuthenticatedAdminOffersRoute: typeof AuthenticatedAdminOffersRoute
   AuthenticatedAdminPlaylistsRoute: typeof AuthenticatedAdminPlaylistsRoute
   AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
   AuthenticatedAdminShelvesRoute: typeof AuthenticatedAdminShelvesRoute
@@ -1186,6 +1207,7 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminIntegrationsRoute: AuthenticatedAdminIntegrationsRoute,
   AuthenticatedAdminJourneysRoute: AuthenticatedAdminJourneysRoute,
   AuthenticatedAdminMusicasRoute: AuthenticatedAdminMusicasRoute,
+  AuthenticatedAdminOffersRoute: AuthenticatedAdminOffersRoute,
   AuthenticatedAdminPlaylistsRoute: AuthenticatedAdminPlaylistsRoute,
   AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
   AuthenticatedAdminShelvesRoute: AuthenticatedAdminShelvesRoute,
