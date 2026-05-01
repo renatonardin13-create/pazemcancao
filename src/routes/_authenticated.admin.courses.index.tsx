@@ -443,6 +443,33 @@ function AdminCoursesPage() {
           )}
         </div>
       )}
+      <ConfirmationDialog
+        isOpen={!!deleteId}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+        onConfirm={() => {
+          if (deleteId) {
+            deleteM.mutate(deleteId);
+            setDeleteId(null);
+          }
+        }}
+        title="Excluir Produto"
+        description="Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita."
+      />
+
+      <ConfirmationDialog
+        isOpen={!!statusId}
+        onOpenChange={(open) => !open && setStatusId(null)}
+        onConfirm={() => {
+          if (statusId) {
+            toggleStatusM.mutate({ id: statusId.id, currentStatus: statusId.status });
+            setStatusId(null);
+          }
+        }}
+        variant="default"
+        title="Alterar Status"
+        description={`Deseja realmente ${statusId?.status === "published" ? "despublicar" : "publicar"} este produto?`}
+        confirmText="Confirmar"
+      />
     </div>
   );
 }
