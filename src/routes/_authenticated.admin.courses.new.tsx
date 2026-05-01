@@ -4,6 +4,7 @@ import { CourseForm } from "@/components/CourseForm";
 import { createCourse } from "@/lib/admin-courses.functions";
 import { listAdminCategories } from "@/lib/admin-categories.functions";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { EmptyState } from "@/components/EmptyState";
 import { toast } from "sonner";
 import { ArrowLeft, Save, Loader2, AlertCircle, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
