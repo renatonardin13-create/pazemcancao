@@ -244,13 +244,18 @@ button,
 [role="button"],
 [role="link"],
 a[class*="rounded"] {
-  transition: transform 0.15s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.3s ease, opacity 0.2s ease;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, opacity 0.2s ease-in-out, filter 0.2s ease-in-out;
 }
 
 button:active:not(:disabled),
 [role="button"]:active:not(:disabled),
 [role="link"]:active {
-  transform: scale(0.97);
+  transform: scale(0.98);
+}
+
+button:hover:not(:disabled),
+[role="button"]:hover:not(:disabled) {
+  filter: brightness(1.1);
 }
 
 /* Premium skeleton shimmer */
