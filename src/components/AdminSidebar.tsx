@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useProjectMode } from "@/hooks/use-project-mode";
+import { useMemo } from "react";
 import {
   Sidebar,
   SidebarContent,
