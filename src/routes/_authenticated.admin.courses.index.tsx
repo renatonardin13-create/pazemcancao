@@ -211,7 +211,7 @@ function AdminCoursesPage() {
                   Capa
                 </TableHead>
                 <TableHead className="text-xs uppercase tracking-widest text-muted-foreground/60">
-                  Nome do Curso
+                  Nome do Produto
                 </TableHead>
                 <TableHead className="hidden sm:table-cell text-xs uppercase tracking-widest text-muted-foreground/60 w-[90px]">
                   Tipo
