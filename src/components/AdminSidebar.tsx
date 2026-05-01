@@ -2,25 +2,21 @@ import { Link, useLocation } from "@tanstack/react-router";
 import {
   LayoutDashboard,
   Users,
-  FolderOpen,
   Settings,
   Shield,
   Music,
-  Webhook,
   BookOpen,
   Compass,
-  Layout,
-  DollarSign,
   ArrowLeft,
   Sparkles,
-  Disc3,
-  Eye,
-  FileText,
-  GalleryHorizontalEnd,
+  CreditCard,
+  Tag,
+  Receipt,
+  LogOut,
+  GraduationCap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useProjectMode } from "@/hooks/use-project-mode";
-import { useMemo } from "react";
 import {
   Sidebar,
   SidebarContent,
@@ -30,29 +26,50 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const allContentItems = [
-  { title: "Músicas", url: "/admin/tracks", icon: Music, module: "louvores" as const },
-  { title: "Playlists", url: "/admin/playlists", icon: Disc3, module: "louvores" as const },
-  { title: "Cursos", url: "/admin/courses", icon: BookOpen, module: "cursos" as const },
-  { title: "Vitrine", url: "/admin/shelves", icon: Layout, module: "vitrine" as const },
-  { title: "Categorias", url: "/admin/categories", icon: FolderOpen, module: "louvores" as const },
-  { title: "Trilhas", url: "/admin/journeys", icon: Compass, module: "trilhas" as const },
-  { title: "Conteúdos", url: "/admin/conteudos", icon: FileText, module: "ebooks" as const },
-  { title: "Banners", url: "/admin/hero-banners", icon: GalleryHorizontalEnd, module: "lancamentos" as const },
+const mainItems = [
+  { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
+  { title: "Usuários", url: "/admin/users", icon: Users },
 ];
 
-const toolItems = [
-  { title: "Vendas", url: "/admin/vendas", icon: DollarSign },
-  { title: "Upsells", url: "/admin/upsells", icon: Sparkles },
-  { title: "Integrações", url: "/admin/integrations", icon: Webhook },
-  { title: "Impersonar aluno", url: "/admin/impersonar", icon: Eye },
+const contentGroups = [
+  {
+    title: "Louvores",
+    icon: Music,
+    module: "louvores" as const,
+    subItems: [
+      { title: "Todos os louvores", url: "/admin/tracks" },
+      { title: "Categorias", url: "/admin/categories" },
+    ],
+  },
+  { title: "Trilhas", url: "/admin/journeys", icon: Compass, module: "trilhas" as const },
+  { title: "Ebooks", url: "/admin/conteudos", icon: BookOpen, module: "ebooks" as const },
+  { title: "Lançamentos", url: "/admin/hero-banners", icon: Sparkles, module: "lancamentos" as const },
+  {
+    title: "Cursos",
+    icon: GraduationCap,
+    module: "cursos" as const,
+    subItems: [
+      { title: "Todos os cursos", url: "/admin/courses" },
+      { title: "Categorias", url: "/admin/categories" },
+    ],
+  },
+];
+
+const salesItems = [
+  { title: "Planos", url: "/admin/vendas", icon: CreditCard },
+  { title: "Cupons", url: "/admin/coupons", icon: Tag },
+  { title: "Transações", url: "/admin/transactions", icon: Receipt },
 ];
 
 const systemItems = [
   { title: "Configurações", url: "/admin/settings", icon: Settings },
+  { title: "Sair", url: "/login", icon: LogOut },
 ];
 
 export function AdminSidebar() {
