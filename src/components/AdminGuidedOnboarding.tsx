@@ -33,7 +33,7 @@ export function AdminGuidedOnboarding({ stats }: AdminGuidedOnboardingProps) {
       title: "1. Criar área de membros",
       description: "Sua identidade visual e domínio próprio.",
       icon: Globe,
-      path: "/admin/settings",
+      path: "/admin/areas/new",
       completed: stats.totalAreas > 0,
       nextStepLabel: "Configurar marca"
     },
