@@ -141,10 +141,13 @@ export function AdminDashboard() {
       {/* Guided Onboarding */}
       {!isLoading && data && (
         <AdminGuidedOnboarding stats={{
-          totalCourses: data.totalCourses || 0,
+          totalAreas: data.totalAreas || 0,
           totalCategories: data.totalCategories || 0,
-          totalTracks: data.totalTracks || 0,
+          totalCourses: data.totalCourses || 0,
           totalStudents: data.totalStudents || 0,
+          webhookActivated: data.webhookActivated || false,
+          webhookToken: data.webhookToken || '',
+          gatewayConfigured: data.gatewayConfigured || false,
         }} />
       )}
 
