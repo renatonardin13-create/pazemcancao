@@ -163,7 +163,7 @@ function AdminCoursesPage() {
             <Button asChild className="h-10 px-5 rounded-xl bg-gradient-to-r from-gold to-gold/85 text-background font-bold hover:shadow-lg hover:shadow-gold/20 transition-all">
               <Link to="/admin/courses/new">
                 <Plus className="h-4 w-4 mr-1.5" />
-                Novo Curso
+                Novo Produto
               </Link>
             </Button>
           </div>
