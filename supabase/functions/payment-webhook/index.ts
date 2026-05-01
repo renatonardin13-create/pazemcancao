@@ -19,7 +19,18 @@ serve(async (req) => {
   try {
     const url = new URL(req.url)
     const provider = url.searchParams.get('provider') || 'perfectpay'
-    const body = await req.json()
+    
+    let body: any = {}
+    const contentType = req.headers.get('content-type') || ''
+    
+    if (contentType.includes('application/json')) {
+      body = await req.json()
+    } else {
+      const formData = await req.formData()
+      formData.forEach((value, key) => {
+        body[key] = value
+      })
+    }
     
     console.log(`Received webhook from ${provider}:`, body)
 
