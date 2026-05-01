@@ -161,7 +161,7 @@ export function StudentSidebar() {
           <Link
             to="/perfil"
             onClick={() => setMobileOpen(false)}
-            className={navItemClass(isActive("/perfil"))}
+            className={navItemClass(isActivePrefix("/perfil"))}
           >
             <UserCircle className="h-[22px] w-[22px] shrink-0" />
             Perfil
