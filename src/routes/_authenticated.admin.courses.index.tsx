@@ -19,8 +19,15 @@ import {
   ChevronRight,
   EyeOff,
   Eye,
+  AlertCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 import { Input } from "@/components/ui/input";
 import {
@@ -77,7 +84,7 @@ function AdminCoursesPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
       queryClient.invalidateQueries({ queryKey: ["student-shelves"] });
-      toast.success("Curso excluído com sucesso");
+      toast.success("Produto excluído com sucesso");
     },
     onError: (e: Error) => toastError(e),
   });
@@ -160,12 +167,39 @@ function AdminCoursesPage() {
                 <SelectItem value="archived">Arquivado</SelectItem>
               </SelectContent>
             </Select>
-            <Button asChild className="h-10 px-5 rounded-xl bg-gradient-to-r from-gold to-gold/85 text-background font-bold hover:shadow-lg hover:shadow-gold/20 transition-all">
-              <Link to="/admin/courses/new">
-                <Plus className="h-4 w-4 mr-1.5" />
-                Novo Produto
-              </Link>
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span>
+                    <Button 
+                      asChild={categories.length > 0}
+                      disabled={categories.length === 0}
+                      className="h-10 px-5 rounded-xl bg-gradient-to-r from-gold to-gold/85 text-background font-bold hover:shadow-lg hover:shadow-gold/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {categories.length > 0 ? (
+                        <Link to="/admin/courses/new">
+                          <Plus className="h-4 w-4 mr-1.5" />
+                          Novo Produto
+                        </Link>
+                      ) : (
+                        <>
+                          <Plus className="h-4 w-4 mr-1.5" />
+                          Novo Produto
+                        </>
+                      )}
+                    </Button>
+                  </span>
+                </TooltipTrigger>
+                {categories.length === 0 && (
+                  <TooltipContent>
+                    <p className="flex items-center gap-2">
+                      <AlertCircle className="h-3.5 w-3.5 text-gold" />
+                      Você precisa criar uma seção antes de adicionar produtos
+                    </p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
       </div>

@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Video, FileText, Save, Loader2, ImageIcon, File, Link as LinkIcon } from "lucide-react";
+import { Video, FileText, Save, Loader2, ImageIcon, File, Link as LinkIcon, Sparkles } from "lucide-react";
 import { ImageUploadField } from "@/components/ImageUploadField";
 
 interface CourseFormProps {
@@ -26,13 +26,15 @@ const inputClass = "h-11 bg-background/50 border-border/20 focus:border-gold/40 
 const labelClass = "text-sm font-semibold text-foreground/80";
 
 const COURSE_TYPE_OPTIONS = [
-  { value: "video", label: "Vídeo", icon: Video },
-  { value: "ebook", label: "PDF", icon: FileText },
-  { value: "file", label: "Arquivo", icon: File },
-  { value: "link", label: "Link", icon: LinkIcon },
+  { value: "aula", label: "Aula", icon: Video },
+  { value: "material", label: "Material", icon: FileText },
+  { value: "bonus", label: "Bônus", icon: Sparkles },
 ] as const;
 
-const normalizeCourseType = (value?: string) => (value === "video" ? "video" : "ebook");
+const normalizeCourseType = (value?: string) => {
+  if (value === "aula" || value === "material" || value === "bonus") return value;
+  return "aula";
+};
 
 function CardSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -61,7 +63,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   // areaId state removed
   const [promotionalPrice, setPromotionalPrice] = useState("");
   const [status, setStatus] = useState("draft");
-  const [courseType, setCourseType] = useState("video");
+  const [courseType, setCourseType] = useState("aula");
   const [launchDate, setLaunchDate] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -96,8 +98,11 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
-    if (!title.trim()) newErrors.title = "O título do curso é obrigatório";
-    else if (title.trim().length < 3) newErrors.title = "O título deve ter pelo menos 3 caracteres";
+    if (!title.trim()) newErrors.title = "O nome do produto é obrigatório";
+    else if (title.trim().length < 3) newErrors.title = "O nome deve ter pelo menos 3 caracteres";
+    
+    if (!categoryId) newErrors.categoryId = "A seção é obrigatória";
+
     if (promotionalPrice.trim() && parseFloat(promotionalPrice) >= parseFloat(price))
       newErrors.promotionalPrice = "Preço promocional deve ser menor que o preço normal";
     return newErrors;
@@ -136,61 +141,62 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
         {/* ===== LEFT: Informações + Configurações ===== */}
         <div className="space-y-5 order-1 lg:col-start-1">
-          <CardSection title="Informações do Curso">
+          <CardSection title="Informações do Produto">
             <div className="space-y-1.5">
               <Label htmlFor="title" className={labelClass}>
-                Título do Curso <span className="text-gold">*</span>
+                Nome do Produto <span className="text-gold">*</span>
               </Label>
               <Input
                 id="title"
                 value={title}
-                onChange={(e) => { setTitle(e.target.value); if (touched.title) setErrors((prev) => { const n = { ...prev }; delete n.title; return n; }); }}
-                onBlur={() => { setTouched((p) => ({ ...p, title: true })); if (!title.trim()) setErrors((p) => ({ ...p, title: "O título do curso é obrigatório" })); }}
-                placeholder="Ex: Curso Completo de Marketing Digital"
+                onChange={(e) => { 
+                  setTitle(e.target.value); 
+                  if (touched.title) setErrors((prev) => { const n = { ...prev }; delete n.title; return n; }); 
+                }}
+                onBlur={() => { 
+                  setTouched((p) => ({ ...p, title: true })); 
+                  if (!title.trim()) setErrors((p) => ({ ...p, title: "O nome do produto é obrigatório" })); 
+                }}
+                placeholder="Ex: Método Venda Expressa"
                 className={`${inputClass} ${errors.title ? "border-destructive" : ""}`}
               />
               {errors.title && <p className="text-[0.8rem] font-medium text-destructive">{errors.title}</p>}
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="shortDesc" className={labelClass}>Descrição Curta</Label>
+              <Label htmlFor="shortDesc" className={labelClass}>Descrição (opcional)</Label>
               <Textarea
                 id="shortDesc"
                 value={shortDesc}
                 onChange={(e) => setShortDesc(e.target.value)}
-                placeholder="Uma breve descrição do curso (aparece na vitrine)"
+                placeholder="Breve descrição do produto"
                 rows={3}
-                className="bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm resize-none"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="fullDesc" className={labelClass}>Descrição Completa</Label>
-              <Textarea
-                id="fullDesc"
-                value={fullDesc}
-                onChange={(e) => setFullDesc(e.target.value)}
-                placeholder="Descrição detalhada do curso (aparece na página do curso)"
-                rows={4}
                 className="bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm resize-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label className={labelClass}>Categoria</Label>
-                <Select value={categoryId} onValueChange={setCategoryId}>
-                  <SelectTrigger className={inputClass}>
-                    <SelectValue placeholder="Selecione uma categoria" />
+                <Label className={labelClass}>Seção <span className="text-gold">*</span></Label>
+                <Select 
+                  value={categoryId} 
+                  onValueChange={(val) => {
+                    setCategoryId(val);
+                    if (errors.categoryId) setErrors((prev) => { const n = { ...prev }; delete n.categoryId; return n; });
+                  }}
+                >
+                  <SelectTrigger className={`${inputClass} ${errors.categoryId ? "border-destructive" : ""}`}>
+                    <SelectValue placeholder="Selecione uma seção" />
                   </SelectTrigger>
                   <SelectContent>
                     {categories.map((cat: any) => (
                       <SelectItem key={cat.id} value={cat.id}>
-                        {cat.icon || "📁"} {cat.name}
+                        {cat.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
+                {errors.categoryId && <p className="text-[0.8rem] font-medium text-destructive">{errors.categoryId}</p>}
               </div>
               <div className="space-y-1.5">
                 <Label className={labelClass}>Status</Label>
@@ -205,8 +211,6 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 </Select>
               </div>
             </div>
-
-            {/* area selection removed */}
           </CardSection>
 
           <CardSection title="Configurações">
@@ -362,7 +366,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
             ) : (
               <Save className="h-3.5 w-3.5 mr-1.5" />
             )}
-            {initialValues ? "Salvar Alterações" : "Criar Curso"}
+            {initialValues ? "Salvar Alterações" : "Criar Produto"}
           </Button>
         </div>
       )}

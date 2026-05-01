@@ -33,7 +33,12 @@ function NewCoursePage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
       queryClient.invalidateQueries({ queryKey: ["student-shelves"] });
-      toast.success("Curso criado com sucesso!");
+      toast.success("Produto criado com sucesso!", {
+        action: {
+          label: "Criar Oferta",
+          onClick: () => navigate({ to: "/admin/vendas" })
+        },
+      });
       navigate({ to: "/admin/courses" });
     },
     onError: (e: Error) => toastError(e),
@@ -57,7 +62,7 @@ function NewCoursePage() {
           <div className="space-y-2">
             <h2 className="text-2xl font-black text-foreground">Seção Necessária</h2>
             <p className="text-muted-foreground">
-              Você precisa criar pelo menos uma <strong>Seção (Categoria)</strong> antes de cadastrar um produto. Isso é essencial para a organização do seu catálogo.
+              Você precisa criar pelo menos uma <strong>Seção</strong> antes de cadastrar um produto. Isso é essencial para a organização do seu catálogo.
             </p>
           </div>
           <Link
@@ -88,10 +93,10 @@ function NewCoursePage() {
             </Link>
             <div>
               <h1 className="font-display text-xl font-black text-foreground tracking-tight">
-                Criar Novo Curso
+                Criar Novo Produto
               </h1>
               <p className="text-xs text-muted-foreground/50 mt-0.5">
-                Configure seu curso, adicione módulos e aulas
+                Configure seu produto, adicione módulos e aulas
               </p>
             </div>
           </div>
@@ -115,7 +120,7 @@ function NewCoursePage() {
               ) : (
                 <Save className="h-4 w-4 mr-1.5" />
               )}
-              Salvar Curso
+              Salvar Produto
             </Button>
           </div>
         </div>
