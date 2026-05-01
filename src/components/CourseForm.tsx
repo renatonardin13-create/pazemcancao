@@ -12,7 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Video, FileText, Save, Loader2, ImageIcon, File, Link as LinkIcon } from "lucide-react";
+import { Video, FileText, Save, Loader2, ImageIcon, File, Link as LinkIcon, Sparkles } from "lucide-react";
 import { ImageUploadField } from "@/components/ImageUploadField";
 
 interface CourseFormProps {
