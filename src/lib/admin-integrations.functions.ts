@@ -69,3 +69,47 @@ export const getIntegrationsDashboard = createServerFn({ method: 'POST' })
       })),
     };
   });
+
+export const createOffer = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .validator((d: any) => d)
+  .handler(async ({ data, context }) => {
+    await verifyAdmin(context.supabase, context.userId);
+    const { 
+      course_id, 
+      platform, 
+      external_product_id, 
+      integration_token, 
+      payment_type 
+    } = data;
+
+    const { data: offer, error } = await supabaseAdmin
+      .from('course_integrations')
+      .insert({
+        course_id,
+        platform,
+        external_product_id,
+        integration_token,
+        payment_type,
+        webhook_active: true,
+        is_enabled: true
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return offer;
+  });
+
+export const listAdminOffers = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }) => {
+    await verifyAdmin(context.supabase, context.userId);
+    const { data, error } = await supabaseAdmin
+      .from('course_integrations')
+      .select('*, courses(title)')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data;
+  });
