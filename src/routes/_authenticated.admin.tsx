@@ -4,7 +4,8 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/AdminSidebar";
 import { LogOut, ShieldAlert, ArrowLeft, RefreshCw } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminLayout,
@@ -14,6 +15,32 @@ function AdminLayout() {
   const { isAdmin, adminLoading, logout, user } = useAuth();
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
+  const loggedAttempt = useRef(false);
+
+  useEffect(() => {
+    const logUnauthorizedAccess = async () => {
+      if (!adminLoading && !isAdmin && user && !loggedAttempt.current) {
+        loggedAttempt.current = true;
+        try {
+          await supabase.from("audit_logs").insert({
+            user_id: user.id,
+            action: "UNAUTHORIZED_ADMIN_ACCESS_ATTEMPT",
+            entity_type: "admin_panel",
+            details: {
+              path: window.location.pathname,
+              email: user.email
+            },
+            ip_address: "client-side-logged", // IP is better handled on server, but we record the attempt
+            user_agent: window.navigator.userAgent
+          });
+        } catch (error) {
+          console.error("Failed to log unauthorized access:", error);
+        }
+      }
+    };
+
+    logUnauthorizedAccess();
+  }, [adminLoading, isAdmin, user]);
 
   const handleRefresh = async () => {
     setRefreshing(true);
