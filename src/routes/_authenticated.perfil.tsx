@@ -75,7 +75,20 @@ function ProfilePage() {
     onError: (e: Error) => toast.error(e.message),
   });
 
+  const deleteAccountMutation = useMutation({
+    mutationFn: () => deleteMyAccount(),
+    onSuccess: () => {
+      toast.success("Sua conta foi excluída permanentemente.");
+      logout();
+      navigate({ to: "/login" });
+    },
+    onError: (e: Error) => toast.error("Erro ao excluir conta: " + e.message),
+  });
+
   const handlePasswordChange = () => {
+...
+    passwordMutation.mutate();
+  };
     if (newPassword.length < 6) {
       toast.error("A senha deve ter pelo menos 6 caracteres.");
       return;
