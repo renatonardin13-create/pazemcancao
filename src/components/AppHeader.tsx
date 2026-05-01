@@ -38,7 +38,7 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
     );
 
   return (
-    <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-2xl border-b border-border/15">
+    <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-3xl border-b border-border/10 shadow-premium">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-4 sm:px-6 h-14 sm:h-16">
         <LogoBrand size="md" showSubtitle linkTo="/home" />
 
