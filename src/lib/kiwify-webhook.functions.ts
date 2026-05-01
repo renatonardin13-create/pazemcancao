@@ -192,33 +192,46 @@ function extractEventId(payload: any, rawBody: any): string {
 
 function extractFields(rawBody: any) {
   const payload = rawBody.data || rawBody;
-  // Kiwify envia o tipo do evento em webhook_event_type/event/event_type (ex.: subscription_canceled, refunded, test).
-  // Quando presente, ele tem prioridade sobre order_status para o roteamento.
+  
+  // Normalize event type/status
   const eventType = (
     rawBody.webhook_event_type || rawBody.event || rawBody.event_type ||
-    payload.webhook_event_type || payload.event || payload.event_type || ''
+    payload.webhook_event_type || payload.event || payload.event_type || 
+    rawBody.sale_status_name || payload.sale_status_name || ''
   ).toString().toLowerCase().trim();
+  
   const orderStatus = (
-    payload.order_status || payload.status || rawBody.order_status || ''
+    payload.order_status || payload.status || rawBody.order_status || 
+    rawBody.status || payload.status || ''
   ).toLowerCase();
+  
   const status = eventType || orderStatus;
+  
+  // Normalize email
   const customerEmail = (
     payload.customer?.email ||
     payload.Customer?.email ||
     rawBody.Customer?.email ||
     rawBody.customer?.email ||
+    rawBody.customer_email ||
+    payload.customer_email ||
     ''
   ).toLowerCase().trim();
+  
+  // Normalize name
   const customerName =
     payload.customer?.name ||
     payload.Customer?.full_name ||
     rawBody.Customer?.full_name ||
     rawBody.customer?.name ||
+    rawBody.customer_full_name ||
+    payload.customer_full_name ||
     'Comprador';
-  const orderId = payload.order_id || rawBody.order_id || '';
+    
+  const orderId = payload.order_id || rawBody.order_id || rawBody.sale_id || payload.sale_id || '';
   const uniqueEventId = extractEventId(payload, rawBody);
 
-  // Extract external product ID from payload (Kiwify, Hotmart, Cakto formats)
+  // Extract external product ID
   const externalProductId = (
     payload.product?.id ||
     payload.Product?.id ||
@@ -226,6 +239,8 @@ function extractFields(rawBody: any) {
     rawBody.Product?.id ||
     payload.product_id ||
     rawBody.product_id ||
+    rawBody.product_code ||
+    payload.product_code ||
     ''
   ).toString().trim();
 
