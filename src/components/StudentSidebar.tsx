@@ -69,6 +69,12 @@ export function StudentSidebar() {
     staleTime: 60_000,
   });
 
+  const { data: categoriesData } = useQuery({
+    queryKey: ["all-categories"],
+    queryFn: () => listCategories({ data: {} }),
+    staleTime: 5 * 60_000,
+  });
+
   const allTracks = tracksData?.tracks || [];
 
   const normalizeStr = (s: string) =>
