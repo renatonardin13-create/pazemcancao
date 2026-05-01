@@ -63,7 +63,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   // areaId state removed
   const [promotionalPrice, setPromotionalPrice] = useState("");
   const [status, setStatus] = useState("draft");
-  const [courseType, setCourseType] = useState("video");
+  const [courseType, setCourseType] = useState("aula");
   const [launchDate, setLaunchDate] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
