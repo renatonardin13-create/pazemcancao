@@ -49,7 +49,7 @@ const contentGroups = [
 
 const salesItems = [
   { title: "Transações", url: "/admin/transactions", icon: Receipt },
-  { title: "Planos", url: "/admin/vendas", icon: CreditCard },
+  { title: "Ofertas", url: "/admin/offers", icon: CreditCard },
   { title: "Cupons", url: "/admin/coupons", icon: Tag },
 ];
 
