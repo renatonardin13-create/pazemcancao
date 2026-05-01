@@ -6,6 +6,24 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+// Helper to redact sensitive fields from logs
+const redactPayload = (body: any) => {
+  if (!body) return body;
+  const redacted = { ...body };
+  const sensitiveKeys = ['token', 'signature', 'password', 'cvv', 'card_number', 'credit_card'];
+  
+  for (const key of sensitiveKeys) {
+    if (key in redacted) redacted[key] = '[REDACTED]';
+  }
+  
+  // Also check nested objects if any
+  if (redacted.customer && typeof redacted.customer === 'object') {
+    redacted.customer = redactPayload(redacted.customer);
+  }
+  
+  return redacted;
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -39,7 +57,7 @@ serve(async (req) => {
       }
     }
     
-    console.log(`Received webhook from ${provider}:`, body)
+    console.log(`Received webhook from ${provider}:`, redactPayload(body))
 
     // Extract common fields based on provider
     let externalProductId = ''
@@ -65,12 +83,12 @@ serve(async (req) => {
       customerName = body.customer?.name || body.name
     }
 
-    // 1. Initial Logging in webhook_logs
+    // 1. Initial Logging in webhook_logs (Redacted)
     const { data: log, error: logError } = await supabaseAdmin
       .from('webhook_logs')
       .insert({
         provider,
-        payload: body,
+        payload: redactPayload(body),
         event_type: saleStatus || 'webhook_received',
         email: customerEmail,
         external_product_id: externalProductId,
@@ -83,27 +101,48 @@ serve(async (req) => {
     logId = log?.id
 
     // 2. Validate mandatory fields
-    if (!externalProductId || !uniqueEventId) {
-      const msg = !externalProductId ? 'Missing product_id' : 'Missing unique event ID (sale_id/order_id)'
+    if (!externalProductId || !uniqueEventId || !customerEmail) {
+      const msg = !externalProductId ? 'Missing product_id' : 
+                  !uniqueEventId ? 'Missing unique event ID' : 'Missing customer email';
       await updateLog(logId, 400, msg)
       return new Response(JSON.stringify({ error: msg }), { status: 400 })
     }
 
-    // 3. Duplicate Check: "Pagamento duplicado -> ignorar"
-    const { data: existingProcess, error: checkError } = await supabaseAdmin
+    // 3. Atomic Duplicate Check using unique constraint
+    // We try to insert into processed_webhooks with status 'processing'
+    const { error: insertProcessError } = await supabaseAdmin
       .from('processed_webhooks')
-      .select('id, status')
-      .eq('unique_event_id', uniqueEventId)
-      .eq('provider', provider)
-      .maybeSingle()
+      .insert({
+        unique_event_id: uniqueEventId,
+        provider,
+        email: customerEmail,
+        event_type: saleStatus,
+        status: 'processing',
+        payload: redactPayload(body)
+      })
 
-    if (existingProcess && existingProcess.status === 'completed') {
-      console.log(`Duplicate event ${uniqueEventId} already processed. Ignoring.`)
-      await updateLog(logId, 200, 'Duplicate event already processed. Ignored.', true)
-      return new Response(JSON.stringify({ success: true, message: 'Already processed' }), { status: 200 })
+    if (insertProcessError) {
+      if (insertProcessError.code === '23505') { // Unique violation
+        const { data: existing } = await supabaseAdmin
+          .from('processed_webhooks')
+          .select('status')
+          .eq('unique_event_id', uniqueEventId)
+          .eq('provider', provider)
+          .maybeSingle()
+
+        if (existing?.status === 'completed') {
+          console.log(`Event ${uniqueEventId} already processed.`)
+          await updateLog(logId, 200, 'Duplicate event already processed.', true)
+          return new Response(JSON.stringify({ success: true, message: 'Already processed' }), { status: 200 })
+        } else {
+          // If it's 'processing', another instance is working on it.
+          return new Response(JSON.stringify({ error: 'Processing in progress' }), { status: 409 })
+        }
+      }
+      throw insertProcessError
     }
 
-    // 4. Identify Offer and Validate Token: "Identificar oferta pelo ID do gateway" & "Validar token"
+    // 4. Identify Offer and Validate Token
     const { data: offer, error: offerError } = await supabaseAdmin
       .from('course_integrations')
       .select('*, courses(area_id)')
@@ -114,33 +153,39 @@ serve(async (req) => {
 
     if (offerError || !offer) {
       const msg = `Offer not found for product ${externalProductId} on ${provider}`
-      console.error(msg)
       await updateLog(logId, 404, msg)
-      // "Produto inexistente -> log de erro"
+      await updateProcess(uniqueEventId, provider, 'failed', msg)
       return new Response(JSON.stringify({ error: 'Product/Offer not found' }), { status: 404 })
     }
 
-    // "Token inválido -> bloquear"
-    if (offer.integration_token && offer.integration_token !== receivedToken) {
-      const msg = 'Invalid authentication token'
-      console.error(msg)
+    // Token check is MANDATORY
+    if (!receivedToken) {
+      const msg = 'Missing authentication token'
       await updateLog(logId, 401, msg)
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401 })
+      await updateProcess(uniqueEventId, provider, 'failed', msg)
+      return new Response(JSON.stringify({ error: 'Unauthorized: Missing token' }), { status: 401 })
     }
 
-    // 5. Verify status: "Verificar status do pagamento"
+    if (offer.integration_token && offer.integration_token !== receivedToken) {
+      const msg = 'Invalid authentication token'
+      await updateLog(logId, 401, msg)
+      await updateProcess(uniqueEventId, provider, 'failed', msg)
+      return new Response(JSON.stringify({ error: 'Unauthorized: Invalid token' }), { status: 401 })
+    }
+
+    // 5. Verify status
     const isApproved = (provider === 'perfectpay' && saleStatus === 'approved') || 
                        (provider === 'kiwify' && (saleStatus === 'paid' || saleStatus === 'approved'))
 
     if (!isApproved) {
       const msg = `Payment not approved (Status: ${saleStatus})`
-      console.log(msg)
       await updateLog(logId, 200, msg)
+      await updateProcess(uniqueEventId, provider, 'completed', msg)
       return new Response(JSON.stringify({ success: true, message: msg }), { status: 200 })
     }
 
-    // 6. Action: "Liberar acesso ao produto vinculado"
-    console.log(`Processing approval for ${customerEmail} - Product ID: ${offer.course_id}`)
+    // 6. Action: Grant access
+    console.log(`Processing approval for ${customerEmail} - Course ID: ${offer.course_id}`)
     
     // Find or Create User
     const { data: { users }, error: listError } = await supabaseAdmin.auth.admin.listUsers()
@@ -159,7 +204,6 @@ serve(async (req) => {
       
       if (createError) {
         if (createError.message.includes('already registered')) {
-          // Double check if user exists (race condition)
           const { data: { users: retryUsers } } = await supabaseAdmin.auth.admin.listUsers()
           userId = retryUsers.find(u => u.email?.toLowerCase() === customerEmail.toLowerCase())?.id
         } else {
@@ -172,13 +216,12 @@ serve(async (req) => {
 
     if (!userId) throw new Error('Could not create or find user')
 
-    // "Associar usuário ao produto" & "Garantir que ele veja na área de membros"
     const { error: enrollError } = await supabaseAdmin
       .from('enrollments')
       .upsert({
         user_id: userId,
         course_id: offer.course_id,
-        area_id: offer.courses?.area_id, // Ensure visibility in the specific area
+        area_id: offer.courses?.area_id,
         status: 'active',
         email: customerEmail,
         access_origin: 'webhook',
@@ -187,18 +230,8 @@ serve(async (req) => {
 
     if (enrollError) throw enrollError
 
-    // Mark as processed
-    await supabaseAdmin
-      .from('processed_webhooks')
-      .insert({
-        unique_event_id: uniqueEventId,
-        provider,
-        email: customerEmail,
-        event_type: saleStatus,
-        status: 'completed',
-        payload: body
-      })
-
+    // Mark as completed
+    await updateProcess(uniqueEventId, provider, 'completed')
     await updateLog(logId, 200, 'Access granted successfully', true)
 
     return new Response(JSON.stringify({ success: true }), { 
@@ -208,9 +241,7 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Webhook processing error:', error)
-    if (logId) {
-      await updateLog(logId, 500, error.message)
-    }
+    if (logId) await updateLog(logId, 500, error.message)
     return new Response(JSON.stringify({ error: error.message }), { 
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500 
@@ -228,5 +259,17 @@ serve(async (req) => {
         processed_at: new Date().toISOString()
       })
       .eq('id', id)
+  }
+
+  async function updateProcess(eventId: string, provider: string, status: string, error?: string) {
+    await supabaseAdmin
+      .from('processed_webhooks')
+      .update({
+        status,
+        error_message: error,
+        processed_at: new Date().toISOString()
+      })
+      .eq('unique_event_id', eventId)
+      .eq('provider', provider)
   }
 })
