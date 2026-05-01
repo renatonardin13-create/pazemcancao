@@ -166,7 +166,19 @@ function NewOfferPage() {
             </div>
             <CardContent className="p-6 space-y-4">
               <div className="space-y-2">
-                <Label>ID do Produto no Gateway</Label>
+                <div className="flex items-center gap-2">
+                  <Label>ID do Produto no Gateway</Label>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <HelpCircle className="h-3.5 w-3.5 text-muted-foreground/50 cursor-help" />
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>O ID único gerado pela plataforma de vendas (ex: PP123456 na PerfectPay)</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
                 <Input 
                   placeholder="Ex: PP123456" 
                   className="h-12 bg-background/50" 
