@@ -72,8 +72,8 @@ export const getIntegrationsDashboard = createServerFn({ method: 'POST' })
 
 export const createOffer = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .validator((d: any) => d)
-  .handler(async ({ data, context }) => {
+  .inputValidator((d: any) => d)
+  .handler(async ({ data, context }: { data: any, context: any }) => {
     await verifyAdmin(context.supabase, context.userId);
     const { 
       course_id, 
@@ -103,7 +103,7 @@ export const createOffer = createServerFn({ method: 'POST' })
 
 export const listAdminOffers = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .handler(async ({ context }: { context: any }) => {
     await verifyAdmin(context.supabase, context.userId);
     const { data, error } = await supabaseAdmin
       .from('course_integrations')
