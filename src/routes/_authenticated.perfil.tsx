@@ -32,6 +32,8 @@ export const Route = createFileRoute("/_authenticated/perfil")({
 
 function ProfilePage() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   const { data, isLoading } = useQuery({
     queryKey: ["my-profile"],
@@ -42,6 +44,7 @@ function ProfilePage() {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   useEffect(() => {
     if (data?.profile) {
