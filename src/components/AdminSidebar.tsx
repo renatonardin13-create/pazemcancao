@@ -203,11 +203,11 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Planos e Vendas */}
+        {/* Vendas */}
         <SidebarGroup className="py-1">
           {!collapsed && (
             <SidebarGroupLabel className={groupLabelClass}>
-              Planos e Vendas
+              Vendas
             </SidebarGroupLabel>
           )}
           <SidebarGroupContent>
