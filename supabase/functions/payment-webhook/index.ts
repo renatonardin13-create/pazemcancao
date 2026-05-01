@@ -40,9 +40,10 @@ serve(async (req) => {
       .insert({
         provider,
         payload: body,
-        event_type: body.sale_status || body.event || 'webhook_received',
+        event_type: body.sale_status || body.event || body.order_status || 'webhook_received',
         response_status: 200,
-        email: body.customer_email || body.email || body.customer?.email
+        email: body.customer_email || body.email || body.customer?.email,
+        external_product_id: body.product_id || body.product?.id
       })
       .select()
       .single()
