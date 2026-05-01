@@ -31,7 +31,10 @@ const COURSE_TYPE_OPTIONS = [
   { value: "bonus", label: "Bônus", icon: Sparkles },
 ] as const;
 
-const normalizeCourseType = (value?: string) => (value === "video" ? "video" : "ebook");
+const normalizeCourseType = (value?: string) => {
+  if (value === "aula" || value === "material" || value === "bonus") return value;
+  return "aula";
+};
 
 function CardSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
