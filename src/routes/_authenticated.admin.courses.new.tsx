@@ -9,6 +9,12 @@ import { toast } from "sonner";
 import { ArrowLeft, Save, Loader2, AlertCircle, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 
