@@ -11,19 +11,19 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-lg shadow-primary/15 hover:brightness-110 hover:shadow-xl hover:shadow-primary/20",
+          "bg-primary text-primary-foreground shadow-lg shadow-primary/15 hover:brightness-110 hover:shadow-xl hover:shadow-primary/20 hover:-translate-y-0.5",
         destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:brightness-110 hover:bg-destructive/90",
+          "bg-destructive text-destructive-foreground shadow-sm hover:brightness-110 hover:bg-destructive/90 hover:-translate-y-0.5",
         outline:
-          "border border-border/50 bg-card/30 backdrop-blur-sm shadow-sm hover:bg-card/60 hover:border-gold/20 hover:text-foreground hover:brightness-110",
+          "border border-border/50 bg-card/30 backdrop-blur-sm shadow-sm hover:bg-card/60 hover:border-gold/20 hover:text-foreground hover:brightness-110 hover:-translate-y-0.5",
         secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 hover:brightness-110",
-        ghost: "hover:bg-muted/30 hover:text-foreground hover:brightness-110",
-        link: "text-primary underline-offset-4 hover:underline",
+          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80 hover:brightness-110 hover:-translate-y-0.5",
+        ghost: "hover:bg-muted/30 hover:text-foreground hover:brightness-110 hover:-translate-y-0.5",
+        link: "text-primary underline-offset-4 hover:underline hover:brightness-110",
         premium:
-          "bg-gradient-to-r from-gold/90 to-gold/70 text-background font-bold tracking-wide shadow-lg shadow-gold/15 hover:from-gold hover:to-gold/80 hover:shadow-xl hover:shadow-gold/25 border border-gold/30 hover:brightness-110",
+          "bg-gradient-to-r from-gold/90 to-gold/70 text-background font-bold tracking-wide shadow-lg shadow-gold/15 hover:from-gold hover:to-gold/80 hover:shadow-xl hover:shadow-gold/25 border border-gold/30 hover:brightness-110 hover:-translate-y-0.5",
         premiumOutline:
-          "border border-gold/30 bg-card/40 backdrop-blur-sm text-gold/90 font-semibold tracking-wide hover:bg-gold/10 hover:border-gold/50 hover:text-gold hover:brightness-110",
+          "border border-gold/30 bg-card/40 backdrop-blur-sm text-gold/90 font-semibold tracking-wide hover:bg-gold/10 hover:border-gold/50 hover:text-gold hover:brightness-110 hover:-translate-y-0.5",
       },
       size: {
         default: "h-10 px-5 py-2",

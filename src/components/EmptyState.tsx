@@ -56,14 +56,14 @@ export function EmptyState({
       {actionLabel && (actionTo || onAction) && (
         <div className="mt-8">
           {actionTo ? (
-            <Button asChild size={compact ? "sm" : "lg"} className="rounded-xl font-bold px-8 shadow-xl hover:shadow-gold/20 transition-all hover:scale-[1.02]">
+            <Button asChild size={compact ? "sm" : "lg"} className="rounded-xl font-bold px-8 shadow-xl hover:shadow-gold/20 transition-all">
               <Link to={actionTo}>
                 {ActionIcon && <ActionIcon className="h-4 w-4 mr-2" />}
                 {actionLabel}
               </Link>
             </Button>
           ) : (
-            <Button size={compact ? "sm" : "lg"} onClick={onAction} className="rounded-xl font-bold px-8 shadow-xl hover:shadow-gold/20 transition-all hover:scale-[1.02]">
+            <Button size={compact ? "sm" : "lg"} onClick={onAction} className="rounded-xl font-bold px-8 shadow-xl hover:shadow-gold/20 transition-all">
               {ActionIcon && <ActionIcon className="h-4 w-4 mr-2" />}
               {actionLabel}
             </Button>
