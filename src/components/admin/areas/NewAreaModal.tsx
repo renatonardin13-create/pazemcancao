@@ -217,6 +217,36 @@ export function NewAreaModal({ open, onOpenChange }: NewAreaModalProps) {
                     </Select>
                   </div>
 
+                  {/* Language and Status Group */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="language" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Idioma da Área</Label>
+                      <Select value={language} onValueChange={setLanguage}>
+                        <SelectTrigger className="bg-white/[0.03] border-white/10 h-14 rounded-2xl focus:ring-gold text-base">
+                          <SelectValue placeholder="Selecione o idioma" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#0A0D14] border-white/10 text-white rounded-2xl">
+                          <SelectItem value="pt-BR" className="rounded-xl h-12">Português (Brasil)</SelectItem>
+                          <SelectItem value="en" className="rounded-xl h-12">English</SelectItem>
+                          <SelectItem value="es" className="rounded-xl h-12">Español</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="status" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Status Inicial</Label>
+                      <Select value={status} onValueChange={setStatus}>
+                        <SelectTrigger className="bg-white/[0.03] border-white/10 h-14 rounded-2xl focus:ring-gold text-base">
+                          <SelectValue placeholder="Status" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#0A0D14] border-white/10 text-white rounded-2xl">
+                          <SelectItem value="active" className="rounded-xl h-12">Ativo</SelectItem>
+                          <SelectItem value="draft" className="rounded-xl h-12">Rascunho</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
                   {/* Toggle Controls */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="flex items-center justify-between p-5 bg-white/[0.03] rounded-2xl border border-white/5 group hover:border-gold/20 transition-all">
