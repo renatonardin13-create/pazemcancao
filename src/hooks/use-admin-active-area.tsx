@@ -7,6 +7,7 @@ export type AdminActiveArea = {
   nome: string;
   subdominio: string;
   principal: boolean;
+  ativa: boolean;
 };
 
 export function useAdminActiveArea() {
@@ -22,7 +23,7 @@ export function useAdminActiveArea() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("areas_membros")
-        .select("id, nome, subdominio, principal")
+        .select("id, nome, subdominio, principal, ativa")
         .order("nome");
       if (error) throw error;
       return data as AdminActiveArea[];
