@@ -26,6 +26,7 @@ export const Route = createFileRoute("/_authenticated/admin/courses/new")({
 function NewCoursePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { activeArea } = useAdminActiveArea();
   const formRef = useRef<HTMLFormElement>(null);
   const [activeTab, setActiveTab] = useState("detalhes");
 
