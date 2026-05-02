@@ -241,6 +241,8 @@ export const listAdminCategories = createServerFn({ method: 'POST' })
 
     if (data?.areaId) {
       query = query.eq('area_id', data.areaId);
+    } else {
+      return { categories: [] };
     }
 
     const { data: categories, error } = await query;
