@@ -352,7 +352,7 @@ export type Database = {
             foreignKeyName: "categories_area_id_fkey"
             columns: ["area_id"]
             isOneToOne: false
-            referencedRelation: "areas"
+            referencedRelation: "areas_membros"
             referencedColumns: ["id"]
           },
         ]
@@ -586,7 +586,7 @@ export type Database = {
             foreignKeyName: "contents_area_id_fkey"
             columns: ["area_id"]
             isOneToOne: false
-            referencedRelation: "areas"
+            referencedRelation: "areas_membros"
             referencedColumns: ["id"]
           },
           {
@@ -1782,7 +1782,7 @@ export type Database = {
             foreignKeyName: "tracks_area_id_fkey"
             columns: ["area_id"]
             isOneToOne: false
-            referencedRelation: "areas"
+            referencedRelation: "areas_membros"
             referencedColumns: ["id"]
           },
         ]

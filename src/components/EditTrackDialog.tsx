@@ -20,6 +20,7 @@ import { Loader2, Upload, X, ImageIcon, Gift } from "lucide-react";
 import { ImageFieldHint } from "@/components/ImageFieldHint";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 
 interface EditTrackDialogProps {
   track: {

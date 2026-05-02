@@ -27,6 +27,7 @@ import { listPlaylistsWithCounts, getPlaylistWithTracks } from "@/lib/playlists.
 import { checkBuyerAccess } from "@/lib/access.functions";
 import { logDownload } from "@/lib/analytics.functions";
 import { usePlayer } from "@/hooks/use-player";
+import { useArea } from "@/hooks/use-area";
 import type { Track } from "@/lib/sample-tracks";
 
 // Normalize a category name: remove emojis/symbols, lowercase, trim, collapse spaces.
@@ -154,6 +155,7 @@ function MusicLibraryState({
 }
 
 function MusicLibraryPage() {
+  const { area } = useArea();
   const search = Route.useSearch();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
@@ -166,19 +168,21 @@ function MusicLibraryPage() {
   // programada / inativas) para exibir badge "Em breve" — a reprodução é
   // bloqueada no TrackCard quando a faixa não está liberada.
   const { data: tracksData, isLoading: tracksLoading, isError: tracksFailed } = useQuery({
-    queryKey: ["music-library-tracks", undefined],
-    queryFn: () => listAllTracks({ data: { areaId: undefined } }),
+    queryKey: ["music-library-tracks", area?.id],
+    queryFn: () => listAllTracks({ data: { areaId: area?.id } }),
     staleTime: 30_000,
     retry: 2,
+    enabled: !!area?.id,
   });
 
   const categoriesLoading = false;
   const categoriesFailed = false;
 
   const { data: playlistsData, isError: playlistsFailed } = useQuery({
-    queryKey: ["music-library-playlists", undefined],
-    queryFn: () => listPlaylistsWithCounts({ data: { areaId: undefined } }),
+    queryKey: ["music-library-playlists", area?.id],
+    queryFn: () => listPlaylistsWithCounts({ data: { areaId: area?.id } }),
     staleTime: 60_000,
+    enabled: !!area?.id,
   });
 
   const { data: playlistTracksData, isLoading: playlistLoading } = useQuery({

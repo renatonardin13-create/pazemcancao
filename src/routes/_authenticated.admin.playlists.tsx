@@ -22,12 +22,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useState } from "react";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/EmptyState";
+import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 
 export const Route = createFileRoute("/_authenticated/admin/playlists")({
   component: AdminPlaylistsPage,
 });
 
 function AdminPlaylistsPage() {
+  const { activeArea } = useAdminActiveArea();
   const queryClient = useQueryClient();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [editingPlaylist, setEditingPlaylist] = useState<any>(null);
@@ -36,16 +38,17 @@ function AdminPlaylistsPage() {
   const [trackSearch, setTrackSearch] = useState("");
 
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-playlists"],
-    queryFn: () => listAdminPlaylists(),
+    queryKey: ["admin-playlists", activeArea?.id],
+    queryFn: () => listAdminPlaylists({ data: { areaId: activeArea?.id } }),
     staleTime: 30_000,
+    enabled: !!activeArea?.id,
   });
 
   const playlists = data?.playlists || [];
 
   const createMutation = useMutation({
     mutationFn: (input: { name: string; description?: string; cover_url?: string }) =>
-      createPlaylist({ data: input }),
+      createPlaylist({ data: { ...input, area_id: activeArea!.id } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-playlists"] });
       toast.success("Playlist criada!");
@@ -395,13 +398,14 @@ function TrackPickerDialog({
   trackSearch: string;
   setTrackSearch: (v: string) => void;
 }) {
+  const { activeArea } = useAdminActiveArea();
   const queryClient = useQueryClient();
 
   const { data: allTracksData } = useQuery({
-    queryKey: ["all-tracks-picker"],
-    queryFn: () => listAllTracksForPicker(),
+    queryKey: ["all-tracks-picker", activeArea?.id],
+    queryFn: () => listAllTracksForPicker({ data: { areaId: activeArea!.id } }),
     staleTime: 60_000,
-    enabled: open,
+    enabled: open && !!activeArea?.id,
   });
 
   const { data: plTracksData } = useQuery({
