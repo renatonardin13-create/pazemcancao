@@ -174,7 +174,7 @@ function AdminHeroBannersPage() {
     staleTime: 60_000,
   });
 
-  const banners = data?.banners ?? [];
+  const banners = (data as any)?.banners ?? [];
   const courses = coursesData?.courses ?? [];
   const metrics: Array<{ bannerId: string; title: string; impressions: number; clicks: number; ctr: number }> =
     (metricsData as any)?.metrics ?? [];
