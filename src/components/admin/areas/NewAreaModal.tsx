@@ -91,7 +91,9 @@ export function NewAreaModal({ open, onOpenChange }: NewAreaModalProps) {
       subdominio,
       produto_id: produtoId,
       ativa,
-      principal
+      principal,
+      status,
+      language
     });
   };
 
