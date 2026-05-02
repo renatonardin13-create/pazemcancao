@@ -29,6 +29,7 @@ export const Route = createFileRoute("/_authenticated/admin/playlists")({
 });
 
 function AdminPlaylistsPage() {
+  const { activeArea } = useAdminActiveArea();
   const queryClient = useQueryClient();
   const [showCreateDialog, setShowCreateDialog] = useState(false);
   const [editingPlaylist, setEditingPlaylist] = useState<any>(null);
@@ -37,9 +38,10 @@ function AdminPlaylistsPage() {
   const [trackSearch, setTrackSearch] = useState("");
 
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-playlists"],
-    queryFn: () => listAdminPlaylists(),
+    queryKey: ["admin-playlists", activeArea?.id],
+    queryFn: () => listAdminPlaylists({ data: { areaId: activeArea?.id } }),
     staleTime: 30_000,
+    enabled: !!activeArea?.id,
   });
 
   const playlists = data?.playlists || [];
