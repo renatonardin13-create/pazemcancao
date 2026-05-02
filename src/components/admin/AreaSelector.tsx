@@ -25,8 +25,11 @@ export function AreaSelector() {
 
   const handleAreaChange = (id: string) => {
     setArea(id);
-    // Invalidate all queries to refresh the data for the new area
-    queryClient.invalidateQueries();
+    // Invalidate main admin queries to refresh the data for the new area
+    queryClient.invalidateQueries({ queryKey: ["admin-shelves"] });
+    queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
+    queryClient.invalidateQueries({ queryKey: ["admin-courses"] });
+    queryClient.invalidateQueries({ queryKey: ["admin-promo-banners"] });
   };
 
   return (

@@ -62,7 +62,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   const [categoryId, setCategoryId] = useState("");
   const [price, setPrice] = useState("0");
   const [areaId, setAreaId] = useState("");
-  const { activeArea } = useAdminActiveArea();
+  const { activeArea, areas: allAreas } = useAdminActiveArea();
   const [promotionalPrice, setPromotionalPrice] = useState("");
   const [status, setStatus] = useState("draft");
   const [courseType, setCourseType] = useState("aula");
@@ -117,7 +117,9 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
     const newErrors = validate();
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
-      const firstErrorField = document.getElementById(Object.keys(newErrors)[0]);
+      const firstErrorKey = Object.keys(newErrors)[0];
+      const fieldId = firstErrorKey === "areaId" ? "areaId-trigger" : firstErrorKey;
+      const firstErrorField = document.getElementById(fieldId);
       firstErrorField?.focus();
       return;
     }
@@ -188,7 +190,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                     if (errors.categoryId) setErrors((prev) => { const n = { ...prev }; delete n.categoryId; return n; });
                   }}
                 >
-                  <SelectTrigger className={`${inputClass} ${errors.categoryId ? "border-destructive" : ""}`}>
+                  <SelectTrigger id="categoryId" className={`${inputClass} ${errors.categoryId ? "border-destructive" : ""}`}>
                     <SelectValue placeholder="Selecione uma seção" />
                   </SelectTrigger>
                   <SelectContent>
@@ -224,15 +226,15 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   if (errors.areaId) setErrors((prev) => { const n = { ...prev }; delete n.areaId; return n; });
                 }}
               >
-                <SelectTrigger className={`${inputClass} ${errors.areaId ? "border-destructive" : ""}`}>
+                <SelectTrigger id="areaId-trigger" className={`${inputClass} ${errors.areaId ? "border-destructive" : ""}`}>
                   <SelectValue placeholder="Selecione a área" />
                 </SelectTrigger>
                 <SelectContent>
-                  {activeArea && (
-                    <SelectItem value={activeArea.id}>
-                      {activeArea.nome}
+                  {allAreas?.map((area) => (
+                    <SelectItem key={area.id} value={area.id}>
+                      {area.nome} {area.ativa ? "" : "(Inativa)"}
                     </SelectItem>
-                  )}
+                  ))}
                 </SelectContent>
               </Select>
               {errors.areaId && <p className="text-[0.8rem] font-medium text-destructive">{errors.areaId}</p>}
