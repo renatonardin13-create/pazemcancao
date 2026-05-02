@@ -21,7 +21,15 @@ const resources = {
       "select_language": "Selecionar Idioma",
       "continue_watching": "Continuar Assistindo",
       "no_content": "Nenhum conteúdo disponível no momento.",
-      "restricted_access": "Acesso restrito"
+      "restricted_access": "Acesso restrito",
+      "coming_soon": "Em breve",
+      "premium": "Premium",
+      "completed": "Concluído",
+      "in_progress": "Em andamento",
+      "tap_to_unlock": "Toque para desbloquear",
+      "premium_content": "Conteúdo Premium",
+      "tap_for_details": "Toque para mais detalhes",
+      "all": "Todos"
     }
   },
   "en": {
@@ -43,7 +51,15 @@ const resources = {
       "select_language": "Select Language",
       "continue_watching": "Continue Watching",
       "no_content": "No content available at the moment.",
-      "restricted_access": "Restricted access"
+      "restricted_access": "Restricted access",
+      "coming_soon": "Coming soon",
+      "premium": "Premium",
+      "completed": "Completed",
+      "in_progress": "In progress",
+      "tap_to_unlock": "Tap to unlock",
+      "premium_content": "Premium Content",
+      "tap_for_details": "Tap for details",
+      "all": "All"
     }
   },
   "es": {
@@ -65,7 +81,15 @@ const resources = {
       "select_language": "Seleccionar Idioma",
       "continue_watching": "Continuar Viendo",
       "no_content": "No hay contenido disponible en este momento.",
-      "restricted_access": "Acceso restringido"
+      "restricted_access": "Acceso restringido",
+      "coming_soon": "Próximamente",
+      "premium": "Premium",
+      "completed": "Completado",
+      "in_progress": "En progreso",
+      "tap_to_unlock": "Toca para desbloquear",
+      "premium_content": "Contenido Premium",
+      "tap_for_details": "Toca para más detalles",
+      "all": "Todos"
     }
   }
 };
