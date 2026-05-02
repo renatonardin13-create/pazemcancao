@@ -97,6 +97,10 @@ export const createTrack = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
+    if (!data.area_id) {
+      throw new Error('O campo área de membros é obrigatório.');
+    }
+
     const { data: maxOrder } = await supabaseAdmin
       .from('tracks')
       .select('sort_order')
@@ -145,6 +149,10 @@ export const updateTrack = createServerFn({ method: 'POST' })
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
+
+    if ('area_id' in data && !data.area_id) {
+      throw new Error('O campo área de membros é obrigatório.');
+    }
 
     const { id, ...updates } = data;
     // Empty string means "remove cover"
