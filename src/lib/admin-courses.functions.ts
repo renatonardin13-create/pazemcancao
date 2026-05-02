@@ -9,7 +9,7 @@ const normalizeCourseType = (value?: string) => {
 
 export const listAdminCourses = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { areaId?: string } | undefined) => input)
+  .inputValidator((input: { areaId?: string } | void) => input)
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
