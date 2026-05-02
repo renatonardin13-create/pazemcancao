@@ -129,6 +129,7 @@ export type Database = {
           domain: string | null
           favicon_url: string | null
           id: string
+          is_primary: boolean | null
           language: string | null
           login_background_url: string | null
           login_subtitle: string | null
@@ -136,6 +137,7 @@ export type Database = {
           logo_url: string | null
           name: string
           primary_color: string | null
+          product_id: string | null
           secondary_color: string | null
           settings: Json | null
           short_label: string | null
@@ -151,6 +153,7 @@ export type Database = {
           domain?: string | null
           favicon_url?: string | null
           id?: string
+          is_primary?: boolean | null
           language?: string | null
           login_background_url?: string | null
           login_subtitle?: string | null
@@ -158,6 +161,7 @@ export type Database = {
           logo_url?: string | null
           name: string
           primary_color?: string | null
+          product_id?: string | null
           secondary_color?: string | null
           settings?: Json | null
           short_label?: string | null
@@ -173,6 +177,7 @@ export type Database = {
           domain?: string | null
           favicon_url?: string | null
           id?: string
+          is_primary?: boolean | null
           language?: string | null
           login_background_url?: string | null
           login_subtitle?: string | null
@@ -180,6 +185,7 @@ export type Database = {
           logo_url?: string | null
           name?: string
           primary_color?: string | null
+          product_id?: string | null
           secondary_color?: string | null
           settings?: Json | null
           short_label?: string | null
@@ -187,7 +193,15 @@ export type Database = {
           status?: string | null
           surface_color?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "areas_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       audit_logs: {
         Row: {

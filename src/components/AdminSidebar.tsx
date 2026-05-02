@@ -14,6 +14,7 @@ import {
   Receipt,
   LogOut,
   GraduationCap,
+  Globe,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useProjectMode } from "@/hooks/use-project-mode";
@@ -39,6 +40,7 @@ const mainItems = [
 ];
 
 const contentGroups = [
+  { title: "Áreas de membros", url: "/admin/areas-membros", icon: Globe },
   { title: "Louvores", url: "/admin/tracks", icon: Music, module: "louvores" as const },
   { title: "Produtos", url: "/admin/courses", icon: GraduationCap, module: "cursos" as const },
   { title: "Trilhas", url: "/admin/journeys", icon: Compass, module: "trilhas" as const },

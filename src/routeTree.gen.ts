@@ -60,6 +60,7 @@ import { Route as AuthenticatedAdminCouponsRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminConteudosRouteImport } from './routes/_authenticated.admin.conteudos'
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated.admin.configuracoes'
 import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated.admin.categories'
+import { Route as AuthenticatedAdminAreasMembrosRouteImport } from './routes/_authenticated.admin.areas-membros'
 import { Route as AuthenticatedCursosCourseIdIndexRouteImport } from './routes/_authenticated.cursos.$courseId.index'
 import { Route as AuthenticatedAdminCoursesIndexRouteImport } from './routes/_authenticated.admin.courses.index'
 import { Route as AuthenticatedAdminOffersNewRouteImport } from './routes/_authenticated.admin.offers.new'
@@ -67,6 +68,7 @@ import { Route as AuthenticatedAdminCoursesNewRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminCoursesCourseIdRouteImport } from './routes/_authenticated.admin.courses.$courseId'
 import { Route as AuthenticatedAdminAreasNewRouteImport } from './routes/_authenticated.admin.areas.new'
 import { Route as AuthenticatedCursosCourseIdAulaLessonIdRouteImport } from './routes/_authenticated.cursos.$courseId.aula.$lessonId'
+import { Route as AuthenticatedAdminAreasAreaIdEditRouteImport } from './routes/_authenticated.admin.areas.$areaId.edit'
 
 const WebhookRoute = WebhookRouteImport.update({
   id: '/webhook',
@@ -352,6 +354,12 @@ const AuthenticatedAdminCategoriesRoute =
     path: '/categories',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
+const AuthenticatedAdminAreasMembrosRoute =
+  AuthenticatedAdminAreasMembrosRouteImport.update({
+    id: '/areas-membros',
+    path: '/areas-membros',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedCursosCourseIdIndexRoute =
   AuthenticatedCursosCourseIdIndexRouteImport.update({
     id: '/',
@@ -394,6 +402,12 @@ const AuthenticatedCursosCourseIdAulaLessonIdRoute =
     path: '/aula/$lessonId',
     getParentRoute: () => AuthenticatedCursosCourseIdRoute,
   } as any)
+const AuthenticatedAdminAreasAreaIdEditRoute =
+  AuthenticatedAdminAreasAreaIdEditRouteImport.update({
+    id: '/areas/$areaId/edit',
+    path: '/areas/$areaId/edit',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -414,6 +428,7 @@ export interface FileRoutesByFullPath {
   '/perfil': typeof AuthenticatedPerfilRoute
   '/trilhas': typeof AuthenticatedTrilhasRoute
   '/vitrine': typeof AuthenticatedVitrineRoute
+  '/admin/areas-membros': typeof AuthenticatedAdminAreasMembrosRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
@@ -452,6 +467,7 @@ export interface FileRoutesByFullPath {
   '/admin/offers/new': typeof AuthenticatedAdminOffersNewRoute
   '/admin/courses/': typeof AuthenticatedAdminCoursesIndexRoute
   '/cursos/$courseId/': typeof AuthenticatedCursosCourseIdIndexRoute
+  '/admin/areas/$areaId/edit': typeof AuthenticatedAdminAreasAreaIdEditRoute
   '/cursos/$courseId/aula/$lessonId': typeof AuthenticatedCursosCourseIdAulaLessonIdRoute
 }
 export interface FileRoutesByTo {
@@ -470,6 +486,7 @@ export interface FileRoutesByTo {
   '/perfil': typeof AuthenticatedPerfilRoute
   '/trilhas': typeof AuthenticatedTrilhasRoute
   '/vitrine': typeof AuthenticatedVitrineRoute
+  '/admin/areas-membros': typeof AuthenticatedAdminAreasMembrosRoute
   '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
@@ -506,6 +523,7 @@ export interface FileRoutesByTo {
   '/admin/offers/new': typeof AuthenticatedAdminOffersNewRoute
   '/admin/courses': typeof AuthenticatedAdminCoursesIndexRoute
   '/cursos/$courseId': typeof AuthenticatedCursosCourseIdIndexRoute
+  '/admin/areas/$areaId/edit': typeof AuthenticatedAdminAreasAreaIdEditRoute
   '/cursos/$courseId/aula/$lessonId': typeof AuthenticatedCursosCourseIdAulaLessonIdRoute
 }
 export interface FileRoutesById {
@@ -529,6 +547,7 @@ export interface FileRoutesById {
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/trilhas': typeof AuthenticatedTrilhasRoute
   '/_authenticated/vitrine': typeof AuthenticatedVitrineRoute
+  '/_authenticated/admin/areas-membros': typeof AuthenticatedAdminAreasMembrosRoute
   '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/_authenticated/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
@@ -567,6 +586,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/offers/new': typeof AuthenticatedAdminOffersNewRoute
   '/_authenticated/admin/courses/': typeof AuthenticatedAdminCoursesIndexRoute
   '/_authenticated/cursos/$courseId/': typeof AuthenticatedCursosCourseIdIndexRoute
+  '/_authenticated/admin/areas/$areaId/edit': typeof AuthenticatedAdminAreasAreaIdEditRoute
   '/_authenticated/cursos/$courseId/aula/$lessonId': typeof AuthenticatedCursosCourseIdAulaLessonIdRoute
 }
 export interface FileRouteTypes {
@@ -590,6 +610,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/trilhas'
     | '/vitrine'
+    | '/admin/areas-membros'
     | '/admin/categories'
     | '/admin/configuracoes'
     | '/admin/conteudos'
@@ -628,6 +649,7 @@ export interface FileRouteTypes {
     | '/admin/offers/new'
     | '/admin/courses/'
     | '/cursos/$courseId/'
+    | '/admin/areas/$areaId/edit'
     | '/cursos/$courseId/aula/$lessonId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -646,6 +668,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/trilhas'
     | '/vitrine'
+    | '/admin/areas-membros'
     | '/admin/categories'
     | '/admin/configuracoes'
     | '/admin/conteudos'
@@ -682,6 +705,7 @@ export interface FileRouteTypes {
     | '/admin/offers/new'
     | '/admin/courses'
     | '/cursos/$courseId'
+    | '/admin/areas/$areaId/edit'
     | '/cursos/$courseId/aula/$lessonId'
   id:
     | '__root__'
@@ -704,6 +728,7 @@ export interface FileRouteTypes {
     | '/_authenticated/perfil'
     | '/_authenticated/trilhas'
     | '/_authenticated/vitrine'
+    | '/_authenticated/admin/areas-membros'
     | '/_authenticated/admin/categories'
     | '/_authenticated/admin/configuracoes'
     | '/_authenticated/admin/conteudos'
@@ -742,6 +767,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/offers/new'
     | '/_authenticated/admin/courses/'
     | '/_authenticated/cursos/$courseId/'
+    | '/_authenticated/admin/areas/$areaId/edit'
     | '/_authenticated/cursos/$courseId/aula/$lessonId'
   fileRoutesById: FileRoutesById
 }
@@ -1114,6 +1140,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCategoriesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
+    '/_authenticated/admin/areas-membros': {
+      id: '/_authenticated/admin/areas-membros'
+      path: '/areas-membros'
+      fullPath: '/admin/areas-membros'
+      preLoaderRoute: typeof AuthenticatedAdminAreasMembrosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/cursos/$courseId/': {
       id: '/_authenticated/cursos/$courseId/'
       path: '/'
@@ -1163,6 +1196,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCursosCourseIdAulaLessonIdRouteImport
       parentRoute: typeof AuthenticatedCursosCourseIdRoute
     }
+    '/_authenticated/admin/areas/$areaId/edit': {
+      id: '/_authenticated/admin/areas/$areaId/edit'
+      path: '/areas/$areaId/edit'
+      fullPath: '/admin/areas/$areaId/edit'
+      preLoaderRoute: typeof AuthenticatedAdminAreasAreaIdEditRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
@@ -1200,6 +1240,7 @@ const AuthenticatedAdminOffersRouteWithChildren =
   )
 
 interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminAreasMembrosRoute: typeof AuthenticatedAdminAreasMembrosRoute
   AuthenticatedAdminCategoriesRoute: typeof AuthenticatedAdminCategoriesRoute
   AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
   AuthenticatedAdminConteudosRoute: typeof AuthenticatedAdminConteudosRoute
@@ -1225,9 +1266,11 @@ interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminVendasRoute: typeof AuthenticatedAdminVendasRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
   AuthenticatedAdminAreasNewRoute: typeof AuthenticatedAdminAreasNewRoute
+  AuthenticatedAdminAreasAreaIdEditRoute: typeof AuthenticatedAdminAreasAreaIdEditRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminAreasMembrosRoute: AuthenticatedAdminAreasMembrosRoute,
   AuthenticatedAdminCategoriesRoute: AuthenticatedAdminCategoriesRoute,
   AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
   AuthenticatedAdminConteudosRoute: AuthenticatedAdminConteudosRoute,
@@ -1253,6 +1296,8 @@ const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminVendasRoute: AuthenticatedAdminVendasRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
   AuthenticatedAdminAreasNewRoute: AuthenticatedAdminAreasNewRoute,
+  AuthenticatedAdminAreasAreaIdEditRoute:
+    AuthenticatedAdminAreasAreaIdEditRoute,
 }
 
 const AuthenticatedAdminRouteWithChildren =

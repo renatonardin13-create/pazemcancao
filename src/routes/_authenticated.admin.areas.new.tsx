@@ -1,14 +1,16 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Globe, ArrowLeft, Loader2, Check, AlertCircle, Sparkles, Layout, BookOpen, GraduationCap, Copy, ExternalLink, PartyPopper } from "lucide-react";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
+import { Globe, ArrowLeft, Loader2, Check, AlertCircle, Sparkles, Layout, BookOpen, GraduationCap, Copy, ExternalLink, PartyPopper, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import { createArea, checkSlugAvailability } from "@/lib/admin-areas.functions";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/admin/areas/new")({
@@ -22,9 +24,23 @@ function NewAreaPage() {
   const [slug, setSlug] = useState("");
   const [language, setLanguage] = useState("pt-BR");
   const [status, setStatus] = useState("active");
+  const [productId, setProductId] = useState<string>("");
+  const [isPrimary, setIsPrimary] = useState(false);
   const [isSlugAvailable, setIsSlugAvailable] = useState<boolean | null>(null);
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+
+  const { data: products } = useQuery({
+    queryKey: ["admin-courses-simple"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("courses")
+        .select("id, title")
+        .order("title");
+      if (error) throw error;
+      return data;
+    }
+  });
 
   // Debounced slug check
   useEffect(() => {
@@ -52,6 +68,7 @@ function NewAreaPage() {
     mutationFn: (vars: any) => createArea({ data: vars }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-dashboard"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-areas"] });
       toast.success("Área de membros criada com sucesso!");
       setShowSuccess(true);
     },
@@ -62,8 +79,18 @@ function NewAreaPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !slug || !isSlugAvailable) return;
-    mutation.mutate({ name, slug, language, status });
+    if (!name || !slug || !isSlugAvailable || !productId) {
+      if (!productId) toast.error("Selecione um produto vinculado");
+      return;
+    }
+    mutation.mutate({ 
+      name, 
+      slug, 
+      language, 
+      status, 
+      product_id: productId, 
+      is_primary: isPrimary 
+    });
   };
 
   const handleSlugChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -315,15 +342,17 @@ function NewAreaPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="grid gap-2">
-                      <Label htmlFor="language" className="text-sm font-bold">Idioma</Label>
-                      <Select value={language} onValueChange={setLanguage}>
+                      <Label htmlFor="productId" className="text-sm font-bold">Produto Vinculado</Label>
+                      <Select value={productId} onValueChange={setProductId}>
                         <SelectTrigger className="h-12 bg-background/50">
-                          <SelectValue placeholder="Selecione o idioma" />
+                          <SelectValue placeholder="Selecione o produto" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="pt-BR">Português (Brasil)</SelectItem>
-                          <SelectItem value="en">Inglês</SelectItem>
-                          <SelectItem value="es">Espanhol</SelectItem>
+                          {products?.map((product) => (
+                            <SelectItem key={product.id} value={product.id}>
+                              {product.title}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                     </div>
@@ -340,6 +369,22 @@ function NewAreaPage() {
                         </SelectContent>
                       </Select>
                     </div>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-background/50 border border-border/20">
+                    <div className="space-y-0.5">
+                      <Label className="text-sm font-bold flex items-center gap-2">
+                        <Star className={`h-4 w-4 ${isPrimary ? 'fill-gold text-gold' : 'text-muted-foreground'}`} />
+                        Área Principal
+                      </Label>
+                      <p className="text-[11px] text-muted-foreground">
+                        Esta será a área padrão para novos alunos.
+                      </p>
+                    </div>
+                    <Switch
+                      checked={isPrimary}
+                      onCheckedChange={setIsPrimary}
+                    />
                   </div>
                 </div>
 
