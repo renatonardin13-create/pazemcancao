@@ -179,9 +179,10 @@ function MusicLibraryPage() {
   const categoriesFailed = false;
 
   const { data: playlistsData, isError: playlistsFailed } = useQuery({
-    queryKey: ["music-library-playlists", undefined],
-    queryFn: () => listPlaylistsWithCounts({ data: { areaId: undefined } }),
+    queryKey: ["music-library-playlists", area?.id],
+    queryFn: () => listPlaylistsWithCounts({ data: { areaId: area?.id } }),
     staleTime: 60_000,
+    enabled: !!area?.id,
   });
 
   const { data: playlistTracksData, isLoading: playlistLoading } = useQuery({
