@@ -117,7 +117,9 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
     const newErrors = validate();
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
-      const firstErrorField = document.getElementById(Object.keys(newErrors)[0] === "areaId" ? "areaId-trigger" : Object.keys(newErrors)[0]);
+      const firstErrorKey = Object.keys(newErrors)[0];
+      const fieldId = firstErrorKey === "areaId" ? "areaId-trigger" : firstErrorKey;
+      const firstErrorField = document.getElementById(fieldId);
       firstErrorField?.focus();
       return;
     }
@@ -188,7 +190,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                     if (errors.categoryId) setErrors((prev) => { const n = { ...prev }; delete n.categoryId; return n; });
                   }}
                 >
-                  <SelectTrigger className={`${inputClass} ${errors.categoryId ? "border-destructive" : ""}`}>
+                  <SelectTrigger id="categoryId" className={`${inputClass} ${errors.categoryId ? "border-destructive" : ""}`}>
                     <SelectValue placeholder="Selecione uma seção" />
                   </SelectTrigger>
                   <SelectContent>
@@ -228,11 +230,11 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   <SelectValue placeholder="Selecione a área" />
                 </SelectTrigger>
                 <SelectContent>
-                  {activeArea && (
-                    <SelectItem value={activeArea.id}>
-                      {activeArea.nome}
+                  {allAreas?.map((area) => (
+                    <SelectItem key={area.id} value={area.id}>
+                      {area.nome} {area.ativa ? "" : "(Inativa)"}
                     </SelectItem>
-                  )}
+                  ))}
                 </SelectContent>
               </Select>
               {errors.areaId && <p className="text-[0.8rem] font-medium text-destructive">{errors.areaId}</p>}
