@@ -91,7 +91,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       setBannerUrl(initialValues.banner_image_url || "");
       setCategoryId(initialValues.category_id || "");
       setPrice(String(initialValues.price ?? 0));
-      // setAreaId removed
+      setAreaId(initialValues.area_id || "");
       setPromotionalPrice(initialValues.promotional_price != null ? String(initialValues.promotional_price) : "");
       setStatus(initialValues.status || "draft");
       setCourseType(normalizeCourseType(initialValues.course_type));
