@@ -30,6 +30,35 @@ export const getAreasMembros = createServerFn({ method: 'GET' })
     return { areas };
   });
 
+export const getAreaMembro = createServerFn({ method: 'GET' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { id: string }) => input)
+  .handler(async ({ data, context }) => {
+    const { userId } = context;
+
+    const { data: adminRole } = await supabaseAdmin
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .eq('role', 'admin')
+      .maybeSingle();
+
+    if (!adminRole) {
+      const { data: userData } = await supabaseAdmin.auth.admin.getUserById(userId);
+      const isAdminEmail = userData?.user?.email?.toLowerCase() === 'renatonardin13@gmail.com';
+      if (!isAdminEmail) throw new Error('Não autorizado');
+    }
+
+    const { data: area, error } = await supabaseAdmin
+      .from('areas_membros')
+      .select('*, courses:produto_id(title)')
+      .eq('id', data.id)
+      .single();
+
+    if (error) throw new Error(error.message);
+    return { area };
+  });
+
 export const createAreaMembro = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { 
