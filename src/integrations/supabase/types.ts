@@ -209,9 +209,11 @@ export type Database = {
           atualizado_em: string
           criado_em: string
           id: string
+          language: string | null
           nome: string
           principal: boolean | null
           produto_id: string | null
+          status: string | null
           subdominio: string
         }
         Insert: {
@@ -219,9 +221,11 @@ export type Database = {
           atualizado_em?: string
           criado_em?: string
           id?: string
+          language?: string | null
           nome: string
           principal?: boolean | null
           produto_id?: string | null
+          status?: string | null
           subdominio: string
         }
         Update: {
@@ -229,9 +233,11 @@ export type Database = {
           atualizado_em?: string
           criado_em?: string
           id?: string
+          language?: string | null
           nome?: string
           principal?: boolean | null
           produto_id?: string | null
+          status?: string | null
           subdominio?: string
         }
         Relationships: [
