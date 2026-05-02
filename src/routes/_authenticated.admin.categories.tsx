@@ -73,8 +73,8 @@ function AdminCategoriesPage() {
   };
 
   const createCatMutation = useMutation({
-    mutationFn: (input: { name: string; slug: string; description?: string; icon?: string; color?: string }) =>
-      createCategory({ data: input }),
+    mutationFn: (input: { name: string; slug: string; description?: string; icon?: string; color?: string; area_id?: string }) =>
+      createCategory({ data: { ...input, area_id: activeArea?.id } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
       invalidateStudentCaches();
