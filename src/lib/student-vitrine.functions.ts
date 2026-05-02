@@ -109,6 +109,7 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
       (() => {
         let q = supabase.from('categories').select('id, name');
         if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null);
         return q;
       })(),
       // course_integrations might still need admin if it's sensitive, but let's check
