@@ -206,7 +206,8 @@ export const deleteCourse = createServerFn({ method: 'POST' })
 
 export const listAdminCategories = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { areaId?: string } | undefined) => input)
+  .handler(async ({ data, context }) => {
     const { supabase } = context;
 
     const { data: categories, error } = await supabase
