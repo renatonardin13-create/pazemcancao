@@ -60,11 +60,13 @@ export const listHeroBanners = createServerFn({ method: "POST" })
 
     if (data?.areaId) {
       query = query.eq("area_id", data.areaId);
+    } else {
+      return { banners: [] };
     }
 
     const { data: banners, error } = await query;
     if (error) throw new Error(error.message);
-    return { banners: data || [] };
+    return { banners: banners || [] };
   });
 
 export const createHeroBanner = createServerFn({ method: "POST" })
