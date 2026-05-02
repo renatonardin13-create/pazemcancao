@@ -101,6 +101,8 @@ function EditAreaPage() {
       setLogoUrl(area.logo_url || "");
       setFaviconUrl(area.favicon_url || "");
       setBannerUrl(area.banner_url || "");
+      setBackgroundColor(area.background_color || "#070707");
+      setSurfaceColor(area.surface_color || "#111111");
     }
   }, [area]);
 
