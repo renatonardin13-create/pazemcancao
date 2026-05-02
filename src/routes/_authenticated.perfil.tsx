@@ -32,6 +32,7 @@ export const Route = createFileRoute("/_authenticated/perfil")({
 });
 
 function ProfilePage() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { logout } = useAuth();
