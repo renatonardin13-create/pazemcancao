@@ -75,9 +75,9 @@ function EditAreaPage() {
 
   useEffect(() => {
     if (area) {
-      setName(area.name);
-      setSlug(area.slug);
-      setStatus(area.status);
+      setName(area.name || "");
+      setSlug(area.slug || "");
+      setStatus(area.status || "");
       setProductId(area.product_id || "");
       setIsPrimary(area.is_primary || false);
     }
