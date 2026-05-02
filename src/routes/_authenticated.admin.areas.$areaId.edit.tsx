@@ -327,29 +327,23 @@ function EditAreaPage() {
                       {/* Logo and Favicon */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="space-y-3">
-                          <Label className="text-sm font-bold flex items-center gap-2">
-                            <ImageIcon className="h-4 w-4 text-gold" />
-                            Logo da Área
-                          </Label>
                           <ImageUploadField
+                            label="Logo da Área"
+                            hint="Recomendado: PNG ou SVG com fundo transparente."
                             value={logoUrl}
                             onChange={setLogoUrl}
-                            uploadLabel="Upload da Logo"
+                            uploadLabel="Fazer upload da Logo"
                           />
-                          <p className="text-[10px] text-muted-foreground">Recomendado: PNG ou SVG com fundo transparente.</p>
                         </div>
 
                         <div className="space-y-3">
-                          <Label className="text-sm font-bold flex items-center gap-2">
-                            <Chrome className="h-4 w-4 text-gold" />
-                            Favicon (Ícone da aba)
-                          </Label>
                           <ImageUploadField
+                            label="Favicon"
+                            hint="Ícone da aba (32x32px ou 64x64px)."
                             value={faviconUrl}
                             onChange={setFaviconUrl}
-                            uploadLabel="Upload do Favicon"
+                            uploadLabel="Fazer upload do Favicon"
                           />
-                          <p className="text-[10px] text-muted-foreground">Recomendado: 32x32px ou 64x64px.</p>
                         </div>
                       </div>
 
