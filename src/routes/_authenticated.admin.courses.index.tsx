@@ -65,6 +65,7 @@ const PAGE_SIZE = 6;
 
 function AdminCoursesPage() {
   const queryClient = useQueryClient();
+  const { activeArea } = useAdminActiveArea();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
