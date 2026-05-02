@@ -29,7 +29,26 @@ const resources = {
       "tap_to_unlock": "Toque para desbloquear",
       "premium_content": "Conteúdo Premium",
       "tap_for_details": "Toque para mais detalhes",
-      "all": "Todos"
+      "all": "Todos",
+      "my_profile": "Meu perfil",
+      "personal_info": "Informações pessoais",
+      "security": "Segurança",
+      "danger_zone": "Zona de perigo",
+      "save_changes": "Salvar alterações",
+      "full_name": "Nome completo",
+      "email": "Email",
+      "current_password": "Senha atual",
+      "new_password": "Nova senha",
+      "confirm_password": "Confirmar",
+      "change_password": "Alterar senha",
+      "delete_account": "Excluir minha conta",
+      "member_since": "Membro desde",
+      "loading_profile": "Carregando perfil...",
+      "your_journey": "Sua caminhada",
+      "overall_evolution": "Evolução geral",
+      "lessons_completed": "Aulas concluídas",
+      "content_experienced": "Conteúdos vivenciados",
+      "study_time": "Tempo de estudo"
     }
   },
   "en": {
@@ -59,7 +78,26 @@ const resources = {
       "tap_to_unlock": "Tap to unlock",
       "premium_content": "Premium Content",
       "tap_for_details": "Tap for details",
-      "all": "All"
+      "all": "All",
+      "my_profile": "My profile",
+      "personal_info": "Personal information",
+      "security": "Security",
+      "danger_zone": "Danger zone",
+      "save_changes": "Save changes",
+      "full_name": "Full name",
+      "email": "Email",
+      "current_password": "Current password",
+      "new_password": "New password",
+      "confirm_password": "Confirm",
+      "change_password": "Change password",
+      "delete_account": "Delete my account",
+      "member_since": "Member since",
+      "loading_profile": "Loading profile...",
+      "your_journey": "Your journey",
+      "overall_evolution": "Overall evolution",
+      "lessons_completed": "Lessons completed",
+      "content_experienced": "Experienced content",
+      "study_time": "Study time"
     }
   },
   "es": {
@@ -89,7 +127,26 @@ const resources = {
       "tap_to_unlock": "Toca para desbloquear",
       "premium_content": "Contenido Premium",
       "tap_for_details": "Toca para más detalles",
-      "all": "Todos"
+      "all": "Todos",
+      "my_profile": "Mi perfil",
+      "personal_info": "Información personal",
+      "security": "Seguridad",
+      "danger_zone": "Zona de peligro",
+      "save_changes": "Guardar cambios",
+      "full_name": "Nombre completo",
+      "email": "Email",
+      "current_password": "Contraseña actual",
+      "new_password": "Nueva contraseña",
+      "confirm_password": "Confirmar",
+      "change_password": "Cambiar contraseña",
+      "delete_account": "Eliminar mi cuenta",
+      "member_since": "Miembro desde",
+      "loading_profile": "Cargando perfil...",
+      "your_journey": "Tu camino",
+      "overall_evolution": "Evolución general",
+      "lessons_completed": "Lecciones completadas",
+      "content_experienced": "Contenido experimentado",
+      "study_time": "Tiempo de estudio"
     }
   }
 };
