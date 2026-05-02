@@ -224,7 +224,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   if (errors.areaId) setErrors((prev) => { const n = { ...prev }; delete n.areaId; return n; });
                 }}
               >
-                <SelectTrigger className={`${inputClass} ${errors.areaId ? "border-destructive" : ""}`}>
+                <SelectTrigger id="areaId-trigger" className={`${inputClass} ${errors.areaId ? "border-destructive" : ""}`}>
                   <SelectValue placeholder="Selecione a área" />
                 </SelectTrigger>
                 <SelectContent>
