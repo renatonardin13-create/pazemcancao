@@ -18,6 +18,7 @@ export const Route = createFileRoute("/login")({
 type View = "login" | "signup" | "reset" | "reset-sent" | "new-password" | "success";
 
 function LoginPage() {
+  const { area } = useArea();
   const navigate = useNavigate();
   const { login, isAuthenticated, loading: authLoading, blocked, blockMessage } = useAuth();
   const [view, setView] = useState<View>("login");
