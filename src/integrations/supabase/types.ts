@@ -203,6 +203,47 @@ export type Database = {
           },
         ]
       }
+      areas_membros: {
+        Row: {
+          ativa: boolean | null
+          atualizado_em: string
+          criado_em: string
+          id: string
+          nome: string
+          principal: boolean | null
+          produto_id: string | null
+          subdominio: string
+        }
+        Insert: {
+          ativa?: boolean | null
+          atualizado_em?: string
+          criado_em?: string
+          id?: string
+          nome: string
+          principal?: boolean | null
+          produto_id?: string | null
+          subdominio: string
+        }
+        Update: {
+          ativa?: boolean | null
+          atualizado_em?: string
+          criado_em?: string
+          id?: string
+          nome?: string
+          principal?: boolean | null
+          produto_id?: string | null
+          subdominio?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "areas_membros_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_logs: {
         Row: {
           action: string
