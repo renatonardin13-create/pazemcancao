@@ -275,7 +275,7 @@ function AdminHeroBannersPage() {
       return;
     }
     // Sincroniza target -> url quando type=url
-    const payload: any = { ...form };
+    const payload: any = { ...form, area_id: activeArea?.id };
     if (form.primary_cta_type === "url") payload.primary_cta_url = form.primary_cta_target;
     if (form.secondary_cta_type === "url") payload.secondary_cta_url = form.secondary_cta_target;
 
