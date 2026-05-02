@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { requestFirstAccess } from "@/lib/first-access.functions";
 import { motion, AnimatePresence } from "framer-motion";
+import { useArea } from "@/hooks/use-area";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
