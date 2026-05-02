@@ -98,14 +98,16 @@ function AdminContentPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-content"],
-    queryFn: () => listAdminContentItems(),
+    queryKey: ["admin-content", activeArea?.id],
+    queryFn: () => listAdminContentItems({ areaId: activeArea?.id }),
+    enabled: !!activeArea?.id,
     staleTime: 30_000,
   });
 
   const { data: catData } = useQuery({
-    queryKey: ["admin-categories"],
-    queryFn: () => listAdminCategories(),
+    queryKey: ["admin-categories", activeArea?.id],
+    queryFn: () => listAdminCategories({ areaId: activeArea?.id }),
+    enabled: !!activeArea?.id,
     staleTime: 60_000,
   });
 
