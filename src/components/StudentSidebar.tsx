@@ -200,13 +200,46 @@ export function StudentSidebar() {
         )}
       </nav>
 
-      <div className="px-5 py-6 border-t border-white/[0.06]">
+      <div className="px-5 py-6 border-t border-white/[0.06] space-y-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="flex items-center gap-4 rounded-2xl px-5 py-3 w-full text-[14px] font-semibold text-muted-foreground/60 hover:text-foreground/80 hover:bg-white/[0.04] transition-all duration-300">
+              <Globe className="h-[20px] w-[20px] shrink-0" />
+              <span className="flex-1 text-left">{t('select_language')}</span>
+              <span className="text-[10px] uppercase font-black text-gold/60">{currentLanguage}</span>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48 bg-sidebar border-white/10 rounded-xl overflow-hidden shadow-2xl">
+            <DropdownMenuItem 
+              onClick={() => changeLanguage('pt-BR')}
+              className="flex items-center justify-between px-4 py-3 cursor-pointer focus:bg-white/5 focus:text-gold"
+            >
+              <span>Português (Brasil)</span>
+              {currentLanguage === 'pt-BR' && <Check className="h-4 w-4 text-gold" />}
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => changeLanguage('en')}
+              className="flex items-center justify-between px-4 py-3 cursor-pointer focus:bg-white/5 focus:text-gold"
+            >
+              <span>English</span>
+              {currentLanguage === 'en' && <Check className="h-4 w-4 text-gold" />}
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => changeLanguage('es')}
+              className="flex items-center justify-between px-4 py-3 cursor-pointer focus:bg-white/5 focus:text-gold"
+            >
+              <span>Español</span>
+              {currentLanguage === 'es' && <Check className="h-4 w-4 text-gold" />}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         <button
           onClick={() => { logout(); setMobileOpen(false); }}
           className="flex items-center gap-4 rounded-2xl px-5 py-3.5 w-full text-[14px] font-semibold text-muted-foreground/40 hover:text-foreground/60 hover:bg-white/[0.04] transition-all duration-300"
         >
           <LogOut className="h-[20px] w-[20px] shrink-0" />
-          Sair
+          {t('logout')}
         </button>
       </div>
     </div>
