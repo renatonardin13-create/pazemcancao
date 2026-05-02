@@ -40,7 +40,7 @@ export const listShelves = createServerFn({ method: 'POST' })
     const { data: shelves, error } = await query;
 
     if (error) throw new Error(error.message);
-    return { shelves: data || [] };
+    return { shelves: shelves || [] };
   });
 
 // ── Create shelf ──
