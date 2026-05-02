@@ -173,12 +173,21 @@ export const toggleHeroBannerActive = createServerFn({ method: "POST" })
 
 export const listCoursesForBannerSelector = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { areaId?: string } | void) => input)
+  .handler(async ({ data, context }) => {
     await assertAdmin(context);
-    const { data, error } = await supabaseAdmin
+    let query = supabaseAdmin
       .from("courses")
       .select("id, title, status")
       .order("title", { ascending: true });
+
+    if (data?.areaId) {
+      query = query.eq("area_id", data.areaId);
+    } else {
+      return { courses: [] };
+    }
+
+    const { data: courses, error } = await query;
     if (error) throw new Error(error.message);
     return { courses: data || [] };
   });
