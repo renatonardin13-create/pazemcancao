@@ -45,6 +45,7 @@ export const createCategory = createServerFn({ method: 'POST' })
     description?: string;
     icon?: string;
     color?: string;
+    area_id?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
