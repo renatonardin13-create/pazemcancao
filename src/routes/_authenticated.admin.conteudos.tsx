@@ -309,7 +309,6 @@ function AdminContentPage() {
     }
     // filterArea removed
     return list;
-    return list;
   }, [data?.items, search, typeFilter]);
 
   const isSubmitting = saveMutation.isPending || uploading;
