@@ -22,10 +22,16 @@ export const listAdminCategories = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
-    const { data: categories, error } = await supabaseAdmin
+    let query = supabaseAdmin
       .from('categories')
       .select('*')
       .order('sort_order', { ascending: true });
+
+    if (data?.areaId) {
+      query = query.eq('area_id', data.areaId);
+    }
+
+    const { data: categories, error } = await query;
 
     if (error) throw new Error(error.message);
     return { categories: categories || [] };
