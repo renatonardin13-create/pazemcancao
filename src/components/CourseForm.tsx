@@ -71,8 +71,9 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const { data: categoriesData } = useQuery({
-    queryKey: ["admin-categories"],
-    queryFn: () => listAdminCategories(),
+    queryKey: ["admin-categories", activeArea?.id],
+    queryFn: () => listAdminCategories({ data: { areaId: activeArea?.id } }),
+    enabled: !!activeArea?.id,
   });
 
   // areas query removed
