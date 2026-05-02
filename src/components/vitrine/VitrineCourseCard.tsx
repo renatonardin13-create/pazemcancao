@@ -57,28 +57,28 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
       ? (
           <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/30 bg-gradient-to-r from-amber-500/95 to-orange-500/90 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-black shadow-lg shadow-black/30 backdrop-blur-sm sm:text-[10px]">
             <Clock3 className="h-2.5 w-2.5" />
-            Em breve
+            {t('coming_soon')}
           </span>
         )
       : isLocked
         ? (
             <span className="inline-flex items-center gap-1 rounded-full border border-gold/20 bg-gradient-to-r from-gold/95 to-amber-500/90 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-gold-foreground shadow-lg shadow-black/30 backdrop-blur-sm sm:text-[10px]">
               <Lock className="h-2.5 w-2.5" />
-              Premium
+              {t('premium')}
             </span>
           )
         : isCompleted
           ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/90 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-white shadow-lg shadow-black/30 backdrop-blur-sm sm:text-[10px]">
                 <BookOpenCheck className="h-2.5 w-2.5" />
-                Concluído
+                {t('completed')}
               </span>
             )
           : isInProgress
             ? (
                 <span className="inline-flex items-center gap-1 rounded-full bg-gold/90 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-gold-foreground shadow-lg shadow-black/30 backdrop-blur-sm sm:text-[10px]">
                   <Play className="h-2.5 w-2.5 fill-current" />
-                  Em andamento
+                  {t('in_progress')}
                 </span>
               )
             : undefined;
