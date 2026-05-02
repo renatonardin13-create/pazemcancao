@@ -8,17 +8,28 @@ export function AreaBrandingProvider({ children }: { children: React.ReactNode }
     if (area) {
       const root = document.documentElement;
       
-      // Update primary color
+      // Update colors
       if (area.primary_color) {
         root.style.setProperty("--gold", area.primary_color);
         root.style.setProperty("--primary", area.primary_color);
         root.style.setProperty("--ring", area.primary_color);
+        root.style.setProperty("--sidebar-primary", area.primary_color);
       }
 
-      // Update secondary color if specified
       if (area.secondary_color) {
-        // You could use this for background or other accent colors
-        // root.style.setProperty("--secondary", area.secondary_color);
+        root.style.setProperty("--secondary", area.secondary_color);
+      }
+
+      if (area.background_color) {
+        root.style.setProperty("--background", area.background_color);
+        root.style.setProperty("--sidebar", area.background_color);
+      }
+
+      if (area.surface_color) {
+        root.style.setProperty("--card", area.surface_color);
+        root.style.setProperty("--popover", area.surface_color);
+        root.style.setProperty("--muted", area.surface_color);
+        root.style.setProperty("--accent", area.surface_color);
       }
 
       // Update favicon if provided
