@@ -34,16 +34,13 @@ serve(async (req) => {
 
     console.log(`Deleting account for user: ${user.id} (${user.email})`)
 
-    // 1. Call DB function to delete application data (using admin client to ensure it has permissions if needed, 
-    // although the function is INVOKER, we want to make sure it runs correctly)
-    const { error: dbError } = await supabaseAdmin.rpc('delete_user_account')
-    
-    // Note: The above RPC will run with auth.uid() being null because it's called by service role.
-    // We should instead call it with the user's client OR modify it to accept a user_id.
-    // Let's modify the RPC to accept a user_id for better control from admin.
-    
-    const { error: dbError2 } = await supabaseAdmin.rpc('delete_user_account_v2', { target_user_id: user.id })
-    if (dbError2) throw dbError2
+    // 1. Call DB function to delete application data
+    // We use delete_user_account_v2 which is more comprehensive and handles sessions/auditing.
+    const { error: dbError } = await supabaseAdmin.rpc('delete_user_account_v2', { target_user_id: user.id })
+    if (dbError) {
+      console.error('Error in delete_user_account_v2 RPC:', dbError)
+      throw dbError
+    }
 
     // 2. Delete user from Auth
     const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(user.id)
