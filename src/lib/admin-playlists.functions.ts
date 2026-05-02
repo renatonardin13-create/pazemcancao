@@ -62,6 +62,7 @@ export const createPlaylist = createServerFn({ method: 'POST' })
     name: string;
     description?: string;
     cover_url?: string;
+    area_id: string;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
