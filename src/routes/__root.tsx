@@ -1,7 +1,7 @@
 import { Outlet, Link, createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/hooks/use-auth";
-// AreaProvider removed
+import { AreaBrandingProvider } from "@/components/AreaBrandingProvider";
 import { PlayerProvider } from "@/hooks/use-player";
 import { GlobalPlayer } from "@/components/GlobalPlayer";
 import { ImpersonationBanner } from "@/components/ImpersonationBanner";
@@ -84,7 +84,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        {/* AreaProvider removed */}
+        <AreaBrandingProvider>
           <PlayerProvider>
             <ImpersonationBanner />
             <SafeBoundary fallbackTitle="Erro ao carregar a página">
@@ -93,7 +93,7 @@ function RootComponent() {
             <GlobalPlayer />
             <Toaster richColors position="top-right" />
           </PlayerProvider>
-        {/* AreaProvider end removed */}
+        </AreaBrandingProvider>
       </AuthProvider>
     </QueryClientProvider>
   );
