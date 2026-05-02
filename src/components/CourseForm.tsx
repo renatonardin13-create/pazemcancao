@@ -61,7 +61,8 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   const [bannerUrl, setBannerUrl] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [price, setPrice] = useState("0");
-  // areaId state removed
+  const [areaId, setAreaId] = useState("");
+  const { activeArea } = useAdminActiveArea();
   const [promotionalPrice, setPromotionalPrice] = useState("");
   const [status, setStatus] = useState("draft");
   const [courseType, setCourseType] = useState("aula");
