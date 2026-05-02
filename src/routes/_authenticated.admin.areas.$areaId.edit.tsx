@@ -149,6 +149,8 @@ function EditAreaPage() {
       logo_url: logoUrl,
       favicon_url: faviconUrl,
       banner_url: bannerUrl,
+      background_color: backgroundColor,
+      surface_color: surfaceColor,
     });
   };
 
