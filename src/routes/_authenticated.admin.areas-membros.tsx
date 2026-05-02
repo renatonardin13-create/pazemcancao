@@ -76,6 +76,19 @@ function AreasMembrosPage() {
     }
   });
 
+  const toggleActiveMutation = useMutation({
+    mutationFn: ({ id, ativa }: { id: string, ativa: boolean }) => 
+      updateAreaMembro({ data: { id, ativa } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["areas-membros"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-areas-list"] });
+      toast.success("Status da área atualizado");
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Erro ao atualizar status");
+    }
+  });
+
   const areas = data?.areas || [];
 
   return (
@@ -153,6 +166,8 @@ function AreasMembrosPage() {
                 onDuplicate={(id) => duplicateMutation.mutate(id)}
                 onEdit={(id) => navigate({ to: `/admin/areas/${id}/edit` })}
                 onTogglePrincipal={(id, current) => togglePrimaryMutation.mutate({ id, principal: !current })}
+                onToggleActive={(id, current) => toggleActiveMutation.mutate({ id, ativa: !current })}
+
               />
             ))}
           </AnimatePresence>

@@ -27,6 +27,7 @@ interface AreaCardProps {
   onDuplicate: (id: string) => void;
   onEdit: (id: string) => void;
   onTogglePrincipal: (id: string, current: boolean) => void;
+  onToggleActive: (id: string, current: boolean) => void;
 }
 
 export function AreaCard({ 
@@ -34,7 +35,8 @@ export function AreaCard({
   onDelete, 
   onDuplicate, 
   onEdit, 
-  onTogglePrincipal 
+  onTogglePrincipal,
+  onToggleActive
 }: AreaCardProps) {
   return (
     <motion.div
@@ -98,9 +100,17 @@ export function AreaCard({
 
           {/* Actions Header */}
           <div className="flex justify-between items-center mb-6">
-            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-              {area.principal ? "Variação ativa no painel" : "Disponível para ativação"}
-            </p>
+            <div className="flex flex-col gap-1">
+              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                {area.principal ? "Variação ativa no painel" : "Disponível para ativação"}
+              </p>
+              <button 
+                onClick={() => onToggleActive(area.id, area.ativa)}
+                className={`text-[9px] font-bold uppercase transition-colors text-left ${area.ativa ? 'text-destructive/60 hover:text-destructive' : 'text-emerald-500/60 hover:text-emerald-500'}`}
+              >
+                {area.ativa ? "Desativar área" : "Ativar área"}
+              </button>
+            </div>
             <div className="flex gap-1">
               <Button 
                 variant="ghost" 

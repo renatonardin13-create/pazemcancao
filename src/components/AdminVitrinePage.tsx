@@ -75,6 +75,7 @@ import {
 } from "@/lib/admin-promo-banners.functions";
 import { getPlatformSettings, updatePlatformSetting } from "@/lib/platform-settings.functions";
 import { getStudentShelves } from "@/lib/shelves.functions";
+import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 
 /* ── Generic drag-and-drop hook ── */
 
@@ -169,6 +170,7 @@ function SummaryCard({
 
 export default function AdminVitrinePage() {
   const queryClient = useQueryClient();
+  const { activeArea } = useAdminActiveArea();
   const [activeTab, setActiveTab] = useState("shelves");
   const [showPreview, setShowPreview] = useState(true);
   const [previewDevice, setPreviewDevice] = useState<"desktop" | "tablet" | "mobile">("desktop");
