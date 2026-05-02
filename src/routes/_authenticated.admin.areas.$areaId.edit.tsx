@@ -64,6 +64,8 @@ function EditAreaPage() {
   const [logoUrl, setLogoUrl] = useState("");
   const [faviconUrl, setFaviconUrl] = useState("");
   const [bannerUrl, setBannerUrl] = useState("");
+  const [backgroundColor, setBackgroundColor] = useState("#070707");
+  const [surfaceColor, setSurfaceColor] = useState("#111111");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { data: areaData, isLoading: isLoadingArea } = useQuery({
