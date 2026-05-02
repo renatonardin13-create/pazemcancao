@@ -80,78 +80,136 @@ function NewAreaPage() {
     };
 
     return (
-      <div className="max-w-2xl mx-auto py-12 px-4">
+      <div className="min-h-[80vh] flex items-center justify-center py-12 px-4">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-8"
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-xl w-full text-center space-y-12"
         >
-          <div className="relative inline-block">
-            <div className="absolute inset-0 bg-gold/20 blur-3xl rounded-full" />
-            <div className="relative h-24 w-24 bg-gold rounded-full flex items-center justify-center mx-auto shadow-2xl shadow-gold/40 border-4 border-background">
-              <PartyPopper className="h-12 w-12 text-black" />
-            </div>
+          {/* Visual Highlight */}
+          <div className="relative">
+            <motion.div
+              initial={{ scale: 0, rotate: -20 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ 
+                type: "spring", 
+                stiffness: 260, 
+                damping: 20,
+                delay: 0.1 
+              }}
+              className="relative h-32 w-32 bg-gold rounded-[2.5rem] flex items-center justify-center mx-auto shadow-[0_20px_50px_rgba(212,175,55,0.3)] border-4 border-background z-10 rotate-3"
+            >
+              <PartyPopper className="h-16 w-16 text-black" />
+            </motion.div>
+            
+            {/* Background Ambient Glow */}
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gold/10 blur-[120px] rounded-full -z-10" />
           </div>
 
-          <div className="space-y-3">
-            <h1 className="text-4xl font-black tracking-tight">Área Criada com Sucesso!</h1>
-            <p className="text-muted-foreground text-lg">
-              Sua nova área <strong>{name}</strong> já está online e pronta para receber seus alunos.
-            </p>
+          <div className="space-y-4">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-black uppercase tracking-widest"
+            >
+              <Check className="h-3 w-3" /> Configuração Concluída
+            </motion.div>
+            
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="text-5xl font-black tracking-tight leading-[1.1]"
+            >
+              Sua área está <br /> <span className="text-gold">oficialmente online!</span>
+            </motion.h1>
+            
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="text-muted-foreground text-lg max-w-sm mx-auto"
+            >
+              A área <strong>{name}</strong> foi configurada com sucesso. Copie o link abaixo para compartilhar.
+            </motion.p>
           </div>
 
-          <Card className="bg-card border-border/30 overflow-hidden shadow-2xl relative">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gold" />
-            <CardContent className="p-8 space-y-6">
-              <div className="space-y-2 text-left">
-                <Label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Link de Acesso</Label>
-                <div className="flex items-center gap-2 p-4 bg-background/50 border border-border/20 rounded-xl group hover:border-gold/50 transition-colors">
-                  <Globe className="h-5 w-5 text-gold shrink-0" />
-                  <span className="text-lg font-medium truncate flex-1">{areaUrl}</span>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={handleCopyUrl}
-                      className="h-9 w-9 rounded-lg hover:bg-gold/10 hover:text-gold"
-                    >
-                      <Copy className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      asChild
-                      className="h-9 w-9 rounded-lg hover:bg-gold/10 hover:text-gold"
-                    >
-                      <a href={areaUrl} target="_blank" rel="noreferrer">
-                        <ExternalLink className="h-4 w-4" />
-                      </a>
-                    </Button>
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6 }}
+            className="space-y-8"
+          >
+            {/* Premium URL Box */}
+            <div className="relative group p-1 bg-gradient-to-b from-border/50 to-transparent rounded-[2rem]">
+              <div className="bg-card/40 border border-border/20 p-8 rounded-[1.8rem] backdrop-blur-xl shadow-2xl space-y-4">
+                <div className="space-y-1">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Link de acesso dos alunos</span>
+                  <div className="flex items-center justify-between gap-4 p-4 bg-background/80 rounded-2xl border border-gold/20 group-hover:border-gold/40 transition-colors">
+                    <Globe className="h-5 w-5 text-gold shrink-0" />
+                    <span className="text-lg font-bold truncate flex-1 font-mono">{areaUrl}</span>
+                    <div className="flex items-center gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={handleCopyUrl}
+                        className="h-10 w-10 rounded-xl hover:bg-gold/10 hover:text-gold transition-colors"
+                      >
+                        <Copy className="h-5 w-5" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        asChild
+                        className="h-10 w-10 rounded-xl hover:bg-gold/10 hover:text-gold transition-colors"
+                      >
+                        <a href={areaUrl} target="_blank" rel="noreferrer">
+                          <ExternalLink className="h-5 w-5" />
+                        </a>
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div className="pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <Button
-                  variant="outline"
-                  onClick={() => navigate({ to: "/admin" })}
-                  className="h-14 font-bold border-border/50 hover:bg-background"
-                >
-                  Ir para o Dashboard
-                </Button>
-                <Button
-                  onClick={() => navigate({ to: "/admin/courses" })}
-                  className="h-14 bg-gold text-black font-black text-lg shadow-xl shadow-gold/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
-                >
+            {/* Direct Action Button */}
+            <div className="flex flex-col gap-6">
+              <Button
+                size="lg"
+                onClick={() => navigate({ to: "/admin/courses" })}
+                className="h-20 bg-gold text-black font-black text-2xl shadow-[0_20px_50px_-15px_rgba(212,175,55,0.4)] hover:shadow-gold/30 hover:scale-[1.02] active:scale-[0.98] transition-all rounded-[1.5rem] group relative overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                <span className="relative z-10 flex items-center gap-3">
                   Ir para o Catálogo
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                  <Sparkles className="h-6 w-6 animate-pulse" />
+                </span>
+              </Button>
+              
+              <button
+                onClick={() => navigate({ to: "/admin" })}
+                className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors flex items-center justify-center gap-2 group mx-auto"
+              >
+                <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
+                Voltar para o Dashboard
+              </button>
+            </div>
+          </motion.div>
 
-          <p className="text-sm text-muted-foreground italic">
-            Dica: Adicione seu primeiro produto para que seus alunos tenham o que acessar.
-          </p>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.2 }}
+            className="pt-4 border-t border-border/10"
+          >
+            <p className="text-sm text-muted-foreground italic flex items-center justify-center gap-2">
+              <Sparkles className="h-4 w-4 text-gold" />
+              Próximo passo: Adicione seu primeiro produto para começar a vender.
+            </p>
+          </motion.div>
         </motion.div>
       </div>
     );
