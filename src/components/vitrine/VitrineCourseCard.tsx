@@ -95,9 +95,9 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
     ? (
         <div className="flex h-full flex-col items-center justify-center gap-2.5 bg-black/55 backdrop-blur-[2px]">
           <span className="rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-black shadow-lg">
-            Em breve
+            {t('coming_soon')}
           </span>
-          <span className="text-[10px] font-medium text-white/60">Toque para mais detalhes</span>
+          <span className="text-[10px] font-medium text-white/60">{t('tap_for_details')}</span>
         </div>
       )
     : isLocked
@@ -109,11 +109,11 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
                 <Lock className="h-6 w-6 text-gold/70" />
               </div>
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold/60">Conteúdo Premium</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold/60">{t('premium_content')}</span>
             {salesUrl ? (
               <span className="mt-0.5 flex items-center gap-1 text-[9px] font-medium text-gold/35">
                 <ShoppingCart className="h-2.5 w-2.5" />
-                Toque para desbloquear
+                {t('tap_to_unlock')}
               </span>
             ) : null}
           </div>
