@@ -52,6 +52,7 @@ const ALL_KEY = "all";
 const FEATURED_LIMIT = 10;
 
 function VitrinePage() {
+  const { t } = useTranslation();
   const [activeCategory, setActiveCategory] = useState<string>(ALL_KEY);
   const [showAll, setShowAll] = useState(false);
 
