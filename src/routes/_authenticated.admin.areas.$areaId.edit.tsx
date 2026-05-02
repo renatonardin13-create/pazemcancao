@@ -47,16 +47,18 @@ function EditAreaPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   
-  const [name, setName] = useState("");
-  const [slug, setSlug] = useState("");
+  const [nome, setNome] = useState("");
+  const [subdominio, setSubdominio] = useState("");
   const [status, setStatus] = useState("");
-  const [productId, setProductId] = useState("");
-  const [isPrimary, setIsPrimary] = useState(false);
+  const [produtoId, setProdutoId] = useState("");
+  const [ativa, setAtiva] = useState(true);
+  const [principal, setPrincipal] = useState(false);
+  const [language, setLanguage] = useState("pt-BR");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const { data: areasData, isLoading: isLoadingArea } = useQuery({
-    queryKey: ["admin-areas"],
-    queryFn: () => getAreas(),
+  const { data: areaData, isLoading: isLoadingArea } = useQuery({
+    queryKey: ["area-membro", areaId],
+    queryFn: () => getAreaMembro({ data: { id: areaId } }),
   });
 
   const { data: products } = useQuery({
@@ -71,22 +73,24 @@ function EditAreaPage() {
     }
   });
 
-  const area = areasData?.areas?.find((a: any) => a.id === areaId);
+  const area = areaData?.area;
 
   useEffect(() => {
     if (area) {
-      setName(area.name || "");
-      setSlug(area.slug || "");
-      setStatus(area.status || "");
-      setProductId(area.product_id || "");
-      setIsPrimary(area.is_primary || false);
+      setNome(area.nome || "");
+      setSubdominio(area.subdominio || "");
+      setStatus(area.status || "active");
+      setProdutoId(area.produto_id || "");
+      setAtiva(area.ativa ?? true);
+      setPrincipal(area.principal ?? false);
+      setLanguage(area.language || "pt-BR");
     }
   }, [area]);
 
   const mutation = useMutation({
-    mutationFn: (vars: any) => updateArea({ data: vars }),
+    mutationFn: (vars: any) => updateAreaMembro({ data: vars }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-areas"] });
+      queryClient.invalidateQueries({ queryKey: ["areas-membros"] });
       toast.success("Área atualizada com sucesso!");
       navigate({ to: "/admin/areas-membros" });
     },
@@ -96,9 +100,9 @@ function EditAreaPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: () => deleteArea({ data: { id: areaId } }),
+    mutationFn: () => deleteAreaMembro({ data: { id: areaId } }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-areas"] });
+      queryClient.invalidateQueries({ queryKey: ["areas-membros"] });
       toast.success("Área excluída com sucesso");
       navigate({ to: "/admin/areas-membros" });
     },
