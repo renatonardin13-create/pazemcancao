@@ -13,7 +13,7 @@ const slugSchema = z.string()
 
 export const checkSlugAvailability = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { slug: string }) => input)
+  .inputValidator(z.object({ slug: slugSchema }))
   .handler(async ({ data }) => {
     const { data: existing } = await supabaseAdmin
       .from('areas')
@@ -26,14 +26,14 @@ export const checkSlugAvailability = createServerFn({ method: 'POST' })
 
 export const createArea = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { 
-    name: string; 
-    slug: string; 
-    language: string; 
-    status: string;
-    product_id?: string;
-    is_primary?: boolean;
-  }) => input)
+  .inputValidator(z.object({ 
+    name: z.string().min(1, "Nome é obrigatório"), 
+    slug: slugSchema, 
+    language: z.string(), 
+    status: z.string(),
+    product_id: z.string().uuid().optional(),
+    is_primary: z.boolean().optional(),
+  }))
   .handler(async ({ data, context }) => {
     const { userId } = context;
 
