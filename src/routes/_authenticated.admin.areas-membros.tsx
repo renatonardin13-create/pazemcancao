@@ -166,6 +166,8 @@ function AreasMembrosPage() {
                 onDuplicate={(id) => duplicateMutation.mutate(id)}
                 onEdit={(id) => navigate({ to: `/admin/areas/${id}/edit` })}
                 onTogglePrincipal={(id, current) => togglePrimaryMutation.mutate({ id, principal: !current })}
+                onToggleActive={(id, current) => toggleActiveMutation.mutate({ id, ativa: !current })}
+
               />
             ))}
           </AnimatePresence>
