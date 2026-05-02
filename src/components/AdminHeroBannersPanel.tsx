@@ -1,5 +1,5 @@
-
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-utils";
