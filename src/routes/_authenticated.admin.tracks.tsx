@@ -20,6 +20,7 @@ export const Route = createFileRoute("/_authenticated/admin/tracks")({
 const PAGE_SIZE = 20;
 
 function AdminTracksPage() {
+  const { activeArea } = useAdminActiveArea();
   const [showForm, setShowForm] = useState(false);
   const [editingTrack, setEditingTrack] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
