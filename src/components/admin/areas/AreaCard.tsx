@@ -45,8 +45,8 @@ export function AreaCard({
       transition={{ duration: 0.3 }}
       className="group"
     >
-      <Card className={`relative overflow-hidden bg-[#0F1219] border-white/5 transition-all duration-500 rounded-[2rem] h-full ${area.principal ? 'ring-2 ring-gold/50 shadow-[0_20px_50px_-20px_rgba(245,196,81,0.2)]' : 'hover:border-gold/30 hover:shadow-[0_20px_40px_-15px_rgba(245,196,81,0.1)]'}`}>
-        <CardContent className="p-8">
+      <Card className={`relative overflow-hidden bg-[#0F1219] border-white/5 transition-all duration-500 rounded-3xl h-full ${area.principal ? 'ring-2 ring-gold/50 shadow-[0_20px_50px_-20px_rgba(245,196,81,0.2)]' : 'hover:border-gold/30 hover:shadow-[0_20px_40px_-15px_rgba(245,196,81,0.1)]'}`}>
+        <CardContent className="p-6">
           {/* Header */}
           <div className="flex justify-between items-start mb-6">
             <div className="flex items-center gap-4">
@@ -125,7 +125,7 @@ export function AreaCard({
           <div className="space-y-4">
             <Button 
               onClick={() => onEdit(area.id)}
-              className="w-full h-14 bg-gold hover:bg-gold/90 text-black font-black text-base rounded-2xl shadow-xl shadow-gold/10 group-hover:shadow-gold/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+              className="w-full h-12 bg-gold hover:bg-gold/90 text-black font-black text-sm rounded-xl shadow-xl shadow-gold/10 group-hover:shadow-gold/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
             >
               <Edit className="h-5 w-5" />
               Personalizar área
