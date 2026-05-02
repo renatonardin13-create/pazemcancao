@@ -22,7 +22,8 @@ async function verifyAdmin(supabase: any, userId: string) {
 // ── List shelves with linked courses ──
 export const listShelves = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { areaId?: string } | void) => input)
+  .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
     const { data, error } = await supabaseAdmin
