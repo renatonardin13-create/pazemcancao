@@ -53,10 +53,16 @@ export const listHeroBanners = createServerFn({ method: "POST" })
   .inputValidator((input: { areaId?: string } | void) => input)
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
-    const { data, error } = await (supabaseAdmin as any)
+    let query = (supabaseAdmin as any)
       .from("vitrine_hero_banners")
       .select("*")
       .order("sort_order", { ascending: true });
+
+    if (data?.areaId) {
+      query = query.eq("area_id", data.areaId);
+    }
+
+    const { data: banners, error } = await query;
     if (error) throw new Error(error.message);
     return { banners: data || [] };
   });
