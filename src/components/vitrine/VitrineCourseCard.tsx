@@ -20,6 +20,7 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
   badge,
 }: VitrineCourseCardProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [unlockOpen, setUnlockOpen] = useState(false);
 
   const progress = course.progress_pct ?? 0;
