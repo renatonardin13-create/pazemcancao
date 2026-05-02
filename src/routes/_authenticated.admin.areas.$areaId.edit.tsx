@@ -16,14 +16,19 @@ import {
   ExternalLink, 
   Save,
   Star,
-  Trash2
+  Trash2,
+  Palette,
+  Image as ImageIcon,
+  Chrome
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { ImageUploadField } from "@/components/ImageUploadField";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { updateAreaMembro, getAreaMembro, deleteAreaMembro } from "@/lib/areas-membros.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -54,6 +59,11 @@ function EditAreaPage() {
   const [ativa, setAtiva] = useState(true);
   const [principal, setPrincipal] = useState(false);
   const [language, setLanguage] = useState("pt-BR");
+  const [primaryColor, setPrimaryColor] = useState("#D4AF37");
+  const [secondaryColor, setSecondaryColor] = useState("#000000");
+  const [logoUrl, setLogoUrl] = useState("");
+  const [faviconUrl, setFaviconUrl] = useState("");
+  const [bannerUrl, setBannerUrl] = useState("");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { data: areaData, isLoading: isLoadingArea } = useQuery({
@@ -84,6 +94,11 @@ function EditAreaPage() {
       setAtiva(area.ativa ?? true);
       setPrincipal(area.principal ?? false);
       setLanguage(area.language || "pt-BR");
+      setPrimaryColor(area.primary_color || "#D4AF37");
+      setSecondaryColor(area.secondary_color || "#000000");
+      setLogoUrl(area.logo_url || "");
+      setFaviconUrl(area.favicon_url || "");
+      setBannerUrl(area.banner_url || "");
     }
   }, [area]);
 
@@ -124,7 +139,12 @@ function EditAreaPage() {
       produto_id: produtoId, 
       principal,
       ativa,
-      language
+      language,
+      primary_color: primaryColor,
+      secondary_color: secondaryColor,
+      logo_url: logoUrl,
+      favicon_url: faviconUrl,
+      banner_url: bannerUrl,
     });
   };
 
