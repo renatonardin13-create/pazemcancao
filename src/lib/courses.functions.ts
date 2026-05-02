@@ -15,6 +15,8 @@ export const listPublishedCourses = createServerFn({ method: 'POST' })
 
     if (inputData?.areaId) {
       query = query.eq('area_id', inputData.areaId);
+    } else {
+      return { courses: [] };
     }
 
     const { data: courses, error } = await query.order('sort_order', { ascending: true });
