@@ -21,10 +21,18 @@ export const listAdminContentItems = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
-    const { data, error } = await supabaseAdmin
+    let query = supabaseAdmin
       .from('content_items')
       .select('*')
       .order('sort_order', { ascending: true });
+
+    if (data?.areaId) {
+      query = query.eq('area_id', data.areaId);
+    } else {
+      return { items: [] };
+    }
+
+    const { data: items, error } = await query;
 
     if (error) throw new Error(error.message);
     return { items: data || [] };
