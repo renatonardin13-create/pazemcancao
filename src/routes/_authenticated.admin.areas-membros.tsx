@@ -158,7 +158,7 @@ function AreasMembrosPage() {
           </AnimatePresence>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-32 px-4 text-center space-y-8 bg-white/[0.01] rounded-[3.5rem] border-2 border-dashed border-white/5 backdrop-blur-sm">
+        <div className="flex flex-col items-center justify-center py-24 px-4 text-center space-y-8 bg-white/[0.01] rounded-3xl border-2 border-dashed border-white/5 backdrop-blur-sm">
           <div className="h-24 w-24 rounded-[2.5rem] bg-gold/10 flex items-center justify-center text-gold">
             <Globe className="h-12 w-12" />
           </div>
@@ -170,7 +170,7 @@ function AreasMembrosPage() {
           </div>
           <Button 
             onClick={() => setIsNewModalOpen(true)}
-            className="h-16 px-10 bg-gold hover:bg-gold/90 text-black font-black text-xl rounded-2xl shadow-2xl shadow-gold/20 transition-all hover:scale-105"
+            className="h-14 px-8 bg-gold hover:bg-gold/90 text-black font-black text-lg rounded-xl shadow-2xl shadow-gold/20 transition-all hover:scale-105"
           >
             <Plus className="h-7 w-7 mr-3 stroke-[3]" />
             Criar minha primeira área

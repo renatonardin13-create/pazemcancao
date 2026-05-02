@@ -85,7 +85,7 @@ export function AreaCard({
           </div>
 
           {/* Body */}
-          <div className="space-y-4 mb-8">
+          <div className="space-y-4 mb-6">
             <div className="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">URL DE ACESSO</p>
               <p className="text-sm font-medium text-white/90 truncate">
@@ -94,7 +94,7 @@ export function AreaCard({
             </div>
           </div>
 
-          <div className="h-px w-full bg-white/5 mb-8" />
+          <div className="h-px w-full bg-white/5 mb-6" />
 
           {/* Actions Header */}
           <div className="flex justify-between items-center mb-6">
