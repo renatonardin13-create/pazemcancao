@@ -65,6 +65,7 @@ const LOUVOR_CATEGORY_LABELS: Record<(typeof OFFICIAL_LOUVOR_CATEGORIES)[number]
 export function StudentSidebar() {
   const { logout, isAdmin, adminLoading } = useAuth();
   const { dbModules } = useProjectMode();
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -81,6 +82,13 @@ export function StudentSidebar() {
   });
 
   const allTracks = tracksData?.tracks || [];
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem("app_language", lng);
+  };
+
+  const currentLanguage = i18n.language;
 
   const normalizeStr = (s: string) =>
     s.replace(/^[^\p{L}\p{N}]+/u, "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -113,14 +121,14 @@ export function StudentSidebar() {
         if (!meta) return null;
         return {
           key: mod.slug,
-          label: mod.name,
+          label: t(mod.slug, mod.name), // Use translation with fallback
           icon: meta.icon,
           to: meta.to,
           matchPrefix: meta.matchPrefix || false,
         };
       })
       .filter((x): x is NonNullable<typeof x> => x !== null);
-  }, [dbModules]);
+  }, [dbModules, t]);
 
   const isActive = (path: string) => location.pathname === path;
   const isActivePrefix = (path: string) => 
