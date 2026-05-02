@@ -76,10 +76,6 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
     enabled: !!activeArea?.id,
   });
 
-  // areas query removed
-
-  // areas state removed
-
   const categories = categoriesData?.categories || [];
 
   useEffect(() => {
@@ -121,7 +117,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
     const newErrors = validate();
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
-      const firstErrorField = document.getElementById(Object.keys(newErrors)[0] === "promotionalPrice" ? "promotionalPrice" : "title");
+      const firstErrorField = document.getElementById(Object.keys(newErrors)[0]);
       firstErrorField?.focus();
       return;
     }
@@ -221,8 +217,14 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
             <div className="space-y-1.5">
               <Label className={labelClass}>Área de Membros <span className="text-gold">*</span></Label>
-              <Select value={areaId} onValueChange={setAreaId}>
-                <SelectTrigger className={inputClass}>
+              <Select 
+                value={areaId} 
+                onValueChange={(val) => {
+                  setAreaId(val);
+                  if (errors.areaId) setErrors((prev) => { const n = { ...prev }; delete n.areaId; return n; });
+                }}
+              >
+                <SelectTrigger className={`${inputClass} ${errors.areaId ? "border-destructive" : ""}`}>
                   <SelectValue placeholder="Selecione a área" />
                 </SelectTrigger>
                 <SelectContent>
@@ -233,6 +235,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   )}
                 </SelectContent>
               </Select>
+              {errors.areaId && <p className="text-[0.8rem] font-medium text-destructive">{errors.areaId}</p>}
             </div>
           </CardSection>
 
