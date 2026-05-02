@@ -164,8 +164,9 @@ function AdminHeroBannersPage() {
     enabled: !!activeArea?.id,
   });
   const { data: coursesData } = useQuery({
-    queryKey: ["admin-banner-courses"],
-    queryFn: () => listCoursesForBannerSelector(),
+    queryKey: ["admin-banner-courses", activeArea?.id],
+    queryFn: () => listCoursesForBannerSelector({ data: { areaId: activeArea?.id } }),
+    enabled: !!activeArea?.id,
   });
   const [metricsDays, setMetricsDays] = useState<7 | 30 | 90>(30);
   const { data: metricsData, isLoading: metricsLoading } = useQuery({

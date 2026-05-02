@@ -40,46 +40,55 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
       (() => {
         let q = supabaseAdmin.from('categories').select('*', { count: 'exact', head: true });
         if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null); // Force empty if no area
         return q;
       })(),
       (() => {
         let q = supabaseAdmin.from('tracks').select('*', { count: 'exact', head: true });
         if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null);
         return q;
       })(),
       (() => {
         let q = supabaseAdmin.from('tracks').select('*', { count: 'exact', head: true }).eq('is_active', true);
         if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null);
         return q;
       })(),
       (() => {
         let q = supabaseAdmin.from('approved_buyers').select('*', { count: 'exact', head: true });
         if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null);
         return q;
       })(),
       (() => {
         let q = supabaseAdmin.from('active_sessions').select('*', { count: 'exact', head: true }).eq('is_valid', true);
         if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null);
         return q;
       })(),
       (() => {
         let q = supabaseAdmin.from('courses').select('*', { count: 'exact', head: true });
         if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null);
         return q;
       })(),
       (() => {
         let q = supabaseAdmin.from('courses').select('*', { count: 'exact', head: true }).eq('status', 'published');
         if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null);
         return q;
       })(),
       (() => {
         let q = supabaseAdmin.from('enrollments').select('*', { count: 'exact', head: true }).eq('status', 'pending');
         if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null);
         return q;
       })(),
       (() => {
         let q = supabaseAdmin.from('transactions').select('amount').eq('status', 'paid');
         if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null);
         return q;
       })(),
       supabaseAdmin.from('webhook_settings').select('*').limit(1),

@@ -51,6 +51,8 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
 
     if (inputData?.areaId) {
       coursesQuery = coursesQuery.eq('area_id', inputData.areaId);
+    } else {
+      return { courses: [], stats: { total: 0, inProgress: 0, completed: 0 } };
     }
 
     const { data: courses } = await coursesQuery;

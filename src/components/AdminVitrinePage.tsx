@@ -221,7 +221,8 @@ export default function AdminVitrinePage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-shelves"],
-    queryFn: () => listShelves(),
+    queryFn: () => listShelves({ data: { areaId: activeArea?.id } }),
+    enabled: !!activeArea?.id,
   });
 
   const { data: coursesData } = useQuery({

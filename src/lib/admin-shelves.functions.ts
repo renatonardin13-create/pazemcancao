@@ -22,16 +22,25 @@ async function verifyAdmin(supabase: any, userId: string) {
 // ── List shelves with linked courses ──
 export const listShelves = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { areaId?: string } | void) => input)
+  .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
-    const { data, error } = await supabaseAdmin
+    let query = supabaseAdmin
       .from('shelves')
       .select('*, shelf_courses(id, course_id, sort_order, courses(id, title, status, cover_image_url))')
       .order('sort_order', { ascending: true });
 
+    if (data?.areaId) {
+      query = query.eq('area_id', data.areaId);
+    } else {
+      return { shelves: [] };
+    }
+
+    const { data: shelves, error } = await query;
+
     if (error) throw new Error(error.message);
-    return { shelves: data || [] };
+    return { shelves: shelves || [] };
   });
 
 // ── Create shelf ──

@@ -30,7 +30,8 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useState, useRef, useMemo } from "react";
+import { useState, useRef, useMemo, useEffect } from "react";
+import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { ImageFieldHint } from "@/components/ImageFieldHint";
@@ -58,6 +59,7 @@ const accessModeOptions = [
 
 function AdminContentPage() {
   const queryClient = useQueryClient();
+  const { activeArea } = useAdminActiveArea();
   const [formOpen, setFormOpen] = useState(false);
   const [editItem, setEditItem] = useState<any>(null);
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
@@ -96,14 +98,16 @@ function AdminContentPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-content"],
-    queryFn: () => listAdminContentItems(),
+    queryKey: ["admin-content", activeArea?.id],
+    queryFn: () => listAdminContentItems({ data: { areaId: activeArea?.id } }),
+    enabled: !!activeArea?.id,
     staleTime: 30_000,
   });
 
   const { data: catData } = useQuery({
-    queryKey: ["admin-categories"],
-    queryFn: () => listAdminCategories(),
+    queryKey: ["admin-categories", activeArea?.id],
+    queryFn: () => listAdminCategories({ data: { areaId: activeArea?.id } }),
+    enabled: !!activeArea?.id,
     staleTime: 60_000,
   });
 
@@ -304,7 +308,6 @@ function AdminContentPage() {
       list = list.filter((i: any) => i.content_type === typeFilter);
     }
     // filterArea removed
-    return list;
     return list;
   }, [data?.items, search, typeFilter]);
 

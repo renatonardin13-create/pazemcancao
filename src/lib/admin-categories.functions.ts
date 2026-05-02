@@ -29,6 +29,9 @@ export const listAdminCategories = createServerFn({ method: 'POST' })
 
     if (data?.areaId) {
       query = query.eq('area_id', data.areaId);
+    } else {
+      // If no areaId provided, return empty to avoid mixing data
+      return { categories: [] };
     }
 
     const { data: categories, error } = await query;
