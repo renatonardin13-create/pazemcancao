@@ -131,9 +131,9 @@ function AreasMembrosPage() {
 
       {/* Grid Section */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-[400px] rounded-[2.5rem] bg-white/[0.02] border border-white/5 animate-pulse" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className="h-[360px] rounded-3xl bg-white/[0.02] border border-white/5 animate-pulse" />
           ))}
         </div>
       ) : areas.length > 0 ? (
