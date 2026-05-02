@@ -215,22 +215,22 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   </SelectContent>
                 </Select>
               </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label className={labelClass}>Área de Membros <span className="text-gold">*</span></Label>
-                <Select value={areaId} onValueChange={setAreaId}>
-                  <SelectTrigger className={inputClass}>
-                    <SelectValue placeholder="Selecione a área" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {activeArea && (
-                      <SelectItem value={activeArea.id}>
-                        {activeArea.nome}
-                      </SelectItem>
-                    )}
-                  </SelectContent>
-                </Select>
-              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className={labelClass}>Área de Membros <span className="text-gold">*</span></Label>
+              <Select value={areaId} onValueChange={setAreaId}>
+                <SelectTrigger className={inputClass}>
+                  <SelectValue placeholder="Selecione a área" />
+                </SelectTrigger>
+                <SelectContent>
+                  {activeArea && (
+                    <SelectItem value={activeArea.id}>
+                      {activeArea.nome}
+                    </SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
             </div>
           </CardSection>
 
