@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Play, ArrowRight, X } from "lucide-react";
+import { useArea } from "@/hooks/use-area";
 import type { VitrineCourse } from "./types";
 import {
   fallbackHeroContent,
@@ -29,10 +30,47 @@ interface Props {
 }
 
 export function HeroBanner({ banners, fallbackCourse }: Props) {
+  const { area } = useArea();
   const list: HeroBannerModel[] = (() => {
     const fromTable = getActiveHeroBanners(banners as any[] | undefined).filter(
       (b) => b && typeof b.image_url === "string" && b.image_url.trim().length > 0,
     );
+    
+    // Add area banner if it exists and it's not already in the list
+    if (area?.banner_url) {
+      const areaBanner: HeroBannerModel = {
+        id: `area-${area.id}`,
+        image_url: area.banner_url,
+        image_tablet_url: null,
+        image_mobile_url: null,
+        image_width: null,
+        image_height: null,
+        title: area.nome || "",
+        subtitle: "Banner da Área",
+        description: null,
+        primary_cta_label: null,
+        primary_cta_type: "url",
+        primary_cta_target: null,
+        primary_cta_url: null,
+        secondary_cta_label: null,
+        secondary_cta_type: "url",
+        secondary_cta_target: null,
+        secondary_cta_url: null,
+        banner_clickable: false,
+        banner_click_type: null,
+        banner_click_target: null,
+        display_mode: "cover",
+        container_ratio: "auto",
+        autoplay: true,
+        autoplay_interval_ms: 7000,
+        source: "custom",
+      };
+      // Check if already exists (avoid duplicates if same URL)
+      if (!fromTable.some(b => b.image_url === area.banner_url)) {
+        fromTable.unshift(areaBanner);
+      }
+    }
+
     if (fromTable.length > 0) return fromTable;
     const fb = fallbackHeroContent(fallbackCourse);
     return fb && fb.image_url && fb.image_url.trim().length > 0 ? [fb] : [];

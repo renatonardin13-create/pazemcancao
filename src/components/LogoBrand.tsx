@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import defaultLogo from "@/assets/logo-paz-em-cancao.png";
-// useArea removed
+import { useArea } from "@/hooks/use-area";
 
 interface LogoBrandProps {
   size?: "sm" | "md" | "lg";
@@ -9,7 +9,7 @@ interface LogoBrandProps {
 }
 
 export function LogoBrand({ size = "md", linkTo }: LogoBrandProps) {
-  // currentArea removed
+  const { area } = useArea();
   
   const heights = {
     sm: "h-8",
@@ -17,8 +17,8 @@ export function LogoBrand({ size = "md", linkTo }: LogoBrandProps) {
     lg: "h-16",
   };
 
-  const logoSrc = defaultLogo;
-  const logoAlt = "Paz em Canção";
+  const logoSrc = area?.logo_url || defaultLogo;
+  const logoAlt = area?.nome || "Paz em Canção";
 
   const content = (
     <img

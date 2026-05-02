@@ -207,36 +207,51 @@ export type Database = {
         Row: {
           ativa: boolean | null
           atualizado_em: string
+          banner_url: string | null
           criado_em: string
+          favicon_url: string | null
           id: string
           language: string | null
+          logo_url: string | null
           nome: string
+          primary_color: string | null
           principal: boolean | null
           produto_id: string | null
+          secondary_color: string | null
           status: string | null
           subdominio: string
         }
         Insert: {
           ativa?: boolean | null
           atualizado_em?: string
+          banner_url?: string | null
           criado_em?: string
+          favicon_url?: string | null
           id?: string
           language?: string | null
+          logo_url?: string | null
           nome: string
+          primary_color?: string | null
           principal?: boolean | null
           produto_id?: string | null
+          secondary_color?: string | null
           status?: string | null
           subdominio: string
         }
         Update: {
           ativa?: boolean | null
           atualizado_em?: string
+          banner_url?: string | null
           criado_em?: string
+          favicon_url?: string | null
           id?: string
           language?: string | null
+          logo_url?: string | null
           nome?: string
+          primary_color?: string | null
           principal?: boolean | null
           produto_id?: string | null
+          secondary_color?: string | null
           status?: string | null
           subdominio?: string
         }
