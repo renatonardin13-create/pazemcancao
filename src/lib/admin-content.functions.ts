@@ -35,7 +35,7 @@ export const listAdminContentItems = createServerFn({ method: 'POST' })
     const { data: items, error } = await query;
 
     if (error) throw new Error(error.message);
-    return { items: data || [] };
+    return { items: items || [] };
   });
 
 export const createContentItem = createServerFn({ method: 'POST' })
