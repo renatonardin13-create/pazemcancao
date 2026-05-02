@@ -236,12 +236,14 @@ export const reorderPlaylistTracks = createServerFn({ method: 'POST' })
 /** List all tracks for the "add track" picker */
 export const listAllTracksForPicker = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { areaId: string }) => input)
+  .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
     const { data: tracks, error } = await supabaseAdmin
       .from('tracks')
       .select('id, title, category, duration, cover_url, is_active')
+      .eq('area_id', data.areaId)
       .order('sort_order', { ascending: true });
 
     if (error) throw new Error(error.message);
