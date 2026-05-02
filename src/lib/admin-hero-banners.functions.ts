@@ -50,7 +50,8 @@ function sanitizeBannerInput(raw: any) {
 
 export const listHeroBanners = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { areaId?: string } | void) => input)
+  .handler(async ({ data, context }) => {
     await assertAdmin(context);
     const { data, error } = await (supabaseAdmin as any)
       .from("vitrine_hero_banners")
