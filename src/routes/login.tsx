@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { requestFirstAccess } from "@/lib/first-access.functions";
 import { motion, AnimatePresence } from "framer-motion";
+import { useArea } from "@/hooks/use-area";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/login")({
 type View = "login" | "signup" | "reset" | "reset-sent" | "new-password" | "success";
 
 function LoginPage() {
+  const { area } = useArea();
   const navigate = useNavigate();
   const { login, isAuthenticated, loading: authLoading, blocked, blockMessage } = useAuth();
   const [view, setView] = useState<View>("login");
@@ -381,7 +383,7 @@ function LoginPage() {
               </p>
             </div>
 
-            <div className="rounded-3xl border border-gold/20 bg-[oklch(0.14_0.01_260)] p-7 sm:p-10 lg:p-14 relative overflow-hidden shadow-[0_8px_60px_-12px_rgba(0,0,0,0.6)]">
+            <div className="rounded-3xl border border-primary/20 bg-card p-7 sm:p-10 lg:p-14 relative overflow-hidden shadow-[0_8px_60px_-12px_rgba(0,0,0,0.6)]">
               <div className="pointer-events-none absolute -top-28 -right-28 h-56 w-56 rounded-full bg-gold/[0.04] blur-[80px]" />
 
               <div className="relative z-10">

@@ -104,7 +104,11 @@ function NewAreaPage() {
       language, 
       status, 
       product_id: productId, 
-      is_primary: isPrimary 
+      is_primary: isPrimary,
+      primary_color: "#D4AF37",
+      secondary_color: "#000000",
+      background_color: "#070707",
+      surface_color: "#111111",
     });
   };
 

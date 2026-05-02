@@ -74,6 +74,8 @@ export const createAreaMembro = createServerFn({ method: 'POST' })
     logo_url?: string;
     favicon_url?: string;
     banner_url?: string;
+    background_color?: string;
+    surface_color?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     const { userId } = context;
@@ -114,6 +116,8 @@ export const createAreaMembro = createServerFn({ method: 'POST' })
         logo_url: data.logo_url,
         favicon_url: data.favicon_url,
         banner_url: data.banner_url,
+        background_color: data.background_color,
+        surface_color: data.surface_color,
       })
       .select('id')
       .single();
@@ -138,6 +142,8 @@ export const updateAreaMembro = createServerFn({ method: 'POST' })
     logo_url?: string;
     favicon_url?: string;
     banner_url?: string;
+    background_color?: string;
+    surface_color?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     const { userId } = context;
@@ -179,6 +185,8 @@ export const updateAreaMembro = createServerFn({ method: 'POST' })
         logo_url: data.logo_url,
         favicon_url: data.favicon_url,
         banner_url: data.banner_url,
+        background_color: data.background_color,
+        surface_color: data.surface_color,
       })
       .eq('id', data.id);
 

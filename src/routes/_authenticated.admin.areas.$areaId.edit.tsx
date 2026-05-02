@@ -64,6 +64,8 @@ function EditAreaPage() {
   const [logoUrl, setLogoUrl] = useState("");
   const [faviconUrl, setFaviconUrl] = useState("");
   const [bannerUrl, setBannerUrl] = useState("");
+  const [backgroundColor, setBackgroundColor] = useState("#070707");
+  const [surfaceColor, setSurfaceColor] = useState("#111111");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { data: areaData, isLoading: isLoadingArea } = useQuery({
@@ -99,6 +101,8 @@ function EditAreaPage() {
       setLogoUrl(area.logo_url || "");
       setFaviconUrl(area.favicon_url || "");
       setBannerUrl(area.banner_url || "");
+      setBackgroundColor(area.background_color || "#070707");
+      setSurfaceColor(area.surface_color || "#111111");
     }
   }, [area]);
 
@@ -145,6 +149,8 @@ function EditAreaPage() {
       logo_url: logoUrl,
       favicon_url: faviconUrl,
       banner_url: bannerUrl,
+      background_color: backgroundColor,
+      surface_color: surfaceColor,
     });
   };
 
@@ -398,6 +404,50 @@ function EditAreaPage() {
                               type="text"
                               value={secondaryColor}
                               onChange={(e) => setSecondaryColor(e.target.value)}
+                              className="flex-1 h-12 bg-background/50 font-mono"
+                              placeholder="#000000"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <Label className="text-sm font-bold flex items-center gap-2">
+                            <div className="h-4 w-4 rounded-full border border-white/20" style={{ backgroundColor: backgroundColor }} />
+                            Cor de Fundo
+                          </Label>
+                          <div className="flex gap-2">
+                            <Input
+                              type="color"
+                              value={backgroundColor}
+                              onChange={(e) => setBackgroundColor(e.target.value)}
+                              className="w-14 h-12 p-1 bg-background border-border/20 cursor-pointer"
+                            />
+                            <Input
+                              type="text"
+                              value={backgroundColor}
+                              onChange={(e) => setBackgroundColor(e.target.value)}
+                              className="flex-1 h-12 bg-background/50 font-mono"
+                              placeholder="#000000"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <Label className="text-sm font-bold flex items-center gap-2">
+                            <div className="h-4 w-4 rounded-full border border-white/20" style={{ backgroundColor: surfaceColor }} />
+                            Cor de Superfície (Cards)
+                          </Label>
+                          <div className="flex gap-2">
+                            <Input
+                              type="color"
+                              value={surfaceColor}
+                              onChange={(e) => setSurfaceColor(e.target.value)}
+                              className="w-14 h-12 p-1 bg-background border-border/20 cursor-pointer"
+                            />
+                            <Input
+                              type="text"
+                              value={surfaceColor}
+                              onChange={(e) => setSurfaceColor(e.target.value)}
                               className="flex-1 h-12 bg-background/50 font-mono"
                               placeholder="#000000"
                             />

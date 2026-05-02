@@ -33,6 +33,10 @@ export const createArea = createServerFn({ method: 'POST' })
     status: z.string(),
     product_id: z.string().uuid().optional(),
     is_primary: z.boolean().optional(),
+    primary_color: z.string().optional(),
+    secondary_color: z.string().optional(),
+    background_color: z.string().optional(),
+    surface_color: z.string().optional(),
   }))
   .handler(async ({ data, context }) => {
     const { userId } = context;
@@ -60,6 +64,10 @@ export const createArea = createServerFn({ method: 'POST' })
         status: data.status,
         product_id: data.product_id,
         is_primary: data.is_primary || false,
+        primary_color: data.primary_color,
+        secondary_color: data.secondary_color,
+        background_color: data.background_color,
+        surface_color: data.surface_color,
       })
       .select('id')
       .single();

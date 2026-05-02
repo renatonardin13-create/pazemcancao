@@ -207,6 +207,7 @@ export type Database = {
         Row: {
           ativa: boolean | null
           atualizado_em: string
+          background_color: string | null
           banner_url: string | null
           criado_em: string
           favicon_url: string | null
@@ -220,10 +221,12 @@ export type Database = {
           secondary_color: string | null
           status: string | null
           subdominio: string
+          surface_color: string | null
         }
         Insert: {
           ativa?: boolean | null
           atualizado_em?: string
+          background_color?: string | null
           banner_url?: string | null
           criado_em?: string
           favicon_url?: string | null
@@ -237,10 +240,12 @@ export type Database = {
           secondary_color?: string | null
           status?: string | null
           subdominio: string
+          surface_color?: string | null
         }
         Update: {
           ativa?: boolean | null
           atualizado_em?: string
+          background_color?: string | null
           banner_url?: string | null
           criado_em?: string
           favicon_url?: string | null
@@ -254,6 +259,7 @@ export type Database = {
           secondary_color?: string | null
           status?: string | null
           subdominio?: string
+          surface_color?: string | null
         }
         Relationships: [
           {
