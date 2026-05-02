@@ -27,6 +27,7 @@ interface AreaCardProps {
   onDuplicate: (id: string) => void;
   onEdit: (id: string) => void;
   onTogglePrincipal: (id: string, current: boolean) => void;
+  onToggleActive: (id: string, current: boolean) => void;
 }
 
 export function AreaCard({ 
