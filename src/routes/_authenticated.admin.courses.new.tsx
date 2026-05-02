@@ -15,7 +15,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 import { motion } from "framer-motion";
 
 export const Route = createFileRoute("/_authenticated/admin/courses/new")({
