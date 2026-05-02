@@ -99,14 +99,14 @@ function AdminContentPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-content", activeArea?.id],
-    queryFn: () => listAdminContentItems({ areaId: activeArea?.id }),
+    queryFn: () => listAdminContentItems({ data: { areaId: activeArea?.id } }),
     enabled: !!activeArea?.id,
     staleTime: 30_000,
   });
 
   const { data: catData } = useQuery({
     queryKey: ["admin-categories", activeArea?.id],
-    queryFn: () => listAdminCategories({ areaId: activeArea?.id }),
+    queryFn: () => listAdminCategories({ data: { areaId: activeArea?.id } }),
     enabled: !!activeArea?.id,
     staleTime: 60_000,
   });
