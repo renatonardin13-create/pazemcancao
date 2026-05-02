@@ -189,5 +189,5 @@ export const listCoursesForBannerSelector = createServerFn({ method: "POST" })
 
     const { data: courses, error } = await query;
     if (error) throw new Error(error.message);
-    return { courses: data || [] };
+    return { courses: courses || [] };
   });
