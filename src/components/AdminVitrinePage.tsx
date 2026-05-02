@@ -170,6 +170,7 @@ function SummaryCard({
 
 export default function AdminVitrinePage() {
   const queryClient = useQueryClient();
+  const { activeArea } = useAdminActiveArea();
   const [activeTab, setActiveTab] = useState("shelves");
   const [showPreview, setShowPreview] = useState(true);
   const [previewDevice, setPreviewDevice] = useState<"desktop" | "tablet" | "mobile">("desktop");
