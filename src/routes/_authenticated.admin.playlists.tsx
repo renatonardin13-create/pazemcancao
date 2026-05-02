@@ -48,7 +48,7 @@ function AdminPlaylistsPage() {
 
   const createMutation = useMutation({
     mutationFn: (input: { name: string; description?: string; cover_url?: string }) =>
-      createPlaylist({ data: input }),
+      createPlaylist({ data: { ...input, area_id: activeArea!.id } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-playlists"] });
       toast.success("Playlist criada!");
