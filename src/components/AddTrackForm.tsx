@@ -13,6 +13,7 @@ import { Upload, Loader2, ImageIcon, Music, X, Gift } from "lucide-react";
 import { ImageFieldHint } from "@/components/ImageFieldHint";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
+import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 
 interface AddTrackFormProps {
   onSuccess?: () => void;
