@@ -38,11 +38,14 @@ interface EditTrackDialogProps {
 
 export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogProps) {
   const queryClient = useQueryClient();
+  const { activeArea } = useAdminActiveArea();
+
   const { data: catData } = useQuery({
-    queryKey: ["admin-categories"],
-    queryFn: () => listAdminCategories(),
+    queryKey: ["admin-categories", activeArea?.id],
+    queryFn: () => listAdminCategories({ data: { areaId: activeArea?.id } }),
+    enabled: !!activeArea?.id,
   });
-  // areas query removed
+  
   const categories = (catData?.categories || []).map((c: any) => c.name);
   const fileInputRef = useRef<HTMLInputElement>(null);
 

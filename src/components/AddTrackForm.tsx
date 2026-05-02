@@ -20,10 +20,12 @@ interface AddTrackFormProps {
 
 export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
   const queryClient = useQueryClient();
-  // areas query removed
+  const { activeArea } = useAdminActiveArea();
+  
   const { data: catData } = useQuery({
-    queryKey: ["admin-categories"],
-    queryFn: () => listAdminCategories(),
+    queryKey: ["admin-categories", activeArea?.id],
+    queryFn: () => listAdminCategories({ data: { areaId: activeArea?.id } }),
+    enabled: !!activeArea?.id,
   });
   const categories = (catData?.categories || []).map((c: any) => c.name);
   const [title, setTitle] = useState("");
@@ -88,7 +90,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
           category,
           duration: duration || "0:00",
           storage_path: fileName,
-          // area_id removed
+          area_id: activeArea?.id,
           download_url: urlData.publicUrl,
           description: description || undefined,
           cover_url: coverUrl,
