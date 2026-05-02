@@ -8,23 +8,53 @@ const corsHeaders = {
 
 // Helper to redact sensitive fields from logs
 const redactPayload = (body: any) => {
-  if (!body) return body;
+  if (!body || typeof body !== 'object') return body;
   const redacted = { ...body };
-  const sensitiveKeys = ['token', 'signature', 'password', 'cvv', 'card_number', 'credit_card'];
+  const sensitiveKeys = ['token', 'signature', 'password', 'cvv', 'card_number', 'credit_card', 'api_key', 'secret'];
   
   for (const key of sensitiveKeys) {
     if (key in redacted) redacted[key] = '[REDACTED]';
   }
   
-  // Also check nested objects if any
-  if (redacted.customer && typeof redacted.customer === 'object') {
-    redacted.customer = redactPayload(redacted.customer);
+  // Recursively redact
+  for (const key in redacted) {
+    if (redacted[key] && typeof redacted[key] === 'object') {
+      redacted[redacted] = redactPayload(redacted[key]);
+    }
   }
   
   return redacted;
 };
 
+/**
+ * Validates Kiwify Signature
+ */
+async function validateKiwifySignature(payload: string, signature: string, secret: string) {
+  if (!signature || !secret) return false;
+  
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(secret),
+    { name: "HMAC", hash: "SHA-1" },
+    false,
+    ["sign"]
+  );
+  
+  const signatureBuffer = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    encoder.encode(payload)
+  );
+  
+  const hashArray = Array.from(new Uint8Array(signatureBuffer));
+  const generatedSignature = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  
+  return generatedSignature === signature;
+}
+
 serve(async (req) => {
+  // 1. Handle CORS
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -35,31 +65,32 @@ serve(async (req) => {
   )
 
   let logId: string | null = null
+  let body: any = {}
+  let rawBody = ""
 
   try {
     const url = new URL(req.url)
     const provider = url.searchParams.get('provider') || 'perfectpay'
     
-    let body: any = {}
+    // 2. Read Body
     const contentType = req.headers.get('content-type') || ''
-    
-    if (contentType && contentType.includes('application/json')) {
-      body = await req.json()
+    if (contentType.includes('application/json')) {
+      rawBody = await req.text()
+      body = JSON.parse(rawBody)
     } else {
-      try {
-        const formData = await req.formData()
-        formData.forEach((value, key) => {
-          body[key] = value
-        })
-      } catch (e) {
-        const text = await req.text()
-        body = { raw: text }
-      }
+      // Fallback for form-data (PerfectPay often uses this)
+      const formData = await req.formData()
+      const obj: any = {}
+      formData.forEach((value, key) => {
+        obj[key] = value
+      })
+      body = obj
+      rawBody = JSON.stringify(obj)
     }
     
-    console.log(`Received webhook from ${provider}:`, redactPayload(body))
+    console.log(`[Webhook] Received from ${provider}. IP: ${req.headers.get('x-forwarded-for') || 'unknown'}`)
 
-    // Extract common fields based on provider
+    // 3. Extract common fields
     let externalProductId = ''
     let uniqueEventId = ''
     let saleStatus = ''
@@ -68,22 +99,22 @@ serve(async (req) => {
     let customerName = ''
 
     if (provider === 'perfectpay') {
-      externalProductId = body.product_id
-      uniqueEventId = body.sale_id
-      saleStatus = body.sale_status
-      receivedToken = body.token
-      customerEmail = body.customer_email
-      customerName = body.customer_name
+      externalProductId = String(body.product_id || '')
+      uniqueEventId = String(body.sale_id || '')
+      saleStatus = String(body.sale_status || '')
+      receivedToken = String(body.token || '')
+      customerEmail = String(body.customer_email || '').trim().toLowerCase()
+      customerName = String(body.customer_name || '')
     } else if (provider === 'kiwify') {
-      externalProductId = body.product_id
-      uniqueEventId = body.order_id || body.sale_id
-      saleStatus = body.order_status || body.status
-      receivedToken = url.searchParams.get('token') || body.token || body.signature
-      customerEmail = body.customer?.email || body.email
-      customerName = body.customer?.name || body.name
+      externalProductId = String(body.product_id || '')
+      uniqueEventId = String(body.order_id || body.sale_id || '')
+      saleStatus = String(body.order_status || body.status || '')
+      receivedToken = req.headers.get('x-kiwify-signature') || url.searchParams.get('signature') || body.signature || ''
+      customerEmail = String(body.customer?.email || body.email || '').trim().toLowerCase()
+      customerName = String(body.customer?.name || body.name || '')
     }
 
-    // 1. Initial Logging in webhook_logs (Redacted)
+    // 4. Initial Logging (Audit)
     const { data: log, error: logError } = await supabaseAdmin
       .from('webhook_logs')
       .insert({
@@ -100,16 +131,53 @@ serve(async (req) => {
     if (logError) console.error('Error logging webhook:', logError)
     logId = log?.id
 
-    // 2. Validate mandatory fields
+    // 5. Hard Validation: Mandatory Fields
     if (!externalProductId || !uniqueEventId || !customerEmail) {
-      const msg = !externalProductId ? 'Missing product_id' : 
-                  !uniqueEventId ? 'Missing unique event ID' : 'Missing customer email';
+      const msg = `Validation Failed: ${!externalProductId ? 'Missing product_id' : !uniqueEventId ? 'Missing sale_id' : 'Missing email'}`
       await updateLog(logId, 400, msg)
-      return new Response(JSON.stringify({ error: msg }), { status: 400 })
+      return new Response(JSON.stringify({ error: msg }), { status: 400, headers: corsHeaders })
     }
 
-    // 3. Atomic Duplicate Check using unique constraint
-    // We try to insert into processed_webhooks with status 'processing'
+    // 6. Security: Token/Signature Check
+    if (!receivedToken) {
+      const msg = 'Security Error: Missing authentication token/signature'
+      await updateLog(logId, 401, msg)
+      return new Response(JSON.stringify({ error: msg }), { status: 401, headers: corsHeaders })
+    }
+
+    // Fetch integration settings
+    const { data: offer, error: offerError } = await supabaseAdmin
+      .from('course_integrations')
+      .select('*, courses(area_id)')
+      .eq('external_product_id', externalProductId)
+      .eq('platform', provider)
+      .eq('is_enabled', true)
+      .maybeSingle()
+
+    if (offerError || !offer) {
+      const msg = `Config Error: Offer not found/enabled for product ${externalProductId} on ${provider}`
+      await updateLog(logId, 404, msg)
+      return new Response(JSON.stringify({ error: 'Product not configured' }), { status: 404, headers: corsHeaders })
+    }
+
+    // Provider specific security validation
+    let isAuthorized = false
+    if (provider === 'perfectpay') {
+      isAuthorized = offer.integration_token === receivedToken
+    } else if (provider === 'kiwify') {
+      // Kiwify uses HMAC-SHA1 of the body
+      isAuthorized = await validateKiwifySignature(rawBody, receivedToken, offer.integration_token)
+    } else {
+      isAuthorized = offer.integration_token === receivedToken
+    }
+
+    if (!isAuthorized) {
+      const msg = 'Security Error: Invalid authentication token/signature'
+      await updateLog(logId, 401, msg)
+      return new Response(JSON.stringify({ error: msg }), { status: 401, headers: corsHeaders })
+    }
+
+    // 7. Idempotency Check (Prevent Multiple Access)
     const { error: insertProcessError } = await supabaseAdmin
       .from('processed_webhooks')
       .insert({
@@ -123,89 +191,48 @@ serve(async (req) => {
 
     if (insertProcessError) {
       if (insertProcessError.code === '23505') { // Unique violation
-        const { data: existing } = await supabaseAdmin
-          .from('processed_webhooks')
-          .select('status')
-          .eq('unique_event_id', uniqueEventId)
-          .eq('provider', provider)
-          .maybeSingle()
-
-        if (existing?.status === 'completed') {
-          console.log(`Event ${uniqueEventId} already processed.`)
-          await updateLog(logId, 200, 'Duplicate event already processed.', true)
-          return new Response(JSON.stringify({ success: true, message: 'Already processed' }), { status: 200 })
-        } else {
-          // If it's 'processing', another instance is working on it.
-          return new Response(JSON.stringify({ error: 'Processing in progress' }), { status: 409 })
-        }
+        console.log(`[Webhook] Duplicate event ${uniqueEventId} detected.`)
+        await updateLog(logId, 200, 'Duplicate event ignored.', true)
+        return new Response(JSON.stringify({ success: true, message: 'Already processed' }), { status: 200, headers: corsHeaders })
       }
       throw insertProcessError
     }
 
-    // 4. Identify Offer and Validate Token
-    const { data: offer, error: offerError } = await supabaseAdmin
-      .from('course_integrations')
-      .select('*, courses(area_id)')
-      .eq('external_product_id', externalProductId)
-      .eq('platform', provider)
-      .eq('is_enabled', true)
-      .maybeSingle()
-
-    if (offerError || !offer) {
-      const msg = `Offer not found for product ${externalProductId} on ${provider}`
-      await updateLog(logId, 404, msg)
-      await updateProcess(uniqueEventId, provider, 'failed', msg)
-      return new Response(JSON.stringify({ error: 'Product/Offer not found' }), { status: 404 })
-    }
-
-    // Token check is MANDATORY
-    if (!receivedToken) {
-      const msg = 'Missing authentication token'
-      await updateLog(logId, 401, msg)
-      await updateProcess(uniqueEventId, provider, 'failed', msg)
-      return new Response(JSON.stringify({ error: 'Unauthorized: Missing token' }), { status: 401 })
-    }
-
-    if (offer.integration_token && offer.integration_token !== receivedToken) {
-      const msg = 'Invalid authentication token'
-      await updateLog(logId, 401, msg)
-      await updateProcess(uniqueEventId, provider, 'failed', msg)
-      return new Response(JSON.stringify({ error: 'Unauthorized: Invalid token' }), { status: 401 })
-    }
-
-    // 5. Verify status
-    const isApproved = (provider === 'perfectpay' && saleStatus === 'approved') || 
+    // 8. Business Logic: Status Check
+    const isApproved = (provider === 'perfectpay' && (saleStatus === 'approved' || saleStatus === 'paid')) || 
                        (provider === 'kiwify' && (saleStatus === 'paid' || saleStatus === 'approved'))
 
     if (!isApproved) {
-      const msg = `Payment not approved (Status: ${saleStatus})`
+      const msg = `Status: ${saleStatus} (Ignored)`
       await updateLog(logId, 200, msg)
       await updateProcess(uniqueEventId, provider, 'completed', msg)
-      return new Response(JSON.stringify({ success: true, message: msg }), { status: 200 })
+      return new Response(JSON.stringify({ success: true, message: msg }), { status: 200, headers: corsHeaders })
     }
 
-    // 6. Action: Grant access
-    console.log(`Processing approval for ${customerEmail} - Course ID: ${offer.course_id}`)
+    // 9. Grant Access
+    console.log(`[Webhook] Granting access to ${customerEmail} for Course ${offer.course_id}`)
     
-    // Find or Create User
+    // Find or Create Auth User (Backend logic)
+    // We use a safe approach to finding users to avoid leaks
     const { data: { users }, error: listError } = await supabaseAdmin.auth.admin.listUsers()
     if (listError) throw listError
 
-    let user = users.find(u => u.email?.toLowerCase() === customerEmail.toLowerCase())
+    let user = users.find(u => u.email?.toLowerCase() === customerEmail)
     let userId = user?.id
 
     if (!userId) {
       const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
         email: customerEmail,
         email_confirm: true,
-        user_metadata: { full_name: customerName },
-        password: Math.random().toString(36).slice(-12)
+        user_metadata: { full_name: customerName, origin: 'webhook_automation' },
+        password: Math.random().toString(36).slice(-12) + 'A1!'
       })
       
       if (createError) {
+        // Handle race condition where user was created between list and create
         if (createError.message.includes('already registered')) {
           const { data: { users: retryUsers } } = await supabaseAdmin.auth.admin.listUsers()
-          userId = retryUsers.find(u => u.email?.toLowerCase() === customerEmail.toLowerCase())?.id
+          userId = retryUsers.find(u => u.email?.toLowerCase() === customerEmail)?.id
         } else {
           throw createError
         }
@@ -214,8 +241,9 @@ serve(async (req) => {
       }
     }
 
-    if (!userId) throw new Error('Could not create or find user')
+    if (!userId) throw new Error('Could not resolve User ID')
 
+    // Create Enrollment
     const { error: enrollError } = await supabaseAdmin
       .from('enrollments')
       .upsert({
@@ -230,9 +258,9 @@ serve(async (req) => {
 
     if (enrollError) throw enrollError
 
-    // Mark as completed
+    // 10. Finalize
     await updateProcess(uniqueEventId, provider, 'completed')
-    await updateLog(logId, 200, 'Access granted successfully', true)
+    await updateLog(logId, 200, 'Success: Access Granted', true)
 
     return new Response(JSON.stringify({ success: true }), { 
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -240,9 +268,9 @@ serve(async (req) => {
     })
 
   } catch (error) {
-    console.error('Webhook processing error:', error)
+    console.error('[Webhook] Critical Error:', error)
     if (logId) await updateLog(logId, 500, error.message)
-    return new Response(JSON.stringify({ error: error.message }), { 
+    return new Response(JSON.stringify({ error: 'Internal Server Error' }), { 
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500 
     })
