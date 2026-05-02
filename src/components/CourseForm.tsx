@@ -131,7 +131,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       cover_image_url: coverUrl.trim() || null,
       banner_image_url: bannerUrl.trim() || null,
       category_id: categoryId || null,
-      area_id: areaId || activeArea?.id || null,
+      area_id: activeArea?.id || null,
       price: parseFloat(price) || 0,
       promotional_price: promotionalPrice.trim() ? parseFloat(promotionalPrice) : null,
       status,
@@ -215,29 +215,6 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className={labelClass}>Área de Membros <span className="text-gold">*</span></Label>
-              <Select 
-                value={areaId} 
-                onValueChange={(val) => {
-                  setAreaId(val);
-                  if (errors.areaId) setErrors((prev) => { const n = { ...prev }; delete n.areaId; return n; });
-                }}
-              >
-                <SelectTrigger id="areaId-trigger" className={`${inputClass} ${errors.areaId ? "border-destructive" : ""}`}>
-                  <SelectValue placeholder="Selecione a área" />
-                </SelectTrigger>
-                <SelectContent>
-                  {allAreas?.map((area) => (
-                    <SelectItem key={area.id} value={area.id}>
-                      {area.nome} {area.ativa ? "" : "(Inativa)"}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {errors.areaId && <p className="text-[0.8rem] font-medium text-destructive">{errors.areaId}</p>}
             </div>
           </CardSection>
 
