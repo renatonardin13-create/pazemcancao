@@ -41,15 +41,26 @@ function AdminTracksPage() {
   };
 
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-tracks", page, debouncedSearch, filterCategory, filterStatus],
-    queryFn: () => listAdminTracks({ data: { page, pageSize: PAGE_SIZE, search: debouncedSearch, category: filterCategory, status: filterStatus } }),
+    queryKey: ["admin-tracks", activeArea?.id, page, debouncedSearch, filterCategory, filterStatus],
+    queryFn: () => listAdminTracks({ 
+      data: { 
+        page, 
+        pageSize: PAGE_SIZE, 
+        search: debouncedSearch, 
+        category: filterCategory, 
+        status: filterStatus,
+        areaId: activeArea?.id 
+      } 
+    }),
     staleTime: 30_000,
+    enabled: !!activeArea?.id,
   });
 
   const { data: catData } = useQuery({
-    queryKey: ["admin-track-categories"],
-    queryFn: () => listAdminTrackCategories({ data: {} }),
+    queryKey: ["admin-track-categories", activeArea?.id],
+    queryFn: () => listAdminTrackCategories({ data: { areaId: activeArea?.id } }),
     staleTime: 60_000,
+    enabled: !!activeArea?.id,
   });
 
   // areasData query removed
