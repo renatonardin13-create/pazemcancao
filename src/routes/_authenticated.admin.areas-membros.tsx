@@ -142,10 +142,16 @@ function AreasMembrosPage() {
             {areas.map((area) => (
               <AreaCard 
                 key={area.id}
-                area={area}
+                area={{
+                  ...area,
+                  ativa: area.ativa ?? false,
+                  principal: area.principal ?? false,
+                  produto_id: area.produto_id ?? "",
+                  courses: area.courses ? { title: area.courses.title } : undefined
+                }}
                 onDelete={(id) => setAreaToDelete(id)}
                 onDuplicate={(id) => duplicateMutation.mutate(id)}
-                onEdit={(id) => navigate({ to: `/admin/areas/${id}/edit` })} // Keep existing edit route if possible
+                onEdit={(id) => navigate({ to: `/admin/areas/${id}/edit` })}
                 onTogglePrincipal={(id, current) => togglePrimaryMutation.mutate({ id, principal: !current })}
               />
             ))}
