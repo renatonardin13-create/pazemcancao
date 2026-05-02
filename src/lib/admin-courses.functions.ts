@@ -29,6 +29,8 @@ export const listAdminCourses = createServerFn({ method: 'POST' })
 
     if (data?.areaId) {
       query = query.eq('area_id', data.areaId);
+    } else {
+      return { courses: [] };
     }
 
     const { data: courses, error } = await query;
