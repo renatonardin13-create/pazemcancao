@@ -200,136 +200,251 @@ function EditAreaPage() {
         <div className="lg:col-span-2 space-y-6">
           <Card className="bg-card border-border/30 overflow-hidden relative">
             <div className="absolute top-0 left-0 w-1 h-full bg-gold" />
-            <CardContent className="p-8">
-              <form onSubmit={handleSubmit} className="space-y-8">
-                <div className="space-y-6">
-                  <div className="grid gap-2">
-                    <Label htmlFor="nome" className="text-sm font-bold">Nome da área</Label>
-                    <Input
-                      id="nome"
-                      value={nome}
-                      onChange={(e) => setNome(e.target.value)}
-                      required
-                      className="h-12 bg-background/50 focus-visible:ring-gold"
-                    />
-                  </div>
-
-                  <div className="grid gap-2 opacity-60">
-                    <Label htmlFor="subdominio" className="text-sm font-bold">Identificador (Subdomínio)</Label>
-                    <Input
-                      id="subdominio"
-                      value={subdominio}
-                      disabled
-                      className="h-12 bg-background/30"
-                    />
-                    <p className="text-[10px] text-muted-foreground font-mono">
-                      O identificador não pode ser alterado após a criação.
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="produtoId" className="text-sm font-bold">Produto Vinculado</Label>
-                      <Select value={produtoId} onValueChange={setProdutoId}>
-                        <SelectTrigger className="h-12 bg-background/50">
-                          <SelectValue placeholder="Selecione o produto" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {products?.map((product) => (
-                            <SelectItem key={product.id} value={product.id}>
-                              {product.title}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="grid gap-2">
-                      <Label htmlFor="status" className="text-sm font-bold">Status</Label>
-                      <Select value={status} onValueChange={setStatus}>
-                        <SelectTrigger className="h-12 bg-background/50">
-                          <SelectValue placeholder="Status" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="active">Ativo</SelectItem>
-                          <SelectItem value="draft">Rascunho</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="grid gap-2">
-                    <Label htmlFor="language" className="text-sm font-bold">Idioma Padrão</Label>
-                    <Select value={language} onValueChange={setLanguage}>
-                      <SelectTrigger className="h-12 bg-background/50">
-                        <SelectValue placeholder="Idioma" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pt-BR">Português (Brasil)</SelectItem>
-                        <SelectItem value="en">English</SelectItem>
-                        <SelectItem value="es">Español</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 rounded-xl bg-background/50 border border-border/20">
-                    <div className="space-y-0.5">
-                      <Label className="text-sm font-bold flex items-center gap-2">
-                        <Star className={`h-4 w-4 ${principal ? 'fill-gold text-gold' : 'text-muted-foreground'}`} />
-                        Área Principal
-                      </Label>
-                      <p className="text-[11px] text-muted-foreground">
-                        Esta será a área padrão para novos alunos.
-                      </p>
-                    </div>
-                    <Switch
-                      checked={principal}
-                      onCheckedChange={setPrincipal}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between p-4 rounded-xl bg-background/50 border border-border/20">
-                    <div className="space-y-0.5">
-                      <Label className="text-sm font-bold">Área Ativa</Label>
-                      <p className="text-[11px] text-muted-foreground">
-                        Define se a área está acessível para os alunos.
-                      </p>
-                    </div>
-                    <Switch
-                      checked={ativa}
-                      onCheckedChange={setAtiva}
-                    />
-                  </div>
-                </div>
-
-                <div className="flex gap-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => navigate({ to: "/admin/areas-membros" })}
-                    className="flex-1 h-14 rounded-xl font-bold"
+            <CardContent className="p-0">
+              <Tabs defaultValue="geral" className="w-full">
+                <TabsList className="w-full justify-start rounded-none border-b bg-transparent h-14 p-0">
+                  <TabsTrigger 
+                    value="geral" 
+                    className="data-[state=active]:bg-gold/10 data-[state=active]:text-gold rounded-none h-full px-8 font-bold border-r border-border/20"
                   >
-                    Cancelar
-                  </Button>
-                  <Button
-                    type="submit"
-                    disabled={mutation.isPending || !nome || !produtoId}
-                    className="flex-1 h-14 bg-gold text-black font-black text-lg rounded-xl hover:shadow-xl hover:shadow-gold/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                    <Layout className="h-4 w-4 mr-2" />
+                    Geral
+                  </TabsTrigger>
+                  <TabsTrigger 
+                    value="branding" 
+                    className="data-[state=active]:bg-gold/10 data-[state=active]:text-gold rounded-none h-full px-8 font-bold"
                   >
-                    {mutation.isPending ? (
-                      <>
-                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                        Salvando...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="mr-2 h-5 w-5" />
-                        Salvar alterações
-                      </>
-                    )}
-                  </Button>
-                </div>
-              </form>
+                    <Palette className="h-4 w-4 mr-2" />
+                    Branding
+                  </TabsTrigger>
+                </TabsList>
+
+                <form onSubmit={handleSubmit}>
+                  <TabsContent value="geral" className="p-8 space-y-8 mt-0">
+                    <div className="space-y-6">
+                      <div className="grid gap-2">
+                        <Label htmlFor="nome" className="text-sm font-bold">Nome da área</Label>
+                        <Input
+                          id="nome"
+                          value={nome}
+                          onChange={(e) => setNome(e.target.value)}
+                          required
+                          className="h-12 bg-background/50 focus-visible:ring-gold"
+                        />
+                      </div>
+
+                      <div className="grid gap-2 opacity-60">
+                        <Label htmlFor="subdominio" className="text-sm font-bold">Identificador (Subdomínio)</Label>
+                        <Input
+                          id="subdominio"
+                          value={subdominio}
+                          disabled
+                          className="h-12 bg-background/30"
+                        />
+                        <p className="text-[10px] text-muted-foreground font-mono">
+                          O identificador não pode ser alterado após a criação.
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="grid gap-2">
+                          <Label htmlFor="produtoId" className="text-sm font-bold">Produto Vinculado</Label>
+                          <Select value={produtoId} onValueChange={setProdutoId}>
+                            <SelectTrigger className="h-12 bg-background/50">
+                              <SelectValue placeholder="Selecione o produto" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {products?.map((product) => (
+                                <SelectItem key={product.id} value={product.id}>
+                                  {product.title}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="grid gap-2">
+                          <Label htmlFor="status" className="text-sm font-bold">Status</Label>
+                          <Select value={status} onValueChange={setStatus}>
+                            <SelectTrigger className="h-12 bg-background/50">
+                              <SelectValue placeholder="Status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="active">Ativo</SelectItem>
+                              <SelectItem value="draft">Rascunho</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+
+                      <div className="grid gap-2">
+                        <Label htmlFor="language" className="text-sm font-bold">Idioma Padrão</Label>
+                        <Select value={language} onValueChange={setLanguage}>
+                          <SelectTrigger className="h-12 bg-background/50">
+                            <SelectValue placeholder="Idioma" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="pt-BR">Português (Brasil)</SelectItem>
+                            <SelectItem value="en">English</SelectItem>
+                            <SelectItem value="es">Español</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="flex items-center justify-between p-4 rounded-xl bg-background/50 border border-border/20">
+                        <div className="space-y-0.5">
+                          <Label className="text-sm font-bold flex items-center gap-2">
+                            <Star className={`h-4 w-4 ${principal ? 'fill-gold text-gold' : 'text-muted-foreground'}`} />
+                            Área Principal
+                          </Label>
+                          <p className="text-[11px] text-muted-foreground">
+                            Esta será a área padrão para novos alunos.
+                          </p>
+                        </div>
+                        <Switch
+                          checked={principal}
+                          onCheckedChange={setPrincipal}
+                        />
+                      </div>
+
+                      <div className="flex items-center justify-between p-4 rounded-xl bg-background/50 border border-border/20">
+                        <div className="space-y-0.5">
+                          <Label className="text-sm font-bold">Área Ativa</Label>
+                          <p className="text-[11px] text-muted-foreground">
+                            Define se a área está acessível para os alunos.
+                          </p>
+                        </div>
+                        <Switch
+                          checked={ativa}
+                          onCheckedChange={setAtiva}
+                        />
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <TabsContent value="branding" className="p-8 space-y-8 mt-0">
+                    <div className="space-y-8">
+                      {/* Logo and Favicon */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="space-y-3">
+                          <Label className="text-sm font-bold flex items-center gap-2">
+                            <ImageIcon className="h-4 w-4 text-gold" />
+                            Logo da Área
+                          </Label>
+                          <ImageUploadField
+                            value={logoUrl}
+                            onChange={setLogoUrl}
+                            uploadLabel="Upload da Logo"
+                          />
+                          <p className="text-[10px] text-muted-foreground">Recomendado: PNG ou SVG com fundo transparente.</p>
+                        </div>
+
+                        <div className="space-y-3">
+                          <Label className="text-sm font-bold flex items-center gap-2">
+                            <Chrome className="h-4 w-4 text-gold" />
+                            Favicon (Ícone da aba)
+                          </Label>
+                          <ImageUploadField
+                            value={faviconUrl}
+                            onChange={setFaviconUrl}
+                            uploadLabel="Upload do Favicon"
+                          />
+                          <p className="text-[10px] text-muted-foreground">Recomendado: 32x32px ou 64x64px.</p>
+                        </div>
+                      </div>
+
+                      {/* Banner */}
+                      <div className="space-y-3">
+                        <Label className="text-sm font-bold flex items-center gap-2">
+                          <ImageIcon className="h-4 w-4 text-gold" />
+                          Banner do Catálogo
+                        </Label>
+                        <ImageUploadField
+                          value={bannerUrl}
+                          onChange={setBannerUrl}
+                          uploadLabel="Upload do Banner"
+                        />
+                        <p className="text-[10px] text-muted-foreground">Este banner aparecerá no topo da vitrine de cursos desta área.</p>
+                      </div>
+
+                      {/* Colors */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t border-border/10">
+                        <div className="space-y-3">
+                          <Label className="text-sm font-bold flex items-center gap-2">
+                            <div className="h-4 w-4 rounded-full border border-white/20" style={{ backgroundColor: primaryColor }} />
+                            Cor Primária
+                          </Label>
+                          <div className="flex gap-2">
+                            <Input
+                              type="color"
+                              value={primaryColor}
+                              onChange={(e) => setPrimaryColor(e.target.value)}
+                              className="w-14 h-12 p-1 bg-background border-border/20 cursor-pointer"
+                            />
+                            <Input
+                              type="text"
+                              value={primaryColor}
+                              onChange={(e) => setPrimaryColor(e.target.value)}
+                              className="flex-1 h-12 bg-background/50 font-mono"
+                              placeholder="#000000"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <Label className="text-sm font-bold flex items-center gap-2">
+                            <div className="h-4 w-4 rounded-full border border-white/20" style={{ backgroundColor: secondaryColor }} />
+                            Cor Secundária
+                          </Label>
+                          <div className="flex gap-2">
+                            <Input
+                              type="color"
+                              value={secondaryColor}
+                              onChange={(e) => setSecondaryColor(e.target.value)}
+                              className="w-14 h-12 p-1 bg-background border-border/20 cursor-pointer"
+                            />
+                            <Input
+                              type="text"
+                              value={secondaryColor}
+                              onChange={(e) => setSecondaryColor(e.target.value)}
+                              className="flex-1 h-12 bg-background/50 font-mono"
+                              placeholder="#000000"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </TabsContent>
+
+                  <div className="p-8 pt-0 flex gap-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => navigate({ to: "/admin/areas-membros" })}
+                      className="flex-1 h-14 rounded-xl font-bold"
+                    >
+                      Cancelar
+                    </Button>
+                    <Button
+                      type="submit"
+                      disabled={mutation.isPending || !nome || !produtoId}
+                      className="flex-1 h-14 bg-gold text-black font-black text-lg rounded-xl hover:shadow-xl hover:shadow-gold/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                    >
+                      {mutation.isPending ? (
+                        <>
+                          <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                          Salvando...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="mr-2 h-5 w-5" />
+                          Salvar alterações
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </form>
+              </Tabs>
             </CardContent>
           </Card>
         </div>
