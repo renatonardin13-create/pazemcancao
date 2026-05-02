@@ -100,6 +100,29 @@ export const createCourse = createServerFn({ method: 'POST' })
 
     if (!role && !isAdminEmail) throw new Error('Não autorizado');
 
+    let areaId = data.area_id;
+
+    if (!areaId) {
+      const { data: principalArea } = await supabaseAdmin
+        .from('areas_membros')
+        .select('id')
+        .eq('principal', true)
+        .maybeSingle();
+      
+      areaId = principalArea?.id;
+    }
+
+    if (!areaId) {
+      const { data: firstArea } = await supabaseAdmin
+        .from('areas_membros')
+        .select('id')
+        .limit(1)
+        .maybeSingle();
+      areaId = firstArea?.id;
+    }
+
+    if (!areaId) throw new Error('É necessário ter uma área de membros ativa.');
+
     const { data: course, error } = await supabaseAdmin
       .from('courses')
       .insert({
@@ -112,7 +135,7 @@ export const createCourse = createServerFn({ method: 'POST' })
         price: data.price ?? 0,
         promotional_price: (data as any).promotional_price ?? null,
         status: data.status || 'draft',
-        area_id: data.area_id || null,
+        area_id: areaId,
         course_type: normalizeCourseType(data.course_type),
         launch_date: data.launch_date || null,
       })
@@ -157,7 +180,6 @@ export const updateCourse = createServerFn({ method: 'POST' })
 
     const { id, ...updates } = data;
     
-    // Sanitize fields to avoid constraint violations
     if ('category_id' in updates && !updates.category_id) {
       updates.category_id = null;
     }
@@ -206,7 +228,7 @@ export const deleteCourse = createServerFn({ method: 'POST' })
 
 export const listAdminCategories = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { areaId?: string } | undefined) => input)
+  .inputValidator((input: { areaId?: string } | void) => input)
   .handler(async ({ data, context }) => {
     const { supabase } = context;
 
