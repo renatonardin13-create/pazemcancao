@@ -408,7 +408,7 @@ function NewAreaPage() {
 
                 <Button
                   type="submit"
-                  disabled={mutation.isPending || !isSlugAvailable || !name}
+                  disabled={mutation.isPending || !isSlugAvailable || !name || !!slugError}
                   className="w-full h-14 bg-gold text-black font-black text-lg rounded-xl hover:shadow-xl hover:shadow-gold/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
                 >
                   {mutation.isPending ? (
