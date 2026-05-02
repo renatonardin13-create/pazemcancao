@@ -51,7 +51,7 @@ export function AreaSelector() {
           Minhas Áreas
         </DropdownMenuLabel>
         <div className="space-y-0.5">
-          {areas?.map((area) => (
+          {areas?.filter(a => a.ativa).map((area) => (
             <DropdownMenuItem
               key={area.id}
               onClick={() => handleAreaChange(area.id)}
