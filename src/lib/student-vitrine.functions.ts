@@ -78,6 +78,8 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
 
     if (inputData?.areaId) {
       coursesQuery = coursesQuery.eq('area_id', inputData.areaId);
+    } else {
+      return { shelves: [], heroBanners: [], featuredCourse: null, featuredCourses: [], promoBanners: [] };
     }
 
     const [
