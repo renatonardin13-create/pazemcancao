@@ -73,6 +73,8 @@ export const createAreaMembro = createServerFn({ method: 'POST' })
         produto_id: data.produto_id,
         ativa: data.ativa,
         principal: data.principal,
+        status: data.status || 'active',
+        language: data.language || 'pt-BR',
       })
       .select('id')
       .single();
