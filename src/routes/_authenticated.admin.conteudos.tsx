@@ -59,6 +59,7 @@ const accessModeOptions = [
 
 function AdminContentPage() {
   const queryClient = useQueryClient();
+  const { activeArea } = useAdminActiveArea();
   const [formOpen, setFormOpen] = useState(false);
   const [editItem, setEditItem] = useState<any>(null);
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
