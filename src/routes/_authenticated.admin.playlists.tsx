@@ -22,6 +22,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { useState } from "react";
 import { toast } from "sonner";
 import { EmptyState } from "@/components/EmptyState";
+import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 
 export const Route = createFileRoute("/_authenticated/admin/playlists")({
   component: AdminPlaylistsPage,
