@@ -128,6 +128,8 @@ export const updateAreaMembro = createServerFn({ method: 'POST' })
         produto_id: data.produto_id,
         ativa: data.ativa,
         principal: data.principal,
+        status: data.status,
+        language: data.language,
       })
       .eq('id', data.id);
 
