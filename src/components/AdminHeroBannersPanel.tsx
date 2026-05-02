@@ -152,14 +152,16 @@ const emptyForm: FormState = {
 
 function AdminHeroBannersPage() {
   const qc = useQueryClient();
+  const { activeArea } = useAdminActiveArea();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [previewOpen, setPreviewOpen] = useState<any>(null);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-hero-banners"],
-    queryFn: () => listHeroBanners(),
+    queryKey: ["admin-hero-banners", activeArea?.id],
+    queryFn: () => listHeroBanners({ data: { areaId: activeArea?.id } }),
+    enabled: !!activeArea?.id,
   });
   const { data: coursesData } = useQuery({
     queryKey: ["admin-banner-courses"],
