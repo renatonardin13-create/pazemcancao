@@ -332,26 +332,29 @@ function NewAreaPage() {
                         onChange={handleSlugChange}
                         required
                         className={`h-12 bg-background/50 pr-10 focus-visible:ring-gold ${
-                          slug.length >= 3 && isSlugAvailable === false ? "border-destructive focus-visible:ring-destructive" : ""
+                          (slug.length >= 3 && isSlugAvailable === false) || slugError ? "border-destructive focus-visible:ring-destructive" : ""
                         }`}
                       />
                       <div className="absolute right-3 top-1/2 -translate-y-1/2">
                         {isCheckingSlug ? (
                           <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                        ) : isSlugAvailable === true ? (
+                        ) : isSlugAvailable === true && !slugError ? (
                           <Check className="h-4 w-4 text-emerald-500" />
-                        ) : isSlugAvailable === false ? (
+                        ) : (isSlugAvailable === false || slugError) && slug.length > 0 ? (
                           <AlertCircle className="h-4 w-4 text-destructive" />
                         ) : null}
                       </div>
                     </div>
-                    {slug && (
+                    {slug && !slugError && (
                       <p className="text-[10px] text-muted-foreground/60 font-mono mt-1">
                         Preview: <span className="text-gold font-bold">{slug}.suaplataforma.com.br</span>
                       </p>
                     )}
-                    {slug.length >= 3 && isSlugAvailable === false && (
-                      <p className="text-[11px] text-destructive font-medium">Este identificador já está em uso.</p>
+                    {slugError && (
+                      <p className="text-[11px] text-destructive font-medium mt-1">{slugError}</p>
+                    )}
+                    {slug.length >= 3 && isSlugAvailable === false && !slugError && (
+                      <p className="text-[11px] text-destructive font-medium mt-1">Este identificador já está em uso.</p>
                     )}
                   </div>
 
