@@ -38,6 +38,8 @@ export const createAreaMembro = createServerFn({ method: 'POST' })
     produto_id: string;
     ativa: boolean;
     principal: boolean;
+    status?: string;
+    language?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     const { userId } = context;
