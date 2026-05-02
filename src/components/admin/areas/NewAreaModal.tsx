@@ -343,18 +343,21 @@ export function NewAreaModal({ open, onOpenChange }: NewAreaModalProps) {
               </div>
 
               {/* URL Box */}
-              <div className="w-full max-w-lg bg-white/[0.03] border border-white/10 p-6 rounded-[2rem] space-y-4 backdrop-blur-xl">
-                <div className="flex flex-col gap-1 text-left">
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 ml-2">Link de acesso dos alunos</span>
-                  <div className="flex items-center justify-between gap-4 p-4 bg-black/40 rounded-2xl border border-gold/20 hover:border-gold/40 transition-colors">
-                    <Globe className="h-5 w-5 text-gold shrink-0" />
-                    <span className="text-base font-bold truncate flex-1 font-mono">{areaUrl}</span>
+              <div className="w-full max-w-lg bg-white/[0.03] border border-white/10 p-8 rounded-[2.5rem] space-y-6 backdrop-blur-xl relative overflow-hidden group">
+                <div className="absolute top-0 left-0 w-full h-1 bg-gold/50 group-hover:bg-gold transition-colors" />
+                
+                <div className="flex flex-col gap-2 text-left">
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gold/60 ml-1">Link de acesso exclusivo</span>
+                  <div className="flex items-center justify-between gap-4 p-5 bg-black/40 rounded-2xl border border-white/5 hover:border-gold/30 transition-all group/url">
+                    <Globe className="h-5 w-5 text-gold shrink-0 group-hover/url:scale-110 transition-transform" />
+                    <span className="text-base font-bold truncate flex-1 font-mono text-white/90 selection:bg-gold selection:text-black">{areaUrl}</span>
                     <div className="flex items-center gap-2">
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={handleCopyUrl}
-                        className="h-10 w-10 rounded-xl hover:bg-gold/10 hover:text-gold"
+                        className="h-10 w-10 rounded-xl hover:bg-gold hover:text-black transition-all"
+                        title="Copiar URL"
                       >
                         <Copy className="h-5 w-5" />
                       </Button>
@@ -362,7 +365,8 @@ export function NewAreaModal({ open, onOpenChange }: NewAreaModalProps) {
                         variant="ghost"
                         size="icon"
                         asChild
-                        className="h-10 w-10 rounded-xl hover:bg-gold/10 hover:text-gold"
+                        className="h-10 w-10 rounded-xl hover:bg-gold/10 hover:text-gold transition-all"
+                        title="Abrir em nova aba"
                       >
                         <a href={areaUrl} target="_blank" rel="noreferrer">
                           <ExternalLink className="h-5 w-5" />
@@ -371,6 +375,10 @@ export function NewAreaModal({ open, onOpenChange }: NewAreaModalProps) {
                     </div>
                   </div>
                 </div>
+
+                <p className="text-[10px] text-muted-foreground/60 italic px-2">
+                  * Você pode alterar o subdomínio e configurar um domínio personalizado nas configurações da área.
+                </p>
               </div>
 
               {/* Action Buttons */}
@@ -381,18 +389,19 @@ export function NewAreaModal({ open, onOpenChange }: NewAreaModalProps) {
                     handleClose(false);
                     navigate({ to: "/admin/courses" });
                   }}
-                  className="h-16 bg-gold text-black font-black text-xl shadow-[0_15px_30px_rgba(212,175,55,0.3)] hover:scale-105 transition-all rounded-2xl flex items-center gap-3"
+                  className="h-16 bg-gold hover:bg-gold/90 text-black font-black text-xl shadow-[0_15px_30px_rgba(212,175,55,0.3)] hover:scale-105 active:scale-95 transition-all rounded-2xl flex items-center justify-center gap-3 w-full"
                 >
                   <BookOpen className="h-6 w-6" />
                   Ir para o Catálogo
                 </Button>
                 
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => handleClose(false)}
-                  className="text-sm font-bold text-muted-foreground hover:text-white transition-colors"
+                  className="h-12 text-sm font-bold text-muted-foreground hover:text-white transition-colors hover:bg-white/5 rounded-xl"
                 >
-                  Fechar e voltar
-                </button>
+                  Continuar no painel
+                </Button>
               </div>
             </motion.div>
           )}
