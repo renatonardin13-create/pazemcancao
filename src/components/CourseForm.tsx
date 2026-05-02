@@ -107,6 +107,8 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
     else if (title.trim().length < 3) newErrors.title = "O nome deve ter pelo menos 3 caracteres";
     
     if (!categoryId) newErrors.categoryId = "A seção é obrigatória";
+    
+    if (!areaId) newErrors.areaId = "Vincular uma área de membros é obrigatório";
 
     if (promotionalPrice.trim() && parseFloat(promotionalPrice) >= parseFloat(price))
       newErrors.promotionalPrice = "Preço promocional deve ser menor que o preço normal";
