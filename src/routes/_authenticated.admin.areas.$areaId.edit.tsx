@@ -24,7 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { updateArea, getAreas, deleteArea } from "@/lib/admin-areas.functions";
+import { updateAreaMembro, getAreaMembro, deleteAreaMembro } from "@/lib/areas-membros.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import {
@@ -47,16 +47,18 @@ function EditAreaPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   
-  const [name, setName] = useState("");
-  const [slug, setSlug] = useState("");
+  const [nome, setNome] = useState("");
+  const [subdominio, setSubdominio] = useState("");
   const [status, setStatus] = useState("");
-  const [productId, setProductId] = useState("");
-  const [isPrimary, setIsPrimary] = useState(false);
+  const [produtoId, setProdutoId] = useState("");
+  const [ativa, setAtiva] = useState(true);
+  const [principal, setPrincipal] = useState(false);
+  const [language, setLanguage] = useState("pt-BR");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const { data: areasData, isLoading: isLoadingArea } = useQuery({
-    queryKey: ["admin-areas"],
-    queryFn: () => getAreas(),
+  const { data: areaData, isLoading: isLoadingArea } = useQuery({
+    queryKey: ["area-membro", areaId],
+    queryFn: () => getAreaMembro({ data: { id: areaId } }),
   });
 
   const { data: products } = useQuery({
@@ -71,22 +73,24 @@ function EditAreaPage() {
     }
   });
 
-  const area = areasData?.areas?.find((a: any) => a.id === areaId);
+  const area = areaData?.area;
 
   useEffect(() => {
     if (area) {
-      setName(area.name || "");
-      setSlug(area.slug || "");
-      setStatus(area.status || "");
-      setProductId(area.product_id || "");
-      setIsPrimary(area.is_primary || false);
+      setNome(area.nome || "");
+      setSubdominio(area.subdominio || "");
+      setStatus(area.status || "active");
+      setProdutoId(area.produto_id || "");
+      setAtiva(area.ativa ?? true);
+      setPrincipal(area.principal ?? false);
+      setLanguage(area.language || "pt-BR");
     }
   }, [area]);
 
   const mutation = useMutation({
-    mutationFn: (vars: any) => updateArea({ data: vars }),
+    mutationFn: (vars: any) => updateAreaMembro({ data: vars }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-areas"] });
+      queryClient.invalidateQueries({ queryKey: ["areas-membros"] });
       toast.success("Área atualizada com sucesso!");
       navigate({ to: "/admin/areas-membros" });
     },
@@ -96,9 +100,9 @@ function EditAreaPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: () => deleteArea({ data: { id: areaId } }),
+    mutationFn: () => deleteAreaMembro({ data: { id: areaId } }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin-areas"] });
+      queryClient.invalidateQueries({ queryKey: ["areas-membros"] });
       toast.success("Área excluída com sucesso");
       navigate({ to: "/admin/areas-membros" });
     },
@@ -109,16 +113,18 @@ function EditAreaPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !productId) {
-      if (!productId) toast.error("Selecione um produto vinculado");
+    if (!nome || !produtoId) {
+      if (!produtoId) toast.error("Selecione um produto vinculado");
       return;
     }
     mutation.mutate({ 
       id: areaId,
-      name, 
+      nome, 
       status, 
-      product_id: productId, 
-      is_primary: isPrimary 
+      produto_id: produtoId, 
+      principal,
+      ativa,
+      language
     });
   };
 
@@ -156,7 +162,7 @@ function EditAreaPage() {
           </Button>
           <div>
             <h1 className="text-3xl font-black text-foreground tracking-tight">Editar Área</h1>
-            <p className="text-muted-foreground">Personalize as configurações de {area.name}</p>
+            <p className="text-muted-foreground">Personalize as configurações de {area.nome}</p>
           </div>
         </div>
 
@@ -178,21 +184,21 @@ function EditAreaPage() {
               <form onSubmit={handleSubmit} className="space-y-8">
                 <div className="space-y-6">
                   <div className="grid gap-2">
-                    <Label htmlFor="name" className="text-sm font-bold">Nome da área</Label>
+                    <Label htmlFor="nome" className="text-sm font-bold">Nome da área</Label>
                     <Input
-                      id="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
+                      id="nome"
+                      value={nome}
+                      onChange={(e) => setNome(e.target.value)}
                       required
                       className="h-12 bg-background/50 focus-visible:ring-gold"
                     />
                   </div>
 
                   <div className="grid gap-2 opacity-60">
-                    <Label htmlFor="slug" className="text-sm font-bold">Identificador (Subdomínio)</Label>
+                    <Label htmlFor="subdominio" className="text-sm font-bold">Identificador (Subdomínio)</Label>
                     <Input
-                      id="slug"
-                      value={slug}
+                      id="subdominio"
+                      value={subdominio}
                       disabled
                       className="h-12 bg-background/30"
                     />
@@ -203,8 +209,8 @@ function EditAreaPage() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="grid gap-2">
-                      <Label htmlFor="productId" className="text-sm font-bold">Produto Vinculado</Label>
-                      <Select value={productId} onValueChange={setProductId}>
+                      <Label htmlFor="produtoId" className="text-sm font-bold">Produto Vinculado</Label>
+                      <Select value={produtoId} onValueChange={setProdutoId}>
                         <SelectTrigger className="h-12 bg-background/50">
                           <SelectValue placeholder="Selecione o produto" />
                         </SelectTrigger>
@@ -232,10 +238,24 @@ function EditAreaPage() {
                     </div>
                   </div>
 
+                  <div className="grid gap-2">
+                    <Label htmlFor="language" className="text-sm font-bold">Idioma Padrão</Label>
+                    <Select value={language} onValueChange={setLanguage}>
+                      <SelectTrigger className="h-12 bg-background/50">
+                        <SelectValue placeholder="Idioma" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="pt-BR">Português (Brasil)</SelectItem>
+                        <SelectItem value="en">English</SelectItem>
+                        <SelectItem value="es">Español</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
                   <div className="flex items-center justify-between p-4 rounded-xl bg-background/50 border border-border/20">
                     <div className="space-y-0.5">
                       <Label className="text-sm font-bold flex items-center gap-2">
-                        <Star className={`h-4 w-4 ${isPrimary ? 'fill-gold text-gold' : 'text-muted-foreground'}`} />
+                        <Star className={`h-4 w-4 ${principal ? 'fill-gold text-gold' : 'text-muted-foreground'}`} />
                         Área Principal
                       </Label>
                       <p className="text-[11px] text-muted-foreground">
@@ -243,8 +263,21 @@ function EditAreaPage() {
                       </p>
                     </div>
                     <Switch
-                      checked={isPrimary}
-                      onCheckedChange={setIsPrimary}
+                      checked={principal}
+                      onCheckedChange={setPrincipal}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 rounded-xl bg-background/50 border border-border/20">
+                    <div className="space-y-0.5">
+                      <Label className="text-sm font-bold">Área Ativa</Label>
+                      <p className="text-[11px] text-muted-foreground">
+                        Define se a área está acessível para os alunos.
+                      </p>
+                    </div>
+                    <Switch
+                      checked={ativa}
+                      onCheckedChange={setAtiva}
                     />
                   </div>
                 </div>
@@ -260,7 +293,7 @@ function EditAreaPage() {
                   </Button>
                   <Button
                     type="submit"
-                    disabled={mutation.isPending || !name || !productId}
+                    disabled={mutation.isPending || !nome || !produtoId}
                     className="flex-1 h-14 bg-gold text-black font-black text-lg rounded-xl hover:shadow-xl hover:shadow-gold/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
                   >
                     {mutation.isPending ? (
@@ -292,9 +325,9 @@ function EditAreaPage() {
                 <div className="p-4 rounded-2xl bg-background/80 border border-gold/20 group">
                   <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-2">Link público</p>
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-sm font-bold truncate font-mono text-gold">{slug}.suaplataforma.com.br</span>
+                    <span className="text-sm font-bold truncate font-mono text-gold">{subdominio}.suaplataforma.com.br</span>
                     <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg" asChild>
-                      <a href={`https://${slug}.suaplataforma.com.br`} target="_blank" rel="noreferrer">
+                      <a href={`https://${subdominio}.suaplataforma.com.br`} target="_blank" rel="noreferrer">
                         <ExternalLink className="h-4 w-4" />
                       </a>
                     </Button>
@@ -325,7 +358,7 @@ function EditAreaPage() {
             </div>
             <AlertDialogTitle className="text-2xl font-black text-center">Excluir Área?</AlertDialogTitle>
             <AlertDialogDescription className="text-center text-lg text-muted-foreground">
-              Esta ação removerá permanentemente a área <strong>{name}</strong> e todos os seus vínculos.
+              Esta ação removerá permanentemente a área <strong>{nome}</strong> e todos os seus vínculos.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="flex-col sm:flex-row gap-3 mt-8">

@@ -5,6 +5,7 @@ import { listActiveTracks } from "@/lib/tracks.functions";
 import { listCategories } from "@/lib/courses.functions";
 import { useProjectMode } from "@/hooks/use-project-mode";
 import { LogoBrand } from "./LogoBrand";
+import { useTranslation } from "react-i18next";
 import {
   Store,
   GraduationCap,
@@ -18,10 +19,18 @@ import {
   Route as RouteIcon,
   Users,
   Rocket,
+  Globe,
+  Check,
   type LucideIcon,
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 /** Static lookup: slug → icon, route, prefix-match, submenu flag */
 const SLUG_META: Record<string, { icon: LucideIcon; to: string; matchPrefix?: boolean }> = {
@@ -56,6 +65,7 @@ const LOUVOR_CATEGORY_LABELS: Record<(typeof OFFICIAL_LOUVOR_CATEGORIES)[number]
 export function StudentSidebar() {
   const { logout, isAdmin, adminLoading } = useAuth();
   const { dbModules } = useProjectMode();
+  const { t, i18n } = useTranslation();
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -72,6 +82,13 @@ export function StudentSidebar() {
   });
 
   const allTracks = tracksData?.tracks || [];
+
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    localStorage.setItem("app_language", lng);
+  };
+
+  const currentLanguage = i18n.language;
 
   const normalizeStr = (s: string) =>
     s.replace(/^[^\p{L}\p{N}]+/u, "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -104,14 +121,14 @@ export function StudentSidebar() {
         if (!meta) return null;
         return {
           key: mod.slug,
-          label: mod.name,
+          label: t(mod.slug, mod.name), // Use translation with fallback
           icon: meta.icon,
           to: meta.to,
           matchPrefix: meta.matchPrefix || false,
         };
       })
       .filter((x): x is NonNullable<typeof x> => x !== null);
-  }, [dbModules]);
+  }, [dbModules, t]);
 
   const isActive = (path: string) => location.pathname === path;
   const isActivePrefix = (path: string) => 
@@ -183,13 +200,46 @@ export function StudentSidebar() {
         )}
       </nav>
 
-      <div className="px-5 py-6 border-t border-white/[0.06]">
+      <div className="px-5 py-6 border-t border-white/[0.06] space-y-4">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="flex items-center gap-4 rounded-2xl px-5 py-3 w-full text-[14px] font-semibold text-muted-foreground/60 hover:text-foreground/80 hover:bg-white/[0.04] transition-all duration-300">
+              <Globe className="h-[20px] w-[20px] shrink-0" />
+              <span className="flex-1 text-left">{t('select_language')}</span>
+              <span className="text-[10px] uppercase font-black text-gold/60">{currentLanguage}</span>
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48 bg-sidebar border-white/10 rounded-xl overflow-hidden shadow-2xl">
+            <DropdownMenuItem 
+              onClick={() => changeLanguage('pt-BR')}
+              className="flex items-center justify-between px-4 py-3 cursor-pointer focus:bg-white/5 focus:text-gold"
+            >
+              <span>Português (Brasil)</span>
+              {currentLanguage === 'pt-BR' && <Check className="h-4 w-4 text-gold" />}
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => changeLanguage('en')}
+              className="flex items-center justify-between px-4 py-3 cursor-pointer focus:bg-white/5 focus:text-gold"
+            >
+              <span>English</span>
+              {currentLanguage === 'en' && <Check className="h-4 w-4 text-gold" />}
+            </DropdownMenuItem>
+            <DropdownMenuItem 
+              onClick={() => changeLanguage('es')}
+              className="flex items-center justify-between px-4 py-3 cursor-pointer focus:bg-white/5 focus:text-gold"
+            >
+              <span>Español</span>
+              {currentLanguage === 'es' && <Check className="h-4 w-4 text-gold" />}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         <button
           onClick={() => { logout(); setMobileOpen(false); }}
           className="flex items-center gap-4 rounded-2xl px-5 py-3.5 w-full text-[14px] font-semibold text-muted-foreground/40 hover:text-foreground/60 hover:bg-white/[0.04] transition-all duration-300"
         >
           <LogOut className="h-[20px] w-[20px] shrink-0" />
-          Sair
+          {t('logout')}
         </button>
       </div>
     </div>

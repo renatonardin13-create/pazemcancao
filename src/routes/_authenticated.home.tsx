@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { AlertCircle, RefreshCw, Loader2, LayoutGrid, ChevronRight, Sparkles } from "lucide-react";
 import { ModuleGuard } from "@/components/ModuleGuard";
 import { getStudentVitrineData } from "@/lib/student-vitrine.functions";
@@ -51,6 +52,7 @@ const ALL_KEY = "all";
 const FEATURED_LIMIT = 10;
 
 function VitrinePage() {
+  const { t } = useTranslation();
   const [activeCategory, setActiveCategory] = useState<string>(ALL_KEY);
   const [showAll, setShowAll] = useState(false);
 
@@ -148,9 +150,9 @@ function VitrinePage() {
             </div>
           ) : allCourses.length === 0 && !featured && heroBanners.length === 0 ? (
             <div className="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center gap-3 px-6 py-20 text-center">
-              <h1 className="font-display text-3xl font-bold text-foreground">Vitrine</h1>
+              <h1 className="font-display text-3xl font-bold text-foreground">{t('catalog')}</h1>
               <p className="text-sm text-muted-foreground">
-                Nenhum conteúdo disponível no momento. Volte em breve.
+                {t('no_content')}
               </p>
             </div>
           ) : (
@@ -165,10 +167,10 @@ function VitrinePage() {
               {categories.length > 0 && (
                 <div className="mx-auto w-full max-w-[1400px] px-4 pt-8 sm:px-8 lg:px-12">
                   <h2 className="mb-4 font-display text-lg font-bold text-foreground">
-                    Explorar por categoria
+                    {t('explore_by_category')}
                   </h2>
                   <div className="scrollbar-hide -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
-                    {[{ key: ALL_KEY, label: "Todos" }, ...categories].map(({ key, label }) => {
+                    {[{ key: ALL_KEY, label: t('all') || "Todos" }, ...categories].map(({ key, label }) => {
                       const active = activeCategory === key;
                       const Icon = key === ALL_KEY ? LayoutGrid : null;
                       return (
@@ -196,10 +198,10 @@ function VitrinePage() {
                 <div className="mb-4 flex items-center justify-between">
                   <h2 className="font-display text-xl font-bold text-foreground">
                     {isFiltered
-                      ? categories.find((c) => c.key === activeCategory)?.label || "Catálogo"
+                      ? categories.find((c) => c.key === activeCategory)?.label || t('catalog')
                       : showAll
-                        ? "Todos os produtos"
-                        : "Em destaque"}
+                        ? t('all_products')
+                        : t('featured')}
                   </h2>
                   {showSeeAll && (
                     <button

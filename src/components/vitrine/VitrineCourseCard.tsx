@@ -1,5 +1,6 @@
 import { memo, useCallback, useState, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { BookOpen, BookOpenCheck, Clock3, Lock, Play, ShoppingCart } from "lucide-react";
 import { PosterCard } from "@/components/PosterCard";
 import { UnlockModal } from "@/components/UnlockModal";
@@ -19,6 +20,7 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
   badge,
 }: VitrineCourseCardProps) {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [unlockOpen, setUnlockOpen] = useState(false);
 
   const progress = course.progress_pct ?? 0;
@@ -55,28 +57,28 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
       ? (
           <span className="inline-flex items-center gap-1 rounded-full border border-amber-400/30 bg-gradient-to-r from-amber-500/95 to-orange-500/90 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-black shadow-lg shadow-black/30 backdrop-blur-sm sm:text-[10px]">
             <Clock3 className="h-2.5 w-2.5" />
-            Em breve
+            {t('coming_soon')}
           </span>
         )
       : isLocked
         ? (
             <span className="inline-flex items-center gap-1 rounded-full border border-gold/20 bg-gradient-to-r from-gold/95 to-amber-500/90 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-gold-foreground shadow-lg shadow-black/30 backdrop-blur-sm sm:text-[10px]">
               <Lock className="h-2.5 w-2.5" />
-              Premium
+              {t('premium')}
             </span>
           )
         : isCompleted
           ? (
               <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/90 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-white shadow-lg shadow-black/30 backdrop-blur-sm sm:text-[10px]">
                 <BookOpenCheck className="h-2.5 w-2.5" />
-                Concluído
+                {t('completed')}
               </span>
             )
           : isInProgress
             ? (
                 <span className="inline-flex items-center gap-1 rounded-full bg-gold/90 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-gold-foreground shadow-lg shadow-black/30 backdrop-blur-sm sm:text-[10px]">
                   <Play className="h-2.5 w-2.5 fill-current" />
-                  Em andamento
+                  {t('in_progress')}
                 </span>
               )
             : undefined;
@@ -93,9 +95,9 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
     ? (
         <div className="flex h-full flex-col items-center justify-center gap-2.5 bg-black/55 backdrop-blur-[2px]">
           <span className="rounded-full bg-gradient-to-r from-amber-500 to-orange-500 px-3 py-1.5 text-[11px] font-bold uppercase tracking-[0.2em] text-black shadow-lg">
-            Em breve
+            {t('coming_soon')}
           </span>
-          <span className="text-[10px] font-medium text-white/60">Toque para mais detalhes</span>
+          <span className="text-[10px] font-medium text-white/60">{t('tap_for_details')}</span>
         </div>
       )
     : isLocked
@@ -107,11 +109,11 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
                 <Lock className="h-6 w-6 text-gold/70" />
               </div>
             </div>
-            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold/60">Conteúdo Premium</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold/60">{t('premium_content')}</span>
             {salesUrl ? (
               <span className="mt-0.5 flex items-center gap-1 text-[9px] font-medium text-gold/35">
                 <ShoppingCart className="h-2.5 w-2.5" />
-                Toque para desbloquear
+                {t('tap_to_unlock')}
               </span>
             ) : null}
           </div>

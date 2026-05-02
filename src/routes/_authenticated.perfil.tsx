@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { ModuleGuard } from "@/components/ModuleGuard";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { getMyProfile, updateMyProfile, changePassword, deleteMyAccount } from "@/lib/profile.functions";
 import { StudentLayout } from "@/components/StudentLayout";
 import { FooterLinks } from "@/components/FooterLinks";
@@ -31,6 +32,7 @@ export const Route = createFileRoute("/_authenticated/perfil")({
 });
 
 function ProfilePage() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { logout } = useAuth();
@@ -132,7 +134,7 @@ function ProfilePage() {
             {isLoading ? (
               <div className="text-center py-24">
                 <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
-                  Carregando perfil...
+                  {t('loading_profile')}
                 </p>
               </div>
             ) : (
@@ -149,10 +151,10 @@ function ProfilePage() {
                   </div>
                   <div>
                     <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground tracking-tight">
-                      Meu perfil
+                      {t('my_profile')}
                     </h1>
                     <p className="text-[13px] text-muted-foreground/70 mt-0.5">
-                      Suas informações pessoais e preferências da conta
+                      {t('personal_info_desc', 'Suas informações pessoais e preferências da conta')}
                     </p>
                   </div>
                 </motion.div>
