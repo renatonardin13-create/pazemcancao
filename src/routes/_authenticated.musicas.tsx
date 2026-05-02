@@ -154,6 +154,7 @@ function MusicLibraryState({
 }
 
 function MusicLibraryPage() {
+  const { area } = useArea();
   const search = Route.useSearch();
   const router = useRouter();
   const [searchTerm, setSearchTerm] = useState("");
@@ -166,10 +167,11 @@ function MusicLibraryPage() {
   // programada / inativas) para exibir badge "Em breve" — a reprodução é
   // bloqueada no TrackCard quando a faixa não está liberada.
   const { data: tracksData, isLoading: tracksLoading, isError: tracksFailed } = useQuery({
-    queryKey: ["music-library-tracks", undefined],
-    queryFn: () => listAllTracks({ data: { areaId: undefined } }),
+    queryKey: ["music-library-tracks", area?.id],
+    queryFn: () => listAllTracks({ data: { areaId: area?.id } }),
     staleTime: 30_000,
     retry: 2,
+    enabled: !!area?.id,
   });
 
   const categoriesLoading = false;
