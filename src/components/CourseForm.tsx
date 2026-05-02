@@ -131,7 +131,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       cover_image_url: coverUrl.trim() || null,
       banner_image_url: bannerUrl.trim() || null,
       category_id: categoryId || null,
-      // area_id removed
+      area_id: areaId || activeArea?.id || null,
       price: parseFloat(price) || 0,
       promotional_price: promotionalPrice.trim() ? parseFloat(promotionalPrice) : null,
       status,
