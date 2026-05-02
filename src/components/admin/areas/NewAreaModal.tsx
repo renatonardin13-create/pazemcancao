@@ -48,6 +48,9 @@ export function NewAreaModal({ open, onOpenChange }: NewAreaModalProps) {
   const [principal, setPrincipal] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
+  const [language, setLanguage] = useState("pt-BR");
+  const [status, setStatus] = useState("active");
+
   const { data: courses } = useQuery({
     queryKey: ["courses-simple"],
     queryFn: async () => {
