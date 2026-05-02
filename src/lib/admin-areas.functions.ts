@@ -1,6 +1,15 @@
 import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
+import { z } from 'zod';
+
+const slugSchema = z.string()
+  .min(3, "Mínimo de 3 caracteres")
+  .max(63, "Máximo de 63 caracteres")
+  .regex(/^[a-z0-9-]+$/, "Apenas letras minúsculas, números e hifens")
+  .refine(s => !s.startsWith('-'), "O subdomínio não pode começar com hífen")
+  .refine(s => !s.endsWith('-'), "O subdomínio não pode terminar com hífen")
+  .refine(s => !s.includes('--'), "O subdomínio não pode conter hifens consecutivos");
 
 export const checkSlugAvailability = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
