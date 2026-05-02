@@ -45,8 +45,8 @@ export function AreaCard({
       transition={{ duration: 0.3 }}
       className="group"
     >
-      <Card className={`relative overflow-hidden bg-[#0F1219] border-white/5 transition-all duration-500 rounded-[2rem] h-full ${area.principal ? 'ring-2 ring-gold/50 shadow-[0_20px_50px_-20px_rgba(245,196,81,0.2)]' : 'hover:border-gold/30 hover:shadow-[0_20px_40px_-15px_rgba(245,196,81,0.1)]'}`}>
-        <CardContent className="p-8">
+      <Card className={`relative overflow-hidden bg-[#0F1219] border-white/5 transition-all duration-500 rounded-3xl h-full ${area.principal ? 'ring-2 ring-gold/50 shadow-[0_20px_50px_-20px_rgba(245,196,81,0.2)]' : 'hover:border-gold/30 hover:shadow-[0_20px_40px_-15px_rgba(245,196,81,0.1)]'}`}>
+        <CardContent className="p-6">
           {/* Header */}
           <div className="flex justify-between items-start mb-6">
             <div className="flex items-center gap-4">
@@ -85,7 +85,7 @@ export function AreaCard({
           </div>
 
           {/* Body */}
-          <div className="space-y-4 mb-8">
+          <div className="space-y-4 mb-6">
             <div className="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">URL DE ACESSO</p>
               <p className="text-sm font-medium text-white/90 truncate">
@@ -94,7 +94,7 @@ export function AreaCard({
             </div>
           </div>
 
-          <div className="h-px w-full bg-white/5 mb-8" />
+          <div className="h-px w-full bg-white/5 mb-6" />
 
           {/* Actions Header */}
           <div className="flex justify-between items-center mb-6">
@@ -125,7 +125,7 @@ export function AreaCard({
           <div className="space-y-4">
             <Button 
               onClick={() => onEdit(area.id)}
-              className="w-full h-14 bg-gold hover:bg-gold/90 text-black font-black text-base rounded-2xl shadow-xl shadow-gold/10 group-hover:shadow-gold/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+              className="w-full h-12 bg-gold hover:bg-gold/90 text-black font-black text-sm rounded-xl shadow-xl shadow-gold/10 group-hover:shadow-gold/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
             >
               <Edit className="h-5 w-5" />
               Personalizar área
@@ -134,17 +134,17 @@ export function AreaCard({
             <div className="grid grid-cols-2 gap-3">
               <Button 
                 variant="outline" 
-                className="h-12 rounded-xl bg-[#151921] border-white/5 hover:bg-white/10 text-white font-bold transition-all flex items-center gap-2"
+                className="h-10 rounded-xl bg-[#151921] border-white/5 hover:bg-white/10 text-white font-bold transition-all flex items-center gap-2"
               >
-                <Shield className="h-4 w-4 text-gold/60" />
-                <span className="text-xs">Ver como admin</span>
+                <Shield className="h-3.5 w-3.5 text-gold/60" />
+                <span className="text-[11px]">Ver como admin</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="h-12 rounded-xl bg-transparent border-gold/30 hover:bg-gold/5 text-gold font-bold transition-all flex items-center gap-2"
+                className="h-10 rounded-xl bg-transparent border-gold/30 hover:bg-gold/5 text-gold font-bold transition-all flex items-center gap-2"
               >
-                <User className="h-4 w-4" />
-                <span className="text-xs">Ver como aluno</span>
+                <User className="h-3.5 w-3.5" />
+                <span className="text-[11px]">Ver como aluno</span>
               </Button>
             </div>
           </div>

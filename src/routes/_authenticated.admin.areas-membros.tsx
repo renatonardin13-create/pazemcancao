@@ -79,7 +79,7 @@ function AreasMembrosPage() {
   const areas = data?.areas || [];
 
   return (
-    <div className="min-h-screen bg-[#07090E] text-white -m-3 sm:-m-6 md:-m-8 p-6 md:p-12 space-y-12">
+    <div className="min-h-screen bg-[#07090E] text-white -m-3 sm:-m-6 md:-m-8 p-6 md:p-10 space-y-10">
       {/* Top Navigation */}
       <div className="flex flex-col gap-8">
         <Button 
@@ -96,7 +96,7 @@ function AreasMembrosPage() {
             <span className="inline-block px-3 py-1 bg-gold/10 text-gold text-[10px] font-black uppercase tracking-[0.3em] rounded-full border border-gold/10">
               FASE 2
             </span>
-            <h1 className="text-5xl font-black tracking-tight bg-gradient-to-br from-white via-white to-white/40 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-black tracking-tight bg-gradient-to-br from-white via-white to-white/40 bg-clip-text text-transparent">
               Áreas de membros
             </h1>
             <p className="text-muted-foreground text-lg max-w-2xl font-medium leading-relaxed">
@@ -106,7 +106,7 @@ function AreasMembrosPage() {
           
           <Button 
             onClick={() => setIsNewModalOpen(true)}
-            className="h-14 px-8 bg-gold hover:bg-gold/90 text-black font-black text-lg rounded-2xl shadow-2xl shadow-gold/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="h-12 px-6 bg-gold hover:bg-gold/90 text-black font-black text-base rounded-xl shadow-2xl shadow-gold/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
           >
             <Plus className="h-6 w-6 mr-2 stroke-[3]" />
             Nova área
@@ -131,13 +131,13 @@ function AreasMembrosPage() {
 
       {/* Grid Section */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-[400px] rounded-[2.5rem] bg-white/[0.02] border border-white/5 animate-pulse" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map(i => (
+            <div key={i} className="h-[360px] rounded-3xl bg-white/[0.02] border border-white/5 animate-pulse" />
           ))}
         </div>
       ) : areas.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <AnimatePresence mode="popLayout">
             {areas.map((area) => (
               <AreaCard 
@@ -158,7 +158,7 @@ function AreasMembrosPage() {
           </AnimatePresence>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center py-32 px-4 text-center space-y-8 bg-white/[0.01] rounded-[3.5rem] border-2 border-dashed border-white/5 backdrop-blur-sm">
+        <div className="flex flex-col items-center justify-center py-24 px-4 text-center space-y-8 bg-white/[0.01] rounded-3xl border-2 border-dashed border-white/5 backdrop-blur-sm">
           <div className="h-24 w-24 rounded-[2.5rem] bg-gold/10 flex items-center justify-center text-gold">
             <Globe className="h-12 w-12" />
           </div>
@@ -170,7 +170,7 @@ function AreasMembrosPage() {
           </div>
           <Button 
             onClick={() => setIsNewModalOpen(true)}
-            className="h-16 px-10 bg-gold hover:bg-gold/90 text-black font-black text-xl rounded-2xl shadow-2xl shadow-gold/20 transition-all hover:scale-105"
+            className="h-14 px-8 bg-gold hover:bg-gold/90 text-black font-black text-lg rounded-xl shadow-2xl shadow-gold/20 transition-all hover:scale-105"
           >
             <Plus className="h-7 w-7 mr-3 stroke-[3]" />
             Criar minha primeira área
