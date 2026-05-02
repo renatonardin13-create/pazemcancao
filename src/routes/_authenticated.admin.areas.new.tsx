@@ -45,7 +45,10 @@ function NewAreaPage() {
 
   // Debounced slug check
   useEffect(() => {
-    if (slug.length < 3) {
+    const error = validateSlug(slug);
+    setSlugError(error);
+
+    if (slug.length < 3 || error) {
       setIsSlugAvailable(null);
       return;
     }
@@ -64,6 +67,17 @@ function NewAreaPage() {
 
     return () => clearTimeout(timer);
   }, [slug]);
+
+  const validateSlug = (val: string) => {
+    if (val.length === 0) return null;
+    if (val.length < 3) return "O identificador deve ter pelo menos 3 caracteres.";
+    if (val.length > 63) return "O identificador deve ter no máximo 63 caracteres.";
+    if (!/^[a-z0-9-]+$/.test(val)) return "Use apenas letras minúsculas, números e hifens.";
+    if (val.startsWith("-")) return "Não pode começar com hífen.";
+    if (val.endsWith("-")) return "Não pode terminar com hífen.";
+    if (val.includes("--")) return "Não pode conter hifens consecutivos.";
+    return null;
+  };
 
   const mutation = useMutation({
     mutationFn: (vars: any) => createArea({ data: vars }),
