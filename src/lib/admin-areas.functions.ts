@@ -98,15 +98,15 @@ export const getAreas = createServerFn({ method: 'GET' })
 
 export const updateArea = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { 
-    id: string;
-    name?: string; 
-    slug?: string; 
-    language?: string; 
-    status?: string;
-    product_id?: string | null;
-    is_primary?: boolean;
-  }) => input)
+  .inputValidator(z.object({ 
+    id: z.string().uuid(),
+    name: z.string().min(1).optional(), 
+    slug: slugSchema.optional(), 
+    language: z.string().optional(), 
+    status: z.string().optional(),
+    product_id: z.string().uuid().nullable().optional(),
+    is_primary: z.boolean().optional(),
+  }))
   .handler(async ({ data, context }) => {
     const { userId } = context;
 
