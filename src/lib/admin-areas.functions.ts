@@ -33,6 +33,10 @@ export const createArea = createServerFn({ method: 'POST' })
     status: z.string(),
     product_id: z.string().uuid().optional(),
     is_primary: z.boolean().optional(),
+    primary_color: z.string().optional(),
+    secondary_color: z.string().optional(),
+    background_color: z.string().optional(),
+    surface_color: z.string().optional(),
   }))
   .handler(async ({ data, context }) => {
     const { userId } = context;
