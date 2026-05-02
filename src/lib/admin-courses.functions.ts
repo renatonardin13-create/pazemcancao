@@ -102,28 +102,12 @@ export const createCourse = createServerFn({ method: 'POST' })
 
     if (!role && !isAdminEmail) throw new Error('Não autorizado');
 
-    let areaId = data.area_id;
+    const areaId = data.area_id;
 
     if (!areaId) {
-      const { data: principalArea } = await supabaseAdmin
-        .from('areas_membros')
-        .select('id')
-        .eq('principal', true)
-        .maybeSingle();
-      
-      areaId = principalArea?.id;
+      throw new Error('O campo área de membros é obrigatório.');
     }
 
-    if (!areaId) {
-      const { data: firstArea } = await supabaseAdmin
-        .from('areas_membros')
-        .select('id')
-        .limit(1)
-        .maybeSingle();
-      areaId = firstArea?.id;
-    }
-
-    if (!areaId) throw new Error('É necessário ter uma área de membros ativa.');
 
     const { data: course, error } = await supabaseAdmin
       .from('courses')
