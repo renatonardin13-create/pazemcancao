@@ -74,6 +74,8 @@ export const createAreaMembro = createServerFn({ method: 'POST' })
     logo_url?: string;
     favicon_url?: string;
     banner_url?: string;
+    background_color?: string;
+    surface_color?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     const { userId } = context;
