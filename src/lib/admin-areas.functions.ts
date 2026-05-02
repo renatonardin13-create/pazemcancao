@@ -1,10 +1,19 @@
 import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
+import { z } from 'zod';
+
+const slugSchema = z.string()
+  .min(3, "Mínimo de 3 caracteres")
+  .max(63, "Máximo de 63 caracteres")
+  .regex(/^[a-z0-9-]+$/, "Apenas letras minúsculas, números e hifens")
+  .refine(s => !s.startsWith('-'), "O subdomínio não pode começar com hífen")
+  .refine(s => !s.endsWith('-'), "O subdomínio não pode terminar com hífen")
+  .refine(s => !s.includes('--'), "O subdomínio não pode conter hifens consecutivos");
 
 export const checkSlugAvailability = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { slug: string }) => input)
+  .inputValidator(z.object({ slug: slugSchema }))
   .handler(async ({ data }) => {
     const { data: existing } = await supabaseAdmin
       .from('areas')
@@ -17,14 +26,14 @@ export const checkSlugAvailability = createServerFn({ method: 'POST' })
 
 export const createArea = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { 
-    name: string; 
-    slug: string; 
-    language: string; 
-    status: string;
-    product_id?: string;
-    is_primary?: boolean;
-  }) => input)
+  .inputValidator(z.object({ 
+    name: z.string().min(1, "Nome é obrigatório"), 
+    slug: slugSchema, 
+    language: z.string(), 
+    status: z.string(),
+    product_id: z.string().uuid().optional(),
+    is_primary: z.boolean().optional(),
+  }))
   .handler(async ({ data, context }) => {
     const { userId } = context;
 
@@ -89,15 +98,15 @@ export const getAreas = createServerFn({ method: 'GET' })
 
 export const updateArea = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { 
-    id: string;
-    name?: string; 
-    slug?: string; 
-    language?: string; 
-    status?: string;
-    product_id?: string | null;
-    is_primary?: boolean;
-  }) => input)
+  .inputValidator(z.object({ 
+    id: z.string().uuid(),
+    name: z.string().min(1).optional(), 
+    slug: slugSchema.optional(), 
+    language: z.string().optional(), 
+    status: z.string().optional(),
+    product_id: z.string().uuid().nullable().optional(),
+    is_primary: z.boolean().optional(),
+  }))
   .handler(async ({ data, context }) => {
     const { userId } = context;
 
