@@ -96,8 +96,10 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       setStatus(initialValues.status || "draft");
       setCourseType(normalizeCourseType(initialValues.course_type));
       setLaunchDate(initialValues.launch_date || "");
+    } else if (activeArea?.id) {
+      setAreaId(activeArea.id);
     }
-  }, [initialValues]);
+  }, [initialValues, activeArea]);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
