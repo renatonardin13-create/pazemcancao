@@ -160,6 +160,10 @@ export const updateContentItem = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
+    if ('area_id' in data && !data.area_id) {
+      throw new Error('O campo área de membros é obrigatório.');
+    }
+
     const { id, ...updates } = data;
     const { error } = await supabaseAdmin
       .from('content_items')
