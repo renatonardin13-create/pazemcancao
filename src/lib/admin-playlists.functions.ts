@@ -70,6 +70,7 @@ export const createPlaylist = createServerFn({ method: 'POST' })
     const { data: maxOrder } = await supabaseAdmin
       .from('playlists')
       .select('sort_order')
+      .eq('area_id', data.area_id)
       .order('sort_order', { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -80,6 +81,7 @@ export const createPlaylist = createServerFn({ method: 'POST' })
         name: data.name,
         description: data.description || null,
         cover_url: data.cover_url || null,
+        area_id: data.area_id,
         sort_order: (maxOrder?.sort_order ?? 0) + 1,
         is_active: true,
       })
