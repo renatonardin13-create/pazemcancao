@@ -398,13 +398,14 @@ function TrackPickerDialog({
   trackSearch: string;
   setTrackSearch: (v: string) => void;
 }) {
+  const { activeArea } = useAdminActiveArea();
   const queryClient = useQueryClient();
 
   const { data: allTracksData } = useQuery({
-    queryKey: ["all-tracks-picker"],
-    queryFn: () => listAllTracksForPicker(),
+    queryKey: ["all-tracks-picker", activeArea?.id],
+    queryFn: () => listAllTracksForPicker({ data: { areaId: activeArea!.id } }),
     staleTime: 60_000,
-    enabled: open,
+    enabled: open && !!activeArea?.id,
   });
 
   const { data: plTracksData } = useQuery({
