@@ -22,10 +22,16 @@ export const listAdminCourses = createServerFn({ method: 'POST' })
 
     if (!role) throw new Error('Não autorizado');
 
-    const { data: courses, error } = await supabaseAdmin
+    let query = supabaseAdmin
       .from('courses')
       .select('*, categories(name, slug, icon), modules(id, lessons(id))')
       .order('sort_order', { ascending: true });
+
+    if (data?.areaId) {
+      query = query.eq('area_id', data.areaId);
+    }
+
+    const { data: courses, error } = await query;
 
     const enriched = (courses || []).map((c: any) => {
       const mods = c.modules || [];
