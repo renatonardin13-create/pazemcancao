@@ -30,7 +30,10 @@ export function useAdminActiveArea() {
     },
   });
 
-  const activeArea = areas?.find((a) => a.id === activeAreaId) || areas?.find((a) => a.principal) || areas?.[0];
+  const activeArea = areas?.find((a) => a.id === activeAreaId && a.ativa) || 
+                     areas?.find((a) => a.principal && a.ativa) || 
+                     areas?.find((a) => a.ativa) || 
+                     areas?.[0];
 
   useEffect(() => {
     if (activeArea && activeArea.id !== activeAreaId) {
