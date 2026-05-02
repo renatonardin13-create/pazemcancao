@@ -117,7 +117,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
     const newErrors = validate();
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
-      const firstErrorField = document.getElementById(Object.keys(newErrors)[0]);
+      const firstErrorField = document.getElementById(Object.keys(newErrors)[0] === "areaId" ? "areaId-trigger" : Object.keys(newErrors)[0]);
       firstErrorField?.focus();
       return;
     }
