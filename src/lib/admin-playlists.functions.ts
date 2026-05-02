@@ -18,13 +18,22 @@ async function verifyAdmin(supabase: any, userId: string) {
 
 export const listAdminPlaylists = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { areaId?: string } | void) => input)
+  .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
-    const { data: playlists, error } = await supabaseAdmin
+    let query = supabaseAdmin
       .from('playlists')
       .select('*')
       .order('sort_order', { ascending: true });
+
+    if (data?.areaId) {
+      query = query.eq('area_id', data.areaId);
+    } else {
+      return { playlists: [] };
+    }
+
+    const { data: playlists, error } = await query;
 
     if (error) throw new Error(error.message);
 
