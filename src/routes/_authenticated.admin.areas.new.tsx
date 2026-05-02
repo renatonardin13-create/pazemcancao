@@ -28,6 +28,7 @@ function NewAreaPage() {
   const [isPrimary, setIsPrimary] = useState(false);
   const [isSlugAvailable, setIsSlugAvailable] = useState<boolean | null>(null);
   const [isCheckingSlug, setIsCheckingSlug] = useState(false);
+  const [slugError, setSlugError] = useState<string | null>(null);
   const [showSuccess, setShowSuccess] = useState(false);
 
   const { data: products } = useQuery({
