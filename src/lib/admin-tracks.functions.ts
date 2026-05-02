@@ -150,6 +150,10 @@ export const updateTrack = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
+    if ('area_id' in data && !data.area_id) {
+      throw new Error('O campo área de membros é obrigatório.');
+    }
+
     const { id, ...updates } = data;
     // Empty string means "remove cover"
     if ('cover_url' in updates && updates.cover_url === '') {
