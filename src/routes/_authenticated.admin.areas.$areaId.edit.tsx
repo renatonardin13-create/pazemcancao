@@ -355,16 +355,13 @@ function EditAreaPage() {
 
                       {/* Banner */}
                       <div className="space-y-3">
-                        <Label className="text-sm font-bold flex items-center gap-2">
-                          <ImageIcon className="h-4 w-4 text-gold" />
-                          Banner do Catálogo
-                        </Label>
                         <ImageUploadField
+                          label="Banner do Catálogo"
+                          hint="Este banner aparecerá no topo da vitrine de cursos desta área."
                           value={bannerUrl}
                           onChange={setBannerUrl}
-                          uploadLabel="Upload do Banner"
+                          uploadLabel="Fazer upload do Banner"
                         />
-                        <p className="text-[10px] text-muted-foreground">Este banner aparecerá no topo da vitrine de cursos desta área.</p>
                       </div>
 
                       {/* Colors */}
