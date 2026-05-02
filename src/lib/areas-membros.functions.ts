@@ -69,6 +69,11 @@ export const createAreaMembro = createServerFn({ method: 'POST' })
     principal: boolean;
     status?: string;
     language?: string;
+    primary_color?: string;
+    secondary_color?: string;
+    logo_url?: string;
+    favicon_url?: string;
+    banner_url?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     const { userId } = context;
@@ -104,6 +109,11 @@ export const createAreaMembro = createServerFn({ method: 'POST' })
         principal: data.principal,
         status: data.status || 'active',
         language: data.language || 'pt-BR',
+        primary_color: data.primary_color,
+        secondary_color: data.secondary_color,
+        logo_url: data.logo_url,
+        favicon_url: data.favicon_url,
+        banner_url: data.banner_url,
       })
       .select('id')
       .single();
@@ -123,6 +133,11 @@ export const updateAreaMembro = createServerFn({ method: 'POST' })
     principal?: boolean;
     status?: string;
     language?: string;
+    primary_color?: string;
+    secondary_color?: string;
+    logo_url?: string;
+    favicon_url?: string;
+    banner_url?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     const { userId } = context;
@@ -159,6 +174,11 @@ export const updateAreaMembro = createServerFn({ method: 'POST' })
         principal: data.principal,
         status: data.status,
         language: data.language,
+        primary_color: data.primary_color,
+        secondary_color: data.secondary_color,
+        logo_url: data.logo_url,
+        favicon_url: data.favicon_url,
+        banner_url: data.banner_url,
       })
       .eq('id', data.id);
 
