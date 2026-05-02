@@ -134,17 +134,17 @@ export function AreaCard({
             <div className="grid grid-cols-2 gap-3">
               <Button 
                 variant="outline" 
-                className="h-12 rounded-xl bg-[#151921] border-white/5 hover:bg-white/10 text-white font-bold transition-all flex items-center gap-2"
+                className="h-10 rounded-xl bg-[#151921] border-white/5 hover:bg-white/10 text-white font-bold transition-all flex items-center gap-2"
               >
-                <Shield className="h-4 w-4 text-gold/60" />
-                <span className="text-xs">Ver como admin</span>
+                <Shield className="h-3.5 w-3.5 text-gold/60" />
+                <span className="text-[11px]">Ver como admin</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="h-12 rounded-xl bg-transparent border-gold/30 hover:bg-gold/5 text-gold font-bold transition-all flex items-center gap-2"
+                className="h-10 rounded-xl bg-transparent border-gold/30 hover:bg-gold/5 text-gold font-bold transition-all flex items-center gap-2"
               >
-                <User className="h-4 w-4" />
-                <span className="text-xs">Ver como aluno</span>
+                <User className="h-3.5 w-3.5" />
+                <span className="text-[11px]">Ver como aluno</span>
               </Button>
             </div>
           </div>
