@@ -1,5 +1,6 @@
 import { memo, useCallback, useState, type KeyboardEvent, type MouseEvent, type ReactNode } from "react";
 import { useNavigate } from "@tanstack/react-router";
+import { useTranslation } from "react-i18next";
 import { BookOpen, BookOpenCheck, Clock3, Lock, Play, ShoppingCart } from "lucide-react";
 import { PosterCard } from "@/components/PosterCard";
 import { UnlockModal } from "@/components/UnlockModal";
