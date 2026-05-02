@@ -169,7 +169,11 @@ export const updateCourse = createServerFn({ method: 'POST' })
     if ('category_id' in updates && !updates.category_id) {
       updates.category_id = null;
     }
-    
+
+    if ('area_id' in updates && !updates.area_id) {
+      throw new Error('O campo área de membros é obrigatório.');
+    }
+
     const normalizedUpdates = {
       ...updates,
       ...(updates.course_type !== undefined
