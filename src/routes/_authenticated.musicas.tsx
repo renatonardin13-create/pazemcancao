@@ -27,6 +27,7 @@ import { listPlaylistsWithCounts, getPlaylistWithTracks } from "@/lib/playlists.
 import { checkBuyerAccess } from "@/lib/access.functions";
 import { logDownload } from "@/lib/analytics.functions";
 import { usePlayer } from "@/hooks/use-player";
+import { useArea } from "@/hooks/use-area";
 import type { Track } from "@/lib/sample-tracks";
 
 // Normalize a category name: remove emojis/symbols, lowercase, trim, collapse spaces.
