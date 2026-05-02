@@ -74,13 +74,15 @@ function AdminCoursesPage() {
   const [statusId, setStatusId] = useState<{ id: string; status: string } | null>(null);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-courses"],
-    queryFn: () => listAdminCourses(),
+    queryKey: ["admin-courses", activeArea?.id],
+    queryFn: () => listAdminCourses({ areaId: activeArea?.id }),
+    enabled: !!activeArea?.id,
   });
 
   const { data: catData, isLoading: catLoading } = useQuery({
-    queryKey: ["admin-categories"],
-    queryFn: () => listAdminCategories(),
+    queryKey: ["admin-categories", activeArea?.id],
+    queryFn: () => listAdminCategories({ areaId: activeArea?.id }),
+    enabled: !!activeArea?.id,
   });
 
   const categories = catData?.categories || [];
