@@ -98,6 +98,7 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
           .select('id, name, sort_order, mode, auto_criteria, show_in_vitrine')
           .eq('is_active', true);
         if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null);
         return q.order('sort_order', { ascending: true });
       })(),
       supabase
