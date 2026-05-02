@@ -5,6 +5,7 @@ import { listActiveTracks } from "@/lib/tracks.functions";
 import { listCategories } from "@/lib/courses.functions";
 import { useProjectMode } from "@/hooks/use-project-mode";
 import { LogoBrand } from "./LogoBrand";
+import { useTranslation } from "react-i18next";
 import {
   Store,
   GraduationCap,
@@ -18,10 +19,18 @@ import {
   Route as RouteIcon,
   Users,
   Rocket,
+  Globe,
+  Check,
   type LucideIcon,
 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 /** Static lookup: slug → icon, route, prefix-match, submenu flag */
 const SLUG_META: Record<string, { icon: LucideIcon; to: string; matchPrefix?: boolean }> = {
