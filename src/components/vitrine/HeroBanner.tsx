@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Play, ArrowRight, X } from "lucide-react";
+import { useArea } from "@/hooks/use-area";
 import type { VitrineCourse } from "./types";
 import {
   fallbackHeroContent,
@@ -29,10 +30,33 @@ interface Props {
 }
 
 export function HeroBanner({ banners, fallbackCourse }: Props) {
+  const { area } = useArea();
   const list: HeroBannerModel[] = (() => {
     const fromTable = getActiveHeroBanners(banners as any[] | undefined).filter(
       (b) => b && typeof b.image_url === "string" && b.image_url.trim().length > 0,
     );
+    
+    // Add area banner if it exists and it's not already in the list
+    if (area?.banner_url) {
+      const areaBanner: HeroBannerModel = {
+        id: `area-${area.id}`,
+        image_url: area.banner_url,
+        title: area.nome || "",
+        subtitle: "Banner da Área",
+        is_active: true,
+        sort_order: -1,
+        display_mode: "cover",
+        container_ratio: "auto",
+        autoplay: true,
+        autoplay_interval_ms: 7000,
+        banner_clickable: false,
+      };
+      // Check if already exists (avoid duplicates if same URL)
+      if (!fromTable.some(b => b.image_url === area.banner_url)) {
+        fromTable.unshift(areaBanner);
+      }
+    }
+
     if (fromTable.length > 0) return fromTable;
     const fb = fallbackHeroContent(fallbackCourse);
     return fb && fb.image_url && fb.image_url.trim().length > 0 ? [fb] : [];
