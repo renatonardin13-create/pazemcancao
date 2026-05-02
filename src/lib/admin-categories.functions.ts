@@ -65,6 +65,7 @@ export const createCategory = createServerFn({ method: 'POST' })
         description: data.description || null,
         icon: data.icon || null,
         color: data.color || null,
+        area_id: data.area_id || null,
         sort_order: (maxOrder?.sort_order ?? 0) + 1,
       } as any)
       .select()
