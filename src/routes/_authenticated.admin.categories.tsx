@@ -58,6 +58,7 @@ function AdminCategoriesPage() {
   const [deleteTagId, setDeleteTagId] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
+  const { activeArea } = useAdminActiveArea();
 
   // ─── Categories queries/mutations ───
   const { data: catData, isLoading: catLoading } = useQuery({
