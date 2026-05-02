@@ -62,8 +62,9 @@ function AdminCategoriesPage() {
 
   // ─── Categories queries/mutations ───
   const { data: catData, isLoading: catLoading } = useQuery({
-    queryKey: ["admin-categories"],
-    queryFn: () => listAdminCategories(),
+    queryKey: ["admin-categories", activeArea?.id],
+    queryFn: () => listAdminCategories({ data: { areaId: activeArea?.id } }),
+    enabled: !!activeArea?.id,
   });
 
   const invalidateStudentCaches = () => {
