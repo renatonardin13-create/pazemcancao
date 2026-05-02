@@ -1,6 +1,7 @@
 import { useState, useEffect, forwardRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { listAdminCategories } from "@/lib/admin-courses.functions";
+import { listAdminCategories } from "@/lib/admin-categories.functions";
+import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
