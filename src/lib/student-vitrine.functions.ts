@@ -74,7 +74,7 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
     let coursesQuery = supabase
       .from('courses')
       .select('id, title, short_description, full_description, sales_description, cover_image_url, banner_image_url, price, promotional_price, benefits, total_lessons, total_duration, product_type, category_id, status, sort_order, launch_date')
-      .in('status', ['published', 'draft']);
+      .eq('status', 'published');
 
     if (inputData?.areaId) {
       coursesQuery = coursesQuery.eq('area_id', inputData.areaId);
