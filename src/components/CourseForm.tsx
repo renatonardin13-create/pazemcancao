@@ -182,7 +182,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label className={labelClass}>Seção <span className="text-gold">*</span></Label>
+                <Label className={labelClass}>Seção Principal <span className="text-gold">*</span></Label>
                 <Select 
                   value={categoryId} 
                   onValueChange={(val) => {
