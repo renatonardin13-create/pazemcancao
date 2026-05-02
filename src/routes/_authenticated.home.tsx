@@ -198,10 +198,10 @@ function VitrinePage() {
                 <div className="mb-4 flex items-center justify-between">
                   <h2 className="font-display text-xl font-bold text-foreground">
                     {isFiltered
-                      ? categories.find((c) => c.key === activeCategory)?.label || "Catálogo"
+                      ? categories.find((c) => c.key === activeCategory)?.label || t('catalog')
                       : showAll
-                        ? "Todos os produtos"
-                        : "Em destaque"}
+                        ? t('all_products')
+                        : t('featured')}
                   </h2>
                   {showSeeAll && (
                     <button
