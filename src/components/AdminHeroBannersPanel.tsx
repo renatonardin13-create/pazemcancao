@@ -1,5 +1,5 @@
-
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-utils";
@@ -152,14 +152,16 @@ const emptyForm: FormState = {
 
 function AdminHeroBannersPage() {
   const qc = useQueryClient();
+  const { activeArea } = useAdminActiveArea();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [previewOpen, setPreviewOpen] = useState<any>(null);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-hero-banners"],
-    queryFn: () => listHeroBanners(),
+    queryKey: ["admin-hero-banners", activeArea?.id],
+    queryFn: () => listHeroBanners({ data: { areaId: activeArea?.id } }),
+    enabled: !!activeArea?.id,
   });
   const { data: coursesData } = useQuery({
     queryKey: ["admin-banner-courses"],
@@ -172,7 +174,7 @@ function AdminHeroBannersPage() {
     staleTime: 60_000,
   });
 
-  const banners = data?.banners ?? [];
+  const banners = (data as any)?.banners ?? [];
   const courses = coursesData?.courses ?? [];
   const metrics: Array<{ bannerId: string; title: string; impressions: number; clicks: number; ctr: number }> =
     (metricsData as any)?.metrics ?? [];
@@ -273,7 +275,7 @@ function AdminHeroBannersPage() {
       return;
     }
     // Sincroniza target -> url quando type=url
-    const payload: any = { ...form };
+    const payload: any = { ...form, area_id: activeArea?.id };
     if (form.primary_cta_type === "url") payload.primary_cta_url = form.primary_cta_target;
     if (form.secondary_cta_type === "url") payload.secondary_cta_url = form.secondary_cta_target;
 

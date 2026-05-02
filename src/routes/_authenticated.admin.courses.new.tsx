@@ -15,7 +15,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
+import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 import { motion } from "framer-motion";
 
 export const Route = createFileRoute("/_authenticated/admin/courses/new")({
@@ -25,12 +26,14 @@ export const Route = createFileRoute("/_authenticated/admin/courses/new")({
 function NewCoursePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { activeArea } = useAdminActiveArea();
   const formRef = useRef<HTMLFormElement>(null);
   const [activeTab, setActiveTab] = useState("detalhes");
 
   const { data: catData, isLoading: catLoading } = useQuery({
-    queryKey: ["admin-categories"],
-    queryFn: () => listAdminCategories(),
+    queryKey: ["admin-categories", activeArea?.id],
+    queryFn: () => listAdminCategories({ data: { areaId: activeArea?.id } }),
+    enabled: !!activeArea?.id,
   });
 
   const categories = catData?.categories || [];

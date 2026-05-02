@@ -9,7 +9,8 @@ const normalizeCourseType = (value?: string) => {
 
 export const listAdminCourses = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { areaId?: string } | void) => input)
+  .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
     const { data: role } = await supabase
@@ -21,10 +22,16 @@ export const listAdminCourses = createServerFn({ method: 'POST' })
 
     if (!role) throw new Error('Não autorizado');
 
-    const { data: courses, error } = await supabaseAdmin
+    let query = supabaseAdmin
       .from('courses')
       .select('*, categories(name, slug, icon), modules(id, lessons(id))')
       .order('sort_order', { ascending: true });
+
+    if (data?.areaId) {
+      query = query.eq('area_id', data.areaId);
+    }
+
+    const { data: courses, error } = await query;
 
     const enriched = (courses || []).map((c: any) => {
       const mods = c.modules || [];
@@ -199,13 +206,20 @@ export const deleteCourse = createServerFn({ method: 'POST' })
 
 export const listAdminCategories = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { areaId?: string } | undefined) => input)
+  .handler(async ({ data, context }) => {
     const { supabase } = context;
 
-    const { data: categories, error } = await supabase
+    let query = supabase
       .from('categories')
       .select('*')
       .order('sort_order', { ascending: true });
+
+    if (data?.areaId) {
+      query = query.eq('area_id', data.areaId);
+    }
+
+    const { data: categories, error } = await query;
 
     if (error) throw new Error(error.message);
     return { categories: categories || [] };

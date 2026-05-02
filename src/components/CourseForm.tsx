@@ -1,6 +1,7 @@
 import { useState, useEffect, forwardRef } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { listAdminCategories } from "@/lib/admin-courses.functions";
+import { listAdminCategories } from "@/lib/admin-categories.functions";
+import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -60,7 +61,8 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   const [bannerUrl, setBannerUrl] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [price, setPrice] = useState("0");
-  // areaId state removed
+  const [areaId, setAreaId] = useState("");
+  const { activeArea } = useAdminActiveArea();
   const [promotionalPrice, setPromotionalPrice] = useState("");
   const [status, setStatus] = useState("draft");
   const [courseType, setCourseType] = useState("aula");
@@ -69,8 +71,9 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const { data: categoriesData } = useQuery({
-    queryKey: ["admin-categories"],
-    queryFn: () => listAdminCategories(),
+    queryKey: ["admin-categories", activeArea?.id],
+    queryFn: () => listAdminCategories({ data: { areaId: activeArea?.id } }),
+    enabled: !!activeArea?.id,
   });
 
   // areas query removed
@@ -88,13 +91,15 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       setBannerUrl(initialValues.banner_image_url || "");
       setCategoryId(initialValues.category_id || "");
       setPrice(String(initialValues.price ?? 0));
-      // setAreaId removed
+      setAreaId(initialValues.area_id || "");
       setPromotionalPrice(initialValues.promotional_price != null ? String(initialValues.promotional_price) : "");
       setStatus(initialValues.status || "draft");
       setCourseType(normalizeCourseType(initialValues.course_type));
       setLaunchDate(initialValues.launch_date || "");
+    } else if (activeArea?.id) {
+      setAreaId(activeArea.id);
     }
-  }, [initialValues]);
+  }, [initialValues, activeArea]);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -126,7 +131,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       cover_image_url: coverUrl.trim() || null,
       banner_image_url: bannerUrl.trim() || null,
       category_id: categoryId || null,
-      // area_id removed
+      area_id: areaId || activeArea?.id || null,
       price: parseFloat(price) || 0,
       promotional_price: promotionalPrice.trim() ? parseFloat(promotionalPrice) : null,
       status,
@@ -177,7 +182,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label className={labelClass}>Seção <span className="text-gold">*</span></Label>
+                <Label className={labelClass}>Seção Principal <span className="text-gold">*</span></Label>
                 <Select 
                   value={categoryId} 
                   onValueChange={(val) => {
@@ -210,6 +215,22 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                   </SelectContent>
                 </Select>
               </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className={labelClass}>Área de Membros <span className="text-gold">*</span></Label>
+              <Select value={areaId} onValueChange={setAreaId}>
+                <SelectTrigger className={inputClass}>
+                  <SelectValue placeholder="Selecione a área" />
+                </SelectTrigger>
+                <SelectContent>
+                  {activeArea && (
+                    <SelectItem value={activeArea.id}>
+                      {activeArea.nome}
+                    </SelectItem>
+                  )}
+                </SelectContent>
+              </Select>
             </div>
           </CardSection>
 

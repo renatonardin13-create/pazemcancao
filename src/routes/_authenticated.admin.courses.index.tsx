@@ -6,7 +6,8 @@ import { listAdminCategories } from "@/lib/admin-categories.functions";
 import { EmptyState } from "@/components/EmptyState";
 import { TableSkeleton } from "@/components/LoadingSkeletons";
 import { FolderOpen } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { StatusBadge } from "@/components/StatusBadge";
 import {
@@ -64,6 +65,7 @@ const PAGE_SIZE = 6;
 
 function AdminCoursesPage() {
   const queryClient = useQueryClient();
+  const { activeArea } = useAdminActiveArea();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
@@ -72,13 +74,15 @@ function AdminCoursesPage() {
   const [statusId, setStatusId] = useState<{ id: string; status: string } | null>(null);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-courses"],
-    queryFn: () => listAdminCourses(),
+    queryKey: ["admin-courses", activeArea?.id],
+    queryFn: () => listAdminCourses({ data: { areaId: activeArea?.id } }),
+    enabled: !!activeArea?.id,
   });
 
   const { data: catData, isLoading: catLoading } = useQuery({
-    queryKey: ["admin-categories"],
-    queryFn: () => listAdminCategories(),
+    queryKey: ["admin-categories", activeArea?.id],
+    queryFn: () => listAdminCategories({ data: { areaId: activeArea?.id } }),
+    enabled: !!activeArea?.id,
   });
 
   const categories = catData?.categories || [];

@@ -17,7 +17,8 @@ import {
   deleteTag,
 } from "@/lib/admin-tags.functions";
 import { FolderOpen, Plus, Trash2, Pencil, GripVertical, Tag } from "lucide-react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
+import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -57,11 +58,13 @@ function AdminCategoriesPage() {
   const [deleteTagId, setDeleteTagId] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
+  const { activeArea } = useAdminActiveArea();
 
   // ─── Categories queries/mutations ───
   const { data: catData, isLoading: catLoading } = useQuery({
-    queryKey: ["admin-categories"],
-    queryFn: () => listAdminCategories(),
+    queryKey: ["admin-categories", activeArea?.id],
+    queryFn: () => listAdminCategories({ data: { areaId: activeArea?.id } }),
+    enabled: !!activeArea?.id,
   });
 
   const invalidateStudentCaches = () => {
@@ -70,8 +73,8 @@ function AdminCategoriesPage() {
   };
 
   const createCatMutation = useMutation({
-    mutationFn: (input: { name: string; slug: string; description?: string; icon?: string; color?: string }) =>
-      createCategory({ data: input }),
+    mutationFn: (input: { name: string; slug: string; description?: string; icon?: string; color?: string; area_id?: string }) =>
+      createCategory({ data: { ...input, area_id: activeArea?.id } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories"] });
       invalidateStudentCaches();
