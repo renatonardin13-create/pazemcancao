@@ -116,6 +116,8 @@ export const createAreaMembro = createServerFn({ method: 'POST' })
         logo_url: data.logo_url,
         favicon_url: data.favicon_url,
         banner_url: data.banner_url,
+        background_color: data.background_color,
+        surface_color: data.surface_color,
       })
       .select('id')
       .single();
