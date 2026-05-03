@@ -67,6 +67,9 @@ function EditAreaPage() {
   const [rotuloCurto, setRotuloCurto] = useState("");
   const [descricao, setDescricao] = useState("");
   const [tipo, setTipo] = useState("misto");
+  const [appName, setAppName] = useState("");
+  const [logoAlt, setLogoAlt] = useState("");
+  const [supportEmail, setSupportEmail] = useState("");
   const [subdominio, setSubdominio] = useState("");
   const [status, setStatus] = useState("active");
   const [produtoId, setProdutoId] = useState("");
