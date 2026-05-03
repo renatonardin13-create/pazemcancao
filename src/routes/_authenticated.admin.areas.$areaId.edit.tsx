@@ -470,7 +470,7 @@ function EditAreaPage() {
                             <SelectItem value="misto" className="focus:bg-[#D4AF37] focus:text-black font-bold">Misto (Cursos + Outros)</SelectItem>
                             <SelectItem value="cursos" className="focus:bg-[#D4AF37] focus:text-black font-bold">Apenas Cursos</SelectItem>
                             <SelectItem value="ebooks" className="focus:bg-[#D4AF37] focus:text-black font-bold">Apenas Ebooks</SelectItem>
-                            <SelectItem value="pack_louvores" className="focus:bg-[#D4AF37] focus:text-black font-bold">Pack de Louvores (Spotify Style)</SelectItem>
+                            <SelectItem value="louvores" className="focus:bg-[#D4AF37] focus:text-black font-bold">Pack de Louvores (Spotify Style)</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
