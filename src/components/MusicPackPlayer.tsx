@@ -141,7 +141,7 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
                 onClick={() => toggle(track, filteredTracks)}
               >
                 <div className={`aspect-square rounded-2xl overflow-hidden border transition-all duration-300 ${
-                  isCurrent ? "border-gold ring-2 ring-gold/20 shadow-2xl shadow-gold/10" : "border-white/5 group-hover:border-white/20"
+                  isCurrent ? "border-orange-500 ring-2 ring-orange-500/20 shadow-2xl shadow-orange-500/10" : "border-white/5 group-hover:border-white/20"
                 }`}>
                   {track.coverUrl ? (
                     <img src={track.coverUrl} alt={track.title} className="w-full h-full object-cover" />
