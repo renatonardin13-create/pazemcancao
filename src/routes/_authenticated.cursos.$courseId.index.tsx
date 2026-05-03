@@ -31,7 +31,6 @@ import {
   List,
 } from "lucide-react";
 import { useState, useEffect } from "react";
-import { MusicPackPlayer } from "@/components/MusicPackPlayer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 

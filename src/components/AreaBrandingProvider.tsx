@@ -1,8 +1,7 @@
 import { useEffect } from "react";
-import { useArea } from "@/hooks/use-area";
 
 export function AreaBrandingProvider({ children }: { children: React.ReactNode }) {
-  const { area } = useArea();
+  const area = null;
 
   useEffect(() => {
     if (area) {

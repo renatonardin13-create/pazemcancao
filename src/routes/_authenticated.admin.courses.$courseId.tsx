@@ -5,7 +5,6 @@ import { CourseIntegrationSection } from "@/components/CourseIntegrationSection"
 import { getAdminCourse, updateCourse } from "@/lib/admin-courses.functions";
 import { CourseModulesTab } from "@/components/CourseModulesTab";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { CourseMusicasTab } from "@/components/admin/CourseMusicasTab";
 import { toast } from "sonner";
 import { ArrowLeft, Save, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";

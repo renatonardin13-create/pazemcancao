@@ -11,7 +11,6 @@ import { useState } from "react";
 import { AddTrackForm } from "@/components/AddTrackForm";
 import { EditTrackDialog } from "@/components/EditTrackDialog";
 import { toast } from "sonner";
-import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 
 export const Route = createFileRoute("/_authenticated/admin/tracks")({
   component: AdminTracksPage,
@@ -20,7 +19,7 @@ export const Route = createFileRoute("/_authenticated/admin/tracks")({
 const PAGE_SIZE = 20;
 
 function AdminTracksPage() {
-  const { activeArea } = useAdminActiveArea();
+  const activeArea = null;
   const [showForm, setShowForm] = useState(false);
   const [editingTrack, setEditingTrack] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");

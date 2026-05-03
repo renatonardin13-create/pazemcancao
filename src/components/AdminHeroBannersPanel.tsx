@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from "react";
-import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-utils";
@@ -152,7 +151,7 @@ const emptyForm: FormState = {
 
 function AdminHeroBannersPage() {
   const qc = useQueryClient();
-  const { activeArea } = useAdminActiveArea();
+  const activeArea = null;
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [deleteTarget, setDeleteTarget] = useState<any>(null);

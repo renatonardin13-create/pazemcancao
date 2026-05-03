@@ -13,7 +13,6 @@ import { Upload, Loader2, ImageIcon, Music, X, Gift } from "lucide-react";
 import { ImageFieldHint } from "@/components/ImageFieldHint";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 
 interface AddTrackFormProps {
   onSuccess?: () => void;
@@ -21,7 +20,7 @@ interface AddTrackFormProps {
 
 export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
   const queryClient = useQueryClient();
-  const { activeArea } = useAdminActiveArea();
+  const activeArea = null;
   
   const { data: catData } = useQuery({
     queryKey: ["admin-categories", activeArea?.id],

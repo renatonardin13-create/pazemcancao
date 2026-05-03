@@ -7,7 +7,6 @@ import { EmptyState } from "@/components/EmptyState";
 import { TableSkeleton } from "@/components/LoadingSkeletons";
 import { FolderOpen } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
-import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { StatusBadge } from "@/components/StatusBadge";
 import {
@@ -67,7 +66,7 @@ const PAGE_SIZE = 6;
 
 function AdminCoursesPage() {
   const queryClient = useQueryClient();
-  const { activeArea } = useAdminActiveArea();
+  const activeArea = null;
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");

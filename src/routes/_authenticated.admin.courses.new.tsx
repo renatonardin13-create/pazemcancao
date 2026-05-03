@@ -16,7 +16,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useRef, useState, useEffect } from "react";
-import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 import { motion } from "framer-motion";
 
 export const Route = createFileRoute("/_authenticated/admin/courses/new")({
@@ -26,7 +25,7 @@ export const Route = createFileRoute("/_authenticated/admin/courses/new")({
 function NewCoursePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { activeArea } = useAdminActiveArea();
+  const activeArea = null;
   const formRef = useRef<HTMLFormElement>(null);
   const [activeTab, setActiveTab] = useState("detalhes");
   const [courseType, setCourseType] = useState("aula");

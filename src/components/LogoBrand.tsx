@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import defaultLogo from "@/assets/logo-paz-em-cancao.png";
-import { useArea } from "@/hooks/use-area";
 
 interface LogoBrandProps {
   size?: "sm" | "md" | "lg";
@@ -9,7 +8,7 @@ interface LogoBrandProps {
 }
 
 export function LogoBrand({ size = "md", linkTo }: LogoBrandProps) {
-  const { area } = useArea();
+  const area = null;
   
   const heights = {
     sm: "h-8",

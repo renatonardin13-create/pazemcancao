@@ -20,7 +20,6 @@ import { Loader2, Upload, X, ImageIcon, Gift } from "lucide-react";
 import { ImageFieldHint } from "@/components/ImageFieldHint";
 import { toast } from "sonner";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 
 interface EditTrackDialogProps {
   track: {
@@ -39,7 +38,7 @@ interface EditTrackDialogProps {
 
 export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogProps) {
   const queryClient = useQueryClient();
-  const { activeArea } = useAdminActiveArea();
+  const activeArea = null;
 
   const { data: catData } = useQuery({
     queryKey: ["admin-categories", activeArea?.id],

@@ -18,7 +18,6 @@ import {
 } from "@/lib/admin-tags.functions";
 import { FolderOpen, Plus, Trash2, Pencil, GripVertical, Tag } from "lucide-react";
 import { useState, useCallback, useEffect } from "react";
-import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 import { ConfirmationDialog } from "@/components/ConfirmationDialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -58,7 +57,7 @@ function AdminCategoriesPage() {
   const [deleteTagId, setDeleteTagId] = useState<string | null>(null);
 
   const queryClient = useQueryClient();
-  const { activeArea } = useAdminActiveArea();
+  const activeArea = null;
 
   // ─── Categories queries/mutations ───
   const { data: catData, isLoading: catLoading } = useQuery({
