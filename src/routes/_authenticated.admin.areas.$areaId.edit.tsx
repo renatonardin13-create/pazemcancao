@@ -107,6 +107,16 @@ function EditAreaPage() {
   const [parabens, setParabens] = useState("");
   const [botaoEntrar, setBotaoEntrar] = useState("");
   const [suporteTexto, setSuporteTexto] = useState("");
+  const [tituloLogin, setTituloLogin] = useState("");
+  const [subtituloLogin, setSubtituloLogin] = useState("");
+  const [placeholderEmail, setPlaceholderEmail] = useState("");
+  const [placeholderSenha, setPlaceholderSenha] = useState("");
+  const [textoBotao, setTextoBotao] = useState("");
+  const [textoAjuda, setTextoAjuda] = useState("");
+  const [textoRodape, setTextoRodape] = useState("");
+  const [imagemLoginUrl, setImagemLoginUrl] = useState("");
+  const [layoutLogin, setLayoutLogin] = useState("right");
+  const [modoFundo, setModoFundo] = useState("solid");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { data: areaData, isLoading: isLoadingArea } = useQuery({
