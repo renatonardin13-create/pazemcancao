@@ -104,42 +104,54 @@ function AreasMembrosPage() {
           Voltar
         </Button>
 
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
           <div className="space-y-4">
-            <span className="inline-block px-3 py-1 bg-gold/10 text-gold text-[10px] font-black uppercase tracking-[0.3em] rounded-full border border-gold/10">
-              FASE 2
-            </span>
-            <h1 className="text-4xl font-black tracking-tight bg-gradient-to-br from-white via-white to-white/40 bg-clip-text text-transparent">
+            <div className="flex items-center gap-3">
+              <span className="px-3 py-1 bg-[#D4AF37]/10 text-[#D4AF37] text-[10px] font-black uppercase tracking-[0.3em] rounded-full border border-[#D4AF37]/10 shadow-[0_0_15px_rgba(212,175,55,0.05)]">
+                MULTI-ÁREAS
+              </span>
+              <span className="h-1 w-1 rounded-full bg-slate-700" />
+              <span className="text-slate-500 text-[10px] font-bold uppercase tracking-widest">
+                FASE 2 ATIVA
+              </span>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-black tracking-tight bg-gradient-to-br from-white via-white to-white/40 bg-clip-text text-transparent">
               Áreas de membros
             </h1>
-            <p className="text-muted-foreground text-lg max-w-2xl font-medium leading-relaxed">
-              Crie quantas áreas independentes quiser, cada uma com seu próprio catálogo, branding e regras de acesso.
+            <p className="text-slate-400 text-lg max-w-2xl font-medium leading-relaxed">
+              Crie ambientes independentes com catálogo, branding e regras de acesso personalizadas.
             </p>
           </div>
           
           <Button 
             onClick={() => setIsNewModalOpen(true)}
-            className="h-12 px-6 bg-gold hover:bg-gold/90 text-black font-black text-base rounded-xl shadow-2xl shadow-gold/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
+            className="h-14 px-8 bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-black font-black text-base rounded-2xl shadow-2xl shadow-[#D4AF37]/20 transition-all hover:scale-[1.03] active:scale-[0.97] group"
           >
-            <Plus className="h-6 w-6 mr-2 stroke-[3]" />
-            Nova área
+            <Plus className="h-6 w-6 mr-3 stroke-[3] group-hover:rotate-90 transition-transform duration-300" />
+            Nova área de membros
           </Button>
         </div>
       </div>
 
-      {/* Info Bar */}
-      <div className="flex items-center justify-between p-6 bg-white/[0.02] border border-white/5 rounded-3xl backdrop-blur-md">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-gold/10 flex items-center justify-center">
-            <LayoutGrid className="h-5 w-5 text-gold" />
+      {/* Info Stats Bar */}
+      <div className="flex items-center justify-between p-6 bg-[#111827]/50 border border-white/5 rounded-[24px] backdrop-blur-md shadow-xl">
+        <div className="flex items-center gap-4">
+          <div className="h-12 w-12 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10 shadow-inner">
+            <LayoutGrid className="h-6 w-6 text-[#D4AF37]" />
           </div>
-          <span className="text-base font-bold text-white/90">
-            📦 {areas.length} áreas criadas
+          <div>
+            <p className="text-xs font-black text-[#D4AF37] uppercase tracking-widest mb-0.5">Visão Geral</p>
+            <p className="text-lg font-black text-white">
+              {areas.length} Áreas Configuradas
+            </p>
+          </div>
+        </div>
+        <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-white/5 rounded-full border border-white/5">
+          <div className="h-2 w-2 rounded-full bg-emerald-500 shadow-[0_0_10px_#10b981]" />
+          <span className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+            Sem limite de criação
           </span>
         </div>
-        <span className="text-sm font-medium text-muted-foreground/60 hidden sm:block">
-          Sem limite — crie quantas precisar.
-        </span>
       </div>
 
       {/* Grid Section */}
