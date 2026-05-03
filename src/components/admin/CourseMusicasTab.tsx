@@ -286,7 +286,7 @@ function MusicaDialog({ isOpen, onClose, courseId, musica }: { isOpen: boolean; 
           </div>
 
           <div className="space-y-1.5">
-            <Label>Arquivo de Áudio (MP3) <span className="text-gold">*</span></Label>
+            <Label>Arquivo de Áudio (MP3) <span className="text-orange-500">*</span></Label>
             <div className="flex gap-2">
               <Input
                 value={formData.audio_url}
@@ -302,7 +302,7 @@ function MusicaDialog({ isOpen, onClose, courseId, musica }: { isOpen: boolean; 
                   className="absolute inset-0 opacity-0 cursor-pointer w-10"
                   disabled={isSubmitting}
                 />
-                <Button type="button" variant="outline" size="icon" className="h-10 w-10 shrink-0">
+                <Button type="button" variant="outline" size="icon" className="h-10 w-10 shrink-0 border-orange-500/20 hover:bg-orange-500/10 hover:text-orange-500">
                   <Upload className="h-4 w-4" />
                 </Button>
               </div>
@@ -336,7 +336,7 @@ function MusicaDialog({ isOpen, onClose, courseId, musica }: { isOpen: boolean; 
                 id="destaque"
                 checked={formData.destaque}
                 onChange={e => setFormData(prev => ({ ...prev, destaque: e.target.checked }))}
-                className="rounded border-border/20 bg-background/50 text-gold focus:ring-gold"
+                className="rounded border-border/20 bg-background/50 text-orange-500 focus:ring-orange-500"
               />
               <Label htmlFor="destaque" className="cursor-pointer">Música em destaque</Label>
             </div>
@@ -346,7 +346,7 @@ function MusicaDialog({ isOpen, onClose, courseId, musica }: { isOpen: boolean; 
             <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
               Cancelar
             </Button>
-            <Button type="submit" className="bg-gold text-black hover:bg-gold/90" disabled={isSubmitting}>
+            <Button type="submit" className="bg-orange-500 text-black hover:bg-orange-600 transition-all duration-300" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               {musica ? "Salvar Alterações" : "Adicionar Música"}
             </Button>
