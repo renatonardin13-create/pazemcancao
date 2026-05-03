@@ -218,10 +218,12 @@ export type Database = {
           primary_color: string | null
           principal: boolean | null
           produto_id: string | null
+          rotulo_curto: string | null
           secondary_color: string | null
           status: string | null
           subdominio: string
           surface_color: string | null
+          tipo: string | null
         }
         Insert: {
           ativa?: boolean | null
@@ -237,10 +239,12 @@ export type Database = {
           primary_color?: string | null
           principal?: boolean | null
           produto_id?: string | null
+          rotulo_curto?: string | null
           secondary_color?: string | null
           status?: string | null
           subdominio: string
           surface_color?: string | null
+          tipo?: string | null
         }
         Update: {
           ativa?: boolean | null
@@ -256,10 +260,12 @@ export type Database = {
           primary_color?: string | null
           principal?: boolean | null
           produto_id?: string | null
+          rotulo_curto?: string | null
           secondary_color?: string | null
           status?: string | null
           subdominio?: string
           surface_color?: string | null
+          tipo?: string | null
         }
         Relationships: [
           {
