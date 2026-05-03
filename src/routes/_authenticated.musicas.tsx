@@ -635,7 +635,7 @@ function ContentPage() {
 
         {/* Invisible funnel shelves */}
         <div className="max-w-6xl mx-auto px-5 sm:px-8 mt-10 mb-8">
-          <InvisibleFunnelShelves context="conteudo" />
+          <InvisibleFunnelShelves context="musicas" />
         </div>
 
         <FooterLinks />
