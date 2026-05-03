@@ -64,14 +64,14 @@ function CourseDetailPage() {
   });
 
   useEffect(() => {
-    if (resolvedLesson?.lessonId) {
+    if (resolvedLesson?.lessonId && data?.course?.course_type !== "louvores") {
       navigate({
         to: "/cursos/$courseId/aula/$lessonId",
         params: { courseId, lessonId: resolvedLesson.lessonId },
         replace: true,
       });
     }
-  }, [resolvedLesson, courseId, navigate]);
+  }, [resolvedLesson, data?.course?.course_type, courseId, navigate]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["course-detail", courseId],
