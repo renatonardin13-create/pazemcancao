@@ -213,6 +213,16 @@ export const updateAreaMembro = createServerFn({ method: 'POST' })
     parabens?: string;
     botao_entrar?: string;
     suporte_texto?: string;
+    titulo_login?: string;
+    subtitulo_login?: string;
+    placeholder_email?: string;
+    placeholder_senha?: string;
+    texto_botao?: string;
+    texto_ajuda?: string;
+    texto_rodape?: string;
+    imagem_login_url?: string;
+    layout_login?: string;
+    modo_fundo?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     const { userId } = context;
