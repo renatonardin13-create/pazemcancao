@@ -187,7 +187,7 @@ function LessonDetailPage() {
   const isLessonCompleted = (id: string) =>
     progress.some((p: any) => p.lesson_id === id && p.completed);
 
-  const contentType = lesson.content_type || "video";
+  const contentType = (lesson as any).content_type || "video";
   const videoUrl = lesson.video_url ?? "";
   const contentUrl = lesson.content_url ?? "";
   const hasVideo = contentType === "video" && !!videoUrl;
