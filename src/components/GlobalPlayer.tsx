@@ -78,8 +78,8 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
                       className={`h-full w-full object-cover transition-transform duration-700 ${playing ? 'scale-110' : 'scale-100'}`}
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-gold/20 to-black">
-                      <Music className="h-6 w-6 text-gold/40" />
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-orange-500/20 to-black">
+                      <Music className="h-6 w-6 text-orange-500/40" />
                     </div>
                   )}
                 </div>
