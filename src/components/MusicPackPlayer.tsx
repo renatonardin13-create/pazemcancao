@@ -118,7 +118,7 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
               onClick={() => setActiveCategory(cat)}
               className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap border ${
                 activeCategory === cat 
-                ? "bg-gold text-black border-gold shadow-lg shadow-gold/20" 
+                ? "bg-orange-500 text-black border-orange-500 shadow-lg shadow-orange-500/20" 
                 : "bg-white/5 text-white/60 border-white/5 hover:bg-white/10 hover:text-white"
               }`}
             >
