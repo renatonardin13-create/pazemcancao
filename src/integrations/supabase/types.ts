@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       active_sessions: {
         Row: {
+          area_id: string | null
           created_at: string
           device_fingerprint: string | null
           email: string
@@ -27,6 +28,7 @@ export type Database = {
           user_agent: string | null
         }
         Insert: {
+          area_id?: string | null
           created_at?: string
           device_fingerprint?: string | null
           email: string
@@ -38,6 +40,7 @@ export type Database = {
           user_agent?: string | null
         }
         Update: {
+          area_id?: string | null
           created_at?: string
           device_fingerprint?: string | null
           email?: string
@@ -48,17 +51,12 @@ export type Database = {
           session_token?: string
           user_agent?: string | null
         }
-        Relationships: [
-          {
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       approved_buyers: {
         Row: {
           access_enabled: boolean
+          area_id: string | null
           can_download: boolean
           created_at: string
           email: string
@@ -74,6 +72,7 @@ export type Database = {
         }
         Insert: {
           access_enabled?: boolean
+          area_id?: string | null
           can_download?: boolean
           created_at?: string
           email: string
@@ -89,6 +88,7 @@ export type Database = {
         }
         Update: {
           access_enabled?: boolean
+          area_id?: string | null
           can_download?: boolean
           created_at?: string
           email?: string
@@ -102,177 +102,7 @@ export type Database = {
           status?: string
           trial_expires_at?: string | null
         }
-        Relationships: [
-          {
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      areas: {
-        Row: {
-          created_at: string | null
-          description: string | null
-          domain: string | null
-          id: string
-          name: string
-          slug: string
-        }
-        Insert: {
-          created_at?: string | null
-          description?: string | null
-          domain?: string | null
-          id?: string
-          name: string
-          slug: string
-        }
-        Update: {
-          created_at?: string | null
-          description?: string | null
-          domain?: string | null
-          id?: string
-          name?: string
-          slug?: string
-        }
         Relationships: []
-      }
-      areas_membros: {
-        Row: {
-          accent_color: string | null
-          app_name: string | null
-          ativa: boolean | null
-          atualizado_em: string
-          background_color: string | null
-          banner_url: string | null
-          boas_vindas: string | null
-          botao_continuar: string | null
-          botao_entrar: string | null
-          button_color: string | null
-          button_text_color: string | null
-          conclusao: string | null
-          criado_em: string
-          descricao: string | null
-          elevated_surface: string | null
-          favicon_url: string | null
-          formato_data: string | null
-          id: string
-          idiomas_ativos: string[] | null
-          language: string | null
-          logo_alt: string | null
-          logo_url: string | null
-          nome: string
-          parabens: string | null
-          primary_color: string | null
-          principal: boolean | null
-          produto_bloqueado: string | null
-          produto_id: string | null
-          rotulo_curto: string | null
-          secondary_color: string | null
-          sidebar_color: string | null
-          status: string | null
-          subdominio: string
-          suporte_texto: string | null
-          support_email: string | null
-          surface_color: string | null
-          text_primary: string | null
-          text_secondary: string | null
-          theme_mode: string | null
-          tipo: string | null
-        }
-        Insert: {
-          accent_color?: string | null
-          app_name?: string | null
-          ativa?: boolean | null
-          atualizado_em?: string
-          background_color?: string | null
-          banner_url?: string | null
-          boas_vindas?: string | null
-          botao_continuar?: string | null
-          botao_entrar?: string | null
-          button_color?: string | null
-          button_text_color?: string | null
-          conclusao?: string | null
-          criado_em?: string
-          descricao?: string | null
-          elevated_surface?: string | null
-          favicon_url?: string | null
-          formato_data?: string | null
-          id?: string
-          idiomas_ativos?: string[] | null
-          language?: string | null
-          logo_alt?: string | null
-          logo_url?: string | null
-          nome: string
-          parabens?: string | null
-          primary_color?: string | null
-          principal?: boolean | null
-          produto_bloqueado?: string | null
-          produto_id?: string | null
-          rotulo_curto?: string | null
-          secondary_color?: string | null
-          sidebar_color?: string | null
-          status?: string | null
-          subdominio: string
-          suporte_texto?: string | null
-          support_email?: string | null
-          surface_color?: string | null
-          text_primary?: string | null
-          text_secondary?: string | null
-          theme_mode?: string | null
-          tipo?: string | null
-        }
-        Update: {
-          accent_color?: string | null
-          app_name?: string | null
-          ativa?: boolean | null
-          atualizado_em?: string
-          background_color?: string | null
-          banner_url?: string | null
-          boas_vindas?: string | null
-          botao_continuar?: string | null
-          botao_entrar?: string | null
-          button_color?: string | null
-          button_text_color?: string | null
-          conclusao?: string | null
-          criado_em?: string
-          descricao?: string | null
-          elevated_surface?: string | null
-          favicon_url?: string | null
-          formato_data?: string | null
-          id?: string
-          idiomas_ativos?: string[] | null
-          language?: string | null
-          logo_alt?: string | null
-          logo_url?: string | null
-          nome?: string
-          parabens?: string | null
-          primary_color?: string | null
-          principal?: boolean | null
-          produto_bloqueado?: string | null
-          produto_id?: string | null
-          rotulo_curto?: string | null
-          secondary_color?: string | null
-          sidebar_color?: string | null
-          status?: string | null
-          subdominio?: string
-          suporte_texto?: string | null
-          support_email?: string | null
-          surface_color?: string | null
-          text_primary?: string | null
-          text_secondary?: string | null
-          theme_mode?: string | null
-          tipo?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "areas_membros_produto_id_fkey"
-            columns: ["produto_id"]
-            isOneToOne: false
-            referencedRelation: "courses"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       audit_logs: {
         Row: {
@@ -380,6 +210,7 @@ export type Database = {
       }
       community_posts: {
         Row: {
+          area_id: string | null
           author_avatar_url: string | null
           author_name: string
           content: string
@@ -389,6 +220,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          area_id?: string | null
           author_avatar_url?: string | null
           author_name: string
           content: string
@@ -398,6 +230,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          area_id?: string | null
           author_avatar_url?: string | null
           author_name?: string
           content?: string
@@ -406,67 +239,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      configuracoes_login_area: {
-        Row: {
-          created_at: string
-          id: string
-          imagem_login_url: string | null
-          layout_login: string | null
-          modo_fundo: string | null
-          placeholder_email: string | null
-          placeholder_senha: string | null
-          subtitulo_login: string | null
-          texto_ajuda: string | null
-          texto_botao: string | null
-          texto_rodape: string | null
-          titulo_login: string | null
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          imagem_login_url?: string | null
-          layout_login?: string | null
-          modo_fundo?: string | null
-          placeholder_email?: string | null
-          placeholder_senha?: string | null
-          subtitulo_login?: string | null
-          texto_ajuda?: string | null
-          texto_botao?: string | null
-          texto_rodape?: string | null
-          titulo_login?: string | null
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          imagem_login_url?: string | null
-          layout_login?: string | null
-          modo_fundo?: string | null
-          placeholder_email?: string | null
-          placeholder_senha?: string | null
-          subtitulo_login?: string | null
-          texto_ajuda?: string | null
-          texto_botao?: string | null
-          texto_rodape?: string | null
-          titulo_login?: string | null
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            isOneToOne: true
-            referencedRelation: "areas_membros"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       content_items: {
         Row: {
@@ -571,55 +344,6 @@ export type Database = {
             columns: ["unlock_rule_content_id"]
             isOneToOne: false
             referencedRelation: "content_items"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      contents: {
-        Row: {
-          category_id: string | null
-          created_at: string | null
-          id: string
-          sort_order: number
-          status: string | null
-          title: string
-          type: string | null
-          updated_at: string | null
-          url: string | null
-        }
-        Insert: {
-          category_id?: string | null
-          created_at?: string | null
-          id?: string
-          sort_order?: number
-          status?: string | null
-          title: string
-          type?: string | null
-          updated_at?: string | null
-          url?: string | null
-        }
-        Update: {
-          category_id?: string | null
-          created_at?: string | null
-          id?: string
-          sort_order?: number
-          status?: string | null
-          title?: string
-          type?: string | null
-          updated_at?: string | null
-          url?: string | null
-        }
-        Relationships: [
-          {
-            isOneToOne: false
-            referencedRelation: "areas_membros"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "contents_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "categories"
             referencedColumns: ["id"]
           },
         ]
@@ -762,34 +486,32 @@ export type Database = {
       }
       download_logs: {
         Row: {
+          area_id: string | null
           downloaded_at: string
           email: string
           id: string
           track_id: string
         }
         Insert: {
+          area_id?: string | null
           downloaded_at?: string
           email: string
           id?: string
           track_id: string
         }
         Update: {
+          area_id?: string | null
           downloaded_at?: string
           email?: string
           id?: string
           track_id?: string
         }
-        Relationships: [
-          {
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       enrollments: {
         Row: {
           access_origin: string
+          area_id: string | null
           completed_at: string | null
           course_id: string
           created_at: string
@@ -806,6 +528,7 @@ export type Database = {
         }
         Insert: {
           access_origin?: string
+          area_id?: string | null
           completed_at?: string | null
           course_id: string
           created_at?: string
@@ -822,6 +545,7 @@ export type Database = {
         }
         Update: {
           access_origin?: string
+          area_id?: string | null
           completed_at?: string | null
           course_id?: string
           created_at?: string
@@ -837,11 +561,6 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
-          {
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "enrollments_course_id_fkey"
             columns: ["course_id"]
@@ -1152,33 +871,6 @@ export type Database = {
           },
         ]
       }
-      memberships: {
-        Row: {
-          created_at: string | null
-          id: string
-          role: string | null
-          user_id: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          role?: string | null
-          user_id: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          role?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       modules: {
         Row: {
           course_id: string
@@ -1253,42 +945,6 @@ export type Database = {
         }
         Relationships: []
       }
-      platform_modules: {
-        Row: {
-          created_at: string
-          enabled: boolean
-          id: string
-          name: string
-          slug: string
-          sort_order: number
-          updated_at: string
-          visible_in_menu: boolean
-          visible_in_vitrine: boolean
-        }
-        Insert: {
-          created_at?: string
-          enabled?: boolean
-          id?: string
-          name: string
-          slug: string
-          sort_order?: number
-          updated_at?: string
-          visible_in_menu?: boolean
-          visible_in_vitrine?: boolean
-        }
-        Update: {
-          created_at?: string
-          enabled?: boolean
-          id?: string
-          name?: string
-          slug?: string
-          sort_order?: number
-          updated_at?: string
-          visible_in_menu?: boolean
-          visible_in_vitrine?: boolean
-        }
-        Relationships: []
-      }
       platform_settings: {
         Row: {
           created_at: string
@@ -1315,6 +971,7 @@ export type Database = {
       }
       play_logs: {
         Row: {
+          area_id: string | null
           duration_seconds: number
           email: string
           id: string
@@ -1322,6 +979,7 @@ export type Database = {
           track_id: string
         }
         Insert: {
+          area_id?: string | null
           duration_seconds?: number
           email: string
           id?: string
@@ -1329,19 +987,14 @@ export type Database = {
           track_id: string
         }
         Update: {
+          area_id?: string | null
           duration_seconds?: number
           email?: string
           id?: string
           played_at?: string
           track_id?: string
         }
-        Relationships: [
-          {
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       playlist_tracks: {
         Row: {
@@ -1742,6 +1395,7 @@ export type Database = {
       transactions: {
         Row: {
           amount: number
+          area_id: string | null
           buyer_email: string
           buyer_name: string
           course_id: string | null
@@ -1757,6 +1411,7 @@ export type Database = {
         }
         Insert: {
           amount?: number
+          area_id?: string | null
           buyer_email: string
           buyer_name: string
           course_id?: string | null
@@ -1772,6 +1427,7 @@ export type Database = {
         }
         Update: {
           amount?: number
+          area_id?: string | null
           buyer_email?: string
           buyer_name?: string
           course_id?: string | null
@@ -1786,11 +1442,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
-          {
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "transactions_course_id_fkey"
             columns: ["course_id"]
@@ -1835,6 +1486,7 @@ export type Database = {
       }
       user_content_progress: {
         Row: {
+          area_id: string | null
           completed_at: string | null
           content_id: string
           created_at: string
@@ -1847,6 +1499,7 @@ export type Database = {
           viewed_at: string | null
         }
         Insert: {
+          area_id?: string | null
           completed_at?: string | null
           content_id: string
           created_at?: string
@@ -1859,6 +1512,7 @@ export type Database = {
           viewed_at?: string | null
         }
         Update: {
+          area_id?: string | null
           completed_at?: string | null
           content_id?: string
           created_at?: string
@@ -1871,11 +1525,6 @@ export type Database = {
           viewed_at?: string | null
         }
         Relationships: [
-          {
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "user_content_progress_content_id_fkey"
             columns: ["content_id"]
@@ -2201,6 +1850,7 @@ export type Database = {
       }
       get_analytics_summary:
         | { Args: { p_days?: number }; Returns: Json }
+        | { Args: { p_area_id?: string; p_days: number }; Returns: Json }
       get_hero_banner_metrics: { Args: { p_days?: number }; Returns: Json }
       has_role: {
         Args: {
@@ -2214,6 +1864,7 @@ export type Database = {
         Returns: undefined
       }
       is_admin: { Args: { uid: string }; Returns: boolean }
+      is_area_member: { Args: { _area_id: string }; Returns: boolean }
       redact_json: { Args: { data: Json }; Returns: Json }
     }
     Enums: {
