@@ -168,7 +168,7 @@ function NewCoursePage() {
                   <TooltipTrigger asChild>
                     <span>
                       <Button variant="outline" size="sm" disabled>
-                        + Criar Módulo
+                        {courseType === "louvores" ? "+ Adicionar Música" : "+ Criar Módulo"}
                       </Button>
                     </span>
                   </TooltipTrigger>
