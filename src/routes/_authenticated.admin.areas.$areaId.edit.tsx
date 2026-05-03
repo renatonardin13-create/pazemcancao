@@ -177,6 +177,21 @@ function EditAreaPage() {
       setParabens(area.parabens || "");
       setBotaoEntrar(area.botao_entrar || "");
       setSuporteTexto(area.suporte_texto || "");
+      
+      // Load login configurations from the joined table
+      const loginConfig = Array.isArray(area.configuracoes_login) ? area.configuracoes_login[0] : area.configuracoes_login;
+      if (loginConfig) {
+        setTituloLogin(loginConfig.titulo_login || "");
+        setSubtituloLogin(loginConfig.subtitulo_login || "");
+        setPlaceholderEmail(loginConfig.placeholder_email || "");
+        setPlaceholderSenha(loginConfig.placeholder_senha || "");
+        setTextoBotao(loginConfig.texto_botao || "");
+        setTextoAjuda(loginConfig.texto_ajuda || "");
+        setTextoRodape(loginConfig.texto_rodape || "");
+        setImagemLoginUrl(loginConfig.imagem_login_url || "");
+        setLayoutLogin(loginConfig.layout_login || "right");
+        setModoFundo(loginConfig.modo_fundo || "solid");
+      }
     }
   }, [area]);
 
