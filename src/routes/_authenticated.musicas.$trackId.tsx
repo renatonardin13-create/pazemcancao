@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/musicas/$trackId")({
       <div className="text-center space-y-4">
         <Music className="mx-auto h-10 w-10 text-muted-foreground/30" />
         <p className="text-muted-foreground/50 text-sm">Conteúdo não encontrado.</p>
-        <Link to="/conteudo" className="inline-block text-gold/70 hover:text-gold text-sm transition-colors">
+        <Link to="/musicas" className="inline-block text-gold/70 hover:text-gold text-sm transition-colors">
           ← Voltar à biblioteca
         </Link>
       </div>
