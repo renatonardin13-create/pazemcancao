@@ -23,8 +23,8 @@ interface AreaCardProps {
     ativa: boolean;
     principal: boolean;
     produto_id: string;
-    status?: string;
-    language?: string;
+    status?: string | null;
+    language?: string | null;
     courses?: { title: string };
   };
   onDelete: (id: string) => void;
