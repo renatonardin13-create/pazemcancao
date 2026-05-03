@@ -44,7 +44,7 @@ function OffersPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: string) => deleteOffer(id),
+    mutationFn: (id: string) => deleteOffer({ data: id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-offers"] });
       toast.success("Oferta excluída com sucesso");
@@ -53,7 +53,7 @@ function OffersPage() {
   });
 
   const statusMutation = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: string }) => toggleOfferStatus({ id, status }),
+    mutationFn: ({ id, status }: { id: string; status: string }) => toggleOfferStatus({ data: { id, status } }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-offers"] });
       toast.success("Status atualizado");
