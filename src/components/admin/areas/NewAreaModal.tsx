@@ -349,7 +349,7 @@ export function NewAreaModal({ open, onOpenChange }: NewAreaModalProps) {
               key="success"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="p-12 text-center space-y-10 flex flex-col items-center justify-center min-h-[500px]"
+              className="p-12 text-center space-y-10 flex flex-col items-center justify-center min-h-[500px] bg-[#111827]"
             >
               {/* Visual Highlight */}
               <div className="relative">
@@ -357,61 +357,52 @@ export function NewAreaModal({ open, onOpenChange }: NewAreaModalProps) {
                   initial={{ scale: 0, rotate: -20 }}
                   animate={{ scale: 1, rotate: 0 }}
                   transition={{ type: "spring", stiffness: 260, damping: 20 }}
-                  className="relative h-32 w-32 bg-gold rounded-[2.5rem] flex items-center justify-center mx-auto shadow-[0_20px_50px_rgba(212,175,55,0.3)] border-4 border-[#07090E] z-10"
+                  className="relative h-32 w-32 bg-[#D4AF37] rounded-[2.5rem] flex items-center justify-center mx-auto shadow-[0_20px_50px_rgba(212,175,55,0.3)] border-4 border-[#0B1220] z-10"
                 >
-                  <PartyPopper className="h-16 w-16 text-black" />
+                  <PartyPopper className="h-16 w-16 text-[#0F172A]" />
                 </motion.div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gold/10 blur-[120px] rounded-full -z-10" />
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-[#D4AF37]/10 blur-[120px] rounded-full -z-10" />
               </div>
 
               <div className="space-y-4">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-black uppercase tracking-widest">
                   <Check className="h-3 w-3" /> Configuração Concluída
                 </div>
-                <h1 className="text-4xl font-black tracking-tight leading-tight">
-                  Sua área está <br /> <span className="text-gold">oficialmente online!</span>
+                <h1 className="text-4xl font-black tracking-tight leading-tight text-white">
+                  Sua área está <br /> <span className="text-[#D4AF37]">oficialmente online!</span>
                 </h1>
-                <p className="text-muted-foreground text-lg max-w-sm mx-auto font-medium">
+                <p className="text-slate-400 text-lg max-w-sm mx-auto font-medium">
                   A área <strong>{nome}</strong> foi configurada com sucesso.
                 </p>
               </div>
 
               {/* URL Box */}
-              <div className="w-full max-w-lg bg-white/[0.03] border border-white/10 p-8 rounded-[2.5rem] space-y-6 backdrop-blur-xl relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gold/50 group-hover:bg-gold transition-colors" />
+              <div className="w-full max-w-lg bg-[#0B1220] border border-white/10 p-8 rounded-[24px] space-y-6 backdrop-blur-xl relative overflow-hidden group">
+                <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/50 group-hover:bg-[#D4AF37] transition-colors" />
                 
                 <div className="flex flex-col gap-2 text-left">
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gold/60 ml-1">Link de acesso exclusivo</span>
-                  <div className="flex items-center justify-between gap-4 p-5 bg-black/40 rounded-2xl border border-white/5 hover:border-gold/30 transition-all group/url">
-                    <Globe className="h-5 w-5 text-gold shrink-0 group-hover/url:scale-110 transition-transform" />
-                    <span className="text-base font-bold truncate flex-1 font-mono text-white/90 selection:bg-gold selection:text-black">{areaUrl}</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37]/60 ml-1">Link de acesso exclusivo</span>
+                  <div className="flex items-center justify-between gap-4 p-5 bg-black/40 rounded-xl border border-white/5 hover:border-[#D4AF37]/30 transition-all group/url">
+                    <Globe className="h-5 w-5 text-[#D4AF37] shrink-0 group-hover/url:scale-110 transition-transform" />
+                    <span className="text-base font-bold truncate flex-1 font-mono text-white/90 selection:bg-[#D4AF37] selection:text-[#0F172A]">
+                      https://{subdominio}.{rootDomain}
+                    </span>
                     <div className="flex items-center gap-2">
                       <Button
                         variant="ghost"
                         size="icon"
                         onClick={handleCopyUrl}
-                        className="h-10 w-10 rounded-xl hover:bg-gold hover:text-black transition-all"
+                        className="h-10 w-10 rounded-xl hover:bg-[#D4AF37] hover:text-[#0F172A] transition-all"
                         title="Copiar URL"
                       >
                         <Copy className="h-5 w-5" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        asChild
-                        className="h-10 w-10 rounded-xl hover:bg-gold/10 hover:text-gold transition-all"
-                        title="Abrir em nova aba"
-                      >
-                        <a href={areaUrl} target="_blank" rel="noreferrer">
-                          <ExternalLink className="h-5 w-5" />
-                        </a>
                       </Button>
                     </div>
                   </div>
                 </div>
 
-                <p className="text-[10px] text-muted-foreground/60 italic px-2">
-                  * Você pode alterar o subdomínio e configurar um domínio personalizado nas configurações da área.
+                <p className="text-[10px] text-slate-500/60 italic px-2">
+                  * Você pode configurar um domínio personalizado a qualquer momento nas configurações da área.
                 </p>
               </div>
 
