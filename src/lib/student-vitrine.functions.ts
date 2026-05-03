@@ -53,6 +53,7 @@ function safeCourse(course: any) {
     benefits: Array.isArray(course.benefits) ? course.benefits.filter(Boolean) : [],
     total_lessons: Number(course.total_lessons ?? 0),
     total_duration: course.total_duration ?? null,
+    course_type: course.course_type || 'video',
     product_type: course.product_type || 'curso_individual',
     category_name: course.category_name ?? null,
     checkout_url: course.checkout_url ?? null,
