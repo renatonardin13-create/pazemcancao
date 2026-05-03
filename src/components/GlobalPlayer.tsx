@@ -169,7 +169,7 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
                       <Download className="h-4 w-4" />
                     </button>
                   )}
-                  <button onClick={() => setIsExpanded(!isExpanded)} className={`p-2 transition-colors ${isExpanded ? 'text-gold' : 'text-white/40 hover:text-white'}`}>
+                  <button onClick={() => setIsExpanded(!isExpanded)} className={`p-2 transition-colors ${isExpanded ? 'text-orange-500' : 'text-white/40 hover:text-white'}`}>
                     <ListMusic className="h-4 w-4" />
                   </button>
                   <button onClick={stop} className="p-2 text-white/40 hover:text-white transition-colors">
