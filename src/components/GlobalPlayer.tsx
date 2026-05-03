@@ -185,7 +185,7 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
               onClick={handleProgressClick}
             >
               <motion.div 
-                className="h-full bg-gold"
+                className="h-full bg-orange-500"
                 style={{ width: `${progress}%` }}
               />
             </div>
