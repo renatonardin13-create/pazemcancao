@@ -67,8 +67,7 @@ function TrackDetailPage() {
     );
   }
 
-  const isThis = currentTrack?.id === track.id;
-  const isPlaying = isThis && playing;
+  const isPlaying = false;
   const emotionalMessage = emotionalMessages[track.category] || emotionalMessages["Paz"];
 
   const currentIndex = sampleTracks.findIndex((t) => t.id === id);
@@ -169,7 +168,7 @@ function TrackDetailPage() {
             {/* Play controls */}
             <motion.div variants={fadeIn} custom={0.45} className="mt-10 w-full max-w-xs space-y-3">
               <button
-                onClick={() => toggle(track)}
+                onClick={() => {}}
                 className={`group w-full flex items-center justify-center gap-3 rounded-full py-4 text-[11px] font-bold tracking-[0.2em] uppercase transition-all duration-500 active:scale-[0.97] ${
                   isPlaying
                     ? "bg-gold/20 text-gold border border-gold/25 shadow-[0_0_40px_-15px] shadow-gold/15"
