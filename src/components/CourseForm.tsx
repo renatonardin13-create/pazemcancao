@@ -77,9 +77,12 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const { data: categoriesData } = useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: () => listAdminCategories(),
   });
 
   const categories = categoriesData?.categories || [];
+
 
   useEffect(() => {
     if (initialValues) {
@@ -117,11 +120,9 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
     const newErrors = validate();
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
-      const firstErrorKey = Object.keys(newErrors)[0];
-      const firstErrorField = document.getElementById(fieldId);
-      firstErrorField?.focus();
       return;
     }
+
 
     onSubmit({
       title: title.trim(),
