@@ -244,7 +244,7 @@ export function AdminSidebar() {
                   tooltip="Voltar ao app"
                   className="h-12 text-sidebar-foreground/50 hover:text-gold transition-all duration-200 text-[1.0625rem] leading-loose"
                 >
-                  <Link to="/vitrine">
+                  <Link to="/home">
                     <ArrowLeft className="h-4 w-4 shrink-0" />
                     <span className="font-medium">Voltar ao app</span>
                   </Link>
