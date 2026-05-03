@@ -42,10 +42,14 @@ export function NewAreaModal({ open, onOpenChange }: NewAreaModalProps) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [nome, setNome] = useState("");
+  const [rotuloCurto, setRotuloCurto] = useState("");
+  const [descricao, setDescricao] = useState("");
   const [subdominio, setSubdominio] = useState("");
+  const [rootDomain, setRootDomain] = useState("seudominio.com");
   const [produtoId, setProdutoId] = useState("");
   const [ativa, setAtiva] = useState(true);
   const [principal, setPrincipal] = useState(false);
+  const [primaryColor, setPrimaryColor] = useState("#D4AF37");
   const [showSuccess, setShowSuccess] = useState(false);
 
   const [language, setLanguage] = useState("pt-BR");
