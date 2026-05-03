@@ -120,6 +120,8 @@ export const createAreaMembro = createServerFn({ method: 'POST' })
         banner_url: data.banner_url,
         background_color: data.background_color,
         surface_color: data.surface_color,
+        tipo: data.tipo || 'misto',
+        rotulo_curto: data.rotulo_curto,
       })
       .select('id')
       .single();
