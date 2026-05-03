@@ -26,6 +26,7 @@ import {
   Music,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ProductDialog } from "@/components/admin/products/ProductDialog";
 import {
   Tooltip,
   TooltipContent,
@@ -73,6 +74,8 @@ function AdminCoursesPage() {
   const [page, setPage] = useState(1);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [statusId, setStatusId] = useState<{ id: string; status: string } | null>(null);
+  const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-courses", activeArea?.id],
@@ -182,21 +185,15 @@ function AdminCoursesPage() {
                 <TooltipTrigger asChild>
                   <span>
                     <Button 
-                      asChild={categories.length > 0}
                       disabled={categories.length === 0}
+                      onClick={() => {
+                        setSelectedProduct(null);
+                        setIsProductDialogOpen(true);
+                      }}
                       className="h-10 px-5 rounded-xl bg-gradient-to-r from-gold to-gold/85 text-background font-bold hover:shadow-lg hover:shadow-gold/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {categories.length > 0 ? (
-                        <Link to="/admin/courses/new">
-                          <Plus className="h-4 w-4 mr-1.5" />
-                          Novo Produto
-                        </Link>
-                      ) : (
-                        <>
-                          <Plus className="h-4 w-4 mr-1.5" />
-                          Novo Produto
-                        </>
-                      )}
+                      <Plus className="h-4 w-4 mr-1.5" />
+                      Novo Produto
                     </Button>
                   </span>
                 </TooltipTrigger>
@@ -458,12 +455,7 @@ function AdminCoursesPage() {
       <ConfirmationDialog
         isOpen={!!deleteId}
         onOpenChange={(open) => !open && setDeleteId(null)}
-        onConfirm={() => {
-          if (deleteId) {
-            deleteM.mutate(deleteId);
-            setDeleteId(null);
-          }
-        }}
+        onConfirm={() => deleteId && deleteM.mutate(deleteId)}
         title="Excluir Produto"
         description="Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita."
       />
@@ -471,16 +463,17 @@ function AdminCoursesPage() {
       <ConfirmationDialog
         isOpen={!!statusId}
         onOpenChange={(open) => !open && setStatusId(null)}
-        onConfirm={() => {
-          if (statusId) {
-            toggleStatusM.mutate({ id: statusId.id, currentStatus: statusId.status });
-            setStatusId(null);
-          }
-        }}
-        variant="default"
-        title="Alterar Status"
-        description={`Deseja realmente ${statusId?.status === "published" ? "despublicar" : "publicar"} este produto?`}
-        confirmText="Confirmar"
+        onConfirm={() => statusId && toggleStatusM.mutate({ id: statusId.id, currentStatus: statusId.status })}
+        title={statusId?.status === "published" ? "Despublicar Produto" : "Publicar Produto"}
+        description={statusId?.status === "published" 
+          ? "O produto deixará de ser visível para os alunos." 
+          : "O produto passará a ser visível para os alunos com acesso."}
+      />
+
+      <ProductDialog
+        open={isProductDialogOpen}
+        onOpenChange={setIsProductDialogOpen}
+        course={selectedProduct}
       />
     </div>
   );

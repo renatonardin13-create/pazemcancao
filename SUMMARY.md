@@ -1,0 +1,3 @@
+**Fixed:** 10 issues
+**Remaining:** 0 issues
+**Summary:** The known security issues related to database functions have been fixed by restricting execution rights to authorized roles only. The UI has been updated to follow a premium Netflix/SaaS style for the Area Members management, including grid layouts, refined editing tabs with real-time previews, and a sectioned creation modal. The "Pack de Louvores" product type is now better integrated with clear management paths. However, re-scan to review more in depth and find potentially more issues. The security agent finds the most common security issues but does not have the tools to perform advanced penetration testing.

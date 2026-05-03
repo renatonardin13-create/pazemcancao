@@ -17,6 +17,7 @@ import { Video, FileText, Save, Loader2, ImageIcon, File, Link as LinkIcon, Spar
 import { ImageUploadField } from "@/components/ImageUploadField";
 
 interface CourseFormProps {
+  id?: string;
   initialValues?: any;
   onSubmit: (values: any) => void;
   isSubmitting: boolean;
@@ -51,6 +52,7 @@ function CardSection({ title, children }: { title: string; children: React.React
 }
 
 export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function CourseForm({
+  id,
   initialValues,
   onSubmit,
   isSubmitting,
@@ -148,7 +150,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   };
 
   return (
-    <form ref={ref} onSubmit={handleSubmit}>
+    <form id={id} ref={ref} onSubmit={handleSubmit}>
       <div className="flex flex-col lg:grid lg:grid-cols-[1fr_340px] gap-5">
 
         {/* ===== LEFT: Informações + Configurações ===== */}
