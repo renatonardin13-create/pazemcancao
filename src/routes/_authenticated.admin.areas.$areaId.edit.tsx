@@ -489,124 +489,113 @@ function EditAreaPage() {
             </TabsContent>
 
             <TabsContent value="branding" className="mt-0 outline-none">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Form Column */}
-                <div className="lg:col-span-2 space-y-6">
+              <div className="grid grid-cols-1 lg:grid-cols-10 gap-8">
+                {/* Form Column (70%) */}
+                <div className="lg:col-span-7 space-y-6">
                   <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
                     <div className="flex items-center gap-3">
                       <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
                         <ImageIcon className="h-5 w-5 text-[#D4AF37]" />
                       </div>
-                      <h3 className="text-xl font-black text-white">Identidade Visual</h3>
+                      <h3 className="text-xl font-black text-white">Configurações de Branding</h3>
                     </div>
 
-                    <div className="space-y-8">
+                    <div className="space-y-10">
                       {/* Logo Section */}
-                      <div className="space-y-4">
-                        <div className="flex flex-col gap-2">
-                          <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Logo principal</Label>
-                          <ImageUploadField
-                            label=""
-                            hint="PNG transparente quadrado. Mín. 256x256 (ideal 512x512)"
-                            value={logoUrl}
-                            onChange={setLogoUrl}
-                            uploadLabel="Enviar imagem da logo"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="logoUrl" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Ou cole a URL da imagem</Label>
-                          <Input
-                            id="logoUrl"
-                            value={logoUrl}
-                            onChange={(e) => setLogoUrl(e.target.value)}
-                            placeholder="https://exemplo.com/logo.png"
-                            className="h-12 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-medium text-sm transition-all"
-                          />
+                      <div className="space-y-6">
+                        <div className="flex flex-col gap-3">
+                          <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">1. Logo principal</Label>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                            <ImageUploadField
+                              label=""
+                              hint="PNG transparente quadrado. Mín. 256x256 (ideal 512x512)"
+                              value={logoUrl}
+                              onChange={setLogoUrl}
+                              uploadLabel="Enviar imagem"
+                            />
+                            <div className="space-y-2">
+                              <Label htmlFor="logoUrl" className="text-[10px] font-bold text-slate-500">Ou colar URL da logo</Label>
+                              <Input
+                                id="logoUrl"
+                                value={logoUrl}
+                                onChange={(e) => setLogoUrl(e.target.value)}
+                                placeholder="https://exemplo.com/logo.png"
+                                className="h-12 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-medium text-sm transition-all"
+                              />
+                            </div>
+                          </div>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div className="space-y-2">
-                          <Label htmlFor="appName" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Nome do app</Label>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-white/5">
+                        <div className="space-y-3">
+                          <Label htmlFor="appName" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">2. Nome do app</Label>
                           <Input
                             id="appName"
                             value={appName}
                             onChange={(e) => setAppName(e.target.value)}
                             placeholder="Ex: Reino das Cores"
-                            className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
+                            className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
                           />
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="logoAlt" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Texto alternativo da logo</Label>
+                        <div className="space-y-3">
+                          <Label htmlFor="logoAlt" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">3. Texto alternativo da logo</Label>
                           <Input
                             id="logoAlt"
                             value={logoAlt}
                             onChange={(e) => setLogoAlt(e.target.value)}
                             placeholder="Ex: Logotipo Reino das Cores"
-                            className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
+                            className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
                           />
                         </div>
                       </div>
 
-                      <div className="space-y-2">
-                        <Label htmlFor="supportEmail" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">E-mail de suporte</Label>
-                        <div className="relative">
+                      <div className="space-y-3 pt-8 border-t border-white/5">
+                        <Label htmlFor="supportEmail" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">4. E-mail de suporte</Label>
+                        <div className="relative group">
                           <Input
                             id="supportEmail"
                             type="email"
                             value={supportEmail}
                             onChange={(e) => setSupportEmail(e.target.value)}
                             placeholder="suporte@exemplo.com"
-                            className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base pl-12 transition-all"
+                            className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base pl-12 transition-all group-hover:bg-white/[0.02]"
                           />
-                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
+                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 group-hover:text-[#D4AF37] transition-colors" />
                         </div>
                       </div>
 
-                      {/* Favicon Section */}
-                      <div className="space-y-4 pt-4 border-t border-white/5">
-                        <div className="flex flex-col gap-2">
-                          <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Favicon</Label>
-                          <ImageUploadField
-                            label=""
-                            hint="Ícone exibido na aba do navegador"
-                            value={faviconUrl}
-                            onChange={setFaviconUrl}
-                            uploadLabel="Enviar Favicon"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="faviconUrl" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Ou cole a URL do favicon</Label>
-                          <Input
-                            id="faviconUrl"
-                            value={faviconUrl}
-                            onChange={(e) => setFaviconUrl(e.target.value)}
-                            placeholder="https://exemplo.com/favicon.ico"
-                            className="h-12 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-medium text-sm transition-all"
-                          />
-                      </div>
-
-                      {/* Catalog Banner Section */}
-                      <div className="space-y-4 pt-4 border-t border-white/5">
-                        <div className="flex flex-col gap-2">
-                          <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Banner do Catálogo</Label>
-                          <ImageUploadField
-                            label=""
-                            hint="Este banner aparecerá no topo da vitrine de cursos desta área."
-                            value={bannerUrl}
-                            onChange={setBannerUrl}
-                            uploadLabel="Enviar Banner do Catálogo"
-                          />
+                      <div className="space-y-6 pt-8 border-t border-white/5">
+                        <div className="flex flex-col gap-3">
+                          <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">5. Favicon</Label>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+                            <ImageUploadField
+                              label=""
+                              hint="Ícone exibido na aba do navegador"
+                              value={faviconUrl}
+                              onChange={setFaviconUrl}
+                              uploadLabel="Enviar Favicon"
+                            />
+                            <div className="space-y-2">
+                              <Label htmlFor="faviconUrl" className="text-[10px] font-bold text-slate-500">Ou colar URL do favicon</Label>
+                              <Input
+                                id="faviconUrl"
+                                value={faviconUrl}
+                                onChange={(e) => setFaviconUrl(e.target.value)}
+                                placeholder="https://exemplo.com/favicon.ico"
+                                className="h-12 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-medium text-sm transition-all"
+                              />
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
-                </div>
 
-                {/* Preview Column */}
-                <div className="space-y-6">
+                {/* Preview Column (30%) */}
+                <div className="lg:col-span-3 space-y-6">
                   <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl sticky top-10 overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
                     <div className="space-y-1">
@@ -614,44 +603,43 @@ function EditAreaPage() {
                       <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Como vai aparecer</p>
                     </div>
 
-                    <div className="space-y-8">
-                      {/* Login/Main Preview */}
-                      <div className="p-10 rounded-[24px] bg-[#0B1220] border border-white/5 flex flex-col items-center justify-center gap-6 shadow-inner relative overflow-hidden group">
-                        <div className="absolute inset-0 bg-gradient-to-b from-[#D4AF37]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        <motion.div
-                          initial={false}
-                          animate={{ scale: 1 }}
-                          whileHover={{ scale: 1.05 }}
-                          className="relative z-10"
+                    <div className="space-y-10">
+                      <div className="space-y-4">
+                        <motion.div 
+                          layout
+                          className="p-12 rounded-[24px] bg-[#0B1220] border border-white/5 flex flex-col items-center justify-center gap-6 shadow-inner relative overflow-hidden group"
                         >
-                          {logoUrl ? (
-                            <img src={logoUrl} alt="Preview Logo" className="h-24 w-24 object-contain rounded-2xl shadow-2xl" />
-                          ) : (
-                            <div className="h-24 w-24 rounded-2xl bg-white/5 flex items-center justify-center text-slate-600 border border-white/5">
-                              <ImageIcon className="h-10 w-10" />
-                            </div>
-                          )}
+                          <div className="absolute inset-0 bg-gradient-to-b from-[#D4AF37]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                          <div className="relative z-10">
+                            {logoUrl ? (
+                              <img src={logoUrl} alt="Preview Logo" className="h-28 w-28 object-contain rounded-2xl shadow-2xl" />
+                            ) : (
+                              <div className="h-28 w-28 rounded-2xl bg-white/5 flex items-center justify-center text-slate-700 border border-dashed border-white/10">
+                                <ImageIcon className="h-12 w-12" />
+                              </div>
+                            )}
+                          </div>
+                          <h4 className="text-2xl font-black text-white relative z-10 text-center">{appName || "Nome do App"}</h4>
                         </motion.div>
-                        <h4 className="text-xl font-black text-white relative z-10">{appName || "Nome do App"}</h4>
                       </div>
 
-                      {/* Header Preview */}
-                      <div className="space-y-3">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500 text-center">Header e Navegação</p>
-                        <div className="p-4 rounded-xl bg-white/5 border border-white/5 flex items-center gap-3">
+                      <div className="space-y-4">
+                        <div className="p-4 rounded-xl bg-[#0B1220]/50 border border-white/5 flex items-center gap-3 shadow-lg">
                           {logoUrl ? (
-                            <img src={logoUrl} alt="Header Logo" className="h-6 w-6 object-contain rounded-md" />
+                            <img src={logoUrl} alt="Header Logo" className="h-8 w-8 object-contain rounded-full border border-[#D4AF37]/20 bg-black/20 p-1" />
                           ) : (
-                            <div className="h-6 w-6 rounded-md bg-white/10" />
+                            <div className="h-8 w-8 rounded-full bg-white/10" />
                           )}
-                          <span className="text-sm font-bold text-white/90">{appName || "App Name"}</span>
+                          <span className="text-sm font-black text-white/90 tracking-tight">{appName || "App Name"}</span>
                           <div className="flex-1" />
-                          <div className="h-2 w-10 rounded-full bg-white/5" />
-                          <div className="h-6 w-6 rounded-full bg-white/10" />
+                          <div className="flex items-center gap-2">
+                            <div className="h-2 w-8 rounded-full bg-white/5" />
+                            <div className="h-8 w-8 rounded-full bg-white/10" />
+                          </div>
                         </div>
                       </div>
 
-                      <div className="pt-4 border-t border-white/5">
+                      <div className="pt-6 border-t border-white/5">
                         <Button
                           onClick={handleSubmit}
                           disabled={mutation.isPending || !nome || !produtoId}
