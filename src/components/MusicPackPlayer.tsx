@@ -164,7 +164,7 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
 
                   {/* Title on thumbnail as requested */}
                   <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/40 to-transparent">
-                    <h3 className={`text-sm font-black tracking-tight line-clamp-2 leading-tight ${isCurrent ? "text-gold" : "text-white"}`}>
+                    <h3 className={`text-sm font-black tracking-tight line-clamp-2 leading-tight ${isCurrent ? "text-orange-500" : "text-white"}`}>
                       {track.title}
                     </h3>
                     <p className="text-[10px] font-bold text-white/40 uppercase tracking-wider mt-1">{track.description}</p>
@@ -174,9 +174,9 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
                 {/* Visualizer if current */}
                 {isCurrent && playing && (
                   <div className="absolute top-3 right-3 flex items-end gap-1 h-4">
-                    <motion.div animate={{ height: [4, 16, 8, 12, 4] }} transition={{ repeat: Infinity, duration: 0.6 }} className="w-1 bg-gold rounded-full" />
-                    <motion.div animate={{ height: [8, 4, 14, 6, 12] }} transition={{ repeat: Infinity, duration: 0.7 }} className="w-1 bg-gold rounded-full" />
-                    <motion.div animate={{ height: [12, 8, 4, 16, 8] }} transition={{ repeat: Infinity, duration: 0.5 }} className="w-1 bg-gold rounded-full" />
+                    <motion.div animate={{ height: [4, 16, 8, 12, 4] }} transition={{ repeat: Infinity, duration: 0.6 }} className="w-1 bg-orange-500 rounded-full" />
+                    <motion.div animate={{ height: [8, 4, 14, 6, 12] }} transition={{ repeat: Infinity, duration: 0.7 }} className="w-1 bg-orange-500 rounded-full" />
+                    <motion.div animate={{ height: [12, 8, 4, 16, 8] }} transition={{ repeat: Infinity, duration: 0.5 }} className="w-1 bg-orange-500 rounded-full" />
                   </div>
                 )}
               </motion.div>
