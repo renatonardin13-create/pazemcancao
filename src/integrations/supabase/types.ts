@@ -14,41 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      acessos_usuario: {
-        Row: {
-          criado_em: string | null
-          id: string
-          origem: string
-          produto_id: string
-          status: string
-          usuario_email: string
-        }
-        Insert: {
-          criado_em?: string | null
-          id?: string
-          origem: string
-          produto_id: string
-          status?: string
-          usuario_email: string
-        }
-        Update: {
-          criado_em?: string | null
-          id?: string
-          origem?: string
-          produto_id?: string
-          status?: string
-          usuario_email?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "acessos_usuario_produto_id_fkey"
-            columns: ["produto_id"]
-            isOneToOne: false
-            referencedRelation: "produtos"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       active_sessions: {
         Row: {
           area_id: string | null
@@ -157,86 +122,30 @@ export type Database = {
       }
       areas: {
         Row: {
-          background_color: string | null
-          banner_url: string | null
           created_at: string | null
           description: string | null
           domain: string | null
-          favicon_url: string | null
           id: string
-          is_primary: boolean | null
-          language: string | null
-          login_background_url: string | null
-          login_subtitle: string | null
-          login_title: string | null
-          logo_url: string | null
           name: string
-          primary_color: string | null
-          product_id: string | null
-          secondary_color: string | null
-          settings: Json | null
-          short_label: string | null
           slug: string
-          status: string | null
-          surface_color: string | null
         }
         Insert: {
-          background_color?: string | null
-          banner_url?: string | null
           created_at?: string | null
           description?: string | null
           domain?: string | null
-          favicon_url?: string | null
           id?: string
-          is_primary?: boolean | null
-          language?: string | null
-          login_background_url?: string | null
-          login_subtitle?: string | null
-          login_title?: string | null
-          logo_url?: string | null
           name: string
-          primary_color?: string | null
-          product_id?: string | null
-          secondary_color?: string | null
-          settings?: Json | null
-          short_label?: string | null
           slug: string
-          status?: string | null
-          surface_color?: string | null
         }
         Update: {
-          background_color?: string | null
-          banner_url?: string | null
           created_at?: string | null
           description?: string | null
           domain?: string | null
-          favicon_url?: string | null
           id?: string
-          is_primary?: boolean | null
-          language?: string | null
-          login_background_url?: string | null
-          login_subtitle?: string | null
-          login_title?: string | null
-          logo_url?: string | null
           name?: string
-          primary_color?: string | null
-          product_id?: string | null
-          secondary_color?: string | null
-          settings?: Json | null
-          short_label?: string | null
           slug?: string
-          status?: string | null
-          surface_color?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "areas_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "courses"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       areas_membros: {
         Row: {
@@ -1396,56 +1305,6 @@ export type Database = {
           },
         ]
       }
-      musicas: {
-        Row: {
-          artista: string | null
-          audio_url: string
-          capa_url: string | null
-          categoria: string | null
-          criado_em: string
-          destaque: boolean | null
-          id: string
-          ordem: number | null
-          produto_id: string
-          titulo: string
-          updated_at: string
-        }
-        Insert: {
-          artista?: string | null
-          audio_url: string
-          capa_url?: string | null
-          categoria?: string | null
-          criado_em?: string
-          destaque?: boolean | null
-          id?: string
-          ordem?: number | null
-          produto_id: string
-          titulo: string
-          updated_at?: string
-        }
-        Update: {
-          artista?: string | null
-          audio_url?: string
-          capa_url?: string | null
-          categoria?: string | null
-          criado_em?: string
-          destaque?: boolean | null
-          id?: string
-          ordem?: number | null
-          produto_id?: string
-          titulo?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "musicas_produto_id_fkey"
-            columns: ["produto_id"]
-            isOneToOne: false
-            referencedRelation: "courses"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       notifications: {
         Row: {
           created_at: string
@@ -1475,72 +1334,6 @@ export type Database = {
           type?: string
         }
         Relationships: []
-      }
-      ofertas: {
-        Row: {
-          codigo_externo: string
-          criado_em: string | null
-          gateway: string
-          id: string
-          modalidade: string
-          nome: string
-          status: string
-          token: string | null
-        }
-        Insert: {
-          codigo_externo: string
-          criado_em?: string | null
-          gateway: string
-          id?: string
-          modalidade: string
-          nome: string
-          status?: string
-          token?: string | null
-        }
-        Update: {
-          codigo_externo?: string
-          criado_em?: string | null
-          gateway?: string
-          id?: string
-          modalidade?: string
-          nome?: string
-          status?: string
-          token?: string | null
-        }
-        Relationships: []
-      }
-      ofertas_produtos: {
-        Row: {
-          id: string
-          oferta_id: string
-          produto_id: string
-        }
-        Insert: {
-          id?: string
-          oferta_id: string
-          produto_id: string
-        }
-        Update: {
-          id?: string
-          oferta_id?: string
-          produto_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "ofertas_produtos_oferta_id_fkey"
-            columns: ["oferta_id"]
-            isOneToOne: false
-            referencedRelation: "ofertas"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "ofertas_produtos_produto_id_fkey"
-            columns: ["produto_id"]
-            isOneToOne: false
-            referencedRelation: "produtos"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       platform_modules: {
         Row: {
@@ -1804,30 +1597,6 @@ export type Database = {
           target_type?: string
           title?: string | null
           updated_at?: string
-        }
-        Relationships: []
-      }
-      produtos: {
-        Row: {
-          criado_em: string | null
-          id: string
-          nome: string
-          status: string
-          tipo: string
-        }
-        Insert: {
-          criado_em?: string | null
-          id?: string
-          nome: string
-          status?: string
-          tipo: string
-        }
-        Update: {
-          criado_em?: string | null
-          id?: string
-          nome?: string
-          status?: string
-          tipo?: string
         }
         Relationships: []
       }
