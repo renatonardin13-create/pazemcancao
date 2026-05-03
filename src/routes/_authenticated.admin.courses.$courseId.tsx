@@ -145,10 +145,8 @@ function EditCoursePage() {
               </span>
             </div>
           )}
-          {isLouvoresPack ? (
-          ) : (
-            <CourseModulesTab courseId={courseId} />
-          )}
+          <CourseModulesTab courseId={courseId} />
+
         </TabsContent>
 
         <TabsContent value="settings" className="mt-4">

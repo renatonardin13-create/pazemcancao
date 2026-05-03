@@ -157,9 +157,16 @@ function AdminHeroBannersPage() {
   const [previewOpen, setPreviewOpen] = useState<any>(null);
 
   const { data, isLoading } = useQuery({
+    queryKey: ["admin-hero-banners"],
+    queryFn: () => listHeroBanners(),
+
   });
   const { data: coursesData } = useQuery({
+    queryKey: ["admin-courses"],
+    queryFn: () => listAdminCourses(),
+
   });
+
   const [metricsDays, setMetricsDays] = useState<7 | 30 | 90>(30);
   const { data: metricsData, isLoading: metricsLoading } = useQuery({
     queryKey: ["admin-hero-banner-metrics", metricsDays],
@@ -267,6 +274,11 @@ function AdminHeroBannersPage() {
       toast.error("Adicione a imagem principal do banner.");
       return;
     }
+    
+    const payload: any = {
+      ...form,
+    };
+    
     // Sincroniza target -> url quando type=url
     if (form.primary_cta_type === "url") payload.primary_cta_url = form.primary_cta_target;
     if (form.secondary_cta_type === "url") payload.secondary_cta_url = form.secondary_cta_target;
@@ -274,6 +286,7 @@ function AdminHeroBannersPage() {
     if (form.id) updateMut.mutate(payload);
     else createMut.mutate(payload);
   };
+
 
   const moveBanner = (idx: number, dir: -1 | 1) => {
     const next = [...banners];

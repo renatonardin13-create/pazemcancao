@@ -76,10 +76,16 @@ function AdminCoursesPage() {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   const { data, isLoading } = useQuery({
+    queryKey: ["admin-courses"],
+    queryFn: () => listAdminCourses(),
   });
 
+
   const { data: catData, isLoading: catLoading } = useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: () => listAdminCategories(),
   });
+
 
   const categories = catData?.categories || [];
 
@@ -465,7 +471,7 @@ function AdminCoursesPage() {
       <ProductDialog
         open={isProductDialogOpen}
         onOpenChange={setIsProductDialogOpen}
-        course={selectedProduct}
+        courseId={selectedProduct?.id}
       />
     </div>
   );
