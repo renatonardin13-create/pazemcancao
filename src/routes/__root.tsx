@@ -1,8 +1,13 @@
 import { Outlet, Link, createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/hooks/use-auth";
+import { AreaBrandingProvider } from "@/components/AreaBrandingProvider";
+import { PlayerProvider } from "@/hooks/use-player";
+import { GlobalPlayer } from "@/components/GlobalPlayer";
+import { ImpersonationBanner } from "@/components/ImpersonationBanner";
 import { Toaster } from "@/components/ui/sonner";
 import { SafeBoundary } from "@/components/SafeBoundary";
+import "@/lib/i18n"; // Import i18n initialization
 
 import "../styles.css";
 
@@ -37,6 +42,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" },
       { title: "Paz em Canção — 30 Louvores Inéditos" },
       { name: "description", content: "Sua biblioteca espiritual privada com 30 louvores inéditos que tocam a alma." },
+      { name: "author", content: "Paz em Canção" },
+      { property: "og:title", content: "Paz em Canção — 30 Louvores Inéditos" },
+      { property: "og:description", content: "Sua biblioteca espiritual privada com 30 louvores inéditos que tocam a alma." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Paz em Canção — 30 Louvores Inéditos" },
+      { name: "twitter:description", content: "Sua biblioteca espiritual privada com 30 louvores inéditos que tocam a alma." },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/22114c34-0a3b-4085-8a82-b7fc792964ac" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/22114c34-0a3b-4085-8a82-b7fc792964ac" },
     ],
     links: [
       { rel: "icon", type: "image/png", href: "/favicon.png" },
@@ -70,10 +84,16 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
-        <SafeBoundary fallbackTitle="Erro ao carregar a página">
-          <Outlet />
-        </SafeBoundary>
-        <Toaster richColors position="top-right" />
+        <AreaBrandingProvider>
+          <PlayerProvider>
+            <ImpersonationBanner />
+            <SafeBoundary fallbackTitle="Erro ao carregar a página">
+              <Outlet />
+            </SafeBoundary>
+            <GlobalPlayer />
+            <Toaster richColors position="top-right" />
+          </PlayerProvider>
+        </AreaBrandingProvider>
       </AuthProvider>
     </QueryClientProvider>
   );

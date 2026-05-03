@@ -9,13 +9,72 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WebhookRouteImport } from './routes/webhook'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedVitrineRouteImport } from './routes/_authenticated.vitrine'
+import { Route as AuthenticatedTrilhasRouteImport } from './routes/_authenticated.trilhas'
+import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated.perfil'
+import { Route as AuthenticatedMusicasRouteImport } from './routes/_authenticated.musicas'
+import { Route as AuthenticatedLancamentosRouteImport } from './routes/_authenticated.lancamentos'
+import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated.home'
+import { Route as AuthenticatedEbooksRouteImport } from './routes/_authenticated.ebooks'
 import { Route as AuthenticatedDownloadsRouteImport } from './routes/_authenticated.downloads'
+import { Route as AuthenticatedCursosRouteImport } from './routes/_authenticated.cursos'
+import { Route as AuthenticatedConteudoRouteImport } from './routes/_authenticated.conteudo'
+import { Route as AuthenticatedComunidadeRouteImport } from './routes/_authenticated.comunidade'
+import { Route as AuthenticatedBonusRouteImport } from './routes/_authenticated.bonus'
+import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.admin'
+import { Route as AuthenticatedCursosIndexRouteImport } from './routes/_authenticated.cursos.index'
+import { Route as AuthenticatedConteudoIndexRouteImport } from './routes/_authenticated.conteudo.index'
+import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated.admin.index'
+import { Route as ApiWebhookKiwifyRouteImport } from './routes/api/webhook/kiwify'
+import { Route as AuthenticatedProdutoCourseIdRouteImport } from './routes/_authenticated.produto.$courseId'
+import { Route as AuthenticatedMusicasTrackIdRouteImport } from './routes/_authenticated.musicas.$trackId'
+import { Route as AuthenticatedLouvorTrackIdRouteImport } from './routes/_authenticated.louvor.$trackId'
+import { Route as AuthenticatedCursosCourseIdRouteImport } from './routes/_authenticated.cursos.$courseId'
+import { Route as AuthenticatedConteudoTrackIdRouteImport } from './routes/_authenticated.conteudo.$trackId'
+import { Route as AuthenticatedAdminVendasRouteImport } from './routes/_authenticated.admin.vendas'
+import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated.admin.usuarios'
+import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated.admin.users'
+import { Route as AuthenticatedAdminUpsellsRouteImport } from './routes/_authenticated.admin.upsells'
+import { Route as AuthenticatedAdminTransactionsRouteImport } from './routes/_authenticated.admin.transactions'
+import { Route as AuthenticatedAdminTracksRouteImport } from './routes/_authenticated.admin.tracks'
+import { Route as AuthenticatedAdminShelvesRouteImport } from './routes/_authenticated.admin.shelves'
+import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated.admin.settings'
+import { Route as AuthenticatedAdminPlaylistsRouteImport } from './routes/_authenticated.admin.playlists'
+import { Route as AuthenticatedAdminOffersRouteImport } from './routes/_authenticated.admin.offers'
+import { Route as AuthenticatedAdminMusicasRouteImport } from './routes/_authenticated.admin.musicas'
+import { Route as AuthenticatedAdminJourneysRouteImport } from './routes/_authenticated.admin.journeys'
+import { Route as AuthenticatedAdminIntegrationsRouteImport } from './routes/_authenticated.admin.integrations'
+import { Route as AuthenticatedAdminIntegracoesRouteImport } from './routes/_authenticated.admin.integracoes'
+import { Route as AuthenticatedAdminImpersonarRouteImport } from './routes/_authenticated.admin.impersonar'
+import { Route as AuthenticatedAdminHeroBannersRouteImport } from './routes/_authenticated.admin.hero-banners'
+import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated.admin.dashboard'
+import { Route as AuthenticatedAdminCursosRouteImport } from './routes/_authenticated.admin.cursos'
+import { Route as AuthenticatedAdminCoursesRouteImport } from './routes/_authenticated.admin.courses'
+import { Route as AuthenticatedAdminCouponsRouteImport } from './routes/_authenticated.admin.coupons'
+import { Route as AuthenticatedAdminConteudosRouteImport } from './routes/_authenticated.admin.conteudos'
+import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated.admin.configuracoes'
+import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated.admin.categories'
+import { Route as AuthenticatedAdminAreasMembrosRouteImport } from './routes/_authenticated.admin.areas-membros'
+import { Route as AuthenticatedCursosCourseIdIndexRouteImport } from './routes/_authenticated.cursos.$courseId.index'
+import { Route as AuthenticatedAdminCoursesIndexRouteImport } from './routes/_authenticated.admin.courses.index'
+import { Route as AuthenticatedAdminOffersNewRouteImport } from './routes/_authenticated.admin.offers.new'
+import { Route as AuthenticatedAdminCoursesNewRouteImport } from './routes/_authenticated.admin.courses.new'
+import { Route as AuthenticatedAdminCoursesCourseIdRouteImport } from './routes/_authenticated.admin.courses.$courseId'
+import { Route as AuthenticatedAdminAreasNewRouteImport } from './routes/_authenticated.admin.areas.new'
+import { Route as AuthenticatedCursosCourseIdAulaLessonIdRouteImport } from './routes/_authenticated.cursos.$courseId.aula.$lessonId'
+import { Route as AuthenticatedAdminAreasAreaIdEditRouteImport } from './routes/_authenticated.admin.areas.$areaId.edit'
 
+const WebhookRoute = WebhookRouteImport.update({
+  id: '/webhook',
+  path: '/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
   path: '/termos',
@@ -40,25 +99,432 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedVitrineRoute = AuthenticatedVitrineRouteImport.update({
+  id: '/vitrine',
+  path: '/vitrine',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedTrilhasRoute = AuthenticatedTrilhasRouteImport.update({
+  id: '/trilhas',
+  path: '/trilhas',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedMusicasRoute = AuthenticatedMusicasRouteImport.update({
+  id: '/musicas',
+  path: '/musicas',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedLancamentosRoute =
+  AuthenticatedLancamentosRouteImport.update({
+    id: '/lancamentos',
+    path: '/lancamentos',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedHomeRoute = AuthenticatedHomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedEbooksRoute = AuthenticatedEbooksRouteImport.update({
+  id: '/ebooks',
+  path: '/ebooks',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedDownloadsRoute = AuthenticatedDownloadsRouteImport.update({
   id: '/downloads',
   path: '/downloads',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedCursosRoute = AuthenticatedCursosRouteImport.update({
+  id: '/cursos',
+  path: '/cursos',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedConteudoRoute = AuthenticatedConteudoRouteImport.update({
+  id: '/conteudo',
+  path: '/conteudo',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedComunidadeRoute = AuthenticatedComunidadeRouteImport.update({
+  id: '/comunidade',
+  path: '/comunidade',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedBonusRoute = AuthenticatedBonusRouteImport.update({
+  id: '/bonus',
+  path: '/bonus',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedCursosIndexRoute =
+  AuthenticatedCursosIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedCursosRoute,
+  } as any)
+const AuthenticatedConteudoIndexRoute =
+  AuthenticatedConteudoIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedConteudoRoute,
+  } as any)
+const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const ApiWebhookKiwifyRoute = ApiWebhookKiwifyRouteImport.update({
+  id: '/api/webhook/kiwify',
+  path: '/api/webhook/kiwify',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedProdutoCourseIdRoute =
+  AuthenticatedProdutoCourseIdRouteImport.update({
+    id: '/produto/$courseId',
+    path: '/produto/$courseId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedMusicasTrackIdRoute =
+  AuthenticatedMusicasTrackIdRouteImport.update({
+    id: '/$trackId',
+    path: '/$trackId',
+    getParentRoute: () => AuthenticatedMusicasRoute,
+  } as any)
+const AuthenticatedLouvorTrackIdRoute =
+  AuthenticatedLouvorTrackIdRouteImport.update({
+    id: '/louvor/$trackId',
+    path: '/louvor/$trackId',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCursosCourseIdRoute =
+  AuthenticatedCursosCourseIdRouteImport.update({
+    id: '/$courseId',
+    path: '/$courseId',
+    getParentRoute: () => AuthenticatedCursosRoute,
+  } as any)
+const AuthenticatedConteudoTrackIdRoute =
+  AuthenticatedConteudoTrackIdRouteImport.update({
+    id: '/$trackId',
+    path: '/$trackId',
+    getParentRoute: () => AuthenticatedConteudoRoute,
+  } as any)
+const AuthenticatedAdminVendasRoute =
+  AuthenticatedAdminVendasRouteImport.update({
+    id: '/vendas',
+    path: '/vendas',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminUsuariosRoute =
+  AuthenticatedAdminUsuariosRouteImport.update({
+    id: '/usuarios',
+    path: '/usuarios',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
+  id: '/users',
+  path: '/users',
+  getParentRoute: () => AuthenticatedAdminRoute,
+} as any)
+const AuthenticatedAdminUpsellsRoute =
+  AuthenticatedAdminUpsellsRouteImport.update({
+    id: '/upsells',
+    path: '/upsells',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminTransactionsRoute =
+  AuthenticatedAdminTransactionsRouteImport.update({
+    id: '/transactions',
+    path: '/transactions',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminTracksRoute =
+  AuthenticatedAdminTracksRouteImport.update({
+    id: '/tracks',
+    path: '/tracks',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminShelvesRoute =
+  AuthenticatedAdminShelvesRouteImport.update({
+    id: '/shelves',
+    path: '/shelves',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminSettingsRoute =
+  AuthenticatedAdminSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPlaylistsRoute =
+  AuthenticatedAdminPlaylistsRouteImport.update({
+    id: '/playlists',
+    path: '/playlists',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminOffersRoute =
+  AuthenticatedAdminOffersRouteImport.update({
+    id: '/offers',
+    path: '/offers',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminMusicasRoute =
+  AuthenticatedAdminMusicasRouteImport.update({
+    id: '/musicas',
+    path: '/musicas',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminJourneysRoute =
+  AuthenticatedAdminJourneysRouteImport.update({
+    id: '/journeys',
+    path: '/journeys',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminIntegrationsRoute =
+  AuthenticatedAdminIntegrationsRouteImport.update({
+    id: '/integrations',
+    path: '/integrations',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminIntegracoesRoute =
+  AuthenticatedAdminIntegracoesRouteImport.update({
+    id: '/integracoes',
+    path: '/integracoes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminImpersonarRoute =
+  AuthenticatedAdminImpersonarRouteImport.update({
+    id: '/impersonar',
+    path: '/impersonar',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminHeroBannersRoute =
+  AuthenticatedAdminHeroBannersRouteImport.update({
+    id: '/hero-banners',
+    path: '/hero-banners',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminDashboardRoute =
+  AuthenticatedAdminDashboardRouteImport.update({
+    id: '/dashboard',
+    path: '/dashboard',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminCursosRoute =
+  AuthenticatedAdminCursosRouteImport.update({
+    id: '/cursos',
+    path: '/cursos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminCoursesRoute =
+  AuthenticatedAdminCoursesRouteImport.update({
+    id: '/courses',
+    path: '/courses',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminCouponsRoute =
+  AuthenticatedAdminCouponsRouteImport.update({
+    id: '/coupons',
+    path: '/coupons',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminConteudosRoute =
+  AuthenticatedAdminConteudosRouteImport.update({
+    id: '/conteudos',
+    path: '/conteudos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminConfiguracoesRoute =
+  AuthenticatedAdminConfiguracoesRouteImport.update({
+    id: '/configuracoes',
+    path: '/configuracoes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminCategoriesRoute =
+  AuthenticatedAdminCategoriesRouteImport.update({
+    id: '/categories',
+    path: '/categories',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminAreasMembrosRoute =
+  AuthenticatedAdminAreasMembrosRouteImport.update({
+    id: '/areas-membros',
+    path: '/areas-membros',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedCursosCourseIdIndexRoute =
+  AuthenticatedCursosCourseIdIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedCursosCourseIdRoute,
+  } as any)
+const AuthenticatedAdminCoursesIndexRoute =
+  AuthenticatedAdminCoursesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedAdminCoursesRoute,
+  } as any)
+const AuthenticatedAdminOffersNewRoute =
+  AuthenticatedAdminOffersNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedAdminOffersRoute,
+  } as any)
+const AuthenticatedAdminCoursesNewRoute =
+  AuthenticatedAdminCoursesNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedAdminCoursesRoute,
+  } as any)
+const AuthenticatedAdminCoursesCourseIdRoute =
+  AuthenticatedAdminCoursesCourseIdRouteImport.update({
+    id: '/$courseId',
+    path: '/$courseId',
+    getParentRoute: () => AuthenticatedAdminCoursesRoute,
+  } as any)
+const AuthenticatedAdminAreasNewRoute =
+  AuthenticatedAdminAreasNewRouteImport.update({
+    id: '/areas/new',
+    path: '/areas/new',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedCursosCourseIdAulaLessonIdRoute =
+  AuthenticatedCursosCourseIdAulaLessonIdRouteImport.update({
+    id: '/aula/$lessonId',
+    path: '/aula/$lessonId',
+    getParentRoute: () => AuthenticatedCursosCourseIdRoute,
+  } as any)
+const AuthenticatedAdminAreasAreaIdEditRoute =
+  AuthenticatedAdminAreasAreaIdEditRouteImport.update({
+    id: '/areas/$areaId/edit',
+    path: '/areas/$areaId/edit',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
+  '/webhook': typeof WebhookRoute
+  '/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/bonus': typeof AuthenticatedBonusRoute
+  '/comunidade': typeof AuthenticatedComunidadeRoute
+  '/conteudo': typeof AuthenticatedConteudoRouteWithChildren
+  '/cursos': typeof AuthenticatedCursosRouteWithChildren
   '/downloads': typeof AuthenticatedDownloadsRoute
+  '/ebooks': typeof AuthenticatedEbooksRoute
+  '/home': typeof AuthenticatedHomeRoute
+  '/lancamentos': typeof AuthenticatedLancamentosRoute
+  '/musicas': typeof AuthenticatedMusicasRouteWithChildren
+  '/perfil': typeof AuthenticatedPerfilRoute
+  '/trilhas': typeof AuthenticatedTrilhasRoute
+  '/vitrine': typeof AuthenticatedVitrineRoute
+  '/admin/areas-membros': typeof AuthenticatedAdminAreasMembrosRoute
+  '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
+  '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
+  '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
+  '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
+  '/admin/cursos': typeof AuthenticatedAdminCursosRoute
+  '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/hero-banners': typeof AuthenticatedAdminHeroBannersRoute
+  '/admin/impersonar': typeof AuthenticatedAdminImpersonarRoute
+  '/admin/integracoes': typeof AuthenticatedAdminIntegracoesRoute
+  '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
+  '/admin/journeys': typeof AuthenticatedAdminJourneysRoute
+  '/admin/musicas': typeof AuthenticatedAdminMusicasRoute
+  '/admin/offers': typeof AuthenticatedAdminOffersRouteWithChildren
+  '/admin/playlists': typeof AuthenticatedAdminPlaylistsRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/shelves': typeof AuthenticatedAdminShelvesRoute
+  '/admin/tracks': typeof AuthenticatedAdminTracksRoute
+  '/admin/transactions': typeof AuthenticatedAdminTransactionsRoute
+  '/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/admin/vendas': typeof AuthenticatedAdminVendasRoute
+  '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
+  '/cursos/$courseId': typeof AuthenticatedCursosCourseIdRouteWithChildren
+  '/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
+  '/musicas/$trackId': typeof AuthenticatedMusicasTrackIdRoute
+  '/produto/$courseId': typeof AuthenticatedProdutoCourseIdRoute
+  '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
+  '/admin/': typeof AuthenticatedAdminIndexRoute
+  '/conteudo/': typeof AuthenticatedConteudoIndexRoute
+  '/cursos/': typeof AuthenticatedCursosIndexRoute
+  '/admin/areas/new': typeof AuthenticatedAdminAreasNewRoute
+  '/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
+  '/admin/courses/new': typeof AuthenticatedAdminCoursesNewRoute
+  '/admin/offers/new': typeof AuthenticatedAdminOffersNewRoute
+  '/admin/courses/': typeof AuthenticatedAdminCoursesIndexRoute
+  '/cursos/$courseId/': typeof AuthenticatedCursosCourseIdIndexRoute
+  '/admin/areas/$areaId/edit': typeof AuthenticatedAdminAreasAreaIdEditRoute
+  '/cursos/$courseId/aula/$lessonId': typeof AuthenticatedCursosCourseIdAulaLessonIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
+  '/webhook': typeof WebhookRoute
+  '/bonus': typeof AuthenticatedBonusRoute
+  '/comunidade': typeof AuthenticatedComunidadeRoute
   '/downloads': typeof AuthenticatedDownloadsRoute
+  '/ebooks': typeof AuthenticatedEbooksRoute
+  '/home': typeof AuthenticatedHomeRoute
+  '/lancamentos': typeof AuthenticatedLancamentosRoute
+  '/musicas': typeof AuthenticatedMusicasRouteWithChildren
+  '/perfil': typeof AuthenticatedPerfilRoute
+  '/trilhas': typeof AuthenticatedTrilhasRoute
+  '/vitrine': typeof AuthenticatedVitrineRoute
+  '/admin/areas-membros': typeof AuthenticatedAdminAreasMembrosRoute
+  '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
+  '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
+  '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
+  '/admin/cursos': typeof AuthenticatedAdminCursosRoute
+  '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/hero-banners': typeof AuthenticatedAdminHeroBannersRoute
+  '/admin/impersonar': typeof AuthenticatedAdminImpersonarRoute
+  '/admin/integracoes': typeof AuthenticatedAdminIntegracoesRoute
+  '/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
+  '/admin/journeys': typeof AuthenticatedAdminJourneysRoute
+  '/admin/musicas': typeof AuthenticatedAdminMusicasRoute
+  '/admin/offers': typeof AuthenticatedAdminOffersRouteWithChildren
+  '/admin/playlists': typeof AuthenticatedAdminPlaylistsRoute
+  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/admin/shelves': typeof AuthenticatedAdminShelvesRoute
+  '/admin/tracks': typeof AuthenticatedAdminTracksRoute
+  '/admin/transactions': typeof AuthenticatedAdminTransactionsRoute
+  '/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
+  '/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/admin/vendas': typeof AuthenticatedAdminVendasRoute
+  '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
+  '/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
+  '/musicas/$trackId': typeof AuthenticatedMusicasTrackIdRoute
+  '/produto/$courseId': typeof AuthenticatedProdutoCourseIdRoute
+  '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
+  '/admin': typeof AuthenticatedAdminIndexRoute
+  '/conteudo': typeof AuthenticatedConteudoIndexRoute
+  '/cursos': typeof AuthenticatedCursosIndexRoute
+  '/admin/areas/new': typeof AuthenticatedAdminAreasNewRoute
+  '/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
+  '/admin/courses/new': typeof AuthenticatedAdminCoursesNewRoute
+  '/admin/offers/new': typeof AuthenticatedAdminOffersNewRoute
+  '/admin/courses': typeof AuthenticatedAdminCoursesIndexRoute
+  '/cursos/$courseId': typeof AuthenticatedCursosCourseIdIndexRoute
+  '/admin/areas/$areaId/edit': typeof AuthenticatedAdminAreasAreaIdEditRoute
+  '/cursos/$courseId/aula/$lessonId': typeof AuthenticatedCursosCourseIdAulaLessonIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -67,13 +533,180 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
+  '/webhook': typeof WebhookRoute
+  '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
+  '/_authenticated/bonus': typeof AuthenticatedBonusRoute
+  '/_authenticated/comunidade': typeof AuthenticatedComunidadeRoute
+  '/_authenticated/conteudo': typeof AuthenticatedConteudoRouteWithChildren
+  '/_authenticated/cursos': typeof AuthenticatedCursosRouteWithChildren
   '/_authenticated/downloads': typeof AuthenticatedDownloadsRoute
+  '/_authenticated/ebooks': typeof AuthenticatedEbooksRoute
+  '/_authenticated/home': typeof AuthenticatedHomeRoute
+  '/_authenticated/lancamentos': typeof AuthenticatedLancamentosRoute
+  '/_authenticated/musicas': typeof AuthenticatedMusicasRouteWithChildren
+  '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
+  '/_authenticated/trilhas': typeof AuthenticatedTrilhasRoute
+  '/_authenticated/vitrine': typeof AuthenticatedVitrineRoute
+  '/_authenticated/admin/areas-membros': typeof AuthenticatedAdminAreasMembrosRoute
+  '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
+  '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/_authenticated/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
+  '/_authenticated/admin/coupons': typeof AuthenticatedAdminCouponsRoute
+  '/_authenticated/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
+  '/_authenticated/admin/cursos': typeof AuthenticatedAdminCursosRoute
+  '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/_authenticated/admin/hero-banners': typeof AuthenticatedAdminHeroBannersRoute
+  '/_authenticated/admin/impersonar': typeof AuthenticatedAdminImpersonarRoute
+  '/_authenticated/admin/integracoes': typeof AuthenticatedAdminIntegracoesRoute
+  '/_authenticated/admin/integrations': typeof AuthenticatedAdminIntegrationsRoute
+  '/_authenticated/admin/journeys': typeof AuthenticatedAdminJourneysRoute
+  '/_authenticated/admin/musicas': typeof AuthenticatedAdminMusicasRoute
+  '/_authenticated/admin/offers': typeof AuthenticatedAdminOffersRouteWithChildren
+  '/_authenticated/admin/playlists': typeof AuthenticatedAdminPlaylistsRoute
+  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
+  '/_authenticated/admin/shelves': typeof AuthenticatedAdminShelvesRoute
+  '/_authenticated/admin/tracks': typeof AuthenticatedAdminTracksRoute
+  '/_authenticated/admin/transactions': typeof AuthenticatedAdminTransactionsRoute
+  '/_authenticated/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
+  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
+  '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/_authenticated/admin/vendas': typeof AuthenticatedAdminVendasRoute
+  '/_authenticated/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
+  '/_authenticated/cursos/$courseId': typeof AuthenticatedCursosCourseIdRouteWithChildren
+  '/_authenticated/louvor/$trackId': typeof AuthenticatedLouvorTrackIdRoute
+  '/_authenticated/musicas/$trackId': typeof AuthenticatedMusicasTrackIdRoute
+  '/_authenticated/produto/$courseId': typeof AuthenticatedProdutoCourseIdRoute
+  '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
+  '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
+  '/_authenticated/conteudo/': typeof AuthenticatedConteudoIndexRoute
+  '/_authenticated/cursos/': typeof AuthenticatedCursosIndexRoute
+  '/_authenticated/admin/areas/new': typeof AuthenticatedAdminAreasNewRoute
+  '/_authenticated/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
+  '/_authenticated/admin/courses/new': typeof AuthenticatedAdminCoursesNewRoute
+  '/_authenticated/admin/offers/new': typeof AuthenticatedAdminOffersNewRoute
+  '/_authenticated/admin/courses/': typeof AuthenticatedAdminCoursesIndexRoute
+  '/_authenticated/cursos/$courseId/': typeof AuthenticatedCursosCourseIdIndexRoute
+  '/_authenticated/admin/areas/$areaId/edit': typeof AuthenticatedAdminAreasAreaIdEditRoute
+  '/_authenticated/cursos/$courseId/aula/$lessonId': typeof AuthenticatedCursosCourseIdAulaLessonIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/privacidade' | '/termos' | '/downloads'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/privacidade'
+    | '/termos'
+    | '/webhook'
+    | '/admin'
+    | '/bonus'
+    | '/comunidade'
+    | '/conteudo'
+    | '/cursos'
+    | '/downloads'
+    | '/ebooks'
+    | '/home'
+    | '/lancamentos'
+    | '/musicas'
+    | '/perfil'
+    | '/trilhas'
+    | '/vitrine'
+    | '/admin/areas-membros'
+    | '/admin/categories'
+    | '/admin/configuracoes'
+    | '/admin/conteudos'
+    | '/admin/coupons'
+    | '/admin/courses'
+    | '/admin/cursos'
+    | '/admin/dashboard'
+    | '/admin/hero-banners'
+    | '/admin/impersonar'
+    | '/admin/integracoes'
+    | '/admin/integrations'
+    | '/admin/journeys'
+    | '/admin/musicas'
+    | '/admin/offers'
+    | '/admin/playlists'
+    | '/admin/settings'
+    | '/admin/shelves'
+    | '/admin/tracks'
+    | '/admin/transactions'
+    | '/admin/upsells'
+    | '/admin/users'
+    | '/admin/usuarios'
+    | '/admin/vendas'
+    | '/conteudo/$trackId'
+    | '/cursos/$courseId'
+    | '/louvor/$trackId'
+    | '/musicas/$trackId'
+    | '/produto/$courseId'
+    | '/api/webhook/kiwify'
+    | '/admin/'
+    | '/conteudo/'
+    | '/cursos/'
+    | '/admin/areas/new'
+    | '/admin/courses/$courseId'
+    | '/admin/courses/new'
+    | '/admin/offers/new'
+    | '/admin/courses/'
+    | '/cursos/$courseId/'
+    | '/admin/areas/$areaId/edit'
+    | '/cursos/$courseId/aula/$lessonId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/privacidade' | '/termos' | '/downloads'
+  to:
+    | '/'
+    | '/login'
+    | '/privacidade'
+    | '/termos'
+    | '/webhook'
+    | '/bonus'
+    | '/comunidade'
+    | '/downloads'
+    | '/ebooks'
+    | '/home'
+    | '/lancamentos'
+    | '/musicas'
+    | '/perfil'
+    | '/trilhas'
+    | '/vitrine'
+    | '/admin/areas-membros'
+    | '/admin/categories'
+    | '/admin/configuracoes'
+    | '/admin/conteudos'
+    | '/admin/coupons'
+    | '/admin/cursos'
+    | '/admin/dashboard'
+    | '/admin/hero-banners'
+    | '/admin/impersonar'
+    | '/admin/integracoes'
+    | '/admin/integrations'
+    | '/admin/journeys'
+    | '/admin/musicas'
+    | '/admin/offers'
+    | '/admin/playlists'
+    | '/admin/settings'
+    | '/admin/shelves'
+    | '/admin/tracks'
+    | '/admin/transactions'
+    | '/admin/upsells'
+    | '/admin/users'
+    | '/admin/usuarios'
+    | '/admin/vendas'
+    | '/conteudo/$trackId'
+    | '/louvor/$trackId'
+    | '/musicas/$trackId'
+    | '/produto/$courseId'
+    | '/api/webhook/kiwify'
+    | '/admin'
+    | '/conteudo'
+    | '/cursos'
+    | '/admin/areas/new'
+    | '/admin/courses/$courseId'
+    | '/admin/courses/new'
+    | '/admin/offers/new'
+    | '/admin/courses'
+    | '/cursos/$courseId'
+    | '/admin/areas/$areaId/edit'
+    | '/cursos/$courseId/aula/$lessonId'
   id:
     | '__root__'
     | '/'
@@ -81,7 +714,61 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacidade'
     | '/termos'
+    | '/webhook'
+    | '/_authenticated/admin'
+    | '/_authenticated/bonus'
+    | '/_authenticated/comunidade'
+    | '/_authenticated/conteudo'
+    | '/_authenticated/cursos'
     | '/_authenticated/downloads'
+    | '/_authenticated/ebooks'
+    | '/_authenticated/home'
+    | '/_authenticated/lancamentos'
+    | '/_authenticated/musicas'
+    | '/_authenticated/perfil'
+    | '/_authenticated/trilhas'
+    | '/_authenticated/vitrine'
+    | '/_authenticated/admin/areas-membros'
+    | '/_authenticated/admin/categories'
+    | '/_authenticated/admin/configuracoes'
+    | '/_authenticated/admin/conteudos'
+    | '/_authenticated/admin/coupons'
+    | '/_authenticated/admin/courses'
+    | '/_authenticated/admin/cursos'
+    | '/_authenticated/admin/dashboard'
+    | '/_authenticated/admin/hero-banners'
+    | '/_authenticated/admin/impersonar'
+    | '/_authenticated/admin/integracoes'
+    | '/_authenticated/admin/integrations'
+    | '/_authenticated/admin/journeys'
+    | '/_authenticated/admin/musicas'
+    | '/_authenticated/admin/offers'
+    | '/_authenticated/admin/playlists'
+    | '/_authenticated/admin/settings'
+    | '/_authenticated/admin/shelves'
+    | '/_authenticated/admin/tracks'
+    | '/_authenticated/admin/transactions'
+    | '/_authenticated/admin/upsells'
+    | '/_authenticated/admin/users'
+    | '/_authenticated/admin/usuarios'
+    | '/_authenticated/admin/vendas'
+    | '/_authenticated/conteudo/$trackId'
+    | '/_authenticated/cursos/$courseId'
+    | '/_authenticated/louvor/$trackId'
+    | '/_authenticated/musicas/$trackId'
+    | '/_authenticated/produto/$courseId'
+    | '/api/webhook/kiwify'
+    | '/_authenticated/admin/'
+    | '/_authenticated/conteudo/'
+    | '/_authenticated/cursos/'
+    | '/_authenticated/admin/areas/new'
+    | '/_authenticated/admin/courses/$courseId'
+    | '/_authenticated/admin/courses/new'
+    | '/_authenticated/admin/offers/new'
+    | '/_authenticated/admin/courses/'
+    | '/_authenticated/cursos/$courseId/'
+    | '/_authenticated/admin/areas/$areaId/edit'
+    | '/_authenticated/cursos/$courseId/aula/$lessonId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -90,10 +777,19 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   TermosRoute: typeof TermosRoute
+  WebhookRoute: typeof WebhookRoute
+  ApiWebhookKiwifyRoute: typeof ApiWebhookKiwifyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/webhook': {
+      id: '/webhook'
+      path: '/webhook'
+      fullPath: '/webhook'
+      preLoaderRoute: typeof WebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/termos': {
       id: '/termos'
       path: '/termos'
@@ -129,6 +825,55 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/vitrine': {
+      id: '/_authenticated/vitrine'
+      path: '/vitrine'
+      fullPath: '/vitrine'
+      preLoaderRoute: typeof AuthenticatedVitrineRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/trilhas': {
+      id: '/_authenticated/trilhas'
+      path: '/trilhas'
+      fullPath: '/trilhas'
+      preLoaderRoute: typeof AuthenticatedTrilhasRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/perfil': {
+      id: '/_authenticated/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof AuthenticatedPerfilRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/musicas': {
+      id: '/_authenticated/musicas'
+      path: '/musicas'
+      fullPath: '/musicas'
+      preLoaderRoute: typeof AuthenticatedMusicasRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/lancamentos': {
+      id: '/_authenticated/lancamentos'
+      path: '/lancamentos'
+      fullPath: '/lancamentos'
+      preLoaderRoute: typeof AuthenticatedLancamentosRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/home': {
+      id: '/_authenticated/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof AuthenticatedHomeRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/ebooks': {
+      id: '/_authenticated/ebooks'
+      path: '/ebooks'
+      fullPath: '/ebooks'
+      preLoaderRoute: typeof AuthenticatedEbooksRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/downloads': {
       id: '/_authenticated/downloads'
       path: '/downloads'
@@ -136,15 +881,520 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedDownloadsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/cursos': {
+      id: '/_authenticated/cursos'
+      path: '/cursos'
+      fullPath: '/cursos'
+      preLoaderRoute: typeof AuthenticatedCursosRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/conteudo': {
+      id: '/_authenticated/conteudo'
+      path: '/conteudo'
+      fullPath: '/conteudo'
+      preLoaderRoute: typeof AuthenticatedConteudoRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/comunidade': {
+      id: '/_authenticated/comunidade'
+      path: '/comunidade'
+      fullPath: '/comunidade'
+      preLoaderRoute: typeof AuthenticatedComunidadeRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/bonus': {
+      id: '/_authenticated/bonus'
+      path: '/bonus'
+      fullPath: '/bonus'
+      preLoaderRoute: typeof AuthenticatedBonusRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/admin': {
+      id: '/_authenticated/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AuthenticatedAdminRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/cursos/': {
+      id: '/_authenticated/cursos/'
+      path: '/'
+      fullPath: '/cursos/'
+      preLoaderRoute: typeof AuthenticatedCursosIndexRouteImport
+      parentRoute: typeof AuthenticatedCursosRoute
+    }
+    '/_authenticated/conteudo/': {
+      id: '/_authenticated/conteudo/'
+      path: '/'
+      fullPath: '/conteudo/'
+      preLoaderRoute: typeof AuthenticatedConteudoIndexRouteImport
+      parentRoute: typeof AuthenticatedConteudoRoute
+    }
+    '/_authenticated/admin/': {
+      id: '/_authenticated/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/api/webhook/kiwify': {
+      id: '/api/webhook/kiwify'
+      path: '/api/webhook/kiwify'
+      fullPath: '/api/webhook/kiwify'
+      preLoaderRoute: typeof ApiWebhookKiwifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/produto/$courseId': {
+      id: '/_authenticated/produto/$courseId'
+      path: '/produto/$courseId'
+      fullPath: '/produto/$courseId'
+      preLoaderRoute: typeof AuthenticatedProdutoCourseIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/musicas/$trackId': {
+      id: '/_authenticated/musicas/$trackId'
+      path: '/$trackId'
+      fullPath: '/musicas/$trackId'
+      preLoaderRoute: typeof AuthenticatedMusicasTrackIdRouteImport
+      parentRoute: typeof AuthenticatedMusicasRoute
+    }
+    '/_authenticated/louvor/$trackId': {
+      id: '/_authenticated/louvor/$trackId'
+      path: '/louvor/$trackId'
+      fullPath: '/louvor/$trackId'
+      preLoaderRoute: typeof AuthenticatedLouvorTrackIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/cursos/$courseId': {
+      id: '/_authenticated/cursos/$courseId'
+      path: '/$courseId'
+      fullPath: '/cursos/$courseId'
+      preLoaderRoute: typeof AuthenticatedCursosCourseIdRouteImport
+      parentRoute: typeof AuthenticatedCursosRoute
+    }
+    '/_authenticated/conteudo/$trackId': {
+      id: '/_authenticated/conteudo/$trackId'
+      path: '/$trackId'
+      fullPath: '/conteudo/$trackId'
+      preLoaderRoute: typeof AuthenticatedConteudoTrackIdRouteImport
+      parentRoute: typeof AuthenticatedConteudoRoute
+    }
+    '/_authenticated/admin/vendas': {
+      id: '/_authenticated/admin/vendas'
+      path: '/vendas'
+      fullPath: '/admin/vendas'
+      preLoaderRoute: typeof AuthenticatedAdminVendasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/usuarios': {
+      id: '/_authenticated/admin/usuarios'
+      path: '/usuarios'
+      fullPath: '/admin/usuarios'
+      preLoaderRoute: typeof AuthenticatedAdminUsuariosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/users': {
+      id: '/_authenticated/admin/users'
+      path: '/users'
+      fullPath: '/admin/users'
+      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/upsells': {
+      id: '/_authenticated/admin/upsells'
+      path: '/upsells'
+      fullPath: '/admin/upsells'
+      preLoaderRoute: typeof AuthenticatedAdminUpsellsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/transactions': {
+      id: '/_authenticated/admin/transactions'
+      path: '/transactions'
+      fullPath: '/admin/transactions'
+      preLoaderRoute: typeof AuthenticatedAdminTransactionsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/tracks': {
+      id: '/_authenticated/admin/tracks'
+      path: '/tracks'
+      fullPath: '/admin/tracks'
+      preLoaderRoute: typeof AuthenticatedAdminTracksRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/shelves': {
+      id: '/_authenticated/admin/shelves'
+      path: '/shelves'
+      fullPath: '/admin/shelves'
+      preLoaderRoute: typeof AuthenticatedAdminShelvesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/settings': {
+      id: '/_authenticated/admin/settings'
+      path: '/settings'
+      fullPath: '/admin/settings'
+      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/playlists': {
+      id: '/_authenticated/admin/playlists'
+      path: '/playlists'
+      fullPath: '/admin/playlists'
+      preLoaderRoute: typeof AuthenticatedAdminPlaylistsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/offers': {
+      id: '/_authenticated/admin/offers'
+      path: '/offers'
+      fullPath: '/admin/offers'
+      preLoaderRoute: typeof AuthenticatedAdminOffersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/musicas': {
+      id: '/_authenticated/admin/musicas'
+      path: '/musicas'
+      fullPath: '/admin/musicas'
+      preLoaderRoute: typeof AuthenticatedAdminMusicasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/journeys': {
+      id: '/_authenticated/admin/journeys'
+      path: '/journeys'
+      fullPath: '/admin/journeys'
+      preLoaderRoute: typeof AuthenticatedAdminJourneysRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/integrations': {
+      id: '/_authenticated/admin/integrations'
+      path: '/integrations'
+      fullPath: '/admin/integrations'
+      preLoaderRoute: typeof AuthenticatedAdminIntegrationsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/integracoes': {
+      id: '/_authenticated/admin/integracoes'
+      path: '/integracoes'
+      fullPath: '/admin/integracoes'
+      preLoaderRoute: typeof AuthenticatedAdminIntegracoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/impersonar': {
+      id: '/_authenticated/admin/impersonar'
+      path: '/impersonar'
+      fullPath: '/admin/impersonar'
+      preLoaderRoute: typeof AuthenticatedAdminImpersonarRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/hero-banners': {
+      id: '/_authenticated/admin/hero-banners'
+      path: '/hero-banners'
+      fullPath: '/admin/hero-banners'
+      preLoaderRoute: typeof AuthenticatedAdminHeroBannersRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/dashboard': {
+      id: '/_authenticated/admin/dashboard'
+      path: '/dashboard'
+      fullPath: '/admin/dashboard'
+      preLoaderRoute: typeof AuthenticatedAdminDashboardRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/cursos': {
+      id: '/_authenticated/admin/cursos'
+      path: '/cursos'
+      fullPath: '/admin/cursos'
+      preLoaderRoute: typeof AuthenticatedAdminCursosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/courses': {
+      id: '/_authenticated/admin/courses'
+      path: '/courses'
+      fullPath: '/admin/courses'
+      preLoaderRoute: typeof AuthenticatedAdminCoursesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/coupons': {
+      id: '/_authenticated/admin/coupons'
+      path: '/coupons'
+      fullPath: '/admin/coupons'
+      preLoaderRoute: typeof AuthenticatedAdminCouponsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/conteudos': {
+      id: '/_authenticated/admin/conteudos'
+      path: '/conteudos'
+      fullPath: '/admin/conteudos'
+      preLoaderRoute: typeof AuthenticatedAdminConteudosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/configuracoes': {
+      id: '/_authenticated/admin/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/admin/configuracoes'
+      preLoaderRoute: typeof AuthenticatedAdminConfiguracoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/categories': {
+      id: '/_authenticated/admin/categories'
+      path: '/categories'
+      fullPath: '/admin/categories'
+      preLoaderRoute: typeof AuthenticatedAdminCategoriesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/areas-membros': {
+      id: '/_authenticated/admin/areas-membros'
+      path: '/areas-membros'
+      fullPath: '/admin/areas-membros'
+      preLoaderRoute: typeof AuthenticatedAdminAreasMembrosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/cursos/$courseId/': {
+      id: '/_authenticated/cursos/$courseId/'
+      path: '/'
+      fullPath: '/cursos/$courseId/'
+      preLoaderRoute: typeof AuthenticatedCursosCourseIdIndexRouteImport
+      parentRoute: typeof AuthenticatedCursosCourseIdRoute
+    }
+    '/_authenticated/admin/courses/': {
+      id: '/_authenticated/admin/courses/'
+      path: '/'
+      fullPath: '/admin/courses/'
+      preLoaderRoute: typeof AuthenticatedAdminCoursesIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminCoursesRoute
+    }
+    '/_authenticated/admin/offers/new': {
+      id: '/_authenticated/admin/offers/new'
+      path: '/new'
+      fullPath: '/admin/offers/new'
+      preLoaderRoute: typeof AuthenticatedAdminOffersNewRouteImport
+      parentRoute: typeof AuthenticatedAdminOffersRoute
+    }
+    '/_authenticated/admin/courses/new': {
+      id: '/_authenticated/admin/courses/new'
+      path: '/new'
+      fullPath: '/admin/courses/new'
+      preLoaderRoute: typeof AuthenticatedAdminCoursesNewRouteImport
+      parentRoute: typeof AuthenticatedAdminCoursesRoute
+    }
+    '/_authenticated/admin/courses/$courseId': {
+      id: '/_authenticated/admin/courses/$courseId'
+      path: '/$courseId'
+      fullPath: '/admin/courses/$courseId'
+      preLoaderRoute: typeof AuthenticatedAdminCoursesCourseIdRouteImport
+      parentRoute: typeof AuthenticatedAdminCoursesRoute
+    }
+    '/_authenticated/admin/areas/new': {
+      id: '/_authenticated/admin/areas/new'
+      path: '/areas/new'
+      fullPath: '/admin/areas/new'
+      preLoaderRoute: typeof AuthenticatedAdminAreasNewRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/cursos/$courseId/aula/$lessonId': {
+      id: '/_authenticated/cursos/$courseId/aula/$lessonId'
+      path: '/aula/$lessonId'
+      fullPath: '/cursos/$courseId/aula/$lessonId'
+      preLoaderRoute: typeof AuthenticatedCursosCourseIdAulaLessonIdRouteImport
+      parentRoute: typeof AuthenticatedCursosCourseIdRoute
+    }
+    '/_authenticated/admin/areas/$areaId/edit': {
+      id: '/_authenticated/admin/areas/$areaId/edit'
+      path: '/areas/$areaId/edit'
+      fullPath: '/admin/areas/$areaId/edit'
+      preLoaderRoute: typeof AuthenticatedAdminAreasAreaIdEditRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
   }
 }
 
+interface AuthenticatedAdminCoursesRouteChildren {
+  AuthenticatedAdminCoursesCourseIdRoute: typeof AuthenticatedAdminCoursesCourseIdRoute
+  AuthenticatedAdminCoursesNewRoute: typeof AuthenticatedAdminCoursesNewRoute
+  AuthenticatedAdminCoursesIndexRoute: typeof AuthenticatedAdminCoursesIndexRoute
+}
+
+const AuthenticatedAdminCoursesRouteChildren: AuthenticatedAdminCoursesRouteChildren =
+  {
+    AuthenticatedAdminCoursesCourseIdRoute:
+      AuthenticatedAdminCoursesCourseIdRoute,
+    AuthenticatedAdminCoursesNewRoute: AuthenticatedAdminCoursesNewRoute,
+    AuthenticatedAdminCoursesIndexRoute: AuthenticatedAdminCoursesIndexRoute,
+  }
+
+const AuthenticatedAdminCoursesRouteWithChildren =
+  AuthenticatedAdminCoursesRoute._addFileChildren(
+    AuthenticatedAdminCoursesRouteChildren,
+  )
+
+interface AuthenticatedAdminOffersRouteChildren {
+  AuthenticatedAdminOffersNewRoute: typeof AuthenticatedAdminOffersNewRoute
+}
+
+const AuthenticatedAdminOffersRouteChildren: AuthenticatedAdminOffersRouteChildren =
+  {
+    AuthenticatedAdminOffersNewRoute: AuthenticatedAdminOffersNewRoute,
+  }
+
+const AuthenticatedAdminOffersRouteWithChildren =
+  AuthenticatedAdminOffersRoute._addFileChildren(
+    AuthenticatedAdminOffersRouteChildren,
+  )
+
+interface AuthenticatedAdminRouteChildren {
+  AuthenticatedAdminAreasMembrosRoute: typeof AuthenticatedAdminAreasMembrosRoute
+  AuthenticatedAdminCategoriesRoute: typeof AuthenticatedAdminCategoriesRoute
+  AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
+  AuthenticatedAdminConteudosRoute: typeof AuthenticatedAdminConteudosRoute
+  AuthenticatedAdminCouponsRoute: typeof AuthenticatedAdminCouponsRoute
+  AuthenticatedAdminCoursesRoute: typeof AuthenticatedAdminCoursesRouteWithChildren
+  AuthenticatedAdminCursosRoute: typeof AuthenticatedAdminCursosRoute
+  AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
+  AuthenticatedAdminHeroBannersRoute: typeof AuthenticatedAdminHeroBannersRoute
+  AuthenticatedAdminImpersonarRoute: typeof AuthenticatedAdminImpersonarRoute
+  AuthenticatedAdminIntegracoesRoute: typeof AuthenticatedAdminIntegracoesRoute
+  AuthenticatedAdminIntegrationsRoute: typeof AuthenticatedAdminIntegrationsRoute
+  AuthenticatedAdminJourneysRoute: typeof AuthenticatedAdminJourneysRoute
+  AuthenticatedAdminMusicasRoute: typeof AuthenticatedAdminMusicasRoute
+  AuthenticatedAdminOffersRoute: typeof AuthenticatedAdminOffersRouteWithChildren
+  AuthenticatedAdminPlaylistsRoute: typeof AuthenticatedAdminPlaylistsRoute
+  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
+  AuthenticatedAdminShelvesRoute: typeof AuthenticatedAdminShelvesRoute
+  AuthenticatedAdminTracksRoute: typeof AuthenticatedAdminTracksRoute
+  AuthenticatedAdminTransactionsRoute: typeof AuthenticatedAdminTransactionsRoute
+  AuthenticatedAdminUpsellsRoute: typeof AuthenticatedAdminUpsellsRoute
+  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
+  AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
+  AuthenticatedAdminVendasRoute: typeof AuthenticatedAdminVendasRoute
+  AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
+  AuthenticatedAdminAreasNewRoute: typeof AuthenticatedAdminAreasNewRoute
+  AuthenticatedAdminAreasAreaIdEditRoute: typeof AuthenticatedAdminAreasAreaIdEditRoute
+}
+
+const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
+  AuthenticatedAdminAreasMembrosRoute: AuthenticatedAdminAreasMembrosRoute,
+  AuthenticatedAdminCategoriesRoute: AuthenticatedAdminCategoriesRoute,
+  AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
+  AuthenticatedAdminConteudosRoute: AuthenticatedAdminConteudosRoute,
+  AuthenticatedAdminCouponsRoute: AuthenticatedAdminCouponsRoute,
+  AuthenticatedAdminCoursesRoute: AuthenticatedAdminCoursesRouteWithChildren,
+  AuthenticatedAdminCursosRoute: AuthenticatedAdminCursosRoute,
+  AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
+  AuthenticatedAdminHeroBannersRoute: AuthenticatedAdminHeroBannersRoute,
+  AuthenticatedAdminImpersonarRoute: AuthenticatedAdminImpersonarRoute,
+  AuthenticatedAdminIntegracoesRoute: AuthenticatedAdminIntegracoesRoute,
+  AuthenticatedAdminIntegrationsRoute: AuthenticatedAdminIntegrationsRoute,
+  AuthenticatedAdminJourneysRoute: AuthenticatedAdminJourneysRoute,
+  AuthenticatedAdminMusicasRoute: AuthenticatedAdminMusicasRoute,
+  AuthenticatedAdminOffersRoute: AuthenticatedAdminOffersRouteWithChildren,
+  AuthenticatedAdminPlaylistsRoute: AuthenticatedAdminPlaylistsRoute,
+  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
+  AuthenticatedAdminShelvesRoute: AuthenticatedAdminShelvesRoute,
+  AuthenticatedAdminTracksRoute: AuthenticatedAdminTracksRoute,
+  AuthenticatedAdminTransactionsRoute: AuthenticatedAdminTransactionsRoute,
+  AuthenticatedAdminUpsellsRoute: AuthenticatedAdminUpsellsRoute,
+  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
+  AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
+  AuthenticatedAdminVendasRoute: AuthenticatedAdminVendasRoute,
+  AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
+  AuthenticatedAdminAreasNewRoute: AuthenticatedAdminAreasNewRoute,
+  AuthenticatedAdminAreasAreaIdEditRoute:
+    AuthenticatedAdminAreasAreaIdEditRoute,
+}
+
+const AuthenticatedAdminRouteWithChildren =
+  AuthenticatedAdminRoute._addFileChildren(AuthenticatedAdminRouteChildren)
+
+interface AuthenticatedConteudoRouteChildren {
+  AuthenticatedConteudoTrackIdRoute: typeof AuthenticatedConteudoTrackIdRoute
+  AuthenticatedConteudoIndexRoute: typeof AuthenticatedConteudoIndexRoute
+}
+
+const AuthenticatedConteudoRouteChildren: AuthenticatedConteudoRouteChildren = {
+  AuthenticatedConteudoTrackIdRoute: AuthenticatedConteudoTrackIdRoute,
+  AuthenticatedConteudoIndexRoute: AuthenticatedConteudoIndexRoute,
+}
+
+const AuthenticatedConteudoRouteWithChildren =
+  AuthenticatedConteudoRoute._addFileChildren(
+    AuthenticatedConteudoRouteChildren,
+  )
+
+interface AuthenticatedCursosCourseIdRouteChildren {
+  AuthenticatedCursosCourseIdIndexRoute: typeof AuthenticatedCursosCourseIdIndexRoute
+  AuthenticatedCursosCourseIdAulaLessonIdRoute: typeof AuthenticatedCursosCourseIdAulaLessonIdRoute
+}
+
+const AuthenticatedCursosCourseIdRouteChildren: AuthenticatedCursosCourseIdRouteChildren =
+  {
+    AuthenticatedCursosCourseIdIndexRoute:
+      AuthenticatedCursosCourseIdIndexRoute,
+    AuthenticatedCursosCourseIdAulaLessonIdRoute:
+      AuthenticatedCursosCourseIdAulaLessonIdRoute,
+  }
+
+const AuthenticatedCursosCourseIdRouteWithChildren =
+  AuthenticatedCursosCourseIdRoute._addFileChildren(
+    AuthenticatedCursosCourseIdRouteChildren,
+  )
+
+interface AuthenticatedCursosRouteChildren {
+  AuthenticatedCursosCourseIdRoute: typeof AuthenticatedCursosCourseIdRouteWithChildren
+  AuthenticatedCursosIndexRoute: typeof AuthenticatedCursosIndexRoute
+}
+
+const AuthenticatedCursosRouteChildren: AuthenticatedCursosRouteChildren = {
+  AuthenticatedCursosCourseIdRoute:
+    AuthenticatedCursosCourseIdRouteWithChildren,
+  AuthenticatedCursosIndexRoute: AuthenticatedCursosIndexRoute,
+}
+
+const AuthenticatedCursosRouteWithChildren =
+  AuthenticatedCursosRoute._addFileChildren(AuthenticatedCursosRouteChildren)
+
+interface AuthenticatedMusicasRouteChildren {
+  AuthenticatedMusicasTrackIdRoute: typeof AuthenticatedMusicasTrackIdRoute
+}
+
+const AuthenticatedMusicasRouteChildren: AuthenticatedMusicasRouteChildren = {
+  AuthenticatedMusicasTrackIdRoute: AuthenticatedMusicasTrackIdRoute,
+}
+
+const AuthenticatedMusicasRouteWithChildren =
+  AuthenticatedMusicasRoute._addFileChildren(AuthenticatedMusicasRouteChildren)
+
 interface AuthenticatedRouteChildren {
+  AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
+  AuthenticatedBonusRoute: typeof AuthenticatedBonusRoute
+  AuthenticatedComunidadeRoute: typeof AuthenticatedComunidadeRoute
+  AuthenticatedConteudoRoute: typeof AuthenticatedConteudoRouteWithChildren
+  AuthenticatedCursosRoute: typeof AuthenticatedCursosRouteWithChildren
   AuthenticatedDownloadsRoute: typeof AuthenticatedDownloadsRoute
+  AuthenticatedEbooksRoute: typeof AuthenticatedEbooksRoute
+  AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
+  AuthenticatedLancamentosRoute: typeof AuthenticatedLancamentosRoute
+  AuthenticatedMusicasRoute: typeof AuthenticatedMusicasRouteWithChildren
+  AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
+  AuthenticatedTrilhasRoute: typeof AuthenticatedTrilhasRoute
+  AuthenticatedVitrineRoute: typeof AuthenticatedVitrineRoute
+  AuthenticatedLouvorTrackIdRoute: typeof AuthenticatedLouvorTrackIdRoute
+  AuthenticatedProdutoCourseIdRoute: typeof AuthenticatedProdutoCourseIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAdminRoute: AuthenticatedAdminRouteWithChildren,
+  AuthenticatedBonusRoute: AuthenticatedBonusRoute,
+  AuthenticatedComunidadeRoute: AuthenticatedComunidadeRoute,
+  AuthenticatedConteudoRoute: AuthenticatedConteudoRouteWithChildren,
+  AuthenticatedCursosRoute: AuthenticatedCursosRouteWithChildren,
   AuthenticatedDownloadsRoute: AuthenticatedDownloadsRoute,
+  AuthenticatedEbooksRoute: AuthenticatedEbooksRoute,
+  AuthenticatedHomeRoute: AuthenticatedHomeRoute,
+  AuthenticatedLancamentosRoute: AuthenticatedLancamentosRoute,
+  AuthenticatedMusicasRoute: AuthenticatedMusicasRouteWithChildren,
+  AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
+  AuthenticatedTrilhasRoute: AuthenticatedTrilhasRoute,
+  AuthenticatedVitrineRoute: AuthenticatedVitrineRoute,
+  AuthenticatedLouvorTrackIdRoute: AuthenticatedLouvorTrackIdRoute,
+  AuthenticatedProdutoCourseIdRoute: AuthenticatedProdutoCourseIdRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -157,6 +1407,8 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   TermosRoute: TermosRoute,
+  WebhookRoute: WebhookRoute,
+  ApiWebhookKiwifyRoute: ApiWebhookKiwifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
