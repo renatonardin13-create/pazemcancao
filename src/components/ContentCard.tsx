@@ -1,6 +1,6 @@
-import { memo, useState } from "react";
+import { memo, useState, useCallback } from "react";
 import { Lock, Download, Play, ShoppingCart, Clock, ArrowRight, CheckCircle2, Eye, Heart, Star, Sparkles } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 import { PosterCard } from "@/components/PosterCard";
 import { UnlockModal } from "@/components/UnlockModal";
@@ -34,6 +34,7 @@ function getContentState(item: any, hasAccess: boolean, progress: ContentCardPro
 }
 
 export const ContentCard = memo(function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progress, isLastAccessed, onTrackView, onTrackDownload, isFavorite, onToggleFavorite }: ContentCardProps) {
+  const navigate = useNavigate();
   const [unlockOpen, setUnlockOpen] = useState(false);
   const accessMode = item.effectiveAccessMode || (item.is_free ? 'gratuito' : 'pago');
   const launchMode = item.launch_mode || 'none';
@@ -58,17 +59,30 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
     : contentState === 'in_progress' ? 15
     : 0;
 
-  const handleLockedClick = () => {
-    if (isLaunchContent) {
-      if (launchMode === 'bloqueado_para_venda') {
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isLocked) {
+      if (isLaunchContent) {
+        if (launchMode === 'bloqueado_para_venda') {
+          setUnlockOpen(true);
+        }
+        return;
+      }
+      if (!isPendingRelease && !isRuleLocked) {
         setUnlockOpen(true);
       }
       return;
     }
-    if (isLocked && !isPendingRelease && !isRuleLocked) {
-      setUnlockOpen(true);
-    }
-  };
+
+    // Determine target route based on content type or just default to musicas
+    const target = item.content_type === "video" || item.content_type === "ebook" || item.content_type === "material" 
+      ? "/conteudo/$trackId" 
+      : "/musicas/$trackId";
+    
+    navigate({ to: target as any, params: { trackId: String(item.id) } as any });
+  }, [isLocked, isLaunchContent, launchMode, isPendingRelease, isRuleLocked, item.content_type, item.id, navigate]);
 
   const fallback = (
     <div className="flex h-14 w-14 items-center justify-center rounded-2xl backdrop-blur-sm bg-white/[0.03] border border-white/[0.05] md:group-hover/card:bg-white/[0.05] md:transition-all md:duration-700">
@@ -281,8 +295,8 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
   return (
     <>
       <div
-        onClick={isLocked ? handleLockedClick : undefined}
-        className={`group/card relative block ${isLocked ? 'cursor-pointer' : ''}`}
+        onClick={handleClick}
+        className="group/card relative block cursor-pointer"
       >
         <PosterCard
           cover={item.card_cover_url || item.cover_url || null}

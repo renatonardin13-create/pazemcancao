@@ -16,6 +16,7 @@ import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedTrilhasRouteImport } from './routes/_authenticated.trilhas'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated.perfil'
+import { Route as AuthenticatedMusicasRouteImport } from './routes/_authenticated.musicas'
 import { Route as AuthenticatedLancamentosRouteImport } from './routes/_authenticated.lancamentos'
 import { Route as AuthenticatedHomeRouteImport } from './routes/_authenticated.home'
 import { Route as AuthenticatedEbooksRouteImport } from './routes/_authenticated.ebooks'
@@ -28,6 +29,7 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.
 import { Route as AuthenticatedCursosIndexRouteImport } from './routes/_authenticated.cursos.index'
 import { Route as AuthenticatedConteudoIndexRouteImport } from './routes/_authenticated.conteudo.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated.admin.index'
+import { Route as AuthenticatedMusicasTrackIdRouteImport } from './routes/_authenticated.musicas.$trackId'
 import { Route as AuthenticatedCursosCourseIdRouteImport } from './routes/_authenticated.cursos.$courseId'
 import { Route as AuthenticatedConteudoTrackIdRouteImport } from './routes/_authenticated.conteudo.$trackId'
 import { Route as AuthenticatedAdminUpsellsRouteImport } from './routes/_authenticated.admin.upsells'
@@ -71,6 +73,11 @@ const AuthenticatedTrilhasRoute = AuthenticatedTrilhasRouteImport.update({
 const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedMusicasRoute = AuthenticatedMusicasRouteImport.update({
+  id: '/musicas',
+  path: '/musicas',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedLancamentosRoute =
@@ -136,6 +143,12 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
+const AuthenticatedMusicasTrackIdRoute =
+  AuthenticatedMusicasTrackIdRouteImport.update({
+    id: '/$trackId',
+    path: '/$trackId',
+    getParentRoute: () => AuthenticatedMusicasRoute,
+  } as any)
 const AuthenticatedCursosCourseIdRoute =
   AuthenticatedCursosCourseIdRouteImport.update({
     id: '/$courseId',
@@ -211,6 +224,7 @@ export interface FileRoutesByFullPath {
   '/ebooks': typeof AuthenticatedEbooksRoute
   '/home': typeof AuthenticatedHomeRoute
   '/lancamentos': typeof AuthenticatedLancamentosRoute
+  '/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/perfil': typeof AuthenticatedPerfilRoute
   '/trilhas': typeof AuthenticatedTrilhasRoute
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
@@ -218,6 +232,7 @@ export interface FileRoutesByFullPath {
   '/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/cursos/$courseId': typeof AuthenticatedCursosCourseIdRouteWithChildren
+  '/musicas/$trackId': typeof AuthenticatedMusicasTrackIdRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/conteudo/': typeof AuthenticatedConteudoIndexRoute
   '/cursos/': typeof AuthenticatedCursosIndexRoute
@@ -238,11 +253,13 @@ export interface FileRoutesByTo {
   '/ebooks': typeof AuthenticatedEbooksRoute
   '/home': typeof AuthenticatedHomeRoute
   '/lancamentos': typeof AuthenticatedLancamentosRoute
+  '/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/perfil': typeof AuthenticatedPerfilRoute
   '/trilhas': typeof AuthenticatedTrilhasRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
+  '/musicas/$trackId': typeof AuthenticatedMusicasTrackIdRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/conteudo': typeof AuthenticatedConteudoIndexRoute
   '/cursos': typeof AuthenticatedCursosIndexRoute
@@ -268,6 +285,7 @@ export interface FileRoutesById {
   '/_authenticated/ebooks': typeof AuthenticatedEbooksRoute
   '/_authenticated/home': typeof AuthenticatedHomeRoute
   '/_authenticated/lancamentos': typeof AuthenticatedLancamentosRoute
+  '/_authenticated/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/trilhas': typeof AuthenticatedTrilhasRoute
   '/_authenticated/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
@@ -275,6 +293,7 @@ export interface FileRoutesById {
   '/_authenticated/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
   '/_authenticated/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/_authenticated/cursos/$courseId': typeof AuthenticatedCursosCourseIdRouteWithChildren
+  '/_authenticated/musicas/$trackId': typeof AuthenticatedMusicasTrackIdRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/conteudo/': typeof AuthenticatedConteudoIndexRoute
   '/_authenticated/cursos/': typeof AuthenticatedCursosIndexRoute
@@ -300,6 +319,7 @@ export interface FileRouteTypes {
     | '/ebooks'
     | '/home'
     | '/lancamentos'
+    | '/musicas'
     | '/perfil'
     | '/trilhas'
     | '/admin/courses'
@@ -307,6 +327,7 @@ export interface FileRouteTypes {
     | '/admin/upsells'
     | '/conteudo/$trackId'
     | '/cursos/$courseId'
+    | '/musicas/$trackId'
     | '/admin/'
     | '/conteudo/'
     | '/cursos/'
@@ -327,11 +348,13 @@ export interface FileRouteTypes {
     | '/ebooks'
     | '/home'
     | '/lancamentos'
+    | '/musicas'
     | '/perfil'
     | '/trilhas'
     | '/admin/dashboard'
     | '/admin/upsells'
     | '/conteudo/$trackId'
+    | '/musicas/$trackId'
     | '/admin'
     | '/conteudo'
     | '/cursos'
@@ -356,6 +379,7 @@ export interface FileRouteTypes {
     | '/_authenticated/ebooks'
     | '/_authenticated/home'
     | '/_authenticated/lancamentos'
+    | '/_authenticated/musicas'
     | '/_authenticated/perfil'
     | '/_authenticated/trilhas'
     | '/_authenticated/admin/courses'
@@ -363,6 +387,7 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/upsells'
     | '/_authenticated/conteudo/$trackId'
     | '/_authenticated/cursos/$courseId'
+    | '/_authenticated/musicas/$trackId'
     | '/_authenticated/admin/'
     | '/_authenticated/conteudo/'
     | '/_authenticated/cursos/'
@@ -430,6 +455,13 @@ declare module '@tanstack/react-router' {
       path: '/perfil'
       fullPath: '/perfil'
       preLoaderRoute: typeof AuthenticatedPerfilRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/musicas': {
+      id: '/_authenticated/musicas'
+      path: '/musicas'
+      fullPath: '/musicas'
+      preLoaderRoute: typeof AuthenticatedMusicasRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/lancamentos': {
@@ -515,6 +547,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/musicas/$trackId': {
+      id: '/_authenticated/musicas/$trackId'
+      path: '/$trackId'
+      fullPath: '/musicas/$trackId'
+      preLoaderRoute: typeof AuthenticatedMusicasTrackIdRouteImport
+      parentRoute: typeof AuthenticatedMusicasRoute
     }
     '/_authenticated/cursos/$courseId': {
       id: '/_authenticated/cursos/$courseId'
@@ -672,6 +711,17 @@ const AuthenticatedCursosRouteChildren: AuthenticatedCursosRouteChildren = {
 const AuthenticatedCursosRouteWithChildren =
   AuthenticatedCursosRoute._addFileChildren(AuthenticatedCursosRouteChildren)
 
+interface AuthenticatedMusicasRouteChildren {
+  AuthenticatedMusicasTrackIdRoute: typeof AuthenticatedMusicasTrackIdRoute
+}
+
+const AuthenticatedMusicasRouteChildren: AuthenticatedMusicasRouteChildren = {
+  AuthenticatedMusicasTrackIdRoute: AuthenticatedMusicasTrackIdRoute,
+}
+
+const AuthenticatedMusicasRouteWithChildren =
+  AuthenticatedMusicasRoute._addFileChildren(AuthenticatedMusicasRouteChildren)
+
 interface AuthenticatedRouteChildren {
   AuthenticatedAdminRoute: typeof AuthenticatedAdminRouteWithChildren
   AuthenticatedBonusRoute: typeof AuthenticatedBonusRoute
@@ -682,6 +732,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedEbooksRoute: typeof AuthenticatedEbooksRoute
   AuthenticatedHomeRoute: typeof AuthenticatedHomeRoute
   AuthenticatedLancamentosRoute: typeof AuthenticatedLancamentosRoute
+  AuthenticatedMusicasRoute: typeof AuthenticatedMusicasRouteWithChildren
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedTrilhasRoute: typeof AuthenticatedTrilhasRoute
 }
@@ -696,6 +747,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedEbooksRoute: AuthenticatedEbooksRoute,
   AuthenticatedHomeRoute: AuthenticatedHomeRoute,
   AuthenticatedLancamentosRoute: AuthenticatedLancamentosRoute,
+  AuthenticatedMusicasRoute: AuthenticatedMusicasRouteWithChildren,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedTrilhasRoute: AuthenticatedTrilhasRoute,
 }

@@ -79,6 +79,7 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
+    <QueryClientProvider client={queryClient}>
       <AuthProvider>
           <ImpersonationBanner />
           <SafeBoundary fallbackTitle="Erro ao carregar a página">
@@ -86,6 +87,6 @@ function RootComponent() {
           </SafeBoundary>
           <Toaster richColors position="top-right" />
       </AuthProvider>
-
+    </QueryClientProvider>
   );
 }
