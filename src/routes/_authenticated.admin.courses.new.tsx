@@ -45,7 +45,7 @@ function NewCoursePage() {
       toast.success("Produto criado com sucesso!", {
         action: {
           label: "Criar Oferta",
-          onClick: () => navigate({ to: "/admin/offers/new" })
+          onClick: () => navigate({ to: "/admin" })
         },
       });
       navigate({ to: "/admin/courses" });
