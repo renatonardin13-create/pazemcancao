@@ -74,6 +74,8 @@ function AdminCoursesPage() {
   const [page, setPage] = useState(1);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [statusId, setStatusId] = useState<{ id: string; status: string } | null>(null);
+  const [isProductDialogOpen, setIsProductDialogOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-courses", activeArea?.id],
