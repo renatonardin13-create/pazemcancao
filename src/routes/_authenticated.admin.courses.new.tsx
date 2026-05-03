@@ -179,7 +179,7 @@ function NewCoursePage() {
                 </Tooltip>
               </TooltipProvider>
             </div>
-            <div className="rounded-xl border border-dashed border-gold/30 bg-gold/[0.03] p-8 text-center">
+            <div className="rounded-xl border border-dashed border-orange-500/30 bg-orange-500/[0.03] p-8 text-center">
               <p className="text-sm text-muted-foreground/60">
                 Salve o curso primeiro para gerenciar módulos e aulas.
               </p>
