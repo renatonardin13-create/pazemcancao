@@ -84,6 +84,14 @@ function EditAreaPage() {
   const [bannerUrl, setBannerUrl] = useState("");
   const [backgroundColor, setBackgroundColor] = useState("#0B1220");
   const [surfaceColor, setSurfaceColor] = useState("#111827");
+  const [themeMode, setThemeMode] = useState("dark");
+  const [accentColor, setAccentColor] = useState("#D4AF37");
+  const [buttonColor, setButtonColor] = useState("#D4AF37");
+  const [buttonTextColor, setButtonTextColor] = useState("#000000");
+  const [sidebarColor, setSidebarColor] = useState("#111827");
+  const [textPrimary, setTextPrimary] = useState("#FFFFFF");
+  const [textSecondary, setTextSecondary] = useState("#94A3B8");
+  const [elevatedSurface, setElevatedSurface] = useState("#1E293B");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { data: areaData, isLoading: isLoadingArea } = useQuery({
