@@ -1198,29 +1198,202 @@ function EditAreaPage() {
             </TabsContent>
 
             <TabsContent value="login" className="mt-0 outline-none">
-              <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
-                    <Lock className="h-5 w-5 text-[#D4AF37]" />
+              <div className="max-w-[1100px] mx-auto space-y-10">
+                <div className="bg-[#111827] border border-white/5 rounded-[24px] p-10 space-y-10 shadow-2xl relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
+                      <Lock className="h-5 w-5 text-[#D4AF37]" />
+                    </div>
+                    <h3 className="text-xl font-black text-white">Customização da Página de Login</h3>
                   </div>
-                  <h3 className="text-xl font-black text-white">Segurança e Acesso</h3>
-                </div>
 
-                <div className="space-y-6">
-                  <div className="p-6 rounded-2xl bg-[#0B1220] border border-white/5 flex items-center justify-between">
-                    <div className="space-y-1">
-                      <Label className="text-base font-black text-white">Exigir Login para visualizar catálogo</Label>
-                      <p className="text-sm text-slate-500 font-medium">Se desativado, a vitrine será pública.</p>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-8">
+                    {/* COLUNA ESQUERDA */}
+                    <div className="space-y-8">
+                      <div className="space-y-3 group">
+                        <Label htmlFor="tituloLogin" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Título da tela de login</Label>
+                        <Input
+                          id="tituloLogin"
+                          value={tituloLogin}
+                          onChange={(e) => setTituloLogin(e.target.value)}
+                          placeholder="Bem-vindo ao Reino das Cores Kids"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
+                        />
+                      </div>
+
+                      <div className="space-y-3 group">
+                        <Label htmlFor="placeholderEmail" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Placeholder do email</Label>
+                        <Input
+                          id="placeholderEmail"
+                          value={placeholderEmail}
+                          onChange={(e) => setPlaceholderEmail(e.target.value)}
+                          placeholder="Seu melhor email"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
+                        />
+                      </div>
+
+                      <div className="space-y-3 group">
+                        <Label htmlFor="textoBotaoLogin" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Texto do botão</Label>
+                        <Input
+                          id="textoBotaoLogin"
+                          value={textoBotao}
+                          onChange={(e) => setTextoBotao(e.target.value)}
+                          placeholder="Entrar agora"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
+                        />
+                      </div>
+
+                      <div className="space-y-3 group">
+                        <Label htmlFor="textoRodape" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Texto do rodapé (opcional)</Label>
+                        <Input
+                          id="textoRodape"
+                          value={textoRodape}
+                          onChange={(e) => setTextoRodape(e.target.value)}
+                          placeholder="Suporte: contato@empresa.com"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
+                        />
+                      </div>
+
+                      <div className="space-y-4 pt-4">
+                        <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Imagem de Login</Label>
+                        <div className="grid grid-cols-1 gap-4">
+                          <ImageUploadField
+                            label=""
+                            hint="Aceita JPG/PNG. Sugestão: 4:3 ou 16:9"
+                            value={imagemLoginUrl}
+                            onChange={setImagemLoginUrl}
+                            uploadLabel="Enviar imagem"
+                          />
+                          <div className="space-y-2">
+                            <Label htmlFor="imagemLoginUrl" className="text-[10px] font-bold text-slate-500">Ou colar URL da imagem</Label>
+                            <Input
+                              id="imagemLoginUrl"
+                              value={imagemLoginUrl}
+                              onChange={(e) => setImagemLoginUrl(e.target.value)}
+                              placeholder="https://exemplo.com/background.jpg"
+                              className="h-12 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-medium text-sm transition-all"
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <Switch defaultChecked className="data-[state=checked]:bg-[#D4AF37]" />
+
+                    {/* COLUNA DIREITA */}
+                    <div className="space-y-8">
+                      <div className="space-y-3 group">
+                        <Label htmlFor="subtituloLogin" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Subtítulo</Label>
+                        <Input
+                          id="subtituloLogin"
+                          value={subtituloLogin}
+                          onChange={(e) => setSubtituloLogin(e.target.value)}
+                          placeholder="Entre para acessar seu conteúdo exclusivo"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
+                        />
+                      </div>
+
+                      <div className="space-y-3 group">
+                        <Label htmlFor="placeholderSenha" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Placeholder da senha</Label>
+                        <Input
+                          id="placeholderSenha"
+                          type="text"
+                          value={placeholderSenha}
+                          onChange={(e) => setPlaceholderSenha(e.target.value)}
+                          placeholder="Sua senha secreta"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
+                        />
+                      </div>
+
+                      <div className="space-y-3 group">
+                        <Label htmlFor="textoAjuda" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Texto de ajuda</Label>
+                        <Input
+                          id="textoAjuda"
+                          value={textoAjuda}
+                          onChange={(e) => setTextoAjuda(e.target.value)}
+                          placeholder="Esqueci minha senha"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
+                        />
+                      </div>
+
+                      <div className="space-y-3">
+                        <Label htmlFor="layoutLogin" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Layout</Label>
+                        <Select value={layoutLogin} onValueChange={setLayoutLogin}>
+                          <SelectTrigger className="h-14 bg-[#1F2937] border-[#374151] focus:ring-[#D4AF37] rounded-xl font-bold text-base">
+                            <SelectValue placeholder="Selecione o layout" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#111827] border-white/5 text-white">
+                            <SelectItem value="right">Imagem à direita</SelectItem>
+                            <SelectItem value="left">Imagem à esquerda</SelectItem>
+                            <SelectItem value="centered">Sem imagem (formulário centralizado)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-3">
+                        <Label htmlFor="modoFundo" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Modo de fundo</Label>
+                        <Select value={modoFundo} onValueChange={setModoFundo}>
+                          <SelectTrigger className="h-14 bg-[#1F2937] border-[#374151] focus:ring-[#D4AF37] rounded-xl font-bold text-base">
+                            <SelectValue placeholder="Selecione o modo de fundo" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#111827] border-white/5 text-white">
+                            <SelectItem value="solid">Cor sólida</SelectItem>
+                            <SelectItem value="gradient">Gradiente</SelectItem>
+                            <SelectItem value="image">Imagem de fundo</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      {/* Preview Box - Simple Simulation */}
+                      <div className="pt-4 space-y-4">
+                         <Label className="text-[10px] font-black uppercase tracking-widest text-slate-600 text-center block">Preview Rápido</Label>
+                         <div className={`p-4 rounded-xl border border-white/5 h-40 flex items-center justify-center overflow-hidden relative shadow-inner bg-[#0B1220]`}>
+                            {modoFundo === 'gradient' && <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/10 to-transparent" />}
+                            {layoutLogin === 'centered' ? (
+                               <div className="bg-[#111827] p-4 rounded-lg border border-white/10 w-32 space-y-2">
+                                  <div className="h-2 w-full bg-white/5 rounded-full" />
+                                  <div className="h-4 w-full bg-[#D4AF37] rounded-md" />
+                               </div>
+                            ) : layoutLogin === 'left' ? (
+                               <div className="flex w-full h-full gap-2">
+                                  <div className="w-1/2 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden">
+                                     {imagemLoginUrl ? <img src={imagemLoginUrl} className="object-cover w-full h-full opacity-50" /> : <ImageIcon className="text-slate-700" />}
+                                  </div>
+                                  <div className="w-1/2 bg-[#111827] p-4 rounded-lg border border-white/10 space-y-2">
+                                     <div className="h-2 w-full bg-white/5 rounded-full" />
+                                     <div className="h-4 w-full bg-[#D4AF37] rounded-md" />
+                                  </div>
+                               </div>
+                            ) : (
+                               <div className="flex w-full h-full gap-2">
+                                  <div className="w-1/2 bg-[#111827] p-4 rounded-lg border border-white/10 space-y-2">
+                                     <div className="h-2 w-full bg-white/5 rounded-full" />
+                                     <div className="h-4 w-full bg-[#D4AF37] rounded-md" />
+                                  </div>
+                                  <div className="w-1/2 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden">
+                                     {imagemLoginUrl ? <img src={imagemLoginUrl} className="object-cover w-full h-full opacity-50" /> : <ImageIcon className="text-slate-700" />}
+                                  </div>
+                               </div>
+                            )}
+                         </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="p-6 rounded-2xl bg-[#0B1220] border border-white/5 flex items-center justify-between">
-                    <div className="space-y-1">
-                      <Label className="text-base font-black text-white">Permitir Auto-cadastro</Label>
-                      <p className="text-sm text-slate-500 font-medium">Novos usuários podem criar conta sozinhos.</p>
-                    </div>
-                    <Switch className="data-[state=checked]:bg-[#D4AF37]" />
+
+                  <div className="pt-10 border-t border-white/5">
+                    <Button
+                      onClick={handleSubmit}
+                      disabled={mutation.isPending || !nome || !produtoId}
+                      className="w-full h-16 bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-[#0F172A] font-black text-lg rounded-2xl shadow-[0_20px_40px_rgba(212,175,55,0.2)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+                    >
+                      {mutation.isPending ? (
+                        <Loader2 className="h-7 w-7 animate-spin" />
+                      ) : (
+                        <>
+                          <Save className="h-6 w-6" />
+                          Salvar Configurações de Login
+                        </>
+                      )}
+                    </Button>
                   </div>
                 </div>
               </div>
