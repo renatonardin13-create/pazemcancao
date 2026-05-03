@@ -1425,33 +1425,96 @@ function EditAreaPage() {
             </TabsContent>
 
             <TabsContent value="produtos" className="mt-0 outline-none">
-              <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
-                    <Package className="h-5 w-5 text-[#D4AF37]" />
+              <div className="max-w-[900px] mx-auto space-y-8">
+                {/* Linked Product Header (Always visible if exists) */}
+                {produtoId && (
+                  <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
+                        <Package className="h-5 w-5 text-[#D4AF37]" />
+                      </div>
+                      <h3 className="text-xl font-black text-white">Produto vinculado</h3>
+                    </div>
+
+                    <div className="max-w-xl space-y-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="produtoId" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Vincular produto do catálogo</Label>
+                        <Select value={produtoId} onValueChange={setProdutoId}>
+                          <SelectTrigger className="h-14 bg-[#0B1220] border-white/5 focus:ring-[#D4AF37] rounded-xl font-bold text-base">
+                            <SelectValue placeholder="Selecione o produto" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#111827] border-white/5 text-white">
+                            {products?.map((product) => (
+                              <SelectItem key={product.id} value={product.id}>
+                                {product.title}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <p className="text-sm text-slate-500 font-medium">Este produto define quais conteúdos estarão disponíveis nesta área de membros por padrão.</p>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-black text-white">Produto vinculado</h3>
+                )}
+
+                {/* Empty State / Guide Section */}
+                <div className="bg-[#111827] border border-[#1F2937] rounded-[16px] p-12 flex flex-col items-center text-center space-y-8 shadow-2xl">
+                  <div className="h-20 w-20 rounded-3xl bg-white/5 flex items-center justify-center text-slate-500">
+                    <Package className="h-10 w-10" />
+                  </div>
+                  
+                  <div className="space-y-3 max-w-lg">
+                    <h3 className="text-2xl font-black text-[#F9FAFB]">Gerenciar produtos vinculados</h3>
+                    <p className="text-[#9CA3AF] font-medium leading-relaxed">
+                      Os produtos exibidos para os alunos desta área são definidos no catálogo geral e liberados pelas ofertas. 
+                      Vá ao catálogo para criar/editar produtos ou às ofertas para definir quais produtos liberam o acesso.
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
+                    <Button 
+                      type="button"
+                      variant="outline"
+                      onClick={() => navigate({ to: "/admin/courses" })}
+                      className="h-12 px-6 rounded-xl border-white/10 bg-transparent text-[#F9FAFB] font-bold hover:bg-white/5 transition-all flex items-center gap-2"
+                    >
+                      <Package className="h-5 w-5 text-slate-500" />
+                      Ir para o catálogo
+                    </Button>
+                    <Button 
+                      type="button"
+                      onClick={() => navigate({ to: "/admin/offers" })}
+                      className="h-12 px-8 rounded-xl bg-[#D4AF37] text-[#0F172A] font-black hover:bg-[#D4AF37]/90 transition-all flex items-center gap-2"
+                    >
+                      <Star className="h-5 w-5 fill-[#0F172A]" />
+                      Ir para ofertas
+                    </Button>
+                  </div>
                 </div>
 
-                <div className="max-w-xl space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="produtoId" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Vincular produto do catálogo</Label>
-                    <Select value={produtoId} onValueChange={setProdutoId}>
-                      <SelectTrigger className="h-14 bg-[#0B1220] border-white/5 focus:ring-[#D4AF37] rounded-xl font-bold text-base">
-                        <SelectValue placeholder="Selecione o produto" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[#111827] border-white/5 text-white">
-                        {products?.map((product) => (
-                          <SelectItem key={product.id} value={product.id}>
-                            {product.title}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <p className="text-sm text-slate-500 font-medium">Este produto define quais conteúdos estarão disponíveis nesta área de membros por padrão.</p>
-                </div>
+                {!produtoId && (
+                   <div className="p-8 bg-[#D4AF37]/5 border border-dashed border-[#D4AF37]/20 rounded-2xl">
+                      <p className="text-[#D4AF37] text-center font-bold">
+                        ⚠️ Nenhuma área de membros funciona sem um produto vinculado. 
+                        Por favor, selecione um produto no seletor acima ou crie um no catálogo.
+                      </p>
+                      <div className="mt-4 max-w-md mx-auto">
+                        <Select value={produtoId} onValueChange={setProdutoId}>
+                          <SelectTrigger className="h-14 bg-[#0B1220] border-white/5 focus:ring-[#D4AF37] rounded-xl font-bold text-base">
+                            <SelectValue placeholder="Selecionar produto agora..." />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#111827] border-white/5 text-white">
+                            {products?.map((product) => (
+                              <SelectItem key={product.id} value={product.id}>
+                                {product.title}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                   </div>
+                )}
               </div>
             </TabsContent>
           </form>
