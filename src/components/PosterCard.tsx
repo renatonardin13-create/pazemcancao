@@ -66,7 +66,7 @@ export interface PosterCardProps {
   aboveCard?: ReactNode;
 }
 
-const DEFAULT_GRADIENT = "from-stone-900/50 via-zinc-950/40 to-neutral-950/60";
+const DEFAULT_GRADIENT = "from-[#111] via-[#111] to-[#0b0b0b]";
 
 export const PosterCard = memo(function PosterCard({
   cover,
