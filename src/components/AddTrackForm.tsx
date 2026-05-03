@@ -176,8 +176,8 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-3 mb-2">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gold/10">
-          <Music className="h-4 w-4 text-gold/60" />
+        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10">
+          <Music className="h-4 w-4 text-orange-500/60" />
         </div>
         <div>
           <h3 className="text-sm font-bold text-foreground/80">Adicionar Louvor</h3>
@@ -356,7 +356,7 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
         <Button
           onClick={() => addTrackMutation.mutate()}
           disabled={!title.trim() || !mp3File || isSubmitting}
-          className="gap-2 rounded-full bg-gold/15 text-gold/65 border border-gold/12 px-6 h-10 text-xs font-bold tracking-[0.15em] uppercase hover:bg-gold/25 hover:text-gold/85 transition-all duration-500"
+          className="gap-2 rounded-full bg-orange-500/15 text-orange-500/65 border border-orange-500/12 px-6 h-10 text-xs font-bold tracking-[0.15em] uppercase hover:bg-orange-500/25 hover:text-orange-500/85 transition-all duration-500"
         >
           {isSubmitting ? (
             <Loader2 className="h-3.5 w-3.5 animate-spin" />

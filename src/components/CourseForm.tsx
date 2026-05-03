@@ -21,9 +21,10 @@ interface CourseFormProps {
   onSubmit: (values: any) => void;
   isSubmitting: boolean;
   hideSubmitButton?: boolean;
+  onTypeChange?: (type: string) => void;
 }
 
-const inputClass = "h-11 bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm";
+const inputClass = "h-11 bg-background/50 border-border/20 focus:border-orange-500/40 rounded-lg text-sm";
 const labelClass = "text-sm font-semibold text-foreground/80";
 
 const COURSE_TYPE_OPTIONS = [
@@ -54,6 +55,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   onSubmit,
   isSubmitting,
   hideSubmitButton,
+  onTypeChange,
 }, ref) {
   const [title, setTitle] = useState("");
   const [shortDesc, setShortDesc] = useState("");
@@ -67,6 +69,10 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   const [promotionalPrice, setPromotionalPrice] = useState("");
   const [status, setStatus] = useState("draft");
   const [courseType, setCourseType] = useState("aula");
+  
+  useEffect(() => {
+    onTypeChange?.(courseType);
+  }, [courseType, onTypeChange]);
   const [launchDate, setLaunchDate] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
@@ -150,7 +156,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
           <CardSection title="Informações do Produto">
             <div className="space-y-1.5">
               <Label htmlFor="title" className={labelClass}>
-                Nome do Produto <span className="text-gold">*</span>
+                Nome do Produto <span className="text-orange-500">*</span>
               </Label>
               <Input
                 id="title"
@@ -177,13 +183,13 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 onChange={(e) => setShortDesc(e.target.value)}
                 placeholder="Breve descrição do produto"
                 rows={3}
-                className="bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm resize-none"
+                className="bg-background/50 border-border/20 focus:border-orange-500/40 rounded-lg text-sm resize-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label className={labelClass}>Seção Principal <span className="text-gold">*</span></Label>
+                <Label className={labelClass}>Seção Principal <span className="text-orange-500">*</span></Label>
                 <Select 
                   value={categoryId} 
                   onValueChange={(val) => {
@@ -230,7 +236,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                     onClick={() => setCourseType(type.value)}
                     className={`flex flex-col items-center gap-1.5 px-5 py-3 rounded-xl border text-xs font-semibold transition-all min-w-[72px] ${
                       courseType === type.value
-                        ? "border-gold/40 bg-gold text-black shadow-lg shadow-gold/20"
+                        ? "border-orange-500/40 bg-orange-500 text-black shadow-lg shadow-orange-500/20"
                         : "border-border/30 bg-background/30 text-muted-foreground/50 hover:border-border/30 hover:text-muted-foreground/70"
                     }`}
                   >
@@ -314,7 +320,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                           <span className="text-xs text-muted-foreground/70 line-through">
                             R$ {parseFloat(price).toFixed(2)}
                           </span>
-                          <span className="text-sm font-bold text-gold">
+                          <span className="text-sm font-bold text-orange-500">
                             R$ {parseFloat(promotionalPrice).toFixed(2)}
                           </span>
                         </>

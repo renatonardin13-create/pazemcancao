@@ -72,19 +72,19 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <div className="h-12 w-12 border-4 border-gold/20 border-t-gold rounded-full animate-spin" />
+        <div className="h-12 w-12 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin" />
         <p className="text-muted-foreground/60 font-medium">Sintonizando louvores...</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-64px)] bg-[#0B1220] text-white">
+    <div className="flex flex-col min-h-[calc(100vh-64px)] bg-[#0b0b0b] text-white">
       {/* Top Section */}
       <div className="px-6 py-8 space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-[0.3em] text-gold/60 mb-1">
+            <h2 className="text-sm font-bold uppercase tracking-[0.3em] text-orange-500/60 mb-1">
               {activeCategory === "Todas" ? "Pack de Louvores" : activeCategory}
             </h2>
             <h1 className="text-3xl md:text-4xl font-black tracking-tight">{courseTitle}</h1>
@@ -97,12 +97,12 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
                 placeholder="Buscar música..." 
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="bg-white/5 border-white/10 pl-10 focus:border-gold/30 h-11 rounded-xl"
+                className="bg-white/5 border-white/10 pl-10 focus:border-orange-500/30 h-11 rounded-xl"
               />
             </div>
             <Button 
               onClick={handlePlayAll}
-              className="bg-gold text-black hover:bg-gold/90 font-bold px-6 h-11 rounded-xl shadow-lg shadow-gold/10"
+              className="bg-orange-500 text-black hover:bg-orange-600 font-bold px-6 h-11 rounded-xl shadow-lg shadow-orange-500/10 transition-all duration-300"
             >
               <Play className="h-4 w-4 mr-2 fill-current" />
               Tocar Tudo
@@ -118,7 +118,7 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
               onClick={() => setActiveCategory(cat)}
               className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all whitespace-nowrap border ${
                 activeCategory === cat 
-                ? "bg-gold text-black border-gold shadow-lg shadow-gold/20" 
+                ? "bg-orange-500 text-black border-orange-500 shadow-lg shadow-orange-500/20" 
                 : "bg-white/5 text-white/60 border-white/5 hover:bg-white/10 hover:text-white"
               }`}
             >
@@ -141,7 +141,7 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
                 onClick={() => toggle(track, filteredTracks)}
               >
                 <div className={`aspect-square rounded-2xl overflow-hidden border transition-all duration-300 ${
-                  isCurrent ? "border-gold ring-2 ring-gold/20 shadow-2xl shadow-gold/10" : "border-white/5 group-hover:border-white/20"
+                  isCurrent ? "border-orange-500 ring-2 ring-orange-500/20 shadow-2xl shadow-orange-500/10" : "border-white/5 group-hover:border-white/20"
                 }`}>
                   {track.coverUrl ? (
                     <img src={track.coverUrl} alt={track.title} className="w-full h-full object-cover" />
@@ -155,7 +155,7 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
                   <div className={`absolute inset-0 bg-black/60 flex items-center justify-center transition-opacity duration-300 ${
                     isCurrent || playing ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                   }`}>
-                    <div className={`w-14 h-14 rounded-full bg-gold flex items-center justify-center text-black shadow-xl transition-transform duration-300 ${
+                    <div className={`w-14 h-14 rounded-full bg-orange-500 flex items-center justify-center text-black shadow-xl transition-transform duration-300 ${
                       isCurrent ? "scale-100" : "scale-75 group-hover:scale-100"
                     }`}>
                       {isCurrent && playing ? <Pause className="h-6 w-6 fill-current" /> : <Play className="h-6 w-6 fill-current ml-1" />}
@@ -164,7 +164,7 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
 
                   {/* Title on thumbnail as requested */}
                   <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black via-black/40 to-transparent">
-                    <h3 className={`text-sm font-black tracking-tight line-clamp-2 leading-tight ${isCurrent ? "text-gold" : "text-white"}`}>
+                    <h3 className={`text-sm font-black tracking-tight line-clamp-2 leading-tight ${isCurrent ? "text-orange-500" : "text-white"}`}>
                       {track.title}
                     </h3>
                     <p className="text-[10px] font-bold text-white/40 uppercase tracking-wider mt-1">{track.description}</p>
@@ -174,9 +174,9 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
                 {/* Visualizer if current */}
                 {isCurrent && playing && (
                   <div className="absolute top-3 right-3 flex items-end gap-1 h-4">
-                    <motion.div animate={{ height: [4, 16, 8, 12, 4] }} transition={{ repeat: Infinity, duration: 0.6 }} className="w-1 bg-gold rounded-full" />
-                    <motion.div animate={{ height: [8, 4, 14, 6, 12] }} transition={{ repeat: Infinity, duration: 0.7 }} className="w-1 bg-gold rounded-full" />
-                    <motion.div animate={{ height: [12, 8, 4, 16, 8] }} transition={{ repeat: Infinity, duration: 0.5 }} className="w-1 bg-gold rounded-full" />
+                    <motion.div animate={{ height: [4, 16, 8, 12, 4] }} transition={{ repeat: Infinity, duration: 0.6 }} className="w-1 bg-orange-500 rounded-full" />
+                    <motion.div animate={{ height: [8, 4, 14, 6, 12] }} transition={{ repeat: Infinity, duration: 0.7 }} className="w-1 bg-orange-500 rounded-full" />
+                    <motion.div animate={{ height: [12, 8, 4, 16, 8] }} transition={{ repeat: Infinity, duration: 0.5 }} className="w-1 bg-orange-500 rounded-full" />
                   </div>
                 )}
               </motion.div>
@@ -192,7 +192,7 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
             initial={{ y: 100 }}
             animate={{ y: 0 }}
             exit={{ y: 100 }}
-            className="fixed bottom-0 left-0 right-0 bg-[#0B1220]/90 backdrop-blur-2xl border-t border-white/5 px-6 py-4 z-50"
+            className="fixed bottom-0 left-0 right-0 bg-[#0b0b0b]/90 backdrop-blur-2xl border-t border-white/5 px-6 py-4 z-50"
           >
             <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-8">
               {/* Info */}
@@ -258,7 +258,7 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
                     <div className="h-full bg-white/40 w-2/3" />
                   </div>
                 </div>
-                <button className="text-white/40 hover:text-gold transition-colors">
+                <button className="text-white/40 hover:text-orange-500 transition-colors">
                   <Clock className="h-4 w-4" />
                 </button>
               </div>

@@ -29,6 +29,7 @@ function NewCoursePage() {
   const { activeArea } = useAdminActiveArea();
   const formRef = useRef<HTMLFormElement>(null);
   const [activeTab, setActiveTab] = useState("detalhes");
+  const [courseType, setCourseType] = useState("aula");
 
   const { data: catData, isLoading: catLoading } = useQuery({
     queryKey: ["admin-categories", activeArea?.id],
@@ -75,14 +76,14 @@ function NewCoursePage() {
   return (
     <div className="max-w-6xl mx-auto space-y-4">
       {/* ===== HEADER ===== */}
-      <div className="relative rounded-2xl border border-gold/10 bg-gradient-to-r from-card via-card/80 to-card px-6 py-4 overflow-hidden shadow-xl shadow-black/10">
-        <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gold/[0.05] blur-[60px]" />
+      <div className="relative rounded-2xl border border-orange-500/10 bg-gradient-to-r from-card via-card/80 to-card px-6 py-4 overflow-hidden shadow-xl shadow-black/10">
+        <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-orange-500/[0.05] blur-[60px]" />
         <div className="flex items-center justify-between relative z-10">
           {/* Left: back + title */}
           <div className="flex items-center gap-3">
             <Link
               to="/admin/courses"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/30 bg-background/30 text-muted-foreground/50 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all duration-200"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/30 bg-background/30 text-muted-foreground/50 hover:text-orange-500 hover:border-orange-500/20 hover:bg-orange-500/5 transition-all duration-200"
             >
               <ArrowLeft className="h-4 w-4" />
             </Link>
@@ -122,19 +123,19 @@ function NewCoursePage() {
         <TabsList className="bg-card/60 border border-border/25 p-1 rounded-xl">
           <TabsTrigger
             value="detalhes"
-            className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-5"
+            className="data-[state=active]:bg-orange-500/15 data-[state=active]:text-orange-500 data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-5"
           >
             Detalhes
           </TabsTrigger>
           <TabsTrigger
             value="modulos"
-            className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-5"
+            className="data-[state=active]:bg-orange-500/15 data-[state=active]:text-orange-500 data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-5"
           >
-            Módulos e Aulas
+            {courseType === "louvores" ? "Gerenciar Músicas" : "Módulos e Aulas"}
           </TabsTrigger>
           <TabsTrigger
             value="config"
-            className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-5"
+            className="data-[state=active]:bg-orange-500/15 data-[state=active]:text-orange-500 data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-5"
           >
             Configurações
           </TabsTrigger>
@@ -146,6 +147,7 @@ function NewCoursePage() {
             onSubmit={(values) => mutation.mutate(values)}
             isSubmitting={mutation.isPending}
             hideSubmitButton
+            onTypeChange={setCourseType}
           />
         </TabsContent>
 
@@ -153,9 +155,13 @@ function NewCoursePage() {
           <div className="rounded-2xl border border-border/30 bg-card p-6 shadow-lg shadow-black/10 space-y-5">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-bold text-foreground">Módulos e Aulas</h3>
+                <h3 className="text-base font-bold text-foreground">
+                  {courseType === "louvores" ? "Gerenciar Músicas" : "Módulos e Aulas"}
+                </h3>
                 <p className="text-sm text-muted-foreground/50 mt-0.5">
-                  Organize a estrutura do seu curso de forma hierárquica
+                  {courseType === "louvores" 
+                    ? "Adicione e organize os louvores deste pack" 
+                    : "Organize a estrutura do seu curso de forma hierárquica"}
                 </p>
               </div>
               <TooltipProvider>
@@ -163,17 +169,17 @@ function NewCoursePage() {
                   <TooltipTrigger asChild>
                     <span>
                       <Button variant="outline" size="sm" disabled>
-                        + Criar Módulo
+                        {courseType === "louvores" ? "+ Adicionar Música" : "+ Criar Módulo"}
                       </Button>
                     </span>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Salve o produto primeiro para gerenciar módulos</p>
+                    <p>Salve o produto primeiro para {courseType === "louvores" ? "gerenciar músicas" : "gerenciar módulos"}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </div>
-            <div className="rounded-xl border border-dashed border-gold/30 bg-gold/[0.03] p-8 text-center">
+            <div className="rounded-xl border border-dashed border-orange-500/30 bg-orange-500/[0.03] p-8 text-center">
               <p className="text-sm text-muted-foreground/60">
                 Salve o curso primeiro para gerenciar módulos e aulas.
               </p>

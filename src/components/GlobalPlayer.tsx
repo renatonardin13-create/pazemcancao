@@ -78,8 +78,8 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
                       className={`h-full w-full object-cover transition-transform duration-700 ${playing ? 'scale-110' : 'scale-100'}`}
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-gold/20 to-black">
-                      <Music className="h-6 w-6 text-gold/40" />
+                    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-orange-500/20 to-black">
+                      <Music className="h-6 w-6 text-orange-500/40" />
                     </div>
                   )}
                 </div>
@@ -90,7 +90,7 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
                         key={i}
                         animate={{ height: ["20%", "100%", "20%"] }}
                         transition={{ repeat: Infinity, duration: 0.5, delay: i * 0.1 }}
-                        className="w-0.5 bg-gold"
+                        className="w-0.5 bg-orange-500"
                       />
                     ))}
                   </div>
@@ -99,14 +99,14 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
 
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm sm:text-base font-bold text-white truncate group-hover:text-gold transition-colors">
+                <h3 className="text-sm sm:text-base font-bold text-white truncate group-hover:text-orange-500 transition-colors">
                   {currentTrack.title}
                 </h3>
                 <div className="flex items-center gap-2 mt-0.5">
                   <span className="text-[10px] sm:text-xs font-medium text-white/40 uppercase tracking-wider truncate">
                     {currentTrack.category}
                   </span>
-                  <span className="text-[10px] sm:text-xs text-gold/60 tabular-nums">
+                  <span className="text-[10px] sm:text-xs text-orange-500/60 tabular-nums">
                     {formatSecs(currentTime)} / {duration > 0 ? formatSecs(duration) : currentTrack.duration}
                   </span>
                 </div>
@@ -140,7 +140,7 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
                       onClick={handleProgressClick}
                     >
                       <motion.div 
-                        className="absolute inset-y-0 left-0 bg-gold rounded-full"
+                        className="absolute inset-y-0 left-0 bg-orange-500 rounded-full"
                         style={{ width: `${progress}%` }}
                       />
                       <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white opacity-0 group-hover/progress:opacity-100 transition-opacity shadow-lg" style={{ left: `calc(${progress}% - 6px)` }} />
@@ -169,7 +169,7 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
                       <Download className="h-4 w-4" />
                     </button>
                   )}
-                  <button onClick={() => setIsExpanded(!isExpanded)} className={`p-2 transition-colors ${isExpanded ? 'text-gold' : 'text-white/40 hover:text-white'}`}>
+                  <button onClick={() => setIsExpanded(!isExpanded)} className={`p-2 transition-colors ${isExpanded ? 'text-orange-500' : 'text-white/40 hover:text-white'}`}>
                     <ListMusic className="h-4 w-4" />
                   </button>
                   <button onClick={stop} className="p-2 text-white/40 hover:text-white transition-colors">
@@ -185,7 +185,7 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
               onClick={handleProgressClick}
             >
               <motion.div 
-                className="h-full bg-gold"
+                className="h-full bg-orange-500"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -204,7 +204,7 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
                   <div className="flex items-center justify-between mb-4">
                     <h4 className="text-xs font-bold uppercase tracking-widest text-white/60">Fila de Reprodução</h4>
                     {nextTrack && (
-                      <span className="text-[10px] text-gold/60">Próxima: {nextTrack.title}</span>
+                      <span className="text-[10px] text-orange-500/60">Próxima: {nextTrack.title}</span>
                     )}
                   </div>
                   <div className="space-y-1">
@@ -214,7 +214,7 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
                         onClick={() => toggle(track, queue)}
                         className={`w-full flex items-center gap-3 p-2 rounded-xl transition-all ${
                           currentTrack.id === track.id 
-                            ? "bg-gold/10 text-gold shadow-lg shadow-gold/5" 
+                            ? "bg-orange-500/10 text-orange-500 shadow-lg shadow-orange-500/5" 
                             : "text-white/40 hover:bg-white/5 hover:text-white"
                         }`}
                       >

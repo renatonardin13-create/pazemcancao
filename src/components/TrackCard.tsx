@@ -90,17 +90,17 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
     <div
       className={`flex h-16 w-16 items-center justify-center rounded-2xl border backdrop-blur-sm transition-all duration-700 ${
         isPlaying
-          ? "border-gold/50 bg-gold/20 scale-110 shadow-[0_0_20px_rgba(212,175,55,0.3)]"
+          ? "border-orange-500/50 bg-orange-500/20 scale-110 shadow-[0_0_20px_rgba(249,115,22,0.3)]"
           : "border-white/[0.06] bg-white/[0.04] md:group-hover/card:scale-105 md:group-hover/card:bg-white/[0.07]"
       }`}
     >
       <Music
         className={`h-7 w-7 transition-colors duration-500 ${
-          isPlaying ? "text-gold" : "text-white/25 md:group-hover/card:text-white/40"
+          isPlaying ? "text-orange-500" : "text-white/25 md:group-hover/card:text-white/40"
         }`}
       />
       {isPlaying && (
-        <div className="absolute inset-0 rounded-2xl border border-gold/50 animate-ping opacity-20" />
+        <div className="absolute inset-0 rounded-2xl border border-orange-500/50 animate-ping opacity-20" />
       )}
     </div>
   );
@@ -111,7 +111,7 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
       {releaseText || "Em breve"}
     </span>
   ) : isPremiumLocked ? (
-    <span className="inline-flex items-center gap-1 rounded-full border border-gold/20 bg-gradient-to-r from-gold/95 to-amber-500/90 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-gold-foreground shadow-lg shadow-black/30 backdrop-blur-sm sm:text-[10px]">
+    <span className="inline-flex items-center gap-1 rounded-full border border-orange-500/20 bg-gradient-to-r from-orange-500/95 to-red-500/90 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-white shadow-lg shadow-black/30 backdrop-blur-sm sm:text-[10px]">
       <Lock className="h-2.5 w-2.5" />
       Premium
     </span>
@@ -127,23 +127,23 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
 
   const actionTopRight =
     isPlaying && !isRestricted ? (
-      <div className="flex h-7 w-7 items-center justify-center rounded-full border border-gold/30 bg-gold/20 backdrop-blur-sm animate-pulse">
-        <Music className="h-3 w-3 text-gold/80" />
+      <div className="flex h-7 w-7 items-center justify-center rounded-full border border-orange-500/30 bg-orange-500/20 backdrop-blur-sm animate-pulse">
+        <Music className="h-3 w-3 text-orange-500/80" />
       </div>
     ) : undefined;
 
   const overlay = isRestricted ? (
     <div className="flex h-full flex-col items-center justify-center gap-2.5 bg-black/25 backdrop-blur-[2px]">
       <div className="relative">
-        <div className="absolute -inset-3 rounded-full bg-gold/10 blur-xl" />
-        <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-gold/25 bg-gradient-to-br from-gold/20 to-amber-600/10 shadow-lg shadow-gold/10">
-          {isComingSoon ? <Clock className="h-6 w-6 text-gold/70" /> : <Lock className="h-6 w-6 text-gold/70" />}
+        <div className="absolute -inset-3 rounded-full bg-orange-500/10 blur-xl" />
+        <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-orange-500/25 bg-gradient-to-br from-orange-500/20 to-red-600/10 shadow-lg shadow-orange-500/10">
+          {isComingSoon ? <Clock className="h-6 w-6 text-orange-500/70" /> : <Lock className="h-6 w-6 text-orange-500/70" />}
         </div>
       </div>
-      <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold/60">
+      <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-orange-500/60">
         {isComingSoon ? "Liberação programada" : "Conteúdo Premium"}
       </span>
-      <span className="text-center text-[9px] font-medium text-gold/40">
+      <span className="text-center text-[9px] font-medium text-orange-500/40">
         {isComingSoon
           ? `${releaseText || "Em breve"}${releaseMeta.releaseDate ? ` · ${formatReleaseDate(releaseMeta.releaseDate)}` : ""}`
           : "Toque para ver detalhes"}
@@ -156,14 +156,14 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
       onClick={handlePlay}
       className={`pointer-events-auto flex h-auto items-center gap-2 rounded-full px-5 py-2.5 shadow-[0_4px_24px_rgba(0,0,0,0.4)] md:transition-all md:duration-500 md:ease-[cubic-bezier(0.22,1,0.36,1)] ${
         isPlaying
-          ? "scale-100 bg-gold/95 opacity-100"
-          : "scale-[0.5] bg-gold/95 opacity-0 md:group-hover/card:scale-100 md:group-hover/card:opacity-100"
+          ? "scale-100 bg-orange-500/95 opacity-100"
+          : "scale-[0.5] bg-orange-500/95 opacity-0 md:group-hover/card:scale-100 md:group-hover/card:opacity-100"
       }`}
     >
       {isPlaying ? (
-        <Pause className="h-4 w-4 fill-gold-foreground text-gold-foreground sm:h-5 sm:w-5" />
+        <Pause className="h-4 w-4 fill-current text-black sm:h-5 sm:w-5" />
       ) : (
-        <Play className="h-4 w-4 fill-gold-foreground text-gold-foreground sm:h-5 sm:w-5" />
+        <Play className="h-4 w-4 fill-current text-black sm:h-5 sm:w-5" />
       )}
     </button>
   ) : undefined;
@@ -175,7 +175,7 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
       </span>
       <button
         onClick={handleDownload}
-        className="inline-flex items-center gap-1 text-[9px] font-semibold uppercase tracking-[0.15em] text-gold/55 transition-colors duration-500 hover:text-gold/80 sm:text-[10px]"
+        className="inline-flex items-center gap-1 text-[9px] font-semibold uppercase tracking-[0.15em] text-orange-500/55 transition-colors duration-500 hover:text-orange-500/80 sm:text-[10px]"
       >
         <Download className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
         Baixar

@@ -59,7 +59,7 @@ export function CourseMusicasTab({ courseId }: CourseMusicasTabProps) {
             className="pl-9 bg-background/50 border-border/20 h-10"
           />
         </div>
-        <Button onClick={() => setIsAdding(true)} className="bg-gold text-black hover:bg-gold/90 h-10">
+        <Button onClick={() => setIsAdding(true)} className="bg-orange-500 text-black hover:bg-orange-600 h-10 transition-all duration-300">
           <Plus className="h-4 w-4 mr-2" />
           Adicionar Música
         </Button>
@@ -67,7 +67,7 @@ export function CourseMusicasTab({ courseId }: CourseMusicasTabProps) {
 
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <Loader2 className="h-8 w-8 text-gold animate-spin" />
+          <Loader2 className="h-8 w-8 text-orange-500 animate-spin" />
           <p className="text-sm text-muted-foreground/60">Carregando músicas...</p>
         </div>
       ) : musicas.length === 0 ? (
@@ -126,9 +126,9 @@ export function CourseMusicasTab({ courseId }: CourseMusicasTabProps) {
                     <td className="px-4 py-3 text-center">
                       <button
                         onClick={() => toggleDestaqueMutation.mutate({ id: musica.id, destaque: !musica.destaque })}
-                        className={`p-1.5 rounded-lg transition-colors ${musica.destaque ? 'text-gold bg-gold/10' : 'text-muted-foreground/20 hover:text-muted-foreground/40'}`}
+                        className={`p-1.5 rounded-lg transition-colors ${musica.destaque ? 'text-orange-500 bg-orange-500/10' : 'text-muted-foreground/20 hover:text-muted-foreground/40'}`}
                       >
-                        <Star className={`h-4 w-4 ${musica.destaque ? 'fill-gold' : ''}`} />
+                        <Star className={`h-4 w-4 ${musica.destaque ? 'fill-orange-500' : ''}`} />
                       </button>
                     </td>
                     <td className="px-4 py-3 text-right">
@@ -136,7 +136,7 @@ export function CourseMusicasTab({ courseId }: CourseMusicasTabProps) {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 rounded-lg hover:bg-gold/10 hover:text-gold"
+                          className="h-8 w-8 rounded-lg hover:bg-orange-500/10 hover:text-orange-500"
                           onClick={() => setEditingMusica(musica)}
                         >
                           <Pencil className="h-3.5 w-3.5" />
@@ -255,7 +255,7 @@ function MusicaDialog({ isOpen, onClose, courseId, musica }: { isOpen: boolean; 
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 pt-4">
           <div className="space-y-1.5">
-            <Label>Título <span className="text-gold">*</span></Label>
+            <Label>Título <span className="text-orange-500">*</span></Label>
             <Input
               value={formData.titulo}
               onChange={e => setFormData(prev => ({ ...prev, titulo: e.target.value }))}
@@ -286,7 +286,7 @@ function MusicaDialog({ isOpen, onClose, courseId, musica }: { isOpen: boolean; 
           </div>
 
           <div className="space-y-1.5">
-            <Label>Arquivo de Áudio (MP3) <span className="text-gold">*</span></Label>
+            <Label>Arquivo de Áudio (MP3) <span className="text-orange-500">*</span></Label>
             <div className="flex gap-2">
               <Input
                 value={formData.audio_url}
@@ -302,7 +302,7 @@ function MusicaDialog({ isOpen, onClose, courseId, musica }: { isOpen: boolean; 
                   className="absolute inset-0 opacity-0 cursor-pointer w-10"
                   disabled={isSubmitting}
                 />
-                <Button type="button" variant="outline" size="icon" className="h-10 w-10 shrink-0">
+                <Button type="button" variant="outline" size="icon" className="h-10 w-10 shrink-0 border-orange-500/20 hover:bg-orange-500/10 hover:text-orange-500">
                   <Upload className="h-4 w-4" />
                 </Button>
               </div>
@@ -336,7 +336,7 @@ function MusicaDialog({ isOpen, onClose, courseId, musica }: { isOpen: boolean; 
                 id="destaque"
                 checked={formData.destaque}
                 onChange={e => setFormData(prev => ({ ...prev, destaque: e.target.checked }))}
-                className="rounded border-border/20 bg-background/50 text-gold focus:ring-gold"
+                className="rounded border-border/20 bg-background/50 text-orange-500 focus:ring-orange-500"
               />
               <Label htmlFor="destaque" className="cursor-pointer">Música em destaque</Label>
             </div>
@@ -346,7 +346,7 @@ function MusicaDialog({ isOpen, onClose, courseId, musica }: { isOpen: boolean; 
             <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
               Cancelar
             </Button>
-            <Button type="submit" className="bg-gold text-black hover:bg-gold/90" disabled={isSubmitting}>
+            <Button type="submit" className="bg-orange-500 text-black hover:bg-orange-600 transition-all duration-300" disabled={isSubmitting}>
               {isSubmitting && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
               {musica ? "Salvar Alterações" : "Adicionar Música"}
             </Button>
