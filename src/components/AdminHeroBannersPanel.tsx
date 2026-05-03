@@ -158,11 +158,13 @@ function AdminHeroBannersPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin-hero-banners"],
-    queryFn: () => listAdminHeroBanners(),
+    queryFn: () => listHeroBanners(),
+
   });
   const { data: coursesData } = useQuery({
     queryKey: ["admin-courses"],
     queryFn: () => listAdminCourses(),
+
   });
 
   const [metricsDays, setMetricsDays] = useState<7 | 30 | 90>(30);

@@ -14,7 +14,6 @@ export const listModules = createServerFn({ method: 'POST' })
 
     if (error) throw new Error(error.message);
     
-    // Sort lessons within modules
     const sortedModules = (modules || []).map(m => ({
       ...m,
       lessons: (m.lessons || []).sort((a: any, b: any) => (a.sort_order || 0) - (b.sort_order || 0))
