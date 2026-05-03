@@ -479,7 +479,14 @@ function EditAreaPage() {
             </TabsContent>
 
             <TabsContent value="branding" className="mt-0 outline-none">
-               <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl">
+               <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
+                      <ImageIcon className="h-5 w-5 text-[#D4AF37]" />
+                    </div>
+                    <h3 className="text-xl font-black text-white">Identidade Visual</h3>
+                  </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <ImageUploadField
                       label="Logo da Área"
