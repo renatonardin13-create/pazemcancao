@@ -850,11 +850,16 @@ function EditAreaPage() {
                           {[1, 2, 3, 4].map(i => (
                             <div 
                               key={i} 
-                              className="p-4 rounded-xl border border-white/5 space-y-3 transition-colors"
-                              style={{ backgroundColor: surfaceColor }}
+                              className="p-4 rounded-xl border border-white/5 space-y-3 transition-all duration-500 group/prevcard hover:scale-[1.02]"
+                              style={{ 
+                                backgroundColor: surfaceColor,
+                                borderColor: i === 1 ? elevatedSurface : 'transparent' 
+                              }}
                             >
-                              <div className="h-10 w-full rounded-lg bg-white/5" />
-                              <p className="text-[9px] font-bold" style={{ color: textSecondary }}>CONTEÚDO {i}</p>
+                              <div className="h-10 w-full rounded-lg bg-white/5 overflow-hidden relative">
+                                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent" />
+                              </div>
+                              <p className="text-[9px] font-black uppercase tracking-widest" style={{ color: textSecondary }}>Módulo {i}</p>
                             </div>
                           ))}
                         </div>
