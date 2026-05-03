@@ -92,7 +92,7 @@ function AreasMembrosPage() {
   const areas = data?.areas || [];
 
   return (
-    <div className="min-h-screen bg-[#07090E] text-white -m-3 sm:-m-6 md:-m-8 p-6 md:p-10 space-y-10">
+    <div className="min-h-screen bg-[#0B1220] text-white -m-3 sm:-m-6 md:-m-8 p-6 md:p-10 space-y-10">
       {/* Top Navigation */}
       <div className="flex flex-col gap-8">
         <Button 
