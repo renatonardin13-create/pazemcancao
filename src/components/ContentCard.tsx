@@ -81,7 +81,7 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
       ? "/conteudo/$trackId" 
       : "/musicas/$trackId";
     
-    navigate({ to: target as any, params: { trackId: String(item.id) } });
+    navigate({ to: target as any, params: { trackId: String(item.id) } as any });
   }, [isLocked, isLaunchContent, launchMode, isPendingRelease, isRuleLocked, item.content_type, item.id, navigate]);
 
   const fallback = (
