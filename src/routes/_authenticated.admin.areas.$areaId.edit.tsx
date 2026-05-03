@@ -963,98 +963,101 @@ function EditAreaPage() {
             </TabsContent>
 
             <TabsContent value="idioma" className="mt-0 outline-none">
-              <div className="space-y-10 max-w-5xl mx-auto">
-                {/* 1. Configurações de idioma */}
-                <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
-                      <Languages className="h-5 w-5 text-[#D4AF37]" />
+              <div className="space-y-10 max-w-[1100px] mx-auto">
+                {/* 1. Header Section */}
+                <div className="bg-[#111827] border border-white/5 rounded-[32px] p-8 md:p-12 space-y-12 shadow-2xl relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#D4AF37] to-transparent opacity-40" />
+                  
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
+                    <div className="flex items-center gap-5">
+                      <div className="h-14 w-14 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10 shadow-[0_0_20px_rgba(212,175,55,0.1)]">
+                        <Languages className="h-7 w-7 text-[#D4AF37]" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-black text-white">Localização e Idiomas</h3>
+                        <p className="text-slate-500 text-sm font-medium">Personalize a tradução e formatos para diferentes países</p>
+                      </div>
                     </div>
-                    <h3 className="text-xl font-black text-white">Configurações de Localização</h3>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    <div className="space-y-3">
-                      <Label htmlFor="language" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Idioma principal da área</Label>
+                  {/* Config Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div className="space-y-4">
+                      <Label htmlFor="language" className="text-[11px] font-black uppercase tracking-[0.2em] text-[#D4AF37]">Idioma Padrão da Plataforma</Label>
                       <Select value={language} onValueChange={setLanguage}>
-                        <SelectTrigger className="h-14 bg-[#0B1220] border-white/5 focus:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]">
+                        <SelectTrigger className="h-14 bg-[#0B1220] border-white/5 focus:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02] shadow-inner">
                           <SelectValue placeholder="Selecione o idioma" />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#111827] border-white/5 text-white">
+                        <SelectContent className="bg-[#111827] border-white/10 text-white">
                           <SelectItem value="pt-BR" className="focus:bg-[#D4AF37] focus:text-black font-bold">Português (Brasil)</SelectItem>
                           <SelectItem value="en" className="focus:bg-[#D4AF37] focus:text-black font-bold">English (US)</SelectItem>
                           <SelectItem value="es" className="focus:bg-[#D4AF37] focus:text-black font-bold">Español</SelectItem>
                         </SelectContent>
                       </Select>
-                      <p className="text-[10px] text-slate-600 font-bold uppercase tracking-wider pl-1">Idioma padrão do sistema</p>
+                      <p className="text-[10px] text-slate-600 font-bold uppercase tracking-wider pl-1 italic">Toda a interface base será exibida neste idioma.</p>
                     </div>
 
-                    <div className="space-y-3">
-                      <Label htmlFor="formatoData" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Formato de data</Label>
+                    <div className="space-y-4">
+                      <Label htmlFor="formatoData" className="text-[11px] font-black uppercase tracking-[0.2em] text-[#D4AF37]">Formato de Data e Hora</Label>
                       <Select value={formatoData} onValueChange={setFormatoData}>
-                        <SelectTrigger className="h-14 bg-[#0B1220] border-white/5 focus:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]">
+                        <SelectTrigger className="h-14 bg-[#0B1220] border-white/5 focus:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02] shadow-inner">
                           <SelectValue placeholder="Selecione o formato" />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#111827] border-white/5 text-white">
+                        <SelectContent className="bg-[#111827] border-white/10 text-white">
                           <SelectItem value="DD/MM/AAAA" className="focus:bg-[#D4AF37] focus:text-black font-bold">DD/MM/AAAA</SelectItem>
                           <SelectItem value="MM/DD/YYYY" className="focus:bg-[#D4AF37] focus:text-black font-bold">MM/DD/YYYY</SelectItem>
                           <SelectItem value="YYYY-MM-DD" className="focus:bg-[#D4AF37] focus:text-black font-bold">YYYY-MM-DD</SelectItem>
                         </SelectContent>
                       </Select>
-                      <p className="text-[10px] text-slate-600 font-bold uppercase tracking-wider pl-1">Exibição de datas para o aluno</p>
+                      <p className="text-[10px] text-slate-600 font-bold uppercase tracking-wider pl-1 italic">Ajustado automaticamente no painel do aluno.</p>
+                    </div>
+                  </div>
+
+                  {/* Multi-language Chips */}
+                  <div className="pt-10 border-t border-white/5 space-y-8">
+                    <div>
+                       <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-6 block">Idiomas secundários habilitados</Label>
+                       <div className="flex flex-wrap gap-4">
+                        {[
+                          { id: "pt-BR", label: "Português", flag: "🇧🇷" },
+                          { id: "en", label: "English", flag: "🇺🇸" },
+                          { id: "es", label: "Español", flag: "🇪🇸" }
+                        ].map((lang) => {
+                          const isActive = idiomasAtivos.includes(lang.id) || lang.id === language;
+                          const isMain = lang.id === language;
+                          
+                          return (
+                            <button
+                              key={lang.id}
+                              type="button"
+                              disabled={isMain}
+                              onClick={() => {
+                                if (idiomasAtivos.includes(lang.id)) {
+                                  setIdiomasAtivos(idiomasAtivos.filter(i => i !== lang.id));
+                                } else {
+                                  setIdiomasAtivos([...idiomasAtivos, lang.id]);
+                                }
+                              }}
+                              className={`
+                                px-8 h-16 rounded-[20px] font-black text-sm transition-all flex items-center gap-4 border-2
+                                ${isActive 
+                                  ? 'bg-[#D4AF37]/10 border-[#D4AF37]/40 text-[#D4AF37] shadow-[0_15px_30px_rgba(212,175,55,0.1)]' 
+                                  : 'bg-[#1F2937]/30 border-white/5 text-slate-500 hover:border-white/20 hover:text-slate-400'
+                                }
+                                ${isMain ? 'cursor-default ring-2 ring-[#D4AF37]/20 border-[#D4AF37]' : 'hover:scale-[1.05] active:scale-[0.95]'}
+                              `}
+                            >
+                              <span className="text-xl">{lang.flag}</span>
+                              {lang.label} 
+                              {isMain && <Badge className="bg-[#D4AF37] text-black text-[8px] px-2 py-0.5 ml-2 font-black uppercase tracking-tighter">Padrão</Badge>}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* 2. Idiomas habilitados */}
-                <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
-                      <Globe className="h-5 w-5 text-[#D4AF37]" />
-                    </div>
-                    <h3 className="text-xl font-black text-white">Idiomas Habilitados</h3>
-                  </div>
-
-                  <div className="flex flex-wrap gap-4">
-                    {[
-                      { id: "pt-BR", label: "Português (Brasil)" },
-                      { id: "en", label: "English" },
-                      { id: "es", label: "Español" }
-                    ].map((lang) => {
-                      const isActive = idiomasAtivos.includes(lang.id) || lang.id === language;
-                      const isMain = lang.id === language;
-                      
-                      return (
-                        <button
-                          key={lang.id}
-                          type="button"
-                          disabled={isMain}
-                          onClick={() => {
-                            if (idiomasAtivos.includes(lang.id)) {
-                              setIdiomasAtivos(idiomasAtivos.filter(i => i !== lang.id));
-                            } else {
-                              setIdiomasAtivos([...idiomasAtivos, lang.id]);
-                            }
-                          }}
-                          className={`
-                            px-8 h-14 rounded-full font-black text-sm transition-all flex items-center gap-4 border
-                            ${isActive 
-                              ? 'bg-[#D4AF37]/10 border-[#D4AF37] text-[#D4AF37] shadow-[0_0_20px_rgba(212,175,55,0.15)]' 
-                              : 'bg-[#0B1220] border-white/5 text-slate-600 hover:border-white/20 hover:text-slate-400'
-                            }
-                            ${isMain ? 'cursor-default ring-2 ring-[#D4AF37]/20' : 'hover:scale-[1.03] active:scale-[0.97]'}
-                          `}
-                        >
-                          <div className={`h-2.5 w-2.5 rounded-full ${isActive ? 'bg-[#D4AF37] shadow-[0_0_8px_#D4AF37]' : 'bg-slate-800'}`} />
-                          {lang.label} {isMain && <span className="text-[10px] bg-[#D4AF37] text-black px-2 py-0.5 rounded-full ml-1 uppercase">Padrão</span>}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <p className="text-xs text-slate-500 font-medium italic">Selecione quais idiomas estarão disponíveis para troca no painel do aluno.</p>
-                </div>
 
                 {/* 3. Textos do sistema */}
                 <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-10 shadow-2xl relative overflow-hidden">
