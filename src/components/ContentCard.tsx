@@ -1,6 +1,6 @@
-import { memo, useState } from "react";
+import { memo, useState, useCallback } from "react";
 import { Lock, Download, Play, ShoppingCart, Clock, ArrowRight, CheckCircle2, Eye, Heart, Star, Sparkles } from "lucide-react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import type { LucideIcon } from "lucide-react";
 import { PosterCard } from "@/components/PosterCard";
 import { UnlockModal } from "@/components/UnlockModal";
