@@ -467,10 +467,10 @@ function EditAreaPage() {
                             <SelectValue placeholder="Selecione o tipo" />
                           </SelectTrigger>
                           <SelectContent className="bg-[#111827] border-white/5 text-white">
-                            <SelectItem value="desenhos">Desenhos</SelectItem>
-                            <SelectItem value="cursos">Cursos</SelectItem>
-                            <SelectItem value="misto">Misto</SelectItem>
-                            <SelectItem value="louvores">Louvores</SelectItem>
+                            <SelectItem value="misto" className="focus:bg-[#D4AF37] focus:text-black font-bold">Misto (Cursos + Outros)</SelectItem>
+                            <SelectItem value="cursos" className="focus:bg-[#D4AF37] focus:text-black font-bold">Apenas Cursos</SelectItem>
+                            <SelectItem value="ebooks" className="focus:bg-[#D4AF37] focus:text-black font-bold">Apenas Ebooks</SelectItem>
+                            <SelectItem value="pack_louvores" className="focus:bg-[#D4AF37] focus:text-black font-bold">Pack de Louvores (Spotify Style)</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
