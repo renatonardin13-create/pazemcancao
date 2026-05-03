@@ -208,6 +208,9 @@ export const updateAreaMembro = createServerFn({ method: 'POST' })
         tipo: data.tipo,
         rotulo_curto: data.rotulo_curto,
         descricao: data.descricao,
+        app_name: data.app_name,
+        logo_alt: data.logo_alt,
+        support_email: data.support_email,
       })
       .eq('id', data.id);
 
