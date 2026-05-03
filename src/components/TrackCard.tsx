@@ -96,7 +96,7 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
     >
       <Music
         className={`h-7 w-7 transition-colors duration-500 ${
-          isPlaying ? "text-gold" : "text-white/25 md:group-hover/card:text-white/40"
+          isPlaying ? "text-orange-500" : "text-white/25 md:group-hover/card:text-white/40"
         }`}
       />
       {isPlaying && (
