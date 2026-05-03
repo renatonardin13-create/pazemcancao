@@ -585,10 +585,24 @@ function EditAreaPage() {
                             placeholder="https://exemplo.com/favicon.ico"
                             className="h-12 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-medium text-sm transition-all"
                           />
+                      </div>
+
+                      {/* Catalog Banner Section */}
+                      <div className="space-y-4 pt-4 border-t border-white/5">
+                        <div className="flex flex-col gap-2">
+                          <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Banner do Catálogo</Label>
+                          <ImageUploadField
+                            label=""
+                            hint="Este banner aparecerá no topo da vitrine de cursos desta área."
+                            value={bannerUrl}
+                            onChange={setBannerUrl}
+                            uploadLabel="Enviar Banner do Catálogo"
+                          />
                         </div>
                       </div>
                     </div>
                   </div>
+                </div>
                 </div>
 
                 {/* Preview Column */}
