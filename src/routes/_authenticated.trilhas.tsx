@@ -59,14 +59,18 @@ function TrilhasPage() {
   }, [allItems, dbJourneys]);
 
   const handleTrackView = useCallback((contentId: string) => {
+    trackContentView({ data: { contentId } }).then(() => {
       queryClient.invalidateQueries({ queryKey: ["content-items"] });
     });
-  }, [queryClient, undefined]);
+  }, [queryClient]);
+
 
   const handleTrackDownload = useCallback((contentId: string) => {
+    trackContentDownload({ data: { contentId } }).then(() => {
       queryClient.invalidateQueries({ queryKey: ["content-items"] });
     });
-  }, [queryClient, undefined]);
+  }, [queryClient]);
+
 
   const handleToggleFavorite = useCallback((contentId: string, currentlyFav: boolean) => {
     toggleFavorite({ data: { contentId, isFavorite: currentlyFav } }).then(() => {

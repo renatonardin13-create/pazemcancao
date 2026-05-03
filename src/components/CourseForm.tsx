@@ -95,6 +95,8 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       setCourseType(normalizeCourseType(initialValues.course_type));
       setLaunchDate(initialValues.launch_date || "");
     }
+  }, [initialValues]);
+
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
