@@ -1198,19 +1198,23 @@ function EditAreaPage() {
             </TabsContent>
 
             <TabsContent value="login" className="mt-0 outline-none">
-              <div className="max-w-[1100px] mx-auto space-y-10">
-                <div className="bg-[#111827] border border-white/5 rounded-[24px] p-10 space-y-10 shadow-2xl relative overflow-hidden">
+              <div className="max-w-[1100px] mx-auto space-y-8">
+                <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 md:p-12 space-y-12 shadow-2xl relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
-                      <Lock className="h-5 w-5 text-[#D4AF37]" />
+                  
+                  <div className="flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10 shadow-[0_0_20px_rgba(212,175,55,0.1)]">
+                      <Lock className="h-6 w-6 text-[#D4AF37]" />
                     </div>
-                    <h3 className="text-xl font-black text-white">Customização da Página de Login</h3>
+                    <div>
+                      <h3 className="text-2xl font-black text-white">Configurações da Página de Login</h3>
+                      <p className="text-slate-500 text-sm font-medium">Personalize a experiência de entrada dos seus alunos</p>
+                    </div>
                   </div>
 
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-8">
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-10">
                     {/* COLUNA ESQUERDA */}
-                    <div className="space-y-8">
+                    <div className="space-y-10">
                       <div className="space-y-3 group">
                         <Label htmlFor="tituloLogin" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Título da tela de login</Label>
                         <Input
@@ -1218,7 +1222,7 @@ function EditAreaPage() {
                           value={tituloLogin}
                           onChange={(e) => setTituloLogin(e.target.value)}
                           placeholder="Bem-vindo ao Reino das Cores Kids"
-                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
                         />
                       </div>
 
@@ -1229,7 +1233,7 @@ function EditAreaPage() {
                           value={placeholderEmail}
                           onChange={(e) => setPlaceholderEmail(e.target.value)}
                           placeholder="Seu melhor email"
-                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
                         />
                       </div>
 
@@ -1240,7 +1244,7 @@ function EditAreaPage() {
                           value={textoBotao}
                           onChange={(e) => setTextoBotao(e.target.value)}
                           placeholder="Entrar agora"
-                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
                         />
                       </div>
 
@@ -1251,27 +1255,27 @@ function EditAreaPage() {
                           value={textoRodape}
                           onChange={(e) => setTextoRodape(e.target.value)}
                           placeholder="Suporte: contato@empresa.com"
-                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
                         />
                       </div>
 
-                      <div className="space-y-4 pt-4">
-                        <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Imagem de Login</Label>
-                        <div className="grid grid-cols-1 gap-4">
+                      <div className="space-y-4 pt-4 border-t border-white/5">
+                        <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Imagem de Login</Label>
+                        <div className="space-y-6">
                           <ImageUploadField
                             label=""
                             hint="Aceita JPG/PNG. Sugestão: 4:3 ou 16:9"
                             value={imagemLoginUrl}
                             onChange={setImagemLoginUrl}
-                            uploadLabel="Enviar imagem"
+                            uploadLabel="Enviar imagem de destaque"
                           />
-                          <div className="space-y-2">
-                            <Label htmlFor="imagemLoginUrl" className="text-[10px] font-bold text-slate-500">Ou colar URL da imagem</Label>
+                          <div className="space-y-2 group">
+                            <Label htmlFor="imagemLoginUrl" className="text-[10px] font-bold text-slate-500 group-focus-within:text-[#D4AF37]">Ou colar URL da imagem</Label>
                             <Input
                               id="imagemLoginUrl"
                               value={imagemLoginUrl}
                               onChange={(e) => setImagemLoginUrl(e.target.value)}
-                              placeholder="https://exemplo.com/background.jpg"
+                              placeholder="https://exemplo.com/login-hero.jpg"
                               className="h-12 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-medium text-sm transition-all"
                             />
                           </div>
