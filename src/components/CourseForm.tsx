@@ -230,7 +230,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                     onClick={() => setCourseType(type.value)}
                     className={`flex flex-col items-center gap-1.5 px-5 py-3 rounded-xl border text-xs font-semibold transition-all min-w-[72px] ${
                       courseType === type.value
-                        ? "border-gold/40 bg-gold text-black shadow-lg shadow-gold/20"
+                        ? "border-orange-500/40 bg-orange-500 text-black shadow-lg shadow-orange-500/20"
                         : "border-border/30 bg-background/30 text-muted-foreground/50 hover:border-border/30 hover:text-muted-foreground/70"
                     }`}
                   >
