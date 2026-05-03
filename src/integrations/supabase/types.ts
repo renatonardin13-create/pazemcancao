@@ -51,15 +51,7 @@ export type Database = {
           session_token?: string
           user_agent?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "active_sessions_area_id_fkey"
-            columns: ["area_id"]
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       approved_buyers: {
         Row: {
@@ -110,106 +102,15 @@ export type Database = {
           status?: string
           trial_expires_at?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "approved_buyers_area_id_fkey"
-            columns: ["area_id"]
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      areas: {
-        Row: {
-          background_color: string | null
-          banner_url: string | null
-          created_at: string | null
-          description: string | null
-          domain: string | null
-          favicon_url: string | null
-          id: string
-          is_primary: boolean | null
-          language: string | null
-          login_background_url: string | null
-          login_subtitle: string | null
-          login_title: string | null
-          logo_url: string | null
-          name: string
-          primary_color: string | null
-          product_id: string | null
-          secondary_color: string | null
-          settings: Json | null
-          short_label: string | null
-          slug: string
-          status: string | null
-          surface_color: string | null
-        }
-        Insert: {
-          background_color?: string | null
-          banner_url?: string | null
-          created_at?: string | null
-          description?: string | null
-          domain?: string | null
-          favicon_url?: string | null
-          id?: string
-          is_primary?: boolean | null
-          language?: string | null
-          login_background_url?: string | null
-          login_subtitle?: string | null
-          login_title?: string | null
-          logo_url?: string | null
-          name: string
-          primary_color?: string | null
-          product_id?: string | null
-          secondary_color?: string | null
-          settings?: Json | null
-          short_label?: string | null
-          slug: string
-          status?: string | null
-          surface_color?: string | null
-        }
-        Update: {
-          background_color?: string | null
-          banner_url?: string | null
-          created_at?: string | null
-          description?: string | null
-          domain?: string | null
-          favicon_url?: string | null
-          id?: string
-          is_primary?: boolean | null
-          language?: string | null
-          login_background_url?: string | null
-          login_subtitle?: string | null
-          login_title?: string | null
-          logo_url?: string | null
-          name?: string
-          primary_color?: string | null
-          product_id?: string | null
-          secondary_color?: string | null
-          settings?: Json | null
-          short_label?: string | null
-          slug?: string
-          status?: string | null
-          surface_color?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "areas_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "courses"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       areas_membros: {
         Row: {
           ativa: boolean | null
-          atualizado_em: string
+          atualizado_em: string | null
           background_color: string | null
           banner_url: string | null
-          criado_em: string
+          criado_em: string | null
           favicon_url: string | null
           id: string
           language: string | null
@@ -225,10 +126,10 @@ export type Database = {
         }
         Insert: {
           ativa?: boolean | null
-          atualizado_em?: string
+          atualizado_em?: string | null
           background_color?: string | null
           banner_url?: string | null
-          criado_em?: string
+          criado_em?: string | null
           favicon_url?: string | null
           id?: string
           language?: string | null
@@ -244,10 +145,10 @@ export type Database = {
         }
         Update: {
           ativa?: boolean | null
-          atualizado_em?: string
+          atualizado_em?: string | null
           background_color?: string | null
           banner_url?: string | null
-          criado_em?: string
+          criado_em?: string | null
           favicon_url?: string | null
           id?: string
           language?: string | null
@@ -417,15 +318,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "community_posts_area_id_fkey"
-            columns: ["area_id"]
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       content_items: {
         Row: {
@@ -532,7 +425,7 @@ export type Database = {
             foreignKeyName: "content_items_area_id_fkey"
             columns: ["area_id"]
             isOneToOne: false
-            referencedRelation: "areas"
+            referencedRelation: "areas_membros"
             referencedColumns: ["id"]
           },
           {
@@ -540,60 +433,6 @@ export type Database = {
             columns: ["unlock_rule_content_id"]
             isOneToOne: false
             referencedRelation: "content_items"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      contents: {
-        Row: {
-          area_id: string | null
-          category_id: string | null
-          created_at: string | null
-          id: string
-          sort_order: number
-          status: string | null
-          title: string
-          type: string | null
-          updated_at: string | null
-          url: string | null
-        }
-        Insert: {
-          area_id?: string | null
-          category_id?: string | null
-          created_at?: string | null
-          id?: string
-          sort_order?: number
-          status?: string | null
-          title: string
-          type?: string | null
-          updated_at?: string | null
-          url?: string | null
-        }
-        Update: {
-          area_id?: string | null
-          category_id?: string | null
-          created_at?: string | null
-          id?: string
-          sort_order?: number
-          status?: string | null
-          title?: string
-          type?: string | null
-          updated_at?: string | null
-          url?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "contents_area_id_fkey"
-            columns: ["area_id"]
-            isOneToOne: false
-            referencedRelation: "areas_membros"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "contents_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "categories"
             referencedColumns: ["id"]
           },
         ]
@@ -732,7 +571,7 @@ export type Database = {
             foreignKeyName: "courses_area_id_fkey"
             columns: ["area_id"]
             isOneToOne: false
-            referencedRelation: "areas"
+            referencedRelation: "areas_membros"
             referencedColumns: ["id"]
           },
           {
@@ -766,15 +605,7 @@ export type Database = {
           id?: string
           track_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "download_logs_area_id_fkey"
-            columns: ["area_id"]
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       enrollments: {
         Row: {
@@ -829,13 +660,6 @@ export type Database = {
           user_id?: string
         }
         Relationships: [
-          {
-            foreignKeyName: "enrollments_area_id_fkey"
-            columns: ["area_id"]
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "enrollments_course_id_fkey"
             columns: ["course_id"]
@@ -991,7 +815,7 @@ export type Database = {
             foreignKeyName: "journeys_area_id_fkey"
             columns: ["area_id"]
             isOneToOne: false
-            referencedRelation: "areas"
+            referencedRelation: "areas_membros"
             referencedColumns: ["id"]
           },
         ]
@@ -1157,38 +981,6 @@ export type Database = {
           },
         ]
       }
-      memberships: {
-        Row: {
-          area_id: string | null
-          created_at: string | null
-          id: string
-          role: string | null
-          user_id: string
-        }
-        Insert: {
-          area_id?: string | null
-          created_at?: string | null
-          id?: string
-          role?: string | null
-          user_id: string
-        }
-        Update: {
-          area_id?: string | null
-          created_at?: string | null
-          id?: string
-          role?: string | null
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "memberships_area_id_fkey"
-            columns: ["area_id"]
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       modules: {
         Row: {
           course_id: string
@@ -1265,37 +1057,37 @@ export type Database = {
       }
       platform_modules: {
         Row: {
-          created_at: string
-          enabled: boolean
+          created_at: string | null
+          enabled: boolean | null
           id: string
           name: string
           slug: string
-          sort_order: number
-          updated_at: string
-          visible_in_menu: boolean
-          visible_in_vitrine: boolean
+          sort_order: number | null
+          updated_at: string | null
+          visible_in_menu: boolean | null
+          visible_in_vitrine: boolean | null
         }
         Insert: {
-          created_at?: string
-          enabled?: boolean
+          created_at?: string | null
+          enabled?: boolean | null
           id?: string
           name: string
           slug: string
-          sort_order?: number
-          updated_at?: string
-          visible_in_menu?: boolean
-          visible_in_vitrine?: boolean
+          sort_order?: number | null
+          updated_at?: string | null
+          visible_in_menu?: boolean | null
+          visible_in_vitrine?: boolean | null
         }
         Update: {
-          created_at?: string
-          enabled?: boolean
+          created_at?: string | null
+          enabled?: boolean | null
           id?: string
           name?: string
           slug?: string
-          sort_order?: number
-          updated_at?: string
-          visible_in_menu?: boolean
-          visible_in_vitrine?: boolean
+          sort_order?: number | null
+          updated_at?: string | null
+          visible_in_menu?: boolean | null
+          visible_in_vitrine?: boolean | null
         }
         Relationships: []
       }
@@ -1348,15 +1140,7 @@ export type Database = {
           played_at?: string
           track_id?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "play_logs_area_id_fkey"
-            columns: ["area_id"]
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       playlist_tracks: {
         Row: {
@@ -1436,7 +1220,7 @@ export type Database = {
             foreignKeyName: "playlists_area_id_fkey"
             columns: ["area_id"]
             isOneToOne: false
-            referencedRelation: "areas"
+            referencedRelation: "areas_membros"
             referencedColumns: ["id"]
           },
         ]
@@ -1560,6 +1344,7 @@ export type Database = {
       }
       promo_banners: {
         Row: {
+          area_id: string | null
           created_at: string
           id: string
           image_url: string
@@ -1571,6 +1356,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          area_id?: string | null
           created_at?: string
           id?: string
           image_url: string
@@ -1582,6 +1368,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          area_id?: string | null
           created_at?: string
           id?: string
           image_url?: string
@@ -1592,7 +1379,15 @@ export type Database = {
           title?: string
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "promo_banners_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas_membros"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       shelf_courses: {
         Row: {
@@ -1687,7 +1482,7 @@ export type Database = {
             foreignKeyName: "shelves_area_id_fkey"
             columns: ["area_id"]
             isOneToOne: false
-            referencedRelation: "areas"
+            referencedRelation: "areas_membros"
             referencedColumns: ["id"]
           },
         ]
@@ -1838,13 +1633,6 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "transactions_area_id_fkey"
-            columns: ["area_id"]
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
-          {
             foreignKeyName: "transactions_course_id_fkey"
             columns: ["course_id"]
             isOneToOne: false
@@ -1927,13 +1715,6 @@ export type Database = {
           viewed_at?: string | null
         }
         Relationships: [
-          {
-            foreignKeyName: "user_content_progress_area_id_fkey"
-            columns: ["area_id"]
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "user_content_progress_content_id_fkey"
             columns: ["content_id"]
@@ -2033,7 +1814,6 @@ export type Database = {
       }
       vitrine_hero_banners: {
         Row: {
-          area_id: string | null
           autoplay: boolean
           autoplay_interval_ms: number
           banner_click_target: string | null
@@ -2066,7 +1846,6 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          area_id?: string | null
           autoplay?: boolean
           autoplay_interval_ms?: number
           banner_click_target?: string | null
@@ -2099,7 +1878,6 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          area_id?: string | null
           autoplay?: boolean
           autoplay_interval_ms?: number
           banner_click_target?: string | null
@@ -2131,15 +1909,7 @@ export type Database = {
           title?: string | null
           updated_at?: string
         }
-        Relationships: [
-          {
-            foreignKeyName: "vitrine_hero_banners_area_id_fkey"
-            columns: ["area_id"]
-            isOneToOne: false
-            referencedRelation: "areas"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       webhook_logs: {
         Row: {
@@ -2225,6 +1995,36 @@ export type Database = {
           provider?: string
           updated_at?: string
           webhook_url?: string
+        }
+        Relationships: []
+      }
+      webhooks_logs: {
+        Row: {
+          created_at: string | null
+          error_message: string | null
+          gateway: string
+          id: string
+          payload: Json
+          processed_at: string | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          error_message?: string | null
+          gateway: string
+          id?: string
+          payload: Json
+          processed_at?: string | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          error_message?: string | null
+          gateway?: string
+          id?: string
+          payload?: Json
+          processed_at?: string | null
+          status?: string | null
         }
         Relationships: []
       }
