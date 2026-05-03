@@ -128,126 +128,126 @@ export function NewAreaModal({ open, onOpenChange }: NewAreaModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="p-0 bg-[#0B1220] border-[#1F2937] text-[#F9FAFB] max-w-[850px] rounded-[24px] overflow-hidden shadow-2xl border">
+      <DialogContent className="p-0 bg-[#0B1220] border-white/5 text-[#F9FAFB] max-w-[900px] rounded-[40px] overflow-hidden shadow-[0_50px_100px_rgba(0,0,0,0.7)] border flex flex-col h-[90vh] md:h-[800px]">
         <AnimatePresence mode="wait">
           {!showSuccess ? (
             <motion.div
               key="form"
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="flex flex-col h-[90vh] md:h-[700px] bg-[#111827]"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="flex flex-col h-full bg-[#111827]"
             >
               {/* Header */}
-              <div className="p-8 border-b border-white/5 bg-[#111827] flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/20 shadow-[0_0_20px_rgba(212,175,55,0.1)]">
-                    <Sparkles className="h-6 w-6 text-[#D4AF37]" />
+              <div className="p-10 border-b border-white/5 bg-[#111827] flex items-center justify-between relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#D4AF37] to-transparent" />
+                <div className="flex items-center gap-6 relative z-10">
+                  <div className="h-16 w-16 rounded-[24px] bg-gradient-to-br from-[#1F2937] to-[#111827] flex items-center justify-center border border-white/5 shadow-2xl">
+                    <Sparkles className="h-8 w-8 text-[#D4AF37]" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-black tracking-tight text-white">Criar Nova Área de Membros</h2>
-                    <p className="text-sm text-slate-500 font-medium">Configure as bases do seu novo ecossistema</p>
+                    <h2 className="text-3xl font-black tracking-tight text-white">Nova Área de Membros</h2>
+                    <p className="text-slate-500 text-base font-medium">Expanda seu ecossistema com um novo ambiente premium</p>
                   </div>
                 </div>
-                <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/10">
+                <div className="hidden sm:flex items-center gap-3 px-4 py-2 bg-[#D4AF37]/5 rounded-full border border-[#D4AF37]/10">
                   <div className="h-2 w-2 rounded-full bg-[#D4AF37] animate-pulse" />
-                  <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Novo Ambiente</span>
+                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37]">Fase 2 Disponível</span>
                 </div>
               </div>
 
               {/* Form Content - Scrollable */}
-              <div className="flex-1 overflow-y-auto p-10 space-y-12 custom-scrollbar bg-[#111827]">
+              <div className="flex-1 overflow-y-auto p-12 space-y-16 custom-scrollbar bg-[#111827]">
                 {/* 1. IDENTIDADE DA ÁREA */}
-                <div className="space-y-8">
+                <div className="space-y-10">
                   <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/20">
-                      <Layers className="h-5 w-5 text-[#D4AF37]" />
+                    <div className="h-12 w-12 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
+                      <Layers className="h-6 w-6 text-[#D4AF37]" />
                     </div>
-                    <h3 className="text-sm font-black uppercase tracking-widest text-[#D4AF37]">1. Identidade da Área</h3>
+                    <h3 className="text-sm font-black uppercase tracking-[0.3em] text-[#D4AF37]">01. Identidade & Branding</h3>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 pl-4">
-                    <div className="space-y-3 group">
-                      <Label htmlFor="nome" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Título (Obrigatório)</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pl-4">
+                    <div className="space-y-4 group">
+                      <Label htmlFor="nome" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Nome da Área (Obrigatório)</Label>
                       <Input 
                         id="nome" 
-                        placeholder="Ex: Reino das Cores Kids" 
+                        placeholder="Ex: Treinamento VIP 2.0" 
                         value={nome}
                         onChange={(e) => setNome(e.target.value)}
-                        className="bg-[#1F2937] border-white/5 h-14 rounded-xl focus-visible:ring-[#D4AF37] text-base font-bold transition-all hover:bg-white/[0.02]"
+                        className="bg-[#0B1220] border-white/5 h-16 rounded-2xl focus-visible:ring-[#D4AF37] text-lg font-bold transition-all hover:bg-white/[0.02] shadow-inner"
                       />
                     </div>
-                    <div className="space-y-3 group">
-                      <Label htmlFor="rotuloCurto" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Rótulo curto</Label>
+                    <div className="space-y-4 group">
+                      <Label htmlFor="rotuloCurto" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Slug / Rótulo Curto</Label>
                       <Input 
                         id="rotuloCurto" 
-                        placeholder="Ex: Kids" 
+                        placeholder="Ex: VIP" 
                         value={rotuloCurto}
                         onChange={(e) => setRotuloCurto(e.target.value)}
-                        className="bg-[#1F2937] border-white/5 h-14 rounded-xl focus-visible:ring-[#D4AF37] text-base font-bold transition-all hover:bg-white/[0.02]"
+                        className="bg-[#0B1220] border-white/5 h-16 rounded-2xl focus-visible:ring-[#D4AF37] text-lg font-bold transition-all hover:bg-white/[0.02] shadow-inner"
                       />
-                      <p className="text-[10px] text-slate-600 font-medium flex items-center gap-1.5 pl-1 italic">
-                        <Info className="h-3 w-3" />
-                        Versão compacta usada em badges e chips.
-                      </p>
                     </div>
                   </div>
 
-                  <div className="space-y-3 group pl-4">
-                    <Label htmlFor="descricao" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Descrição</Label>
+                  <div className="space-y-4 group pl-4">
+                    <Label htmlFor="descricao" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Descrição da Área</Label>
                     <Textarea 
                       id="descricao" 
-                      placeholder="Descreva para quem é essa área e o que ela entrega de valor..." 
+                      placeholder="Conte para seus alunos o que eles encontrarão aqui..." 
                       value={descricao}
                       onChange={(e) => setDescricao(e.target.value)}
-                      className="bg-[#1F2937] border-white/5 min-h-[120px] rounded-xl focus-visible:ring-[#D4AF37] text-base font-medium resize-none transition-all hover:bg-white/[0.02] p-4 leading-relaxed"
+                      className="bg-[#0B1220] border-white/5 min-h-[140px] rounded-2xl focus-visible:ring-[#D4AF37] text-lg font-medium resize-none transition-all hover:bg-white/[0.02] p-6 leading-relaxed shadow-inner"
                     />
                   </div>
                 </div>
 
                 {/* 2. ENDEREÇO DA ÁREA */}
-                <div className="space-y-8">
+                <div className="space-y-10">
                   <div className="flex items-center gap-4">
-                    <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/20">
-                      <Globe className="h-5 w-5 text-[#D4AF37]" />
+                    <div className="h-12 w-12 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
+                      <Globe className="h-6 w-6 text-[#D4AF37]" />
                     </div>
-                    <h3 className="text-sm font-black uppercase tracking-widest text-[#D4AF37]">2. Endereço da Área</h3>
+                    <h3 className="text-sm font-black uppercase tracking-[0.3em] text-[#D4AF37]">02. Endereço & Domínio</h3>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 pl-4">
-                    <div className="space-y-3 group">
-                      <Label htmlFor="subdominio" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Identificador (Obrigatório)</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pl-4">
+                    <div className="space-y-4 group">
+                      <Label htmlFor="subdominio" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Subdomínio (Identificador)</Label>
                       <Input 
                         id="subdominio" 
-                        placeholder="Ex: desafio24dias" 
+                        placeholder="Ex: elite" 
                         value={subdominio}
                         onChange={(e) => setSubdominio(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ""))}
-                        className="bg-[#1F2937] border-white/5 h-14 rounded-xl focus-visible:ring-[#D4AF37] font-mono text-sm transition-all hover:bg-white/[0.02]"
+                        className="bg-[#0B1220] border-white/5 h-16 rounded-2xl focus-visible:ring-[#D4AF37] font-mono text-base transition-all hover:bg-white/[0.02] shadow-inner"
                       />
                     </div>
-                    <div className="space-y-3 group">
-                      <Label htmlFor="rootDomain" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Domínio raiz</Label>
+                    <div className="space-y-4 group">
+                      <Label htmlFor="rootDomain" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Domínio Raiz</Label>
                       <Input 
                         id="rootDomain" 
-                        placeholder="Ex: seudominio.com" 
+                        placeholder="Ex: meudominio.com" 
                         value={rootDomain}
                         onChange={(e) => setRootDomain(e.target.value)}
-                        className="bg-[#1F2937] border-white/5 h-14 rounded-xl focus-visible:ring-[#D4AF37] font-mono text-sm transition-all hover:bg-white/[0.02]"
+                        className="bg-[#0B1220] border-white/5 h-16 rounded-2xl focus-visible:ring-[#D4AF37] font-mono text-base transition-all hover:bg-white/[0.02] shadow-inner"
                       />
                     </div>
                   </div>
 
-                  <div className="p-6 rounded-[24px] bg-[#0B1220] border border-[#D4AF37]/10 space-y-4 shadow-inner relative overflow-hidden group/url ml-4">
-                    <div className="absolute top-0 left-0 w-1 h-full bg-[#D4AF37]/40" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37]/70 ml-1 italic">Preview do link de acesso</span>
-                    <div className="flex items-center justify-between gap-4 p-4 bg-black/30 rounded-xl border border-white/5 group-hover/url:border-[#D4AF37]/20 transition-all">
-                      <Globe className="h-5 w-5 text-[#D4AF37] group-hover/url:scale-110 transition-transform duration-500" />
-                      <span className="text-base font-black text-slate-300 truncate flex-1 font-mono tracking-tight">
+                  <div className="p-8 rounded-[32px] bg-[#0B1220] border border-[#D4AF37]/20 space-y-6 shadow-2xl relative overflow-hidden group/url ml-4 mx-auto max-w-[700px]">
+                    <div className="absolute top-0 left-0 w-1.5 h-full bg-[#D4AF37]" />
+                    <div className="flex items-center gap-3">
+                       <span className="text-[10px] font-black uppercase tracking-[0.3em] text-[#D4AF37]">Link de Acesso Final</span>
+                    </div>
+                    <div className="flex items-center justify-between gap-6 p-6 bg-black/40 rounded-[20px] border border-white/5 group-hover/url:border-[#D4AF37]/30 transition-all">
+                      <Globe className="h-6 w-6 text-[#D4AF37] group-hover/url:scale-110 transition-transform duration-500" />
+                      <span className="text-xl font-black text-slate-400 truncate flex-1 font-mono tracking-tighter">
                         https://<span className="text-[#D4AF37]">{subdominio || "subdominio"}</span>.<span className="text-white/90">{rootDomain || "dominio.com"}</span>
                       </span>
                     </div>
                   </div>
                 </div>
+
 
                 {/* 3. CONFIGURAÇÕES DA ÁREA */}
                 <div className="space-y-8">

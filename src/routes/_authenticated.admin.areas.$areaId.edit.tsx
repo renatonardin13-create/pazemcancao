@@ -470,7 +470,7 @@ function EditAreaPage() {
                             <SelectItem value="misto" className="focus:bg-[#D4AF37] focus:text-black font-bold">Misto (Cursos + Outros)</SelectItem>
                             <SelectItem value="cursos" className="focus:bg-[#D4AF37] focus:text-black font-bold">Apenas Cursos</SelectItem>
                             <SelectItem value="ebooks" className="focus:bg-[#D4AF37] focus:text-black font-bold">Apenas Ebooks</SelectItem>
-                            <SelectItem value="pack_louvores" className="focus:bg-[#D4AF37] focus:text-black font-bold">Pack de Louvores (Spotify Style)</SelectItem>
+                            <SelectItem value="louvores" className="focus:bg-[#D4AF37] focus:text-black font-bold">Pack de Louvores (Spotify Style)</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -581,105 +581,102 @@ function EditAreaPage() {
             </TabsContent>
 
             <TabsContent value="branding" className="mt-0 outline-none">
-              <div className="grid grid-cols-1 lg:grid-cols-10 gap-8">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 {/* Form Column (70%) */}
-                <div className="lg:col-span-7 space-y-6">
-                  <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
-                        <ImageIcon className="h-5 w-5 text-[#D4AF37]" />
+                <div className="lg:col-span-8 space-y-8">
+                  <div className="bg-[#111827] border border-white/5 rounded-[32px] p-8 md:p-10 space-y-10 shadow-2xl relative overflow-hidden group">
+                    <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#D4AF37] to-transparent opacity-40" />
+                    <div className="flex items-center gap-4">
+                      <div className="h-14 w-14 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10 shadow-[0_0_20px_rgba(212,175,55,0.1)]">
+                        <ImageIcon className="h-7 w-7 text-[#D4AF37]" />
                       </div>
-                      <h3 className="text-xl font-black text-white">Configurações de Branding</h3>
+                      <div>
+                        <h3 className="text-2xl font-black text-white">Branding & Identidade</h3>
+                        <p className="text-slate-500 text-sm font-medium">Configure como sua marca será vista pelos alunos</p>
+                      </div>
                     </div>
-
-                    <div className="space-y-10">
+                    
+                    <div className="space-y-12">
                       {/* Logo Section */}
                       <div className="space-y-6">
-                        <div className="flex flex-col gap-3">
-                          <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">1. Logo principal</Label>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-                            <ImageUploadField
-                              label=""
-                              hint="PNG transparente quadrado. Mín. 256x256 (ideal 512x512)"
-                              value={logoUrl}
-                              onChange={setLogoUrl}
-                              uploadLabel="Enviar imagem"
-                            />
-                            <div className="space-y-2">
-                              <Label htmlFor="logoUrl" className="text-[10px] font-bold text-slate-500">Ou colar URL da logo</Label>
+                        <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-[#D4AF37]">1. Logo Principal</Label>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start bg-white/[0.02] p-8 rounded-3xl border border-white/5">
+                          <ImageUploadField
+                            label=""
+                            hint="PNG transparente. Mín. 256x256"
+                            value={logoUrl}
+                            onChange={setLogoUrl}
+                            uploadLabel="Subir nova logo"
+                          />
+                          <div className="space-y-4">
+                            <div className="space-y-2 group">
+                              <Label htmlFor="logoUrl" className="text-[10px] font-bold text-slate-500 group-focus-within:text-[#D4AF37]">URL Direta da Imagem</Label>
                               <Input
                                 id="logoUrl"
                                 value={logoUrl}
                                 onChange={(e) => setLogoUrl(e.target.value)}
-                                placeholder="https://exemplo.com/logo.png"
+                                placeholder="https://..."
                                 className="h-12 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-medium text-sm transition-all"
                               />
+                            </div>
+                            <div className="p-4 rounded-xl bg-[#0B1220]/50 border border-white/5 space-y-2">
+                               <p className="text-[10px] font-bold text-slate-600 uppercase">Dica Pro</p>
+                               <p className="text-[11px] text-slate-500 italic">Use logotipos com fundo transparente (PNG) para um acabamento premium sobre fundos escuros.</p>
                             </div>
                           </div>
                         </div>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-white/5">
-                        <div className="space-y-3">
-                          <Label htmlFor="appName" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">2. Nome do app</Label>
+                      {/* App Name & Support */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-10 border-t border-white/5">
+                        <div className="space-y-3 group">
+                          <Label htmlFor="appName" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">2. Nome da plataforma</Label>
                           <Input
                             id="appName"
                             value={appName}
                             onChange={(e) => setAppName(e.target.value)}
                             placeholder="Ex: Reino das Cores"
-                            className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
+                            className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
                           />
                         </div>
-                        <div className="space-y-3">
-                          <Label htmlFor="logoAlt" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">3. Texto alternativo da logo</Label>
+                        <div className="space-y-3 group">
+                          <Label htmlFor="supportEmail" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">3. E-mail de suporte</Label>
+                          <div className="relative">
+                            <Input
+                              id="supportEmail"
+                              type="email"
+                              value={supportEmail}
+                              onChange={(e) => setSupportEmail(e.target.value)}
+                              placeholder="suporte@exemplo.com"
+                              className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base pl-12 transition-all hover:bg-white/[0.02]"
+                            />
+                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500" />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Favicon & Alt */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-10 pt-10 border-t border-white/5">
+                        <div className="space-y-6">
+                           <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">4. Favicon (Ícone de aba)</Label>
+                           <ImageUploadField
+                             label=""
+                             hint="Ícone 32x32 ou 64x64"
+                             value={faviconUrl}
+                             onChange={setFaviconUrl}
+                             uploadLabel="Subir favicon"
+                           />
+                        </div>
+                        <div className="space-y-3 group">
+                          <Label htmlFor="logoAlt" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">5. Texto ALT da Logo</Label>
                           <Input
                             id="logoAlt"
                             value={logoAlt}
                             onChange={(e) => setLogoAlt(e.target.value)}
-                            placeholder="Ex: Logotipo Reino das Cores"
-                            className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
+                            placeholder="Ex: Logo Oficial"
+                            className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
                           />
-                        </div>
-                      </div>
-
-                      <div className="space-y-3 pt-8 border-t border-white/5">
-                        <Label htmlFor="supportEmail" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">4. E-mail de suporte</Label>
-                        <div className="relative group">
-                          <Input
-                            id="supportEmail"
-                            type="email"
-                            value={supportEmail}
-                            onChange={(e) => setSupportEmail(e.target.value)}
-                            placeholder="suporte@exemplo.com"
-                            className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base pl-12 transition-all group-hover:bg-white/[0.02]"
-                          />
-                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-500 group-hover:text-[#D4AF37] transition-colors" />
-                        </div>
-                      </div>
-
-                      <div className="space-y-6 pt-8 border-t border-white/5">
-                        <div className="flex flex-col gap-3">
-                          <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">5. Favicon</Label>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
-                            <ImageUploadField
-                              label=""
-                              hint="Ícone exibido na aba do navegador"
-                              value={faviconUrl}
-                              onChange={setFaviconUrl}
-                              uploadLabel="Enviar Favicon"
-                            />
-                            <div className="space-y-2">
-                              <Label htmlFor="faviconUrl" className="text-[10px] font-bold text-slate-500">Ou colar URL do favicon</Label>
-                              <Input
-                                id="faviconUrl"
-                                value={faviconUrl}
-                                onChange={(e) => setFaviconUrl(e.target.value)}
-                                placeholder="https://exemplo.com/favicon.ico"
-                                className="h-12 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-medium text-sm transition-all"
-                              />
-                            </div>
-                          </div>
+                          <p className="text-[10px] text-slate-600 italic">Melhora o SEO e a acessibilidade da sua página.</p>
                         </div>
                       </div>
                     </div>
@@ -687,64 +684,56 @@ function EditAreaPage() {
                 </div>
 
                 {/* Preview Column (30%) */}
-                <div className="lg:col-span-3 space-y-6">
-                  <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl sticky top-10 overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
-                    <div className="space-y-1">
-                      <h3 className="text-xl font-black text-white">Pré-visualização</h3>
-                      <p className="text-slate-500 text-xs font-bold uppercase tracking-widest">Como vai aparecer</p>
+                <div className="lg:col-span-4 space-y-6">
+                  <div className="bg-[#111827] border border-white/5 rounded-[32px] p-8 space-y-8 shadow-2xl sticky top-10 overflow-hidden group/preview">
+                    <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-transparent via-[#D4AF37]/30 to-transparent" />
+                    <div className="space-y-1 text-center">
+                      <h3 className="text-xl font-black text-white">Visualização em Tempo Real</h3>
+                      <p className="text-slate-600 text-[10px] font-black uppercase tracking-widest italic">Protótipo da Interface</p>
                     </div>
 
-                    <div className="space-y-10">
-                      <div className="space-y-4">
-                        <motion.div 
-                          layout
-                          className="p-12 rounded-[24px] bg-[#0B1220] border border-white/5 flex flex-col items-center justify-center gap-6 shadow-inner relative overflow-hidden group"
-                        >
-                          <div className="absolute inset-0 bg-gradient-to-b from-[#D4AF37]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                          <div className="relative z-10">
-                            {logoUrl ? (
-                              <img src={logoUrl} alt="Preview Logo" className="h-28 w-28 object-contain rounded-2xl shadow-2xl" />
-                            ) : (
-                              <div className="h-28 w-28 rounded-2xl bg-white/5 flex items-center justify-center text-slate-700 border border-dashed border-white/10">
-                                <ImageIcon className="h-12 w-12" />
-                              </div>
-                            )}
+                    <div className="space-y-8">
+                       {/* Header Preview */}
+                       <div className="p-4 rounded-2xl bg-[#0B1220] border border-white/5 space-y-4 shadow-inner relative">
+                          <div className="flex items-center justify-between border-b border-white/5 pb-3">
+                             <div className="flex items-center gap-3">
+                                <div className="h-8 w-8 rounded-lg bg-white/5 flex items-center justify-center overflow-hidden border border-white/5">
+                                   {logoUrl ? <img src={logoUrl} className="h-full w-full object-contain" /> : <div className="h-2 w-2 rounded-full bg-[#D4AF37]" />}
+                                </div>
+                                <span className="text-[10px] font-black text-white tracking-tight truncate max-w-[80px]">{appName || "Sua Marca"}</span>
+                             </div>
+                             <div className="flex gap-2">
+                                <div className="h-4 w-4 rounded-full bg-white/5" />
+                                <div className="h-4 w-4 rounded-full bg-white/5" />
+                             </div>
                           </div>
-                          <h4 className="text-2xl font-black text-white relative z-10 text-center">{appName || "Nome do App"}</h4>
-                        </motion.div>
-                      </div>
-
-                      <div className="space-y-4">
-                        <div className="p-4 rounded-xl bg-[#0B1220]/50 border border-white/5 flex items-center gap-3 shadow-lg">
-                          {logoUrl ? (
-                            <img src={logoUrl} alt="Header Logo" className="h-8 w-8 object-contain rounded-full border border-[#D4AF37]/20 bg-black/20 p-1" />
-                          ) : (
-                            <div className="h-8 w-8 rounded-full bg-white/10" />
-                          )}
-                          <span className="text-sm font-black text-white/90 tracking-tight">{appName || "App Name"}</span>
-                          <div className="flex-1" />
-                          <div className="flex items-center gap-2">
-                            <div className="h-2 w-8 rounded-full bg-white/5" />
-                            <div className="h-8 w-8 rounded-full bg-white/10" />
+                          <div className="space-y-2">
+                             <div className="h-2 w-1/3 bg-white/10 rounded-full" />
+                             <div className="h-20 w-full bg-white/[0.02] rounded-xl border border-dashed border-white/10 flex items-center justify-center">
+                                <span className="text-[8px] font-black text-slate-700 uppercase tracking-widest">Banner da Área</span>
+                             </div>
                           </div>
-                        </div>
-                      </div>
+                       </div>
 
-                      <div className="pt-6 border-t border-white/5">
-                        <Button
-                          onClick={handleSubmit}
-                          disabled={mutation.isPending || !nome || !produtoId}
-                          className="w-full h-14 bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-black font-black text-lg rounded-2xl shadow-[0_15px_30px_rgba(212,175,55,0.2)] hover:scale-[1.03] active:scale-[0.97] transition-all"
-                        >
-                          {mutation.isPending ? (
-                            <Loader2 className="h-6 w-6 animate-spin" />
-                          ) : (
-                            "Salvar Branding"
-                          )}
-                        </Button>
-                      </div>
+                       {/* Browser Tab Preview */}
+                       <div className="p-4 rounded-2xl bg-white/[0.01] border border-dashed border-white/10 space-y-3">
+                          <Label className="text-[10px] font-black text-slate-600 uppercase tracking-widest text-center block">Na aba do navegador</Label>
+                          <div className="h-10 bg-[#1F2937] rounded-xl flex items-center px-4 gap-3 shadow-2xl">
+                             <div className="h-4 w-4 rounded-sm overflow-hidden bg-white/10">
+                                {faviconUrl && <img src={faviconUrl} className="w-full h-full object-contain" />}
+                             </div>
+                             <span className="text-[10px] font-bold text-slate-300 truncate">{appName || "Sua Marca"} | Área de Membros</span>
+                          </div>
+                       </div>
                     </div>
+
+                    <Button
+                      onClick={handleSubmit}
+                      disabled={mutation.isPending || !nome || !produtoId}
+                      className="w-full h-16 bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-[#0F172A] font-black text-lg rounded-2xl shadow-[0_20px_40px_rgba(212,175,55,0.2)] hover:scale-[1.03] transition-all flex items-center justify-center gap-3"
+                    >
+                      {mutation.isPending ? <Loader2 className="h-7 w-7 animate-spin" /> : "Salvar Branding"}
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -974,98 +963,101 @@ function EditAreaPage() {
             </TabsContent>
 
             <TabsContent value="idioma" className="mt-0 outline-none">
-              <div className="space-y-10 max-w-5xl mx-auto">
-                {/* 1. Configurações de idioma */}
-                <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
-                      <Languages className="h-5 w-5 text-[#D4AF37]" />
+              <div className="space-y-10 max-w-[1100px] mx-auto">
+                {/* 1. Header Section */}
+                <div className="bg-[#111827] border border-white/5 rounded-[32px] p-8 md:p-12 space-y-12 shadow-2xl relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#D4AF37] to-transparent opacity-40" />
+                  
+                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
+                    <div className="flex items-center gap-5">
+                      <div className="h-14 w-14 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10 shadow-[0_0_20px_rgba(212,175,55,0.1)]">
+                        <Languages className="h-7 w-7 text-[#D4AF37]" />
+                      </div>
+                      <div>
+                        <h3 className="text-2xl font-black text-white">Localização e Idiomas</h3>
+                        <p className="text-slate-500 text-sm font-medium">Personalize a tradução e formatos para diferentes países</p>
+                      </div>
                     </div>
-                    <h3 className="text-xl font-black text-white">Configurações de Localização</h3>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                    <div className="space-y-3">
-                      <Label htmlFor="language" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Idioma principal da área</Label>
+                  {/* Config Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                    <div className="space-y-4">
+                      <Label htmlFor="language" className="text-[11px] font-black uppercase tracking-[0.2em] text-[#D4AF37]">Idioma Padrão da Plataforma</Label>
                       <Select value={language} onValueChange={setLanguage}>
-                        <SelectTrigger className="h-14 bg-[#0B1220] border-white/5 focus:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]">
+                        <SelectTrigger className="h-14 bg-[#0B1220] border-white/5 focus:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02] shadow-inner">
                           <SelectValue placeholder="Selecione o idioma" />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#111827] border-white/5 text-white">
+                        <SelectContent className="bg-[#111827] border-white/10 text-white">
                           <SelectItem value="pt-BR" className="focus:bg-[#D4AF37] focus:text-black font-bold">Português (Brasil)</SelectItem>
                           <SelectItem value="en" className="focus:bg-[#D4AF37] focus:text-black font-bold">English (US)</SelectItem>
                           <SelectItem value="es" className="focus:bg-[#D4AF37] focus:text-black font-bold">Español</SelectItem>
                         </SelectContent>
                       </Select>
-                      <p className="text-[10px] text-slate-600 font-bold uppercase tracking-wider pl-1">Idioma padrão do sistema</p>
+                      <p className="text-[10px] text-slate-600 font-bold uppercase tracking-wider pl-1 italic">Toda a interface base será exibida neste idioma.</p>
                     </div>
 
-                    <div className="space-y-3">
-                      <Label htmlFor="formatoData" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Formato de data</Label>
+                    <div className="space-y-4">
+                      <Label htmlFor="formatoData" className="text-[11px] font-black uppercase tracking-[0.2em] text-[#D4AF37]">Formato de Data e Hora</Label>
                       <Select value={formatoData} onValueChange={setFormatoData}>
-                        <SelectTrigger className="h-14 bg-[#0B1220] border-white/5 focus:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]">
+                        <SelectTrigger className="h-14 bg-[#0B1220] border-white/5 focus:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02] shadow-inner">
                           <SelectValue placeholder="Selecione o formato" />
                         </SelectTrigger>
-                        <SelectContent className="bg-[#111827] border-white/5 text-white">
+                        <SelectContent className="bg-[#111827] border-white/10 text-white">
                           <SelectItem value="DD/MM/AAAA" className="focus:bg-[#D4AF37] focus:text-black font-bold">DD/MM/AAAA</SelectItem>
                           <SelectItem value="MM/DD/YYYY" className="focus:bg-[#D4AF37] focus:text-black font-bold">MM/DD/YYYY</SelectItem>
                           <SelectItem value="YYYY-MM-DD" className="focus:bg-[#D4AF37] focus:text-black font-bold">YYYY-MM-DD</SelectItem>
                         </SelectContent>
                       </Select>
-                      <p className="text-[10px] text-slate-600 font-bold uppercase tracking-wider pl-1">Exibição de datas para o aluno</p>
+                      <p className="text-[10px] text-slate-600 font-bold uppercase tracking-wider pl-1 italic">Ajustado automaticamente no painel do aluno.</p>
+                    </div>
+                  </div>
+
+                  {/* Multi-language Chips */}
+                  <div className="pt-10 border-t border-white/5 space-y-8">
+                    <div>
+                       <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-[#D4AF37] mb-6 block">Idiomas secundários habilitados</Label>
+                       <div className="flex flex-wrap gap-4">
+                        {[
+                          { id: "pt-BR", label: "Português", flag: "🇧🇷" },
+                          { id: "en", label: "English", flag: "🇺🇸" },
+                          { id: "es", label: "Español", flag: "🇪🇸" }
+                        ].map((lang) => {
+                          const isActive = idiomasAtivos.includes(lang.id) || lang.id === language;
+                          const isMain = lang.id === language;
+                          
+                          return (
+                            <button
+                              key={lang.id}
+                              type="button"
+                              disabled={isMain}
+                              onClick={() => {
+                                if (idiomasAtivos.includes(lang.id)) {
+                                  setIdiomasAtivos(idiomasAtivos.filter(i => i !== lang.id));
+                                } else {
+                                  setIdiomasAtivos([...idiomasAtivos, lang.id]);
+                                }
+                              }}
+                              className={`
+                                px-8 h-16 rounded-[20px] font-black text-sm transition-all flex items-center gap-4 border-2
+                                ${isActive 
+                                  ? 'bg-[#D4AF37]/10 border-[#D4AF37]/40 text-[#D4AF37] shadow-[0_15px_30px_rgba(212,175,55,0.1)]' 
+                                  : 'bg-[#1F2937]/30 border-white/5 text-slate-500 hover:border-white/20 hover:text-slate-400'
+                                }
+                                ${isMain ? 'cursor-default ring-2 ring-[#D4AF37]/20 border-[#D4AF37]' : 'hover:scale-[1.05] active:scale-[0.95]'}
+                              `}
+                            >
+                              <span className="text-xl">{lang.flag}</span>
+                              {lang.label} 
+                              {isMain && <Badge className="bg-[#D4AF37] text-black text-[8px] px-2 py-0.5 ml-2 font-black uppercase tracking-tighter">Padrão</Badge>}
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                {/* 2. Idiomas habilitados */}
-                <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
-                      <Globe className="h-5 w-5 text-[#D4AF37]" />
-                    </div>
-                    <h3 className="text-xl font-black text-white">Idiomas Habilitados</h3>
-                  </div>
-
-                  <div className="flex flex-wrap gap-4">
-                    {[
-                      { id: "pt-BR", label: "Português (Brasil)" },
-                      { id: "en", label: "English" },
-                      { id: "es", label: "Español" }
-                    ].map((lang) => {
-                      const isActive = idiomasAtivos.includes(lang.id) || lang.id === language;
-                      const isMain = lang.id === language;
-                      
-                      return (
-                        <button
-                          key={lang.id}
-                          type="button"
-                          disabled={isMain}
-                          onClick={() => {
-                            if (idiomasAtivos.includes(lang.id)) {
-                              setIdiomasAtivos(idiomasAtivos.filter(i => i !== lang.id));
-                            } else {
-                              setIdiomasAtivos([...idiomasAtivos, lang.id]);
-                            }
-                          }}
-                          className={`
-                            px-8 h-14 rounded-full font-black text-sm transition-all flex items-center gap-4 border
-                            ${isActive 
-                              ? 'bg-[#D4AF37]/10 border-[#D4AF37] text-[#D4AF37] shadow-[0_0_20px_rgba(212,175,55,0.15)]' 
-                              : 'bg-[#0B1220] border-white/5 text-slate-600 hover:border-white/20 hover:text-slate-400'
-                            }
-                            ${isMain ? 'cursor-default ring-2 ring-[#D4AF37]/20' : 'hover:scale-[1.03] active:scale-[0.97]'}
-                          `}
-                        >
-                          <div className={`h-2.5 w-2.5 rounded-full ${isActive ? 'bg-[#D4AF37] shadow-[0_0_8px_#D4AF37]' : 'bg-slate-800'}`} />
-                          {lang.label} {isMain && <span className="text-[10px] bg-[#D4AF37] text-black px-2 py-0.5 rounded-full ml-1 uppercase">Padrão</span>}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  <p className="text-xs text-slate-500 font-medium italic">Selecione quais idiomas estarão disponíveis para troca no painel do aluno.</p>
-                </div>
 
                 {/* 3. Textos do sistema */}
                 <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-10 shadow-2xl relative overflow-hidden">
@@ -1424,33 +1416,34 @@ function EditAreaPage() {
               </div>
             </TabsContent>
 
-            <TabsContent value="produtos" className="mt-0 outline-none flex items-center justify-center min-h-[60vh]">
-              <div className="max-w-[900px] w-full mx-auto space-y-10">
+            <TabsContent value="produtos" className="mt-0 outline-none flex items-center justify-center min-h-[60vh] py-12">
+              <div className="max-w-[850px] w-full mx-auto">
                 {/* Centralized Card */}
-                <div className="bg-[#111827] border border-[#1F2937] rounded-[16px] p-16 md:p-24 flex flex-col items-center text-center space-y-10 shadow-2xl relative overflow-hidden">
-                  {/* Subtle Glow Effect */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-1 bg-[#D4AF37]/20 blur-sm" />
+                <div className="bg-[#111827] border border-white/5 rounded-[40px] p-16 md:p-24 flex flex-col items-center text-center space-y-10 shadow-[0_40px_100px_rgba(0,0,0,0.6)] relative overflow-hidden group">
+                  {/* Premium Glow Effect */}
+                  <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-48 bg-[#D4AF37]/10 blur-[100px] group-hover:bg-[#D4AF37]/15 transition-all duration-700" />
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent" />
                   
-                  <div className="h-24 w-24 rounded-3xl bg-white/5 flex items-center justify-center text-slate-500 shadow-inner">
-                    <Package className="h-12 w-12" />
+                  <div className="h-32 w-32 rounded-[40px] bg-gradient-to-br from-[#1F2937] to-[#111827] flex items-center justify-center text-[#D4AF37] border border-white/5 shadow-2xl relative z-10 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+                    <Package className="h-16 w-16" />
                   </div>
                   
-                  <div className="space-y-4 max-w-xl">
-                    <h3 className="text-3xl font-black text-[#F9FAFB] tracking-tight">Gerenciar produtos vinculados</h3>
-                    <p className="text-[#9CA3AF] text-lg font-medium leading-relaxed">
-                      Os produtos exibidos para os alunos desta área são definidos no catálogo geral e liberados pelas ofertas. 
-                      Vá ao catálogo para criar/editar produtos ou às ofertas para definir quais produtos liberam o acesso.
+                  <div className="space-y-6 max-w-xl relative z-10">
+                    <h3 className="text-4xl font-black text-white tracking-tight">Gerenciar conteúdos</h3>
+                    <p className="text-slate-400 text-xl font-medium leading-relaxed">
+                      Os produtos exibidos para os alunos desta área são definidos no catálogo central e distribuídos através das suas ofertas.
                     </p>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6 w-full">
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-8 w-full relative z-10">
                     <Button 
                       type="button"
                       variant="outline"
                       onClick={() => navigate({ to: "/admin/courses" })}
-                      className="h-14 px-8 rounded-xl border-white/10 bg-transparent text-[#F9FAFB] font-bold hover:bg-white/5 transition-all flex items-center gap-3 w-full sm:w-auto text-base"
+                      className="h-16 px-10 rounded-2xl border-white/5 bg-white/[0.02] text-white font-black hover:bg-white/5 hover:border-white/10 transition-all flex items-center gap-4 w-full sm:w-auto text-lg shadow-xl"
                     >
-                      <Package className="h-6 w-6 text-slate-500" />
+                      <Package className="h-7 w-7 text-slate-500" />
+
                       Ir para o catálogo
                     </Button>
                     <Button 
