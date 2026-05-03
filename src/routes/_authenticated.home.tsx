@@ -162,70 +162,46 @@ function VitrinePage() {
               )}
 
               <ContinueWatchingSection />
-
-              {/* Chips de categoria */}
-              {categories.length > 0 && (
-                <div className="mx-auto w-full max-w-[1400px] px-4 pt-8 sm:px-8 lg:px-12">
-                  <h2 className="mb-4 font-display text-lg font-bold text-foreground">
-                    {t('explore_by_category')}
-                  </h2>
-                  <div className="scrollbar-hide -mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
-                    {[{ key: ALL_KEY, label: t('all') || "Todos" }, ...categories].map(({ key, label }) => {
-                      const active = activeCategory === key;
-                      const Icon = key === ALL_KEY ? LayoutGrid : null;
-                      return (
-                        <button
-                          key={key}
-                          onClick={() => handleCategoryClick(key)}
-                          className={[
-                            "inline-flex shrink-0 items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold transition-all",
-                            active
-                              ? "border-gold/50 bg-gradient-to-br from-gold/20 to-amber-600/10 text-gold shadow-lg shadow-gold/10"
-                              : "border-border/40 bg-card/40 text-muted-foreground hover:border-gold/30 hover:text-foreground",
-                          ].join(" ")}
-                        >
-                          {Icon ? <Icon className="h-4 w-4" /> : null}
-                          {label}
+...
+              {/* Prateleiras de Conteúdo - Estilo Streaming */}
+              <div className="space-y-12 pb-20">
+                {allShelves.map((shelf, shelfIndex) => (
+                  <section 
+                    key={shelf.id} 
+                    className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12"
+                  >
+                    <div className="mb-6 flex items-center justify-between">
+                      <div className="space-y-1">
+                        <h2 className="font-display text-2xl font-black tracking-tight text-white sm:text-3xl">
+                          {shelf.public_title || shelf.name}
+                        </h2>
+                        {shelf.description && (
+                          <p className="text-sm text-white/40 max-w-2xl line-clamp-1">
+                            {shelf.description}
+                          </p>
+                        )}
+                      </div>
+                      {shelf.courses.length > 5 && (
+                        <button className="text-xs font-bold uppercase tracking-widest text-white/30 hover:text-gold transition-colors">
+                          Ver todos
                         </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
+                      )}
+                    </div>
 
-              {/* Grade única — Em destaque / categoria selecionada */}
-              <section className="mx-auto mt-8 w-full max-w-[1400px] px-4 pb-16 sm:px-8 lg:px-12">
-                <div className="mb-4 flex items-center justify-between">
-                  <h2 className="font-display text-xl font-bold text-foreground">
-                    {isFiltered
-                      ? categories.find((c) => c.key === activeCategory)?.label || t('catalog')
-                      : showAll
-                        ? t('all_products')
-                        : t('featured')}
-                  </h2>
-                  {showSeeAll && (
-                    <button
-                      onClick={() => setShowAll(true)}
-                      className="inline-flex items-center gap-1 text-sm font-medium text-gold/80 hover:text-gold"
-                    >
-                      Ver todos <ChevronRight className="h-4 w-4" />
-                    </button>
-                  )}
-                </div>
-
-                {displayedCourses.length === 0 ? (
-                  <div className="rounded-xl border border-border/30 bg-card/30 px-6 py-10 text-center text-sm text-muted-foreground">
-                    Nenhum conteúdo nesta categoria.
-                  </div>
-                ) : (
-                  <div className={POSTER_GRID}>
-                    {displayedCourses.map((course, index) => (
-                      <VitrineCourseCard key={course.id} course={course} index={index} />
-                    ))}
-                  </div>
-                )}
-              </section>
-            </>
+                    <div className="scrollbar-hide -mx-4 flex gap-4 overflow-x-auto px-4 pb-4 sm:mx-0 sm:gap-6 sm:px-0">
+                      {shelf.courses.map((course, index) => (
+                        <div key={course.id} className="w-[280px] shrink-0 sm:w-[320px] lg:w-[380px]">
+                          <VitrineCourseCard 
+                            course={course} 
+                            index={index + shelfIndex * 10} 
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  </section>
+                ))}
+              </div>
+...
           )}
         </div>
       </StudentLayout>
