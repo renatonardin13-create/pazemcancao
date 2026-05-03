@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Download, Play, Pause, Music, Heart, ChevronLeft, ChevronRight } from "lucide-react";
 import { sampleTracks } from "@/lib/sample-tracks";
-import { usePlayer } from "@/hooks/use-player";
+// removed player hook
 import { motion } from "framer-motion";
 import { StudentLayout } from "@/components/StudentLayout";
 import { Progress } from "@/components/ui/progress";
@@ -46,7 +46,10 @@ function TrackDetailPage() {
   const { trackId } = Route.useParams();
   const id = parseInt(trackId, 10);
   const track = sampleTracks.find((t) => t.id === id);
-  const { currentTrack, playing, progress, toggle } = usePlayer();
+  const currentTrack = null;
+  const playing = false;
+  const progress = 0;
+  const toggle = () => {};
 
   if (!track) {
     return (
