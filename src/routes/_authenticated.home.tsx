@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
+// removed translation hook
 import { AlertCircle, RefreshCw, Loader2, ChevronRight } from "lucide-react";
 import { ModuleGuard } from "@/components/ModuleGuard";
 import { getStudentVitrineData } from "@/lib/student-vitrine.functions";
@@ -48,10 +48,10 @@ function VitrineErrorFallback({ error }: { error: Error }) {
 }
 
 function VitrinePage() {
-  const { t } = useTranslation();
+  const t = (k: string) => k === 'catalog' ? 'Catálogo' : k === 'no_content' ? 'Nenhum conteúdo disponível no momento.' : k;
 
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ["student-shelves", "v5-streaming", undefined],
+    queryKey: ["student-shelves"],
     queryFn: () => getStudentVitrineData(),
     staleTime: 30_000,
     refetchOnWindowFocus: false,
@@ -74,8 +74,8 @@ function VitrinePage() {
   const hasAnyContent = allShelves.length > 0 || !!featured || heroBanners.length > 0;
 
   return (
-    <ModuleGuard moduleKey="vitrine">
-      <StudentLayout>
+    <StudentLayout>
+
         <div className="min-h-screen bg-[#0b0b0b]">
           {isError ? (
             <div className="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center gap-4 px-6 py-20 text-center">
@@ -154,7 +154,7 @@ function VitrinePage() {
             </>
           )}
         </div>
-      </StudentLayout>
-    </ModuleGuard>
+    </StudentLayout>
   );
 }
+
