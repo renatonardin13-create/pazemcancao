@@ -1358,28 +1358,44 @@ function EditAreaPage() {
                             {modoFundo === 'gradient' && <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/20 to-transparent" />}
                             {modoFundo === 'image' && imagemLoginUrl && <img src={imagemLoginUrl} className="absolute inset-0 w-full h-full object-cover opacity-30" />}
                             {layoutLogin === 'centered' ? (
-                               <div className="bg-[#111827] p-4 rounded-lg border border-white/10 w-32 space-y-2">
-                                  <div className="h-2 w-full bg-white/5 rounded-full" />
-                                  <div className="h-4 w-full bg-[#D4AF37] rounded-md" />
+                               <div className="bg-[#111827]/90 p-5 rounded-xl border border-white/10 w-40 space-y-3 z-10 shadow-2xl scale-90 group-hover/preview:scale-100 transition-transform duration-500">
+                                  <div className="h-1.5 w-1/2 bg-white/10 rounded-full" />
+                                  <div className="h-4 w-full bg-[#1F2937] border border-white/5 rounded-md" />
+                                  <div className="h-4 w-full bg-[#1F2937] border border-white/5 rounded-md" />
+                                  <div className="h-8 w-full bg-[#D4AF37] rounded-lg shadow-lg shadow-[#D4AF37]/10" />
                                </div>
                             ) : layoutLogin === 'left' ? (
-                               <div className="flex w-full h-full gap-2">
-                                  <div className="w-1/2 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden">
-                                     {imagemLoginUrl ? <img src={imagemLoginUrl} className="object-cover w-full h-full opacity-50" /> : <ImageIcon className="text-slate-700" />}
+                               <div className="flex w-full h-full gap-3 p-2 z-10">
+                                  <div className="w-[45%] bg-[#1F2937]/50 rounded-xl flex items-center justify-center overflow-hidden border border-white/5 relative">
+                                     {imagemLoginUrl ? (
+                                       <img src={imagemLoginUrl} className="object-cover w-full h-full" alt="Hero" />
+                                     ) : (
+                                       <ImageIcon className="h-8 w-8 text-slate-700" />
+                                     )}
+                                     <div className="absolute inset-0 bg-black/20" />
                                   </div>
-                                  <div className="w-1/2 bg-[#111827] p-4 rounded-lg border border-white/10 space-y-2">
-                                     <div className="h-2 w-full bg-white/5 rounded-full" />
-                                     <div className="h-4 w-full bg-[#D4AF37] rounded-md" />
+                                  <div className="flex-1 bg-[#111827]/90 p-4 rounded-xl border border-white/10 space-y-2 flex flex-col justify-center shadow-2xl">
+                                     <div className="h-1 w-1/3 bg-white/10 rounded-full" />
+                                     <div className="h-3 w-full bg-[#1F2937] border border-white/5 rounded-sm" />
+                                     <div className="h-3 w-full bg-[#1F2937] border border-white/5 rounded-sm" />
+                                     <div className="h-6 w-full bg-[#D4AF37] rounded-md mt-2" />
                                   </div>
                                </div>
                             ) : (
-                               <div className="flex w-full h-full gap-2">
-                                  <div className="w-1/2 bg-[#111827] p-4 rounded-lg border border-white/10 space-y-2">
-                                     <div className="h-2 w-full bg-white/5 rounded-full" />
-                                     <div className="h-4 w-full bg-[#D4AF37] rounded-md" />
+                               <div className="flex w-full h-full gap-3 p-2 z-10">
+                                  <div className="flex-1 bg-[#111827]/90 p-4 rounded-xl border border-white/10 space-y-2 flex flex-col justify-center shadow-2xl">
+                                     <div className="h-1 w-1/3 bg-white/10 rounded-full" />
+                                     <div className="h-3 w-full bg-[#1F2937] border border-white/5 rounded-sm" />
+                                     <div className="h-3 w-full bg-[#1F2937] border border-white/5 rounded-sm" />
+                                     <div className="h-6 w-full bg-[#D4AF37] rounded-md mt-2" />
                                   </div>
-                                  <div className="w-1/2 bg-white/5 rounded-lg flex items-center justify-center overflow-hidden">
-                                     {imagemLoginUrl ? <img src={imagemLoginUrl} className="object-cover w-full h-full opacity-50" /> : <ImageIcon className="text-slate-700" />}
+                                  <div className="w-[45%] bg-[#1F2937]/50 rounded-xl flex items-center justify-center overflow-hidden border border-white/5 relative">
+                                     {imagemLoginUrl ? (
+                                       <img src={imagemLoginUrl} className="object-cover w-full h-full" alt="Hero" />
+                                     ) : (
+                                       <ImageIcon className="h-8 w-8 text-slate-700" />
+                                     )}
+                                     <div className="absolute inset-0 bg-black/20" />
                                   </div>
                                </div>
                             )}
@@ -1392,15 +1408,15 @@ function EditAreaPage() {
                     <Button
                       onClick={handleSubmit}
                       disabled={mutation.isPending || !nome || !produtoId}
-                      className="w-full h-16 bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-[#0F172A] font-black text-lg rounded-2xl shadow-[0_20px_40px_rgba(212,175,55,0.2)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3"
+                      className="w-full h-16 bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-[#0F172A] font-black text-lg rounded-2xl shadow-[0_20px_40px_rgba(212,175,55,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group"
                     >
                       {mutation.isPending ? (
                         <Loader2 className="h-7 w-7 animate-spin" />
                       ) : (
-                        <>
-                          <Save className="h-6 w-6" />
-                          Salvar Configurações de Login
-                        </>
+                        <div className="flex items-center gap-2">
+                           <Save className="h-6 w-6 group-hover:scale-110 transition-transform" />
+                           Salvar Configurações de Login
+                        </div>
                       )}
                     </Button>
                   </div>
