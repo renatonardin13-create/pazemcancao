@@ -12,9 +12,6 @@ export const listPublishedCourses = createServerFn({ method: 'POST' })
       .select('*, categories(name, slug, icon)')
       .eq('status', 'published');
 
-    } else {
-      return { courses: [] };
-    }
 
     const { data: courses, error } = await query.order('sort_order', { ascending: true });
 
@@ -32,9 +29,6 @@ export const listCategories = createServerFn({ method: 'POST' })
       .from('categories')
       .select('*');
 
-    } else {
-      return { categories: [] };
-    }
 
     const { data: categories, error } = await query.order('sort_order', { ascending: true });
 
