@@ -204,7 +204,7 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
                   <div className="flex items-center justify-between mb-4">
                     <h4 className="text-xs font-bold uppercase tracking-widest text-white/60">Fila de Reprodução</h4>
                     {nextTrack && (
-                      <span className="text-[10px] text-gold/60">Próxima: {nextTrack.title}</span>
+                      <span className="text-[10px] text-orange-500/60">Próxima: {nextTrack.title}</span>
                     )}
                   </div>
                   <div className="space-y-1">
