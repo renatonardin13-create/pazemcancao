@@ -99,11 +99,11 @@ export function AdminSidebar() {
           )}
         </div>
 
-        {/* Gestão */}
+        {/* Menu Principal */}
         <SidebarGroup className="py-1">
           {!collapsed && (
             <SidebarGroupLabel className={groupLabelClass}>
-              Gestão
+              Menu Principal
             </SidebarGroupLabel>
           )}
           <SidebarGroupContent>
@@ -130,72 +130,8 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Conteúdo */}
-        <SidebarGroup className="py-1">
-          {!collapsed && (
-            <SidebarGroupLabel className={groupLabelClass}>
-              Conteúdo
-            </SidebarGroupLabel>
-          )}
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {contentGroups
-                .filter((item) => !item.module || modules[item.module])
-                .map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={isActive(item.url || "")}
-                      tooltip={item.title}
-                      className={cn(
-                        "h-12 transition-all duration-200 text-[1.0625rem] leading-loose",
-                        isActive(item.url || "") && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
-                      )}
-                    >
-                      <Link to={item.url}>
-                        <item.icon className="h-4 w-4 shrink-0" />
-                        <span className="font-medium">{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Financeiro */}
-        <SidebarGroup className="py-1">
-          {!collapsed && (
-            <SidebarGroupLabel className={groupLabelClass}>
-              Financeiro
-            </SidebarGroupLabel>
-          )}
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {salesItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive(item.url)}
-                    tooltip={item.title}
-                    className={cn(
-                      "h-12 transition-all duration-200 text-[1.0625rem] leading-loose",
-                      isActive(item.url) && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
-                    )}
-                  >
-                    <Link to={item.url}>
-                      <item.icon className="h-4 w-4 shrink-0" />
-                      <span className="font-medium">{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
         {/* Sistema */}
-        <SidebarGroup className="py-1">
+        <SidebarGroup className="py-1 mt-4">
           {!collapsed && (
             <SidebarGroupLabel className={groupLabelClass}>
               Sistema
