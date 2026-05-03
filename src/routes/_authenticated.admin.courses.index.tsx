@@ -23,6 +23,7 @@ import {
   EyeOff,
   Eye,
   AlertCircle,
+  Music,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -162,6 +163,7 @@ function AdminCoursesPage() {
                 <SelectItem value="all">Todos Tipos</SelectItem>
                 <SelectItem value="video">Vídeos</SelectItem>
                 <SelectItem value="ebook">eBooks</SelectItem>
+                <SelectItem value="louvores">Louvores</SelectItem>
               </SelectContent>
             </Select>
             <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1); }}>
@@ -299,6 +301,10 @@ function AdminCoursesPage() {
                           alt=""
                           className="h-14 w-14 object-cover"
                         />
+                      ) : course.course_type === "louvores" ? (
+                        <div className="h-14 w-14 flex items-center justify-center">
+                          <Music className="h-5 w-5 text-gold/55" />
+                        </div>
                       ) : course.course_type === "video" ? (
                         <div className="h-14 w-14 flex items-center justify-center">
                           <Video className="h-5 w-5 text-gold/55" />
@@ -326,12 +332,14 @@ function AdminCoursesPage() {
                   {/* Type - hidden on small */}
                   <TableCell className="hidden sm:table-cell">
                     <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground/70">
-                      {course.course_type === "video" ? (
+                      {course.course_type === "louvores" ? (
+                        <Music className="h-3 w-3" />
+                      ) : course.course_type === "video" ? (
                         <Video className="h-3 w-3" />
                       ) : (
                         <BookText className="h-3 w-3" />
                       )}
-                      {course.course_type === "video" ? "Vídeo" : "eBook"}
+                      {course.course_type === "louvores" ? "Louvores" : course.course_type === "video" ? "Vídeo" : "eBook"}
                     </span>
                   </TableCell>
 
