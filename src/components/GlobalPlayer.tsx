@@ -214,7 +214,7 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
                         onClick={() => toggle(track, queue)}
                         className={`w-full flex items-center gap-3 p-2 rounded-xl transition-all ${
                           currentTrack.id === track.id 
-                            ? "bg-gold/10 text-gold shadow-lg shadow-gold/5" 
+                            ? "bg-orange-500/10 text-orange-500 shadow-lg shadow-orange-500/5" 
                             : "text-white/40 hover:bg-white/5 hover:text-white"
                         }`}
                       >
