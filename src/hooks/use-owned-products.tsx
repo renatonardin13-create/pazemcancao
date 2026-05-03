@@ -12,6 +12,7 @@ export function useOwnedProducts() {
 
   const query = useQuery({
     queryKey: ["owned-products", "v2-access-state", undefined],
+    queryFn: () => getMyCoursesData(),
     staleTime: 30_000,
   });
 
