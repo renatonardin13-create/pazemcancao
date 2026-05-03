@@ -30,7 +30,10 @@ function NewCoursePage() {
   const [courseType, setCourseType] = useState("aula");
 
   const { data: catData, isLoading: catLoading } = useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: () => listAdminCategories(),
   });
+
 
   const categories = catData?.categories || [];
 
