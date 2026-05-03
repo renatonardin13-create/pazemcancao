@@ -35,29 +35,20 @@ import {
 } from "@/components/ui/sidebar";
 
 const mainItems = [
-  { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
-  { title: "Usuários", url: "/admin/users", icon: Users },
-];
-
-const contentGroups = [
-  // removed areas-membros
-  { title: "Louvores", url: "/admin/tracks", icon: Music, module: "louvores" as const },
-  { title: "Produtos", url: "/admin/courses", icon: GraduationCap, module: "cursos" as const },
-  { title: "Trilhas", url: "/admin/journeys", icon: Compass, module: "trilhas" as const },
-  { title: "Ebooks", url: "/admin/conteudos", icon: BookOpen, module: "ebooks" as const },
-  { title: "Lançamentos", url: "/admin/hero-banners", icon: Sparkles, module: "lancamentos" as const },
-  { title: "Comunidade", url: "/comunidade", icon: Users, module: "comunidade" as const },
-];
-
-const salesItems = [
-  { title: "Transações", url: "/admin/transactions", icon: Receipt },
-  { title: "Ofertas", url: "/admin/offers", icon: CreditCard },
-  { title: "Cupons", url: "/admin/coupons", icon: Tag },
+  { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
+  { title: "Músicas", url: "/admin/musicas", icon: Music },
+  { title: "Playlists", url: "/admin/playlists", icon: Compass },
+  { title: "Cursos", url: "/admin/cursos", icon: GraduationCap },
+  { title: "Vitrine", url: "/admin/vitrine", icon: Sparkles },
+  { title: "Categorias", url: "/admin/categorias", icon: Tag },
+  { title: "Usuários", url: "/admin/usuarios", icon: Users },
+  { title: "Vendas", url: "/admin/vendas", icon: Receipt },
+  { title: "Upsells", url: "/admin/upsells", icon: CreditCard },
+  { title: "Integrações", url: "/admin/integracoes", icon: Shield },
+  { title: "Configurações", url: "/admin/configuracoes", icon: Settings },
 ];
 
 const systemItems = [
-  { title: "Webhooks", url: "/admin/integrations", icon: Shield },
-  { title: "Configurações Gerais", url: "/admin/settings", icon: Settings },
   { title: "Sair", url: "/login", icon: LogOut },
 ];
 
