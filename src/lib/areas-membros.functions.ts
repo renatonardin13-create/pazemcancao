@@ -148,6 +148,8 @@ export const updateAreaMembro = createServerFn({ method: 'POST' })
     banner_url?: string;
     background_color?: string;
     surface_color?: string;
+    tipo?: string;
+    rotulo_curto?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     const { userId } = context;
