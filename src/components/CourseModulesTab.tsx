@@ -111,7 +111,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
 
   const { data, isLoading } = useQuery({
     queryKey,
-    queryFn: () => listModules({ data: { courseId } }),
+    queryFn: () => listModules({ courseId }),
   });
 
   const modules = data?.modules || [];
@@ -119,7 +119,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   // ─── Mutations ───
   const createModM = useMutation({
     mutationFn: (input: { title: string; description?: string; status?: string; thumbnail_url?: string }) =>
-      createModule({ data: { courseId, ...input } } as any),
+      createModule({ courseId, ...input }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
       toast.success("Módulo criado com sucesso");
@@ -130,7 +130,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
 
   const updateModM = useMutation({
     mutationFn: (input: { id: string; title?: string; description?: string; status?: string; thumbnail_url?: string }) =>
-      updateModule({ data: input } as any),
+      updateModule(input),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
       toast.success("Módulo atualizado");
@@ -140,7 +140,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   });
 
   const deleteModM = useMutation({
-    mutationFn: (id: string) => deleteModule({ data: { id } }),
+    mutationFn: (id: string) => deleteModule({ id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
       toast.success("Módulo excluído");
@@ -150,7 +150,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
 
   const createLesM = useMutation({
     mutationFn: (input: { moduleId: string; title: string; description?: string; video_url?: string; content_url?: string; content_type?: string; is_free_preview?: boolean; duration?: string; thumbnail_url?: string; status?: string }) =>
-      createLesson({ data: { courseId, ...input } }),
+      createLesson({ courseId, ...input }),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey });
       toast.success("Aula criada com sucesso");
@@ -160,7 +160,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
 
   const updateLesM = useMutation({
     mutationFn: (input: { id: string; title?: string; description?: string; video_url?: string; content_url?: string; content_type?: string; is_free_preview?: boolean; duration?: string; thumbnail_url?: string; status?: string }) =>
-      updateLesson({ data: input }),
+      updateLesson(input),
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey });
       toast.success("Aula atualizada");
@@ -169,7 +169,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   });
 
   const deleteLesM = useMutation({
-    mutationFn: (id: string) => deleteLesson({ data: { id } }),
+    mutationFn: (id: string) => deleteLesson({ id }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
       toast.success("Aula excluída");
@@ -179,13 +179,13 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
 
   const reorderModM = useMutation({
     mutationFn: (items: { id: string; sort_order: number }[]) =>
-      reorderModules({ data: { items } }),
+      reorderModules({ items }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey }),
   });
 
   const reorderLesM = useMutation({
     mutationFn: (items: { id: string; sort_order: number }[]) =>
-      reorderLessons({ data: { items } }),
+      reorderLessons({ items }),
     onSuccess: () => queryClient.invalidateQueries({ queryKey }),
   });
 
