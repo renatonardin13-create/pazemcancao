@@ -53,8 +53,11 @@ function EditAreaPage() {
   const queryClient = useQueryClient();
   
   const [nome, setNome] = useState("");
+  const [rotuloCurto, setRotuloCurto] = useState("");
+  const [descricao, setDescricao] = useState("");
+  const [tipo, setTipo] = useState("misto");
   const [subdominio, setSubdominio] = useState("");
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState("active");
   const [produtoId, setProdutoId] = useState("");
   const [ativa, setAtiva] = useState(true);
   const [principal, setPrincipal] = useState(false);
@@ -64,8 +67,8 @@ function EditAreaPage() {
   const [logoUrl, setLogoUrl] = useState("");
   const [faviconUrl, setFaviconUrl] = useState("");
   const [bannerUrl, setBannerUrl] = useState("");
-  const [backgroundColor, setBackgroundColor] = useState("#070707");
-  const [surfaceColor, setSurfaceColor] = useState("#111111");
+  const [backgroundColor, setBackgroundColor] = useState("#0B1220");
+  const [surfaceColor, setSurfaceColor] = useState("#111827");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { data: areaData, isLoading: isLoadingArea } = useQuery({
