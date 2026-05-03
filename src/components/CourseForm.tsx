@@ -55,6 +55,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   onSubmit,
   isSubmitting,
   hideSubmitButton,
+  onTypeChange,
 }, ref) {
   const [title, setTitle] = useState("");
   const [shortDesc, setShortDesc] = useState("");
