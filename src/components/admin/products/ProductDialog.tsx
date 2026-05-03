@@ -54,10 +54,10 @@ export function ProductDialog({ open, onOpenChange, course }: ProductDialogProps
       <DialogContent className="max-w-[900px] p-0 bg-[#0B1220] border-white/5 text-white overflow-hidden rounded-[32px] shadow-2xl h-[90vh] flex flex-col">
         {/* Header */}
         <div className="p-8 border-b border-white/5 bg-[#111827] flex items-center justify-between relative">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-orange-500 to-transparent" />
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold to-transparent" />
           <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-2xl bg-orange-500/10 flex items-center justify-center border border-orange-500/10">
-              {courseType === "louvores" ? <Music className="h-6 w-6 text-orange-500" /> : <Plus className="h-6 w-6 text-orange-500" />}
+            <div className="h-12 w-12 rounded-2xl bg-gold/10 flex items-center justify-center border border-gold/10">
+              {courseType === "louvores" ? <Music className="h-6 w-6 text-gold" /> : <Plus className="h-6 w-6 text-gold" />}
             </div>
             <div>
               <DialogTitle className="text-2xl font-black tracking-tight">
@@ -71,7 +71,7 @@ export function ProductDialog({ open, onOpenChange, course }: ProductDialogProps
           
           <Button 
             onClick={() => (document.querySelector('form#course-form') as HTMLFormElement)?.requestSubmit()}
-            className="h-12 px-6 bg-orange-500 hover:bg-orange-600 text-black font-bold rounded-xl shadow-lg shadow-orange-500/10"
+            className="h-12 px-6 bg-gold hover:bg-gold/90 text-black font-bold rounded-xl shadow-lg shadow-gold/20"
             disabled={mutation.isPending}
           >
             <Save className="h-4 w-4 mr-2" />
@@ -84,14 +84,14 @@ export function ProductDialog({ open, onOpenChange, course }: ProductDialogProps
           <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
             <div className="px-8 py-4 bg-[#111827]/50 border-b border-white/5">
               <TabsList className="bg-black/20 border border-white/5 p-1 rounded-xl w-fit">
-                <TabsTrigger value="detalhes" className="data-[state=active]:bg-orange-500/10 data-[state=active]:text-orange-500 rounded-lg text-xs font-bold px-6 py-2">
+                <TabsTrigger value="detalhes" className="data-[state=active]:bg-gold/10 data-[state=active]:text-gold rounded-lg text-xs font-bold px-6 py-2">
                   <Info className="h-3.5 w-3.5 mr-2" />
                   Detalhes
                 </TabsTrigger>
                 <TabsTrigger 
                   value="musica" 
                   disabled={!currentCourse?.id}
-                  className="data-[state=active]:bg-orange-500/10 data-[state=active]:text-orange-500 rounded-lg text-xs font-bold px-6 py-2"
+                  className="data-[state=active]:bg-gold/10 data-[state=active]:text-gold rounded-lg text-xs font-bold px-6 py-2"
                 >
                   <Music className="h-3.5 w-3.5 mr-2" />
                   {courseType === "louvores" ? "Músicas" : "Conteúdo"}
@@ -99,7 +99,7 @@ export function ProductDialog({ open, onOpenChange, course }: ProductDialogProps
                 <TabsTrigger 
                   value="config" 
                   disabled={!currentCourse?.id}
-                  className="data-[state=active]:bg-orange-500/10 data-[state=active]:text-orange-500 rounded-lg text-xs font-bold px-6 py-2"
+                  className="data-[state=active]:bg-gold/10 data-[state=active]:text-gold rounded-lg text-xs font-bold px-6 py-2"
                 >
                   <Settings className="h-3.5 w-3.5 mr-2" />
                   Configurações
