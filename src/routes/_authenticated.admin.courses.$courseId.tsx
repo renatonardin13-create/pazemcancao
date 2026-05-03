@@ -5,6 +5,7 @@ import { CourseIntegrationSection } from "@/components/CourseIntegrationSection"
 import { getAdminCourse, updateCourse } from "@/lib/admin-courses.functions";
 import { CourseModulesTab } from "@/components/CourseModulesTab";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { CourseMusicasTab } from "@/components/admin/CourseMusicasTab";
 import { toast } from "sonner";
 import { ArrowLeft, Save, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -55,6 +56,7 @@ function EditCoursePage() {
 
   const course = data?.course;
   const courseTitle = course?.title || "Curso";
+  const isLouvoresPack = course?.course_type === "louvores";
 
   const tabTriggerClass =
     "data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-5";
@@ -112,7 +114,7 @@ function EditCoursePage() {
             Detalhes
           </TabsTrigger>
           <TabsTrigger value="modules" className={tabTriggerClass}>
-            Módulos e Aulas
+            {isLouvoresPack ? "Gerenciar Músicas" : "Módulos e Aulas"}
           </TabsTrigger>
           <TabsTrigger value="settings" className={tabTriggerClass}>
             Configurações
@@ -145,7 +147,11 @@ function EditCoursePage() {
               </span>
             </div>
           )}
-          <CourseModulesTab courseId={courseId} />
+          {isLouvoresPack ? (
+            <CourseMusicasTab courseId={courseId} />
+          ) : (
+            <CourseModulesTab courseId={courseId} />
+          )}
         </TabsContent>
 
         <TabsContent value="settings" className="mt-4">

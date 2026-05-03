@@ -31,6 +31,7 @@ import {
   List,
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { MusicPackPlayer } from "@/components/MusicPackPlayer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 
@@ -56,26 +57,27 @@ function CourseDetailPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["course-detail", courseId],
+    queryFn: () => getCourseDetail({ data: { courseId } }),
+  });
+
   // Auto-redirect to the appropriate lesson
-  const { data: resolvedLesson, isLoading: isResolving } = useQuery({
+  const { data: resolvedLesson } = useQuery({
     queryKey: ["resolve-course-lesson", courseId],
     queryFn: () => resolveCourseLesson({ data: { courseId } }),
+    enabled: !!data && data.course?.course_type !== "louvores",
   });
 
   useEffect(() => {
-    if (resolvedLesson?.lessonId) {
+    if (resolvedLesson?.lessonId && data?.course?.course_type !== "louvores") {
       navigate({
         to: "/cursos/$courseId/aula/$lessonId",
         params: { courseId, lessonId: resolvedLesson.lessonId },
         replace: true,
       });
     }
-  }, [resolvedLesson, courseId, navigate]);
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["course-detail", courseId],
-    queryFn: () => getCourseDetail({ data: { courseId } }),
-  });
+  }, [resolvedLesson, data?.course?.course_type, courseId, navigate]);
 
   const progressMutation = useMutation({
     mutationFn: (input: {
@@ -146,6 +148,8 @@ function CourseDetailPage() {
   const totalLessons = lessons.length;
   const progressPercent =
     totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+
+  const isLouvoresPack = course?.course_type === "louvores";
 
   const isLessonCompleted = (lessonId: string) =>
     progress.some((p: any) => p.lesson_id === lessonId && p.completed);
@@ -307,6 +311,14 @@ function CourseDetailPage() {
       </div>
     );
   };
+
+  if (isLouvoresPack) {
+    return (
+      <StudentLayout>
+        <MusicPackPlayer courseId={courseId} courseTitle={course.title} />
+      </StudentLayout>
+    );
+  }
 
   return (
     <StudentLayout>

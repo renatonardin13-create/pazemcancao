@@ -3,7 +3,7 @@ import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 const normalizeCourseType = (value?: string) => {
-  if (value === 'aula' || value === 'material' || value === 'bonus') return value;
+  if (value === 'aula' || value === 'material' || value === 'bonus' || value === 'louvores') return value;
   return 'aula';
 };
 

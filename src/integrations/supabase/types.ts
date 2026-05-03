@@ -1361,6 +1361,56 @@ export type Database = {
           },
         ]
       }
+      musicas: {
+        Row: {
+          artista: string | null
+          audio_url: string
+          capa_url: string | null
+          categoria: string | null
+          criado_em: string
+          destaque: boolean | null
+          id: string
+          ordem: number | null
+          produto_id: string
+          titulo: string
+          updated_at: string
+        }
+        Insert: {
+          artista?: string | null
+          audio_url: string
+          capa_url?: string | null
+          categoria?: string | null
+          criado_em?: string
+          destaque?: boolean | null
+          id?: string
+          ordem?: number | null
+          produto_id: string
+          titulo: string
+          updated_at?: string
+        }
+        Update: {
+          artista?: string | null
+          audio_url?: string
+          capa_url?: string | null
+          categoria?: string | null
+          criado_em?: string
+          destaque?: boolean | null
+          id?: string
+          ordem?: number | null
+          produto_id?: string
+          titulo?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "musicas_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string
