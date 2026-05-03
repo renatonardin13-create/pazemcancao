@@ -76,6 +76,12 @@ export const createAreaMembro = createServerFn({ method: 'POST' })
     banner_url?: string;
     background_color?: string;
     surface_color?: string;
+    tipo?: string;
+    rotulo_curto?: string;
+    descricao?: string;
+    app_name?: string;
+    logo_alt?: string;
+    support_email?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     const { userId } = context;
@@ -118,6 +124,12 @@ export const createAreaMembro = createServerFn({ method: 'POST' })
         banner_url: data.banner_url,
         background_color: data.background_color,
         surface_color: data.surface_color,
+        tipo: data.tipo || 'misto',
+        rotulo_curto: data.rotulo_curto,
+        descricao: data.descricao,
+        app_name: data.app_name,
+        logo_alt: data.logo_alt,
+        support_email: data.support_email,
       })
       .select('id')
       .single();
@@ -144,6 +156,12 @@ export const updateAreaMembro = createServerFn({ method: 'POST' })
     banner_url?: string;
     background_color?: string;
     surface_color?: string;
+    tipo?: string;
+    rotulo_curto?: string;
+    descricao?: string;
+    app_name?: string;
+    logo_alt?: string;
+    support_email?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     const { userId } = context;
@@ -187,6 +205,12 @@ export const updateAreaMembro = createServerFn({ method: 'POST' })
         banner_url: data.banner_url,
         background_color: data.background_color,
         surface_color: data.surface_color,
+        tipo: data.tipo,
+        rotulo_curto: data.rotulo_curto,
+        descricao: data.descricao,
+        app_name: data.app_name,
+        logo_alt: data.logo_alt,
+        support_email: data.support_email,
       })
       .eq('id', data.id);
 

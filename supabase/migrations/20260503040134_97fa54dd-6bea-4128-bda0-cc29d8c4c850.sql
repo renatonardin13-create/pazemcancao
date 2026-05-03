@@ -1,0 +1,4 @@
+ALTER TABLE public.areas_membros 
+ADD COLUMN IF NOT EXISTS app_name TEXT,
+ADD COLUMN IF NOT EXISTS logo_alt TEXT,
+ADD COLUMN IF NOT EXISTS support_email TEXT;
