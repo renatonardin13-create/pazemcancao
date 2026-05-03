@@ -210,6 +210,7 @@ export type Database = {
           background_color: string | null
           banner_url: string | null
           criado_em: string
+          descricao: string | null
           favicon_url: string | null
           id: string
           language: string | null
@@ -231,6 +232,7 @@ export type Database = {
           background_color?: string | null
           banner_url?: string | null
           criado_em?: string
+          descricao?: string | null
           favicon_url?: string | null
           id?: string
           language?: string | null
@@ -252,6 +254,7 @@ export type Database = {
           background_color?: string | null
           banner_url?: string | null
           criado_em?: string
+          descricao?: string | null
           favicon_url?: string | null
           id?: string
           language?: string | null
