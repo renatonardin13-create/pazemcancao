@@ -6,7 +6,9 @@ import {
   ExternalLink, 
   Edit, 
   Shield, 
-  User 
+  User,
+  Globe,
+  Settings
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +23,8 @@ interface AreaCardProps {
     ativa: boolean;
     principal: boolean;
     produto_id: string;
+    status?: string | null;
+    language?: string | null;
     courses?: { title: string };
   };
   onDelete: (id: string) => void;
@@ -38,85 +42,52 @@ export function AreaCard({
   onTogglePrincipal,
   onToggleActive
 }: AreaCardProps) {
+  const fullUrl = `https://${area.subdominio}.seudominio.com`;
+
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={{ y: -5 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      whileHover={{ y: -8, transition: { duration: 0.2 } }}
       className="group"
     >
-      <Card className={`relative overflow-hidden bg-[#0F1219] border-white/5 transition-all duration-500 rounded-3xl h-full ${area.principal ? 'ring-2 ring-gold/50 shadow-[0_20px_50px_-20px_rgba(245,196,81,0.2)]' : 'hover:border-gold/30 hover:shadow-[0_20px_40px_-15px_rgba(245,196,81,0.1)]'}`}>
-        <CardContent className="p-6">
+      <Card className={`relative overflow-hidden bg-[#111827] border-white/5 transition-all duration-300 rounded-[16px] h-full shadow-lg ${area.principal ? 'ring-2 ring-[#D4AF37]/50 shadow-[0_0_30px_rgba(212,175,55,0.15)]' : 'hover:border-[#D4AF37]/30 hover:shadow-[0_10px_40px_rgba(0,0,0,0.3)]'}`}>
+        {/* Active Glow Effect */}
+        {area.principal && (
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-[#D4AF37] to-transparent opacity-50" />
+        )}
+
+        <CardContent className="p-8">
           {/* Header */}
-          <div className="flex justify-between items-start mb-6">
+          <div className="flex justify-between items-start mb-8">
             <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-2xl bg-gold/10 flex items-center justify-center text-gold group-hover:scale-110 transition-transform duration-500">
-                <Layers className="h-6 w-6" />
+              <div className="h-14 w-14 rounded-full bg-[#D4AF37]/10 flex items-center justify-center text-[#D4AF37] border border-[#D4AF37]/20 shadow-[0_0_15px_rgba(212,175,55,0.1)] group-hover:scale-110 transition-transform duration-300">
+                <Layers className="h-7 w-7" />
               </div>
               <div className="space-y-1">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-xl font-black text-white group-hover:text-gold transition-colors truncate max-w-[180px]">
+                  <h3 className="text-xl font-bold text-white group-hover:text-[#D4AF37] transition-colors truncate max-w-[180px]">
                     {area.nome}
                   </h3>
-                  {area.principal && <Star className="h-4 w-4 fill-gold text-gold" />}
+                  {area.principal && (
+                    <Badge className="bg-[#D4AF37] text-black border-[#D4AF37] text-[9px] font-black uppercase tracking-widest rounded-full px-2 py-0 h-4">
+                      Principal
+                    </Badge>
+                  )}
                 </div>
-                <p className="text-xs font-medium text-muted-foreground/60 flex items-center gap-1">
-                  app.plataforma.com
+                <p className="text-xs font-medium text-slate-400 flex items-center gap-1">
+                  {area.subdominio}.seudominio.com
                 </p>
               </div>
             </div>
 
             <div className="flex gap-2">
-              {area.ativa ? (
-                <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[10px] font-black uppercase tracking-widest rounded-full px-3">
-                  Ativa
-                </Badge>
-              ) : (
-                <Badge variant="outline" className="text-[10px] font-black uppercase tracking-widest opacity-60 rounded-full px-3">
-                  Inativa
-                </Badge>
-              )}
-              {area.principal && (
-                <Badge className="bg-gold text-black border-gold text-[10px] font-black uppercase tracking-widest shadow-[0_4px_10px_rgba(245,196,81,0.3)] rounded-full px-3">
-                  Principal
-                </Badge>
-              )}
-            </div>
-          </div>
-
-          {/* Body */}
-          <div className="space-y-4 mb-6">
-            <div className="p-3 rounded-xl bg-white/5 border border-white/5 space-y-1">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">URL DE ACESSO</p>
-              <p className="text-sm font-medium text-white/90 truncate">
-                {area.subdominio}.plataforma.com
-              </p>
-            </div>
-          </div>
-
-          <div className="h-px w-full bg-white/5 mb-6" />
-
-          {/* Actions Header */}
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex flex-col gap-1">
-              <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                {area.principal ? "Variação ativa no painel" : "Disponível para ativação"}
-              </p>
-              <button 
-                onClick={() => onToggleActive(area.id, area.ativa)}
-                className={`text-[9px] font-bold uppercase transition-colors text-left ${area.ativa ? 'text-destructive/60 hover:text-destructive' : 'text-emerald-500/60 hover:text-emerald-500'}`}
-              >
-                {area.ativa ? "Desativar área" : "Ativar área"}
-              </button>
-            </div>
-            <div className="flex gap-1">
               <Button 
                 variant="ghost" 
                 size="icon" 
                 onClick={() => onDuplicate(area.id)}
-                className="h-9 w-9 rounded-xl hover:bg-white/5 text-muted-foreground hover:text-white transition-all"
+                className="h-9 w-9 rounded-xl hover:bg-white/5 text-slate-500 hover:text-white transition-all"
               >
                 <Copy className="h-4 w-4" />
               </Button>
@@ -124,37 +95,69 @@ export function AreaCard({
                 variant="ghost" 
                 size="icon" 
                 onClick={() => onDelete(area.id)}
-                className="h-9 w-9 rounded-xl hover:bg-destructive/10 text-destructive/60 hover:text-destructive transition-all"
+                className="h-9 w-9 rounded-xl hover:bg-destructive/10 text-destructive/40 hover:text-destructive transition-all"
               >
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>
           </div>
 
-          {/* Main Action */}
-          <div className="space-y-4">
+          {/* Tags */}
+          <div className="flex flex-wrap gap-2 mb-8">
+            {area.ativa ? (
+              <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[10px] font-bold uppercase tracking-wider rounded-md px-3 py-1">
+                Ativa
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="bg-slate-500/5 text-slate-400 border-slate-500/20 text-[10px] font-bold uppercase tracking-wider rounded-md px-3 py-1">
+                Inativa
+              </Badge>
+            )}
+            <Badge variant="outline" className="bg-white/5 text-slate-300 border-white/10 text-[10px] font-bold uppercase tracking-wider rounded-md px-3 py-1">
+              {area.courses?.title?.toLowerCase().includes('desenho') ? 'Desenhos' : area.courses?.title?.toLowerCase().includes('curso') ? 'Cursos' : 'Misto'}
+            </Badge>
+            <Badge variant="outline" className="bg-white/5 text-slate-300 border-white/10 text-[10px] font-bold uppercase tracking-wider rounded-md px-3 py-1">
+              {area.language || 'PT-BR'}
+            </Badge>
+          </div>
+
+          {/* Info Section */}
+          <div className="space-y-4 mb-8">
+            <div className="p-4 rounded-xl bg-slate-900/50 border border-white/5 group-hover:border-[#D4AF37]/20 transition-colors">
+              <div className="flex items-center gap-2 mb-1">
+                <Globe className="h-3 w-3 text-slate-500" />
+                <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">URL DA ÁREA</p>
+              </div>
+              <p className="text-sm font-medium text-white/90 truncate">
+                {fullUrl}
+              </p>
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div className="space-y-3">
             <Button 
               onClick={() => onEdit(area.id)}
-              className="w-full h-12 bg-gold hover:bg-gold/90 text-black font-black text-sm rounded-xl shadow-xl shadow-gold/10 group-hover:shadow-gold/20 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+              className="w-full h-12 bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-black font-bold text-sm rounded-xl shadow-lg shadow-[#D4AF37]/10 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
             >
-              <Edit className="h-5 w-5" />
+              <Settings className="h-5 w-5" />
               Personalizar área
             </Button>
 
             <div className="grid grid-cols-2 gap-3">
               <Button 
                 variant="outline" 
-                className="h-10 rounded-xl bg-[#151921] border-white/5 hover:bg-white/10 text-white font-bold transition-all flex items-center gap-2"
+                className="h-11 rounded-xl bg-transparent border-white/10 hover:bg-white/5 text-white text-xs font-bold transition-all flex items-center gap-2"
               >
-                <Shield className="h-3.5 w-3.5 text-gold/60" />
-                <span className="text-[11px]">Ver como admin</span>
+                <Shield className="h-3.5 w-3.5 text-[#D4AF37]/60" />
+                <span>Ver como admin</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="h-10 rounded-xl bg-transparent border-gold/30 hover:bg-gold/5 text-gold font-bold transition-all flex items-center gap-2"
+                className="h-11 rounded-xl bg-transparent border-white/10 hover:border-[#D4AF37]/30 hover:bg-[#D4AF37]/5 text-slate-300 hover:text-[#D4AF37] text-xs font-bold transition-all flex items-center gap-2"
               >
                 <User className="h-3.5 w-3.5" />
-                <span className="text-[11px]">Ver como aluno</span>
+                <span>Ver como aluno</span>
               </Button>
             </div>
           </div>
