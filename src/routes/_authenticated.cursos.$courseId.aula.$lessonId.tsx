@@ -320,71 +320,47 @@ function LessonDetailPage() {
   const currentLessonIndex = allSidebarLessons.findIndex((l) => l.id === lessonId);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-[#0b0b0b] flex flex-col">
       {/* ═══ HEADER — cinematic, minimal ═══ */}
-      <header className="sticky top-0 z-30 border-b border-border/10 bg-background/90 backdrop-blur-2xl">
-        <div className="mx-auto flex max-w-[1800px] items-center gap-4 px-5 py-3.5 sm:px-8">
-          <Button variant="premiumOutline" size="sm" asChild className="shrink-0">
-            <Link to="/home">
-              <ChevronLeft className="h-4 w-4" />
-              <span className="hidden sm:inline">Voltar à vitrine</span>
-            </Link>
-          </Button>
+      <header className="sticky top-0 z-30 border-b border-white/5 bg-[#0b0b0b]/90 backdrop-blur-2xl">
+        <div className="mx-auto flex max-w-[1800px] items-center gap-4 px-5 py-4 sm:px-8">
+          <Link 
+            to="/home" 
+            className="group flex items-center gap-2 text-white/40 hover:text-white transition-colors"
+          >
+            <ChevronLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
+            <span className="hidden sm:inline text-sm font-black uppercase tracking-widest">Sair do player</span>
+          </Link>
 
-          <div className="hidden h-6 w-px bg-border/10 sm:block" />
-
-          <div className="hidden sm:flex h-10 w-10 shrink-0 overflow-hidden rounded-xl border border-border/10 bg-card/8 shadow-sm">
-            {course.cover_image_url ? (
-              <img
-                src={course.cover_image_url}
-                alt={course.title}
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center">
-                <BookOpen className="h-4 w-4 text-muted-foreground/25" />
-              </div>
-            )}
-          </div>
+          <div className="hidden h-6 w-px bg-white/5 sm:block" />
 
           <div className="min-w-0 flex-1">
-            <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-gold/45">
-              Aula {currentLessonIndex >= 0 ? currentLessonIndex + 1 : "–"} · {totalLessons}
-            </p>
-            <h1 className="truncate text-[13px] sm:text-sm font-bold text-foreground/80 leading-tight mt-0.5">
+            <h1 className="truncate text-base sm:text-lg font-black text-white leading-tight">
               {lesson.title}
             </h1>
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-gold/60 mt-0.5">
+              {course.title}
+            </p>
           </div>
 
           {/* Progress pill */}
-          <div className="flex shrink-0 items-center gap-3 rounded-2xl border border-border/10 bg-card/6 px-4 py-2.5">
-            {isCourseCompleted ? (
-              <div className="flex items-center gap-2 text-player-completed">
-                <Award className="h-4 w-4" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.15em]">Concluído</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3">
-                <div className="hidden sm:flex flex-col items-end">
-                  <span className="text-[10px] text-muted-foreground/40 tabular-nums">
-                    <span className="font-bold text-foreground/55">{completedCount}</span>
-                    <span className="mx-0.5">/</span>
-                    {totalLessons}
-                  </span>
-                </div>
-                <div className="w-20 sm:w-28 h-2 rounded-full bg-player-progress-track overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${progressPercent}%` }}
-                    transition={{ duration: 1, ease: "easeOut" }}
-                    className="h-full rounded-full bg-player-progress-fill"
-                  />
-                </div>
-                <span className="text-[13px] font-black text-gold tabular-nums min-w-[2rem] text-right">
-                  {progressPercent}%
-                </span>
-              </div>
-            )}
+          <div className="flex shrink-0 items-center gap-4 rounded-2xl border border-white/5 bg-white/5 px-5 py-2.5">
+            <div className="hidden sm:flex flex-col items-end">
+              <span className="text-[10px] font-black uppercase tracking-widest text-white/20">
+                Seu Progresso
+              </span>
+            </div>
+            <div className="w-24 sm:w-32 h-1.5 rounded-full bg-white/10 overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${progressPercent}%` }}
+                transition={{ duration: 1, ease: "easeOut" }}
+                className="h-full rounded-full bg-gold shadow-[0_0_10px_rgba(234,179,8,0.5)]"
+              />
+            </div>
+            <span className="text-sm font-black text-gold tabular-nums">
+              {progressPercent}%
+            </span>
           </div>
         </div>
       </header>
