@@ -67,7 +67,7 @@ export function CourseMusicasTab({ courseId }: CourseMusicasTabProps) {
 
       {isLoading ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <Loader2 className="h-8 w-8 text-gold animate-spin" />
+          <Loader2 className="h-8 w-8 text-orange-500 animate-spin" />
           <p className="text-sm text-muted-foreground/60">Carregando músicas...</p>
         </div>
       ) : musicas.length === 0 ? (
