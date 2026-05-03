@@ -127,7 +127,7 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
 
   const actionTopRight =
     isPlaying && !isRestricted ? (
-      <div className="flex h-7 w-7 items-center justify-center rounded-full border border-gold/30 bg-gold/20 backdrop-blur-sm animate-pulse">
+      <div className="flex h-7 w-7 items-center justify-center rounded-full border border-orange-500/30 bg-orange-500/20 backdrop-blur-sm animate-pulse">
         <Music className="h-3 w-3 text-gold/80" />
       </div>
     ) : undefined;
