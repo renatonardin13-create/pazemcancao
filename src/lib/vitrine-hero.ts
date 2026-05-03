@@ -51,7 +51,7 @@ export function resolveCtaHref(
   fallbackUrl?: string | null,
 ): string | null {
   const t = (target || "").trim();
-  if (type === "product" && t) return `/produto/${t}`;
+  if (type === "product" && t) return `/cursos/${t}`;
   if (type === "video" && t) return null;
   if (type === "url" && t) return t;
   return (fallbackUrl || "").trim() || null;
