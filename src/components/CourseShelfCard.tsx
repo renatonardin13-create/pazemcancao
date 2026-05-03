@@ -67,7 +67,7 @@ export const CourseShelfCard = memo(function CourseShelfCard({
   const salesUrl = course.sales_page_url || course.checkout_url;
   const isExternalLink = false;
   const priceLabel = course.promotional_price ?? course.price;
-  const metaLine = subtitle || (course.total_lessons > 0 ? `${course.total_lessons} aulas` : course.short_description || '');
+  const metaLine = subtitle || (course.total_lessons > 0 ? `${course.total_lessons} ${course.course_type === 'louvores' ? 'músicas' : 'aulas'}` : course.short_description || '');
 
   const fallback = (
     <div className={`flex h-16 w-16 items-center justify-center rounded-2xl backdrop-blur-sm transition-all duration-700 ${

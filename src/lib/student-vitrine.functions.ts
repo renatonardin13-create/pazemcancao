@@ -15,6 +15,7 @@ type CourseRow = {
   benefits: string[] | null;
   total_lessons: number;
   total_duration: string | null;
+  course_type: string;
   product_type: string;
   category_id: string | null;
   status: string;
@@ -52,6 +53,7 @@ function safeCourse(course: any) {
     benefits: Array.isArray(course.benefits) ? course.benefits.filter(Boolean) : [],
     total_lessons: Number(course.total_lessons ?? 0),
     total_duration: course.total_duration ?? null,
+    course_type: course.course_type || 'video',
     product_type: course.product_type || 'curso_individual',
     category_name: course.category_name ?? null,
     checkout_url: course.checkout_url ?? null,
@@ -73,7 +75,7 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
     // to enforce RLS policies (area membership and published status).
     let coursesQuery = supabase
       .from('courses')
-      .select('id, title, short_description, full_description, sales_description, cover_image_url, banner_image_url, price, promotional_price, benefits, total_lessons, total_duration, product_type, category_id, status, sort_order, launch_date')
+      .select('id, title, short_description, full_description, sales_description, cover_image_url, banner_image_url, price, promotional_price, benefits, total_lessons, total_duration, course_type, product_type, category_id, status, sort_order, launch_date')
       .eq('status', 'published');
 
     if (inputData?.areaId) {
