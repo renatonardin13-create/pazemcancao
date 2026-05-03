@@ -14,6 +14,41 @@ export type Database = {
   }
   public: {
     Tables: {
+      acessos_usuario: {
+        Row: {
+          criado_em: string | null
+          id: string
+          origem: string
+          produto_id: string
+          status: string
+          usuario_email: string
+        }
+        Insert: {
+          criado_em?: string | null
+          id?: string
+          origem: string
+          produto_id: string
+          status?: string
+          usuario_email: string
+        }
+        Update: {
+          criado_em?: string | null
+          id?: string
+          origem?: string
+          produto_id?: string
+          status?: string
+          usuario_email?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "acessos_usuario_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       active_sessions: {
         Row: {
           area_id: string | null
@@ -1441,6 +1476,72 @@ export type Database = {
         }
         Relationships: []
       }
+      ofertas: {
+        Row: {
+          codigo_externo: string
+          criado_em: string | null
+          gateway: string
+          id: string
+          modalidade: string
+          nome: string
+          status: string
+          token: string | null
+        }
+        Insert: {
+          codigo_externo: string
+          criado_em?: string | null
+          gateway: string
+          id?: string
+          modalidade: string
+          nome: string
+          status?: string
+          token?: string | null
+        }
+        Update: {
+          codigo_externo?: string
+          criado_em?: string | null
+          gateway?: string
+          id?: string
+          modalidade?: string
+          nome?: string
+          status?: string
+          token?: string | null
+        }
+        Relationships: []
+      }
+      ofertas_produtos: {
+        Row: {
+          id: string
+          oferta_id: string
+          produto_id: string
+        }
+        Insert: {
+          id?: string
+          oferta_id: string
+          produto_id: string
+        }
+        Update: {
+          id?: string
+          oferta_id?: string
+          produto_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ofertas_produtos_oferta_id_fkey"
+            columns: ["oferta_id"]
+            isOneToOne: false
+            referencedRelation: "ofertas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ofertas_produtos_produto_id_fkey"
+            columns: ["produto_id"]
+            isOneToOne: false
+            referencedRelation: "produtos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       platform_modules: {
         Row: {
           created_at: string
@@ -1703,6 +1804,30 @@ export type Database = {
           target_type?: string
           title?: string | null
           updated_at?: string
+        }
+        Relationships: []
+      }
+      produtos: {
+        Row: {
+          criado_em: string | null
+          id: string
+          nome: string
+          status: string
+          tipo: string
+        }
+        Insert: {
+          criado_em?: string | null
+          id?: string
+          nome: string
+          status?: string
+          tipo: string
+        }
+        Update: {
+          criado_em?: string | null
+          id?: string
+          nome?: string
+          status?: string
+          tipo?: string
         }
         Relationships: []
       }

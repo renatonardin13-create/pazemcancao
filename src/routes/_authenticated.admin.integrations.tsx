@@ -22,8 +22,8 @@ export const Route = createFileRoute("/_authenticated/admin/integrations")({
 const platformColors: Record<string, { bg: string; text: string; dot: string }> = {
   hotmart: { bg: "bg-orange-500/15 text-orange-400 border-orange-500/30", text: "text-orange-400", dot: "bg-orange-500" },
   kiwify: { bg: "bg-emerald-500/15 text-emerald-400 border-emerald-500/30", text: "text-emerald-400", dot: "bg-emerald-500" },
+  perfect_pay: { bg: "bg-red-500/15 text-red-400 border-red-500/30", text: "text-red-400", dot: "bg-red-500" },
   perfectpay: { bg: "bg-red-500/15 text-red-400 border-red-500/30", text: "text-red-400", dot: "bg-red-500" },
-  cakto: { bg: "bg-blue-500/15 text-blue-400 border-blue-500/30", text: "text-blue-400", dot: "bg-blue-500" },
 };
 
 function IntegrationsPage() {
@@ -44,16 +44,14 @@ function IntegrationsPage() {
   const integrations = data?.integrations || [];
   const logs = logsData?.logs || [];
 
-  const webhookBaseUrl = "https://pazemcancao.lovable.app/api/webhook/kiwify";
-
-  const handleCopyUrl = (courseId: string) => {
-    const url = `${webhookBaseUrl}?course=${courseId}`;
+  const handleCopyUrl = (offerId: string) => {
+    const url = `${window.location.origin}/api/webhooks/payment?id=${offerId}`;
     navigator.clipboard.writeText(url);
     toast.success("URL do webhook copiada!");
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-4">
+    <div className="max-w-6xl mx-auto space-y-4 pb-20">
       {/* Header */}
       <div className="relative rounded-2xl border border-gold/10 bg-gradient-to-r from-card via-card/80 to-card px-6 py-4 overflow-hidden shadow-xl shadow-black/10">
         <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gold/[0.05] blur-[60px]" />
@@ -83,10 +81,10 @@ function IntegrationsPage() {
 
       {/* Logs Dialog */}
       <Dialog open={logsOpen} onOpenChange={setLogsOpen}>
-        <DialogContent className="max-w-3xl max-h-[80vh]">
+        <DialogContent className="max-w-3xl max-h-[80vh] bg-card border-border/50">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <ScrollText className="h-5 w-5" />
+              <ScrollText className="h-5 w-5 text-gold" />
               Logs de Webhook
             </DialogTitle>
           </DialogHeader>
@@ -98,7 +96,7 @@ function IntegrationsPage() {
             ) : (
               <Table>
                 <TableHeader>
-                  <TableRow>
+                  <TableRow className="border-border/30">
                     <TableHead>Data</TableHead>
                     <TableHead>Evento</TableHead>
                     <TableHead>Email</TableHead>
@@ -108,12 +106,12 @@ function IntegrationsPage() {
                 </TableHeader>
                 <TableBody>
                   {logs.map((log) => (
-                    <TableRow key={log.id}>
+                    <TableRow key={log.id} className="border-border/20">
                       <TableCell className="text-xs text-muted-foreground whitespace-nowrap">
-                        {format(new Date(log.created_at), "dd/MM HH:mm")}
+                        {log.created_at ? format(new Date(log.created_at), "dd/MM HH:mm") : "—"}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-[10px] uppercase">
                           {log.event_type || "—"}
                         </Badge>
                       </TableCell>
@@ -121,7 +119,7 @@ function IntegrationsPage() {
                       <TableCell>
                         <Badge
                           variant="outline"
-                          className={`text-xs ${
+                          className={`text-[10px] ${
                             log.response_status === 200
                               ? "border-emerald-500/30 text-emerald-400"
                               : "border-red-500/30 text-red-400"
@@ -171,21 +169,21 @@ function IntegrationsPage() {
         />
       </div>
 
-      {/* Webhooks por Curso */}
+      {/* Webhooks table */}
       <Card className="bg-card border-border/30">
         <CardContent className="p-6">
           <div className="mb-4">
-            <h3 className="text-lg font-semibold text-foreground">Webhooks por Curso</h3>
-            <p className="text-sm text-muted-foreground">Webhooks configurados e vinculados a cursos específicos</p>
+            <h3 className="text-lg font-semibold text-foreground">Ofertas Ativas</h3>
+            <p className="text-sm text-muted-foreground">Listagem simplificada de integrações</p>
           </div>
 
           <div className="rounded-lg border border-border/20 overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow className="border-border/20">
-                  <TableHead>Curso</TableHead>
+                  <TableHead>Nome</TableHead>
                   <TableHead>Plataforma</TableHead>
-                  <TableHead>Product ID</TableHead>
+                  <TableHead>Código</TableHead>
                   <TableHead className="text-center">Vendas</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Ações</TableHead>
@@ -201,7 +199,7 @@ function IntegrationsPage() {
                 ) : integrations.length === 0 ? (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                      Nenhuma integração configurada
+                      Nenhuma oferta configurada
                     </TableCell>
                   </TableRow>
                 ) : (
@@ -209,10 +207,10 @@ function IntegrationsPage() {
                     const pc = platformColors[integ.platform] || platformColors.kiwify;
                     return (
                       <TableRow key={integ.id} className="border-border/25">
-                        <TableCell className="font-medium">{integ.courseTitle}</TableCell>
+                        <TableCell className="font-medium">{integ.nome}</TableCell>
                         <TableCell>
                           <Badge variant="outline" className={`text-xs ${pc.bg}`}>
-                            {integ.platform.charAt(0).toUpperCase() + integ.platform.slice(1)}
+                            {integ.platform.charAt(0).toUpperCase() + integ.platform.slice(1).replace('_', ' ')}
                           </Badge>
                         </TableCell>
                         <TableCell className="font-mono text-xs text-muted-foreground">
@@ -223,12 +221,12 @@ function IntegrationsPage() {
                           <Badge
                             variant="outline"
                             className={`text-xs ${
-                              integ.webhookActive && integ.isEnabled
+                              integ.isEnabled
                                 ? "border-emerald-500/30 text-emerald-400"
                                 : "border-red-500/30 text-red-400"
                             }`}
                           >
-                            {integ.webhookActive && integ.isEnabled ? "Ativo" : "Inativo"}
+                            {integ.isEnabled ? "Ativo" : "Inativo"}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right">
@@ -237,16 +235,11 @@ function IntegrationsPage() {
                               variant="ghost"
                               size="icon"
                               className="h-7 w-7"
-                              onClick={() => handleCopyUrl(integ.courseId)}
+                              onClick={() => handleCopyUrl(integ.id)}
                               title="Copiar URL do webhook"
                             >
                               <Copy className="h-3.5 w-3.5" />
                             </Button>
-                            <Link to="/admin/courses/$courseId" params={{ courseId: integ.courseId }}>
-                              <Button variant="ghost" size="icon" className="h-7 w-7" title="Configurações do curso">
-                                <Settings className="h-3.5 w-3.5" />
-                              </Button>
-                            </Link>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -256,145 +249,22 @@ function IntegrationsPage() {
               </TableBody>
             </Table>
           </div>
-
-          {/* Hint */}
-          <div className="mt-4 flex items-center gap-2 rounded-lg bg-muted/10 border border-border/30 px-4 py-3">
-            <Lightbulb className="h-4 w-4 text-amber-400 shrink-0" />
-            <p className="text-xs text-muted-foreground">
-              Configure webhooks na aba <span className="font-semibold text-foreground/70">Configurações</span> de cada curso
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Platform Guides */}
-      <Card className="bg-card border-border/30">
-        <CardContent className="p-6">
-          <div className="mb-4">
-            <h3 className="text-lg font-semibold text-foreground">Como Integrar com as Plataformas</h3>
-            <p className="text-sm text-muted-foreground">Guias passo a passo para configurar webhooks em cada plataforma</p>
-          </div>
-
-          <Accordion type="single" collapsible className="space-y-2">
-            <AccordionItem value="hotmart" className="border border-border/30 rounded-lg px-4">
-              <AccordionTrigger className="hover:no-underline py-4">
-                <div className="flex items-center gap-3">
-                  <span className="h-2.5 w-2.5 rounded-full bg-orange-500" />
-                  <span className="font-semibold text-foreground">Hotmart</span>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="pb-4">
-                <ol className="space-y-2.5 text-sm text-muted-foreground">
-                  <li>1. Acesse o <span className="font-bold text-foreground">Painel Hotmart</span> → Produtos → Seu Produto</li>
-                  <li>2. Vá em <span className="font-bold text-foreground">Configurações</span> → <span className="font-bold text-foreground">Integrações</span> → <span className="font-bold text-foreground">Webhooks</span></li>
-                  <li>3. Clique em <span className="font-bold text-foreground">Adicionar webhook</span></li>
-                  <li>4. Cole a URL do webhook gerada no MemberHero</li>
-                  <li>5. Selecione os eventos: <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">purchase.approved</code></li>
-                  <li>6. Salve e teste o webhook</li>
-                </ol>
-                <div className="mt-4 rounded-lg bg-muted/10 border border-border/30 px-4 py-2.5">
-                  <p className="text-xs text-muted-foreground">
-                    <span className="font-semibold text-foreground/70">Dica:</span> O email do comprador virá no campo <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">buyer.email</code>
-                  </p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="kiwify" className="border border-border/30 rounded-lg px-4">
-              <AccordionTrigger className="hover:no-underline py-4">
-                <div className="flex items-center gap-3">
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-500" />
-                  <span className="font-semibold text-foreground">Kiwify</span>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="pb-4">
-                <ol className="space-y-2.5 text-sm text-muted-foreground">
-                  <li>1. Acesse o <span className="font-bold text-foreground">Dashboard Kiwify</span> → Produtos</li>
-                  <li>2. Selecione seu produto → <span className="font-bold text-foreground">Webhooks</span></li>
-                  <li>3. Clique em <span className="font-bold text-foreground">Novo Webhook</span></li>
-                  <li>4. Cole a URL do webhook do MemberHero</li>
-                  <li>5. Ative os eventos: <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">order.paid</code></li>
-                  <li>6. Salve a configuração</li>
-                </ol>
-                <div className="mt-4 rounded-lg bg-muted/10 border border-border/30 px-4 py-2.5">
-                  <p className="text-xs text-muted-foreground">
-                    <span className="font-semibold text-foreground/70">Dica:</span> O email virá em <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">Customer.email</code>
-                  </p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-
-            <AccordionItem value="perfectpay" className="border border-border/30 rounded-lg px-4">
-              <AccordionTrigger className="hover:no-underline py-4">
-                <div className="flex items-center gap-3">
-                  <span className="h-2.5 w-2.5 rounded-full bg-red-500" />
-                  <span className="font-semibold text-foreground">PerfectPay</span>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="pb-4">
-                <ol className="space-y-2.5 text-sm text-muted-foreground">
-                  <li>1. Acesse o <span className="font-bold text-foreground">Painel PerfectPay</span> → Meus Produtos</li>
-                  <li>2. Selecione seu produto → <span className="font-bold text-foreground">Postback (Webhook)</span></li>
-                  <li>3. Clique em <span className="font-bold text-foreground">Adicionar Novo</span></li>
-                  <li>4. Cole a URL do webhook do MemberHero</li>
-                  <li>5. Selecione os eventos: <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">sale_approved</code> e <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">billet_paid</code></li>
-                  <li>6. Salve a configuração</li>
-                </ol>
-                <div className="mt-4 rounded-lg bg-muted/10 border border-border/30 px-4 py-2.5">
-                  <p className="text-xs text-muted-foreground">
-                    <span className="font-semibold text-foreground/70">Dica:</span> O email virá no campo <code className="text-xs bg-muted/20 px-1.5 py-0.5 rounded font-mono">customer_email</code>
-                  </p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="cakto" className="border border-border/30 rounded-lg px-4">
-              <AccordionTrigger className="hover:no-underline py-4">
-                <div className="flex items-center gap-3">
-                  <span className="h-2.5 w-2.5 rounded-full bg-purple-500" />
-                  <span className="font-semibold text-foreground">Cakto</span>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="pb-4">
-                <ol className="space-y-2.5 text-sm text-muted-foreground">
-                  <li>1. Acesse o <span className="font-bold text-foreground">Painel Cakto</span> → Produtos</li>
-                  <li>2. Selecione seu produto → <span className="font-bold text-foreground">Integrações</span></li>
-                  <li>3. Clique em <span className="font-bold text-foreground">Adicionar Webhook</span></li>
-                  <li>4. Cole a URL do webhook gerada no MemberHero</li>
-                  <li>5. Selecione os eventos de compra aprovada</li>
-                  <li>6. Salve e teste a integração</li>
-                </ol>
-                <div className="mt-4 rounded-lg bg-muted/10 border border-border/30 px-4 py-2.5">
-                  <p className="text-xs text-muted-foreground">
-                    <span className="font-semibold text-foreground/70">Dica:</span> O email do comprador virá no campo de dados do cliente
-                  </p>
-                </div>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
         </CardContent>
       </Card>
     </div>
   );
 }
 
-function StatCard({ label, value, icon, color, valueColor }: {
-  label: string;
-  value: string;
-  icon: React.ReactNode;
-  color: string;
-  valueColor?: string;
-}) {
+function StatCard({ label, value, icon, color, valueColor }: any) {
   return (
-    <Card className="bg-card border-border/30">
-      <CardContent className="p-5">
-        <div className="flex items-start justify-between">
-          <div>
-            <p className="text-xs text-muted-foreground mb-1">{label}</p>
-            <p className={`text-2xl font-bold ${valueColor || "text-gold"}`}>{value}</p>
-          </div>
-          <div className={`h-9 w-9 rounded-lg bg-muted/15 flex items-center justify-center ${color}`}>
-            {icon}
-          </div>
+    <Card className="bg-card/50 border-border/20">
+      <CardContent className="p-4 flex items-center gap-4">
+        <div className={`h-10 w-10 rounded-xl bg-background/50 border border-border/30 flex items-center justify-center ${color}`}>
+          {icon}
+        </div>
+        <div>
+          <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground/50">{label}</p>
+          <h4 className={`text-xl font-black tracking-tight ${valueColor || "text-foreground"}`}>{value}</h4>
         </div>
       </CardContent>
     </Card>

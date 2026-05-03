@@ -1,195 +1,248 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { listAdminOffers } from "@/lib/admin-integrations.functions";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { listAdminOffers, deleteOffer, toggleOfferStatus } from "@/lib/admin-integrations.functions";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, ShoppingCart, ArrowLeft, ExternalLink, Copy, CheckCircle2, AlertCircle } from "lucide-react";
+import { Plus, Search, Filter, MoreHorizontal, Edit2, Copy, Trash2, CheckCircle2, XCircle, AlertCircle, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
 import { TableSkeleton } from "@/components/LoadingSkeletons";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 export const Route = createFileRoute("/_authenticated/admin/offers")({
   component: OffersPage,
 });
 
-const platformColors: Record<string, { bg: string; text: string }> = {
-  hotmart: { bg: "bg-orange-500/15 text-orange-400", text: "text-orange-400" },
-  kiwify: { bg: "bg-emerald-500/15 text-emerald-400", text: "text-emerald-400" },
-  perfectpay: { bg: "bg-red-500/15 text-red-400", text: "text-red-400" },
-  cakto: { bg: "bg-blue-500/15 text-blue-400", text: "text-blue-400" },
+const gatewayColors: Record<string, { bg: string; text: string; border: string }> = {
+  kiwify: { bg: "bg-emerald-500/10", text: "text-emerald-400", border: "border-emerald-500/20" },
+  perfect_pay: { bg: "bg-red-500/10", text: "text-red-400", border: "border-red-500/20" },
+};
+
+const statusColors: Record<string, { bg: string; text: string; border: string }> = {
+  ativa: { bg: "bg-emerald-500/10", text: "text-emerald-400", border: "border-emerald-500/20" },
+  rascunho: { bg: "bg-yellow-500/10", text: "text-yellow-400", border: "border-yellow-500/20" },
+  inativa: { bg: "bg-red-500/10", text: "text-red-400", border: "border-red-500/20" },
 };
 
 function OffersPage() {
+  const queryClient = useQueryClient();
+  const [search, setSearch] = useState("");
+  const [gatewayFilter, setGatewayFilter] = useState<string>("all");
+
   const { data: offers, isLoading } = useQuery({
     queryKey: ["admin-offers"],
     queryFn: () => listAdminOffers(),
   });
 
-  const handleCopyWebhook = (courseId: string) => {
-    const url = `https://pazemcancao.lovable.app/api/webhook/kiwify?course=${courseId}`;
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteOffer({ data: id }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-offers"] });
+      toast.success("Oferta excluída com sucesso");
+    },
+    onError: () => toast.error("Erro ao excluir oferta"),
+  });
+
+  const statusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) => toggleOfferStatus({ data: { id, status } }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-offers"] });
+      toast.success("Status atualizado");
+    },
+  });
+
+  const handleCopyWebhook = (id: string) => {
+    const url = `${window.location.origin}/api/webhooks/payment?id=${id}`;
     navigator.clipboard.writeText(url);
-    toast.success("Link de automação copiado!");
+    toast.success("Link do webhook copiado!");
   };
 
+  const filteredOffers = offers?.filter(offer => {
+    const matchesSearch = offer.nome.toLowerCase().includes(search.toLowerCase()) || 
+                          offer.codigo_externo.toLowerCase().includes(search.toLowerCase());
+    const matchesGateway = gatewayFilter === "all" || offer.gateway === gatewayFilter;
+    return matchesSearch && matchesGateway;
+  });
+
   return (
-    <div className="max-w-6xl mx-auto space-y-4">
+    <div className="max-w-7xl mx-auto space-y-6 pb-20">
       {/* Header */}
-      <div className="relative rounded-2xl border border-gold/10 bg-gradient-to-r from-card via-card/80 to-card px-6 py-4 overflow-hidden shadow-xl shadow-black/10">
-        <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gold/[0.05] blur-[60px]" />
-        <div className="flex items-center justify-between relative z-10">
-          <div className="flex items-center gap-3">
-            <Link
-              to="/admin"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/30 bg-background/30 text-muted-foreground/50 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all duration-200"
-            >
-              <ArrowLeft className="h-4 w-4" />
-            </Link>
-            <div>
-              <h1 className="font-display text-xl font-black text-foreground tracking-tight">
-                Minhas Ofertas
-              </h1>
-              <p className="text-xs text-muted-foreground/50 mt-0.5">
-                Gerencie como seus produtos são vendidos e integrados
-              </p>
-            </div>
-          </div>
-          <Link to="/admin/offers/new">
-            <Button size="sm" className="gap-2">
-              <Plus className="h-4 w-4" />
-              Nova Oferta
-            </Button>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <Link
+            to="/admin"
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-border/30 bg-background/50 text-muted-foreground hover:text-gold hover:border-gold/30 transition-all"
+          >
+            <ArrowLeft className="h-5 w-5" />
           </Link>
+          <div>
+            <h1 className="text-2xl font-black text-foreground tracking-tight">Ofertas</h1>
+            <p className="text-sm text-muted-foreground">Gerencie suas integrações de pagamento</p>
+          </div>
+        </div>
+        <Link to="/admin/offers/new">
+          <Button className="gap-2 bg-gold hover:bg-gold/90 text-black font-bold">
+            <Plus className="h-4 w-4" />
+            Nova oferta
+          </Button>
+        </Link>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input 
+            placeholder="Buscar por nome ou código..." 
+            className="pl-10 bg-card border-border/30"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
+        <div className="flex gap-2">
+          <select 
+            className="h-10 px-3 rounded-md border border-border/30 bg-card text-sm"
+            value={gatewayFilter}
+            onChange={(e) => setGatewayFilter(e.target.value)}
+          >
+            <option value="all">Todos Gateways</option>
+            <option value="kiwify">Kiwify</option>
+            <option value="perfect_pay">Perfect Pay</option>
+          </select>
+          <Button variant="outline" className="gap-2 border-border/30 bg-card">
+            <Filter className="h-4 w-4" />
+            Filtros
+          </Button>
         </div>
       </div>
 
-      <Card className="bg-card border-border/30">
-        <CardContent className="p-6">
-          {isLoading ? (
-            <div className="rounded-lg border border-border/20 overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="border-border/20">
-                    <TableHead>Produto</TableHead>
-                    <TableHead>Plataforma</TableHead>
-                    <TableHead>Cód. Produto</TableHead>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableSkeleton rows={3} cols={6} />
-                </TableBody>
-              </Table>
-            </div>
-          ) : !offers || offers.length === 0 ? (
-            <div className="text-center py-20 space-y-4">
-              <div className="mx-auto w-16 h-16 rounded-full bg-muted/20 flex items-center justify-center text-muted-foreground/40">
-                <ShoppingCart className="h-8 w-8" />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-foreground">Nenhum produto disponível</h3>
-                <p className="text-sm text-muted-foreground">Você precisa criar um produto antes de configurar uma oferta</p>
-              </div>
-              <Link to="/admin/courses/new">
-                <Button variant="outline" className="border-gold/30 text-gold hover:bg-gold/10">
-                  Criar Produto
-                </Button>
-              </Link>
-            </div>
-          ) : (
-            <div className="rounded-lg border border-border/20 overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="border-border/20">
-                    <TableHead>Produto</TableHead>
-                    <TableHead>Plataforma</TableHead>
-                    <TableHead>Cód. Produto</TableHead>
-                    <TableHead>Tipo</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Ações</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {offers.map((offer) => {
-                    const pc = platformColors[offer.platform] || { bg: "bg-muted/20", text: "text-muted-foreground" };
-                    return (
-                      <TableRow key={offer.id} className="border-border/25">
-                        <TableCell className="font-medium">{(offer as any).courses?.title}</TableCell>
-                        <TableCell>
-                          <Badge variant="outline" className={`text-xs ${pc.bg}`}>
-                            {offer.platform.charAt(0).toUpperCase() + offer.platform.slice(1)}
+      <Card className="bg-card border-border/30 overflow-hidden">
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-border/30 hover:bg-transparent">
+                <TableHead className="w-[120px]">Gateway</TableHead>
+                <TableHead>Nome da entrega</TableHead>
+                <TableHead>Modalidade</TableHead>
+                <TableHead>Código</TableHead>
+                <TableHead>Produtos liberados</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                <TableSkeleton rows={5} cols={7} />
+              ) : filteredOffers?.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={7} className="h-64 text-center">
+                    <div className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                      <AlertCircle className="h-10 w-10 opacity-20" />
+                      <p>Nenhuma oferta encontrada</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : (
+                filteredOffers?.map((offer) => (
+                  <TableRow key={offer.id} className="border-border/20 group hover:bg-white/[0.02]">
+                    <TableCell>
+                      <Badge 
+                        variant="outline" 
+                        className={`${gatewayColors[offer.gateway]?.bg} ${gatewayColors[offer.gateway]?.text} ${gatewayColors[offer.gateway]?.border} capitalize font-bold text-[10px]`}
+                      >
+                        {offer.gateway.replace('_', ' ')}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="font-medium text-foreground">{offer.nome}</TableCell>
+                    <TableCell>
+                      <span className="text-xs text-muted-foreground capitalize">
+                        {offer.modalidade === 'unico' ? 'Venda única' : 'Assinatura'}
+                      </span>
+                    </TableCell>
+                    <TableCell>
+                      <code className="text-[11px] bg-muted/30 px-1.5 py-0.5 rounded text-gold/80">
+                        {offer.codigo_externo}
+                      </code>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {offer.ofertas_produtos?.map((op: any) => (
+                          <Badge key={op.produto_id} variant="secondary" className="text-[9px] bg-white/5 text-muted-foreground">
+                            {op.produtos?.nome}
                           </Badge>
-                        </TableCell>
-                        <TableCell className="font-mono text-xs text-muted-foreground">
-                          {offer.external_product_id}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="secondary" className="text-[10px] uppercase">
-                            {offer.payment_type === 'subscription' ? 'Assinatura' : 'Venda Única'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-medium">
-                            <CheckCircle2 className="h-3 w-3" />
-                            Ativo
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button 
-                            variant="ghost" 
-                            size="icon" 
-                            className="h-8 w-8" 
-                            onClick={() => handleCopyWebhook(offer.course_id)}
-                            title="Copiar Link de Automação"
+                        )) || "-"}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge 
+                        variant="outline" 
+                        className={`${statusColors[offer.status]?.bg} ${statusColors[offer.status]?.text} ${statusColors[offer.status]?.border} capitalize font-medium text-[10px]`}
+                      >
+                        {offer.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-white/10">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-40 bg-card border-border/50">
+                          <DropdownMenuItem className="gap-2 cursor-pointer">
+                            <Edit2 className="h-3.5 w-3.5" />
+                            Editar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="gap-2 cursor-pointer"
+                            onClick={() => handleCopyWebhook(offer.id)}
                           >
                             <Copy className="h-3.5 w-3.5" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
-          )}
-        </CardContent>
+                            Copiar Webhook
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="gap-2 cursor-pointer"
+                            onClick={() => statusMutation.mutate({ 
+                              id: offer.id, 
+                              status: offer.status === 'ativa' ? 'inativa' : 'ativa' 
+                            })}
+                          >
+                            {offer.status === 'ativa' ? (
+                              <><XCircle className="h-3.5 w-3.5 text-red-400" /> Desativar</>
+                            ) : (
+                              <><CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" /> Ativar</>
+                            )}
+                          </DropdownMenuItem>
+                          <DropdownMenuItem 
+                            className="gap-2 cursor-pointer text-red-400 focus:text-red-400"
+                            onClick={() => {
+                              if (confirm("Deseja realmente excluir esta oferta?")) {
+                                deleteMutation.mutate(offer.id);
+                              }
+                            }}
+                          >
+                            <Trash2 className="h-3.5 w-3.5" />
+                            Excluir
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </Card>
-
-      {/* Educational block in listing too */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <EduCard 
-          step="1"
-          title="Cliente Paga"
-          description="O cliente realiza o pagamento no checkout da sua plataforma."
-        />
-        <EduCard 
-          step="2"
-          title="Plataforma Notifica"
-          description="A plataforma envia uma notificação automática para o nosso sistema."
-        />
-        <EduCard 
-          step="3"
-          title="Acesso Liberado"
-          description="O sistema cria a conta do aluno e libera o acesso ao produto instantaneamente."
-        />
-      </div>
-    </div>
-  );
-}
-
-function EduCard({ step, title, description }: { step: string; title: string; description: string }) {
-  return (
-    <div className="bg-card/40 border border-border/20 rounded-xl p-4 flex gap-3">
-      <div className="h-6 w-6 rounded-full bg-gold/10 border border-gold/20 flex items-center justify-center text-[10px] font-black text-gold shrink-0">
-        {step}
-      </div>
-      <div>
-        <h4 className="text-sm font-bold text-foreground mb-0.5">{title}</h4>
-        <p className="text-[11px] text-muted-foreground leading-relaxed">{description}</p>
-      </div>
     </div>
   );
 }
