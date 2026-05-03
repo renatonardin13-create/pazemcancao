@@ -74,8 +74,8 @@ function VitrinePage() {
   const hasAnyContent = allShelves.length > 0 || !!featured || heroBanners.length > 0;
 
   return (
-    <ModuleGuard moduleKey="vitrine">
-      <StudentLayout>
+    <StudentLayout>
+
         <div className="min-h-screen bg-[#0b0b0b]">
           {isError ? (
             <div className="mx-auto flex min-h-[60vh] max-w-2xl flex-col items-center justify-center gap-4 px-6 py-20 text-center">
@@ -154,7 +154,7 @@ function VitrinePage() {
             </>
           )}
         </div>
-      </StudentLayout>
-    </ModuleGuard>
+    </StudentLayout>
   );
 }
+
