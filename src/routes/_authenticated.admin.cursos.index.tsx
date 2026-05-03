@@ -234,7 +234,7 @@ function AdminCoursesPage() {
           title="Nenhum conteúdo criado ainda"
           description="Para vender, você precisa primeiro criar uma seção. Seções organizam seus conteúdos (ex: Módulo 1, Bônus, Aulas)"
           actionLabel="Criar primeira seção"
-          actionTo="/admin/categories"
+          actionTo="/admin/categorias"
         />
       ) : filtered.length === 0 ? (
         <div className="text-center py-20 rounded-2xl border border-border/30 bg-card shadow-lg shadow-black/10">
@@ -246,7 +246,7 @@ function AdminCoursesPage() {
           </p>
           {allCourses.length === 0 && (
             <Button asChild size="sm" className="mt-4">
-              <Link to="/admin/courses/new">
+              <Link to="/admin/cursos/new">
                 <Plus className="h-4 w-4 mr-1" />
                 Criar primeiro produto
               </Link>
@@ -372,7 +372,7 @@ function AdminCoursesPage() {
                       <DropdownMenuContent align="end" className="w-48">
                         <DropdownMenuItem asChild>
                           <Link
-                            to="/admin/courses/$courseId"
+                            to="/admin/cursos/$courseId"
                             params={{ courseId: course.id }}
                             className="flex items-center gap-2"
                           >
