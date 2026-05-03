@@ -454,22 +454,20 @@ function AdminCoursesPage() {
       )}
       <ConfirmationDialog
         isOpen={!!deleteId}
-        onClose={() => setDeleteId(null)}
+        onOpenChange={(open) => !open && setDeleteId(null)}
         onConfirm={() => deleteId && deleteM.mutate(deleteId)}
         title="Excluir Produto"
         description="Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita."
-        isLoading={deleteM.isPending}
       />
 
       <ConfirmationDialog
         isOpen={!!statusId}
-        onClose={() => setStatusId(null)}
+        onOpenChange={(open) => !open && setStatusId(null)}
         onConfirm={() => statusId && toggleStatusM.mutate({ id: statusId.id, currentStatus: statusId.status })}
         title={statusId?.status === "published" ? "Despublicar Produto" : "Publicar Produto"}
         description={statusId?.status === "published" 
           ? "O produto deixará de ser visível para os alunos." 
           : "O produto passará a ser visível para os alunos com acesso."}
-        isLoading={toggleStatusM.isPending}
       />
 
       <ProductDialog
