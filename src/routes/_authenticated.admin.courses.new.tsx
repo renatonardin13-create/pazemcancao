@@ -147,6 +147,7 @@ function NewCoursePage() {
             onSubmit={(values) => mutation.mutate(values)}
             isSubmitting={mutation.isPending}
             hideSubmitButton
+            onTypeChange={setCourseType}
           />
         </TabsContent>
 
