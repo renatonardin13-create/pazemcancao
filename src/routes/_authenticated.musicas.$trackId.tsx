@@ -240,7 +240,7 @@ function TrackDetailPage() {
                 )}
                 {nextTrack ? (
                   <Link
-                    to="/conteudo/$trackId"
+                    to="/musicas/$trackId"
                     params={{ trackId: String(nextTrack.id) }}
                     className="group flex-1 flex flex-col items-end gap-1 rounded-xl border border-border/10 bg-card/5 px-4 py-3 hover:border-gold/10 hover:bg-card/10 transition-all"
                   >
