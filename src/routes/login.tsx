@@ -350,7 +350,7 @@ function LoginPage() {
       <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-background to-transparent" />
       <div className="absolute right-0 top-1/4 bottom-1/4 w-px bg-gradient-to-b from-transparent via-gold/10 to-transparent" />
 
-      <div className="relative z-10 flex items-center justify-center px-10 animate-in fade-in slide-in-from-left-8 duration-[1200ms]">
+      <div className="relative z-10 flex items-center justify-center px-10 animate-in fade-in slide-in-from-left-4 duration-700">
         <img
           src={productBox}
           alt="Paz em Canção — Coleção Exclusiva com 30 Louvores Inéditos"
@@ -369,7 +369,7 @@ function LoginPage() {
         {leftPanel}
 
         <div className="flex flex-1 lg:flex-[1.2] items-center justify-center px-6 py-6 sm:py-12">
-          <div className="w-full max-w-[420px] sm:max-w-[480px] lg:max-w-[600px] lg:min-w-[500px] animate-in fade-in slide-in-from-bottom-8 duration-1000">
+          <div className="w-full max-w-[420px] sm:max-w-[480px] lg:max-w-[600px] lg:min-w-[500px] animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Mobile header */}
             <div className="lg:hidden mb-6 sm:mb-10 text-center">
               <div className="mx-auto mb-5 w-px h-8 bg-gradient-to-b from-transparent via-gold/15 to-transparent" />

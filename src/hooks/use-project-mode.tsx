@@ -51,13 +51,13 @@ export function useProjectMode() {
     isLoading: modulesLoading,
   } = useQuery({
     queryKey: ["platform-modules"],
-    queryFn: () => getPlatformModules(),
+    queryFn: () => getPlatformModules().catch(() => ({ modules: [] })), // Catch missing table errors
     staleTime: 5 * 60_000,
     refetchOnWindowFocus: false,
   });
 
   const settings = settingsData?.settings || {};
-  const mode: ProjectMode = (settings.general?.project_mode as ProjectMode) || "hibrido";
+  const mode: ProjectMode = (settings.general as any)?.project_mode || "hibrido";
   const dbModules: PlatformModule[] = modulesData?.modules || [];
 
   const defaults = MODE_DEFAULTS[mode];

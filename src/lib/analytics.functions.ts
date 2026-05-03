@@ -2,20 +2,9 @@ import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
-async function verifyAdmin(supabase: any, userId: string) {
-  const { data: role } = await supabase
-    .from('user_roles')
-    .select('role')
-    .eq('user_id', userId)
-    .eq('role', 'admin')
-    .maybeSingle();
-  const { data: userData } = await supabase.auth.getUser();
-  const isAdminEmail = userData?.user?.email?.toLowerCase() === 'renatonardin13@gmail.com';
-  if (!role && !isAdminEmail) throw new Error('Não autorizado');
-}
-
 export const logPlay = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
+  .inputValidator((input: { trackId: string, durationSeconds: number }) => input)
   .handler(async ({ data, context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
     const email = userData?.user?.email;
@@ -31,6 +20,7 @@ export const logPlay = createServerFn({ method: 'POST' })
 
 export const logDownload = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
+  .inputValidator((input: { trackId: string }) => input)
   .handler(async ({ data, context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
     const email = userData?.user?.email;
@@ -45,12 +35,20 @@ export const logDownload = createServerFn({ method: 'POST' })
 
 export const getDashboardAnalytics = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
+  .inputValidator((input: { days?: number }) => input)
   .handler(async ({ data, context }) => {
-    await verifyAdmin(context.supabase, context.userId);
+    const { data: role } = await context.supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', context.userId)
+      .eq('role', 'admin')
+      .maybeSingle();
+    const { data: userData } = await context.supabase.auth.getUser();
+    const isAdminEmail = userData?.user?.email?.toLowerCase() === 'renatonardin13@gmail.com';
+    if (!role && !isAdminEmail) throw new Error('Não autorizado');
 
     const days = data?.days || 30;
 
-    // Use the database function for efficient aggregation
     const { data: result, error } = await supabaseAdmin.rpc('get_analytics_summary', {
       p_days: days,
     });

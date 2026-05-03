@@ -89,10 +89,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         if (audio!.currentTime >= 30 && playLoggedRef.current !== String(track.id)) {
           playLoggedRef.current = String(track.id);
           logPlay({
-            data: {
-              trackId: String(track.id),
-              durationSeconds: Math.round(audio!.currentTime),
-            }
+            trackId: String(track.id),
+            durationSeconds: Math.round(audio!.currentTime),
           }).catch(() => {});
         }
       }

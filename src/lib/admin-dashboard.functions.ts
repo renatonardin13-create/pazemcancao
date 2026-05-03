@@ -22,7 +22,6 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
     }
 
     const [
-      { count: totalAreas },
       { count: totalCategories },
       { count: totalTracks },
       { count: activeTracks },
@@ -35,7 +34,6 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
       { data: webhookSettings },
       { count: totalIntegrations },
     ] = await Promise.all([
-      supabaseAdmin.from('areas').select('*', { count: 'exact', head: true }),
       supabaseAdmin.from('categories').select('*', { count: 'exact', head: true }),
       supabaseAdmin.from('tracks').select('*', { count: 'exact', head: true }),
       supabaseAdmin.from('tracks').select('*', { count: 'exact', head: true }).eq('is_active', true),
@@ -82,7 +80,6 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
     const totalRevenue = (revenueData || []).reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
     return {
-      totalAreas: totalAreas || 0,
       totalCategories: totalCategories || 0,
       totalTracks: totalTracks || 0,
       activeTracks: activeTracks || 0,
