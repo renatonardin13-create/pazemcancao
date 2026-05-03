@@ -1,5 +1,6 @@
 import { memo, useState, type ReactNode } from "react";
 import { OptimizedImage } from "@/components/OptimizedImage";
+import { Play } from "lucide-react";
 import { getCardsConfigSync, useCardScope, getCardSizingFor } from "@/hooks/use-cards-config";
 
 /**
