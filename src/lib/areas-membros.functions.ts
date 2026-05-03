@@ -51,9 +51,9 @@ export const getAreaMembro = createServerFn({ method: 'GET' })
 
     const { data: area, error } = await supabaseAdmin
       .from('areas_membros')
-      .select('*, courses:produto_id(title)')
+      .select('*, courses:produto_id(title), configuracoes_login:configuracoes_login_area(*)')
       .eq('id', data.id)
-      .single();
+      .maybeSingle();
 
     if (error) throw new Error(error.message);
     return { area };
