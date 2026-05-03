@@ -52,6 +52,7 @@ function VitrinePage() {
 
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["student-shelves", "v5-streaming", undefined],
+    queryFn: () => getStudentVitrineData(),
     staleTime: 30_000,
     refetchOnWindowFocus: false,
     retry: 1,

@@ -20,6 +20,7 @@ function BonusPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["content-items", undefined],
+    queryFn: () => listContentItems(),
     staleTime: 60_000,
   });
 
@@ -34,8 +35,6 @@ function BonusPage() {
   const progressMap: Record<string, any> = data?.progressMap || {};
   const allItems = data?.items || [];
 
-  // Bônus aqui = SOMENTE conteúdos extras (cursos, ebooks, vídeos).
-  // Louvores bônus aparecem dentro da própria categoria, em /musicas.
   const bonusItems = useMemo(() => {
     return allItems.filter((item: any) => {
       if (!item.is_active) return false;
@@ -120,7 +119,6 @@ function BonusPage() {
                       ))}
                     </div>
                   )}
-
                 </div>
               )}
             </div>
