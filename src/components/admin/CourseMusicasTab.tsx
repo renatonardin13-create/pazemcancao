@@ -255,7 +255,7 @@ function MusicaDialog({ isOpen, onClose, courseId, musica }: { isOpen: boolean; 
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 pt-4">
           <div className="space-y-1.5">
-            <Label>Título <span className="text-gold">*</span></Label>
+            <Label>Título <span className="text-orange-500">*</span></Label>
             <Input
               value={formData.titulo}
               onChange={e => setFormData(prev => ({ ...prev, titulo: e.target.value }))}
