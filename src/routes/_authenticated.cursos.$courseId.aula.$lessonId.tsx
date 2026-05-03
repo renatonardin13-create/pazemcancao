@@ -282,8 +282,8 @@ function LessonDetailPage() {
         </div>
       </header>
 
-      <div className="flex-1 flex flex-col lg:flex-row">
-        <main className="flex-1 min-w-0 flex flex-col">
+      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden h-[calc(100vh-81px)]">
+        <main className="flex-1 min-w-0 flex flex-col overflow-y-auto scrollbar-hide">
           {accessRestricted && (
             <div className="flex items-center justify-center min-h-[65vh] p-8">
               <div className="max-w-sm text-center space-y-6">
