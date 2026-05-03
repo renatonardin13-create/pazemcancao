@@ -75,7 +75,7 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
     // to enforce RLS policies (area membership and published status).
     let coursesQuery = supabase
       .from('courses')
-      .select('id, title, short_description, full_description, sales_description, cover_image_url, banner_image_url, price, promotional_price, benefits, total_lessons, total_duration, product_type, category_id, status, sort_order, launch_date')
+      .select('id, title, short_description, full_description, sales_description, cover_image_url, banner_image_url, price, promotional_price, benefits, total_lessons, total_duration, course_type, product_type, category_id, status, sort_order, launch_date')
       .eq('status', 'published');
 
     if (inputData?.areaId) {
