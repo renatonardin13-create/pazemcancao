@@ -75,7 +75,7 @@ export function AdminSidebar() {
   };
 
   const groupLabelClass =
-    "text-[13px] uppercase tracking-[0.3em] text-sidebar-foreground/40 font-bold px-4 mb-2 mt-4 first:mt-0";
+    "text-[14px] uppercase tracking-[0.15em] text-sidebar-foreground/50 font-semibold px-4 mb-2 mt-4 first:mt-0";
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
@@ -124,7 +124,7 @@ export function AdminSidebar() {
                     isActive={isActive(item.url)}
                     tooltip={item.title}
                     className={cn(
-                      "h-11 transition-all duration-200 text-[1rem] leading-relaxed",
+                      "h-12 transition-all duration-200 text-[1.0625rem] leading-loose",
                       isActive(item.url) && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
                     )}
                   >
@@ -157,7 +157,7 @@ export function AdminSidebar() {
                       isActive={isActive(item.url || "")}
                       tooltip={item.title}
                       className={cn(
-                        "h-11 transition-all duration-200 text-[1rem] leading-relaxed",
+                        "h-12 transition-all duration-200 text-[1.0625rem] leading-loose",
                         isActive(item.url || "") && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
                       )}
                     >
@@ -188,7 +188,7 @@ export function AdminSidebar() {
                     isActive={isActive(item.url)}
                     tooltip={item.title}
                     className={cn(
-                      "h-11 transition-all duration-200 text-[1rem] leading-relaxed",
+                      "h-12 transition-all duration-200 text-[1.0625rem] leading-loose",
                       isActive(item.url) && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
                     )}
                   >
@@ -219,7 +219,7 @@ export function AdminSidebar() {
                     isActive={isActive(item.url)}
                     tooltip={item.title}
                     className={cn(
-                      "h-11 transition-all duration-200 text-[1rem] leading-relaxed",
+                      "h-12 transition-all duration-200 text-[1.0625rem] leading-loose",
                       isActive(item.url) && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
                     )}
                   >
@@ -242,7 +242,7 @@ export function AdminSidebar() {
                 <SidebarMenuButton
                   asChild
                   tooltip="Voltar ao app"
-                  className="h-11 text-sidebar-foreground/50 hover:text-gold transition-all duration-200 text-[1rem] leading-relaxed"
+                  className="h-12 text-sidebar-foreground/50 hover:text-gold transition-all duration-200 text-[1.0625rem] leading-loose"
                 >
                   <Link to="/vitrine">
                     <ArrowLeft className="h-4 w-4 shrink-0" />
