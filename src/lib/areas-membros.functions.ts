@@ -76,6 +76,9 @@ export const createAreaMembro = createServerFn({ method: 'POST' })
     banner_url?: string;
     background_color?: string;
     surface_color?: string;
+    tipo?: string;
+    rotulo_curto?: string;
+    descricao?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     const { userId } = context;
@@ -118,6 +121,9 @@ export const createAreaMembro = createServerFn({ method: 'POST' })
         banner_url: data.banner_url,
         background_color: data.background_color,
         surface_color: data.surface_color,
+        tipo: data.tipo || 'misto',
+        rotulo_curto: data.rotulo_curto,
+        descricao: data.descricao,
       })
       .select('id')
       .single();
@@ -144,6 +150,9 @@ export const updateAreaMembro = createServerFn({ method: 'POST' })
     banner_url?: string;
     background_color?: string;
     surface_color?: string;
+    tipo?: string;
+    rotulo_curto?: string;
+    descricao?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     const { userId } = context;
@@ -187,6 +196,9 @@ export const updateAreaMembro = createServerFn({ method: 'POST' })
         banner_url: data.banner_url,
         background_color: data.background_color,
         surface_color: data.surface_color,
+        tipo: data.tipo,
+        rotulo_curto: data.rotulo_curto,
+        descricao: data.descricao,
       })
       .eq('id', data.id);
 
