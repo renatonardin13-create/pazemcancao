@@ -155,7 +155,7 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
                   <div className={`absolute inset-0 bg-black/60 flex items-center justify-center transition-opacity duration-300 ${
                     isCurrent || playing ? "opacity-100" : "opacity-0 group-hover:opacity-100"
                   }`}>
-                    <div className={`w-14 h-14 rounded-full bg-gold flex items-center justify-center text-black shadow-xl transition-transform duration-300 ${
+                    <div className={`w-14 h-14 rounded-full bg-orange-500 flex items-center justify-center text-black shadow-xl transition-transform duration-300 ${
                       isCurrent ? "scale-100" : "scale-75 group-hover:scale-100"
                     }`}>
                       {isCurrent && playing ? <Pause className="h-6 w-6 fill-current" /> : <Play className="h-6 w-6 fill-current ml-1" />}
