@@ -154,9 +154,13 @@ function NewCoursePage() {
           <div className="rounded-2xl border border-border/30 bg-card p-6 shadow-lg shadow-black/10 space-y-5">
             <div className="flex items-center justify-between">
               <div>
-                <h3 className="text-base font-bold text-foreground">Módulos e Aulas</h3>
+                <h3 className="text-base font-bold text-foreground">
+                  {courseType === "louvores" ? "Gerenciar Músicas" : "Módulos e Aulas"}
+                </h3>
                 <p className="text-sm text-muted-foreground/50 mt-0.5">
-                  Organize a estrutura do seu curso de forma hierárquica
+                  {courseType === "louvores" 
+                    ? "Adicione e organize os louvores deste pack" 
+                    : "Organize a estrutura do seu curso de forma hierárquica"}
                 </p>
               </div>
               <TooltipProvider>
