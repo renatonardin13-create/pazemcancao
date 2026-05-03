@@ -150,7 +150,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
           <CardSection title="Informações do Produto">
             <div className="space-y-1.5">
               <Label htmlFor="title" className={labelClass}>
-                Nome do Produto <span className="text-gold">*</span>
+                Nome do Produto <span className="text-orange-500">*</span>
               </Label>
               <Input
                 id="title"
