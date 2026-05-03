@@ -131,7 +131,7 @@ function NewCoursePage() {
             value="modulos"
             className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-5"
           >
-            Módulos e Aulas
+            {courseType === "louvores" ? "Gerenciar Músicas" : "Módulos e Aulas"}
           </TabsTrigger>
           <TabsTrigger
             value="config"
