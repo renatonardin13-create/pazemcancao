@@ -397,6 +397,17 @@ export function NewAreaModal({ open, onOpenChange }: NewAreaModalProps) {
                       >
                         <Copy className="h-5 w-5" />
                       </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        asChild
+                        className="h-10 w-10 rounded-xl hover:bg-[#D4AF37]/10 hover:text-[#D4AF37] transition-all"
+                        title="Abrir em nova aba"
+                      >
+                        <a href={`https://${subdominio}.${rootDomain}`} target="_blank" rel="noreferrer">
+                          <ExternalLink className="h-5 w-5" />
+                        </a>
+                      </Button>
                     </div>
                   </div>
                 </div>
