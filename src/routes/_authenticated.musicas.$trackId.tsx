@@ -1,12 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Download, Play, Pause, Music, Heart, ChevronLeft, ChevronRight } from "lucide-react";
 import { sampleTracks } from "@/lib/sample-tracks";
-// removed player hook
+import { useMusicPlayer } from "@/hooks/use-music-player";
 import { motion } from "framer-motion";
 import { StudentLayout } from "@/components/StudentLayout";
 import { Progress } from "@/components/ui/progress";
 import { UpsellSection } from "@/components/UpsellSection";
 import { CrossSellSection } from "@/components/CrossSellSection";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/_authenticated/musicas/$trackId")({
   component: TrackDetailPage,
@@ -46,10 +47,14 @@ function TrackDetailPage() {
   const { trackId } = Route.useParams();
   const id = parseInt(trackId, 10);
   const track = sampleTracks.find((t) => t.id === id);
-  const currentTrack = null;
-  const playing = false;
-  const progress = 0;
-  const toggle = () => {};
+  const { isPlaying, currentTrack, progress, playTrack, toggle } = useMusicPlayer();
+
+  useEffect(() => {
+    if (track && currentTrack?.id !== track.id) {
+       // We don't auto-play to avoid unwanted noise on navigation, 
+       // but we set it as the current track in the hook logic if we wanted.
+    }
+  }, [track, currentTrack]);
 
   if (!track) {
     return (
@@ -67,7 +72,7 @@ function TrackDetailPage() {
     );
   }
 
-  const isPlaying = false;
+  const isCurrentPlaying = isPlaying && currentTrack?.id === track.id;
   const emotionalMessage = emotionalMessages[track.category] || emotionalMessages["Paz"];
 
   const currentIndex = sampleTracks.findIndex((t) => t.id === id);
@@ -116,14 +121,14 @@ function TrackDetailPage() {
                   ? "border-gold/20 bg-gold/[0.05] shadow-[0_0_60px_-20px] shadow-gold/12"
                   : "border-border/15 bg-card/10"
               }`}>
-                {isPlaying && (
+                {isCurrentPlaying && (
                   <div className="absolute inset-0 rounded-2xl border border-gold/8 animate-breathe" />
                 )}
                 <Music className={`h-10 w-10 sm:h-12 sm:w-12 transition-colors duration-700 ${
-                  isPlaying ? "text-gold/60" : "text-muted-foreground/30"
+                  isCurrentPlaying ? "text-gold/60" : "text-muted-foreground/30"
                 }`} />
                 <span className={`absolute bottom-2.5 right-3 text-[10px] font-bold tracking-[0.2em] transition-colors duration-500 ${
-                  isPlaying ? "text-gold/40" : "text-muted-foreground/10"
+                  isCurrentPlaying ? "text-gold/40" : "text-muted-foreground/10"
                 }`}>
                   {String(track.id).padStart(2, "0")}
                 </span>
@@ -168,14 +173,14 @@ function TrackDetailPage() {
             {/* Play controls */}
             <motion.div variants={fadeIn} custom={0.45} className="mt-10 w-full max-w-xs space-y-3">
               <button
-                onClick={() => {}}
+                onClick={() => playTrack({ id: track.id, title: track.title, audioUrl: track.audioUrl })}
                 className={`group w-full flex items-center justify-center gap-3 rounded-full py-4 text-[11px] font-bold tracking-[0.2em] uppercase transition-all duration-500 active:scale-[0.97] ${
-                  isPlaying
+                  isCurrentPlaying
                     ? "bg-gold/20 text-gold border border-gold/25 shadow-[0_0_40px_-15px] shadow-gold/15"
                     : "bg-gold/10 text-gold/65 border border-gold/15 hover:bg-gold/20 hover:text-gold hover:shadow-[0_0_40px_-15px] hover:shadow-gold/10"
                 }`}
               >
-                {isPlaying ? (
+                {isCurrentPlaying ? (
                   <>
                     <Pause className="h-4 w-4" />
                     Pausar
@@ -189,7 +194,7 @@ function TrackDetailPage() {
               </button>
 
               {/* Progress bar */}
-              {isPlaying && (
+              {(isCurrentPlaying || (currentTrack?.id === track.id)) && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
