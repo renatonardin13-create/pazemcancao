@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { AlertCircle, RefreshCw, Loader2 } from "lucide-react";
+import { AlertCircle, RefreshCw, Loader2, ChevronRight } from "lucide-react";
 import { ModuleGuard } from "@/components/ModuleGuard";
 import { getStudentVitrineData } from "@/lib/student-vitrine.functions";
 import { StudentLayout } from "@/components/StudentLayout";
@@ -113,33 +113,34 @@ function VitrinePage() {
               <div className="space-y-16 pb-32 pt-8">
                 <ContinueWatchingSection />
 
-                {/* Prateleiras de Conteúdo - Estilo Streaming */}
+                {/* Prateleiras de Conteúdo - Estilo Streaming Premium */}
                 {allShelves.map((shelf, shelfIndex) => (
                   <section 
                     key={shelf.id} 
-                    className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12"
+                    className="mx-auto w-full max-w-[1400px] px-4 sm:px-8 lg:px-12 animate-in fade-in slide-in-from-bottom-8 duration-1000"
+                    style={{ animationDelay: `${shelfIndex * 200}ms`, animationFillMode: 'both' }}
                   >
-                    <div className="mb-6 flex items-end justify-between">
+                    <div className="mb-6 flex items-end justify-between border-l-4 border-gold pl-4">
                       <div className="space-y-1">
-                        <h2 className="font-display text-2xl font-black tracking-tight text-white sm:text-3xl">
+                        <h2 className="font-display text-2xl font-black tracking-tight text-white sm:text-3xl uppercase tracking-[0.1em]">
                           {shelf.public_title || shelf.name}
                         </h2>
                         {shelf.description && (
-                          <p className="text-sm text-white/40 max-w-2xl line-clamp-1">
+                          <p className="text-xs sm:text-sm text-white/30 max-w-2xl line-clamp-1 font-medium">
                             {shelf.description}
                           </p>
                         )}
                       </div>
                       {shelf.courses.length > 5 && (
-                        <button className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20 hover:text-gold transition-all duration-300">
-                          Ver todos
+                        <button className="text-[10px] font-black uppercase tracking-[0.3em] text-white/20 hover:text-gold transition-all duration-300 group flex items-center gap-2">
+                          Explorar tudo <ChevronRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
                         </button>
                       )}
                     </div>
 
-                    <div className="scrollbar-hide -mx-4 flex gap-4 overflow-x-auto px-4 pb-8 sm:mx-0 sm:gap-6 sm:px-0">
+                    <div className="scrollbar-hide -mx-4 flex gap-6 overflow-x-auto px-4 pb-12 sm:mx-0 sm:px-0">
                       {shelf.courses.map((course, index) => (
-                        <div key={course.id} className="w-[280px] shrink-0 sm:w-[320px] lg:w-[400px]">
+                        <div key={course.id} className="w-[280px] shrink-0 sm:w-[320px] lg:w-[420px]">
                           <VitrineCourseCard 
                             course={course} 
                             index={index + shelfIndex * 10} 

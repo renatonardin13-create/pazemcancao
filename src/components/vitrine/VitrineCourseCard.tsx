@@ -155,13 +155,21 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
           overlay={overlay}
           centerAction={centerAction}
           title={course.title}
-          subtitle=""
+          subtitle={course.category_name}
           meta={
-            !isLocked && progress > 0 ? (
-              <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-gold/55 sm:text-[10px]">
-                {progress}%
-              </span>
-            ) : null
+            <div className="flex items-center gap-3">
+              {course.total_duration && (
+                <span className="flex items-center gap-1">
+                  <Clock3 className="h-3 w-3" />
+                  {course.total_duration}
+                </span>
+              )}
+              {!isLocked && progress > 0 && (
+                <span className="text-gold font-black">
+                  {progress}%
+                </span>
+              )}
+            </div>
           }
           progress={!isLocked && progress > 0 ? progress : null}
           progressColorClass={isCompleted ? "bg-emerald-400" : "bg-gold"}

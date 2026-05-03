@@ -17,7 +17,7 @@ export function ContinueWatchingSection() {
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 pt-4 sm:px-8 lg:px-12">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="font-display text-xl font-bold tracking-tight text-white/50 uppercase tracking-[0.2em] text-[10px]">
+        <h2 className="font-display text-xs font-black uppercase tracking-[0.2em] text-white/30">
           Continue assistindo
         </h2>
       </div>
@@ -30,14 +30,14 @@ export function ContinueWatchingSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: idx * 0.1 }}
-            className="group relative w-[260px] shrink-0 sm:w-[320px] lg:w-[380px] aspect-video rounded-2xl overflow-hidden bg-card border border-white/5 transition-all duration-300 hover:scale-[1.02] hover:border-gold/30 shadow-2xl"
+            className="group relative w-[260px] shrink-0 sm:w-[320px] lg:w-[380px] aspect-video rounded-2xl overflow-hidden bg-[#111] border border-white/5 transition-all duration-300 hover:scale-[1.03] hover:border-gold/30 shadow-2xl"
           >
             <img 
               src={course.banner_image_url || course.cover_image_url || ""} 
               alt={course.title}
               className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
             
             <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300">
               <div className="h-14 w-14 flex items-center justify-center rounded-full bg-gold shadow-2xl shadow-gold/40 scale-75 group-hover:scale-100 transition-transform">
@@ -46,11 +46,14 @@ export function ContinueWatchingSection() {
             </div>
 
             <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6">
-              <h3 className="text-sm sm:text-lg font-black text-white leading-tight mb-2 truncate">
+              <p className="text-[10px] font-black uppercase tracking-widest text-gold mb-1 truncate">
                 {course.title}
+              </p>
+              <h3 className="text-sm sm:text-base font-black text-white leading-tight mb-3 truncate">
+                {course.resume_lesson_title || "Continuar Aula"}
               </h3>
               <div className="space-y-2">
-                <div className="flex justify-between text-[10px] font-black uppercase tracking-widest text-white/40">
+                <div className="flex justify-between text-[9px] font-black uppercase tracking-widest text-white/40">
                   <span>{course.progress_pct}% concluído</span>
                 </div>
                 <div className="h-1 w-full bg-white/10 rounded-full overflow-hidden">
