@@ -140,7 +140,7 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
                       onClick={handleProgressClick}
                     >
                       <motion.div 
-                        className="absolute inset-y-0 left-0 bg-gold rounded-full"
+                        className="absolute inset-y-0 left-0 bg-orange-500 rounded-full"
                         style={{ width: `${progress}%` }}
                       />
                       <div className="absolute top-1/2 -translate-y-1/2 h-3 w-3 rounded-full bg-white opacity-0 group-hover/progress:opacity-100 transition-opacity shadow-lg" style={{ left: `calc(${progress}% - 6px)` }} />
