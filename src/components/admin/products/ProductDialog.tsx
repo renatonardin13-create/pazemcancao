@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { CourseForm } from "@/components/CourseForm";
-import { CourseMusicasTab } from "@/components/admin/CourseMusicasTab";
 import { Button } from "@/components/ui/button";
 import { Save, Music, Info, Settings, Plus } from "lucide-react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -121,7 +120,6 @@ export function ProductDialog({ open, onOpenChange, course }: ProductDialogProps
 
               <TabsContent value="musica" className="mt-0 outline-none">
                 {courseType === "louvores" ? (
-                  <CourseMusicasTab courseId={currentCourse?.id} />
                 ) : (
                   <div className="py-20 text-center border-2 border-dashed border-white/5 rounded-[32px] bg-white/[0.02]">
                     <p className="text-muted-foreground">Módulos e aulas em breve...</p>

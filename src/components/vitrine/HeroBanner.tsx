@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Play, ArrowRight, X } from "lucide-react";
-import { useArea } from "@/hooks/use-area";
 import type { VitrineCourse } from "./types";
 import {
   fallbackHeroContent,
@@ -30,7 +29,7 @@ interface Props {
 }
 
 export function HeroBanner({ banners, fallbackCourse }: Props) {
-  const { area } = useArea();
+  const area = null;
   const list: HeroBannerModel[] = (() => {
     const fromTable = getActiveHeroBanners(banners as any[] | undefined).filter(
       (b) => b && typeof b.image_url === "string" && b.image_url.trim().length > 0,

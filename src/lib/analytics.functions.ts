@@ -16,7 +16,6 @@ async function verifyAdmin(supabase: any, userId: string) {
 
 export const logPlay = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { trackId: string; durationSeconds: number; areaId?: string }) => input)
   .handler(async ({ data, context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
     const email = userData?.user?.email;
@@ -26,14 +25,12 @@ export const logPlay = createServerFn({ method: 'POST' })
       email,
       track_id: data.trackId,
       duration_seconds: data.durationSeconds,
-      area_id: data.areaId,
     });
     return { success: true };
   });
 
 export const logDownload = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { trackId: string; areaId?: string }) => input)
   .handler(async ({ data, context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
     const email = userData?.user?.email;
@@ -42,24 +39,20 @@ export const logDownload = createServerFn({ method: 'POST' })
     await supabaseAdmin.from('download_logs').insert({
       email,
       track_id: data.trackId,
-      area_id: data.areaId,
     });
     return { success: true };
   });
 
 export const getDashboardAnalytics = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { days?: number; areaId?: string }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
     const days = data?.days || 30;
-    const areaId = data?.areaId || null;
 
     // Use the database function for efficient aggregation
     const { data: result, error } = await supabaseAdmin.rpc('get_analytics_summary', {
       p_days: days,
-      p_area_id: areaId,
     });
 
     if (error) {

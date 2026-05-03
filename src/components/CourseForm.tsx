@@ -1,7 +1,6 @@
 import { useState, useEffect, forwardRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { listAdminCategories } from "@/lib/admin-categories.functions";
-import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -66,8 +65,6 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   const [bannerUrl, setBannerUrl] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [price, setPrice] = useState("0");
-  const [areaId, setAreaId] = useState("");
-  const { activeArea, areas: allAreas } = useAdminActiveArea();
   const [promotionalPrice, setPromotionalPrice] = useState("");
   const [status, setStatus] = useState("draft");
   const [courseType, setCourseType] = useState("aula");
@@ -80,9 +77,6 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const { data: categoriesData } = useQuery({
-    queryKey: ["admin-categories", activeArea?.id],
-    queryFn: () => listAdminCategories({ data: { areaId: activeArea?.id } }),
-    enabled: !!activeArea?.id,
   });
 
   const categories = categoriesData?.categories || [];
@@ -96,15 +90,11 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       setBannerUrl(initialValues.banner_image_url || "");
       setCategoryId(initialValues.category_id || "");
       setPrice(String(initialValues.price ?? 0));
-      setAreaId(initialValues.area_id || "");
       setPromotionalPrice(initialValues.promotional_price != null ? String(initialValues.promotional_price) : "");
       setStatus(initialValues.status || "draft");
       setCourseType(normalizeCourseType(initialValues.course_type));
       setLaunchDate(initialValues.launch_date || "");
-    } else if (activeArea?.id) {
-      setAreaId(activeArea.id);
     }
-  }, [initialValues, activeArea]);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -113,7 +103,6 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
     
     if (!categoryId) newErrors.categoryId = "A seção é obrigatória";
     
-    if (!areaId) newErrors.areaId = "Vincular uma área de membros é obrigatório";
 
     if (promotionalPrice.trim() && parseFloat(promotionalPrice) >= parseFloat(price))
       newErrors.promotionalPrice = "Preço promocional deve ser menor que o preço normal";
@@ -127,7 +116,6 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
       const firstErrorKey = Object.keys(newErrors)[0];
-      const fieldId = firstErrorKey === "areaId" ? "areaId-trigger" : firstErrorKey;
       const firstErrorField = document.getElementById(fieldId);
       firstErrorField?.focus();
       return;
@@ -140,7 +128,6 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       cover_image_url: coverUrl.trim() || null,
       banner_image_url: bannerUrl.trim() || null,
       category_id: categoryId || null,
-      area_id: activeArea?.id || null,
       price: parseFloat(price) || 0,
       promotional_price: promotionalPrice.trim() ? parseFloat(promotionalPrice) : null,
       status,

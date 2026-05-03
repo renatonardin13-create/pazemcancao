@@ -1,7 +1,6 @@
 import { createContext, useContext, useState, useCallback, useRef, useEffect, type ReactNode } from "react";
 import type { Track } from "@/lib/sample-tracks";
 import { logPlay } from "@/lib/analytics.functions";
-// useArea removed
 
 interface PlayerState {
   currentTrack: Track | null;
@@ -93,7 +92,6 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
             data: {
               trackId: String(track.id),
               durationSeconds: Math.round(audio!.currentTime),
-              areaId: undefined
             }
           }).catch(() => {});
         }

@@ -24,7 +24,6 @@ export const listAdminTracks = createServerFn({ method: 'POST' })
     search?: string;
     category?: string;
     status?: string;
-    areaId?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
@@ -49,9 +48,6 @@ export const listAdminTracks = createServerFn({ method: 'POST' })
     } else if (data.status === 'inactive') {
       query = query.eq('is_active', false);
     }
-    if (data.areaId && data.areaId !== 'all') {
-      query = query.eq('area_id', data.areaId);
-    }
 
     const { data: tracks, error, count } = await query
       .order('sort_order', { ascending: true })
@@ -63,19 +59,14 @@ export const listAdminTracks = createServerFn({ method: 'POST' })
 
 export const listAdminTrackCategories = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { areaId?: string }) => input)
-  .handler(async ({ data: inputData, context }) => {
+  .handler(async ({ context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
-    let query = supabaseAdmin
+    const { data, error } = await supabaseAdmin
       .from('tracks')
       .select('category');
 
-    if (inputData?.areaId && inputData.areaId !== 'all') {
-      query = query.eq('area_id', inputData.areaId);
-    }
-
-    const { data, error } = await query;
+    if (error) throw new Error(error.message);
     const categories = Array.from(new Set((data || []).map((t: any) => t.category))).sort();
     return { categories };
   });
@@ -87,7 +78,6 @@ export const createTrack = createServerFn({ method: 'POST' })
     category: string;
     duration: string;
     storage_path: string;
-    area_id?: string;
     cover_url?: string;
     download_url?: string;
     description?: string;
@@ -97,16 +87,12 @@ export const createTrack = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
-    if (!data.area_id) {
-      throw new Error('O campo área de membros é obrigatório.');
-    }
-
     const { data: maxOrder } = await supabaseAdmin
       .from('tracks')
       .select('sort_order')
       .order('sort_order', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
     const { data: track, error } = await supabaseAdmin
       .from('tracks')
@@ -115,7 +101,6 @@ export const createTrack = createServerFn({ method: 'POST' })
         category: data.category,
         duration: data.duration,
         storage_path: data.storage_path,
-        area_id: data.area_id || null,
         cover_url: data.cover_url || null,
         download_url: data.download_url || null,
         description: data.description || null,
@@ -139,7 +124,6 @@ export const updateTrack = createServerFn({ method: 'POST' })
     category?: string;
     duration?: string;
     storage_path?: string;
-    area_id?: string;
     cover_url?: string;
     download_url?: string;
     description?: string;
@@ -150,12 +134,7 @@ export const updateTrack = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
-    if ('area_id' in data && !data.area_id) {
-      throw new Error('O campo área de membros é obrigatório.');
-    }
-
     const { id, ...updates } = data;
-    // Empty string means "remove cover"
     if ('cover_url' in updates && updates.cover_url === '') {
       (updates as any).cover_url = null;
     }

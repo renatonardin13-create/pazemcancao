@@ -18,22 +18,13 @@ async function verifyAdmin(supabase: any, userId: string) {
 
 export const listAdminPlaylists = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { areaId?: string } | void) => input)
-  .handler(async ({ data, context }) => {
+  .handler(async ({ context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
-    let query = supabaseAdmin
+    const { data: playlists, error } = await supabaseAdmin
       .from('playlists')
       .select('*')
       .order('sort_order', { ascending: true });
-
-    if (data?.areaId) {
-      query = query.eq('area_id', data.areaId);
-    } else {
-      return { playlists: [] };
-    }
-
-    const { data: playlists, error } = await query;
 
     if (error) throw new Error(error.message);
 
@@ -62,7 +53,6 @@ export const createPlaylist = createServerFn({ method: 'POST' })
     name: string;
     description?: string;
     cover_url?: string;
-    area_id: string;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
@@ -70,7 +60,6 @@ export const createPlaylist = createServerFn({ method: 'POST' })
     const { data: maxOrder } = await supabaseAdmin
       .from('playlists')
       .select('sort_order')
-      .eq('area_id', data.area_id)
       .order('sort_order', { ascending: false })
       .limit(1)
       .maybeSingle();
@@ -81,7 +70,6 @@ export const createPlaylist = createServerFn({ method: 'POST' })
         name: data.name,
         description: data.description || null,
         cover_url: data.cover_url || null,
-        area_id: data.area_id,
         sort_order: (maxOrder?.sort_order ?? 0) + 1,
         is_active: true,
       })
@@ -236,14 +224,12 @@ export const reorderPlaylistTracks = createServerFn({ method: 'POST' })
 /** List all tracks for the "add track" picker */
 export const listAllTracksForPicker = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { areaId: string }) => input)
-  .handler(async ({ data, context }) => {
+  .handler(async ({ context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
     const { data: tracks, error } = await supabaseAdmin
       .from('tracks')
       .select('id, title, category, duration, cover_url, is_active')
-      .eq('area_id', data.areaId)
       .order('sort_order', { ascending: true });
 
     if (error) throw new Error(error.message);

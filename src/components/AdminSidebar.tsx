@@ -40,7 +40,7 @@ const mainItems = [
 ];
 
 const contentGroups = [
-  { title: "Áreas de membros", url: "/admin/areas-membros", icon: Globe },
+  // removed areas-membros
   { title: "Louvores", url: "/admin/tracks", icon: Music, module: "louvores" as const },
   { title: "Produtos", url: "/admin/courses", icon: GraduationCap, module: "cursos" as const },
   { title: "Trilhas", url: "/admin/journeys", icon: Compass, module: "trilhas" as const },

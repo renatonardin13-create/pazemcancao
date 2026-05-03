@@ -50,21 +50,13 @@ function sanitizeBannerInput(raw: any) {
 
 export const listHeroBanners = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { areaId?: string } | void) => input)
-  .handler(async ({ data, context }) => {
+  .handler(async ({ context }) => {
     await assertAdmin(context);
-    let query = (supabaseAdmin as any)
+    const { data: banners, error } = await (supabaseAdmin as any)
       .from("vitrine_hero_banners")
       .select("*")
       .order("sort_order", { ascending: true });
 
-    if (data?.areaId) {
-      query = query.eq("area_id", data.areaId);
-    } else {
-      return { banners: [] };
-    }
-
-    const { data: banners, error } = await query;
     if (error) throw new Error(error.message);
     return { banners: banners || [] };
   });
@@ -173,21 +165,13 @@ export const toggleHeroBannerActive = createServerFn({ method: "POST" })
 
 export const listCoursesForBannerSelector = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { areaId?: string } | void) => input)
-  .handler(async ({ data, context }) => {
+  .handler(async ({ context }) => {
     await assertAdmin(context);
-    let query = supabaseAdmin
+    const { data: courses, error } = await supabaseAdmin
       .from("courses")
       .select("id, title, status")
       .order("title", { ascending: true });
 
-    if (data?.areaId) {
-      query = query.eq("area_id", data.areaId);
-    } else {
-      return { courses: [] };
-    }
-
-    const { data: courses, error } = await query;
     if (error) throw new Error(error.message);
     return { courses: courses || [] };
   });
