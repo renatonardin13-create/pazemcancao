@@ -177,13 +177,13 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 onChange={(e) => setShortDesc(e.target.value)}
                 placeholder="Breve descrição do produto"
                 rows={3}
-                className="bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm resize-none"
+                className="bg-background/50 border-border/20 focus:border-orange-500/40 rounded-lg text-sm resize-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label className={labelClass}>Seção Principal <span className="text-gold">*</span></Label>
+                <Label className={labelClass}>Seção Principal <span className="text-orange-500">*</span></Label>
                 <Select 
                   value={categoryId} 
                   onValueChange={(val) => {
