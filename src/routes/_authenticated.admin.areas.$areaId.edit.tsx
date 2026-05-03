@@ -135,6 +135,14 @@ function EditAreaPage() {
       setBannerUrl(area.banner_url || "");
       setBackgroundColor(area.background_color || "#0B1220");
       setSurfaceColor(area.surface_color || "#111827");
+      setThemeMode(area.theme_mode || "dark");
+      setAccentColor(area.accent_color || "#D4AF37");
+      setButtonColor(area.button_color || "#D4AF37");
+      setButtonTextColor(area.button_text_color || "#000000");
+      setSidebarColor(area.sidebar_color || "#111827");
+      setTextPrimary(area.text_primary || "#FFFFFF");
+      setTextSecondary(area.text_secondary || "#94A3B8");
+      setElevatedSurface(area.elevated_surface || "#1E293B");
     }
   }, [area]);
 
