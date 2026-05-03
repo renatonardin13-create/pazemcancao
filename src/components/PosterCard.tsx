@@ -122,7 +122,7 @@ export const PosterCard = memo(function PosterCard({
       />
 
       <div
-        className={`relative overflow-hidden bg-card/5 shadow-md shadow-black/25 ring-1 transition-all duration-300 ease-out hover:scale-[1.03] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] ${
+        className={`relative overflow-hidden bg-card/5 shadow-md shadow-black/25 ring-1 transition-all duration-300 ease-out group-hover/card:scale-[1.05] group-hover/card:shadow-[0_30px_60px_rgba(0,0,0,0.6)] ${
           cfg.hoverGold ? "hover:ring-gold/40" : ""
         } ${
           highlight ? "ring-gold/30 shadow-[0_2px_32px_-8px] shadow-gold/15" : cfg.showBorder ? "ring-white/[0.04]" : "ring-transparent"
