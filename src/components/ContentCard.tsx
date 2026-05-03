@@ -295,8 +295,8 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
   return (
     <>
       <div
-        onClick={isLocked ? handleLockedClick : undefined}
-        className={`group/card relative block ${isLocked ? 'cursor-pointer' : ''}`}
+        onClick={handleClick}
+        className="group/card relative block cursor-pointer"
       >
         <PosterCard
           cover={item.card_cover_url || item.cover_url || null}
