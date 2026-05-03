@@ -21,6 +21,7 @@ interface CourseFormProps {
   onSubmit: (values: any) => void;
   isSubmitting: boolean;
   hideSubmitButton?: boolean;
+  onTypeChange?: (type: string) => void;
 }
 
 const inputClass = "h-11 bg-background/50 border-border/20 focus:border-orange-500/40 rounded-lg text-sm";
