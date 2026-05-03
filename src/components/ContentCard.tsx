@@ -59,17 +59,30 @@ export const ContentCard = memo(function ContentCard({ item, index, hasAccess, g
     : contentState === 'in_progress' ? 15
     : 0;
 
-  const handleLockedClick = () => {
-    if (isLaunchContent) {
-      if (launchMode === 'bloqueado_para_venda') {
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (isLocked) {
+      if (isLaunchContent) {
+        if (launchMode === 'bloqueado_para_venda') {
+          setUnlockOpen(true);
+        }
+        return;
+      }
+      if (!isPendingRelease && !isRuleLocked) {
         setUnlockOpen(true);
       }
       return;
     }
-    if (isLocked && !isPendingRelease && !isRuleLocked) {
-      setUnlockOpen(true);
-    }
-  };
+
+    // Determine target route based on content type or just default to musicas
+    const target = item.content_type === "video" || item.content_type === "ebook" || item.content_type === "material" 
+      ? "/conteudo/$trackId" 
+      : "/musicas/$trackId";
+    
+    navigate({ to: target as any, params: { trackId: String(item.id) } });
+  }, [isLocked, isLaunchContent, launchMode, isPendingRelease, isRuleLocked, item.content_type, item.id, navigate]);
 
   const fallback = (
     <div className="flex h-14 w-14 items-center justify-center rounded-2xl backdrop-blur-sm bg-white/[0.03] border border-white/[0.05] md:group-hover/card:bg-white/[0.05] md:transition-all md:duration-700">
