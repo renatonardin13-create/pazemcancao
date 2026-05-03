@@ -449,9 +449,9 @@ export function NewAreaModal({ open, onOpenChange }: NewAreaModalProps) {
                 <Button
                   variant="ghost"
                   onClick={() => handleClose(false)}
-                  className="h-12 text-slate-500 font-bold hover:text-white transition-colors hover:bg-white/5 rounded-xl"
+                  className="h-14 text-slate-500 font-black rounded-2xl hover:bg-white/5 transition-all uppercase tracking-widest text-xs"
                 >
-                  Voltar para a listagem
+                  Ir para listagem de áreas
                 </Button>
               </div>
             </motion.div>
