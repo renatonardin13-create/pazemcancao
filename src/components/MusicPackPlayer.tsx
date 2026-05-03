@@ -72,7 +72,7 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
-        <div className="h-12 w-12 border-4 border-gold/20 border-t-gold rounded-full animate-spin" />
+        <div className="h-12 w-12 border-4 border-orange-500/20 border-t-orange-500 rounded-full animate-spin" />
         <p className="text-muted-foreground/60 font-medium">Sintonizando louvores...</p>
       </div>
     );
