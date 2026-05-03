@@ -15,6 +15,7 @@ type CourseRow = {
   benefits: string[] | null;
   total_lessons: number;
   total_duration: string | null;
+  course_type: string;
   product_type: string;
   category_id: string | null;
   status: string;
