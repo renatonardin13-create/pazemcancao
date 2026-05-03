@@ -75,7 +75,7 @@ export function AdminSidebar() {
   };
 
   const groupLabelClass =
-    "text-[11px] uppercase tracking-[0.25em] text-sidebar-foreground/30 font-bold px-4 mb-1";
+    "text-[13px] uppercase tracking-[0.3em] text-sidebar-foreground/40 font-bold px-4 mb-2 mt-4 first:mt-0";
 
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
@@ -124,13 +124,13 @@ export function AdminSidebar() {
                     isActive={isActive(item.url)}
                     tooltip={item.title}
                     className={cn(
-                      "h-10 transition-all duration-200 text-[0.95rem]",
+                      "h-11 transition-all duration-200 text-[1rem]",
                       isActive(item.url) && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
                     )}
                   >
                     <Link to={item.url}>
                       <item.icon className="h-4 w-4 shrink-0" />
-                      <span className="font-semibold">{item.title}</span>
+                      <span className="font-medium">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -157,13 +157,13 @@ export function AdminSidebar() {
                       isActive={isActive(item.url || "")}
                       tooltip={item.title}
                       className={cn(
-                        "h-10 transition-all duration-200 text-[0.95rem]",
+                        "h-11 transition-all duration-200 text-[1rem]",
                         isActive(item.url || "") && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
                       )}
                     >
                       <Link to={item.url}>
                         <item.icon className="h-4 w-4 shrink-0" />
-                        <span>{item.title}</span>
+                        <span className="font-medium">{item.title}</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -188,13 +188,13 @@ export function AdminSidebar() {
                     isActive={isActive(item.url)}
                     tooltip={item.title}
                     className={cn(
-                      "h-10 transition-all duration-200 text-[0.95rem]",
+                      "h-11 transition-all duration-200 text-[1rem]",
                       isActive(item.url) && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
                     )}
                   >
                     <Link to={item.url}>
                       <item.icon className="h-4 w-4 shrink-0" />
-                      <span>{item.title}</span>
+                      <span className="font-medium">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -219,13 +219,13 @@ export function AdminSidebar() {
                     isActive={isActive(item.url)}
                     tooltip={item.title}
                     className={cn(
-                      "h-10 transition-all duration-200 text-[0.95rem]",
+                      "h-11 transition-all duration-200 text-[1rem]",
                       isActive(item.url) && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
                     )}
                   >
                     <Link to={item.url}>
                       <item.icon className="h-4 w-4 shrink-0" />
-                      <span>{item.title}</span>
+                      <span className="font-medium">{item.title}</span>
                     </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -242,11 +242,11 @@ export function AdminSidebar() {
                 <SidebarMenuButton
                   asChild
                   tooltip="Voltar ao app"
-                  className="h-10 text-sidebar-foreground/50 hover:text-gold transition-all duration-200 text-[0.95rem]"
+                  className="h-11 text-sidebar-foreground/50 hover:text-gold transition-all duration-200 text-[1rem]"
                 >
                   <Link to="/vitrine">
                     <ArrowLeft className="h-4 w-4 shrink-0" />
-                    <span>Voltar ao app</span>
+                    <span className="font-medium">Voltar ao app</span>
                   </Link>
                 </SidebarMenuButton>
               </SidebarMenuItem>
