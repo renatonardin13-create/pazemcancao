@@ -177,20 +177,6 @@ function LessonDetailPage() {
     checkoutUrl,
   } = data;
 
-  const legacySupplementaryMaterial =
-    hasVideo && contentUrl
-      ? {
-          id: "legacy-content-url",
-          title: lesson.title,
-          material_type: contentType === "link" ? "link" : contentType === "pdf" ? "pdf" : "file",
-          url: contentUrl,
-        }
-      : null;
-
-  const displayedMaterials = legacySupplementaryMaterial
-    ? [legacySupplementaryMaterial, ...(materials || [])]
-    : materials || [];
-
   const progressPercent =
     totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
 
@@ -212,6 +198,20 @@ function LessonDetailPage() {
     (videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be"));
   const isVimeo = hasVideo && videoUrl.includes("vimeo.com");
   const isCourseCompleted = progressPercent >= 100;
+
+  const legacySupplementaryMaterial =
+    hasVideo && contentUrl
+      ? {
+          id: "legacy-content-url",
+          title: lesson.title,
+          material_type: contentType === "link" ? "link" : contentType === "pdf" ? "pdf" : "file",
+          url: contentUrl,
+        }
+      : null;
+
+  const displayedMaterials = legacySupplementaryMaterial
+    ? [legacySupplementaryMaterial, ...(materials || [])]
+    : materials || [];
 
   const getYouTubeEmbedUrl = (url: string) => {
     const match = url.match(
