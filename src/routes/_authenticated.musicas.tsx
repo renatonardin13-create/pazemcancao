@@ -29,7 +29,7 @@ import {
   Heart,
 } from "lucide-react";
 
-export const Route = createFileRoute("/_authenticated/conteudo/")({
+export const Route = createFileRoute("/_authenticated/musicas")({
   component: ContentPage,
 });
 
@@ -641,7 +641,7 @@ function ContentPage() {
         <FooterLinks />
       </div>
     </StudentLayout>
-  );
+  )
 }
 
 /* ── Reusable sub-components ── */
