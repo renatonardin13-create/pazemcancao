@@ -263,6 +263,16 @@ function EditAreaPage() {
       parabens: parabens,
       botao_entrar: botaoEntrar,
       suporte_texto: suporteTexto,
+      titulo_login: tituloLogin,
+      subtitulo_login: subtituloLogin,
+      placeholder_email: placeholderEmail,
+      placeholder_senha: placeholderSenha,
+      texto_botao: textoBotao,
+      texto_ajuda: textoAjuda,
+      texto_rodape: textoRodape,
+      imagem_login_url: imagemLoginUrl,
+      layout_login: layoutLogin,
+      modo_fundo: modoFundo,
     });
   };
 
