@@ -52,6 +52,7 @@ function CardSection({ title, children }: { title: string; children: React.React
 }
 
 export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function CourseForm({
+  id,
   initialValues,
   onSubmit,
   isSubmitting,
