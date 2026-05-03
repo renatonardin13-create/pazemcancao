@@ -1284,7 +1284,7 @@ function EditAreaPage() {
                     </div>
 
                     {/* COLUNA DIREITA */}
-                    <div className="space-y-8">
+                    <div className="space-y-10">
                       <div className="space-y-3 group">
                         <Label htmlFor="subtituloLogin" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Subtítulo</Label>
                         <Input
@@ -1292,7 +1292,7 @@ function EditAreaPage() {
                           value={subtituloLogin}
                           onChange={(e) => setSubtituloLogin(e.target.value)}
                           placeholder="Entre para acessar seu conteúdo exclusivo"
-                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
                         />
                       </div>
 
@@ -1304,7 +1304,7 @@ function EditAreaPage() {
                           value={placeholderSenha}
                           onChange={(e) => setPlaceholderSenha(e.target.value)}
                           placeholder="Sua senha secreta"
-                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
                         />
                       </div>
 
@@ -1315,20 +1315,20 @@ function EditAreaPage() {
                           value={textoAjuda}
                           onChange={(e) => setTextoAjuda(e.target.value)}
                           placeholder="Esqueci minha senha"
-                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
                         />
                       </div>
 
                       <div className="space-y-3">
-                        <Label htmlFor="layoutLogin" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Layout</Label>
+                        <Label htmlFor="layoutLogin" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Layout da página</Label>
                         <Select value={layoutLogin} onValueChange={setLayoutLogin}>
-                          <SelectTrigger className="h-14 bg-[#1F2937] border-[#374151] focus:ring-[#D4AF37] rounded-xl font-bold text-base">
+                          <SelectTrigger className="h-14 bg-[#1F2937] border-[#374151] focus:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]">
                             <SelectValue placeholder="Selecione o layout" />
                           </SelectTrigger>
                           <SelectContent className="bg-[#111827] border-white/5 text-white">
-                            <SelectItem value="right">Imagem à direita</SelectItem>
-                            <SelectItem value="left">Imagem à esquerda</SelectItem>
-                            <SelectItem value="centered">Sem imagem (formulário centralizado)</SelectItem>
+                            <SelectItem value="right" className="focus:bg-[#D4AF37] focus:text-black font-bold">Imagem à direita</SelectItem>
+                            <SelectItem value="left" className="focus:bg-[#D4AF37] focus:text-black font-bold">Imagem à esquerda</SelectItem>
+                            <SelectItem value="centered" className="focus:bg-[#D4AF37] focus:text-black font-bold">Sem imagem (formulário centralizado)</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -1336,22 +1336,27 @@ function EditAreaPage() {
                       <div className="space-y-3">
                         <Label htmlFor="modoFundo" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Modo de fundo</Label>
                         <Select value={modoFundo} onValueChange={setModoFundo}>
-                          <SelectTrigger className="h-14 bg-[#1F2937] border-[#374151] focus:ring-[#D4AF37] rounded-xl font-bold text-base">
+                          <SelectTrigger className="h-14 bg-[#1F2937] border-[#374151] focus:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]">
                             <SelectValue placeholder="Selecione o modo de fundo" />
                           </SelectTrigger>
                           <SelectContent className="bg-[#111827] border-white/5 text-white">
-                            <SelectItem value="solid">Cor sólida</SelectItem>
-                            <SelectItem value="gradient">Gradiente</SelectItem>
-                            <SelectItem value="image">Imagem de fundo</SelectItem>
+                            <SelectItem value="solid" className="focus:bg-[#D4AF37] focus:text-black font-bold">Cor sólida</SelectItem>
+                            <SelectItem value="gradient" className="focus:bg-[#D4AF37] focus:text-black font-bold">Gradiente</SelectItem>
+                            <SelectItem value="image" className="focus:bg-[#D4AF37] focus:text-black font-bold">Imagem de fundo</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
                       
-                      {/* Preview Box - Simple Simulation */}
+                      {/* Preview Box - Professional Simulation */}
                       <div className="pt-4 space-y-4">
-                         <Label className="text-[10px] font-black uppercase tracking-widest text-slate-600 text-center block">Preview Rápido</Label>
-                         <div className={`p-4 rounded-xl border border-white/5 h-40 flex items-center justify-center overflow-hidden relative shadow-inner bg-[#0B1220]`}>
-                            {modoFundo === 'gradient' && <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/10 to-transparent" />}
+                        <div className="flex items-center justify-center gap-2">
+                           <div className="h-px flex-1 bg-white/5" />
+                           <Label className="text-[10px] font-black uppercase tracking-widest text-slate-600">Simulação Visual</Label>
+                           <div className="h-px flex-1 bg-white/5" />
+                        </div>
+                        <div className={`p-4 rounded-[20px] border border-white/5 h-48 flex items-center justify-center overflow-hidden relative shadow-2xl bg-[#0B1220] group/preview`}>
+                            {modoFundo === 'gradient' && <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/20 to-transparent" />}
+                            {modoFundo === 'image' && imagemLoginUrl && <img src={imagemLoginUrl} className="absolute inset-0 w-full h-full object-cover opacity-30" />}
                             {layoutLogin === 'centered' ? (
                                <div className="bg-[#111827] p-4 rounded-lg border border-white/10 w-32 space-y-2">
                                   <div className="h-2 w-full bg-white/5 rounded-full" />
