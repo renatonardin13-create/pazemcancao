@@ -177,6 +177,20 @@ function LessonDetailPage() {
     checkoutUrl,
   } = data;
 
+  const legacySupplementaryMaterial =
+    hasVideo && contentUrl
+      ? {
+          id: "legacy-content-url",
+          title: lesson.title,
+          material_type: contentType === "link" ? "link" : contentType === "pdf" ? "pdf" : "file",
+          url: contentUrl,
+        }
+      : null;
+
+  const displayedMaterials = legacySupplementaryMaterial
+    ? [legacySupplementaryMaterial, ...(materials || [])]
+    : materials || [];
+
   const progressPercent =
     totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
 
