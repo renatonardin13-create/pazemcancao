@@ -17,6 +17,7 @@ import { Video, FileText, Save, Loader2, ImageIcon, File, Link as LinkIcon, Spar
 import { ImageUploadField } from "@/components/ImageUploadField";
 
 interface CourseFormProps {
+  id?: string;
   initialValues?: any;
   onSubmit: (values: any) => void;
   isSubmitting: boolean;
