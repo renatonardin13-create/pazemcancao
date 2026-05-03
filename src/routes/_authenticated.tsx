@@ -20,12 +20,11 @@ function AuthenticatedLayout() {
   const [accessLoading, setAccessLoading] = useState(true);
   const [accessCheckFailed, setAccessCheckFailed] = useState(false);
   const lastCheckedEmail = useRef<string | null>(null);
-  const welcomeShown = useRef(false);
 
   const isAdminRoute = location.pathname.startsWith("/admin");
   const isMusicExperience = location.pathname === "/musicas" || location.pathname.startsWith("/louvor/");
-  const isVitrineRoute = location.pathname === "/home" || location.pathname.startsWith("/home/") || location.pathname === "/vitrine";
-  const isCursosRoute = location.pathname === "/cursos" || location.pathname.startsWith("/cursos/");
+  const isVitrineRoute = location.pathname === "/home" || location.pathname === "/vitrine";
+  const isCursosRoute = location.pathname.startsWith("/cursos");
   
   const skipAccessGate = isMusicExperience || isVitrineRoute || isCursosRoute || isAdminRoute;
 
@@ -67,7 +66,6 @@ function AuthenticatedLayout() {
         lastCheckedEmail.current = currentEmail;
       }
     }).catch((err) => {
-      console.error("Access check failed:", err);
       if (!cancelled) {
         setAccessCheckFailed(true);
         setAccessLoading(false);
@@ -88,28 +86,24 @@ function AuthenticatedLayout() {
   if (loading || (isAuthenticated && !isAdmin && accessLoading && !skipAccessGate)) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-6 animate-pulse">
-          <p className="text-xs font-medium uppercase tracking-widest text-gold/70">
-            Carregando...
-          </p>
+        <div className="animate-pulse text-gold/70 text-xs uppercase tracking-widest">
+          Carregando...
         </div>
       </div>
     );
   }
 
-  if (accessCheckFailed && !skipAccessGate) {
-    return <RestrictedAccessCard />;
-  }
+  if (accessCheckFailed && !skipAccessGate) return <RestrictedAccessCard />;
 
   if (!isAuthenticated || blocked) {
     if (blocked && blockMessage) {
       return (
         <div className="flex min-h-screen items-center justify-center bg-background p-8 text-center">
-          <div>
+          <div className="max-w-sm">
             <ShieldAlert className="h-12 w-12 text-destructive mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">Acesso Bloqueado</h2>
             <p className="text-muted-foreground">{blockMessage}</p>
-            <button onClick={() => logout()} className="mt-6 text-sm underline">Sair</button>
+            <button onClick={() => logout()} className="mt-6 text-sm underline opacity-50 hover:opacity-100">Sair</button>
           </div>
         </div>
       );
@@ -120,10 +114,10 @@ function AuthenticatedLayout() {
   if (!skipAccessGate && !isAdmin && !accessData?.hasAccess) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background p-8 text-center">
-        <div>
+        <div className="max-w-sm">
           <h2 className="text-2xl font-bold mb-2">Acesso não autorizado</h2>
           <p className="text-muted-foreground mb-6">Este e-mail não possui compra registrada.</p>
-          <button onClick={() => logout()} className="text-sm underline">Sair</button>
+          <button onClick={() => logout()} className="text-sm underline opacity-50 hover:opacity-100">Sair</button>
         </div>
       </div>
     );
