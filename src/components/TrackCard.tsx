@@ -135,8 +135,8 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
   const overlay = isRestricted ? (
     <div className="flex h-full flex-col items-center justify-center gap-2.5 bg-black/25 backdrop-blur-[2px]">
       <div className="relative">
-        <div className="absolute -inset-3 rounded-full bg-gold/10 blur-xl" />
-        <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-gold/25 bg-gradient-to-br from-gold/20 to-amber-600/10 shadow-lg shadow-gold/10">
+        <div className="absolute -inset-3 rounded-full bg-orange-500/10 blur-xl" />
+        <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-orange-500/25 bg-gradient-to-br from-orange-500/20 to-red-600/10 shadow-lg shadow-orange-500/10">
           {isComingSoon ? <Clock className="h-6 w-6 text-gold/70" /> : <Lock className="h-6 w-6 text-gold/70" />}
         </div>
       </div>
