@@ -346,14 +346,23 @@ function ContentPage() {
         <div className="mx-auto max-w-6xl px-5 sm:px-8 py-8 sm:py-12 space-y-12 sm:space-y-16">
           {/* Greeting + Stats */}
           <div className="space-y-6">
-            <div>
-              <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/85 tracking-tight">
-                {getGreeting()}
-                {firstName ? `, ${firstName}` : ""}
-              </h1>
-               <p className="mt-2 text-[13px] text-muted-foreground/45 font-light leading-relaxed italic">
-                 {getInspirationPhrase()}
-               </p>
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
+              <div className="space-y-1">
+                <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/85 tracking-tight">
+                  {getGreeting()}
+                  {firstName ? `, ${firstName}` : ""}
+                </h1>
+                 <p className="text-[13px] text-muted-foreground/45 font-light leading-relaxed italic">
+                   {getInspirationPhrase()}
+                 </p>
+              </div>
+              <button 
+                onClick={() => toast.info("Em breve: Reprodução contínua de todos os louvores")}
+                className="flex items-center gap-2.5 px-6 py-3 rounded-full bg-gold/15 text-gold border border-gold/20 hover:bg-gold/20 transition-all group w-fit"
+              >
+                <PlayCircle className="h-5 w-5 fill-current" />
+                <span className="text-xs font-bold uppercase tracking-[0.2em]">Tocar todos</span>
+              </button>
             </div>
 
             {/* Stats bar with progress */}
