@@ -28,6 +28,7 @@ import {
   TrendingUp,
   Heart,
 } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_authenticated/musicas")({
   component: ContentPage,
