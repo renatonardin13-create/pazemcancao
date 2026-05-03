@@ -496,6 +496,65 @@ export type Database = {
           },
         ]
       }
+      configuracoes_login_area: {
+        Row: {
+          area_id: string
+          created_at: string
+          id: string
+          imagem_login_url: string | null
+          layout_login: string | null
+          modo_fundo: string | null
+          placeholder_email: string | null
+          placeholder_senha: string | null
+          subtitulo_login: string | null
+          texto_ajuda: string | null
+          texto_botao: string | null
+          texto_rodape: string | null
+          titulo_login: string | null
+          updated_at: string
+        }
+        Insert: {
+          area_id: string
+          created_at?: string
+          id?: string
+          imagem_login_url?: string | null
+          layout_login?: string | null
+          modo_fundo?: string | null
+          placeholder_email?: string | null
+          placeholder_senha?: string | null
+          subtitulo_login?: string | null
+          texto_ajuda?: string | null
+          texto_botao?: string | null
+          texto_rodape?: string | null
+          titulo_login?: string | null
+          updated_at?: string
+        }
+        Update: {
+          area_id?: string
+          created_at?: string
+          id?: string
+          imagem_login_url?: string | null
+          layout_login?: string | null
+          modo_fundo?: string | null
+          placeholder_email?: string | null
+          placeholder_senha?: string | null
+          subtitulo_login?: string | null
+          texto_ajuda?: string | null
+          texto_botao?: string | null
+          texto_rodape?: string | null
+          titulo_login?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "configuracoes_login_area_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: true
+            referencedRelation: "areas_membros"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       content_items: {
         Row: {
           access_mode: string | null
