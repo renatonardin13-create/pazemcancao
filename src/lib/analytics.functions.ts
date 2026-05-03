@@ -2,6 +2,37 @@ import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
+export const logPlay = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { trackId: string, durationSeconds: number }) => input)
+  .handler(async ({ data, context }) => {
+    const { data: userData } = await context.supabase.auth.getUser();
+    const email = userData?.user?.email;
+    if (!email) throw new Error('Usuário sem email');
+
+    await supabaseAdmin.from('play_logs').insert({
+      email,
+      track_id: data.trackId,
+      duration_seconds: data.durationSeconds,
+    });
+    return { success: true };
+  });
+
+export const logDownload = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((input: { trackId: string }) => input)
+  .handler(async ({ data, context }) => {
+    const { data: userData } = await context.supabase.auth.getUser();
+    const email = userData?.user?.email;
+    if (!email) throw new Error('Usuário sem email');
+
+    await supabaseAdmin.from('download_logs').insert({
+      email,
+      track_id: data.trackId,
+    });
+    return { success: true };
+  });
+
 export const getDashboardAnalytics = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { days?: number }) => input)
@@ -18,7 +49,6 @@ export const getDashboardAnalytics = createServerFn({ method: 'POST' })
 
     const days = data?.days || 30;
 
-    // Use the database function for efficient aggregation
     const { data: result, error } = await supabaseAdmin.rpc('get_analytics_summary', {
       p_days: days,
     });
