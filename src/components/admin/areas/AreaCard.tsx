@@ -81,7 +81,7 @@ export function AreaCard({
                   )}
                 </div>
                 <p className="text-xs font-medium text-slate-500 tracking-tight">
-                  {area.subdominio}.seudominio.com
+                  app.{area.subdominio}.seudominio.com
                 </p>
               </div>
             </div>
