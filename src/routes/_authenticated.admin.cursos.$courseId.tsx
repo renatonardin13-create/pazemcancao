@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useRef } from "react";
 
 export const Route = createFileRoute(
-  "/_authenticated/admin/courses/$courseId"
+  "/_authenticated/admin/cursos/$courseId"
 )({
   component: EditCoursePage,
 });

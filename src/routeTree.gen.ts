@@ -41,13 +41,12 @@ import { Route as AuthenticatedAdminMusicasRouteImport } from './routes/_authent
 import { Route as AuthenticatedAdminIntegracoesRouteImport } from './routes/_authenticated.admin.integracoes'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated.admin.dashboard'
 import { Route as AuthenticatedAdminCursosRouteImport } from './routes/_authenticated.admin.cursos'
-import { Route as AuthenticatedAdminCoursesRouteImport } from './routes/_authenticated.admin.courses'
 import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated.admin.configuracoes'
 import { Route as AuthenticatedAdminCategoriasRouteImport } from './routes/_authenticated.admin.categorias'
 import { Route as AuthenticatedCursosCourseIdIndexRouteImport } from './routes/_authenticated.cursos.$courseId.index'
-import { Route as AuthenticatedAdminCoursesIndexRouteImport } from './routes/_authenticated.admin.courses.index'
-import { Route as AuthenticatedAdminCoursesNewRouteImport } from './routes/_authenticated.admin.courses.new'
-import { Route as AuthenticatedAdminCoursesCourseIdRouteImport } from './routes/_authenticated.admin.courses.$courseId'
+import { Route as AuthenticatedAdminCursosIndexRouteImport } from './routes/_authenticated.admin.cursos.index'
+import { Route as AuthenticatedAdminCursosNewRouteImport } from './routes/_authenticated.admin.cursos.new'
+import { Route as AuthenticatedAdminCursosCourseIdRouteImport } from './routes/_authenticated.admin.cursos.$courseId'
 import { Route as AuthenticatedCursosCourseIdAulaLessonIdRouteImport } from './routes/_authenticated.cursos.$courseId.aula.$lessonId'
 
 const TermosRoute = TermosRouteImport.update({
@@ -224,12 +223,6 @@ const AuthenticatedAdminCursosRoute =
     path: '/cursos',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminCoursesRoute =
-  AuthenticatedAdminCoursesRouteImport.update({
-    id: '/courses',
-    path: '/courses',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
 const AuthenticatedAdminConfiguracoesRoute =
   AuthenticatedAdminConfiguracoesRouteImport.update({
     id: '/configuracoes',
@@ -248,23 +241,23 @@ const AuthenticatedCursosCourseIdIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedCursosCourseIdRoute,
   } as any)
-const AuthenticatedAdminCoursesIndexRoute =
-  AuthenticatedAdminCoursesIndexRouteImport.update({
+const AuthenticatedAdminCursosIndexRoute =
+  AuthenticatedAdminCursosIndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedAdminCoursesRoute,
+    getParentRoute: () => AuthenticatedAdminCursosRoute,
   } as any)
-const AuthenticatedAdminCoursesNewRoute =
-  AuthenticatedAdminCoursesNewRouteImport.update({
+const AuthenticatedAdminCursosNewRoute =
+  AuthenticatedAdminCursosNewRouteImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => AuthenticatedAdminCoursesRoute,
+    getParentRoute: () => AuthenticatedAdminCursosRoute,
   } as any)
-const AuthenticatedAdminCoursesCourseIdRoute =
-  AuthenticatedAdminCoursesCourseIdRouteImport.update({
+const AuthenticatedAdminCursosCourseIdRoute =
+  AuthenticatedAdminCursosCourseIdRouteImport.update({
     id: '/$courseId',
     path: '/$courseId',
-    getParentRoute: () => AuthenticatedAdminCoursesRoute,
+    getParentRoute: () => AuthenticatedAdminCursosRoute,
   } as any)
 const AuthenticatedCursosCourseIdAulaLessonIdRoute =
   AuthenticatedCursosCourseIdAulaLessonIdRouteImport.update({
@@ -292,8 +285,7 @@ export interface FileRoutesByFullPath {
   '/trilhas': typeof AuthenticatedTrilhasRoute
   '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
-  '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
-  '/admin/cursos': typeof AuthenticatedAdminCursosRoute
+  '/admin/cursos': typeof AuthenticatedAdminCursosRouteWithChildren
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/integracoes': typeof AuthenticatedAdminIntegracoesRoute
   '/admin/musicas': typeof AuthenticatedAdminMusicasRoute
@@ -308,9 +300,9 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/conteudo/': typeof AuthenticatedConteudoIndexRoute
   '/cursos/': typeof AuthenticatedCursosIndexRoute
-  '/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
-  '/admin/courses/new': typeof AuthenticatedAdminCoursesNewRoute
-  '/admin/courses/': typeof AuthenticatedAdminCoursesIndexRoute
+  '/admin/cursos/$courseId': typeof AuthenticatedAdminCursosCourseIdRoute
+  '/admin/cursos/new': typeof AuthenticatedAdminCursosNewRoute
+  '/admin/cursos/': typeof AuthenticatedAdminCursosIndexRoute
   '/cursos/$courseId/': typeof AuthenticatedCursosCourseIdIndexRoute
   '/cursos/$courseId/aula/$lessonId': typeof AuthenticatedCursosCourseIdAulaLessonIdRoute
 }
@@ -330,7 +322,6 @@ export interface FileRoutesByTo {
   '/trilhas': typeof AuthenticatedTrilhasRoute
   '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
   '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
-  '/admin/cursos': typeof AuthenticatedAdminCursosRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/integracoes': typeof AuthenticatedAdminIntegracoesRoute
   '/admin/musicas': typeof AuthenticatedAdminMusicasRoute
@@ -344,9 +335,9 @@ export interface FileRoutesByTo {
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/conteudo': typeof AuthenticatedConteudoIndexRoute
   '/cursos': typeof AuthenticatedCursosIndexRoute
-  '/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
-  '/admin/courses/new': typeof AuthenticatedAdminCoursesNewRoute
-  '/admin/courses': typeof AuthenticatedAdminCoursesIndexRoute
+  '/admin/cursos/$courseId': typeof AuthenticatedAdminCursosCourseIdRoute
+  '/admin/cursos/new': typeof AuthenticatedAdminCursosNewRoute
+  '/admin/cursos': typeof AuthenticatedAdminCursosIndexRoute
   '/cursos/$courseId': typeof AuthenticatedCursosCourseIdIndexRoute
   '/cursos/$courseId/aula/$lessonId': typeof AuthenticatedCursosCourseIdAulaLessonIdRoute
 }
@@ -371,8 +362,7 @@ export interface FileRoutesById {
   '/_authenticated/trilhas': typeof AuthenticatedTrilhasRoute
   '/_authenticated/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
   '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
-  '/_authenticated/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
-  '/_authenticated/admin/cursos': typeof AuthenticatedAdminCursosRoute
+  '/_authenticated/admin/cursos': typeof AuthenticatedAdminCursosRouteWithChildren
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/_authenticated/admin/integracoes': typeof AuthenticatedAdminIntegracoesRoute
   '/_authenticated/admin/musicas': typeof AuthenticatedAdminMusicasRoute
@@ -387,9 +377,9 @@ export interface FileRoutesById {
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/conteudo/': typeof AuthenticatedConteudoIndexRoute
   '/_authenticated/cursos/': typeof AuthenticatedCursosIndexRoute
-  '/_authenticated/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
-  '/_authenticated/admin/courses/new': typeof AuthenticatedAdminCoursesNewRoute
-  '/_authenticated/admin/courses/': typeof AuthenticatedAdminCoursesIndexRoute
+  '/_authenticated/admin/cursos/$courseId': typeof AuthenticatedAdminCursosCourseIdRoute
+  '/_authenticated/admin/cursos/new': typeof AuthenticatedAdminCursosNewRoute
+  '/_authenticated/admin/cursos/': typeof AuthenticatedAdminCursosIndexRoute
   '/_authenticated/cursos/$courseId/': typeof AuthenticatedCursosCourseIdIndexRoute
   '/_authenticated/cursos/$courseId/aula/$lessonId': typeof AuthenticatedCursosCourseIdAulaLessonIdRoute
 }
@@ -414,7 +404,6 @@ export interface FileRouteTypes {
     | '/trilhas'
     | '/admin/categorias'
     | '/admin/configuracoes'
-    | '/admin/courses'
     | '/admin/cursos'
     | '/admin/dashboard'
     | '/admin/integracoes'
@@ -430,9 +419,9 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/conteudo/'
     | '/cursos/'
-    | '/admin/courses/$courseId'
-    | '/admin/courses/new'
-    | '/admin/courses/'
+    | '/admin/cursos/$courseId'
+    | '/admin/cursos/new'
+    | '/admin/cursos/'
     | '/cursos/$courseId/'
     | '/cursos/$courseId/aula/$lessonId'
   fileRoutesByTo: FileRoutesByTo
@@ -452,7 +441,6 @@ export interface FileRouteTypes {
     | '/trilhas'
     | '/admin/categorias'
     | '/admin/configuracoes'
-    | '/admin/cursos'
     | '/admin/dashboard'
     | '/admin/integracoes'
     | '/admin/musicas'
@@ -466,9 +454,9 @@ export interface FileRouteTypes {
     | '/admin'
     | '/conteudo'
     | '/cursos'
-    | '/admin/courses/$courseId'
-    | '/admin/courses/new'
-    | '/admin/courses'
+    | '/admin/cursos/$courseId'
+    | '/admin/cursos/new'
+    | '/admin/cursos'
     | '/cursos/$courseId'
     | '/cursos/$courseId/aula/$lessonId'
   id:
@@ -492,7 +480,6 @@ export interface FileRouteTypes {
     | '/_authenticated/trilhas'
     | '/_authenticated/admin/categorias'
     | '/_authenticated/admin/configuracoes'
-    | '/_authenticated/admin/courses'
     | '/_authenticated/admin/cursos'
     | '/_authenticated/admin/dashboard'
     | '/_authenticated/admin/integracoes'
@@ -508,9 +495,9 @@ export interface FileRouteTypes {
     | '/_authenticated/admin/'
     | '/_authenticated/conteudo/'
     | '/_authenticated/cursos/'
-    | '/_authenticated/admin/courses/$courseId'
-    | '/_authenticated/admin/courses/new'
-    | '/_authenticated/admin/courses/'
+    | '/_authenticated/admin/cursos/$courseId'
+    | '/_authenticated/admin/cursos/new'
+    | '/_authenticated/admin/cursos/'
     | '/_authenticated/cursos/$courseId/'
     | '/_authenticated/cursos/$courseId/aula/$lessonId'
   fileRoutesById: FileRoutesById
@@ -749,13 +736,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminCursosRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/courses': {
-      id: '/_authenticated/admin/courses'
-      path: '/courses'
-      fullPath: '/admin/courses'
-      preLoaderRoute: typeof AuthenticatedAdminCoursesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
     '/_authenticated/admin/configuracoes': {
       id: '/_authenticated/admin/configuracoes'
       path: '/configuracoes'
@@ -777,26 +757,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCursosCourseIdIndexRouteImport
       parentRoute: typeof AuthenticatedCursosCourseIdRoute
     }
-    '/_authenticated/admin/courses/': {
-      id: '/_authenticated/admin/courses/'
+    '/_authenticated/admin/cursos/': {
+      id: '/_authenticated/admin/cursos/'
       path: '/'
-      fullPath: '/admin/courses/'
-      preLoaderRoute: typeof AuthenticatedAdminCoursesIndexRouteImport
-      parentRoute: typeof AuthenticatedAdminCoursesRoute
+      fullPath: '/admin/cursos/'
+      preLoaderRoute: typeof AuthenticatedAdminCursosIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminCursosRoute
     }
-    '/_authenticated/admin/courses/new': {
-      id: '/_authenticated/admin/courses/new'
+    '/_authenticated/admin/cursos/new': {
+      id: '/_authenticated/admin/cursos/new'
       path: '/new'
-      fullPath: '/admin/courses/new'
-      preLoaderRoute: typeof AuthenticatedAdminCoursesNewRouteImport
-      parentRoute: typeof AuthenticatedAdminCoursesRoute
+      fullPath: '/admin/cursos/new'
+      preLoaderRoute: typeof AuthenticatedAdminCursosNewRouteImport
+      parentRoute: typeof AuthenticatedAdminCursosRoute
     }
-    '/_authenticated/admin/courses/$courseId': {
-      id: '/_authenticated/admin/courses/$courseId'
+    '/_authenticated/admin/cursos/$courseId': {
+      id: '/_authenticated/admin/cursos/$courseId'
       path: '/$courseId'
-      fullPath: '/admin/courses/$courseId'
-      preLoaderRoute: typeof AuthenticatedAdminCoursesCourseIdRouteImport
-      parentRoute: typeof AuthenticatedAdminCoursesRoute
+      fullPath: '/admin/cursos/$courseId'
+      preLoaderRoute: typeof AuthenticatedAdminCursosCourseIdRouteImport
+      parentRoute: typeof AuthenticatedAdminCursosRoute
     }
     '/_authenticated/cursos/$courseId/aula/$lessonId': {
       id: '/_authenticated/cursos/$courseId/aula/$lessonId'
@@ -808,30 +788,29 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthenticatedAdminCoursesRouteChildren {
-  AuthenticatedAdminCoursesCourseIdRoute: typeof AuthenticatedAdminCoursesCourseIdRoute
-  AuthenticatedAdminCoursesNewRoute: typeof AuthenticatedAdminCoursesNewRoute
-  AuthenticatedAdminCoursesIndexRoute: typeof AuthenticatedAdminCoursesIndexRoute
+interface AuthenticatedAdminCursosRouteChildren {
+  AuthenticatedAdminCursosCourseIdRoute: typeof AuthenticatedAdminCursosCourseIdRoute
+  AuthenticatedAdminCursosNewRoute: typeof AuthenticatedAdminCursosNewRoute
+  AuthenticatedAdminCursosIndexRoute: typeof AuthenticatedAdminCursosIndexRoute
 }
 
-const AuthenticatedAdminCoursesRouteChildren: AuthenticatedAdminCoursesRouteChildren =
+const AuthenticatedAdminCursosRouteChildren: AuthenticatedAdminCursosRouteChildren =
   {
-    AuthenticatedAdminCoursesCourseIdRoute:
-      AuthenticatedAdminCoursesCourseIdRoute,
-    AuthenticatedAdminCoursesNewRoute: AuthenticatedAdminCoursesNewRoute,
-    AuthenticatedAdminCoursesIndexRoute: AuthenticatedAdminCoursesIndexRoute,
+    AuthenticatedAdminCursosCourseIdRoute:
+      AuthenticatedAdminCursosCourseIdRoute,
+    AuthenticatedAdminCursosNewRoute: AuthenticatedAdminCursosNewRoute,
+    AuthenticatedAdminCursosIndexRoute: AuthenticatedAdminCursosIndexRoute,
   }
 
-const AuthenticatedAdminCoursesRouteWithChildren =
-  AuthenticatedAdminCoursesRoute._addFileChildren(
-    AuthenticatedAdminCoursesRouteChildren,
+const AuthenticatedAdminCursosRouteWithChildren =
+  AuthenticatedAdminCursosRoute._addFileChildren(
+    AuthenticatedAdminCursosRouteChildren,
   )
 
 interface AuthenticatedAdminRouteChildren {
   AuthenticatedAdminCategoriasRoute: typeof AuthenticatedAdminCategoriasRoute
   AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
-  AuthenticatedAdminCoursesRoute: typeof AuthenticatedAdminCoursesRouteWithChildren
-  AuthenticatedAdminCursosRoute: typeof AuthenticatedAdminCursosRoute
+  AuthenticatedAdminCursosRoute: typeof AuthenticatedAdminCursosRouteWithChildren
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
   AuthenticatedAdminIntegracoesRoute: typeof AuthenticatedAdminIntegracoesRoute
   AuthenticatedAdminMusicasRoute: typeof AuthenticatedAdminMusicasRoute
@@ -846,8 +825,7 @@ interface AuthenticatedAdminRouteChildren {
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
   AuthenticatedAdminCategoriasRoute: AuthenticatedAdminCategoriasRoute,
   AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
-  AuthenticatedAdminCoursesRoute: AuthenticatedAdminCoursesRouteWithChildren,
-  AuthenticatedAdminCursosRoute: AuthenticatedAdminCursosRoute,
+  AuthenticatedAdminCursosRoute: AuthenticatedAdminCursosRouteWithChildren,
   AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
   AuthenticatedAdminIntegracoesRoute: AuthenticatedAdminIntegracoesRoute,
   AuthenticatedAdminMusicasRoute: AuthenticatedAdminMusicasRoute,

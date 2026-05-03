@@ -18,7 +18,7 @@ import {
 import { useRef, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
-export const Route = createFileRoute("/_authenticated/admin/courses/new")({
+export const Route = createFileRoute("/_authenticated/admin/cursos/new")({
   component: NewCoursePage,
 });
 
