@@ -32,13 +32,21 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as AuthenticatedMusicasTrackIdRouteImport } from './routes/_authenticated.musicas.$trackId'
 import { Route as AuthenticatedCursosCourseIdRouteImport } from './routes/_authenticated.cursos.$courseId'
 import { Route as AuthenticatedConteudoTrackIdRouteImport } from './routes/_authenticated.conteudo.$trackId'
+import { Route as AuthenticatedAdminVitrineRouteImport } from './routes/_authenticated.admin.vitrine'
+import { Route as AuthenticatedAdminVendasRouteImport } from './routes/_authenticated.admin.vendas'
+import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated.admin.usuarios'
 import { Route as AuthenticatedAdminUpsellsRouteImport } from './routes/_authenticated.admin.upsells'
+import { Route as AuthenticatedAdminPlaylistsRouteImport } from './routes/_authenticated.admin.playlists'
+import { Route as AuthenticatedAdminMusicasRouteImport } from './routes/_authenticated.admin.musicas'
+import { Route as AuthenticatedAdminIntegracoesRouteImport } from './routes/_authenticated.admin.integracoes'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated.admin.dashboard'
-import { Route as AuthenticatedAdminCoursesRouteImport } from './routes/_authenticated.admin.courses'
+import { Route as AuthenticatedAdminCursosRouteImport } from './routes/_authenticated.admin.cursos'
+import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated.admin.configuracoes'
+import { Route as AuthenticatedAdminCategoriasRouteImport } from './routes/_authenticated.admin.categorias'
 import { Route as AuthenticatedCursosCourseIdIndexRouteImport } from './routes/_authenticated.cursos.$courseId.index'
-import { Route as AuthenticatedAdminCoursesIndexRouteImport } from './routes/_authenticated.admin.courses.index'
-import { Route as AuthenticatedAdminCoursesNewRouteImport } from './routes/_authenticated.admin.courses.new'
-import { Route as AuthenticatedAdminCoursesCourseIdRouteImport } from './routes/_authenticated.admin.courses.$courseId'
+import { Route as AuthenticatedAdminCursosIndexRouteImport } from './routes/_authenticated.admin.cursos.index'
+import { Route as AuthenticatedAdminCursosNewRouteImport } from './routes/_authenticated.admin.cursos.new'
+import { Route as AuthenticatedAdminCursosCourseIdRouteImport } from './routes/_authenticated.admin.cursos.$courseId'
 import { Route as AuthenticatedCursosCourseIdAulaLessonIdRouteImport } from './routes/_authenticated.cursos.$courseId.aula.$lessonId'
 
 const TermosRoute = TermosRouteImport.update({
@@ -161,10 +169,46 @@ const AuthenticatedConteudoTrackIdRoute =
     path: '/$trackId',
     getParentRoute: () => AuthenticatedConteudoRoute,
   } as any)
+const AuthenticatedAdminVitrineRoute =
+  AuthenticatedAdminVitrineRouteImport.update({
+    id: '/vitrine',
+    path: '/vitrine',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminVendasRoute =
+  AuthenticatedAdminVendasRouteImport.update({
+    id: '/vendas',
+    path: '/vendas',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminUsuariosRoute =
+  AuthenticatedAdminUsuariosRouteImport.update({
+    id: '/usuarios',
+    path: '/usuarios',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
 const AuthenticatedAdminUpsellsRoute =
   AuthenticatedAdminUpsellsRouteImport.update({
     id: '/upsells',
     path: '/upsells',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminPlaylistsRoute =
+  AuthenticatedAdminPlaylistsRouteImport.update({
+    id: '/playlists',
+    path: '/playlists',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminMusicasRoute =
+  AuthenticatedAdminMusicasRouteImport.update({
+    id: '/musicas',
+    path: '/musicas',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminIntegracoesRoute =
+  AuthenticatedAdminIntegracoesRouteImport.update({
+    id: '/integracoes',
+    path: '/integracoes',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminDashboardRoute =
@@ -173,10 +217,22 @@ const AuthenticatedAdminDashboardRoute =
     path: '/dashboard',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminCoursesRoute =
-  AuthenticatedAdminCoursesRouteImport.update({
-    id: '/courses',
-    path: '/courses',
+const AuthenticatedAdminCursosRoute =
+  AuthenticatedAdminCursosRouteImport.update({
+    id: '/cursos',
+    path: '/cursos',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminConfiguracoesRoute =
+  AuthenticatedAdminConfiguracoesRouteImport.update({
+    id: '/configuracoes',
+    path: '/configuracoes',
+    getParentRoute: () => AuthenticatedAdminRoute,
+  } as any)
+const AuthenticatedAdminCategoriasRoute =
+  AuthenticatedAdminCategoriasRouteImport.update({
+    id: '/categorias',
+    path: '/categorias',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedCursosCourseIdIndexRoute =
@@ -185,23 +241,23 @@ const AuthenticatedCursosCourseIdIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedCursosCourseIdRoute,
   } as any)
-const AuthenticatedAdminCoursesIndexRoute =
-  AuthenticatedAdminCoursesIndexRouteImport.update({
+const AuthenticatedAdminCursosIndexRoute =
+  AuthenticatedAdminCursosIndexRouteImport.update({
     id: '/',
     path: '/',
-    getParentRoute: () => AuthenticatedAdminCoursesRoute,
+    getParentRoute: () => AuthenticatedAdminCursosRoute,
   } as any)
-const AuthenticatedAdminCoursesNewRoute =
-  AuthenticatedAdminCoursesNewRouteImport.update({
+const AuthenticatedAdminCursosNewRoute =
+  AuthenticatedAdminCursosNewRouteImport.update({
     id: '/new',
     path: '/new',
-    getParentRoute: () => AuthenticatedAdminCoursesRoute,
+    getParentRoute: () => AuthenticatedAdminCursosRoute,
   } as any)
-const AuthenticatedAdminCoursesCourseIdRoute =
-  AuthenticatedAdminCoursesCourseIdRouteImport.update({
+const AuthenticatedAdminCursosCourseIdRoute =
+  AuthenticatedAdminCursosCourseIdRouteImport.update({
     id: '/$courseId',
     path: '/$courseId',
-    getParentRoute: () => AuthenticatedAdminCoursesRoute,
+    getParentRoute: () => AuthenticatedAdminCursosRoute,
   } as any)
 const AuthenticatedCursosCourseIdAulaLessonIdRoute =
   AuthenticatedCursosCourseIdAulaLessonIdRouteImport.update({
@@ -227,18 +283,26 @@ export interface FileRoutesByFullPath {
   '/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/perfil': typeof AuthenticatedPerfilRoute
   '/trilhas': typeof AuthenticatedTrilhasRoute
-  '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
+  '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
+  '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/admin/cursos': typeof AuthenticatedAdminCursosRouteWithChildren
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/integracoes': typeof AuthenticatedAdminIntegracoesRoute
+  '/admin/musicas': typeof AuthenticatedAdminMusicasRoute
+  '/admin/playlists': typeof AuthenticatedAdminPlaylistsRoute
   '/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
+  '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/admin/vendas': typeof AuthenticatedAdminVendasRoute
+  '/admin/vitrine': typeof AuthenticatedAdminVitrineRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/cursos/$courseId': typeof AuthenticatedCursosCourseIdRouteWithChildren
   '/musicas/$trackId': typeof AuthenticatedMusicasTrackIdRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/conteudo/': typeof AuthenticatedConteudoIndexRoute
   '/cursos/': typeof AuthenticatedCursosIndexRoute
-  '/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
-  '/admin/courses/new': typeof AuthenticatedAdminCoursesNewRoute
-  '/admin/courses/': typeof AuthenticatedAdminCoursesIndexRoute
+  '/admin/cursos/$courseId': typeof AuthenticatedAdminCursosCourseIdRoute
+  '/admin/cursos/new': typeof AuthenticatedAdminCursosNewRoute
+  '/admin/cursos/': typeof AuthenticatedAdminCursosIndexRoute
   '/cursos/$courseId/': typeof AuthenticatedCursosCourseIdIndexRoute
   '/cursos/$courseId/aula/$lessonId': typeof AuthenticatedCursosCourseIdAulaLessonIdRoute
 }
@@ -256,16 +320,24 @@ export interface FileRoutesByTo {
   '/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/perfil': typeof AuthenticatedPerfilRoute
   '/trilhas': typeof AuthenticatedTrilhasRoute
+  '/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
+  '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/admin/integracoes': typeof AuthenticatedAdminIntegracoesRoute
+  '/admin/musicas': typeof AuthenticatedAdminMusicasRoute
+  '/admin/playlists': typeof AuthenticatedAdminPlaylistsRoute
   '/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
+  '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/admin/vendas': typeof AuthenticatedAdminVendasRoute
+  '/admin/vitrine': typeof AuthenticatedAdminVitrineRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/musicas/$trackId': typeof AuthenticatedMusicasTrackIdRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/conteudo': typeof AuthenticatedConteudoIndexRoute
   '/cursos': typeof AuthenticatedCursosIndexRoute
-  '/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
-  '/admin/courses/new': typeof AuthenticatedAdminCoursesNewRoute
-  '/admin/courses': typeof AuthenticatedAdminCoursesIndexRoute
+  '/admin/cursos/$courseId': typeof AuthenticatedAdminCursosCourseIdRoute
+  '/admin/cursos/new': typeof AuthenticatedAdminCursosNewRoute
+  '/admin/cursos': typeof AuthenticatedAdminCursosIndexRoute
   '/cursos/$courseId': typeof AuthenticatedCursosCourseIdIndexRoute
   '/cursos/$courseId/aula/$lessonId': typeof AuthenticatedCursosCourseIdAulaLessonIdRoute
 }
@@ -288,18 +360,26 @@ export interface FileRoutesById {
   '/_authenticated/musicas': typeof AuthenticatedMusicasRouteWithChildren
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/trilhas': typeof AuthenticatedTrilhasRoute
-  '/_authenticated/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
+  '/_authenticated/admin/categorias': typeof AuthenticatedAdminCategoriasRoute
+  '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
+  '/_authenticated/admin/cursos': typeof AuthenticatedAdminCursosRouteWithChildren
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
+  '/_authenticated/admin/integracoes': typeof AuthenticatedAdminIntegracoesRoute
+  '/_authenticated/admin/musicas': typeof AuthenticatedAdminMusicasRoute
+  '/_authenticated/admin/playlists': typeof AuthenticatedAdminPlaylistsRoute
   '/_authenticated/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
+  '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
+  '/_authenticated/admin/vendas': typeof AuthenticatedAdminVendasRoute
+  '/_authenticated/admin/vitrine': typeof AuthenticatedAdminVitrineRoute
   '/_authenticated/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/_authenticated/cursos/$courseId': typeof AuthenticatedCursosCourseIdRouteWithChildren
   '/_authenticated/musicas/$trackId': typeof AuthenticatedMusicasTrackIdRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/conteudo/': typeof AuthenticatedConteudoIndexRoute
   '/_authenticated/cursos/': typeof AuthenticatedCursosIndexRoute
-  '/_authenticated/admin/courses/$courseId': typeof AuthenticatedAdminCoursesCourseIdRoute
-  '/_authenticated/admin/courses/new': typeof AuthenticatedAdminCoursesNewRoute
-  '/_authenticated/admin/courses/': typeof AuthenticatedAdminCoursesIndexRoute
+  '/_authenticated/admin/cursos/$courseId': typeof AuthenticatedAdminCursosCourseIdRoute
+  '/_authenticated/admin/cursos/new': typeof AuthenticatedAdminCursosNewRoute
+  '/_authenticated/admin/cursos/': typeof AuthenticatedAdminCursosIndexRoute
   '/_authenticated/cursos/$courseId/': typeof AuthenticatedCursosCourseIdIndexRoute
   '/_authenticated/cursos/$courseId/aula/$lessonId': typeof AuthenticatedCursosCourseIdAulaLessonIdRoute
 }
@@ -322,18 +402,26 @@ export interface FileRouteTypes {
     | '/musicas'
     | '/perfil'
     | '/trilhas'
-    | '/admin/courses'
+    | '/admin/categorias'
+    | '/admin/configuracoes'
+    | '/admin/cursos'
     | '/admin/dashboard'
+    | '/admin/integracoes'
+    | '/admin/musicas'
+    | '/admin/playlists'
     | '/admin/upsells'
+    | '/admin/usuarios'
+    | '/admin/vendas'
+    | '/admin/vitrine'
     | '/conteudo/$trackId'
     | '/cursos/$courseId'
     | '/musicas/$trackId'
     | '/admin/'
     | '/conteudo/'
     | '/cursos/'
-    | '/admin/courses/$courseId'
-    | '/admin/courses/new'
-    | '/admin/courses/'
+    | '/admin/cursos/$courseId'
+    | '/admin/cursos/new'
+    | '/admin/cursos/'
     | '/cursos/$courseId/'
     | '/cursos/$courseId/aula/$lessonId'
   fileRoutesByTo: FileRoutesByTo
@@ -351,16 +439,24 @@ export interface FileRouteTypes {
     | '/musicas'
     | '/perfil'
     | '/trilhas'
+    | '/admin/categorias'
+    | '/admin/configuracoes'
     | '/admin/dashboard'
+    | '/admin/integracoes'
+    | '/admin/musicas'
+    | '/admin/playlists'
     | '/admin/upsells'
+    | '/admin/usuarios'
+    | '/admin/vendas'
+    | '/admin/vitrine'
     | '/conteudo/$trackId'
     | '/musicas/$trackId'
     | '/admin'
     | '/conteudo'
     | '/cursos'
-    | '/admin/courses/$courseId'
-    | '/admin/courses/new'
-    | '/admin/courses'
+    | '/admin/cursos/$courseId'
+    | '/admin/cursos/new'
+    | '/admin/cursos'
     | '/cursos/$courseId'
     | '/cursos/$courseId/aula/$lessonId'
   id:
@@ -382,18 +478,26 @@ export interface FileRouteTypes {
     | '/_authenticated/musicas'
     | '/_authenticated/perfil'
     | '/_authenticated/trilhas'
-    | '/_authenticated/admin/courses'
+    | '/_authenticated/admin/categorias'
+    | '/_authenticated/admin/configuracoes'
+    | '/_authenticated/admin/cursos'
     | '/_authenticated/admin/dashboard'
+    | '/_authenticated/admin/integracoes'
+    | '/_authenticated/admin/musicas'
+    | '/_authenticated/admin/playlists'
     | '/_authenticated/admin/upsells'
+    | '/_authenticated/admin/usuarios'
+    | '/_authenticated/admin/vendas'
+    | '/_authenticated/admin/vitrine'
     | '/_authenticated/conteudo/$trackId'
     | '/_authenticated/cursos/$courseId'
     | '/_authenticated/musicas/$trackId'
     | '/_authenticated/admin/'
     | '/_authenticated/conteudo/'
     | '/_authenticated/cursos/'
-    | '/_authenticated/admin/courses/$courseId'
-    | '/_authenticated/admin/courses/new'
-    | '/_authenticated/admin/courses/'
+    | '/_authenticated/admin/cursos/$courseId'
+    | '/_authenticated/admin/cursos/new'
+    | '/_authenticated/admin/cursos/'
     | '/_authenticated/cursos/$courseId/'
     | '/_authenticated/cursos/$courseId/aula/$lessonId'
   fileRoutesById: FileRoutesById
@@ -569,11 +673,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConteudoTrackIdRouteImport
       parentRoute: typeof AuthenticatedConteudoRoute
     }
+    '/_authenticated/admin/vitrine': {
+      id: '/_authenticated/admin/vitrine'
+      path: '/vitrine'
+      fullPath: '/admin/vitrine'
+      preLoaderRoute: typeof AuthenticatedAdminVitrineRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/vendas': {
+      id: '/_authenticated/admin/vendas'
+      path: '/vendas'
+      fullPath: '/admin/vendas'
+      preLoaderRoute: typeof AuthenticatedAdminVendasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/usuarios': {
+      id: '/_authenticated/admin/usuarios'
+      path: '/usuarios'
+      fullPath: '/admin/usuarios'
+      preLoaderRoute: typeof AuthenticatedAdminUsuariosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
     '/_authenticated/admin/upsells': {
       id: '/_authenticated/admin/upsells'
       path: '/upsells'
       fullPath: '/admin/upsells'
       preLoaderRoute: typeof AuthenticatedAdminUpsellsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/playlists': {
+      id: '/_authenticated/admin/playlists'
+      path: '/playlists'
+      fullPath: '/admin/playlists'
+      preLoaderRoute: typeof AuthenticatedAdminPlaylistsRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/musicas': {
+      id: '/_authenticated/admin/musicas'
+      path: '/musicas'
+      fullPath: '/admin/musicas'
+      preLoaderRoute: typeof AuthenticatedAdminMusicasRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/integracoes': {
+      id: '/_authenticated/admin/integracoes'
+      path: '/integracoes'
+      fullPath: '/admin/integracoes'
+      preLoaderRoute: typeof AuthenticatedAdminIntegracoesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/dashboard': {
@@ -583,11 +729,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminDashboardRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/courses': {
-      id: '/_authenticated/admin/courses'
-      path: '/courses'
-      fullPath: '/admin/courses'
-      preLoaderRoute: typeof AuthenticatedAdminCoursesRouteImport
+    '/_authenticated/admin/cursos': {
+      id: '/_authenticated/admin/cursos'
+      path: '/cursos'
+      fullPath: '/admin/cursos'
+      preLoaderRoute: typeof AuthenticatedAdminCursosRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/configuracoes': {
+      id: '/_authenticated/admin/configuracoes'
+      path: '/configuracoes'
+      fullPath: '/admin/configuracoes'
+      preLoaderRoute: typeof AuthenticatedAdminConfiguracoesRouteImport
+      parentRoute: typeof AuthenticatedAdminRoute
+    }
+    '/_authenticated/admin/categorias': {
+      id: '/_authenticated/admin/categorias'
+      path: '/categorias'
+      fullPath: '/admin/categorias'
+      preLoaderRoute: typeof AuthenticatedAdminCategoriasRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/cursos/$courseId/': {
@@ -597,26 +757,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCursosCourseIdIndexRouteImport
       parentRoute: typeof AuthenticatedCursosCourseIdRoute
     }
-    '/_authenticated/admin/courses/': {
-      id: '/_authenticated/admin/courses/'
+    '/_authenticated/admin/cursos/': {
+      id: '/_authenticated/admin/cursos/'
       path: '/'
-      fullPath: '/admin/courses/'
-      preLoaderRoute: typeof AuthenticatedAdminCoursesIndexRouteImport
-      parentRoute: typeof AuthenticatedAdminCoursesRoute
+      fullPath: '/admin/cursos/'
+      preLoaderRoute: typeof AuthenticatedAdminCursosIndexRouteImport
+      parentRoute: typeof AuthenticatedAdminCursosRoute
     }
-    '/_authenticated/admin/courses/new': {
-      id: '/_authenticated/admin/courses/new'
+    '/_authenticated/admin/cursos/new': {
+      id: '/_authenticated/admin/cursos/new'
       path: '/new'
-      fullPath: '/admin/courses/new'
-      preLoaderRoute: typeof AuthenticatedAdminCoursesNewRouteImport
-      parentRoute: typeof AuthenticatedAdminCoursesRoute
+      fullPath: '/admin/cursos/new'
+      preLoaderRoute: typeof AuthenticatedAdminCursosNewRouteImport
+      parentRoute: typeof AuthenticatedAdminCursosRoute
     }
-    '/_authenticated/admin/courses/$courseId': {
-      id: '/_authenticated/admin/courses/$courseId'
+    '/_authenticated/admin/cursos/$courseId': {
+      id: '/_authenticated/admin/cursos/$courseId'
       path: '/$courseId'
-      fullPath: '/admin/courses/$courseId'
-      preLoaderRoute: typeof AuthenticatedAdminCoursesCourseIdRouteImport
-      parentRoute: typeof AuthenticatedAdminCoursesRoute
+      fullPath: '/admin/cursos/$courseId'
+      preLoaderRoute: typeof AuthenticatedAdminCursosCourseIdRouteImport
+      parentRoute: typeof AuthenticatedAdminCursosRoute
     }
     '/_authenticated/cursos/$courseId/aula/$lessonId': {
       id: '/_authenticated/cursos/$courseId/aula/$lessonId'
@@ -628,36 +788,52 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthenticatedAdminCoursesRouteChildren {
-  AuthenticatedAdminCoursesCourseIdRoute: typeof AuthenticatedAdminCoursesCourseIdRoute
-  AuthenticatedAdminCoursesNewRoute: typeof AuthenticatedAdminCoursesNewRoute
-  AuthenticatedAdminCoursesIndexRoute: typeof AuthenticatedAdminCoursesIndexRoute
+interface AuthenticatedAdminCursosRouteChildren {
+  AuthenticatedAdminCursosCourseIdRoute: typeof AuthenticatedAdminCursosCourseIdRoute
+  AuthenticatedAdminCursosNewRoute: typeof AuthenticatedAdminCursosNewRoute
+  AuthenticatedAdminCursosIndexRoute: typeof AuthenticatedAdminCursosIndexRoute
 }
 
-const AuthenticatedAdminCoursesRouteChildren: AuthenticatedAdminCoursesRouteChildren =
+const AuthenticatedAdminCursosRouteChildren: AuthenticatedAdminCursosRouteChildren =
   {
-    AuthenticatedAdminCoursesCourseIdRoute:
-      AuthenticatedAdminCoursesCourseIdRoute,
-    AuthenticatedAdminCoursesNewRoute: AuthenticatedAdminCoursesNewRoute,
-    AuthenticatedAdminCoursesIndexRoute: AuthenticatedAdminCoursesIndexRoute,
+    AuthenticatedAdminCursosCourseIdRoute:
+      AuthenticatedAdminCursosCourseIdRoute,
+    AuthenticatedAdminCursosNewRoute: AuthenticatedAdminCursosNewRoute,
+    AuthenticatedAdminCursosIndexRoute: AuthenticatedAdminCursosIndexRoute,
   }
 
-const AuthenticatedAdminCoursesRouteWithChildren =
-  AuthenticatedAdminCoursesRoute._addFileChildren(
-    AuthenticatedAdminCoursesRouteChildren,
+const AuthenticatedAdminCursosRouteWithChildren =
+  AuthenticatedAdminCursosRoute._addFileChildren(
+    AuthenticatedAdminCursosRouteChildren,
   )
 
 interface AuthenticatedAdminRouteChildren {
-  AuthenticatedAdminCoursesRoute: typeof AuthenticatedAdminCoursesRouteWithChildren
+  AuthenticatedAdminCategoriasRoute: typeof AuthenticatedAdminCategoriasRoute
+  AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
+  AuthenticatedAdminCursosRoute: typeof AuthenticatedAdminCursosRouteWithChildren
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
+  AuthenticatedAdminIntegracoesRoute: typeof AuthenticatedAdminIntegracoesRoute
+  AuthenticatedAdminMusicasRoute: typeof AuthenticatedAdminMusicasRoute
+  AuthenticatedAdminPlaylistsRoute: typeof AuthenticatedAdminPlaylistsRoute
   AuthenticatedAdminUpsellsRoute: typeof AuthenticatedAdminUpsellsRoute
+  AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
+  AuthenticatedAdminVendasRoute: typeof AuthenticatedAdminVendasRoute
+  AuthenticatedAdminVitrineRoute: typeof AuthenticatedAdminVitrineRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
-  AuthenticatedAdminCoursesRoute: AuthenticatedAdminCoursesRouteWithChildren,
+  AuthenticatedAdminCategoriasRoute: AuthenticatedAdminCategoriasRoute,
+  AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
+  AuthenticatedAdminCursosRoute: AuthenticatedAdminCursosRouteWithChildren,
   AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
+  AuthenticatedAdminIntegracoesRoute: AuthenticatedAdminIntegracoesRoute,
+  AuthenticatedAdminMusicasRoute: AuthenticatedAdminMusicasRoute,
+  AuthenticatedAdminPlaylistsRoute: AuthenticatedAdminPlaylistsRoute,
   AuthenticatedAdminUpsellsRoute: AuthenticatedAdminUpsellsRoute,
+  AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
+  AuthenticatedAdminVendasRoute: AuthenticatedAdminVendasRoute,
+  AuthenticatedAdminVitrineRoute: AuthenticatedAdminVitrineRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 

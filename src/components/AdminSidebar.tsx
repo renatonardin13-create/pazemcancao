@@ -35,29 +35,20 @@ import {
 } from "@/components/ui/sidebar";
 
 const mainItems = [
-  { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
-  { title: "Usuários", url: "/admin/users", icon: Users },
-];
-
-const contentGroups = [
-  // removed areas-membros
-  { title: "Louvores", url: "/admin/tracks", icon: Music, module: "louvores" as const },
-  { title: "Produtos", url: "/admin/courses", icon: GraduationCap, module: "cursos" as const },
-  { title: "Trilhas", url: "/admin/journeys", icon: Compass, module: "trilhas" as const },
-  { title: "Ebooks", url: "/admin/conteudos", icon: BookOpen, module: "ebooks" as const },
-  { title: "Lançamentos", url: "/admin/hero-banners", icon: Sparkles, module: "lancamentos" as const },
-  { title: "Comunidade", url: "/comunidade", icon: Users, module: "comunidade" as const },
-];
-
-const salesItems = [
-  { title: "Transações", url: "/admin/transactions", icon: Receipt },
-  { title: "Ofertas", url: "/admin/offers", icon: CreditCard },
-  { title: "Cupons", url: "/admin/coupons", icon: Tag },
+  { title: "Dashboard", url: "/admin/dashboard", icon: LayoutDashboard },
+  { title: "Músicas", url: "/admin/musicas", icon: Music },
+  { title: "Playlists", url: "/admin/playlists", icon: Compass },
+  { title: "Cursos", url: "/admin/cursos", icon: GraduationCap },
+  { title: "Vitrine", url: "/admin/vitrine", icon: Sparkles },
+  { title: "Categorias", url: "/admin/categorias", icon: Tag },
+  { title: "Usuários", url: "/admin/usuarios", icon: Users },
+  { title: "Vendas", url: "/admin/vendas", icon: Receipt },
+  { title: "Upsells", url: "/admin/upsells", icon: CreditCard },
+  { title: "Integrações", url: "/admin/integracoes", icon: Shield },
+  { title: "Configurações", url: "/admin/configuracoes", icon: Settings },
 ];
 
 const systemItems = [
-  { title: "Webhooks", url: "/admin/integrations", icon: Shield },
-  { title: "Configurações Gerais", url: "/admin/settings", icon: Settings },
   { title: "Sair", url: "/login", icon: LogOut },
 ];
 
@@ -108,11 +99,11 @@ export function AdminSidebar() {
           )}
         </div>
 
-        {/* Gestão */}
+        {/* Menu Principal */}
         <SidebarGroup className="py-1">
           {!collapsed && (
             <SidebarGroupLabel className={groupLabelClass}>
-              Gestão
+              Menu Principal
             </SidebarGroupLabel>
           )}
           <SidebarGroupContent>
@@ -139,72 +130,8 @@ export function AdminSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {/* Conteúdo */}
-        <SidebarGroup className="py-1">
-          {!collapsed && (
-            <SidebarGroupLabel className={groupLabelClass}>
-              Conteúdo
-            </SidebarGroupLabel>
-          )}
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {contentGroups
-                .filter((item) => !item.module || modules[item.module])
-                .map((item) => (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      isActive={isActive(item.url || "")}
-                      tooltip={item.title}
-                      className={cn(
-                        "h-12 transition-all duration-200 text-[1.0625rem] leading-loose",
-                        isActive(item.url || "") && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
-                      )}
-                    >
-                      <Link to={item.url}>
-                        <item.icon className="h-4 w-4 shrink-0" />
-                        <span className="font-medium">{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        {/* Financeiro */}
-        <SidebarGroup className="py-1">
-          {!collapsed && (
-            <SidebarGroupLabel className={groupLabelClass}>
-              Financeiro
-            </SidebarGroupLabel>
-          )}
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {salesItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    asChild
-                    isActive={isActive(item.url)}
-                    tooltip={item.title}
-                    className={cn(
-                      "h-12 transition-all duration-200 text-[1.0625rem] leading-loose",
-                      isActive(item.url) && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
-                    )}
-                  >
-                    <Link to={item.url}>
-                      <item.icon className="h-4 w-4 shrink-0" />
-                      <span className="font-medium">{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
         {/* Sistema */}
-        <SidebarGroup className="py-1">
+        <SidebarGroup className="py-1 mt-4">
           {!collapsed && (
             <SidebarGroupLabel className={groupLabelClass}>
               Sistema

@@ -62,7 +62,7 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
           ))}
 
           {!adminLoading && isAdmin && (
-            <Link to="/admin" className={navLinkClass(location.pathname.startsWith("/admin"))}>
+            <Link to="/admin/dashboard" className={navLinkClass(location.pathname.startsWith("/admin"))}>
               <Settings className="h-4 w-4" />
               <span className="hidden md:inline tracking-wide uppercase">
                 Admin
@@ -118,7 +118,7 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
 
             {!adminLoading && isAdmin && (
               <Link
-                to="/admin"
+                to="/admin/dashboard"
                 onClick={() => setMobileMenuOpen(false)}
                 className={cn(
                   "flex items-center gap-3 rounded-xl px-4 py-3 text-[13px] font-semibold transition-all duration-200",
