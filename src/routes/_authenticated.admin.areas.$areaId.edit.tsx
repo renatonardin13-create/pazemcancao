@@ -1424,33 +1424,34 @@ function EditAreaPage() {
               </div>
             </TabsContent>
 
-            <TabsContent value="produtos" className="mt-0 outline-none flex items-center justify-center min-h-[60vh]">
-              <div className="max-w-[900px] w-full mx-auto space-y-10">
+            <TabsContent value="produtos" className="mt-0 outline-none flex items-center justify-center min-h-[60vh] py-12">
+              <div className="max-w-[850px] w-full mx-auto">
                 {/* Centralized Card */}
-                <div className="bg-[#111827] border border-[#1F2937] rounded-[16px] p-16 md:p-24 flex flex-col items-center text-center space-y-10 shadow-2xl relative overflow-hidden">
-                  {/* Subtle Glow Effect */}
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-64 h-1 bg-[#D4AF37]/20 blur-sm" />
+                <div className="bg-[#111827] border border-white/5 rounded-[40px] p-16 md:p-24 flex flex-col items-center text-center space-y-10 shadow-[0_40px_100px_rgba(0,0,0,0.6)] relative overflow-hidden group">
+                  {/* Premium Glow Effect */}
+                  <div className="absolute -top-24 left-1/2 -translate-x-1/2 w-96 h-48 bg-[#D4AF37]/10 blur-[100px] group-hover:bg-[#D4AF37]/15 transition-all duration-700" />
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-[#D4AF37]/40 to-transparent" />
                   
-                  <div className="h-24 w-24 rounded-3xl bg-white/5 flex items-center justify-center text-slate-500 shadow-inner">
-                    <Package className="h-12 w-12" />
+                  <div className="h-32 w-32 rounded-[40px] bg-gradient-to-br from-[#1F2937] to-[#111827] flex items-center justify-center text-[#D4AF37] border border-white/5 shadow-2xl relative z-10 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+                    <Package className="h-16 w-16" />
                   </div>
                   
-                  <div className="space-y-4 max-w-xl">
-                    <h3 className="text-3xl font-black text-[#F9FAFB] tracking-tight">Gerenciar produtos vinculados</h3>
-                    <p className="text-[#9CA3AF] text-lg font-medium leading-relaxed">
-                      Os produtos exibidos para os alunos desta área são definidos no catálogo geral e liberados pelas ofertas. 
-                      Vá ao catálogo para criar/editar produtos ou às ofertas para definir quais produtos liberam o acesso.
+                  <div className="space-y-6 max-w-xl relative z-10">
+                    <h3 className="text-4xl font-black text-white tracking-tight">Gerenciar conteúdos</h3>
+                    <p className="text-slate-400 text-xl font-medium leading-relaxed">
+                      Os produtos exibidos para os alunos desta área são definidos no catálogo central e distribuídos através das suas ofertas.
                     </p>
                   </div>
 
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-6 w-full">
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-6 pt-8 w-full relative z-10">
                     <Button 
                       type="button"
                       variant="outline"
                       onClick={() => navigate({ to: "/admin/courses" })}
-                      className="h-14 px-8 rounded-xl border-white/10 bg-transparent text-[#F9FAFB] font-bold hover:bg-white/5 transition-all flex items-center gap-3 w-full sm:w-auto text-base"
+                      className="h-16 px-10 rounded-2xl border-white/5 bg-white/[0.02] text-white font-black hover:bg-white/5 hover:border-white/10 transition-all flex items-center gap-4 w-full sm:w-auto text-lg shadow-xl"
                     >
-                      <Package className="h-6 w-6 text-slate-500" />
+                      <Package className="h-7 w-7 text-slate-500" />
+
                       Ir para o catálogo
                     </Button>
                     <Button 
