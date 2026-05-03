@@ -10,7 +10,6 @@ export const listActiveTracks = createServerFn({ method: 'POST' })
       .select('*')
       .eq('is_active', true);
 
-    }
 
     const { data: tracks, error } = await query.order('sort_order', { ascending: true });
 
@@ -26,7 +25,6 @@ export const listAllTracks = createServerFn({ method: 'POST' })
       .from('tracks')
       .select('*');
 
-    }
 
     const { data: tracks, error } = await query.order('sort_order', { ascending: true });
 
@@ -41,7 +39,6 @@ export const listCategories = createServerFn({ method: 'POST' })
       .from('categories')
       .select('id, name, slug, icon, sort_order');
 
-    }
 
     const { data: categories, error } = await query.order('sort_order', { ascending: true });
 
