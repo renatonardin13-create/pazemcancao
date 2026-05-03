@@ -868,28 +868,28 @@ function LessonDetailPage() {
         </main>
 
         {/* ═══ SIDEBAR — premium playlist ═══ */}
-        <aside className="w-full lg:w-[340px] xl:w-[380px] shrink-0 border-t lg:border-t-0 lg:border-l border-border/8 bg-player-sidebar-bg lg:overflow-y-auto lg:max-h-[calc(100vh-52px)] lg:sticky lg:top-[52px]">
+        <aside className="w-full lg:w-[360px] xl:w-[400px] shrink-0 border-t lg:border-t-0 lg:border-l border-white/5 bg-[#111] lg:overflow-y-auto lg:max-h-[calc(100vh-80px)] lg:sticky lg:top-[80px]">
           {/* Mobile toggle */}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="flex lg:hidden items-center justify-between w-full px-5 py-3.5 text-[13px] font-semibold text-foreground/60 active:bg-card/8 transition-colors"
+            className="flex lg:hidden items-center justify-between w-full px-5 py-4 text-[13px] font-black text-white/60 active:bg-white/5 transition-colors"
           >
             <div className="flex items-center gap-2.5">
-              <List className="h-4 w-4 text-gold/45" />
-              <span>Playlist · {completedCount}/{totalLessons}</span>
+              <List className="h-4 w-4 text-gold" />
+              <span>Conteúdo do curso · {completedCount}/{totalLessons}</span>
             </div>
             {sidebarOpen ? (
-              <ChevronUp className="h-4 w-4 text-muted-foreground/35" />
+              <ChevronUp className="h-4 w-4 text-white/20" />
             ) : (
-              <ChevronDown className="h-4 w-4 text-muted-foreground/35" />
+              <ChevronDown className="h-4 w-4 text-white/20" />
             )}
           </button>
 
           <div className={`${sidebarOpen ? "block" : "hidden"} lg:block`}>
             {/* Sidebar header */}
-            <div className="border-b border-border/8 p-5">
-              <div className="mb-5 flex items-start gap-3.5">
-                <div className="flex h-12 w-12 shrink-0 overflow-hidden rounded-xl border border-border/10 bg-card/8 shadow-sm">
+            <div className="border-b border-white/5 p-6 space-y-6">
+              <div className="flex items-center gap-4">
+                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/5 bg-white/5 shadow-2xl">
                   {course.cover_image_url ? (
                     <img
                       src={course.cover_image_url}
@@ -898,79 +898,43 @@ function LessonDetailPage() {
                     />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center">
-                      <BookOpen className="h-5 w-5 text-muted-foreground/25" />
+                      <BookOpen className="h-6 w-6 text-white/20" />
                     </div>
                   )}
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-[13px] font-bold leading-snug text-foreground/80">
+                  <h3 className="text-sm font-black leading-tight text-white line-clamp-2">
                     {course.title}
                   </h3>
-                  <p className="mt-1 text-[10px] text-muted-foreground/35">
-                    {completedCount} de {totalLessons} aulas
-                  </p>
-                </div>
-
-                <span className="text-lg font-black text-gold tabular-nums">
-                  {progressPercent}%
-                </span>
-              </div>
-
-              {/* Progress bar */}
-              <div className="mb-4">
-                <div className="h-2 w-full rounded-full bg-player-progress-track overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${progressPercent}%` }}
-                    transition={{ duration: 1.2, ease: "easeOut" }}
-                    className={`h-full rounded-full ${isCourseCompleted ? "bg-player-completed" : "bg-player-progress-fill"}`}
-                  />
-                </div>
-                <div className="flex items-center justify-between mt-2">
-                  <span className="text-[10px] text-muted-foreground/35">
-                    <span className="font-bold text-foreground/55">{completedCount}</span> de {totalLessons} concluídas
-                  </span>
-                  {!isCourseCompleted && totalLessons - completedCount > 0 && (
-                    <span className="text-[10px] text-gold/35 font-medium">
-                      Faltam {totalLessons - completedCount}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {isCourseCompleted && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="mb-4 flex items-center justify-center gap-2.5 rounded-xl border border-player-completed/12 bg-player-completed/8 px-4 py-3"
-                >
-                  <Award className="h-5 w-5 text-player-completed" />
-                  <div className="text-center">
-                    <span className="block text-[12px] font-bold text-player-completed">
-                      Curso concluído! 🎉
-                    </span>
-                    <span className="block text-[10px] text-player-completed/50 mt-0.5">
-                      Parabéns pela dedicação
+                  <div className="mt-2 flex items-center gap-2">
+                    <div className="h-1 flex-1 rounded-full bg-white/10 overflow-hidden">
+                      <div 
+                        className="h-full bg-gold transition-all duration-1000" 
+                        style={{ width: `${progressPercent}%` }} 
+                      />
+                    </div>
+                    <span className="text-[10px] font-black text-gold tabular-nums">
+                      {progressPercent}%
                     </span>
                   </div>
-                </motion.div>
-              )}
+                </div>
+              </div>
 
               {/* Search */}
               <div className="relative">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground/25" />
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-white/20" />
                 <Input
                   placeholder="Buscar aula..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="h-9 border-border/10 bg-card/5 pl-9 text-[12px] rounded-xl placeholder:text-muted-foreground/20 focus:border-gold/20 focus:ring-gold/10"
+                  className="h-11 border-white/5 bg-white/5 pl-10 text-xs rounded-xl placeholder:text-white/20 focus:border-gold/30 focus:ring-gold/10 transition-all"
                 />
               </div>
             </div>
 
             {/* Lesson list */}
-            <div className="divide-y divide-border/5 max-h-[50vh] lg:max-h-none overflow-y-auto">
+            <div className="divide-y divide-white/5 overflow-y-auto">
               {filteredBySearch ? (
                 filteredBySearch.length > 0 ? (
                   filteredBySearch.map((l: any) => (
@@ -984,9 +948,9 @@ function LessonDetailPage() {
                     />
                   ))
                 ) : (
-                  <div className="p-8 text-center">
-                    <p className="text-[11px] text-muted-foreground/25">
-                      Nenhuma aula encontrada
+                  <div className="p-12 text-center">
+                    <p className="text-xs font-black uppercase tracking-widest text-white/10">
+                      Nada encontrado
                     </p>
                   </div>
                 )
@@ -1027,7 +991,7 @@ function LessonDetailPage() {
 
                   {unmoduled.length > 0 && (
                     <ModuleSection
-                      title="Aulas"
+                      title="Conteúdo Geral"
                       completedCount={
                         unmoduled.filter((l: any) => isLessonCompleted(l.id)).length
                       }
