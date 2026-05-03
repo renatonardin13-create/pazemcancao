@@ -94,6 +94,7 @@ function EditAreaPage() {
     if (area) {
       setNome(area.nome || "");
       setRotuloCurto(area.rotulo_curto || "");
+      setDescricao(area.descricao || "");
       setTipo(area.tipo || "misto");
       setSubdominio(area.subdominio || "");
       setStatus(area.status || "active");
