@@ -3,18 +3,18 @@ import { FooterLinks } from "@/components/FooterLinks";
 import logo from "@/assets/logo-paz-em-cancao.png";
 import heroImg from "@/assets/hero-bg.jpg";
 import { motion } from "framer-motion";
-
+import { MusicNoteParticles } from "@/components/MusicNoteParticles";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
 });
 
 const fadeUp = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 20 },
   visible: (delay: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 1.2, ease: [0.22, 1, 0.36, 1], delay },
+    transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay },
   }),
 };
 
@@ -26,6 +26,7 @@ function LandingPage() {
         <div className="absolute inset-0 bg-background" />
 
         {/* Musical note particles */}
+        <MusicNoteParticles />
 
         {/* Top content: Logo + Text */}
         <div className="relative z-10 flex flex-col items-center text-center px-4 sm:px-6 mt-4 sm:mt-8">
@@ -35,7 +36,7 @@ function LandingPage() {
             className="flex flex-col items-center"
           >
             {/* Logo */}
-            <motion.div variants={fadeUp} custom={0.2} className="mb-4 sm:mb-8">
+            <motion.div variants={fadeUp} custom={0.1} className="mb-4 sm:mb-8">
               <img
                 src={logo}
                 alt="Paz em Canção"
@@ -44,7 +45,7 @@ function LandingPage() {
             </motion.div>
 
             {/* Divider */}
-            <motion.div variants={fadeUp} custom={0.5}>
+            <motion.div variants={fadeUp} custom={0.3}>
               <div className="mx-auto h-px w-36 bg-gradient-to-r from-transparent via-gold/25 to-transparent" />
             </motion.div>
           </motion.div>
@@ -54,7 +55,7 @@ function LandingPage() {
             initial="hidden"
             animate="visible"
             variants={fadeUp}
-            custom={0.9}
+            custom={0.5}
             className="mt-4 sm:mt-8 relative group"
           >
             <div className="absolute -inset-8 rounded-3xl bg-gradient-to-r from-gold/5 via-gold/8 to-gold/5 blur-[40px] opacity-40" />
@@ -83,7 +84,7 @@ function LandingPage() {
           initial="hidden"
           animate="visible"
           variants={fadeUp}
-          custom={1.0}
+          custom={0.7}
           className="relative z-10 mb-6 sm:mb-8 mt-6 sm:mt-16 px-6"
         >
           <Link
