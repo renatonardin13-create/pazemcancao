@@ -15,7 +15,6 @@ import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedVitrineRouteImport } from './routes/_authenticated.vitrine'
 import { Route as AuthenticatedTrilhasRouteImport } from './routes/_authenticated.trilhas'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated.perfil'
 import { Route as AuthenticatedLancamentosRouteImport } from './routes/_authenticated.lancamentos'
@@ -70,11 +69,6 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedVitrineRoute = AuthenticatedVitrineRouteImport.update({
-  id: '/vitrine',
-  path: '/vitrine',
-  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedTrilhasRoute = AuthenticatedTrilhasRouteImport.update({
   id: '/trilhas',
@@ -232,7 +226,6 @@ export interface FileRoutesByFullPath {
   '/lancamentos': typeof AuthenticatedLancamentosRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/trilhas': typeof AuthenticatedTrilhasRoute
-  '/vitrine': typeof AuthenticatedVitrineRoute
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
@@ -262,7 +255,6 @@ export interface FileRoutesByTo {
   '/lancamentos': typeof AuthenticatedLancamentosRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/trilhas': typeof AuthenticatedTrilhasRoute
-  '/vitrine': typeof AuthenticatedVitrineRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
@@ -295,7 +287,6 @@ export interface FileRoutesById {
   '/_authenticated/lancamentos': typeof AuthenticatedLancamentosRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/trilhas': typeof AuthenticatedTrilhasRoute
-  '/_authenticated/vitrine': typeof AuthenticatedVitrineRoute
   '/_authenticated/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/_authenticated/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
@@ -330,7 +321,6 @@ export interface FileRouteTypes {
     | '/lancamentos'
     | '/perfil'
     | '/trilhas'
-    | '/vitrine'
     | '/admin/courses'
     | '/admin/dashboard'
     | '/admin/upsells'
@@ -360,7 +350,6 @@ export interface FileRouteTypes {
     | '/lancamentos'
     | '/perfil'
     | '/trilhas'
-    | '/vitrine'
     | '/admin/dashboard'
     | '/admin/upsells'
     | '/conteudo/$trackId'
@@ -392,7 +381,6 @@ export interface FileRouteTypes {
     | '/_authenticated/lancamentos'
     | '/_authenticated/perfil'
     | '/_authenticated/trilhas'
-    | '/_authenticated/vitrine'
     | '/_authenticated/admin/courses'
     | '/_authenticated/admin/dashboard'
     | '/_authenticated/admin/upsells'
@@ -462,13 +450,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/vitrine': {
-      id: '/_authenticated/vitrine'
-      path: '/vitrine'
-      fullPath: '/vitrine'
-      preLoaderRoute: typeof AuthenticatedVitrineRouteImport
-      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/trilhas': {
       id: '/_authenticated/trilhas'
@@ -743,7 +724,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedLancamentosRoute: typeof AuthenticatedLancamentosRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedTrilhasRoute: typeof AuthenticatedTrilhasRoute
-  AuthenticatedVitrineRoute: typeof AuthenticatedVitrineRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -758,7 +738,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedLancamentosRoute: AuthenticatedLancamentosRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedTrilhasRoute: AuthenticatedTrilhasRoute,
-  AuthenticatedVitrineRoute: AuthenticatedVitrineRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
