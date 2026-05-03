@@ -197,6 +197,14 @@ function EditAreaPage() {
       banner_url: bannerUrl,
       background_color: backgroundColor,
       surface_color: surfaceColor,
+      theme_mode: themeMode,
+      accent_color: accentColor,
+      button_color: buttonColor,
+      button_text_color: buttonTextColor,
+      sidebar_color: sidebarColor,
+      text_primary: textPrimary,
+      text_secondary: textSecondary,
+      elevated_surface: elevatedSurface,
     });
   };
 
