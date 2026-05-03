@@ -137,13 +137,13 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
       <div className="relative">
         <div className="absolute -inset-3 rounded-full bg-orange-500/10 blur-xl" />
         <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl border border-orange-500/25 bg-gradient-to-br from-orange-500/20 to-red-600/10 shadow-lg shadow-orange-500/10">
-          {isComingSoon ? <Clock className="h-6 w-6 text-gold/70" /> : <Lock className="h-6 w-6 text-gold/70" />}
+          {isComingSoon ? <Clock className="h-6 w-6 text-orange-500/70" /> : <Lock className="h-6 w-6 text-orange-500/70" />}
         </div>
       </div>
-      <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-gold/60">
+      <span className="text-[10px] font-bold uppercase tracking-[0.25em] text-orange-500/60">
         {isComingSoon ? "Liberação programada" : "Conteúdo Premium"}
       </span>
-      <span className="text-center text-[9px] font-medium text-gold/40">
+      <span className="text-center text-[9px] font-medium text-orange-500/40">
         {isComingSoon
           ? `${releaseText || "Em breve"}${releaseMeta.releaseDate ? ` · ${formatReleaseDate(releaseMeta.releaseDate)}` : ""}`
           : "Toque para ver detalhes"}
