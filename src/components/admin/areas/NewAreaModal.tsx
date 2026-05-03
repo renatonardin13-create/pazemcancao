@@ -420,23 +420,20 @@ export function NewAreaModal({ open, onOpenChange }: NewAreaModalProps) {
               {/* Action Buttons */}
               <div className="flex flex-col w-full max-w-sm gap-4">
                 <Button
-                  size="lg"
                   onClick={() => {
                     handleClose(false);
-                    navigate({ to: "/admin/courses" });
+                    navigate({ to: `/admin/areas/${mutation.data?.areaId}/edit` });
                   }}
-                  className="h-16 bg-gold hover:bg-gold/90 text-black font-black text-xl shadow-[0_15px_30px_rgba(212,175,55,0.3)] hover:scale-105 active:scale-95 transition-all rounded-2xl flex items-center justify-center gap-3 w-full"
+                  className="h-14 bg-[#D4AF37] text-[#0F172A] font-black text-lg rounded-2xl hover:bg-[#D4AF37]/90 shadow-2xl shadow-[#D4AF37]/20 transition-all hover:scale-[1.02] active:scale-[0.98]"
                 >
-                  <BookOpen className="h-6 w-6" />
-                  Ir para o Catálogo
+                  Configurar layout da área
                 </Button>
-                
                 <Button
                   variant="ghost"
                   onClick={() => handleClose(false)}
-                  className="h-12 text-sm font-bold text-muted-foreground hover:text-white transition-colors hover:bg-white/5 rounded-xl"
+                  className="h-12 text-slate-500 font-bold hover:text-white transition-colors hover:bg-white/5 rounded-xl"
                 >
-                  Continuar no painel
+                  Voltar para a listagem
                 </Button>
               </div>
             </motion.div>
