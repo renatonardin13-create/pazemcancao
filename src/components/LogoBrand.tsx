@@ -1,40 +1,36 @@
 import { Link } from "@tanstack/react-router";
-import defaultLogo from "@/assets/logo-paz-em-cancao.png";
-import { useArea } from "@/hooks/use-area";
+import { cn } from "@/lib/utils";
 
 interface LogoBrandProps {
-  size?: "sm" | "md" | "lg";
-  linkTo?: string;
+  size?: "sm" | "md" | "lg" | "xl";
+  className?: string;
   showSubtitle?: boolean;
+  linkTo?: string;
 }
 
-export function LogoBrand({ size = "md", linkTo }: LogoBrandProps) {
-  const { area } = useArea();
-  
-  const heights = {
-    sm: "h-8",
-    md: "h-10 sm:h-12",
-    lg: "h-16",
+export function LogoBrand({ 
+  size = "md", 
+  className, 
+  showSubtitle = true,
+  linkTo = "/"
+}: LogoBrandProps) {
+  const sizes = {
+    sm: "text-lg",
+    md: "text-xl sm:text-2xl",
+    lg: "text-3xl",
+    xl: "text-4xl sm:text-5xl",
   };
 
-  const logoSrc = area?.logo_url || defaultLogo;
-  const logoAlt = area?.nome || "Paz em Canção";
-
-  const content = (
-    <img
-      src={logoSrc}
-      alt={logoAlt}
-      className={`${heights[size]} object-contain`}
-    />
+  return (
+    <Link to={linkTo as any} className={cn("flex flex-col items-center", className)}>
+      <h1 className={cn("font-display font-bold text-gold tracking-tight", sizes[size])}>
+        Paz em Canção
+      </h1>
+      {showSubtitle && (
+        <p className="text-[10px] sm:text-xs text-muted-foreground/60 tracking-[0.3em] uppercase mt-1">
+          Biblioteca Espiritual
+        </p>
+      )}
+    </Link>
   );
-
-  if (linkTo) {
-    return (
-      <Link to={linkTo} className="hover:opacity-80 transition-opacity duration-500">
-        {content}
-      </Link>
-    );
-  }
-
-  return content;
 }
