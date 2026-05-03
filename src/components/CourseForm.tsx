@@ -314,7 +314,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                           <span className="text-xs text-muted-foreground/70 line-through">
                             R$ {parseFloat(price).toFixed(2)}
                           </span>
-                          <span className="text-sm font-bold text-gold">
+                          <span className="text-sm font-bold text-orange-500">
                             R$ {parseFloat(promotionalPrice).toFixed(2)}
                           </span>
                         </>
