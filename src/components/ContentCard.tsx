@@ -34,6 +34,7 @@ function getContentState(item: any, hasAccess: boolean, progress: ContentCardPro
 }
 
 export const ContentCard = memo(function ContentCard({ item, index, hasAccess, gradient, TypeIcon, progress, isLastAccessed, onTrackView, onTrackDownload, isFavorite, onToggleFavorite }: ContentCardProps) {
+  const navigate = useNavigate();
   const [unlockOpen, setUnlockOpen] = useState(false);
   const accessMode = item.effectiveAccessMode || (item.is_free ? 'gratuito' : 'pago');
   const launchMode = item.launch_mode || 'none';
