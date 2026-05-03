@@ -79,12 +79,12 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
   }
 
   return (
-    <div className="flex flex-col min-h-[calc(100vh-64px)] bg-[#0B1220] text-white">
+    <div className="flex flex-col min-h-[calc(100vh-64px)] bg-[#0b0b0b] text-white">
       {/* Top Section */}
       <div className="px-6 py-8 space-y-6">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div>
-            <h2 className="text-sm font-bold uppercase tracking-[0.3em] text-gold/60 mb-1">
+            <h2 className="text-sm font-bold uppercase tracking-[0.3em] text-orange-500/60 mb-1">
               {activeCategory === "Todas" ? "Pack de Louvores" : activeCategory}
             </h2>
             <h1 className="text-3xl md:text-4xl font-black tracking-tight">{courseTitle}</h1>
@@ -97,12 +97,12 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
                 placeholder="Buscar música..." 
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="bg-white/5 border-white/10 pl-10 focus:border-gold/30 h-11 rounded-xl"
+                className="bg-white/5 border-white/10 pl-10 focus:border-orange-500/30 h-11 rounded-xl"
               />
             </div>
             <Button 
               onClick={handlePlayAll}
-              className="bg-gold text-black hover:bg-gold/90 font-bold px-6 h-11 rounded-xl shadow-lg shadow-gold/10"
+              className="bg-orange-500 text-black hover:bg-orange-600 font-bold px-6 h-11 rounded-xl shadow-lg shadow-orange-500/10 transition-all duration-300"
             >
               <Play className="h-4 w-4 mr-2 fill-current" />
               Tocar Tudo
