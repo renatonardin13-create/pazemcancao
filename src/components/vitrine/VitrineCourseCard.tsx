@@ -122,8 +122,11 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
 
   const centerAction = isReleased
     ? (
-        <div className="scale-[0.5] rounded-full bg-gold/95 px-5 py-2.5 opacity-0 shadow-[0_4px_24px_rgba(0,0,0,0.4)] md:transition-all md:duration-500 md:ease-[cubic-bezier(0.22,1,0.36,1)] md:group-hover/card:scale-100 md:group-hover/card:opacity-100 sm:px-6 sm:py-3">
-          <Play className="h-4 w-4 fill-gold-foreground text-gold-foreground sm:h-5 sm:w-5" />
+        <div className="flex h-full flex-col items-center justify-center bg-black/40 backdrop-blur-[2px] opacity-0 group-hover/card:opacity-100 transition-opacity duration-300">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gold shadow-2xl shadow-gold/40 transition-transform duration-300 group-hover/card:scale-110">
+            <Play className="h-5 w-5 fill-current text-black" />
+          </div>
+          <span className="mt-4 text-[10px] font-black uppercase tracking-[0.2em] text-white">Assistir agora</span>
         </div>
       )
     : undefined;

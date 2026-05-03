@@ -122,16 +122,16 @@ export const PosterCard = memo(function PosterCard({
       />
 
       <div
-        className={`relative overflow-hidden bg-card/5 shadow-md shadow-black/25 ring-1 md:transition-all md:duration-500 md:ease-out md:group-hover/card:scale-[1.05] md:group-hover/card:shadow-[0_18px_48px_-10px_rgba(212,175,55,0.28)] ${
-          cfg.hoverGold ? "md:group-hover/card:ring-gold/40" : ""
+        className={`relative overflow-hidden bg-card/5 shadow-md shadow-black/25 ring-1 transition-all duration-300 ease-out hover:scale-[1.03] hover:shadow-[0_20px_50px_rgba(0,0,0,0.5)] ${
+          cfg.hoverGold ? "hover:ring-gold/40" : ""
         } ${
           highlight ? "ring-gold/30 shadow-[0_2px_32px_-8px] shadow-gold/15" : cfg.showBorder ? "ring-white/[0.04]" : "ring-transparent"
         }`}
         style={{ borderRadius: radius }}
       >
         <div
-          className={`relative overflow-hidden bg-gradient-to-br ${gradientClass}`}
-          style={{ aspectRatio, borderRadius: radius }}
+          className={`relative overflow-hidden bg-gradient-to-br ${gradientClass} aspect-video`}
+          style={{ borderRadius: radius }}
         >
           {/* Capa */}
           {showImage ? (
@@ -140,14 +140,14 @@ export const PosterCard = memo(function PosterCard({
               alt={coverAlt}
               context="card"
               onError={() => setImgFailed(true)}
-              className={`h-full w-full object-cover md:transition-transform md:duration-[900ms] md:ease-out md:group-hover/card:scale-[1.08] ${
+              className={`h-full w-full object-cover transition-transform duration-700 ease-out group-hover/card:scale-110 ${
                 locked ? "saturate-[0.45] brightness-[0.6]" : ""
               }`}
             />
           ) : cover && typeof cover !== "string" ? (
             cover
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center">{fallback}</div>
+            <div className="absolute inset-0 flex items-center justify-center bg-[#111]">{fallback}</div>
           )}
 
           {/* Gradiente inferior (legibilidade do título) */}
