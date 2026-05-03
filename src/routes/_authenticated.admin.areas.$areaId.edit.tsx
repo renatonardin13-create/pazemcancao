@@ -507,38 +507,135 @@ function EditAreaPage() {
             </TabsContent>
 
             <TabsContent value="cores" className="mt-0 outline-none">
-               <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl">
+               <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
+                      <Palette className="h-5 w-5 text-[#D4AF37]" />
+                    </div>
+                    <h3 className="text-xl font-black text-white">Esquema de cores</h3>
+                  </div>
+
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <Label className="text-sm font-bold">Cor Primária</Label>
+                      <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Cor Primária</Label>
                       <div className="flex gap-2">
-                        <Input type="color" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="w-14 h-12 p-1 bg-background border-white/10 cursor-pointer" />
-                        <Input value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="flex-1 h-12 bg-[#0B1220] border-white/5" />
+                        <Input type="color" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="w-14 h-14 p-1 bg-[#0B1220] border-white/10 cursor-pointer rounded-xl" />
+                        <Input value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="flex-1 h-14 bg-[#0B1220] border-white/5 font-mono" />
                       </div>
                     </div>
                     <div className="space-y-3">
-                      <Label className="text-sm font-bold">Cor Secundária</Label>
+                      <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Cor Secundária</Label>
                       <div className="flex gap-2">
-                        <Input type="color" value={secondaryColor} onChange={(e) => setSecondaryColor(e.target.value)} className="w-14 h-12 p-1 bg-background border-white/10 cursor-pointer" />
-                        <Input value={secondaryColor} onChange={(e) => setSecondaryColor(e.target.value)} className="flex-1 h-12 bg-[#0B1220] border-white/5" />
+                        <Input type="color" value={secondaryColor} onChange={(e) => setSecondaryColor(e.target.value)} className="w-14 h-14 p-1 bg-[#0B1220] border-white/10 cursor-pointer rounded-xl" />
+                        <Input value={secondaryColor} onChange={(e) => setSecondaryColor(e.target.value)} className="flex-1 h-14 bg-[#0B1220] border-white/5 font-mono" />
                       </div>
                     </div>
                     <div className="space-y-3">
-                      <Label className="text-sm font-bold">Cor de Fundo</Label>
+                      <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Cor de Fundo</Label>
                       <div className="flex gap-2">
-                        <Input type="color" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="w-14 h-12 p-1 bg-background border-white/10 cursor-pointer" />
-                        <Input value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="flex-1 h-12 bg-[#0B1220] border-white/5" />
+                        <Input type="color" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="w-14 h-14 p-1 bg-[#0B1220] border-white/10 cursor-pointer rounded-xl" />
+                        <Input value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="flex-1 h-14 bg-[#0B1220] border-white/5 font-mono" />
                       </div>
                     </div>
                     <div className="space-y-3">
-                      <Label className="text-sm font-bold">Cor de Superfície</Label>
+                      <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Cor de Superfície (Cards)</Label>
                       <div className="flex gap-2">
-                        <Input type="color" value={surfaceColor} onChange={(e) => setSurfaceColor(e.target.value)} className="w-14 h-12 p-1 bg-background border-white/10 cursor-pointer" />
-                        <Input value={surfaceColor} onChange={(e) => setSurfaceColor(e.target.value)} className="flex-1 h-12 bg-[#0B1220] border-white/5" />
+                        <Input type="color" value={surfaceColor} onChange={(e) => setSurfaceColor(e.target.value)} className="w-14 h-14 p-1 bg-[#0B1220] border-white/10 cursor-pointer rounded-xl" />
+                        <Input value={surfaceColor} onChange={(e) => setSurfaceColor(e.target.value)} className="flex-1 h-14 bg-[#0B1220] border-white/5 font-mono" />
                       </div>
                     </div>
                   </div>
                </div>
+            </TabsContent>
+
+            <TabsContent value="idioma" className="mt-0 outline-none">
+              <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
+                    <Languages className="h-5 w-5 text-[#D4AF37]" />
+                  </div>
+                  <h3 className="text-xl font-black text-white">Localização</h3>
+                </div>
+
+                <div className="max-w-md space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="language" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Idioma da interface</Label>
+                    <Select value={language} onValueChange={setLanguage}>
+                      <SelectTrigger className="h-14 bg-[#0B1220] border-white/5 focus:ring-[#D4AF37] rounded-xl font-bold text-base">
+                        <SelectValue placeholder="Selecione o idioma" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#111827] border-white/5 text-white">
+                        <SelectItem value="pt-BR">Português (Brasil)</SelectItem>
+                        <SelectItem value="en">English (US)</SelectItem>
+                        <SelectItem value="es">Español</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <p className="text-sm text-slate-500">Isso alterará os textos automáticos do sistema para os alunos desta área.</p>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="login" className="mt-0 outline-none">
+              <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
+                    <Lock className="h-5 w-5 text-[#D4AF37]" />
+                  </div>
+                  <h3 className="text-xl font-black text-white">Segurança e Acesso</h3>
+                </div>
+
+                <div className="space-y-6">
+                  <div className="p-6 rounded-2xl bg-[#0B1220] border border-white/5 flex items-center justify-between">
+                    <div className="space-y-1">
+                      <Label className="text-base font-black text-white">Exigir Login para visualizar catálogo</Label>
+                      <p className="text-sm text-slate-500 font-medium">Se desativado, a vitrine será pública.</p>
+                    </div>
+                    <Switch defaultChecked className="data-[state=checked]:bg-[#D4AF37]" />
+                  </div>
+                  <div className="p-6 rounded-2xl bg-[#0B1220] border border-white/5 flex items-center justify-between">
+                    <div className="space-y-1">
+                      <Label className="text-base font-black text-white">Permitir Auto-cadastro</Label>
+                      <p className="text-sm text-slate-500 font-medium">Novos usuários podem criar conta sozinhos.</p>
+                    </div>
+                    <Switch className="data-[state=checked]:bg-[#D4AF37]" />
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="produtos" className="mt-0 outline-none">
+              <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
+                    <Package className="h-5 w-5 text-[#D4AF37]" />
+                  </div>
+                  <h3 className="text-xl font-black text-white">Produto vinculado</h3>
+                </div>
+
+                <div className="max-w-xl space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="produtoId" className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Vincular produto do catálogo</Label>
+                    <Select value={produtoId} onValueChange={setProdutoId}>
+                      <SelectTrigger className="h-14 bg-[#0B1220] border-white/5 focus:ring-[#D4AF37] rounded-xl font-bold text-base">
+                        <SelectValue placeholder="Selecione o produto" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-[#111827] border-white/5 text-white">
+                        {products?.map((product) => (
+                          <SelectItem key={product.id} value={product.id}>
+                            {product.title}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <p className="text-sm text-slate-500 font-medium">Este produto define quais conteúdos estarão disponíveis nesta área de membros por padrão.</p>
+                </div>
+              </div>
             </TabsContent>
           </form>
         </Tabs>
