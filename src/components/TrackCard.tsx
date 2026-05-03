@@ -175,7 +175,7 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
       </span>
       <button
         onClick={handleDownload}
-        className="inline-flex items-center gap-1 text-[9px] font-semibold uppercase tracking-[0.15em] text-gold/55 transition-colors duration-500 hover:text-gold/80 sm:text-[10px]"
+        className="inline-flex items-center gap-1 text-[9px] font-semibold uppercase tracking-[0.15em] text-orange-500/55 transition-colors duration-500 hover:text-orange-500/80 sm:text-[10px]"
       >
         <Download className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
         Baixar
