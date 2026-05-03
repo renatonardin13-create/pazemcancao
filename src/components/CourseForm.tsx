@@ -68,6 +68,10 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   const [promotionalPrice, setPromotionalPrice] = useState("");
   const [status, setStatus] = useState("draft");
   const [courseType, setCourseType] = useState("aula");
+  
+  useEffect(() => {
+    onTypeChange?.(courseType);
+  }, [courseType, onTypeChange]);
   const [launchDate, setLaunchDate] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
