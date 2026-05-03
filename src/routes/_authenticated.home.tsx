@@ -51,7 +51,7 @@ function VitrinePage() {
   const t = (k: string) => k === 'catalog' ? 'Catálogo' : k === 'no_content' ? 'Nenhum conteúdo disponível no momento.' : k;
 
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ["student-shelves", "v5-streaming", undefined],
+    queryKey: ["student-shelves"],
     queryFn: () => getStudentVitrineData(),
     staleTime: 30_000,
     refetchOnWindowFocus: false,
