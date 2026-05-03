@@ -683,46 +683,221 @@ function EditAreaPage() {
             </TabsContent>
 
             <TabsContent value="cores" className="mt-0 outline-none">
-               <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
-                  <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
-                      <Palette className="h-5 w-5 text-[#D4AF37]" />
+              <div className="grid grid-cols-1 lg:grid-cols-10 gap-8">
+                {/* Left Column (60%) */}
+                <div className="lg:col-span-6 space-y-6">
+                  <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
+                        <Palette className="h-5 w-5 text-[#D4AF37]" />
+                      </div>
+                      <h3 className="text-xl font-black text-white">Configurações de Cores</h3>
                     </div>
-                    <h3 className="text-xl font-black text-white">Esquema de cores</h3>
-                  </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-3">
-                      <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Cor Primária</Label>
-                      <div className="flex gap-2">
-                        <Input type="color" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="w-14 h-14 p-1 bg-[#0B1220] border-white/10 cursor-pointer rounded-xl" />
-                        <Input value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="flex-1 h-14 bg-[#0B1220] border-white/5 font-mono" />
+                    <div className="space-y-8">
+                      {/* Theme Selection */}
+                      <div className="space-y-3">
+                        <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">1. Tema padrão</Label>
+                        <Select value={themeMode} onValueChange={setThemeMode}>
+                          <SelectTrigger className="h-14 bg-[#0B1220] border-white/5 focus:ring-[#D4AF37] rounded-xl font-bold text-base">
+                            <SelectValue placeholder="Selecione o tema" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#111827] border-white/5 text-white">
+                            <SelectItem value="auto">Automático (sistema)</SelectItem>
+                            <SelectItem value="light">Claro</SelectItem>
+                            <SelectItem value="dark">Escuro</SelectItem>
+                          </SelectContent>
+                        </Select>
                       </div>
-                    </div>
-                    <div className="space-y-3">
-                      <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Cor Secundária</Label>
-                      <div className="flex gap-2">
-                        <Input type="color" value={secondaryColor} onChange={(e) => setSecondaryColor(e.target.value)} className="w-14 h-14 p-1 bg-[#0B1220] border-white/10 cursor-pointer rounded-xl" />
-                        <Input value={secondaryColor} onChange={(e) => setSecondaryColor(e.target.value)} className="flex-1 h-14 bg-[#0B1220] border-white/5 font-mono" />
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Cor de Fundo</Label>
-                      <div className="flex gap-2">
-                        <Input type="color" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="w-14 h-14 p-1 bg-[#0B1220] border-white/10 cursor-pointer rounded-xl" />
-                        <Input value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="flex-1 h-14 bg-[#0B1220] border-white/5 font-mono" />
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <Label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">Cor de Superfície (Cards)</Label>
-                      <div className="flex gap-2">
-                        <Input type="color" value={surfaceColor} onChange={(e) => setSurfaceColor(e.target.value)} className="w-14 h-14 p-1 bg-[#0B1220] border-white/10 cursor-pointer rounded-xl" />
-                        <Input value={surfaceColor} onChange={(e) => setSurfaceColor(e.target.value)} className="flex-1 h-14 bg-[#0B1220] border-white/5 font-mono" />
+
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Primary Color */}
+                        <div className="space-y-3">
+                          <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">2. Cor primária</Label>
+                          <div className="flex gap-2">
+                            <div className="relative group/picker">
+                              <Input type="color" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="w-14 h-14 p-1 bg-[#0B1220] border-white/10 cursor-pointer rounded-xl" />
+                            </div>
+                            <Input value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} className="flex-1 h-14 bg-[#0B1220] border-white/5 font-mono text-center font-bold" />
+                          </div>
+                        </div>
+
+                        {/* Accent Color */}
+                        <div className="space-y-3">
+                          <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">3. Cor de destaque</Label>
+                          <div className="flex gap-2">
+                            <Input type="color" value={accentColor} onChange={(e) => setAccentColor(e.target.value)} className="w-14 h-14 p-1 bg-[#0B1220] border-white/10 cursor-pointer rounded-xl" />
+                            <Input value={accentColor} onChange={(e) => setAccentColor(e.target.value)} className="flex-1 h-14 bg-[#0B1220] border-white/5 font-mono text-center font-bold" />
+                          </div>
+                        </div>
+
+                        {/* Button Color */}
+                        <div className="space-y-3">
+                          <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">4. Cor dos botões</Label>
+                          <div className="flex gap-2">
+                            <Input type="color" value={buttonColor} onChange={(e) => setButtonColor(e.target.value)} className="w-14 h-14 p-1 bg-[#0B1220] border-white/10 cursor-pointer rounded-xl" />
+                            <Input value={buttonColor} onChange={(e) => setButtonColor(e.target.value)} className="flex-1 h-14 bg-[#0B1220] border-white/5 font-mono text-center font-bold" />
+                          </div>
+                        </div>
+
+                        {/* Button Text Color */}
+                        <div className="space-y-3">
+                          <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">5. Texto do botão</Label>
+                          <div className="flex gap-2">
+                            <Input type="color" value={buttonTextColor} onChange={(e) => setButtonTextColor(e.target.value)} className="w-14 h-14 p-1 bg-[#0B1220] border-white/10 cursor-pointer rounded-xl" />
+                            <Input value={buttonTextColor} onChange={(e) => setButtonTextColor(e.target.value)} className="flex-1 h-14 bg-[#0B1220] border-white/5 font-mono text-center font-bold" />
+                          </div>
+                        </div>
+
+                        {/* Background Color */}
+                        <div className="space-y-3">
+                          <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">6. Fundo geral</Label>
+                          <div className="flex gap-2">
+                            <Input type="color" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="w-14 h-14 p-1 bg-[#0B1220] border-white/10 cursor-pointer rounded-xl" />
+                            <Input value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="flex-1 h-14 bg-[#0B1220] border-white/5 font-mono text-center font-bold" />
+                          </div>
+                        </div>
+
+                        {/* Surface Color */}
+                        <div className="space-y-3">
+                          <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">7. Cards / superfícies</Label>
+                          <div className="flex gap-2">
+                            <Input type="color" value={surfaceColor} onChange={(e) => setSurfaceColor(e.target.value)} className="w-14 h-14 p-1 bg-[#0B1220] border-white/10 cursor-pointer rounded-xl" />
+                            <Input value={surfaceColor} onChange={(e) => setSurfaceColor(e.target.value)} className="flex-1 h-14 bg-[#0B1220] border-white/5 font-mono text-center font-bold" />
+                          </div>
+                        </div>
+
+                        {/* Sidebar Color */}
+                        <div className="space-y-3">
+                          <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">8. Sidebar</Label>
+                          <div className="flex gap-2">
+                            <Input type="color" value={sidebarColor} onChange={(e) => setSidebarColor(e.target.value)} className="w-14 h-14 p-1 bg-[#0B1220] border-white/10 cursor-pointer rounded-xl" />
+                            <Input value={sidebarColor} onChange={(e) => setSidebarColor(e.target.value)} className="flex-1 h-14 bg-[#0B1220] border-white/5 font-mono text-center font-bold" />
+                          </div>
+                        </div>
+
+                        {/* Text Primary */}
+                        <div className="space-y-3">
+                          <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">9. Texto principal</Label>
+                          <div className="flex gap-2">
+                            <Input type="color" value={textPrimary} onChange={(e) => setTextPrimary(e.target.value)} className="w-14 h-14 p-1 bg-[#0B1220] border-white/10 cursor-pointer rounded-xl" />
+                            <Input value={textPrimary} onChange={(e) => setTextPrimary(e.target.value)} className="flex-1 h-14 bg-[#0B1220] border-white/5 font-mono text-center font-bold" />
+                          </div>
+                        </div>
+
+                        {/* Text Secondary */}
+                        <div className="space-y-3">
+                          <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">10. Texto secundário</Label>
+                          <div className="flex gap-2">
+                            <Input type="color" value={textSecondary} onChange={(e) => setTextSecondary(e.target.value)} className="w-14 h-14 p-1 bg-[#0B1220] border-white/10 cursor-pointer rounded-xl" />
+                            <Input value={textSecondary} onChange={(e) => setTextSecondary(e.target.value)} className="flex-1 h-14 bg-[#0B1220] border-white/5 font-mono text-center font-bold" />
+                          </div>
+                        </div>
+
+                        {/* Elevated Surface */}
+                        <div className="space-y-3">
+                          <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">11. Superfície elevada</Label>
+                          <div className="flex gap-2">
+                            <Input type="color" value={elevatedSurface} onChange={(e) => setElevatedSurface(e.target.value)} className="w-14 h-14 p-1 bg-[#0B1220] border-white/10 cursor-pointer rounded-xl" />
+                            <Input value={elevatedSurface} onChange={(e) => setElevatedSurface(e.target.value)} className="flex-1 h-14 bg-[#0B1220] border-white/5 font-mono text-center font-bold" />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-               </div>
+                </div>
+
+                {/* Right Column (40%) - Preview */}
+                <div className="lg:col-span-4 space-y-6">
+                  <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl sticky top-10 overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
+                    <div className="space-y-1">
+                      <h3 className="text-xl font-black text-white">Pré-visualização</h3>
+                      <p className="text-slate-500 text-xs font-bold uppercase tracking-widest italic">Simulação da interface real</p>
+                    </div>
+
+                    {/* App Interface Simulation */}
+                    <div 
+                      className="rounded-2xl border border-white/10 overflow-hidden h-[500px] flex shadow-inner"
+                      style={{ backgroundColor: backgroundColor }}
+                    >
+                      {/* Sidebar Simulation */}
+                      <div 
+                        className="w-24 md:w-32 border-r border-white/5 p-4 flex flex-col gap-6"
+                        style={{ backgroundColor: sidebarColor }}
+                      >
+                        <div className="h-8 w-8 rounded-lg" style={{ backgroundColor: primaryColor }} />
+                        <div className="space-y-3">
+                          <div className="h-2 w-full rounded-full" style={{ backgroundColor: textSecondary, opacity: 0.2 }} />
+                          <div className="h-2 w-[80%] rounded-full" style={{ backgroundColor: textSecondary, opacity: 0.2 }} />
+                          <div className="h-2 w-[60%] rounded-full" style={{ backgroundColor: accentColor, opacity: 0.4 }} />
+                        </div>
+                      </div>
+
+                      {/* Main Simulation */}
+                      <div className="flex-1 p-6 space-y-6 overflow-hidden">
+                        <div className="flex items-center justify-between">
+                          <h4 className="text-lg font-black" style={{ color: textPrimary }}>Início</h4>
+                          <div className="flex gap-2">
+                            <div className="h-6 w-16 rounded-md" style={{ backgroundColor: accentColor, opacity: 0.2 }} />
+                            <div className="h-6 w-6 rounded-full" style={{ backgroundColor: textSecondary, opacity: 0.1 }} />
+                          </div>
+                        </div>
+
+                        {/* Cards Grid */}
+                        <div className="grid grid-cols-2 gap-4">
+                          {[1, 2, 3, 4].map(i => (
+                            <div 
+                              key={i} 
+                              className="p-4 rounded-xl border border-white/5 space-y-3 transition-colors"
+                              style={{ backgroundColor: surfaceColor }}
+                            >
+                              <div className="h-10 w-full rounded-lg bg-white/5" />
+                              <p className="text-[9px] font-bold" style={{ color: textSecondary }}>CONTEÚDO {i}</p>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Button & Badge Preview */}
+                        <div className="flex flex-col gap-3 pt-4">
+                          <div className="flex items-center gap-3">
+                            <div 
+                              className="px-4 py-2 rounded-lg text-[10px] font-black uppercase transition-all shadow-lg"
+                              style={{ backgroundColor: buttonColor, color: buttonTextColor }}
+                            >
+                              Botão Primário
+                            </div>
+                            <div 
+                              className="px-2 py-1 rounded-md text-[8px] font-black uppercase border"
+                              style={{ color: accentColor, borderColor: `${accentColor}33`, backgroundColor: `${accentColor}11` }}
+                            >
+                              Badge
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="pt-4">
+                      <Button
+                        onClick={handleSubmit}
+                        disabled={mutation.isPending || !nome || !produtoId}
+                        className="w-full h-14 bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-black font-black text-lg rounded-2xl shadow-[0_15px_30px_rgba(212,175,55,0.2)] hover:scale-[1.03] active:scale-[0.97] transition-all"
+                      >
+                        {mutation.isPending ? (
+                          <Loader2 className="h-6 w-6 animate-spin" />
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <Save className="h-5 w-5" />
+                            Salvar Cores
+                          </div>
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </TabsContent>
 
             <TabsContent value="idioma" className="mt-0 outline-none">
