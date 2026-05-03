@@ -36,7 +36,7 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
       { data: webhookSettings },
       { count: totalIntegrations },
     ] = await Promise.all([
-      supabaseAdmin.from('areas').select('*', { count: 'exact', head: true }),
+      supabaseAdmin.from('areas_membros').select('*', { count: 'exact', head: true }),
       (() => {
         let q = supabaseAdmin.from('categories').select('*', { count: 'exact', head: true });
         if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
