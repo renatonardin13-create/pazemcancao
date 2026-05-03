@@ -17,18 +17,13 @@ async function verifyAdmin(supabase: any, userId: string) {
 
 export const listAdminContentItems = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ data, context }) => {
+  .handler(async ({ context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
-    let query = supabaseAdmin
+    const { data: items, error } = await supabaseAdmin
       .from('content_items')
       .select('*')
       .order('sort_order', { ascending: true });
-
-      return { items: [] };
-    }
-
-    const { data: items, error } = await query;
 
     if (error) throw new Error(error.message);
     return { items: items || [] };
@@ -67,16 +62,12 @@ export const createContentItem = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
-    if (!data.area_id) {
-      throw new Error('O campo área de membros é obrigatório.');
-    }
-
     const { data: maxOrder } = await supabaseAdmin
       .from('content_items')
       .select('sort_order')
       .order('sort_order', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
     const accessMode = data.access_mode || (data.is_free ? 'gratuito' : (data.release_days && data.release_days > 0 ? 'liberar_em_dias' : 'pago'));
 
@@ -110,7 +101,7 @@ export const createContentItem = createServerFn({ method: 'POST' })
         locked_final_count: data.locked_final_count ?? 0,
         locked_label: data.locked_label || null,
         launch_mode: data.launch_mode || 'none',
-      } as any)
+      })
       .select()
       .single();
 
@@ -152,10 +143,6 @@ export const updateContentItem = createServerFn({ method: 'POST' })
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
-
-    if ('area_id' in data && !data.area_id) {
-      throw new Error('O campo área de membros é obrigatório.');
-    }
 
     const { id, ...updates } = data;
     const { error } = await supabaseAdmin
