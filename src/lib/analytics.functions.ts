@@ -15,6 +15,7 @@ async function verifyAdmin(supabase: any, userId: string) {
 }
 
 export const logPlay = createServerFn({ method: 'POST' })
+  .inputValidator((input: { trackId: string, durationSeconds: number }) => input)
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
@@ -30,6 +31,7 @@ export const logPlay = createServerFn({ method: 'POST' })
   });
 
 export const logDownload = createServerFn({ method: 'POST' })
+  .inputValidator((input: { trackId: string }) => input)
   .middleware([requireSupabaseAuth])
   .handler(async ({ data, context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
