@@ -192,7 +192,7 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
             initial={{ y: 100 }}
             animate={{ y: 0 }}
             exit={{ y: 100 }}
-            className="fixed bottom-0 left-0 right-0 bg-[#0B1220]/90 backdrop-blur-2xl border-t border-white/5 px-6 py-4 z-50"
+            className="fixed bottom-0 left-0 right-0 bg-[#0b0b0b]/90 backdrop-blur-2xl border-t border-white/5 px-6 py-4 z-50"
           >
             <div className="max-w-[1400px] mx-auto flex items-center justify-between gap-8">
               {/* Info */}
