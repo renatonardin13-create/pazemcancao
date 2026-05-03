@@ -33,24 +33,9 @@ import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authentic
 import { Route as ApiWebhookKiwifyRouteImport } from './routes/api/webhook/kiwify'
 import { Route as AuthenticatedCursosCourseIdRouteImport } from './routes/_authenticated.cursos.$courseId'
 import { Route as AuthenticatedConteudoTrackIdRouteImport } from './routes/_authenticated.conteudo.$trackId'
-import { Route as AuthenticatedAdminVendasRouteImport } from './routes/_authenticated.admin.vendas'
-import { Route as AuthenticatedAdminUsuariosRouteImport } from './routes/_authenticated.admin.usuarios'
-import { Route as AuthenticatedAdminUsersRouteImport } from './routes/_authenticated.admin.users'
 import { Route as AuthenticatedAdminUpsellsRouteImport } from './routes/_authenticated.admin.upsells'
-import { Route as AuthenticatedAdminTracksRouteImport } from './routes/_authenticated.admin.tracks'
-import { Route as AuthenticatedAdminShelvesRouteImport } from './routes/_authenticated.admin.shelves'
-import { Route as AuthenticatedAdminSettingsRouteImport } from './routes/_authenticated.admin.settings'
-import { Route as AuthenticatedAdminPlaylistsRouteImport } from './routes/_authenticated.admin.playlists'
-import { Route as AuthenticatedAdminJourneysRouteImport } from './routes/_authenticated.admin.journeys'
-import { Route as AuthenticatedAdminImpersonarRouteImport } from './routes/_authenticated.admin.impersonar'
-import { Route as AuthenticatedAdminHeroBannersRouteImport } from './routes/_authenticated.admin.hero-banners'
 import { Route as AuthenticatedAdminDashboardRouteImport } from './routes/_authenticated.admin.dashboard'
-import { Route as AuthenticatedAdminCursosRouteImport } from './routes/_authenticated.admin.cursos'
 import { Route as AuthenticatedAdminCoursesRouteImport } from './routes/_authenticated.admin.courses'
-import { Route as AuthenticatedAdminCouponsRouteImport } from './routes/_authenticated.admin.coupons'
-import { Route as AuthenticatedAdminConteudosRouteImport } from './routes/_authenticated.admin.conteudos'
-import { Route as AuthenticatedAdminConfiguracoesRouteImport } from './routes/_authenticated.admin.configuracoes'
-import { Route as AuthenticatedAdminCategoriesRouteImport } from './routes/_authenticated.admin.categories'
 import { Route as AuthenticatedCursosCourseIdIndexRouteImport } from './routes/_authenticated.cursos.$courseId.index'
 import { Route as AuthenticatedAdminCoursesIndexRouteImport } from './routes/_authenticated.admin.courses.index'
 import { Route as AuthenticatedAdminCoursesNewRouteImport } from './routes/_authenticated.admin.courses.new'
@@ -181,69 +166,10 @@ const AuthenticatedConteudoTrackIdRoute =
     path: '/$trackId',
     getParentRoute: () => AuthenticatedConteudoRoute,
   } as any)
-const AuthenticatedAdminVendasRoute =
-  AuthenticatedAdminVendasRouteImport.update({
-    id: '/vendas',
-    path: '/vendas',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminUsuariosRoute =
-  AuthenticatedAdminUsuariosRouteImport.update({
-    id: '/usuarios',
-    path: '/usuarios',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminUsersRoute = AuthenticatedAdminUsersRouteImport.update({
-  id: '/users',
-  path: '/users',
-  getParentRoute: () => AuthenticatedAdminRoute,
-} as any)
 const AuthenticatedAdminUpsellsRoute =
   AuthenticatedAdminUpsellsRouteImport.update({
     id: '/upsells',
     path: '/upsells',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminTracksRoute =
-  AuthenticatedAdminTracksRouteImport.update({
-    id: '/tracks',
-    path: '/tracks',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminShelvesRoute =
-  AuthenticatedAdminShelvesRouteImport.update({
-    id: '/shelves',
-    path: '/shelves',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminSettingsRoute =
-  AuthenticatedAdminSettingsRouteImport.update({
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminPlaylistsRoute =
-  AuthenticatedAdminPlaylistsRouteImport.update({
-    id: '/playlists',
-    path: '/playlists',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminJourneysRoute =
-  AuthenticatedAdminJourneysRouteImport.update({
-    id: '/journeys',
-    path: '/journeys',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminImpersonarRoute =
-  AuthenticatedAdminImpersonarRouteImport.update({
-    id: '/impersonar',
-    path: '/impersonar',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminHeroBannersRoute =
-  AuthenticatedAdminHeroBannersRouteImport.update({
-    id: '/hero-banners',
-    path: '/hero-banners',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedAdminDashboardRoute =
@@ -252,40 +178,10 @@ const AuthenticatedAdminDashboardRoute =
     path: '/dashboard',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
-const AuthenticatedAdminCursosRoute =
-  AuthenticatedAdminCursosRouteImport.update({
-    id: '/cursos',
-    path: '/cursos',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
 const AuthenticatedAdminCoursesRoute =
   AuthenticatedAdminCoursesRouteImport.update({
     id: '/courses',
     path: '/courses',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminCouponsRoute =
-  AuthenticatedAdminCouponsRouteImport.update({
-    id: '/coupons',
-    path: '/coupons',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminConteudosRoute =
-  AuthenticatedAdminConteudosRouteImport.update({
-    id: '/conteudos',
-    path: '/conteudos',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminConfiguracoesRoute =
-  AuthenticatedAdminConfiguracoesRouteImport.update({
-    id: '/configuracoes',
-    path: '/configuracoes',
-    getParentRoute: () => AuthenticatedAdminRoute,
-  } as any)
-const AuthenticatedAdminCategoriesRoute =
-  AuthenticatedAdminCategoriesRouteImport.update({
-    id: '/categories',
-    path: '/categories',
     getParentRoute: () => AuthenticatedAdminRoute,
   } as any)
 const AuthenticatedCursosCourseIdIndexRoute =
@@ -337,24 +233,9 @@ export interface FileRoutesByFullPath {
   '/perfil': typeof AuthenticatedPerfilRoute
   '/trilhas': typeof AuthenticatedTrilhasRoute
   '/vitrine': typeof AuthenticatedVitrineRoute
-  '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
-  '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
-  '/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
-  '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
-  '/admin/cursos': typeof AuthenticatedAdminCursosRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
-  '/admin/hero-banners': typeof AuthenticatedAdminHeroBannersRoute
-  '/admin/impersonar': typeof AuthenticatedAdminImpersonarRoute
-  '/admin/journeys': typeof AuthenticatedAdminJourneysRoute
-  '/admin/playlists': typeof AuthenticatedAdminPlaylistsRoute
-  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/admin/shelves': typeof AuthenticatedAdminShelvesRoute
-  '/admin/tracks': typeof AuthenticatedAdminTracksRoute
   '/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
-  '/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
-  '/admin/vendas': typeof AuthenticatedAdminVendasRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/cursos/$courseId': typeof AuthenticatedCursosCourseIdRouteWithChildren
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
@@ -382,23 +263,8 @@ export interface FileRoutesByTo {
   '/perfil': typeof AuthenticatedPerfilRoute
   '/trilhas': typeof AuthenticatedTrilhasRoute
   '/vitrine': typeof AuthenticatedVitrineRoute
-  '/admin/categories': typeof AuthenticatedAdminCategoriesRoute
-  '/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
-  '/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
-  '/admin/coupons': typeof AuthenticatedAdminCouponsRoute
-  '/admin/cursos': typeof AuthenticatedAdminCursosRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
-  '/admin/hero-banners': typeof AuthenticatedAdminHeroBannersRoute
-  '/admin/impersonar': typeof AuthenticatedAdminImpersonarRoute
-  '/admin/journeys': typeof AuthenticatedAdminJourneysRoute
-  '/admin/playlists': typeof AuthenticatedAdminPlaylistsRoute
-  '/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/admin/shelves': typeof AuthenticatedAdminShelvesRoute
-  '/admin/tracks': typeof AuthenticatedAdminTracksRoute
   '/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
-  '/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
-  '/admin/vendas': typeof AuthenticatedAdminVendasRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
@@ -430,24 +296,9 @@ export interface FileRoutesById {
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/trilhas': typeof AuthenticatedTrilhasRoute
   '/_authenticated/vitrine': typeof AuthenticatedVitrineRoute
-  '/_authenticated/admin/categories': typeof AuthenticatedAdminCategoriesRoute
-  '/_authenticated/admin/configuracoes': typeof AuthenticatedAdminConfiguracoesRoute
-  '/_authenticated/admin/conteudos': typeof AuthenticatedAdminConteudosRoute
-  '/_authenticated/admin/coupons': typeof AuthenticatedAdminCouponsRoute
   '/_authenticated/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
-  '/_authenticated/admin/cursos': typeof AuthenticatedAdminCursosRoute
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
-  '/_authenticated/admin/hero-banners': typeof AuthenticatedAdminHeroBannersRoute
-  '/_authenticated/admin/impersonar': typeof AuthenticatedAdminImpersonarRoute
-  '/_authenticated/admin/journeys': typeof AuthenticatedAdminJourneysRoute
-  '/_authenticated/admin/playlists': typeof AuthenticatedAdminPlaylistsRoute
-  '/_authenticated/admin/settings': typeof AuthenticatedAdminSettingsRoute
-  '/_authenticated/admin/shelves': typeof AuthenticatedAdminShelvesRoute
-  '/_authenticated/admin/tracks': typeof AuthenticatedAdminTracksRoute
   '/_authenticated/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
-  '/_authenticated/admin/users': typeof AuthenticatedAdminUsersRoute
-  '/_authenticated/admin/usuarios': typeof AuthenticatedAdminUsuariosRoute
-  '/_authenticated/admin/vendas': typeof AuthenticatedAdminVendasRoute
   '/_authenticated/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/_authenticated/cursos/$courseId': typeof AuthenticatedCursosCourseIdRouteWithChildren
   '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
@@ -480,24 +331,9 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/trilhas'
     | '/vitrine'
-    | '/admin/categories'
-    | '/admin/configuracoes'
-    | '/admin/conteudos'
-    | '/admin/coupons'
     | '/admin/courses'
-    | '/admin/cursos'
     | '/admin/dashboard'
-    | '/admin/hero-banners'
-    | '/admin/impersonar'
-    | '/admin/journeys'
-    | '/admin/playlists'
-    | '/admin/settings'
-    | '/admin/shelves'
-    | '/admin/tracks'
     | '/admin/upsells'
-    | '/admin/users'
-    | '/admin/usuarios'
-    | '/admin/vendas'
     | '/conteudo/$trackId'
     | '/cursos/$courseId'
     | '/api/webhook/kiwify'
@@ -525,23 +361,8 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/trilhas'
     | '/vitrine'
-    | '/admin/categories'
-    | '/admin/configuracoes'
-    | '/admin/conteudos'
-    | '/admin/coupons'
-    | '/admin/cursos'
     | '/admin/dashboard'
-    | '/admin/hero-banners'
-    | '/admin/impersonar'
-    | '/admin/journeys'
-    | '/admin/playlists'
-    | '/admin/settings'
-    | '/admin/shelves'
-    | '/admin/tracks'
     | '/admin/upsells'
-    | '/admin/users'
-    | '/admin/usuarios'
-    | '/admin/vendas'
     | '/conteudo/$trackId'
     | '/api/webhook/kiwify'
     | '/admin'
@@ -572,24 +393,9 @@ export interface FileRouteTypes {
     | '/_authenticated/perfil'
     | '/_authenticated/trilhas'
     | '/_authenticated/vitrine'
-    | '/_authenticated/admin/categories'
-    | '/_authenticated/admin/configuracoes'
-    | '/_authenticated/admin/conteudos'
-    | '/_authenticated/admin/coupons'
     | '/_authenticated/admin/courses'
-    | '/_authenticated/admin/cursos'
     | '/_authenticated/admin/dashboard'
-    | '/_authenticated/admin/hero-banners'
-    | '/_authenticated/admin/impersonar'
-    | '/_authenticated/admin/journeys'
-    | '/_authenticated/admin/playlists'
-    | '/_authenticated/admin/settings'
-    | '/_authenticated/admin/shelves'
-    | '/_authenticated/admin/tracks'
     | '/_authenticated/admin/upsells'
-    | '/_authenticated/admin/users'
-    | '/_authenticated/admin/usuarios'
-    | '/_authenticated/admin/vendas'
     | '/_authenticated/conteudo/$trackId'
     | '/_authenticated/cursos/$courseId'
     | '/api/webhook/kiwify'
@@ -783,81 +589,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedConteudoTrackIdRouteImport
       parentRoute: typeof AuthenticatedConteudoRoute
     }
-    '/_authenticated/admin/vendas': {
-      id: '/_authenticated/admin/vendas'
-      path: '/vendas'
-      fullPath: '/admin/vendas'
-      preLoaderRoute: typeof AuthenticatedAdminVendasRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/usuarios': {
-      id: '/_authenticated/admin/usuarios'
-      path: '/usuarios'
-      fullPath: '/admin/usuarios'
-      preLoaderRoute: typeof AuthenticatedAdminUsuariosRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/users': {
-      id: '/_authenticated/admin/users'
-      path: '/users'
-      fullPath: '/admin/users'
-      preLoaderRoute: typeof AuthenticatedAdminUsersRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
     '/_authenticated/admin/upsells': {
       id: '/_authenticated/admin/upsells'
       path: '/upsells'
       fullPath: '/admin/upsells'
       preLoaderRoute: typeof AuthenticatedAdminUpsellsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/tracks': {
-      id: '/_authenticated/admin/tracks'
-      path: '/tracks'
-      fullPath: '/admin/tracks'
-      preLoaderRoute: typeof AuthenticatedAdminTracksRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/shelves': {
-      id: '/_authenticated/admin/shelves'
-      path: '/shelves'
-      fullPath: '/admin/shelves'
-      preLoaderRoute: typeof AuthenticatedAdminShelvesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/settings': {
-      id: '/_authenticated/admin/settings'
-      path: '/settings'
-      fullPath: '/admin/settings'
-      preLoaderRoute: typeof AuthenticatedAdminSettingsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/playlists': {
-      id: '/_authenticated/admin/playlists'
-      path: '/playlists'
-      fullPath: '/admin/playlists'
-      preLoaderRoute: typeof AuthenticatedAdminPlaylistsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/journeys': {
-      id: '/_authenticated/admin/journeys'
-      path: '/journeys'
-      fullPath: '/admin/journeys'
-      preLoaderRoute: typeof AuthenticatedAdminJourneysRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/impersonar': {
-      id: '/_authenticated/admin/impersonar'
-      path: '/impersonar'
-      fullPath: '/admin/impersonar'
-      preLoaderRoute: typeof AuthenticatedAdminImpersonarRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/hero-banners': {
-      id: '/_authenticated/admin/hero-banners'
-      path: '/hero-banners'
-      fullPath: '/admin/hero-banners'
-      preLoaderRoute: typeof AuthenticatedAdminHeroBannersRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/admin/dashboard': {
@@ -867,46 +603,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAdminDashboardRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
-    '/_authenticated/admin/cursos': {
-      id: '/_authenticated/admin/cursos'
-      path: '/cursos'
-      fullPath: '/admin/cursos'
-      preLoaderRoute: typeof AuthenticatedAdminCursosRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
     '/_authenticated/admin/courses': {
       id: '/_authenticated/admin/courses'
       path: '/courses'
       fullPath: '/admin/courses'
       preLoaderRoute: typeof AuthenticatedAdminCoursesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/coupons': {
-      id: '/_authenticated/admin/coupons'
-      path: '/coupons'
-      fullPath: '/admin/coupons'
-      preLoaderRoute: typeof AuthenticatedAdminCouponsRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/conteudos': {
-      id: '/_authenticated/admin/conteudos'
-      path: '/conteudos'
-      fullPath: '/admin/conteudos'
-      preLoaderRoute: typeof AuthenticatedAdminConteudosRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/configuracoes': {
-      id: '/_authenticated/admin/configuracoes'
-      path: '/configuracoes'
-      fullPath: '/admin/configuracoes'
-      preLoaderRoute: typeof AuthenticatedAdminConfiguracoesRouteImport
-      parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/_authenticated/admin/categories': {
-      id: '/_authenticated/admin/categories'
-      path: '/categories'
-      fullPath: '/admin/categories'
-      preLoaderRoute: typeof AuthenticatedAdminCategoriesRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
     }
     '/_authenticated/cursos/$courseId/': {
@@ -967,46 +668,16 @@ const AuthenticatedAdminCoursesRouteWithChildren =
   )
 
 interface AuthenticatedAdminRouteChildren {
-  AuthenticatedAdminCategoriesRoute: typeof AuthenticatedAdminCategoriesRoute
-  AuthenticatedAdminConfiguracoesRoute: typeof AuthenticatedAdminConfiguracoesRoute
-  AuthenticatedAdminConteudosRoute: typeof AuthenticatedAdminConteudosRoute
-  AuthenticatedAdminCouponsRoute: typeof AuthenticatedAdminCouponsRoute
   AuthenticatedAdminCoursesRoute: typeof AuthenticatedAdminCoursesRouteWithChildren
-  AuthenticatedAdminCursosRoute: typeof AuthenticatedAdminCursosRoute
   AuthenticatedAdminDashboardRoute: typeof AuthenticatedAdminDashboardRoute
-  AuthenticatedAdminHeroBannersRoute: typeof AuthenticatedAdminHeroBannersRoute
-  AuthenticatedAdminImpersonarRoute: typeof AuthenticatedAdminImpersonarRoute
-  AuthenticatedAdminJourneysRoute: typeof AuthenticatedAdminJourneysRoute
-  AuthenticatedAdminPlaylistsRoute: typeof AuthenticatedAdminPlaylistsRoute
-  AuthenticatedAdminSettingsRoute: typeof AuthenticatedAdminSettingsRoute
-  AuthenticatedAdminShelvesRoute: typeof AuthenticatedAdminShelvesRoute
-  AuthenticatedAdminTracksRoute: typeof AuthenticatedAdminTracksRoute
   AuthenticatedAdminUpsellsRoute: typeof AuthenticatedAdminUpsellsRoute
-  AuthenticatedAdminUsersRoute: typeof AuthenticatedAdminUsersRoute
-  AuthenticatedAdminUsuariosRoute: typeof AuthenticatedAdminUsuariosRoute
-  AuthenticatedAdminVendasRoute: typeof AuthenticatedAdminVendasRoute
   AuthenticatedAdminIndexRoute: typeof AuthenticatedAdminIndexRoute
 }
 
 const AuthenticatedAdminRouteChildren: AuthenticatedAdminRouteChildren = {
-  AuthenticatedAdminCategoriesRoute: AuthenticatedAdminCategoriesRoute,
-  AuthenticatedAdminConfiguracoesRoute: AuthenticatedAdminConfiguracoesRoute,
-  AuthenticatedAdminConteudosRoute: AuthenticatedAdminConteudosRoute,
-  AuthenticatedAdminCouponsRoute: AuthenticatedAdminCouponsRoute,
   AuthenticatedAdminCoursesRoute: AuthenticatedAdminCoursesRouteWithChildren,
-  AuthenticatedAdminCursosRoute: AuthenticatedAdminCursosRoute,
   AuthenticatedAdminDashboardRoute: AuthenticatedAdminDashboardRoute,
-  AuthenticatedAdminHeroBannersRoute: AuthenticatedAdminHeroBannersRoute,
-  AuthenticatedAdminImpersonarRoute: AuthenticatedAdminImpersonarRoute,
-  AuthenticatedAdminJourneysRoute: AuthenticatedAdminJourneysRoute,
-  AuthenticatedAdminPlaylistsRoute: AuthenticatedAdminPlaylistsRoute,
-  AuthenticatedAdminSettingsRoute: AuthenticatedAdminSettingsRoute,
-  AuthenticatedAdminShelvesRoute: AuthenticatedAdminShelvesRoute,
-  AuthenticatedAdminTracksRoute: AuthenticatedAdminTracksRoute,
   AuthenticatedAdminUpsellsRoute: AuthenticatedAdminUpsellsRoute,
-  AuthenticatedAdminUsersRoute: AuthenticatedAdminUsersRoute,
-  AuthenticatedAdminUsuariosRoute: AuthenticatedAdminUsuariosRoute,
-  AuthenticatedAdminVendasRoute: AuthenticatedAdminVendasRoute,
   AuthenticatedAdminIndexRoute: AuthenticatedAdminIndexRoute,
 }
 
