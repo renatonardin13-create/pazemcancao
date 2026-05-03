@@ -120,7 +120,6 @@ export function ProductDialog({ open, onOpenChange, course }: ProductDialogProps
 
               <TabsContent value="musica" className="mt-0 outline-none">
                 {courseType === "louvores" ? (
-                  <CourseMusicasTab courseId={currentCourse?.id} />
                 ) : (
                   <div className="py-20 text-center border-2 border-dashed border-white/5 rounded-[32px] bg-white/[0.02]">
                     <p className="text-muted-foreground">Módulos e aulas em breve...</p>

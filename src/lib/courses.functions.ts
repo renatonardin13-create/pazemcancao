@@ -4,7 +4,6 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 export const listPublishedCourses = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { areaId?: string }) => input)
   .handler(async ({ data: inputData, context }) => {
     const { supabase } = context;
 
@@ -13,8 +12,6 @@ export const listPublishedCourses = createServerFn({ method: 'POST' })
       .select('*, categories(name, slug, icon)')
       .eq('status', 'published');
 
-    if (inputData?.areaId) {
-      query = query.eq('area_id', inputData.areaId);
     } else {
       return { courses: [] };
     }
@@ -28,7 +25,6 @@ export const listPublishedCourses = createServerFn({ method: 'POST' })
 
 export const listCategories = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { areaId?: string }) => input)
   .handler(async ({ data: inputData, context }) => {
     const { supabase } = context;
 
@@ -36,8 +32,6 @@ export const listCategories = createServerFn({ method: 'POST' })
       .from('categories')
       .select('*');
 
-    if (inputData?.areaId) {
-      query = query.eq('area_id', inputData.areaId);
     } else {
       return { categories: [] };
     }

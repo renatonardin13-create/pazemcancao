@@ -30,7 +30,6 @@ interface EditTrackDialogProps {
     cover_url: string | null;
     is_bonus?: boolean;
     bonus_release_date?: string | null;
-    // area_id removed
   };
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -38,12 +37,8 @@ interface EditTrackDialogProps {
 
 export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogProps) {
   const queryClient = useQueryClient();
-  const activeArea = null;
 
   const { data: catData } = useQuery({
-    queryKey: ["admin-categories", activeArea?.id],
-    queryFn: () => listAdminCategories({ data: { areaId: activeArea?.id } }),
-    enabled: !!activeArea?.id,
   });
   
   const categories = (catData?.categories || []).map((c: any) => c.name);
@@ -52,7 +47,6 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
   const [title, setTitle] = useState(track.title);
   const [category, setCategory] = useState(track.category);
   const [description, setDescription] = useState(track.description || "");
-  // areaId state removed
   const [isBonus, setIsBonus] = useState(track.is_bonus || false);
   const [bonusDays, setBonusDays] = useState<string>(() => {
     if (!track.bonus_release_date) return "";
@@ -145,7 +139,6 @@ export function EditTrackDialog({ track, open, onOpenChange }: EditTrackDialogPr
           category,
           description: description.trim() || undefined,
           cover_url: cover_url === null ? "" : (cover_url || undefined),
-          // area_id removed
           is_bonus: isBonus,
           bonus_release_date: computedReleaseDate,
         },

@@ -66,7 +66,6 @@ const PAGE_SIZE = 6;
 
 function AdminCoursesPage() {
   const queryClient = useQueryClient();
-  const activeArea = null;
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
@@ -77,15 +76,9 @@ function AdminCoursesPage() {
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-courses", activeArea?.id],
-    queryFn: () => listAdminCourses({ data: { areaId: activeArea?.id } }),
-    enabled: !!activeArea?.id,
   });
 
   const { data: catData, isLoading: catLoading } = useQuery({
-    queryKey: ["admin-categories", activeArea?.id],
-    queryFn: () => listAdminCategories({ data: { areaId: activeArea?.id } }),
-    enabled: !!activeArea?.id,
   });
 
   const categories = catData?.categories || [];

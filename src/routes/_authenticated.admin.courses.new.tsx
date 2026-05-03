@@ -25,15 +25,11 @@ export const Route = createFileRoute("/_authenticated/admin/courses/new")({
 function NewCoursePage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const activeArea = null;
   const formRef = useRef<HTMLFormElement>(null);
   const [activeTab, setActiveTab] = useState("detalhes");
   const [courseType, setCourseType] = useState("aula");
 
   const { data: catData, isLoading: catLoading } = useQuery({
-    queryKey: ["admin-categories", activeArea?.id],
-    queryFn: () => listAdminCategories({ data: { areaId: activeArea?.id } }),
-    enabled: !!activeArea?.id,
   });
 
   const categories = catData?.categories || [];

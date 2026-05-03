@@ -314,7 +314,6 @@ function CourseDetailPage() {
   if (isLouvoresPack) {
     return (
       <StudentLayout>
-        <MusicPackPlayer courseId={courseId} courseTitle={course.title} />
       </StudentLayout>
     );
   }

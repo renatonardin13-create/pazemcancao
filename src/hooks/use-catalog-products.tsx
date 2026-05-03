@@ -8,7 +8,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 import { getStudentVitrineData } from "@/lib/student-vitrine.functions";
-// useArea removed
 import type { VitrineCourse, VitrineShelf } from "@/components/vitrine/types";
 
 export function useCatalogProducts() {

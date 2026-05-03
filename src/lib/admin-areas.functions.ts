@@ -53,7 +53,6 @@ export const createArea = createServerFn({ method: 'POST' })
       .single();
 
     if (error) throw new Error(error.message);
-    return { success: true, areaId: newArea.id };
   });
 
 export const getAreas = createServerFn({ method: 'GET' })

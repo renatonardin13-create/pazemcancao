@@ -84,13 +84,11 @@ function ContentPage() {
   const queryClient = useQueryClient();
 
   const handleTrackView = useCallback((contentId: string) => {
-    trackContentView({ data: { contentId, areaId: undefined } }).then(() => {
       queryClient.invalidateQueries({ queryKey: ["content-items"] });
     });
   }, [queryClient, undefined]);
 
   const handleTrackDownload = useCallback((contentId: string) => {
-    trackContentDownload({ data: { contentId, areaId: undefined } }).then(() => {
       queryClient.invalidateQueries({ queryKey: ["content-items"] });
     });
   }, [queryClient, undefined]);
@@ -107,7 +105,6 @@ function ContentPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["content-items", undefined],
-    queryFn: () => listContentItems({ data: { areaId: undefined } }),
     refetchOnWindowFocus: true,
     staleTime: 60_000,
   });

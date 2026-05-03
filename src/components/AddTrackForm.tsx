@@ -20,19 +20,14 @@ interface AddTrackFormProps {
 
 export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
   const queryClient = useQueryClient();
-  const activeArea = null;
   
   const { data: catData } = useQuery({
-    queryKey: ["admin-categories", activeArea?.id],
-    queryFn: () => listAdminCategories({ data: { areaId: activeArea?.id } }),
-    enabled: !!activeArea?.id,
   });
   const categories = (catData?.categories || []).map((c: any) => c.name);
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [duration, setDuration] = useState("");
   const [description, setDescription] = useState("");
-  // areaId state removed
   const [mp3File, setMp3File] = useState<File | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
   const [coverPreview, setCoverPreview] = useState<string | null>(null);
@@ -90,7 +85,6 @@ export function AddTrackForm({ onSuccess }: AddTrackFormProps) {
           category,
           duration: duration || "0:00",
           storage_path: fileName,
-          area_id: activeArea?.id,
           download_url: urlData.publicUrl,
           description: description || undefined,
           cover_url: coverUrl,

@@ -20,7 +20,6 @@ function EbooksPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["content-items", undefined],
-    queryFn: () => listContentItems({ data: { areaId: undefined } }),
     staleTime: 60_000,
   });
 
@@ -43,13 +42,11 @@ function EbooksPage() {
   }, [allItems]);
 
   const handleTrackView = useCallback((contentId: string) => {
-    trackContentView({ data: { contentId, areaId: undefined } }).then(() => {
       queryClient.invalidateQueries({ queryKey: ["content-items"] });
     });
   }, [queryClient, undefined]);
 
   const handleTrackDownload = useCallback((contentId: string) => {
-    trackContentDownload({ data: { contentId, areaId: undefined } }).then(() => {
       queryClient.invalidateQueries({ queryKey: ["content-items"] });
     });
   }, [queryClient, undefined]);

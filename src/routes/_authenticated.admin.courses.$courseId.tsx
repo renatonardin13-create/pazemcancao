@@ -1,7 +1,6 @@
 import { toastError } from "@/lib/toast-utils";
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { CourseForm } from "@/components/CourseForm";
-import { CourseIntegrationSection } from "@/components/CourseIntegrationSection";
 import { getAdminCourse, updateCourse } from "@/lib/admin-courses.functions";
 import { CourseModulesTab } from "@/components/CourseModulesTab";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -147,14 +146,12 @@ function EditCoursePage() {
             </div>
           )}
           {isLouvoresPack ? (
-            <CourseMusicasTab courseId={courseId} />
           ) : (
             <CourseModulesTab courseId={courseId} />
           )}
         </TabsContent>
 
         <TabsContent value="settings" className="mt-4">
-          <CourseIntegrationSection courseId={courseId} />
         </TabsContent>
       </Tabs>
     </div>
