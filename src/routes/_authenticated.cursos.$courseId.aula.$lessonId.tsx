@@ -396,7 +396,7 @@ function LessonDetailPage() {
             <div className="border-b border-white/5 p-6 space-y-6">
               <div className="flex items-center gap-4">
                 <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-white/5 bg-white/5">
-                  <img src={course.cover_image_url} alt={course.title} className="h-full w-full object-cover" />
+                  <img src={course.cover_image_url || undefined} alt={course.title} className="h-full w-full object-cover" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <h3 className="text-sm font-black text-white line-clamp-2">{course.title}</h3>
