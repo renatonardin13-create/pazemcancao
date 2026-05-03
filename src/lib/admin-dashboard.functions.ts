@@ -4,7 +4,6 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 export const getDashboardStats = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { areaId?: string }) => input)
   .handler(async ({ data: inputData, context }) => {
     const { supabase, userId } = context;
 

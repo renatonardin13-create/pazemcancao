@@ -50,7 +50,6 @@ function sanitizeBannerInput(raw: any) {
 
 export const listHeroBanners = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { areaId?: string } | void) => input)
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     let query = (supabaseAdmin as any)
@@ -58,9 +57,6 @@ export const listHeroBanners = createServerFn({ method: "POST" })
       .select("*")
       .order("sort_order", { ascending: true });
 
-    if (data?.areaId) {
-      query = query.eq("area_id", data.areaId);
-    } else {
       return { banners: [] };
     }
 
@@ -173,7 +169,6 @@ export const toggleHeroBannerActive = createServerFn({ method: "POST" })
 
 export const listCoursesForBannerSelector = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { areaId?: string } | void) => input)
   .handler(async ({ data, context }) => {
     await assertAdmin(context);
     let query = supabaseAdmin
@@ -181,9 +176,6 @@ export const listCoursesForBannerSelector = createServerFn({ method: "POST" })
       .select("id, title, status")
       .order("title", { ascending: true });
 
-    if (data?.areaId) {
-      query = query.eq("area_id", data.areaId);
-    } else {
       return { courses: [] };
     }
 

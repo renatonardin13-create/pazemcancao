@@ -18,7 +18,6 @@ async function verifyAdmin(supabase: any, userId: string) {
 
 export const listAdminPlaylists = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { areaId?: string } | void) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
@@ -27,9 +26,6 @@ export const listAdminPlaylists = createServerFn({ method: 'POST' })
       .select('*')
       .order('sort_order', { ascending: true });
 
-    if (data?.areaId) {
-      query = query.eq('area_id', data.areaId);
-    } else {
       return { playlists: [] };
     }
 
@@ -81,7 +77,6 @@ export const createPlaylist = createServerFn({ method: 'POST' })
         name: data.name,
         description: data.description || null,
         cover_url: data.cover_url || null,
-        area_id: data.area_id,
         sort_order: (maxOrder?.sort_order ?? 0) + 1,
         is_active: true,
       })

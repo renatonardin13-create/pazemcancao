@@ -17,7 +17,6 @@ async function verifyAdmin(supabase: any, userId: string) {
 
 export const listAdminContentItems = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { areaId?: string } | void) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
@@ -26,9 +25,6 @@ export const listAdminContentItems = createServerFn({ method: 'POST' })
       .select('*')
       .order('sort_order', { ascending: true });
 
-    if (data?.areaId) {
-      query = query.eq('area_id', data.areaId);
-    } else {
       return { items: [] };
     }
 
@@ -44,7 +40,6 @@ export const createContentItem = createServerFn({ method: 'POST' })
     title: string;
     description?: string;
     content_type: string;
-    area_id?: string;
     cover_url?: string;
     file_url?: string;
     video_url?: string;
@@ -91,7 +86,6 @@ export const createContentItem = createServerFn({ method: 'POST' })
         title: data.title,
         description: data.description || null,
         content_type: data.content_type,
-        area_id: data.area_id || null,
         cover_url: data.cover_url || null,
         file_url: data.file_url || null,
         video_url: data.video_url || null,
@@ -131,7 +125,6 @@ export const updateContentItem = createServerFn({ method: 'POST' })
     title?: string;
     description?: string;
     content_type?: string;
-    area_id?: string;
     cover_url?: string;
     file_url?: string;
     video_url?: string;

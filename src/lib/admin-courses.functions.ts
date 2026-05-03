@@ -9,7 +9,6 @@ const normalizeCourseType = (value?: string) => {
 
 export const listAdminCourses = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { areaId?: string } | void) => input)
   .handler(async ({ data, context }) => {
     const { supabase, userId } = context;
 
@@ -27,9 +26,6 @@ export const listAdminCourses = createServerFn({ method: 'POST' })
       .select('*, categories(name, slug, icon), modules(id, lessons(id))')
       .order('sort_order', { ascending: true });
 
-    if (data?.areaId) {
-      query = query.eq('area_id', data.areaId);
-    } else {
       return { courses: [] };
     }
 
@@ -81,7 +77,6 @@ export const createCourse = createServerFn({ method: 'POST' })
     cover_image_url?: string;
     banner_image_url?: string;
     category_id?: string;
-    area_id?: string;
     price?: number;
     status?: string;
     course_type?: string;
@@ -142,7 +137,6 @@ export const updateCourse = createServerFn({ method: 'POST' })
     cover_image_url?: string | null;
     banner_image_url?: string | null;
     category_id?: string | null;
-    area_id?: string | null;
     price?: number;
     promotional_price?: number | null;
     status?: string;
@@ -218,7 +212,6 @@ export const deleteCourse = createServerFn({ method: 'POST' })
 
 export const listAdminCategories = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { areaId?: string } | void) => input)
   .handler(async ({ data, context }) => {
     const { supabase } = context;
 
@@ -227,9 +220,6 @@ export const listAdminCategories = createServerFn({ method: 'POST' })
       .select('*')
       .order('sort_order', { ascending: true });
 
-    if (data?.areaId) {
-      query = query.eq('area_id', data.areaId);
-    } else {
       return { categories: [] };
     }
 

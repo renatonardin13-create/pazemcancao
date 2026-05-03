@@ -24,7 +24,6 @@ export const listAdminTracks = createServerFn({ method: 'POST' })
     search?: string;
     category?: string;
     status?: string;
-    areaId?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
@@ -63,7 +62,6 @@ export const listAdminTracks = createServerFn({ method: 'POST' })
 
 export const listAdminTrackCategories = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .inputValidator((input: { areaId?: string }) => input)
   .handler(async ({ data: inputData, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
@@ -87,7 +85,6 @@ export const createTrack = createServerFn({ method: 'POST' })
     category: string;
     duration: string;
     storage_path: string;
-    area_id?: string;
     cover_url?: string;
     download_url?: string;
     description?: string;
@@ -115,7 +112,6 @@ export const createTrack = createServerFn({ method: 'POST' })
         category: data.category,
         duration: data.duration,
         storage_path: data.storage_path,
-        area_id: data.area_id || null,
         cover_url: data.cover_url || null,
         download_url: data.download_url || null,
         description: data.description || null,
@@ -139,7 +135,6 @@ export const updateTrack = createServerFn({ method: 'POST' })
     category?: string;
     duration?: string;
     storage_path?: string;
-    area_id?: string;
     cover_url?: string;
     download_url?: string;
     description?: string;
