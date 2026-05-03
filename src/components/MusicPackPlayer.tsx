@@ -258,7 +258,7 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
                     <div className="h-full bg-white/40 w-2/3" />
                   </div>
                 </div>
-                <button className="text-white/40 hover:text-gold transition-colors">
+                <button className="text-white/40 hover:text-orange-500 transition-colors">
                   <Clock className="h-4 w-4" />
                 </button>
               </div>
