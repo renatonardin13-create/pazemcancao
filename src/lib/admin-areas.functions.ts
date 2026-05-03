@@ -16,9 +16,9 @@ export const checkSlugAvailability = createServerFn({ method: 'POST' })
   .inputValidator(z.object({ slug: slugSchema }))
   .handler(async ({ data }) => {
     const { data: existing } = await supabaseAdmin
-      .from('areas')
+      .from('areas_membros')
       .select('id')
-      .eq('slug', data.slug)
+      .eq('subdominio', data.slug)
       .maybeSingle();
 
     return { available: !existing };
@@ -41,7 +41,6 @@ export const createArea = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     const { userId } = context;
 
-    // Security check: Only admins can create areas
     const { data: adminRole } = await supabaseAdmin
       .from('user_roles')
       .select('role')
@@ -56,18 +55,19 @@ export const createArea = createServerFn({ method: 'POST' })
     }
 
     const { data: newArea, error } = await supabaseAdmin
-      .from('areas')
+      .from('areas_membros')
       .insert({
-        name: data.name,
-        slug: data.slug,
+        nome: data.name,
+        subdominio: data.slug,
         language: data.language,
         status: data.status,
-        product_id: data.product_id,
-        is_primary: data.is_primary || false,
+        produto_id: data.product_id,
+        principal: data.is_primary || false,
         primary_color: data.primary_color,
         secondary_color: data.secondary_color,
         background_color: data.background_color,
         surface_color: data.surface_color,
+        ativa: true
       })
       .select('id')
       .single();
@@ -81,7 +81,6 @@ export const getAreas = createServerFn({ method: 'GET' })
   .handler(async ({ context }) => {
     const { userId } = context;
 
-    // Security check: Only admins can list all areas
     const { data: adminRole } = await supabaseAdmin
       .from('user_roles')
       .select('role')
@@ -96,12 +95,12 @@ export const getAreas = createServerFn({ method: 'GET' })
     }
 
     const { data: areas, error } = await supabaseAdmin
-      .from('areas')
-      .select('*, courses(title)')
-      .order('created_at', { ascending: false });
+      .from('areas_membros')
+      .select('*, courses:produto_id(title)')
+      .order('criado_em', { ascending: false });
 
     if (error) throw new Error(error.message);
-    return { areas };
+    return { areas: areas || [] };
   });
 
 export const updateArea = createServerFn({ method: 'POST' })
@@ -132,14 +131,14 @@ export const updateArea = createServerFn({ method: 'POST' })
     }
 
     const { error } = await supabaseAdmin
-      .from('areas')
+      .from('areas_membros')
       .update({
-        name: data.name,
-        slug: data.slug,
+        nome: data.name,
+        subdominio: data.slug,
         language: data.language,
         status: data.status,
-        product_id: data.product_id,
-        is_primary: data.is_primary,
+        produto_id: data.product_id,
+        principal: data.is_primary,
       })
       .eq('id', data.id);
 
@@ -167,7 +166,7 @@ export const deleteArea = createServerFn({ method: 'POST' })
     }
 
     const { error } = await supabaseAdmin
-      .from('areas')
+      .from('areas_membros')
       .delete()
       .eq('id', data.id);
 
@@ -195,7 +194,7 @@ export const duplicateArea = createServerFn({ method: 'POST' })
     }
 
     const { data: area, error: fetchError } = await supabaseAdmin
-      .from('areas')
+      .from('areas_membros')
       .select('*')
       .eq('id', data.id)
       .single();
@@ -203,28 +202,22 @@ export const duplicateArea = createServerFn({ method: 'POST' })
     if (fetchError) throw new Error(fetchError.message);
 
     const { data: newArea, error: insertError } = await supabaseAdmin
-      .from('areas')
+      .from('areas_membros')
       .insert({
-        name: `${area.name} (Cópia)`,
-        slug: `${area.slug}-copia-${Math.floor(Math.random() * 1000)}`,
+        nome: `${area.nome} (Cópia)`,
+        subdominio: `${area.subdominio}-copia-${Math.floor(Math.random() * 1000)}`,
         language: area.language,
         status: 'draft',
-        product_id: area.product_id,
-        is_primary: false,
-        description: area.description,
+        produto_id: area.produto_id,
+        principal: false,
+        ativa: true,
         primary_color: area.primary_color,
-        logo_url: area.logo_url,
-        domain: area.domain,
-        favicon_url: area.favicon_url,
-        banner_url: area.banner_url,
         secondary_color: area.secondary_color,
         background_color: area.background_color,
         surface_color: area.surface_color,
-        login_title: area.login_title,
-        login_subtitle: area.login_subtitle,
-        login_background_url: area.login_background_url,
-        settings: area.settings,
-        short_label: area.short_label,
+        logo_url: area.logo_url,
+        favicon_url: area.favicon_url,
+        banner_url: area.banner_url
       })
       .select('id')
       .single();
