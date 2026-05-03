@@ -3,7 +3,7 @@ import { FooterLinks } from "@/components/FooterLinks";
 import logo from "@/assets/logo-paz-em-cancao.png";
 import heroImg from "@/assets/hero-bg.jpg";
 import { motion } from "framer-motion";
-import { MusicNoteParticles } from "@/components/MusicNoteParticles";
+
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
@@ -26,7 +26,6 @@ function LandingPage() {
         <div className="absolute inset-0 bg-background" />
 
         {/* Musical note particles */}
-        <MusicNoteParticles />
 
         {/* Top content: Logo + Text */}
         <div className="relative z-10 flex flex-col items-center text-center px-4 sm:px-6 mt-4 sm:mt-8">

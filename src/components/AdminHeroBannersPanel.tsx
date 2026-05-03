@@ -73,6 +73,7 @@ import {
   toggleHeroBannerActive,
   listCoursesForBannerSelector,
 } from "@/lib/admin-hero-banners.functions";
+import { listAdminCourses } from "@/lib/admin-courses.functions";
 import { getHeroBannerMetrics } from "@/lib/hero-banner-metrics.functions";
 import { HeroBanner } from "@/components/vitrine/HeroBanner";
 

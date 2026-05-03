@@ -9,13 +9,11 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as WebhookRouteImport } from './routes/webhook'
 import { Route as TermosRouteImport } from './routes/termos'
 import { Route as PrivacidadeRouteImport } from './routes/privacidade'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AuthenticatedVitrineRouteImport } from './routes/_authenticated.vitrine'
 import { Route as AuthenticatedTrilhasRouteImport } from './routes/_authenticated.trilhas'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated.perfil'
 import { Route as AuthenticatedLancamentosRouteImport } from './routes/_authenticated.lancamentos'
@@ -30,7 +28,6 @@ import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated.
 import { Route as AuthenticatedCursosIndexRouteImport } from './routes/_authenticated.cursos.index'
 import { Route as AuthenticatedConteudoIndexRouteImport } from './routes/_authenticated.conteudo.index'
 import { Route as AuthenticatedAdminIndexRouteImport } from './routes/_authenticated.admin.index'
-import { Route as ApiWebhookKiwifyRouteImport } from './routes/api/webhook/kiwify'
 import { Route as AuthenticatedCursosCourseIdRouteImport } from './routes/_authenticated.cursos.$courseId'
 import { Route as AuthenticatedConteudoTrackIdRouteImport } from './routes/_authenticated.conteudo.$trackId'
 import { Route as AuthenticatedAdminUpsellsRouteImport } from './routes/_authenticated.admin.upsells'
@@ -42,11 +39,6 @@ import { Route as AuthenticatedAdminCoursesNewRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdminCoursesCourseIdRouteImport } from './routes/_authenticated.admin.courses.$courseId'
 import { Route as AuthenticatedCursosCourseIdAulaLessonIdRouteImport } from './routes/_authenticated.cursos.$courseId.aula.$lessonId'
 
-const WebhookRoute = WebhookRouteImport.update({
-  id: '/webhook',
-  path: '/webhook',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const TermosRoute = TermosRouteImport.update({
   id: '/termos',
   path: '/termos',
@@ -70,11 +62,6 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AuthenticatedVitrineRoute = AuthenticatedVitrineRouteImport.update({
-  id: '/vitrine',
-  path: '/vitrine',
-  getParentRoute: () => AuthenticatedRoute,
 } as any)
 const AuthenticatedTrilhasRoute = AuthenticatedTrilhasRouteImport.update({
   id: '/trilhas',
@@ -149,11 +136,6 @@ const AuthenticatedAdminIndexRoute = AuthenticatedAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedAdminRoute,
 } as any)
-const ApiWebhookKiwifyRoute = ApiWebhookKiwifyRouteImport.update({
-  id: '/api/webhook/kiwify',
-  path: '/api/webhook/kiwify',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthenticatedCursosCourseIdRoute =
   AuthenticatedCursosCourseIdRouteImport.update({
     id: '/$courseId',
@@ -220,7 +202,6 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
-  '/webhook': typeof WebhookRoute
   '/admin': typeof AuthenticatedAdminRouteWithChildren
   '/bonus': typeof AuthenticatedBonusRoute
   '/comunidade': typeof AuthenticatedComunidadeRoute
@@ -232,13 +213,11 @@ export interface FileRoutesByFullPath {
   '/lancamentos': typeof AuthenticatedLancamentosRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/trilhas': typeof AuthenticatedTrilhasRoute
-  '/vitrine': typeof AuthenticatedVitrineRoute
   '/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/cursos/$courseId': typeof AuthenticatedCursosCourseIdRouteWithChildren
-  '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
   '/admin/': typeof AuthenticatedAdminIndexRoute
   '/conteudo/': typeof AuthenticatedConteudoIndexRoute
   '/cursos/': typeof AuthenticatedCursosIndexRoute
@@ -253,7 +232,6 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
-  '/webhook': typeof WebhookRoute
   '/bonus': typeof AuthenticatedBonusRoute
   '/comunidade': typeof AuthenticatedComunidadeRoute
   '/downloads': typeof AuthenticatedDownloadsRoute
@@ -262,11 +240,9 @@ export interface FileRoutesByTo {
   '/lancamentos': typeof AuthenticatedLancamentosRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/trilhas': typeof AuthenticatedTrilhasRoute
-  '/vitrine': typeof AuthenticatedVitrineRoute
   '/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
   '/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
-  '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
   '/admin': typeof AuthenticatedAdminIndexRoute
   '/conteudo': typeof AuthenticatedConteudoIndexRoute
   '/cursos': typeof AuthenticatedCursosIndexRoute
@@ -283,7 +259,6 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/privacidade': typeof PrivacidadeRoute
   '/termos': typeof TermosRoute
-  '/webhook': typeof WebhookRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRouteWithChildren
   '/_authenticated/bonus': typeof AuthenticatedBonusRoute
   '/_authenticated/comunidade': typeof AuthenticatedComunidadeRoute
@@ -295,13 +270,11 @@ export interface FileRoutesById {
   '/_authenticated/lancamentos': typeof AuthenticatedLancamentosRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/trilhas': typeof AuthenticatedTrilhasRoute
-  '/_authenticated/vitrine': typeof AuthenticatedVitrineRoute
   '/_authenticated/admin/courses': typeof AuthenticatedAdminCoursesRouteWithChildren
   '/_authenticated/admin/dashboard': typeof AuthenticatedAdminDashboardRoute
   '/_authenticated/admin/upsells': typeof AuthenticatedAdminUpsellsRoute
   '/_authenticated/conteudo/$trackId': typeof AuthenticatedConteudoTrackIdRoute
   '/_authenticated/cursos/$courseId': typeof AuthenticatedCursosCourseIdRouteWithChildren
-  '/api/webhook/kiwify': typeof ApiWebhookKiwifyRoute
   '/_authenticated/admin/': typeof AuthenticatedAdminIndexRoute
   '/_authenticated/conteudo/': typeof AuthenticatedConteudoIndexRoute
   '/_authenticated/cursos/': typeof AuthenticatedCursosIndexRoute
@@ -318,7 +291,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacidade'
     | '/termos'
-    | '/webhook'
     | '/admin'
     | '/bonus'
     | '/comunidade'
@@ -330,13 +302,11 @@ export interface FileRouteTypes {
     | '/lancamentos'
     | '/perfil'
     | '/trilhas'
-    | '/vitrine'
     | '/admin/courses'
     | '/admin/dashboard'
     | '/admin/upsells'
     | '/conteudo/$trackId'
     | '/cursos/$courseId'
-    | '/api/webhook/kiwify'
     | '/admin/'
     | '/conteudo/'
     | '/cursos/'
@@ -351,7 +321,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacidade'
     | '/termos'
-    | '/webhook'
     | '/bonus'
     | '/comunidade'
     | '/downloads'
@@ -360,11 +329,9 @@ export interface FileRouteTypes {
     | '/lancamentos'
     | '/perfil'
     | '/trilhas'
-    | '/vitrine'
     | '/admin/dashboard'
     | '/admin/upsells'
     | '/conteudo/$trackId'
-    | '/api/webhook/kiwify'
     | '/admin'
     | '/conteudo'
     | '/cursos'
@@ -380,7 +347,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacidade'
     | '/termos'
-    | '/webhook'
     | '/_authenticated/admin'
     | '/_authenticated/bonus'
     | '/_authenticated/comunidade'
@@ -392,13 +358,11 @@ export interface FileRouteTypes {
     | '/_authenticated/lancamentos'
     | '/_authenticated/perfil'
     | '/_authenticated/trilhas'
-    | '/_authenticated/vitrine'
     | '/_authenticated/admin/courses'
     | '/_authenticated/admin/dashboard'
     | '/_authenticated/admin/upsells'
     | '/_authenticated/conteudo/$trackId'
     | '/_authenticated/cursos/$courseId'
-    | '/api/webhook/kiwify'
     | '/_authenticated/admin/'
     | '/_authenticated/conteudo/'
     | '/_authenticated/cursos/'
@@ -415,19 +379,10 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PrivacidadeRoute: typeof PrivacidadeRoute
   TermosRoute: typeof TermosRoute
-  WebhookRoute: typeof WebhookRoute
-  ApiWebhookKiwifyRoute: typeof ApiWebhookKiwifyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/webhook': {
-      id: '/webhook'
-      path: '/webhook'
-      fullPath: '/webhook'
-      preLoaderRoute: typeof WebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/termos': {
       id: '/termos'
       path: '/termos'
@@ -462,13 +417,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/_authenticated/vitrine': {
-      id: '/_authenticated/vitrine'
-      path: '/vitrine'
-      fullPath: '/vitrine'
-      preLoaderRoute: typeof AuthenticatedVitrineRouteImport
-      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/trilhas': {
       id: '/_authenticated/trilhas'
@@ -567,13 +515,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AuthenticatedAdminIndexRouteImport
       parentRoute: typeof AuthenticatedAdminRoute
-    }
-    '/api/webhook/kiwify': {
-      id: '/api/webhook/kiwify'
-      path: '/api/webhook/kiwify'
-      fullPath: '/api/webhook/kiwify'
-      preLoaderRoute: typeof ApiWebhookKiwifyRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/cursos/$courseId': {
       id: '/_authenticated/cursos/$courseId'
@@ -743,7 +684,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedLancamentosRoute: typeof AuthenticatedLancamentosRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedTrilhasRoute: typeof AuthenticatedTrilhasRoute
-  AuthenticatedVitrineRoute: typeof AuthenticatedVitrineRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -758,7 +698,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedLancamentosRoute: AuthenticatedLancamentosRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedTrilhasRoute: AuthenticatedTrilhasRoute,
-  AuthenticatedVitrineRoute: AuthenticatedVitrineRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
@@ -771,8 +710,6 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PrivacidadeRoute: PrivacidadeRoute,
   TermosRoute: TermosRoute,
-  WebhookRoute: WebhookRoute,
-  ApiWebhookKiwifyRoute: ApiWebhookKiwifyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

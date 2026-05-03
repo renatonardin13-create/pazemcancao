@@ -15,7 +15,7 @@ export function useCatalogProducts() {
 
   const query = useQuery({
     queryKey: ["catalog-products", "v1"],
-    queryFn: () => getStudentVitrineData({ data: {} }),
+    queryFn: () => getStudentVitrineData(),
     staleTime: 30_000,
     refetchOnWindowFocus: true,
   });
