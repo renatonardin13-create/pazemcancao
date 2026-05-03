@@ -76,14 +76,14 @@ function NewCoursePage() {
   return (
     <div className="max-w-6xl mx-auto space-y-4">
       {/* ===== HEADER ===== */}
-      <div className="relative rounded-2xl border border-gold/10 bg-gradient-to-r from-card via-card/80 to-card px-6 py-4 overflow-hidden shadow-xl shadow-black/10">
-        <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-gold/[0.05] blur-[60px]" />
+      <div className="relative rounded-2xl border border-orange-500/10 bg-gradient-to-r from-card via-card/80 to-card px-6 py-4 overflow-hidden shadow-xl shadow-black/10">
+        <div className="pointer-events-none absolute -top-16 -right-16 h-40 w-40 rounded-full bg-orange-500/[0.05] blur-[60px]" />
         <div className="flex items-center justify-between relative z-10">
           {/* Left: back + title */}
           <div className="flex items-center gap-3">
             <Link
               to="/admin/courses"
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/30 bg-background/30 text-muted-foreground/50 hover:text-gold hover:border-gold/20 hover:bg-gold/5 transition-all duration-200"
+              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/30 bg-background/30 text-muted-foreground/50 hover:text-orange-500 hover:border-orange-500/20 hover:bg-orange-500/5 transition-all duration-200"
             >
               <ArrowLeft className="h-4 w-4" />
             </Link>
