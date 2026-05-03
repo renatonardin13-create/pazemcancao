@@ -93,6 +93,8 @@ function EditAreaPage() {
   useEffect(() => {
     if (area) {
       setNome(area.nome || "");
+      setRotuloCurto(area.rotulo_curto || "");
+      setTipo(area.tipo || "misto");
       setSubdominio(area.subdominio || "");
       setStatus(area.status || "active");
       setProdutoId(area.produto_id || "");
@@ -104,8 +106,8 @@ function EditAreaPage() {
       setLogoUrl(area.logo_url || "");
       setFaviconUrl(area.favicon_url || "");
       setBannerUrl(area.banner_url || "");
-      setBackgroundColor(area.background_color || "#070707");
-      setSurfaceColor(area.surface_color || "#111111");
+      setBackgroundColor(area.background_color || "#0B1220");
+      setSurfaceColor(area.surface_color || "#111827");
     }
   }, [area]);
 
