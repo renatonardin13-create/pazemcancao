@@ -168,35 +168,29 @@ export const PosterCard = memo(function PosterCard({
 
           {overlay && <div className="absolute inset-0 z-10">{overlay}</div>}
 
+          {/* Info Block - Netflix Style (Bottom layer for legibility) */}
+          <div className="absolute inset-x-0 bottom-0 z-10 p-4 pt-10 bg-gradient-to-t from-[#0b0b0b] via-[#0b0b0b]/80 to-transparent">
+            <h3 className="text-sm font-black text-white leading-tight truncate">{title}</h3>
+            <div className="flex items-center gap-2 mt-1">
+              {subtitle && <span className="text-[10px] font-black text-gold uppercase tracking-widest">{subtitle}</span>}
+              {meta && <div className="text-[10px] font-bold text-white/40">{meta}</div>}
+            </div>
+          </div>
+
+          {overlay && <div className="absolute inset-0 z-20">{overlay}</div>}
+
           {centerAction && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+            <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
               {centerAction}
             </div>
           )}
 
-          {actionTopRight && <div className="absolute top-2.5 right-2.5 z-20">{actionTopRight}</div>}
-
-          {/*
-            Bloco inferior padronizado.
-            Regras anti-irregularidade:
-            - posicionamento absoluto (não empurra a capa)
-            - title: SEMPRE 2 linhas reservadas (min-h)
-            - subtitle: SEMPRE 1 linha (line-clamp-1)
-            - meta: altura reservada mesmo quando some no hover
-          */}
-          {/* Acessibilidade: título disponível para SR mas oculto visualmente */}
-          <h3 className="sr-only">{title}</h3>
-
-          {meta && (
-            <div className="absolute inset-x-0 bottom-0 z-10 px-3.5 pb-3 sm:px-4 sm:pb-4 flex h-4 items-center gap-3 opacity-0 md:group-hover/card:opacity-100 md:transition-opacity md:duration-400">
-              {meta}
-            </div>
-          )}
+          {actionTopRight && <div className="absolute top-2.5 right-2.5 z-40">{actionTopRight}</div>}
 
           {hasProgress && (
-            <div className="absolute bottom-0 left-0 right-0 z-20 h-[2.5px] bg-white/[0.06]">
+            <div className="absolute bottom-0 left-0 right-0 z-50 h-[3px] bg-white/10">
               <div
-                className={`h-full rounded-r-full ease-linear md:transition-all md:duration-200 ${progressColorClass}`}
+                className={`h-full rounded-r-full ease-linear transition-all duration-300 ${progressColorClass}`}
                 style={{ width: `${Math.min(progress!, 100)}%` }}
               />
             </div>
