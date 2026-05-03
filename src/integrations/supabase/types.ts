@@ -1055,6 +1055,42 @@ export type Database = {
         }
         Relationships: []
       }
+      platform_modules: {
+        Row: {
+          created_at: string | null
+          enabled: boolean | null
+          id: string
+          name: string
+          slug: string
+          sort_order: number | null
+          updated_at: string | null
+          visible_in_menu: boolean | null
+          visible_in_vitrine: boolean | null
+        }
+        Insert: {
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number | null
+          updated_at?: string | null
+          visible_in_menu?: boolean | null
+          visible_in_vitrine?: boolean | null
+        }
+        Update: {
+          created_at?: string | null
+          enabled?: boolean | null
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number | null
+          updated_at?: string | null
+          visible_in_menu?: boolean | null
+          visible_in_vitrine?: boolean | null
+        }
+        Relationships: []
+      }
       platform_settings: {
         Row: {
           created_at: string
@@ -1147,6 +1183,7 @@ export type Database = {
       }
       playlists: {
         Row: {
+          area_id: string | null
           cover_url: string | null
           created_at: string
           description: string | null
@@ -1157,6 +1194,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          area_id?: string | null
           cover_url?: string | null
           created_at?: string
           description?: string | null
@@ -1167,6 +1205,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          area_id?: string | null
           cover_url?: string | null
           created_at?: string
           description?: string | null
@@ -1176,7 +1215,15 @@ export type Database = {
           sort_order?: number
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "playlists_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas_membros"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       processed_webhooks: {
         Row: {
