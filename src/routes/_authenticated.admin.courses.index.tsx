@@ -185,21 +185,15 @@ function AdminCoursesPage() {
                 <TooltipTrigger asChild>
                   <span>
                     <Button 
-                      asChild={categories.length > 0}
                       disabled={categories.length === 0}
+                      onClick={() => {
+                        setSelectedProduct(null);
+                        setIsProductDialogOpen(true);
+                      }}
                       className="h-10 px-5 rounded-xl bg-gradient-to-r from-gold to-gold/85 text-background font-bold hover:shadow-lg hover:shadow-gold/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {categories.length > 0 ? (
-                        <Link to="/admin/courses/new">
-                          <Plus className="h-4 w-4 mr-1.5" />
-                          Novo Produto
-                        </Link>
-                      ) : (
-                        <>
-                          <Plus className="h-4 w-4 mr-1.5" />
-                          Novo Produto
-                        </>
-                      )}
+                      <Plus className="h-4 w-4 mr-1.5" />
+                      Novo Produto
                     </Button>
                   </span>
                 </TooltipTrigger>
