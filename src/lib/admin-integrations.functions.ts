@@ -23,82 +23,42 @@ export const getIntegrationsDashboard = createServerFn({ method: 'POST' })
 
     const [{ data: integrations }, { data: logs }, { data: enrollments }] = await Promise.all([
       supabaseAdmin
-        .from('course_integrations')
-        .select('*, courses(title)')
+        .from('ofertas')
+        .select('*, ofertas_produtos(produto_id)')
         .order('created_at', { ascending: false }),
       supabaseAdmin
         .from('webhook_logs')
         .select('response_status')
-        .eq('provider', 'kiwify')
         .limit(1000),
       supabaseAdmin
-        .from('enrollments')
-        .select('course_id, status, access_origin')
-        .eq('access_origin', 'webhook'),
+        .from('acessos_usuario')
+        .select('produto_id, status')
+        .eq('status', 'ativo'),
     ]);
 
-    const allIntegrations = integrations || [];
+    const allOffers = integrations || [];
     const allLogs = logs || [];
-    const allEnrollments = enrollments || [];
-
-    const salesPerCourse = allEnrollments.reduce<Record<string, number>>((acc, enrollment) => {
-      if (enrollment.status !== 'active') return acc;
-      acc[enrollment.course_id] = (acc[enrollment.course_id] || 0) + 1;
-      return acc;
-    }, {});
+    const allAccess = enrollments || [];
 
     return {
       stats: {
-        totalWebhooks: allIntegrations.length,
-        activeWebhooks: allIntegrations.filter((item) => item.webhook_active && item.is_enabled).length,
-        totalSales: allEnrollments.filter((item) => item.status === 'active').length,
+        totalWebhooks: allOffers.length,
+        activeWebhooks: allOffers.filter((item) => item.status === 'ativa').length,
+        totalSales: allAccess.length,
         successRate: allLogs.length > 0
           ? Math.round((allLogs.filter((item) => item.response_status === 200).length / allLogs.length) * 100)
           : 0,
       },
-      integrations: allIntegrations.map((item) => ({
+      integrations: allOffers.map((item) => ({
         id: item.id,
-        courseId: item.course_id,
-        courseTitle: (item as any).courses?.title || 'Sem título',
-        platform: item.platform,
-        externalProductId: item.external_product_id,
-        isEnabled: item.is_enabled,
-        webhookActive: item.webhook_active,
-        checkoutUrl: item.checkout_url,
-        sales: salesPerCourse[item.course_id] || 0,
+        nome: item.nome,
+        platform: item.gateway,
+        externalProductId: item.codigo_externo,
+        isEnabled: item.status === 'ativa',
+        status: item.status,
+        sales: allAccess.filter(a => item.ofertas_produtos?.some((op: any) => op.produto_id === a.produto_id)).length,
       })),
     };
-  });
-
-export const createOffer = createServerFn({ method: 'POST' })
-  .middleware([requireSupabaseAuth])
-  .inputValidator((d: any) => d)
-  .handler(async ({ data, context }: { data: any, context: any }) => {
-    await verifyAdmin(context.supabase, context.userId);
-    const { 
-      course_id, 
-      platform, 
-      external_product_id, 
-      integration_token, 
-      payment_type 
-    } = data;
-
-    const { data: offer, error } = await supabaseAdmin
-      .from('course_integrations')
-      .insert({
-        course_id,
-        platform,
-        external_product_id,
-        integration_token,
-        payment_type,
-        webhook_active: true,
-        is_enabled: true
-      })
-      .select()
-      .single();
-
-    if (error) throw error;
-    return offer;
   });
 
 export const listAdminOffers = createServerFn({ method: 'POST' })
@@ -106,10 +66,100 @@ export const listAdminOffers = createServerFn({ method: 'POST' })
   .handler(async ({ context }: { context: any }) => {
     await verifyAdmin(context.supabase, context.userId);
     const { data, error } = await supabaseAdmin
-      .from('course_integrations')
-      .select('*, courses(title)')
+      .from('ofertas')
+      .select('*, ofertas_produtos(produto_id, produtos(nome, tipo))')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
     return data;
   });
+
+export const listAdminProducts = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .handler(async ({ context }: { context: any }) => {
+    await verifyAdmin(context.supabase, context.userId);
+    const { data, error } = await supabaseAdmin
+      .from('produtos')
+      .select('*')
+      .order('nome', { ascending: true });
+
+    if (error) throw error;
+    return data;
+  });
+
+export const createOfferWithProducts = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: any) => d)
+  .handler(async ({ data, context }: { data: any, context: any }) => {
+    await verifyAdmin(context.supabase, context.userId);
+    const { 
+      nome,
+      gateway,
+      modalidade,
+      codigo_externo,
+      token,
+      status,
+      productIds 
+    } = data;
+
+    // 1. Create Offer
+    const { data: offer, error: offerError } = await supabaseAdmin
+      .from('ofertas')
+      .insert({
+        nome,
+        gateway,
+        modalidade,
+        codigo_externo,
+        token,
+        status: status || 'rascunho'
+      })
+      .select()
+      .single();
+
+    if (offerError) throw offerError;
+
+    // 2. Link Products
+    if (productIds && productIds.length > 0) {
+      const links = productIds.map((pId: string) => ({
+        oferta_id: offer.id,
+        produto_id: pId
+      }));
+
+      const { error: linkError } = await supabaseAdmin
+        .from('ofertas_produtos')
+        .insert(links);
+
+      if (linkError) throw linkError;
+    }
+
+    return offer;
+  });
+
+export const deleteOffer = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: string) => d)
+  .handler(async ({ data: offerId, context }: { data: string, context: any }) => {
+    await verifyAdmin(context.supabase, context.userId);
+    const { error } = await supabaseAdmin
+      .from('ofertas')
+      .delete()
+      .eq('id', offerId);
+
+    if (error) throw error;
+    return { success: true };
+  });
+
+export const toggleOfferStatus = createServerFn({ method: 'POST' })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { id: string, status: string }) => d)
+  .handler(async ({ data, context }: { data: { id: string, status: string }, context: any }) => {
+    await verifyAdmin(context.supabase, context.userId);
+    const { error } = await supabaseAdmin
+      .from('ofertas')
+      .update({ status: data.status })
+      .eq('id', data.id);
+
+    if (error) throw error;
+    return { success: true };
+  });
+
