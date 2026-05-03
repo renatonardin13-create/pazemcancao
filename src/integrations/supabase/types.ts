@@ -205,13 +205,17 @@ export type Database = {
       }
       areas_membros: {
         Row: {
+          accent_color: string | null
           app_name: string | null
           ativa: boolean | null
           atualizado_em: string
           background_color: string | null
           banner_url: string | null
+          button_color: string | null
+          button_text_color: string | null
           criado_em: string
           descricao: string | null
+          elevated_surface: string | null
           favicon_url: string | null
           id: string
           language: string | null
@@ -223,20 +227,28 @@ export type Database = {
           produto_id: string | null
           rotulo_curto: string | null
           secondary_color: string | null
+          sidebar_color: string | null
           status: string | null
           subdominio: string
           support_email: string | null
           surface_color: string | null
+          text_primary: string | null
+          text_secondary: string | null
+          theme_mode: string | null
           tipo: string | null
         }
         Insert: {
+          accent_color?: string | null
           app_name?: string | null
           ativa?: boolean | null
           atualizado_em?: string
           background_color?: string | null
           banner_url?: string | null
+          button_color?: string | null
+          button_text_color?: string | null
           criado_em?: string
           descricao?: string | null
+          elevated_surface?: string | null
           favicon_url?: string | null
           id?: string
           language?: string | null
@@ -248,20 +260,28 @@ export type Database = {
           produto_id?: string | null
           rotulo_curto?: string | null
           secondary_color?: string | null
+          sidebar_color?: string | null
           status?: string | null
           subdominio: string
           support_email?: string | null
           surface_color?: string | null
+          text_primary?: string | null
+          text_secondary?: string | null
+          theme_mode?: string | null
           tipo?: string | null
         }
         Update: {
+          accent_color?: string | null
           app_name?: string | null
           ativa?: boolean | null
           atualizado_em?: string
           background_color?: string | null
           banner_url?: string | null
+          button_color?: string | null
+          button_text_color?: string | null
           criado_em?: string
           descricao?: string | null
+          elevated_surface?: string | null
           favicon_url?: string | null
           id?: string
           language?: string | null
@@ -273,10 +293,14 @@ export type Database = {
           produto_id?: string | null
           rotulo_curto?: string | null
           secondary_color?: string | null
+          sidebar_color?: string | null
           status?: string | null
           subdominio?: string
           support_email?: string | null
           surface_color?: string | null
+          text_primary?: string | null
+          text_secondary?: string | null
+          theme_mode?: string | null
           tipo?: string | null
         }
         Relationships: [

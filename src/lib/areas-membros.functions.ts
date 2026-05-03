@@ -82,6 +82,14 @@ export const createAreaMembro = createServerFn({ method: 'POST' })
     app_name?: string;
     logo_alt?: string;
     support_email?: string;
+    theme_mode?: string;
+    accent_color?: string;
+    button_color?: string;
+    button_text_color?: string;
+    sidebar_color?: string;
+    text_primary?: string;
+    text_secondary?: string;
+    elevated_surface?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     const { userId } = context;
@@ -130,6 +138,14 @@ export const createAreaMembro = createServerFn({ method: 'POST' })
         app_name: data.app_name,
         logo_alt: data.logo_alt,
         support_email: data.support_email,
+        theme_mode: data.theme_mode || 'dark',
+        accent_color: data.accent_color,
+        button_color: data.button_color,
+        button_text_color: data.button_text_color,
+        sidebar_color: data.sidebar_color,
+        text_primary: data.text_primary,
+        text_secondary: data.text_secondary,
+        elevated_surface: data.elevated_surface,
       })
       .select('id')
       .single();
@@ -162,6 +178,14 @@ export const updateAreaMembro = createServerFn({ method: 'POST' })
     app_name?: string;
     logo_alt?: string;
     support_email?: string;
+    theme_mode?: string;
+    accent_color?: string;
+    button_color?: string;
+    button_text_color?: string;
+    sidebar_color?: string;
+    text_primary?: string;
+    text_secondary?: string;
+    elevated_surface?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     const { userId } = context;
@@ -211,6 +235,14 @@ export const updateAreaMembro = createServerFn({ method: 'POST' })
         app_name: data.app_name,
         logo_alt: data.logo_alt,
         support_email: data.support_email,
+        theme_mode: data.theme_mode,
+        accent_color: data.accent_color,
+        button_color: data.button_color,
+        button_text_color: data.button_text_color,
+        sidebar_color: data.sidebar_color,
+        text_primary: data.text_primary,
+        text_secondary: data.text_secondary,
+        elevated_surface: data.elevated_surface,
       })
       .eq('id', data.id);
 
