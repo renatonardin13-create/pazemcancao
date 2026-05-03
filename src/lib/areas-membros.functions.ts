@@ -235,6 +235,14 @@ export const updateAreaMembro = createServerFn({ method: 'POST' })
         app_name: data.app_name,
         logo_alt: data.logo_alt,
         support_email: data.support_email,
+        theme_mode: data.theme_mode,
+        accent_color: data.accent_color,
+        button_color: data.button_color,
+        button_text_color: data.button_text_color,
+        sidebar_color: data.sidebar_color,
+        text_primary: data.text_primary,
+        text_secondary: data.text_secondary,
+        elevated_surface: data.elevated_surface,
       })
       .eq('id', data.id);
 
