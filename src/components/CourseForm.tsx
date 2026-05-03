@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Video, FileText, Save, Loader2, ImageIcon, File, Link as LinkIcon, Sparkles } from "lucide-react";
+import { Video, FileText, Save, Loader2, ImageIcon, File, Link as LinkIcon, Sparkles, Music } from "lucide-react";
 import { ImageUploadField } from "@/components/ImageUploadField";
 
 interface CourseFormProps {
@@ -30,10 +30,11 @@ const COURSE_TYPE_OPTIONS = [
   { value: "aula", label: "Aula", icon: Video },
   { value: "material", label: "Material", icon: FileText },
   { value: "bonus", label: "Bônus", icon: Sparkles },
+  { value: "louvores", label: "Pack de Louvores", icon: Music },
 ] as const;
 
 const normalizeCourseType = (value?: string) => {
-  if (value === "aula" || value === "material" || value === "bonus") return value;
+  if (value === "aula" || value === "material" || value === "bonus" || value === "louvores") return value;
   return "aula";
 };
 
