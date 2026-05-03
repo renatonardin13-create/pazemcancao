@@ -223,9 +223,8 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
   }
 
   return (
-    <Link
-      to="/musicas/$trackId"
-      params={{ trackId: String(track.id) }}
+    <div
+      onClick={handlePlay}
       className="group/card relative block cursor-pointer"
     >
       <PosterCard
@@ -246,6 +245,6 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
         index={index}
         highlight={isPlaying}
       />
-    </Link>
+    </div>
   );
 });

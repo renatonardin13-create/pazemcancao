@@ -374,17 +374,18 @@ function BannerSlide({
                         e.stopPropagation();
                         onPrimary();
                       }}
-                      className="group inline-flex items-center gap-3 rounded-2xl bg-gold px-8 py-4 text-sm font-black text-black shadow-2xl shadow-gold/20 transition-all hover:scale-105 active:scale-95 sm:px-10 sm:py-5 sm:text-base"
+                      className="group inline-flex items-center gap-3 rounded-2xl bg-[#D4AF37] px-8 py-4 text-sm font-black text-black shadow-2xl shadow-[#D4AF37]/20 transition-all hover:scale-105 active:scale-95 sm:px-10 sm:py-5 sm:text-base"
                     >
                       <Play className="h-5 w-5 fill-current" />
-                      {banner.primary_cta_label?.toLowerCase().includes('começar') ? 'Continuar assistindo' : (banner.primary_cta_label || "Começar agora")}
+                      Continuar assistindo
                     </button>
                   )}
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
-                      onPrimary(); // Or separate link if available
+                      // Redirect to course details or similar
+                      onPrimary(); 
                     }}
                     className="inline-flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl px-8 py-4 text-sm font-black text-white transition-all hover:bg-white/10 hover:border-white/20 active:scale-95 sm:px-10 sm:py-5 sm:text-base"
                   >
