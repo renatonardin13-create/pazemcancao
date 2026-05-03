@@ -20,8 +20,10 @@ function EbooksPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["content-items", undefined],
+    queryFn: () => listContentItems(),
     staleTime: 60_000,
   });
+
 
   const { data: favData } = useQuery({
     queryKey: ["user-favorites"],

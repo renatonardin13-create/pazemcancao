@@ -109,9 +109,11 @@ function ContentPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["content-items", undefined],
+    queryFn: () => listContentItems(),
     refetchOnWindowFocus: true,
     staleTime: 60_000,
   });
+
 
   const { data: profileData } = useQuery({
     queryKey: ["my-profile"],
