@@ -1,9 +1,12 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { FooterLinks } from "@/components/FooterLinks";
 import logo from "@/assets/logo-paz-em-cancao.png";
 import heroImg from "@/assets/hero-bg.jpg";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
+import { useAuth } from "@/hooks/use-auth";
 import { MusicNoteParticles } from "@/components/MusicNoteParticles";
+
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
@@ -19,6 +22,17 @@ const fadeUp = {
 };
 
 function LandingPage() {
+  const { isAuthenticated, loading } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && isAuthenticated) {
+      navigate({ to: "/home" });
+    }
+  }, [isAuthenticated, loading, navigate]);
+
+  if (loading) return null;
+
   return (
     <div className="min-h-screen bg-[#0b0b0b] flex flex-col relative overflow-hidden">
       <section className="relative flex-1 flex flex-col items-center justify-between py-8 sm:py-16">
