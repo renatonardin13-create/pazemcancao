@@ -2,53 +2,19 @@ import { createServerFn } from '@tanstack/react-start';
 import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
-async function verifyAdmin(supabase: any, userId: string) {
-  const { data: role } = await supabase
-    .from('user_roles')
-    .select('role')
-    .eq('user_id', userId)
-    .eq('role', 'admin')
-    .maybeSingle();
-  const { data: userData } = await supabase.auth.getUser();
-  const isAdminEmail = userData?.user?.email?.toLowerCase() === 'renatonardin13@gmail.com';
-  if (!role && !isAdminEmail) throw new Error('Não autorizado');
-}
-
-export const logPlay = createServerFn({ method: 'POST' })
-  .inputValidator((input: { trackId: string, durationSeconds: number }) => input)
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ data, context }) => {
-    const { data: userData } = await context.supabase.auth.getUser();
-    const email = userData?.user?.email;
-    if (!email) throw new Error('Usuário sem email');
-
-    await supabaseAdmin.from('play_logs').insert({
-      email,
-      track_id: data.trackId,
-      duration_seconds: data.durationSeconds,
-    });
-    return { success: true };
-  });
-
-export const logDownload = createServerFn({ method: 'POST' })
-  .inputValidator((input: { trackId: string }) => input)
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ data, context }) => {
-    const { data: userData } = await context.supabase.auth.getUser();
-    const email = userData?.user?.email;
-    if (!email) throw new Error('Usuário sem email');
-
-    await supabaseAdmin.from('download_logs').insert({
-      email,
-      track_id: data.trackId,
-    });
-    return { success: true };
-  });
-
 export const getDashboardAnalytics = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
+  .inputValidator((input: { days?: number }) => input)
   .handler(async ({ data, context }) => {
-    await verifyAdmin(context.supabase, context.userId);
+    const { data: role } = await context.supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', context.userId)
+      .eq('role', 'admin')
+      .maybeSingle();
+    const { data: userData } = await context.supabase.auth.getUser();
+    const isAdminEmail = userData?.user?.email?.toLowerCase() === 'renatonardin13@gmail.com';
+    if (!role && !isAdminEmail) throw new Error('Não autorizado');
 
     const days = data?.days || 30;
 

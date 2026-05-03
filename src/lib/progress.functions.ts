@@ -4,6 +4,7 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 export const trackContentView = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
+  .inputValidator((input: { contentId: string }) => input)
   .handler(async ({ data, context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
     const email = userData?.user?.email?.toLowerCase();
@@ -26,6 +27,7 @@ export const trackContentView = createServerFn({ method: 'POST' })
 
 export const trackContentComplete = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
+  .inputValidator((input: { contentId: string }) => input)
   .handler(async ({ data, context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
     const email = userData?.user?.email?.toLowerCase();
@@ -49,6 +51,7 @@ export const trackContentComplete = createServerFn({ method: 'POST' })
 
 export const trackContentDownload = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
+  .inputValidator((input: { contentId: string }) => input)
   .handler(async ({ data, context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
     const email = userData?.user?.email?.toLowerCase();
@@ -72,6 +75,7 @@ export const trackContentDownload = createServerFn({ method: 'POST' })
 
 export const updateWatchPosition = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
+  .inputValidator((input: { contentId: string, positionSeconds: number }) => input)
   .handler(async ({ data, context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
     const email = userData?.user?.email?.toLowerCase();
@@ -95,7 +99,7 @@ export const updateWatchPosition = createServerFn({ method: 'POST' })
 
 export const getUserProgress = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ data: inputData, context }) => {
+  .handler(async ({ context }) => {
     const { data: userData } = await context.supabase.auth.getUser();
     const email = userData?.user?.email?.toLowerCase();
     if (!email) return { progress: [] };
