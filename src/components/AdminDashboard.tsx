@@ -20,25 +20,25 @@ export function AdminDashboard() {
         <StatCard 
           icon={CreditCard} 
           label="Receita Total" 
-          value={isLoading ? null : new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(stats?.totalRevenue || 0)} 
+          value={isLoading ? null : new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(stats?.totalRevenue ?? 0)} 
           isLoading={isLoading}
         />
         <StatCard 
           icon={Users} 
           label="Total de Alunos" 
-          value={isLoading ? null : stats?.totalStudents.toString()} 
+          value={isLoading ? null : (stats?.totalStudents ?? 0).toString()} 
           isLoading={isLoading}
         />
         <StatCard 
           icon={GraduationCap} 
           label="Produtos Ativos" 
-          value={isLoading ? null : stats?.activeCourses.toString()} 
+          value={isLoading ? null : (stats?.activeCourses ?? 0).toString()} 
           isLoading={isLoading}
         />
         <StatCard 
           icon={Music} 
           label="Louvores Ativos" 
-          value={isLoading ? null : stats?.activeTracks.toString()} 
+          value={isLoading ? null : (stats?.activeTracks ?? 0).toString()} 
           isLoading={isLoading}
         />
       </div>
