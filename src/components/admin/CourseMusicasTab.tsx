@@ -59,7 +59,7 @@ export function CourseMusicasTab({ courseId }: CourseMusicasTabProps) {
             className="pl-9 bg-background/50 border-border/20 h-10"
           />
         </div>
-        <Button onClick={() => setIsAdding(true)} className="bg-gold text-black hover:bg-gold/90 h-10">
+        <Button onClick={() => setIsAdding(true)} className="bg-orange-500 text-black hover:bg-orange-600 h-10 transition-all duration-300">
           <Plus className="h-4 w-4 mr-2" />
           Adicionar Música
         </Button>
