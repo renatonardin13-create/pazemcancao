@@ -23,7 +23,7 @@ interface CourseFormProps {
   hideSubmitButton?: boolean;
 }
 
-const inputClass = "h-11 bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm";
+const inputClass = "h-11 bg-background/50 border-border/20 focus:border-orange-500/40 rounded-lg text-sm";
 const labelClass = "text-sm font-semibold text-foreground/80";
 
 const COURSE_TYPE_OPTIONS = [
