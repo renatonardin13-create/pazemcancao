@@ -99,7 +99,7 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
 
               {/* Info */}
               <div className="flex-1 min-w-0">
-                <h3 className="text-sm sm:text-base font-bold text-white truncate group-hover:text-gold transition-colors">
+                <h3 className="text-sm sm:text-base font-bold text-white truncate group-hover:text-orange-500 transition-colors">
                   {currentTrack.title}
                 </h3>
                 <div className="flex items-center gap-2 mt-0.5">
