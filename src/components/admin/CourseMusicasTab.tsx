@@ -126,9 +126,9 @@ export function CourseMusicasTab({ courseId }: CourseMusicasTabProps) {
                     <td className="px-4 py-3 text-center">
                       <button
                         onClick={() => toggleDestaqueMutation.mutate({ id: musica.id, destaque: !musica.destaque })}
-                        className={`p-1.5 rounded-lg transition-colors ${musica.destaque ? 'text-gold bg-gold/10' : 'text-muted-foreground/20 hover:text-muted-foreground/40'}`}
+                        className={`p-1.5 rounded-lg transition-colors ${musica.destaque ? 'text-orange-500 bg-orange-500/10' : 'text-muted-foreground/20 hover:text-muted-foreground/40'}`}
                       >
-                        <Star className={`h-4 w-4 ${musica.destaque ? 'fill-gold' : ''}`} />
+                        <Star className={`h-4 w-4 ${musica.destaque ? 'fill-orange-500' : ''}`} />
                       </button>
                     </td>
                     <td className="px-4 py-3 text-right">
