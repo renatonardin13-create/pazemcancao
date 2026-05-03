@@ -48,9 +48,6 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
       .in('id', courseIds)
       .eq('status', 'published');
 
-    } else {
-      return { courses: [], stats: { total: 0, inProgress: 0, completed: 0 } };
-    }
 
     const { data: courses } = await coursesQuery;
 

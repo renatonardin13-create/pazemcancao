@@ -105,7 +105,6 @@ export const getUserProgress = createServerFn({ method: 'POST' })
       .select('*')
       .eq('user_email', email);
 
-    }
 
     const { data: progress } = await query;
 

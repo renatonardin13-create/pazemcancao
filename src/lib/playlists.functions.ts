@@ -10,7 +10,6 @@ export const listPlaylists = createServerFn({ method: 'POST' })
       .select('*')
       .eq('is_active', true);
 
-    }
 
     const { data: playlists, error } = await query
       .order('sort_order', { ascending: true });
@@ -69,7 +68,6 @@ export const listPlaylistsWithCounts = createServerFn({ method: 'POST' })
       .select('*')
       .eq('is_active', true);
 
-    }
 
     const { data: playlists, error } = await query
       .order('sort_order', { ascending: true });
