@@ -146,6 +146,7 @@ function EditAreaPage() {
       id: areaId,
       nome, 
       rotulo_curto: rotuloCurto,
+      descricao,
       tipo,
       status, 
       produto_id: produtoId, 
