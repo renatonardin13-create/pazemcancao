@@ -100,7 +100,7 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
         }`}
       />
       {isPlaying && (
-        <div className="absolute inset-0 rounded-2xl border border-gold/50 animate-ping opacity-20" />
+        <div className="absolute inset-0 rounded-2xl border border-orange-500/50 animate-ping opacity-20" />
       )}
     </div>
   );
