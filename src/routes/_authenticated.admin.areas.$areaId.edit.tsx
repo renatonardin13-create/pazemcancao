@@ -939,7 +939,7 @@ function EditAreaPage() {
             </TabsContent>
 
             <TabsContent value="idioma" className="mt-0 outline-none">
-              <div className="space-y-8 max-w-5xl mx-auto">
+              <div className="space-y-10 max-w-5xl mx-auto">
                 {/* 1. Configurações de idioma */}
                 <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
@@ -950,41 +950,41 @@ function EditAreaPage() {
                     <h3 className="text-xl font-black text-white">Configurações de Localização</h3>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                     <div className="space-y-3">
-                      <Label htmlFor="language" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Idioma principal da área</Label>
+                      <Label htmlFor="language" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Idioma principal da área</Label>
                       <Select value={language} onValueChange={setLanguage}>
-                        <SelectTrigger className="h-14 bg-[#0B1220] border-white/5 focus:ring-[#D4AF37] rounded-xl font-bold text-base">
+                        <SelectTrigger className="h-14 bg-[#0B1220] border-white/5 focus:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]">
                           <SelectValue placeholder="Selecione o idioma" />
                         </SelectTrigger>
                         <SelectContent className="bg-[#111827] border-white/5 text-white">
-                          <SelectItem value="pt-BR">Português (Brasil)</SelectItem>
-                          <SelectItem value="en">English (US)</SelectItem>
-                          <SelectItem value="es">Español</SelectItem>
+                          <SelectItem value="pt-BR" className="focus:bg-[#D4AF37] focus:text-black font-bold">Português (Brasil)</SelectItem>
+                          <SelectItem value="en" className="focus:bg-[#D4AF37] focus:text-black font-bold">English (US)</SelectItem>
+                          <SelectItem value="es" className="focus:bg-[#D4AF37] focus:text-black font-bold">Español</SelectItem>
                         </SelectContent>
                       </Select>
-                      <p className="text-[10px] text-slate-500 font-medium">Este será o idioma padrão carregado para todos os usuários.</p>
+                      <p className="text-[10px] text-slate-600 font-bold uppercase tracking-wider pl-1">Idioma padrão do sistema</p>
                     </div>
 
                     <div className="space-y-3">
-                      <Label htmlFor="formatoData" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Formato de data</Label>
+                      <Label htmlFor="formatoData" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Formato de data</Label>
                       <Select value={formatoData} onValueChange={setFormatoData}>
-                        <SelectTrigger className="h-14 bg-[#0B1220] border-white/5 focus:ring-[#D4AF37] rounded-xl font-bold text-base">
+                        <SelectTrigger className="h-14 bg-[#0B1220] border-white/5 focus:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]">
                           <SelectValue placeholder="Selecione o formato" />
                         </SelectTrigger>
                         <SelectContent className="bg-[#111827] border-white/5 text-white">
-                          <SelectItem value="DD/MM/AAAA">DD/MM/AAAA</SelectItem>
-                          <SelectItem value="MM/DD/YYYY">MM/DD/YYYY</SelectItem>
-                          <SelectItem value="YYYY-MM-DD">YYYY-MM-DD</SelectItem>
+                          <SelectItem value="DD/MM/AAAA" className="focus:bg-[#D4AF37] focus:text-black font-bold">DD/MM/AAAA</SelectItem>
+                          <SelectItem value="MM/DD/YYYY" className="focus:bg-[#D4AF37] focus:text-black font-bold">MM/DD/YYYY</SelectItem>
+                          <SelectItem value="YYYY-MM-DD" className="focus:bg-[#D4AF37] focus:text-black font-bold">YYYY-MM-DD</SelectItem>
                         </SelectContent>
                       </Select>
-                      <p className="text-[10px] text-slate-500 font-medium">Como as datas serão exibidas na interface do aluno.</p>
+                      <p className="text-[10px] text-slate-600 font-bold uppercase tracking-wider pl-1">Exibição de datas para o aluno</p>
                     </div>
                   </div>
                 </div>
 
                 {/* 2. Idiomas habilitados */}
-                <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-6 shadow-2xl relative overflow-hidden">
+                <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
@@ -1015,124 +1015,145 @@ function EditAreaPage() {
                             }
                           }}
                           className={`
-                            px-6 h-12 rounded-full font-bold text-sm transition-all flex items-center gap-3 border
+                            px-8 h-14 rounded-full font-black text-sm transition-all flex items-center gap-4 border
                             ${isActive 
-                              ? 'bg-[#D4AF37]/10 border-[#D4AF37] text-[#D4AF37] shadow-[0_0_15px_rgba(212,175,55,0.1)]' 
-                              : 'bg-[#0B1220] border-white/5 text-slate-500 hover:border-white/20'
+                              ? 'bg-[#D4AF37]/10 border-[#D4AF37] text-[#D4AF37] shadow-[0_0_20px_rgba(212,175,55,0.15)]' 
+                              : 'bg-[#0B1220] border-white/5 text-slate-600 hover:border-white/20 hover:text-slate-400'
                             }
-                            ${isMain ? 'cursor-default' : 'hover:scale-[1.02] active:scale-[0.98]'}
+                            ${isMain ? 'cursor-default ring-2 ring-[#D4AF37]/20' : 'hover:scale-[1.03] active:scale-[0.97]'}
                           `}
                         >
-                          <div className={`h-2 w-2 rounded-full ${isActive ? 'bg-[#D4AF37] animate-pulse' : 'bg-slate-700'}`} />
-                          {lang.label} {isMain && "(Padrão)"}
+                          <div className={`h-2.5 w-2.5 rounded-full ${isActive ? 'bg-[#D4AF37] shadow-[0_0_8px_#D4AF37]' : 'bg-slate-800'}`} />
+                          {lang.label} {isMain && <span className="text-[10px] bg-[#D4AF37] text-black px-2 py-0.5 rounded-full ml-1 uppercase">Padrão</span>}
                         </button>
                       );
                     })}
                   </div>
-                  <p className="text-xs text-slate-500 font-medium">Os alunos poderão alternar entre os idiomas habilitados no menu de perfil.</p>
+                  <p className="text-xs text-slate-500 font-medium italic">Selecione quais idiomas estarão disponíveis para troca no painel do aluno.</p>
                 </div>
 
                 {/* 3. Textos do sistema */}
-                <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
+                <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-10 shadow-2xl relative overflow-hidden">
                   <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
                       <MessageSquare className="h-5 w-5 text-[#D4AF37]" />
                     </div>
-                    <h3 className="text-xl font-black text-white">Personalização de Textos</h3>
+                    <h3 className="text-xl font-black text-white">Personalização de Textos do Sistema</h3>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
-                    <div className="space-y-3">
-                      <Label htmlFor="boasVindas" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">1. Texto de boas-vindas</Label>
-                      <Input
-                        id="boasVindas"
-                        value={boasVindas}
-                        onChange={(e) => setBoasVindas(e.target.value)}
-                        placeholder="Ex: Olá, seja bem-vindo de volta!"
-                        className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
-                      />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+                    <div className="space-y-3 group">
+                      <Label htmlFor="boasVindas" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">1. Texto de boas-vindas</Label>
+                      <div className="relative">
+                        <Input
+                          id="boasVindas"
+                          value={boasVindas}
+                          onChange={(e) => setBoasVindas(e.target.value)}
+                          placeholder="Olá, seja bem-vindo de volta!"
+                          className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all pl-12"
+                        />
+                        <Sparkles className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-600 group-focus-within:text-[#D4AF37]/40" />
+                      </div>
                     </div>
 
-                    <div className="space-y-3">
-                      <Label htmlFor="botaoContinuar" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">2. Texto do botão "Continuar"</Label>
-                      <Input
-                        id="botaoContinuar"
-                        value={botaoContinuar}
-                        onChange={(e) => setBotaoContinuar(e.target.value)}
-                        placeholder="Ex: Continuar assistindo"
-                        className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
-                      />
+                    <div className="space-y-3 group">
+                      <Label htmlFor="botaoContinuar" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">2. Texto do botão "Continuar"</Label>
+                      <div className="relative">
+                        <Input
+                          id="botaoContinuar"
+                          value={botaoContinuar}
+                          onChange={(e) => setBotaoContinuar(e.target.value)}
+                          placeholder="Continuar assistindo"
+                          className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all pl-12"
+                        />
+                        <ChevronRight className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-600 group-focus-within:text-[#D4AF37]/40" />
+                      </div>
                     </div>
 
-                    <div className="space-y-3">
-                      <Label htmlFor="produtoBloqueado" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">3. Texto de produto bloqueado</Label>
-                      <Input
-                        id="produtoBloqueado"
-                        value={produtoBloqueado}
-                        onChange={(e) => setProdutoBloqueado(e.target.value)}
-                        placeholder="Ex: Você ainda não possui acesso a este conteúdo"
-                        className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
-                      />
+                    <div className="space-y-3 group">
+                      <Label htmlFor="produtoBloqueado" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">3. Texto de produto bloqueado</Label>
+                      <div className="relative">
+                        <Input
+                          id="produtoBloqueado"
+                          value={produtoBloqueado}
+                          onChange={(e) => setProdutoBloqueado(e.target.value)}
+                          placeholder="Você ainda não possui acesso..."
+                          className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all pl-12"
+                        />
+                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-600 group-focus-within:text-[#D4AF37]/40" />
+                      </div>
                     </div>
 
-                    <div className="space-y-3">
-                      <Label htmlFor="conclusao" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">4. Texto de conclusão</Label>
-                      <Input
-                        id="conclusao"
-                        value={conclusao}
-                        onChange={(e) => setConclusao(e.target.value)}
-                        placeholder="Ex: Conteúdo concluído com sucesso!"
-                        className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
-                      />
+                    <div className="space-y-3 group">
+                      <Label htmlFor="conclusao" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">4. Texto de conclusão</Label>
+                      <div className="relative">
+                        <Input
+                          id="conclusao"
+                          value={conclusao}
+                          onChange={(e) => setConclusao(e.target.value)}
+                          placeholder="Conteúdo concluído com sucesso!"
+                          className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all pl-12"
+                        />
+                        <CheckCircle2 className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-600 group-focus-within:text-[#D4AF37]/40" />
+                      </div>
                     </div>
 
-                    <div className="space-y-3">
-                      <Label htmlFor="parabens" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">5. Texto de parabéns</Label>
-                      <Input
-                        id="parabens"
-                        value={parabens}
-                        onChange={(e) => setParabens(e.target.value)}
-                        placeholder="Ex: Parabéns por finalizar este módulo!"
-                        className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
-                      />
+                    <div className="space-y-3 group">
+                      <Label htmlFor="parabens" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">5. Texto de parabéns</Label>
+                      <div className="relative">
+                        <Input
+                          id="parabens"
+                          value={parabens}
+                          onChange={(e) => setParabens(e.target.value)}
+                          placeholder="Parabéns por finalizar este módulo!"
+                          className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all pl-12"
+                        />
+                        <Trophy className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-600 group-focus-within:text-[#D4AF37]/40" />
+                      </div>
                     </div>
 
-                    <div className="space-y-3">
-                      <Label htmlFor="botaoEntrar" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">6. Texto do botão "Entrar"</Label>
-                      <Input
-                        id="botaoEntrar"
-                        value={botaoEntrar}
-                        onChange={(e) => setBotaoEntrar(e.target.value)}
-                        placeholder="Ex: Acessar plataforma"
-                        className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
-                      />
+                    <div className="space-y-3 group">
+                      <Label htmlFor="botaoEntrar" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">6. Texto do botão "Entrar"</Label>
+                      <div className="relative">
+                        <Input
+                          id="botaoEntrar"
+                          value={botaoEntrar}
+                          onChange={(e) => setBotaoEntrar(e.target.value)}
+                          placeholder="Acessar plataforma"
+                          className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all pl-12"
+                        />
+                        <LogIn className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-600 group-focus-within:text-[#D4AF37]/40" />
+                      </div>
                     </div>
 
-                    <div className="space-y-3 md:col-span-2">
-                      <Label htmlFor="suporteTexto" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">7. Texto de suporte</Label>
-                      <Input
-                        id="suporteTexto"
-                        value={suporteTexto}
-                        onChange={(e) => setSuporteTexto(e.target.value)}
-                        placeholder="Ex: Precisa de ajuda? Fale com nosso suporte"
-                        className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all"
-                      />
+                    <div className="space-y-3 md:col-span-2 group">
+                      <Label htmlFor="suporteTexto" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">7. Texto de suporte</Label>
+                      <div className="relative">
+                        <Input
+                          id="suporteTexto"
+                          value={suporteTexto}
+                          onChange={(e) => setSuporteTexto(e.target.value)}
+                          placeholder="Precisa de ajuda? Fale com nosso suporte"
+                          className="h-14 bg-[#0B1220] border-white/5 focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all pl-12"
+                        />
+                        <LifeBuoy className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-600 group-focus-within:text-[#D4AF37]/40" />
+                      </div>
                     </div>
                   </div>
 
-                  <div className="pt-6 border-t border-white/5">
+                  <div className="pt-8 border-t border-white/5">
                     <Button
                       onClick={handleSubmit}
                       disabled={mutation.isPending || !nome || !produtoId}
-                      className="w-full h-16 bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-black font-black text-lg rounded-2xl shadow-[0_20px_40px_rgba(212,175,55,0.2)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3"
+                      className="w-full h-16 bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-black font-black text-lg rounded-2xl shadow-[0_20px_40px_rgba(212,175,55,0.2)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group"
                     >
                       {mutation.isPending ? (
-                        <Loader2 className="h-6 w-6 animate-spin" />
+                        <Loader2 className="h-7 w-7 animate-spin" />
                       ) : (
                         <>
-                          <Save className="h-6 w-6" />
-                          Salvar Configurações de Localização
+                          <Save className="h-6 w-6 group-hover:scale-110 transition-transform" />
+                          Salvar Localização e Textos
                         </>
                       )}
                     </Button>
