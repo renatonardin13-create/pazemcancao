@@ -92,9 +92,9 @@ function StrategicShelf({ playlist, shelfIdx }: { playlist: StrategicPlaylist; s
         <h2 className="font-display text-lg sm:text-xl font-bold text-foreground/90 tracking-tight">
           {playlist.title}
         </h2>
-        <div className="flex-1 h-px bg-gradient-to-r from-gold/10 to-transparent" />
+        <div className="flex-1 h-px bg-gradient-to-r from-orange-500/10 to-transparent" />
         {playlist.hasLockedTracks && (
-          <span className="flex items-center gap-1 text-[10px] font-semibold text-gold/50 uppercase tracking-wider">
+          <span className="flex items-center gap-1 text-[10px] font-semibold text-orange-500/50 uppercase tracking-wider">
             <Lock className="h-2.5 w-2.5" />
             Premium
           </span>
