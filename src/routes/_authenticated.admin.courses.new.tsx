@@ -29,6 +29,7 @@ function NewCoursePage() {
   const { activeArea } = useAdminActiveArea();
   const formRef = useRef<HTMLFormElement>(null);
   const [activeTab, setActiveTab] = useState("detalhes");
+  const [courseType, setCourseType] = useState("aula");
 
   const { data: catData, isLoading: catLoading } = useQuery({
     queryKey: ["admin-categories", activeArea?.id],
