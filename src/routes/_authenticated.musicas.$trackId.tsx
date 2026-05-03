@@ -91,7 +91,7 @@ function TrackDetailPage() {
         <div className="sticky top-0 z-30 border-b border-border/10 bg-background/95 backdrop-blur-xl">
           <div className="mx-auto max-w-2xl flex items-center justify-between px-6 h-12">
             <Link
-              to="/conteudo"
+              to="/musicas"
               className="flex items-center gap-2 text-xs font-medium text-muted-foreground/50 hover:text-foreground/70 transition-colors"
             >
               <ChevronLeft className="h-3.5 w-3.5" />
