@@ -318,7 +318,7 @@ function CourseDetailPage() {
           <div className="max-w-md space-y-4">
             <h2 className="text-2xl font-bold">Pacote de Louvores</h2>
             <p className="text-muted-foreground">Você pode acessar todos os louvores diretamente na seção de Músicas.</p>
-            <Link to="/musicas" className="inline-block px-6 py-2 bg-gold text-background rounded-full font-bold">Ver Músicas</Link>
+            <Link to="/home" className="inline-block px-6 py-2 bg-gold text-background rounded-full font-bold">Voltar ao Início</Link>
           </div>
         </div>
       </StudentLayout>

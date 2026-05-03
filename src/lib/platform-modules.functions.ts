@@ -23,7 +23,7 @@ export const getPlatformModules = createServerFn({ method: 'POST' })
       // If table doesn't exist, return empty list instead of throwing
       return { modules: [] };
     }
-    return { modules: (data || []) as PlatformModule[] };
+    return { modules: (data || []) as unknown as PlatformModule[] };
   });
 
 export const updatePlatformModule = createServerFn({ method: 'POST' })
