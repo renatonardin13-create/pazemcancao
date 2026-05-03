@@ -109,6 +109,9 @@ function EditAreaPage() {
       setNome(area.nome || "");
       setRotuloCurto(area.rotulo_curto || "");
       setDescricao(area.descricao || "");
+      setAppName(area.app_name || "");
+      setLogoAlt(area.logo_alt || "");
+      setSupportEmail(area.support_email || "");
       setTipo(area.tipo || "misto");
       setSubdominio(area.subdominio || "");
       setStatus(area.status || "active");
