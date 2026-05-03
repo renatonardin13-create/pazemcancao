@@ -1,0 +1,9 @@
+ALTER TABLE public.areas_membros 
+ADD COLUMN IF NOT EXISTS theme_mode TEXT DEFAULT 'dark',
+ADD COLUMN IF NOT EXISTS accent_color TEXT,
+ADD COLUMN IF NOT EXISTS button_color TEXT,
+ADD COLUMN IF NOT EXISTS button_text_color TEXT,
+ADD COLUMN IF NOT EXISTS sidebar_color TEXT,
+ADD COLUMN IF NOT EXISTS text_primary TEXT,
+ADD COLUMN IF NOT EXISTS text_secondary TEXT,
+ADD COLUMN IF NOT EXISTS elevated_surface TEXT;
