@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { useTranslation } from "react-i18next";
+// removed translation hook
 import { AlertCircle, RefreshCw, Loader2, ChevronRight } from "lucide-react";
 import { ModuleGuard } from "@/components/ModuleGuard";
 import { getStudentVitrineData } from "@/lib/student-vitrine.functions";
@@ -48,7 +48,7 @@ function VitrineErrorFallback({ error }: { error: Error }) {
 }
 
 function VitrinePage() {
-  const { t } = useTranslation();
+  const t = (k: string) => k === 'catalog' ? 'Catálogo' : k === 'no_content' ? 'Nenhum conteúdo disponível no momento.' : k;
 
   const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ["student-shelves", "v5-streaming", undefined],
