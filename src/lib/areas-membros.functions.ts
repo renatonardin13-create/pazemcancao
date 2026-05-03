@@ -293,6 +293,39 @@ export const updateAreaMembro = createServerFn({ method: 'POST' })
       .eq('id', data.id);
 
     if (error) throw new Error(error.message);
+
+    // Update login configurations
+    if (
+      data.titulo_login !== undefined ||
+      data.subtitulo_login !== undefined ||
+      data.placeholder_email !== undefined ||
+      data.placeholder_senha !== undefined ||
+      data.texto_botao !== undefined ||
+      data.texto_ajuda !== undefined ||
+      data.texto_rodape !== undefined ||
+      data.imagem_login_url !== undefined ||
+      data.layout_login !== undefined ||
+      data.modo_fundo !== undefined
+    ) {
+      const { error: loginError } = await supabaseAdmin
+        .from('configuracoes_login_area')
+        .upsert({
+          area_id: data.id,
+          titulo_login: data.titulo_login,
+          subtitulo_login: data.subtitulo_login,
+          placeholder_email: data.placeholder_email,
+          placeholder_senha: data.placeholder_senha,
+          texto_botao: data.texto_botao,
+          texto_ajuda: data.texto_ajuda,
+          texto_rodape: data.texto_rodape,
+          imagem_login_url: data.imagem_login_url,
+          layout_login: data.layout_login,
+          modo_fundo: data.modo_fundo,
+        }, { onConflict: 'area_id' });
+
+      if (loginError) throw new Error(loginError.message);
+    }
+
     return { success: true };
   });
 
