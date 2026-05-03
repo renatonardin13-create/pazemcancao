@@ -26,6 +26,7 @@ import {
   Music,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ProductDialog } from "@/components/admin/products/ProductDialog";
 import {
   Tooltip,
   TooltipContent,
