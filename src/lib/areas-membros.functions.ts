@@ -270,6 +270,15 @@ export const updateAreaMembro = createServerFn({ method: 'POST' })
         text_primary: data.text_primary,
         text_secondary: data.text_secondary,
         elevated_surface: data.elevated_surface,
+        idiomas_ativos: data.idiomas_ativos,
+        formato_data: data.formato_data,
+        boas_vindas: data.boas_vindas,
+        botao_continuar: data.botao_continuar,
+        produto_bloqueado: data.produto_bloqueado,
+        conclusao: data.conclusao,
+        parabens: data.parabens,
+        botao_entrar: data.botao_entrar,
+        suporte_texto: data.suporte_texto,
       })
       .eq('id', data.id);
 
