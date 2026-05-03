@@ -29,7 +29,13 @@ import {
   Lock,
   Package,
   ChevronRight,
-  Mail
+  Mail,
+  Calendar,
+  MessageSquare,
+  CheckCircle2,
+  Trophy,
+  LogIn,
+  LifeBuoy
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
