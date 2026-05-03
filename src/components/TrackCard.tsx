@@ -161,9 +161,9 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
       }`}
     >
       {isPlaying ? (
-        <Pause className="h-4 w-4 fill-gold-foreground text-gold-foreground sm:h-5 sm:w-5" />
+        <Pause className="h-4 w-4 fill-current text-black sm:h-5 sm:w-5" />
       ) : (
-        <Play className="h-4 w-4 fill-gold-foreground text-gold-foreground sm:h-5 sm:w-5" />
+        <Play className="h-4 w-4 fill-current text-black sm:h-5 sm:w-5" />
       )}
     </button>
   ) : undefined;
