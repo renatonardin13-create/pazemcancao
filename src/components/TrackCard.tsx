@@ -156,8 +156,8 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
       onClick={handlePlay}
       className={`pointer-events-auto flex h-auto items-center gap-2 rounded-full px-5 py-2.5 shadow-[0_4px_24px_rgba(0,0,0,0.4)] md:transition-all md:duration-500 md:ease-[cubic-bezier(0.22,1,0.36,1)] ${
         isPlaying
-          ? "scale-100 bg-gold/95 opacity-100"
-          : "scale-[0.5] bg-gold/95 opacity-0 md:group-hover/card:scale-100 md:group-hover/card:opacity-100"
+          ? "scale-100 bg-orange-500/95 opacity-100"
+          : "scale-[0.5] bg-orange-500/95 opacity-0 md:group-hover/card:scale-100 md:group-hover/card:opacity-100"
       }`}
     >
       {isPlaying ? (
