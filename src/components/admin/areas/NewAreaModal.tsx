@@ -128,201 +128,220 @@ export function NewAreaModal({ open, onOpenChange }: NewAreaModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="p-0 bg-[#07090E] border-white/5 text-white max-w-4xl rounded-[2.5rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.8)] border border-white/10">
+      <DialogContent className="p-0 bg-[#0B1220] border-[#1F2937] text-[#F9FAFB] max-w-[800px] rounded-[16px] overflow-hidden shadow-2xl">
         <AnimatePresence mode="wait">
           {!showSuccess ? (
             <motion.div
               key="form"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, scale: 0.98 }}
+              animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="flex flex-col md:flex-row h-full"
+              className="flex flex-col h-[85vh] md:h-[650px]"
             >
-              {/* Sidebar Info */}
-              <div className="md:w-[320px] bg-white/[0.02] p-8 border-r border-white/5 flex flex-col justify-between relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-gold" />
-                <div className="space-y-6 relative z-10">
-                  <div className="h-14 w-14 rounded-2xl bg-gold/10 flex items-center justify-center text-gold">
-                    <Sparkles className="h-8 w-8" />
+              {/* Header */}
+              <div className="p-6 border-b border-white/5 bg-[#111827]">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/20">
+                    <Sparkles className="h-5 w-5 text-[#D4AF37]" />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-black tracking-tight">Nova Área</h2>
-                    <p className="text-muted-foreground mt-2 leading-relaxed">
-                      Configure o ambiente exclusivo para seus alunos.
-                    </p>
-                  </div>
-                  
-                  <div className="space-y-4 pt-4">
-                    <div className="flex gap-3">
-                      <div className="h-6 w-6 rounded-full bg-gold/20 flex items-center justify-center text-gold text-xs font-bold shrink-0">1</div>
-                      <p className="text-xs text-muted-foreground leading-relaxed">Defina o nome e o subdomínio único da sua área.</p>
-                    </div>
-                    <div className="flex gap-3">
-                      <div className="h-6 w-6 rounded-full bg-white/5 flex items-center justify-center text-muted-foreground text-xs font-bold shrink-0">2</div>
-                      <p className="text-xs text-muted-foreground leading-relaxed">Vincule um produto do seu catálogo.</p>
-                    </div>
-                    <div className="flex gap-3">
-                      <div className="h-6 w-6 rounded-full bg-white/5 flex items-center justify-center text-muted-foreground text-xs font-bold shrink-0">3</div>
-                      <p className="text-xs text-muted-foreground leading-relaxed">Configure visibilidade e preferência.</p>
-                    </div>
+                    <h2 className="text-xl font-black tracking-tight">Criar Nova Área de Membros</h2>
+                    <p className="text-xs text-[#9CA3AF] font-medium">Configure seu novo ambiente de cursos</p>
                   </div>
                 </div>
-
-                <div className="mt-8 p-4 rounded-2xl bg-white/[0.03] border border-white/5 space-y-2 relative z-10">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gold">DICA PREMIUM</p>
-                  <p className="text-xs text-muted-foreground italic">Use nomes curtos e subdomínios fáceis de lembrar para seus alunos.</p>
-                </div>
-
-                {/* Ambient Light */}
-                <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-gold/5 blur-[80px] rounded-full" />
               </div>
 
-              {/* Form Content */}
-              <div className="flex-1 p-10 space-y-8 max-h-[85vh] overflow-y-auto custom-scrollbar">
-                <div className="grid gap-8">
-                  {/* Basic Info Group */}
-                  <div className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      <div className="space-y-2">
-                        <Label htmlFor="nome" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Nome da área</Label>
-                        <Input 
-                          id="nome" 
-                          placeholder="Ex: Comunidade Premium" 
-                          value={nome}
-                          onChange={(e) => setNome(e.target.value)}
-                          className="bg-white/[0.03] border-white/10 h-14 rounded-2xl focus-visible:ring-gold text-base font-medium placeholder:text-white/20"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="subdominio" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Identificador (Subdomínio)</Label>
-                        <div className="relative group">
-                          <Input 
-                            id="subdominio" 
-                            placeholder="ex: alunos" 
-                            value={subdominio}
-                            onChange={(e) => setSubdominio(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "-"))}
-                            className="bg-white/[0.03] border-white/10 h-14 rounded-2xl focus-visible:ring-gold pr-32 text-base font-mono"
-                          />
-                          <span className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground/40 text-xs font-bold">.plataforma.com</span>
-                        </div>
-                        {subdominio && (
-                          <p className="text-[10px] text-gold/60 font-mono pl-1">
-                            Acesso via: <span className="font-bold underline">{subdominio}.plataforma.com</span>
-                          </p>
-                        )}
-                      </div>
+              {/* Form Content - Scrollable */}
+              <div className="flex-1 overflow-y-auto p-8 space-y-10 custom-scrollbar bg-[#111827]">
+                {/* 1. IDENTIDADE DA ÁREA */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2 pb-2 border-b border-white/5">
+                    <div className="h-6 w-6 rounded-full bg-white/5 flex items-center justify-center text-[10px] font-bold text-slate-500">1</div>
+                    <h3 className="text-sm font-black uppercase tracking-widest text-[#D4AF37]">Identidade da Área</h3>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="nome" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Título (Obrigatório)</Label>
+                      <Input 
+                        id="nome" 
+                        placeholder="Ex: Reino das Cores Kids" 
+                        value={nome}
+                        onChange={(e) => setNome(e.target.value)}
+                        className="bg-[#1F2937] border-white/5 h-12 rounded-xl focus-visible:ring-[#D4AF37] text-base font-bold transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="rotuloCurto" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Rótulo curto</Label>
+                      <Input 
+                        id="rotuloCurto" 
+                        placeholder="Ex: Kids" 
+                        value={rotuloCurto}
+                        onChange={(e) => setRotuloCurto(e.target.value)}
+                        className="bg-[#1F2937] border-white/5 h-12 rounded-xl focus-visible:ring-[#D4AF37] text-base font-bold transition-all"
+                      />
+                      <p className="text-[10px] text-slate-600 font-medium flex items-center gap-1">
+                        <Info className="h-3 w-3" />
+                        Versão compacta usada em badges e chips.
+                      </p>
                     </div>
                   </div>
 
-                  {/* Product Group */}
-                  <div className="space-y-4">
-                    <Label htmlFor="produto" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Produto vinculado</Label>
+                  <div className="space-y-2">
+                    <Label htmlFor="descricao" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Descrição</Label>
+                    <Textarea 
+                      id="descricao" 
+                      placeholder="Descreva para quem é essa área e o que ela entrega" 
+                      value={descricao}
+                      onChange={(e) => setDescricao(e.target.value)}
+                      className="bg-[#1F2937] border-white/5 min-h-[100px] rounded-xl focus-visible:ring-[#D4AF37] text-base font-medium resize-none transition-all"
+                    />
+                  </div>
+                </div>
+
+                {/* 2. ENDEREÇO DA ÁREA */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2 pb-2 border-b border-white/5">
+                    <div className="h-6 w-6 rounded-full bg-white/5 flex items-center justify-center text-[10px] font-bold text-slate-500">2</div>
+                    <h3 className="text-sm font-black uppercase tracking-widest text-[#D4AF37]">Endereço da Área</h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="subdominio" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Identificador (Obrigatório)</Label>
+                      <Input 
+                        id="subdominio" 
+                        placeholder="Ex: desafio24dias" 
+                        value={subdominio}
+                        onChange={(e) => setSubdominio(e.target.value.toLowerCase().replace(/[^a-z0-9]/g, ""))}
+                        className="bg-[#1F2937] border-white/5 h-12 rounded-xl focus-visible:ring-[#D4AF37] font-mono text-sm transition-all"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="rootDomain" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Domínio raiz</Label>
+                      <Input 
+                        id="rootDomain" 
+                        placeholder="Ex: seudominio.com" 
+                        value={rootDomain}
+                        onChange={(e) => setRootDomain(e.target.value)}
+                        className="bg-[#1F2937] border-white/5 h-12 rounded-xl focus-visible:ring-[#D4AF37] font-mono text-sm transition-all"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="p-5 rounded-2xl bg-[#0B1220] border border-white/5 space-y-3">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[#D4AF37]/60">Preview da URL</span>
+                    <div className="flex items-center justify-between gap-3 p-3 bg-black/20 rounded-xl border border-white/5 group/url">
+                      <Globe className="h-4 w-4 text-[#D4AF37]/40" />
+                      <span className="text-xs font-bold text-slate-400 truncate flex-1 font-mono">
+                        https://{subdominio || "subdominio"}.{rootDomain || "dominio.com"}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* 3. CONFIGURAÇÕES DA ÁREA */}
+                <div className="space-y-6">
+                  <div className="flex items-center gap-2 pb-2 border-b border-white/5">
+                    <div className="h-6 w-6 rounded-full bg-white/5 flex items-center justify-center text-[10px] font-bold text-slate-500">3</div>
+                    <h3 className="text-sm font-black uppercase tracking-widest text-[#D4AF37]">Configurações da Área</h3>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                      <Label htmlFor="status" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Status Inicial</Label>
+                      <Select value={status} onValueChange={setStatus}>
+                        <SelectTrigger className="bg-[#1F2937] border-white/5 h-12 rounded-xl focus:ring-[#D4AF37] font-bold">
+                          <SelectValue placeholder="Status" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#111827] border-white/10 text-white">
+                          <SelectItem value="active" className="focus:bg-[#D4AF37] focus:text-black font-bold">Ativa</SelectItem>
+                          <SelectItem value="draft" className="focus:bg-[#D4AF37] focus:text-black font-bold">Rascunho</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="language" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Idioma Padrão</Label>
+                      <Select value={language} onValueChange={setLanguage}>
+                        <SelectTrigger className="bg-[#1F2937] border-white/5 h-12 rounded-xl focus:ring-[#D4AF37] font-bold">
+                          <SelectValue placeholder="Idioma" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#111827] border-white/10 text-white">
+                          <SelectItem value="pt-BR" className="focus:bg-[#D4AF37] focus:text-black font-bold">Português (Brasil)</SelectItem>
+                          <SelectItem value="en" className="focus:bg-[#D4AF37] focus:text-black font-bold">English</SelectItem>
+                          <SelectItem value="es" className="focus:bg-[#D4AF37] focus:text-black font-bold">Español</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="produto" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Produto Principal (Vínculo Inicial)</Label>
                     <Select value={produtoId} onValueChange={setProdutoId}>
-                      <SelectTrigger className="bg-white/[0.03] border-white/10 h-14 rounded-2xl focus:ring-gold text-base">
+                      <SelectTrigger className="bg-[#1F2937] border-white/5 h-12 rounded-xl focus:ring-[#D4AF37] font-bold">
                         <SelectValue placeholder="Selecione um produto do seu catálogo" />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#0A0D14] border-white/10 text-white rounded-2xl p-2">
+                      <SelectContent className="bg-[#111827] border-white/10 text-white max-h-[200px]">
                         {courses?.map(course => (
-                          <SelectItem key={course.id} value={course.id} className="rounded-xl h-12 focus:bg-gold focus:text-black font-medium">
+                          <SelectItem key={course.id} value={course.id} className="focus:bg-[#D4AF37] focus:text-black font-bold">
                             {course.title}
                           </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
                   </div>
+                </div>
 
-                  {/* Language and Status Group */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="language" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Idioma da Área</Label>
-                      <Select value={language} onValueChange={setLanguage}>
-                        <SelectTrigger className="bg-white/[0.03] border-white/10 h-14 rounded-2xl focus:ring-gold text-base">
-                          <SelectValue placeholder="Selecione o idioma" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-[#0A0D14] border-white/10 text-white rounded-2xl">
-                          <SelectItem value="pt-BR" className="rounded-xl h-12">Português (Brasil)</SelectItem>
-                          <SelectItem value="en" className="rounded-xl h-12">English</SelectItem>
-                          <SelectItem value="es" className="rounded-xl h-12">Español</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="status" className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">Status Inicial</Label>
-                      <Select value={status} onValueChange={setStatus}>
-                        <SelectTrigger className="bg-white/[0.03] border-white/10 h-14 rounded-2xl focus:ring-gold text-base">
-                          <SelectValue placeholder="Status" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-[#0A0D14] border-white/10 text-white rounded-2xl">
-                          <SelectItem value="active" className="rounded-xl h-12">Ativo</SelectItem>
-                          <SelectItem value="draft" className="rounded-xl h-12">Rascunho</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
+                {/* 4. IDENTIDADE VISUAL RÁPIDA */}
+                <div className="space-y-6 pb-6">
+                  <div className="flex items-center gap-2 pb-2 border-b border-white/5">
+                    <div className="h-6 w-6 rounded-full bg-white/5 flex items-center justify-center text-[10px] font-bold text-slate-500">4</div>
+                    <h3 className="text-sm font-black uppercase tracking-widest text-[#D4AF37]">Identidade Visual Rápida</h3>
                   </div>
 
-                  {/* Toggle Controls */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="flex items-center justify-between p-5 bg-white/[0.03] rounded-2xl border border-white/5 group hover:border-gold/20 transition-all">
-                      <div className="space-y-1">
-                        <Label className="text-sm font-black flex items-center gap-2">
-                          <div className={`h-2 w-2 rounded-full ${ativa ? 'bg-emerald-500 animate-pulse' : 'bg-white/20'}`} />
-                          Área Ativa
-                        </Label>
-                        <p className="text-xs text-muted-foreground">Disponível para os alunos</p>
-                      </div>
-                      <Switch 
-                        checked={ativa} 
-                        onCheckedChange={setAtiva} 
-                        className="data-[state=checked]:bg-emerald-500"
+                  <div className="space-y-3">
+                    <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Cor de destaque</Label>
+                    <div className="flex gap-4">
+                      <Input 
+                        type="color" 
+                        value={primaryColor} 
+                        onChange={(e) => setPrimaryColor(e.target.value)} 
+                        className="w-16 h-12 p-1 bg-[#1F2937] border-white/10 cursor-pointer rounded-xl" 
                       />
-                    </div>
-
-                    <div className="flex items-center justify-between p-5 bg-white/[0.03] rounded-2xl border border-white/5 group hover:border-gold/20 transition-all">
-                      <div className="space-y-1">
-                        <Label className="text-sm font-black flex items-center gap-2">
-                          <Star className={`h-4 w-4 ${principal ? 'fill-gold text-gold' : 'text-muted-foreground'}`} />
-                          Área Principal
-                        </Label>
-                        <p className="text-xs text-muted-foreground">Padrão da plataforma</p>
-                      </div>
-                      <Switch 
-                        checked={principal} 
-                        onCheckedChange={setPrincipal}
-                        className="data-[state=checked]:bg-gold"
+                      <Input 
+                        value={primaryColor} 
+                        onChange={(e) => setPrimaryColor(e.target.value)} 
+                        className="flex-1 h-12 bg-[#1F2937] border-white/5 font-mono text-center font-bold rounded-xl" 
                       />
                     </div>
                   </div>
                 </div>
+              </div>
 
-                {/* Action Bar */}
-                <div className="flex flex-col sm:flex-row gap-4 pt-6 border-t border-white/5">
-                  <Button 
-                    variant="ghost" 
-                    onClick={() => onOpenChange(false)}
-                    className="flex-1 h-14 rounded-2xl hover:bg-white/5 text-white font-bold"
-                  >
-                    Descartar
-                  </Button>
-                  <Button 
-                    onClick={handleCreate}
-                    disabled={mutation.isPending || !nome || !subdominio || !produtoId}
-                    className="flex-[2] h-14 rounded-2xl bg-gold hover:bg-gold/90 text-black font-black text-lg shadow-[0_15px_30px_rgba(212,175,55,0.2)] hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
-                  >
-                    {mutation.isPending ? (
-                      <div className="flex items-center gap-2">
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                        Criando...
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        Criar Área Agora
-                        <ArrowRight className="h-5 w-5" />
-                      </div>
-                    )}
-                  </Button>
-                </div>
+              {/* Fixed Footer */}
+              <div className="p-6 border-t border-white/5 bg-[#111827] flex gap-4">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => onOpenChange(false)}
+                  className="flex-1 h-14 rounded-2xl hover:bg-white/5 text-slate-400 font-bold transition-all"
+                >
+                  Cancelar
+                </Button>
+                <Button 
+                  onClick={handleCreate}
+                  disabled={mutation.isPending || !nome || !subdominio || !produtoId}
+                  className="flex-[2] h-14 rounded-2xl bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-[#0F172A] font-black text-lg shadow-[0_15px_30px_rgba(212,175,55,0.2)] hover:scale-[1.02] active:scale-[0.98] transition-all disabled:opacity-50"
+                >
+                  {mutation.isPending ? (
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                      Criando Área...
+                    </div>
+                  ) : (
+                    "Criar minha área agora"
+                  )}
+                </Button>
               </div>
             </motion.div>
           ) : (
