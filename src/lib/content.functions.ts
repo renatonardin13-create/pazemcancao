@@ -35,7 +35,6 @@ export const listContentItems = createServerFn({ method: 'POST' })
       .select('*')
       .eq('is_active', true);
 
-    }
 
     const { data, error } = await query.order('sort_order', { ascending: true });
 

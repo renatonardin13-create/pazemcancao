@@ -77,9 +77,6 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
       .select('id, title, short_description, full_description, sales_description, cover_image_url, banner_image_url, price, promotional_price, benefits, total_lessons, total_duration, course_type, product_type, category_id, status, sort_order, launch_date')
       .eq('status', 'published');
 
-    } else {
-      return { shelves: [], heroBanners: [], featuredCourse: null, featuredCourses: [], promoBanners: [] };
-    }
 
     const [
       shelvesRes,
@@ -96,7 +93,7 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
           .from('shelves')
           .select('id, name, sort_order, mode, auto_criteria, show_in_vitrine')
           .eq('is_active', true);
-        else q = q.is('id', null);
+
         return q.order('sort_order', { ascending: true });
       })(),
       supabase
@@ -106,7 +103,7 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
       coursesQuery.order('sort_order', { ascending: true }),
       (() => {
         let q = supabase.from('categories').select('id, name');
-        else q = q.is('id', null);
+
         return q;
       })(),
       // course_integrations might still need admin if it's sensitive, but let's check
@@ -122,7 +119,7 @@ export const getStudentVitrineData = createServerFn({ method: 'POST' })
           .from('vitrine_hero_banners')
           .select('id, image_url, image_tablet_url, image_mobile_url, title, subtitle, description, primary_cta_label, primary_cta_url, primary_cta_type, primary_cta_target, secondary_cta_label, secondary_cta_url, secondary_cta_type, secondary_cta_target, banner_clickable, banner_click_type, banner_click_target, autoplay, autoplay_interval_ms, is_active, sort_order, schedule_start_at, schedule_end_at')
           .eq('is_active', true);
-        else q = q.is('id', null);
+
         return q.order('sort_order', { ascending: true });
       })(),
     ]);
