@@ -223,6 +223,15 @@ function EditAreaPage() {
       text_primary: textPrimary,
       text_secondary: textSecondary,
       elevated_surface: elevatedSurface,
+      idiomas_ativos: idiomasAtivos,
+      formato_data: formatoData,
+      boas_vindas: boasVindas,
+      botao_continuar: botaoContinuar,
+      produto_bloqueado: produtoBloqueado,
+      conclusao: conclusao,
+      parabens: parabens,
+      botao_entrar: botaoEntrar,
+      suporte_texto: suporteTexto,
     });
   };
 
