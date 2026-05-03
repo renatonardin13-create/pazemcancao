@@ -1,11 +1,10 @@
 import { Outlet, Link, createRootRouteWithContext, HeadContent, Scripts } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "@/hooks/use-auth";
-import { PlayerProvider } from "@/hooks/use-player";
 import { ImpersonationBanner } from "@/components/ImpersonationBanner";
 import { Toaster } from "@/components/ui/sonner";
 import { SafeBoundary } from "@/components/SafeBoundary";
-import "@/lib/i18n"; // Import i18n initialization
+
 
 import "../styles.css";
 
