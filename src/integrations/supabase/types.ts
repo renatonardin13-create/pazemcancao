@@ -205,6 +205,7 @@ export type Database = {
       }
       areas_membros: {
         Row: {
+          app_name: string | null
           ativa: boolean | null
           atualizado_em: string
           background_color: string | null
@@ -214,6 +215,7 @@ export type Database = {
           favicon_url: string | null
           id: string
           language: string | null
+          logo_alt: string | null
           logo_url: string | null
           nome: string
           primary_color: string | null
@@ -223,10 +225,12 @@ export type Database = {
           secondary_color: string | null
           status: string | null
           subdominio: string
+          support_email: string | null
           surface_color: string | null
           tipo: string | null
         }
         Insert: {
+          app_name?: string | null
           ativa?: boolean | null
           atualizado_em?: string
           background_color?: string | null
@@ -236,6 +240,7 @@ export type Database = {
           favicon_url?: string | null
           id?: string
           language?: string | null
+          logo_alt?: string | null
           logo_url?: string | null
           nome: string
           primary_color?: string | null
@@ -245,10 +250,12 @@ export type Database = {
           secondary_color?: string | null
           status?: string | null
           subdominio: string
+          support_email?: string | null
           surface_color?: string | null
           tipo?: string | null
         }
         Update: {
+          app_name?: string | null
           ativa?: boolean | null
           atualizado_em?: string
           background_color?: string | null
@@ -258,6 +265,7 @@ export type Database = {
           favicon_url?: string | null
           id?: string
           language?: string | null
+          logo_alt?: string | null
           logo_url?: string | null
           nome?: string
           primary_color?: string | null
@@ -267,6 +275,7 @@ export type Database = {
           secondary_color?: string | null
           status?: string | null
           subdominio?: string
+          support_email?: string | null
           surface_color?: string | null
           tipo?: string | null
         }
