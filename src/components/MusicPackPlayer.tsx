@@ -64,6 +64,11 @@ export function MusicPackPlayer({ courseId, courseTitle }: MusicPackPlayerProps)
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  useEffect(() => {
+    document.body.classList.add('hide-global-player');
+    return () => document.body.classList.remove('hide-global-player');
+  }, []);
+
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center py-20 gap-4">
