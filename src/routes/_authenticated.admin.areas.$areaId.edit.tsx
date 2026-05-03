@@ -144,6 +144,8 @@ function EditAreaPage() {
     mutation.mutate({ 
       id: areaId,
       nome, 
+      rotulo_curto: rotuloCurto,
+      tipo,
       status, 
       produto_id: produtoId, 
       principal,
