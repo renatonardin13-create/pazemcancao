@@ -22,7 +22,17 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
 
   const canDownload = accessData?.canDownload !== false;
 
-  if (!currentTrack) return null;
+  const [shouldHide, setShouldHide] = useState(false);
+  
+  useEffect(() => {
+    const check = () => setShouldHide(document.body.classList.contains('hide-global-player'));
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
+  if (!currentTrack || shouldHide) return null;
 
   const hasQueue = queue.length > 1;
 
