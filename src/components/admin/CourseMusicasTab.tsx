@@ -136,7 +136,7 @@ export function CourseMusicasTab({ courseId }: CourseMusicasTabProps) {
                         <Button
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 rounded-lg hover:bg-gold/10 hover:text-gold"
+                          className="h-8 w-8 rounded-lg hover:bg-orange-500/10 hover:text-orange-500"
                           onClick={() => setEditingMusica(musica)}
                         >
                           <Pencil className="h-3.5 w-3.5" />
