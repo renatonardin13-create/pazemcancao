@@ -29,9 +29,14 @@ import {
   Copy, 
   ExternalLink,
   ArrowRight,
-  BookOpen
+  BookOpen,
+  Info,
+  Layout,
+  Layers,
+  Palette
 } from "lucide-react";
 import { useNavigate } from "@tanstack/react-router";
+import { Textarea } from "@/components/ui/textarea";
 
 interface NewAreaModalProps {
   open: boolean;
