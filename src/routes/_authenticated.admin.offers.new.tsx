@@ -37,7 +37,7 @@ function NewOfferPage() {
   });
 
   const mutation = useMutation({
-    mutationFn: (values: any) => createOfferWithProducts(values),
+    mutationFn: (values: any) => createOfferWithProducts({ data: values }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-offers"] });
       toast.success("Oferta criada com sucesso!");
@@ -203,7 +203,7 @@ function NewOfferPage() {
               <div className="text-center py-20 space-y-4">
                 <Box className="h-10 w-10 text-muted-foreground/30 mx-auto" />
                 <p className="text-sm text-muted-foreground">Nenhum produto cadastrado no catálogo.</p>
-                <Link to="/admin/products/new">
+                <Link to="/admin/courses/new">
                   <Button variant="outline" size="sm">Cadastrar Produto</Button>
                 </Link>
               </div>
