@@ -78,10 +78,13 @@ export function NewAreaModal({ open, onOpenChange }: NewAreaModalProps) {
 
   const resetForm = () => {
     setNome("");
+    setRotuloCurto("");
+    setDescricao("");
     setSubdominio("");
     setProdutoId("");
     setAtiva(true);
     setPrincipal(false);
+    setPrimaryColor("#D4AF37");
     setShowSuccess(false);
   };
 
@@ -92,12 +95,15 @@ export function NewAreaModal({ open, onOpenChange }: NewAreaModalProps) {
     }
     mutation.mutate({
       nome,
+      rotulo_curto: rotuloCurto,
+      descricao,
       subdominio,
       produto_id: produtoId,
       ativa,
       principal,
       status,
-      language
+      language,
+      primary_color: primaryColor,
     });
   };
 
