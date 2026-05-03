@@ -107,6 +107,16 @@ function EditAreaPage() {
   const [parabens, setParabens] = useState("");
   const [botaoEntrar, setBotaoEntrar] = useState("");
   const [suporteTexto, setSuporteTexto] = useState("");
+  const [tituloLogin, setTituloLogin] = useState("");
+  const [subtituloLogin, setSubtituloLogin] = useState("");
+  const [placeholderEmail, setPlaceholderEmail] = useState("");
+  const [placeholderSenha, setPlaceholderSenha] = useState("");
+  const [textoBotao, setTextoBotao] = useState("");
+  const [textoAjuda, setTextoAjuda] = useState("");
+  const [textoRodape, setTextoRodape] = useState("");
+  const [imagemLoginUrl, setImagemLoginUrl] = useState("");
+  const [layoutLogin, setLayoutLogin] = useState("right");
+  const [modoFundo, setModoFundo] = useState("solid");
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const { data: areaData, isLoading: isLoadingArea } = useQuery({
@@ -167,6 +177,21 @@ function EditAreaPage() {
       setParabens(area.parabens || "");
       setBotaoEntrar(area.botao_entrar || "");
       setSuporteTexto(area.suporte_texto || "");
+      
+      // Load login configurations from the joined table
+      const loginConfig = Array.isArray(area.configuracoes_login) ? area.configuracoes_login[0] : area.configuracoes_login;
+      if (loginConfig) {
+        setTituloLogin(loginConfig.titulo_login || "");
+        setSubtituloLogin(loginConfig.subtitulo_login || "");
+        setPlaceholderEmail(loginConfig.placeholder_email || "");
+        setPlaceholderSenha(loginConfig.placeholder_senha || "");
+        setTextoBotao(loginConfig.texto_botao || "");
+        setTextoAjuda(loginConfig.texto_ajuda || "");
+        setTextoRodape(loginConfig.texto_rodape || "");
+        setImagemLoginUrl(loginConfig.imagem_login_url || "");
+        setLayoutLogin(loginConfig.layout_login || "right");
+        setModoFundo(loginConfig.modo_fundo || "solid");
+      }
     }
   }, [area]);
 
@@ -238,6 +263,16 @@ function EditAreaPage() {
       parabens: parabens,
       botao_entrar: botaoEntrar,
       suporte_texto: suporteTexto,
+      titulo_login: tituloLogin,
+      subtitulo_login: subtituloLogin,
+      placeholder_email: placeholderEmail,
+      placeholder_senha: placeholderSenha,
+      texto_botao: textoBotao,
+      texto_ajuda: textoAjuda,
+      texto_rodape: textoRodape,
+      imagem_login_url: imagemLoginUrl,
+      layout_login: layoutLogin,
+      modo_fundo: modoFundo,
     });
   };
 
@@ -1163,29 +1198,227 @@ function EditAreaPage() {
             </TabsContent>
 
             <TabsContent value="login" className="mt-0 outline-none">
-              <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 space-y-8 shadow-2xl relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
-                <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10">
-                    <Lock className="h-5 w-5 text-[#D4AF37]" />
+              <div className="max-w-[1100px] mx-auto space-y-8">
+                <div className="bg-[#111827] border border-white/5 rounded-[24px] p-8 md:p-12 space-y-12 shadow-2xl relative overflow-hidden">
+                  <div className="absolute top-0 left-0 w-full h-1 bg-[#D4AF37]/20" />
+                  
+                  <div className="flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-2xl bg-[#D4AF37]/10 flex items-center justify-center border border-[#D4AF37]/10 shadow-[0_0_20px_rgba(212,175,55,0.1)]">
+                      <Lock className="h-6 w-6 text-[#D4AF37]" />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-black text-white">Configurações da Página de Login</h3>
+                      <p className="text-slate-500 text-sm font-medium">Personalize a experiência de entrada dos seus alunos</p>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-black text-white">Segurança e Acesso</h3>
-                </div>
 
-                <div className="space-y-6">
-                  <div className="p-6 rounded-2xl bg-[#0B1220] border border-white/5 flex items-center justify-between">
-                    <div className="space-y-1">
-                      <Label className="text-base font-black text-white">Exigir Login para visualizar catálogo</Label>
-                      <p className="text-sm text-slate-500 font-medium">Se desativado, a vitrine será pública.</p>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-16 gap-y-10">
+                    {/* COLUNA ESQUERDA */}
+                    <div className="space-y-10">
+                      <div className="space-y-3 group">
+                        <Label htmlFor="tituloLogin" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Título da tela de login</Label>
+                        <Input
+                          id="tituloLogin"
+                          value={tituloLogin}
+                          onChange={(e) => setTituloLogin(e.target.value)}
+                          placeholder="Bem-vindo ao Reino das Cores Kids"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
+                        />
+                      </div>
+
+                      <div className="space-y-3 group">
+                        <Label htmlFor="placeholderEmail" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Placeholder do email</Label>
+                        <Input
+                          id="placeholderEmail"
+                          value={placeholderEmail}
+                          onChange={(e) => setPlaceholderEmail(e.target.value)}
+                          placeholder="Seu melhor email"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
+                        />
+                      </div>
+
+                      <div className="space-y-3 group">
+                        <Label htmlFor="textoBotaoLogin" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Texto do botão</Label>
+                        <Input
+                          id="textoBotaoLogin"
+                          value={textoBotao}
+                          onChange={(e) => setTextoBotao(e.target.value)}
+                          placeholder="Entrar agora"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
+                        />
+                      </div>
+
+                      <div className="space-y-3 group">
+                        <Label htmlFor="textoRodape" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Texto do rodapé (opcional)</Label>
+                        <Input
+                          id="textoRodape"
+                          value={textoRodape}
+                          onChange={(e) => setTextoRodape(e.target.value)}
+                          placeholder="Suporte: contato@empresa.com"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
+                        />
+                      </div>
+
+                      <div className="space-y-4 pt-4 border-t border-white/5">
+                        <Label className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Imagem de Login</Label>
+                        <div className="space-y-6">
+                          <ImageUploadField
+                            label=""
+                            hint="Aceita JPG/PNG. Sugestão: 4:3 ou 16:9"
+                            value={imagemLoginUrl}
+                            onChange={setImagemLoginUrl}
+                            uploadLabel="Enviar imagem de destaque"
+                          />
+                          <div className="space-y-2 group">
+                            <Label htmlFor="imagemLoginUrl" className="text-[10px] font-bold text-slate-500 group-focus-within:text-[#D4AF37]">Ou colar URL da imagem</Label>
+                            <Input
+                              id="imagemLoginUrl"
+                              value={imagemLoginUrl}
+                              onChange={(e) => setImagemLoginUrl(e.target.value)}
+                              placeholder="https://exemplo.com/login-hero.jpg"
+                              className="h-12 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-medium text-sm transition-all"
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <Switch defaultChecked className="data-[state=checked]:bg-[#D4AF37]" />
+
+                    {/* COLUNA DIREITA */}
+                    <div className="space-y-10">
+                      <div className="space-y-3 group">
+                        <Label htmlFor="subtituloLogin" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Subtítulo</Label>
+                        <Input
+                          id="subtituloLogin"
+                          value={subtituloLogin}
+                          onChange={(e) => setSubtituloLogin(e.target.value)}
+                          placeholder="Entre para acessar seu conteúdo exclusivo"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
+                        />
+                      </div>
+
+                      <div className="space-y-3 group">
+                        <Label htmlFor="placeholderSenha" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Placeholder da senha</Label>
+                        <Input
+                          id="placeholderSenha"
+                          type="text"
+                          value={placeholderSenha}
+                          onChange={(e) => setPlaceholderSenha(e.target.value)}
+                          placeholder="Sua senha secreta"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
+                        />
+                      </div>
+
+                      <div className="space-y-3 group">
+                        <Label htmlFor="textoAjuda" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500 group-focus-within:text-[#D4AF37] transition-colors">Texto de ajuda</Label>
+                        <Input
+                          id="textoAjuda"
+                          value={textoAjuda}
+                          onChange={(e) => setTextoAjuda(e.target.value)}
+                          placeholder="Esqueci minha senha"
+                          className="h-14 bg-[#1F2937] border-[#374151] focus-visible:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]"
+                        />
+                      </div>
+
+                      <div className="space-y-3">
+                        <Label htmlFor="layoutLogin" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Layout da página</Label>
+                        <Select value={layoutLogin} onValueChange={setLayoutLogin}>
+                          <SelectTrigger className="h-14 bg-[#1F2937] border-[#374151] focus:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]">
+                            <SelectValue placeholder="Selecione o layout" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#111827] border-white/5 text-white">
+                            <SelectItem value="right" className="focus:bg-[#D4AF37] focus:text-black font-bold">Imagem à direita</SelectItem>
+                            <SelectItem value="left" className="focus:bg-[#D4AF37] focus:text-black font-bold">Imagem à esquerda</SelectItem>
+                            <SelectItem value="centered" className="focus:bg-[#D4AF37] focus:text-black font-bold">Sem imagem (formulário centralizado)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-3">
+                        <Label htmlFor="modoFundo" className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">Modo de fundo</Label>
+                        <Select value={modoFundo} onValueChange={setModoFundo}>
+                          <SelectTrigger className="h-14 bg-[#1F2937] border-[#374151] focus:ring-[#D4AF37] rounded-xl font-bold text-base transition-all hover:bg-white/[0.02]">
+                            <SelectValue placeholder="Selecione o modo de fundo" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#111827] border-white/5 text-white">
+                            <SelectItem value="solid" className="focus:bg-[#D4AF37] focus:text-black font-bold">Cor sólida</SelectItem>
+                            <SelectItem value="gradient" className="focus:bg-[#D4AF37] focus:text-black font-bold">Gradiente</SelectItem>
+                            <SelectItem value="image" className="focus:bg-[#D4AF37] focus:text-black font-bold">Imagem de fundo</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      {/* Preview Box - Professional Simulation */}
+                      <div className="pt-4 space-y-4">
+                        <div className="flex items-center justify-center gap-2">
+                           <div className="h-px flex-1 bg-white/5" />
+                           <Label className="text-[10px] font-black uppercase tracking-widest text-slate-600">Simulação Visual</Label>
+                           <div className="h-px flex-1 bg-white/5" />
+                        </div>
+                        <div className={`p-4 rounded-[20px] border border-white/5 h-48 flex items-center justify-center overflow-hidden relative shadow-2xl bg-[#0B1220] group/preview`}>
+                            {modoFundo === 'gradient' && <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/20 to-transparent" />}
+                            {modoFundo === 'image' && imagemLoginUrl && <img src={imagemLoginUrl} className="absolute inset-0 w-full h-full object-cover opacity-30" />}
+                            {layoutLogin === 'centered' ? (
+                               <div className="bg-[#111827]/90 p-5 rounded-xl border border-white/10 w-40 space-y-3 z-10 shadow-2xl scale-90 group-hover/preview:scale-100 transition-transform duration-500">
+                                  <div className="h-1.5 w-1/2 bg-white/10 rounded-full" />
+                                  <div className="h-4 w-full bg-[#1F2937] border border-white/5 rounded-md" />
+                                  <div className="h-4 w-full bg-[#1F2937] border border-white/5 rounded-md" />
+                                  <div className="h-8 w-full bg-[#D4AF37] rounded-lg shadow-lg shadow-[#D4AF37]/10" />
+                               </div>
+                            ) : layoutLogin === 'left' ? (
+                               <div className="flex w-full h-full gap-3 p-2 z-10">
+                                  <div className="w-[45%] bg-[#1F2937]/50 rounded-xl flex items-center justify-center overflow-hidden border border-white/5 relative">
+                                     {imagemLoginUrl ? (
+                                       <img src={imagemLoginUrl} className="object-cover w-full h-full" alt="Hero" />
+                                     ) : (
+                                       <ImageIcon className="h-8 w-8 text-slate-700" />
+                                     )}
+                                     <div className="absolute inset-0 bg-black/20" />
+                                  </div>
+                                  <div className="flex-1 bg-[#111827]/90 p-4 rounded-xl border border-white/10 space-y-2 flex flex-col justify-center shadow-2xl">
+                                     <div className="h-1 w-1/3 bg-white/10 rounded-full" />
+                                     <div className="h-3 w-full bg-[#1F2937] border border-white/5 rounded-sm" />
+                                     <div className="h-3 w-full bg-[#1F2937] border border-white/5 rounded-sm" />
+                                     <div className="h-6 w-full bg-[#D4AF37] rounded-md mt-2" />
+                                  </div>
+                               </div>
+                            ) : (
+                               <div className="flex w-full h-full gap-3 p-2 z-10">
+                                  <div className="flex-1 bg-[#111827]/90 p-4 rounded-xl border border-white/10 space-y-2 flex flex-col justify-center shadow-2xl">
+                                     <div className="h-1 w-1/3 bg-white/10 rounded-full" />
+                                     <div className="h-3 w-full bg-[#1F2937] border border-white/5 rounded-sm" />
+                                     <div className="h-3 w-full bg-[#1F2937] border border-white/5 rounded-sm" />
+                                     <div className="h-6 w-full bg-[#D4AF37] rounded-md mt-2" />
+                                  </div>
+                                  <div className="w-[45%] bg-[#1F2937]/50 rounded-xl flex items-center justify-center overflow-hidden border border-white/5 relative">
+                                     {imagemLoginUrl ? (
+                                       <img src={imagemLoginUrl} className="object-cover w-full h-full" alt="Hero" />
+                                     ) : (
+                                       <ImageIcon className="h-8 w-8 text-slate-700" />
+                                     )}
+                                     <div className="absolute inset-0 bg-black/20" />
+                                  </div>
+                               </div>
+                            )}
+                         </div>
+                      </div>
+                    </div>
                   </div>
-                  <div className="p-6 rounded-2xl bg-[#0B1220] border border-white/5 flex items-center justify-between">
-                    <div className="space-y-1">
-                      <Label className="text-base font-black text-white">Permitir Auto-cadastro</Label>
-                      <p className="text-sm text-slate-500 font-medium">Novos usuários podem criar conta sozinhos.</p>
-                    </div>
-                    <Switch className="data-[state=checked]:bg-[#D4AF37]" />
+
+                  <div className="pt-10 border-t border-white/5">
+                    <Button
+                      onClick={handleSubmit}
+                      disabled={mutation.isPending || !nome || !produtoId}
+                      className="w-full h-16 bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-[#0F172A] font-black text-lg rounded-2xl shadow-[0_20px_40px_rgba(212,175,55,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group"
+                    >
+                      {mutation.isPending ? (
+                        <Loader2 className="h-7 w-7 animate-spin" />
+                      ) : (
+                        <div className="flex items-center gap-2">
+                           <Save className="h-6 w-6 group-hover:scale-110 transition-transform" />
+                           Salvar Configurações de Login
+                        </div>
+                      )}
+                    </Button>
                   </div>
                 </div>
               </div>
