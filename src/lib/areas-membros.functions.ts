@@ -79,6 +79,9 @@ export const createAreaMembro = createServerFn({ method: 'POST' })
     tipo?: string;
     rotulo_curto?: string;
     descricao?: string;
+    app_name?: string;
+    logo_alt?: string;
+    support_email?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     const { userId } = context;
