@@ -153,12 +153,21 @@ export const PosterCard = memo(function PosterCard({
           {/* Gradiente inferior (legibilidade do título) */}
           <div className="absolute inset-x-0 bottom-0 h-[72%] bg-gradient-to-t from-black/95 via-black/55 to-transparent" style={{ opacity: 0.5 + gradientOpacity * 0.5 }} />
 
-          {/* Escurecimento de hover */}
+          {/* Escurecimento de hover + Assistir Button */}
           <div
-            className={`absolute inset-0 md:transition-all md:duration-500 ${
-              locked ? "bg-black/20" : "bg-black/0 md:group-hover/card:bg-black/30"
+            className={`absolute inset-0 transition-all duration-500 flex items-center justify-center ${
+              locked ? "bg-black/20" : "bg-black/0 group-hover/card:bg-black/60"
             }`}
-          />
+          >
+            {!locked && (
+              <div className="opacity-0 group-hover/card:opacity-100 transition-all duration-500 translate-y-4 group-hover/card:translate-y-0">
+                <div className="bg-gold text-black rounded-full px-6 py-2 text-xs font-black uppercase tracking-widest shadow-2xl shadow-gold/40 flex items-center gap-2">
+                  <Play className="h-3 w-3 fill-current" />
+                  Assistir
+                </div>
+              </div>
+            )}
+          </div>
 
           {/* Vinheta interna */}
           <div className="absolute inset-0 shadow-[inset_0_0_30px_rgba(0,0,0,0.25)] pointer-events-none" />
