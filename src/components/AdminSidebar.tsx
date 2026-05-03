@@ -124,7 +124,7 @@ export function AdminSidebar() {
                     isActive={isActive(item.url)}
                     tooltip={item.title}
                     className={cn(
-                      "h-11 transition-all duration-200 text-[1rem]",
+                      "h-11 transition-all duration-200 text-[1rem] leading-relaxed",
                       isActive(item.url) && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
                     )}
                   >
@@ -157,7 +157,7 @@ export function AdminSidebar() {
                       isActive={isActive(item.url || "")}
                       tooltip={item.title}
                       className={cn(
-                        "h-11 transition-all duration-200 text-[1rem]",
+                        "h-11 transition-all duration-200 text-[1rem] leading-relaxed",
                         isActive(item.url || "") && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
                       )}
                     >
@@ -188,7 +188,7 @@ export function AdminSidebar() {
                     isActive={isActive(item.url)}
                     tooltip={item.title}
                     className={cn(
-                      "h-11 transition-all duration-200 text-[1rem]",
+                      "h-11 transition-all duration-200 text-[1rem] leading-relaxed",
                       isActive(item.url) && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
                     )}
                   >
@@ -219,7 +219,7 @@ export function AdminSidebar() {
                     isActive={isActive(item.url)}
                     tooltip={item.title}
                     className={cn(
-                      "h-11 transition-all duration-200 text-[1rem]",
+                      "h-11 transition-all duration-200 text-[1rem] leading-relaxed",
                       isActive(item.url) && "bg-gold/10 text-gold hover:bg-gold/20 hover:text-gold"
                     )}
                   >
@@ -242,7 +242,7 @@ export function AdminSidebar() {
                 <SidebarMenuButton
                   asChild
                   tooltip="Voltar ao app"
-                  className="h-11 text-sidebar-foreground/50 hover:text-gold transition-all duration-200 text-[1rem]"
+                  className="h-11 text-sidebar-foreground/50 hover:text-gold transition-all duration-200 text-[1rem] leading-relaxed"
                 >
                   <Link to="/vitrine">
                     <ArrowLeft className="h-4 w-4 shrink-0" />
