@@ -123,19 +123,19 @@ function NewCoursePage() {
         <TabsList className="bg-card/60 border border-border/25 p-1 rounded-xl">
           <TabsTrigger
             value="detalhes"
-            className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-5"
+            className="data-[state=active]:bg-orange-500/15 data-[state=active]:text-orange-500 data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-5"
           >
             Detalhes
           </TabsTrigger>
           <TabsTrigger
             value="modulos"
-            className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-5"
+            className="data-[state=active]:bg-orange-500/15 data-[state=active]:text-orange-500 data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-5"
           >
             {courseType === "louvores" ? "Gerenciar Músicas" : "Módulos e Aulas"}
           </TabsTrigger>
           <TabsTrigger
             value="config"
-            className="data-[state=active]:bg-gold/15 data-[state=active]:text-gold data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-5"
+            className="data-[state=active]:bg-orange-500/15 data-[state=active]:text-orange-500 data-[state=active]:shadow-none rounded-lg text-xs font-semibold px-5"
           >
             Configurações
           </TabsTrigger>
