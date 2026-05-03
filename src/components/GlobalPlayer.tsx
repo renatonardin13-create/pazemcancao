@@ -90,7 +90,7 @@ export const GlobalPlayer = memo(function GlobalPlayer() {
                         key={i}
                         animate={{ height: ["20%", "100%", "20%"] }}
                         transition={{ repeat: Infinity, duration: 0.5, delay: i * 0.1 }}
-                        className="w-0.5 bg-gold"
+                        className="w-0.5 bg-orange-500"
                       />
                     ))}
                   </div>
