@@ -211,25 +211,34 @@ export type Database = {
           atualizado_em: string
           background_color: string | null
           banner_url: string | null
+          boas_vindas: string | null
+          botao_continuar: string | null
+          botao_entrar: string | null
           button_color: string | null
           button_text_color: string | null
+          conclusao: string | null
           criado_em: string
           descricao: string | null
           elevated_surface: string | null
           favicon_url: string | null
+          formato_data: string | null
           id: string
+          idiomas_ativos: string[] | null
           language: string | null
           logo_alt: string | null
           logo_url: string | null
           nome: string
+          parabens: string | null
           primary_color: string | null
           principal: boolean | null
+          produto_bloqueado: string | null
           produto_id: string | null
           rotulo_curto: string | null
           secondary_color: string | null
           sidebar_color: string | null
           status: string | null
           subdominio: string
+          suporte_texto: string | null
           support_email: string | null
           surface_color: string | null
           text_primary: string | null
@@ -244,25 +253,34 @@ export type Database = {
           atualizado_em?: string
           background_color?: string | null
           banner_url?: string | null
+          boas_vindas?: string | null
+          botao_continuar?: string | null
+          botao_entrar?: string | null
           button_color?: string | null
           button_text_color?: string | null
+          conclusao?: string | null
           criado_em?: string
           descricao?: string | null
           elevated_surface?: string | null
           favicon_url?: string | null
+          formato_data?: string | null
           id?: string
+          idiomas_ativos?: string[] | null
           language?: string | null
           logo_alt?: string | null
           logo_url?: string | null
           nome: string
+          parabens?: string | null
           primary_color?: string | null
           principal?: boolean | null
+          produto_bloqueado?: string | null
           produto_id?: string | null
           rotulo_curto?: string | null
           secondary_color?: string | null
           sidebar_color?: string | null
           status?: string | null
           subdominio: string
+          suporte_texto?: string | null
           support_email?: string | null
           surface_color?: string | null
           text_primary?: string | null
@@ -277,25 +295,34 @@ export type Database = {
           atualizado_em?: string
           background_color?: string | null
           banner_url?: string | null
+          boas_vindas?: string | null
+          botao_continuar?: string | null
+          botao_entrar?: string | null
           button_color?: string | null
           button_text_color?: string | null
+          conclusao?: string | null
           criado_em?: string
           descricao?: string | null
           elevated_surface?: string | null
           favicon_url?: string | null
+          formato_data?: string | null
           id?: string
+          idiomas_ativos?: string[] | null
           language?: string | null
           logo_alt?: string | null
           logo_url?: string | null
           nome?: string
+          parabens?: string | null
           primary_color?: string | null
           principal?: boolean | null
+          produto_bloqueado?: string | null
           produto_id?: string | null
           rotulo_curto?: string | null
           secondary_color?: string | null
           sidebar_color?: string | null
           status?: string | null
           subdominio?: string
+          suporte_texto?: string | null
           support_email?: string | null
           surface_color?: string | null
           text_primary?: string | null
