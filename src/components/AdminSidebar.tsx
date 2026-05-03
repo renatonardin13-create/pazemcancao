@@ -93,10 +93,10 @@ export function AdminSidebar() {
                 <Shield className="h-4 w-4 text-gold" />
               </div>
               <div className="overflow-hidden">
-                <p className="text-[0.95rem] font-bold text-sidebar-foreground tracking-tight truncate">
+                <p className="text-[1.05rem] font-bold text-sidebar-foreground tracking-tight truncate">
                   Admin
                 </p>
-                <p className="text-[12px] text-sidebar-foreground/40 truncate">
+                <p className="text-[13px] text-sidebar-foreground/40 truncate">
                   Painel de Gestão
                 </p>
               </div>
