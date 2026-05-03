@@ -173,7 +173,7 @@ function NewCoursePage() {
                     </span>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Salve o produto primeiro para gerenciar módulos</p>
+                    <p>Salve o produto primeiro para {courseType === "louvores" ? "gerenciar músicas" : "gerenciar módulos"}</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
