@@ -3,13 +3,13 @@ import { requireSupabaseAuth } from '@/integrations/supabase/auth-middleware';
 import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 const normalizeCourseType = (value?: string) => {
-  if (value === 'aula' || value === 'material' || value === 'bonus' || value === 'louvores') return value;
+  if (value === 'aula' || value === 'material' || value === 'bonus') return value;
   return 'aula';
 };
 
 export const listAdminCourses = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ data, context }) => {
+  .handler(async ({ context }) => {
     const { supabase, userId } = context;
 
     const { data: role } = await supabase
@@ -19,17 +19,18 @@ export const listAdminCourses = createServerFn({ method: 'POST' })
       .eq('role', 'admin')
       .maybeSingle();
 
-    if (!role) throw new Error('Não autorizado');
+    if (!role) {
+       const { data: userData } = await supabase.auth.getUser();
+       const isAdminEmail = userData?.user?.email?.toLowerCase() === 'renatonardin13@gmail.com';
+       if (!isAdminEmail) throw new Error('Não autorizado');
+    }
 
-    let query = supabaseAdmin
+    const { data: courses, error } = await supabaseAdmin
       .from('courses')
       .select('*, categories(name, slug, icon), modules(id, lessons(id))')
       .order('sort_order', { ascending: true });
 
-      return { courses: [] };
-    }
-
-    const { data: courses, error } = await query;
+    if (error) throw new Error(error.message);
 
     const enriched = (courses || []).map((c: any) => {
       const mods = c.modules || [];
@@ -39,7 +40,6 @@ export const listAdminCourses = createServerFn({ method: 'POST' })
       return { ...rest, modules_count: modulesCount, lessons_count: lessonsCount };
     });
 
-    if (error) throw new Error(error.message);
     return { courses: enriched };
   });
 
@@ -56,7 +56,11 @@ export const getAdminCourse = createServerFn({ method: 'POST' })
       .eq('role', 'admin')
       .maybeSingle();
 
-    if (!role) throw new Error('Não autorizado');
+    if (!role) {
+       const { data: userData } = await supabase.auth.getUser();
+       const isAdminEmail = userData?.user?.email?.toLowerCase() === 'renatonardin13@gmail.com';
+       if (!isAdminEmail) throw new Error('Não autorizado');
+    }
 
     const { data: course, error } = await supabaseAdmin
       .from('courses')
@@ -97,13 +101,6 @@ export const createCourse = createServerFn({ method: 'POST' })
 
     if (!role && !isAdminEmail) throw new Error('Não autorizado');
 
-    const areaId = data.area_id;
-
-    if (!areaId) {
-      throw new Error('O campo área de membros é obrigatório.');
-    }
-
-
     const { data: course, error } = await supabaseAdmin
       .from('courses')
       .insert({
@@ -114,9 +111,7 @@ export const createCourse = createServerFn({ method: 'POST' })
         banner_image_url: data.banner_image_url || null,
         category_id: data.category_id || null,
         price: data.price ?? 0,
-        promotional_price: (data as any).promotional_price ?? null,
         status: data.status || 'draft',
-        area_id: areaId,
         course_type: normalizeCourseType(data.course_type),
         launch_date: data.launch_date || null,
       })
@@ -138,7 +133,6 @@ export const updateCourse = createServerFn({ method: 'POST' })
     banner_image_url?: string | null;
     category_id?: string | null;
     price?: number;
-    promotional_price?: number | null;
     status?: string;
     course_type?: string;
     launch_date?: string | null;
@@ -162,10 +156,6 @@ export const updateCourse = createServerFn({ method: 'POST' })
     
     if ('category_id' in updates && !updates.category_id) {
       updates.category_id = null;
-    }
-
-    if ('area_id' in updates && !updates.area_id) {
-      throw new Error('O campo área de membros é obrigatório.');
     }
 
     const normalizedUpdates = {
@@ -208,23 +198,4 @@ export const deleteCourse = createServerFn({ method: 'POST' })
 
     if (error) throw new Error(error.message);
     return { success: true };
-  });
-
-export const listAdminCategories = createServerFn({ method: 'POST' })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ data, context }) => {
-    const { supabase } = context;
-
-    let query = supabase
-      .from('categories')
-      .select('*')
-      .order('sort_order', { ascending: true });
-
-      return { categories: [] };
-    }
-
-    const { data: categories, error } = await query;
-
-    if (error) throw new Error(error.message);
-    return { categories: categories || [] };
   });
