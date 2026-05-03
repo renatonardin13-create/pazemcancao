@@ -18,19 +18,13 @@ async function verifyAdmin(supabase: any, userId: string) {
 
 export const listAdminCategories = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ data, context }) => {
+  .handler(async ({ context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
-    let query = supabaseAdmin
+    const { data: categories, error } = await supabaseAdmin
       .from('categories')
       .select('*')
       .order('sort_order', { ascending: true });
-
-      // If no areaId provided, return empty to avoid mixing data
-      return { categories: [] };
-    }
-
-    const { data: categories, error } = await query;
 
     if (error) throw new Error(error.message);
     return { categories: categories || [] };
@@ -53,7 +47,7 @@ export const createCategory = createServerFn({ method: 'POST' })
       .select('sort_order')
       .order('sort_order', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
     const { data: category, error } = await supabaseAdmin
       .from('categories')
@@ -64,7 +58,7 @@ export const createCategory = createServerFn({ method: 'POST' })
         icon: data.icon || null,
         color: data.color || null,
         sort_order: (maxOrder?.sort_order ?? 0) + 1,
-      } as any)
+      })
       .select()
       .single();
 
