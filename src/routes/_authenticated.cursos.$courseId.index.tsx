@@ -57,10 +57,16 @@ function CourseDetailPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["course-detail", courseId],
+    queryFn: () => getCourseDetail({ data: { courseId } }),
+  });
+
   // Auto-redirect to the appropriate lesson
-  const { data: resolvedLesson, isLoading: isResolving } = useQuery({
+  const { data: resolvedLesson } = useQuery({
     queryKey: ["resolve-course-lesson", courseId],
     queryFn: () => resolveCourseLesson({ data: { courseId } }),
+    enabled: !!data && data.course?.course_type !== "louvores",
   });
 
   useEffect(() => {
@@ -72,11 +78,6 @@ function CourseDetailPage() {
       });
     }
   }, [resolvedLesson, data?.course?.course_type, courseId, navigate]);
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["course-detail", courseId],
-    queryFn: () => getCourseDetail({ data: { courseId } }),
-  });
 
   const progressMutation = useMutation({
     mutationFn: (input: {
