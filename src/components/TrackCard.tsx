@@ -111,7 +111,7 @@ export const TrackCard = memo(function TrackCard({ track, index, queue }: TrackC
       {releaseText || "Em breve"}
     </span>
   ) : isPremiumLocked ? (
-    <span className="inline-flex items-center gap-1 rounded-full border border-gold/20 bg-gradient-to-r from-gold/95 to-amber-500/90 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-gold-foreground shadow-lg shadow-black/30 backdrop-blur-sm sm:text-[10px]">
+    <span className="inline-flex items-center gap-1 rounded-full border border-orange-500/20 bg-gradient-to-r from-orange-500/95 to-red-500/90 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-white shadow-lg shadow-black/30 backdrop-blur-sm sm:text-[10px]">
       <Lock className="h-2.5 w-2.5" />
       Premium
     </span>
