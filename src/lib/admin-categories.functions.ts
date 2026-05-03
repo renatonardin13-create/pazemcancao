@@ -18,13 +18,23 @@ async function verifyAdmin(supabase: any, userId: string) {
 
 export const listAdminCategories = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { areaId?: string } | void) => input)
+  .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
-    const { data: categories, error } = await supabaseAdmin
+    let query = supabaseAdmin
       .from('categories')
       .select('*')
       .order('sort_order', { ascending: true });
+
+    if (data?.areaId) {
+      query = query.eq('area_id', data.areaId);
+    } else {
+      // If no areaId provided, return empty to avoid mixing data
+      return { categories: [] };
+    }
+
+    const { data: categories, error } = await query;
 
     if (error) throw new Error(error.message);
     return { categories: categories || [] };
@@ -38,6 +48,7 @@ export const createCategory = createServerFn({ method: 'POST' })
     description?: string;
     icon?: string;
     color?: string;
+    area_id?: string;
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
@@ -47,7 +58,7 @@ export const createCategory = createServerFn({ method: 'POST' })
       .select('sort_order')
       .order('sort_order', { ascending: false })
       .limit(1)
-      .maybeSingle();
+      .single();
 
     const { data: category, error } = await supabaseAdmin
       .from('categories')
@@ -57,8 +68,9 @@ export const createCategory = createServerFn({ method: 'POST' })
         description: data.description || null,
         icon: data.icon || null,
         color: data.color || null,
+        area_id: data.area_id || null,
         sort_order: (maxOrder?.sort_order ?? 0) + 1,
-      })
+      } as any)
       .select()
       .single();
 

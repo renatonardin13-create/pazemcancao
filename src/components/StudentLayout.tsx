@@ -1,4 +1,4 @@
-import { AppHeader } from "./AppHeader";
+import { StudentSidebar } from "./StudentSidebar";
 
 interface StudentLayoutProps {
   children: React.ReactNode;
@@ -6,12 +6,11 @@ interface StudentLayoutProps {
 
 export function StudentLayout({ children }: StudentLayoutProps) {
   return (
-    <div className="flex min-h-screen w-full bg-[#0b0b0b]">
-      <AppHeader />
-      <main className="flex-1 min-w-0 pt-[60px] md:pt-16 pb-[100px] overflow-x-hidden overflow-y-visible">
+    <div className="flex min-h-screen w-full bg-background">
+      <StudentSidebar />
+      <main className="flex-1 min-w-0 pt-[60px] md:pt-0 pb-[140px] overflow-x-hidden overflow-y-visible">
         {children}
       </main>
     </div>
   );
 }
-

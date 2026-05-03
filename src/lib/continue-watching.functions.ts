@@ -120,8 +120,6 @@ export const getContinueWatching = createServerFn({ method: 'POST' })
           }
         }
 
-        const resumeLesson = courseLessons.find((l: any) => l.id === resumeLessonId);
-
         const productAccessState = 'owned' as const;
         return {
           ...course,
@@ -130,7 +128,6 @@ export const getContinueWatching = createServerFn({ method: 'POST' })
           completed_lessons: completedLessons,
           last_accessed_at: info.lastAccessedAt,
           resume_lesson_id: resumeLessonId,
-          resume_lesson_title: resumeLesson?.title || "",
           product_access_state: productAccessState,
           access_state: deriveProductVisualAccessState(productAccessState, progressPct, totalLessons),
         };

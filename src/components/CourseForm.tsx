@@ -1,6 +1,7 @@
 import { useState, useEffect, forwardRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { listAdminCategories } from "@/lib/admin-categories.functions";
+import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
@@ -12,30 +13,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Video, FileText, Save, Loader2, ImageIcon, File, Link as LinkIcon, Sparkles, Music } from "lucide-react";
+import { Video, FileText, Save, Loader2, ImageIcon, File, Link as LinkIcon, Sparkles } from "lucide-react";
 import { ImageUploadField } from "@/components/ImageUploadField";
 
 interface CourseFormProps {
-  id?: string;
   initialValues?: any;
   onSubmit: (values: any) => void;
   isSubmitting: boolean;
   hideSubmitButton?: boolean;
-  onTypeChange?: (type: string) => void;
 }
 
-const inputClass = "h-11 bg-background/50 border-border/20 focus:border-orange-500/40 rounded-lg text-sm";
+const inputClass = "h-11 bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm";
 const labelClass = "text-sm font-semibold text-foreground/80";
 
 const COURSE_TYPE_OPTIONS = [
   { value: "aula", label: "Aula", icon: Video },
   { value: "material", label: "Material", icon: FileText },
   { value: "bonus", label: "Bônus", icon: Sparkles },
-  { value: "louvores", label: "Pack de Louvores", icon: Music },
 ] as const;
 
 const normalizeCourseType = (value?: string) => {
-  if (value === "aula" || value === "material" || value === "bonus" || value === "louvores") return value;
+  if (value === "aula" || value === "material" || value === "bonus") return value;
   return "aula";
 };
 
@@ -51,12 +49,10 @@ function CardSection({ title, children }: { title: string; children: React.React
 }
 
 export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function CourseForm({
-  id,
   initialValues,
   onSubmit,
   isSubmitting,
   hideSubmitButton,
-  onTypeChange,
 }, ref) {
   const [title, setTitle] = useState("");
   const [shortDesc, setShortDesc] = useState("");
@@ -65,24 +61,22 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   const [bannerUrl, setBannerUrl] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [price, setPrice] = useState("0");
+  const [areaId, setAreaId] = useState("");
+  const { activeArea, areas: allAreas } = useAdminActiveArea();
   const [promotionalPrice, setPromotionalPrice] = useState("");
   const [status, setStatus] = useState("draft");
   const [courseType, setCourseType] = useState("aula");
-  
-  useEffect(() => {
-    onTypeChange?.(courseType);
-  }, [courseType, onTypeChange]);
   const [launchDate, setLaunchDate] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   const { data: categoriesData } = useQuery({
-    queryKey: ["admin-categories"],
-    queryFn: () => listAdminCategories(),
+    queryKey: ["admin-categories", activeArea?.id],
+    queryFn: () => listAdminCategories({ data: { areaId: activeArea?.id } }),
+    enabled: !!activeArea?.id,
   });
 
   const categories = categoriesData?.categories || [];
-
 
   useEffect(() => {
     if (initialValues) {
@@ -93,13 +87,15 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       setBannerUrl(initialValues.banner_image_url || "");
       setCategoryId(initialValues.category_id || "");
       setPrice(String(initialValues.price ?? 0));
+      setAreaId(initialValues.area_id || "");
       setPromotionalPrice(initialValues.promotional_price != null ? String(initialValues.promotional_price) : "");
       setStatus(initialValues.status || "draft");
       setCourseType(normalizeCourseType(initialValues.course_type));
       setLaunchDate(initialValues.launch_date || "");
+    } else if (activeArea?.id) {
+      setAreaId(activeArea.id);
     }
-  }, [initialValues]);
-
+  }, [initialValues, activeArea]);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -108,6 +104,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
     
     if (!categoryId) newErrors.categoryId = "A seção é obrigatória";
     
+    if (!areaId) newErrors.areaId = "Vincular uma área de membros é obrigatório";
 
     if (promotionalPrice.trim() && parseFloat(promotionalPrice) >= parseFloat(price))
       newErrors.promotionalPrice = "Preço promocional deve ser menor que o preço normal";
@@ -120,9 +117,12 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
     const newErrors = validate();
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
+      const firstErrorKey = Object.keys(newErrors)[0];
+      const fieldId = firstErrorKey === "areaId" ? "areaId-trigger" : firstErrorKey;
+      const firstErrorField = document.getElementById(fieldId);
+      firstErrorField?.focus();
       return;
     }
-
 
     onSubmit({
       title: title.trim(),
@@ -131,6 +131,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
       cover_image_url: coverUrl.trim() || null,
       banner_image_url: bannerUrl.trim() || null,
       category_id: categoryId || null,
+      area_id: activeArea?.id || null,
       price: parseFloat(price) || 0,
       promotional_price: promotionalPrice.trim() ? parseFloat(promotionalPrice) : null,
       status,
@@ -140,7 +141,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
   };
 
   return (
-    <form id={id} ref={ref} onSubmit={handleSubmit}>
+    <form ref={ref} onSubmit={handleSubmit}>
       <div className="flex flex-col lg:grid lg:grid-cols-[1fr_340px] gap-5">
 
         {/* ===== LEFT: Informações + Configurações ===== */}
@@ -148,7 +149,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
           <CardSection title="Informações do Produto">
             <div className="space-y-1.5">
               <Label htmlFor="title" className={labelClass}>
-                Nome do Produto <span className="text-orange-500">*</span>
+                Nome do Produto <span className="text-gold">*</span>
               </Label>
               <Input
                 id="title"
@@ -175,13 +176,13 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                 onChange={(e) => setShortDesc(e.target.value)}
                 placeholder="Breve descrição do produto"
                 rows={3}
-                className="bg-background/50 border-border/20 focus:border-orange-500/40 rounded-lg text-sm resize-none"
+                className="bg-background/50 border-border/20 focus:border-gold/40 rounded-lg text-sm resize-none"
               />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <Label className={labelClass}>Seção Principal <span className="text-orange-500">*</span></Label>
+                <Label className={labelClass}>Seção Principal <span className="text-gold">*</span></Label>
                 <Select 
                   value={categoryId} 
                   onValueChange={(val) => {
@@ -228,7 +229,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                     onClick={() => setCourseType(type.value)}
                     className={`flex flex-col items-center gap-1.5 px-5 py-3 rounded-xl border text-xs font-semibold transition-all min-w-[72px] ${
                       courseType === type.value
-                        ? "border-orange-500/40 bg-orange-500 text-black shadow-lg shadow-orange-500/20"
+                        ? "border-gold/40 bg-gold text-black shadow-lg shadow-gold/20"
                         : "border-border/30 bg-background/30 text-muted-foreground/50 hover:border-border/30 hover:text-muted-foreground/70"
                     }`}
                   >
@@ -312,7 +313,7 @@ export const CourseForm = forwardRef<HTMLFormElement, CourseFormProps>(function 
                           <span className="text-xs text-muted-foreground/70 line-through">
                             R$ {parseFloat(price).toFixed(2)}
                           </span>
-                          <span className="text-sm font-bold text-orange-500">
+                          <span className="text-sm font-bold text-gold">
                             R$ {parseFloat(promotionalPrice).toFixed(2)}
                           </span>
                         </>

@@ -59,7 +59,7 @@ export function UnlockModal({
       return;
     }
     onOpenChange(false);
-    navigate({ to: "/cursos/$courseId", params: { courseId: productId } });
+    navigate({ to: "/produto/$courseId", params: { courseId: productId } });
   };
 
   const handleSecondary = () => {

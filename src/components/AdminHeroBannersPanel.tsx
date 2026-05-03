@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { useAdminActiveArea } from "@/hooks/use-admin-active-area";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { toastError } from "@/lib/toast-utils";
@@ -73,7 +74,6 @@ import {
   toggleHeroBannerActive,
   listCoursesForBannerSelector,
 } from "@/lib/admin-hero-banners.functions";
-import { listAdminCourses } from "@/lib/admin-courses.functions";
 import { getHeroBannerMetrics } from "@/lib/hero-banner-metrics.functions";
 import { HeroBanner } from "@/components/vitrine/HeroBanner";
 
@@ -152,22 +152,22 @@ const emptyForm: FormState = {
 
 function AdminHeroBannersPage() {
   const qc = useQueryClient();
+  const { activeArea } = useAdminActiveArea();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [form, setForm] = useState<FormState>(emptyForm);
   const [deleteTarget, setDeleteTarget] = useState<any>(null);
   const [previewOpen, setPreviewOpen] = useState<any>(null);
 
   const { data, isLoading } = useQuery({
-    queryKey: ["admin-hero-banners"],
-    queryFn: () => listHeroBanners(),
-
+    queryKey: ["admin-hero-banners", activeArea?.id],
+    queryFn: () => listHeroBanners({ data: { areaId: activeArea?.id } }),
+    enabled: !!activeArea?.id,
   });
   const { data: coursesData } = useQuery({
-    queryKey: ["admin-courses"],
-    queryFn: () => listAdminCourses(),
-
+    queryKey: ["admin-banner-courses", activeArea?.id],
+    queryFn: () => listCoursesForBannerSelector({ data: { areaId: activeArea?.id } }),
+    enabled: !!activeArea?.id,
   });
-
   const [metricsDays, setMetricsDays] = useState<7 | 30 | 90>(30);
   const { data: metricsData, isLoading: metricsLoading } = useQuery({
     queryKey: ["admin-hero-banner-metrics", metricsDays],
@@ -275,19 +275,14 @@ function AdminHeroBannersPage() {
       toast.error("Adicione a imagem principal do banner.");
       return;
     }
-    
-    const payload: any = {
-      ...form,
-    };
-    
     // Sincroniza target -> url quando type=url
+    const payload: any = { ...form, area_id: activeArea?.id };
     if (form.primary_cta_type === "url") payload.primary_cta_url = form.primary_cta_target;
     if (form.secondary_cta_type === "url") payload.secondary_cta_url = form.secondary_cta_target;
 
     if (form.id) updateMut.mutate(payload);
     else createMut.mutate(payload);
   };
-
 
   const moveBanner = (idx: number, dir: -1 | 1) => {
     const next = [...banners];

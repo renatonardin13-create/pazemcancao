@@ -84,18 +84,16 @@ function ContentPage() {
   const queryClient = useQueryClient();
 
   const handleTrackView = useCallback((contentId: string) => {
-    trackContentView({ data: { contentId } }).then(() => {
+    trackContentView({ data: { contentId, areaId: undefined } }).then(() => {
       queryClient.invalidateQueries({ queryKey: ["content-items"] });
     });
-  }, [queryClient]);
-
+  }, [queryClient, undefined]);
 
   const handleTrackDownload = useCallback((contentId: string) => {
-    trackContentDownload({ data: { contentId } }).then(() => {
+    trackContentDownload({ data: { contentId, areaId: undefined } }).then(() => {
       queryClient.invalidateQueries({ queryKey: ["content-items"] });
     });
-  }, [queryClient]);
-
+  }, [queryClient, undefined]);
 
   // RC1: dedupe ids across "Top semana" → "Mais acessados" → "Lançamentos" → "Recomendado"
   const [weeklyTopIds, setWeeklyTopIds] = useState<string[]>([]);
@@ -109,11 +107,10 @@ function ContentPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["content-items", undefined],
-    queryFn: () => listContentItems(),
+    queryFn: () => listContentItems({ data: { areaId: undefined } }),
     refetchOnWindowFocus: true,
     staleTime: 60_000,
   });
-
 
   const { data: profileData } = useQuery({
     queryKey: ["my-profile"],

@@ -27,10 +27,9 @@ export interface ModuleInfo {
 
 /** Default enabled state per project mode (fallback when DB has no rows) */
 const MODE_DEFAULTS: Record<ProjectMode, Record<ModuleKey, boolean>> = {
-  hibrido: { vitrine: true, louvores: true, cursos: true, ebooks: true, trilhas: true, perfil: true, comunidade: true, bonus: true, lancamentos: true },
-  somente_musica: { vitrine: true, louvores: true, cursos: true, ebooks: true, trilhas: true, perfil: true, comunidade: true, bonus: true, lancamentos: true },
-  somente_cursos: { vitrine: true, louvores: true, cursos: true, ebooks: true, trilhas: true, perfil: true, comunidade: true, bonus: true, lancamentos: true },
-
+  hibrido: { vitrine: true, louvores: true, cursos: true, ebooks: true, trilhas: true, perfil: true, comunidade: false, bonus: true, lancamentos: true },
+  somente_musica: { vitrine: true, louvores: true, cursos: false, ebooks: false, trilhas: true, perfil: true, comunidade: false, bonus: true, lancamentos: true },
+  somente_cursos: { vitrine: true, louvores: false, cursos: true, ebooks: true, trilhas: false, perfil: true, comunidade: false, bonus: false, lancamentos: true },
 };
 
 export type PlatformModules = Record<ModuleKey, boolean>;
@@ -52,13 +51,13 @@ export function useProjectMode() {
     isLoading: modulesLoading,
   } = useQuery({
     queryKey: ["platform-modules"],
-    queryFn: () => getPlatformModules().catch(() => ({ modules: [] })), // Catch missing table errors
+    queryFn: () => getPlatformModules(),
     staleTime: 5 * 60_000,
     refetchOnWindowFocus: false,
   });
 
   const settings = settingsData?.settings || {};
-  const mode: ProjectMode = (settings.general as any)?.project_mode || "hibrido";
+  const mode: ProjectMode = (settings.general?.project_mode as ProjectMode) || "hibrido";
   const dbModules: PlatformModule[] = modulesData?.modules || [];
 
   const defaults = MODE_DEFAULTS[mode];

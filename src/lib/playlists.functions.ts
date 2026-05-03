@@ -4,12 +4,16 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 export const listPlaylists = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
+  .inputValidator((input: { areaId?: string }) => input)
   .handler(async ({ data: inputData }) => {
     let query = supabaseAdmin
       .from('playlists')
       .select('*')
       .eq('is_active', true);
 
+    if (inputData?.areaId) {
+      query = query.eq('area_id', inputData.areaId);
+    }
 
     const { data: playlists, error } = await query
       .order('sort_order', { ascending: true });
@@ -62,12 +66,16 @@ export const getPlaylistWithTracks = createServerFn({ method: 'POST' })
 /** List all playlists with track counts (for display) */
 export const listPlaylistsWithCounts = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
+  .inputValidator((input: { areaId?: string }) => input)
   .handler(async ({ data: inputData }) => {
     let query = supabaseAdmin
       .from('playlists')
       .select('*')
       .eq('is_active', true);
 
+    if (inputData?.areaId) {
+      query = query.eq('area_id', inputData.areaId);
+    }
 
     const { data: playlists, error } = await query
       .order('sort_order', { ascending: true });

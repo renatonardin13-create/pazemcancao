@@ -1,789 +1,714 @@
-import { EmptyState } from "@/components/EmptyState";
-import { Progress } from "@/components/ui/progress";
-import { createFileRoute } from "@tanstack/react-router";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useCallback, useState, useEffect } from "react";
-import { trackContentView, trackContentDownload } from "@/lib/progress.functions";
-import { listContentItems } from "@/lib/content.functions";
-import { listFavorites, toggleFavorite } from "@/lib/favorites.functions";
-import { getMyProfile } from "@/lib/profile.functions";
-import { useAuth } from "@/hooks/use-auth";
-import { StudentLayout } from "@/components/StudentLayout";
-import { FooterLinks } from "@/components/FooterLinks";
-import { InvisibleFunnelShelves } from "@/components/InvisibleFunnelShelves";
-import { ContentCard } from "@/components/ContentCard";
-import { POSTER_GRID } from "@/lib/card-grid";
-import { RecommendedSection } from "@/components/RecommendedSection";
-import { TopRankingSection } from "@/components/TopRankingSection";
+import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import {
-  BookOpen,
-  Video,
-  GraduationCap,
-  FileText,
-  PlayCircle,
-  Sparkles,
-  Clock,
-  CheckCircle2,
-  Library,
-  TrendingUp,
-  Heart,
+  AlertCircle,
+  Disc3,
+  Gift,
+  Headphones,
+  ListMusic,
+  Play,
+  Search,
 } from "lucide-react";
-import { toast } from "sonner";
+import { ModuleGuard } from "@/components/ModuleGuard";
+import { StudentLayout } from "@/components/StudentLayout";
+import { SafeBoundary } from "@/components/SafeBoundary";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { TrackCard } from "@/components/TrackCard";
+import { HighlightTrackCard } from "@/components/HighlightTrackCard";
+import { UpcomingReleaseBlock } from "@/components/UpcomingReleaseBlock";
+import { InspirationalBlock } from "@/components/InspirationalBlock";
+import { POSTER_GRID } from "@/lib/card-grid";
+import { CardScopeProvider } from "@/hooks/use-cards-config";
+import { PosterShelfRow, PosterShelfItem } from "@/components/PosterShelfRow";
+import { listAllTracks } from "@/lib/tracks.functions";
+import { listPlaylistsWithCounts, getPlaylistWithTracks } from "@/lib/playlists.functions";
+import { checkBuyerAccess } from "@/lib/access.functions";
+import { logDownload } from "@/lib/analytics.functions";
+import { usePlayer } from "@/hooks/use-player";
+import { useArea } from "@/hooks/use-area";
+import type { Track } from "@/lib/sample-tracks";
+
+// Normalize a category name: remove emojis/symbols, lowercase, trim, collapse spaces.
+// This makes "⭐ Destaques (Top 10)" → "destaques (top 10)" so categorias com emoji
+// no banco continuam visíveis na UI.
+function normalizeCategorySlug(value: unknown): string {
+  if (typeof value !== "string") return "";
+  return value
+    .replace(/[\p{Emoji_Presentation}\p{Extended_Pictographic}]/gu, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
 
 export const Route = createFileRoute("/_authenticated/musicas")({
-  component: ContentPage,
+  validateSearch: (search: Record<string, unknown>): { categoria?: string } => ({
+    categoria: typeof search.categoria === "string" ? search.categoria : undefined,
+  }),
+  component: MusicLibraryPageWithScope,
+  errorComponent: MusicLibraryError,
+  pendingComponent: MusicLibraryPending,
 });
 
-const typeConfig: Record<
-  string,
-  { label: string; icon: any; gradient: string }
-> = {
-  ebook: {
-    label: "E-books",
-    icon: BookOpen,
-    gradient: "from-blue-900/40 via-blue-950/30 to-slate-950/50",
-  },
-  video: {
-    label: "Videoaulas",
-    icon: Video,
-    gradient: "from-purple-900/40 via-purple-950/30 to-slate-950/50",
-  },
-  free_lesson: {
-    label: "Aulas Gratuitas",
-    icon: GraduationCap,
-    gradient: "from-emerald-900/40 via-emerald-950/30 to-slate-950/50",
-  },
-  material: {
-    label: "Materiais",
-    icon: FileText,
-    gradient: "from-amber-900/40 via-amber-950/30 to-slate-950/50",
-  },
-};
-
-const spiritualGreetings: string[] = [
-  "Que este momento traga paz ao seu coração",
-  "Um novo dia para alimentar sua alma",
-  "Respire fundo… este é o seu momento de paz",
-  "A música cura o que as palavras não alcançam",
-  "Deus preparou algo especial para você hoje",
-];
-
-function getGreeting(): string {
-  const hour = new Date().getHours();
-  if (hour < 12) return "Bom dia";
-  if (hour < 18) return "Boa tarde";
-  return "Boa noite";
-}
-
-function getInspirationPhrase(): string {
-  const day = new Date().getDay();
-  return spiritualGreetings[day % spiritualGreetings.length];
-}
-
-function ContentPage() {
-  const { user } = useAuth();
-  const queryClient = useQueryClient();
-
-  const handleTrackView = useCallback((contentId: string) => {
-    trackContentView({ data: { contentId } }).then(() => {
-      queryClient.invalidateQueries({ queryKey: ["content-items"] });
-    });
-  }, [queryClient]);
-
-
-  const handleTrackDownload = useCallback((contentId: string) => {
-    trackContentDownload({ data: { contentId } }).then(() => {
-      queryClient.invalidateQueries({ queryKey: ["content-items"] });
-    });
-  }, [queryClient]);
-
-
-  // RC1: dedupe ids across "Top semana" → "Mais acessados" → "Lançamentos" → "Recomendado"
-  const [weeklyTopIds, setWeeklyTopIds] = useState<string[]>([]);
-  const [allTimeTopIds, setAllTimeTopIds] = useState<string[]>([]);
-  const [newItemsIds, setNewItemsIds] = useState<string[]>([]);
-  const weeklyTopSet = useMemo(() => new Set(weeklyTopIds), [weeklyTopIds]);
-  const recommendedExcludeSet = useMemo(
-    () => new Set([...weeklyTopIds, ...allTimeTopIds, ...newItemsIds]),
-    [weeklyTopIds, allTimeTopIds, newItemsIds],
+function MusicLibraryPageWithScope() {
+  return (
+    <CardScopeProvider scope="musicas">
+      <MusicLibraryPage />
+    </CardScopeProvider>
   );
+}
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["content-items", undefined],
-    queryFn: () => listContentItems(),
-    refetchOnWindowFocus: true,
-    staleTime: 60_000,
+function MusicLibraryPending() {
+  return (
+    <ModuleGuard moduleKey="louvores">
+      <StudentLayout>
+        <div className="min-h-screen bg-background px-4 py-8 sm:px-6 lg:px-10">
+          <div className="mx-auto flex w-full max-w-6xl items-center justify-center rounded-3xl border border-border/30 bg-card/20 px-6 py-16 text-sm text-muted-foreground/70">
+            Carregando músicas...
+          </div>
+        </div>
+      </StudentLayout>
+    </ModuleGuard>
+  );
+}
+
+function MusicLibraryError({ error }: { error: Error; reset: () => void }) {
+  const router = useRouter();
+
+  return (
+    <ModuleGuard moduleKey="louvores">
+      <StudentLayout>
+        <div className="min-h-screen bg-background px-4 py-8 sm:px-6 lg:px-10">
+          <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-center gap-4 rounded-3xl border border-border/30 bg-card/20 px-6 py-16 text-center">
+            <AlertCircle className="h-8 w-8 text-muted-foreground/60" />
+            <div>
+              <h1 className="font-display text-xl font-semibold text-foreground">Erro ao carregar músicas</h1>
+              <p className="mt-2 text-sm text-muted-foreground/70">{error.message || "Tente novamente."}</p>
+            </div>
+            <Button variant="premiumOutline" size="sm" onClick={() => router.invalidate()}>
+              Tentar novamente
+            </Button>
+          </div>
+        </div>
+      </StudentLayout>
+    </ModuleGuard>
+  );
+}
+
+function getStoragePublicUrl(storagePath: string | null | undefined) {
+  if (!storagePath) return "";
+  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+  return `${supabaseUrl}/storage/v1/object/public/tracks/${storagePath}`;
+}
+
+function dbTrackToPlayerTrack(track: any): Track {
+  const audioUrl = getStoragePublicUrl(track?.storage_path);
+  return {
+    id: String(track?.id ?? ""),
+    title: track?.title || "Música sem título",
+    duration: track?.duration || "0:00",
+    category: track?.category || "Sem categoria",
+    audioUrl,
+    downloadUrl: track?.download_url || audioUrl,
+    description: track?.description || "",
+    coverUrl: track?.cover_url || undefined,
+    // Propaga flags de bônus/liberação para o TrackCard exibir os badges
+    // ("Bônus", "Em breve") e travar a reprodução quando aplicável.
+    isBonus: Boolean(track?.is_bonus),
+    bonusReleaseDate: track?.bonus_release_date ?? null,
+    isLocked: track?.is_active === false,
+  };
+}
+
+function safeSlug(value: unknown) {
+  if (typeof value !== "string") return "";
+  return value.trim().toLowerCase();
+}
+
+function MusicLibraryState({
+  title = "Músicas",
+  message,
+  onRetry,
+}: {
+  title?: string;
+  message: string;
+  onRetry?: () => void;
+}) {
+  return (
+    <ModuleGuard moduleKey="louvores">
+      <StudentLayout>
+        <div className="min-h-screen bg-background px-4 py-8 sm:px-6 lg:px-10">
+          <div className="mx-auto flex w-full max-w-6xl flex-col items-center justify-center gap-4 rounded-3xl border border-border/30 bg-card/20 px-6 py-16 text-center">
+            <h1 className="font-display text-xl font-semibold text-foreground">{title}</h1>
+            <p className="text-sm text-muted-foreground/70">{message}</p>
+            {onRetry ? (
+              <Button variant="premiumOutline" size="sm" onClick={onRetry}>
+                Tentar novamente
+              </Button>
+            ) : null}
+          </div>
+        </div>
+      </StudentLayout>
+    </ModuleGuard>
+  );
+}
+
+function MusicLibraryPage() {
+  const { area } = useArea();
+  const search = Route.useSearch();
+  const router = useRouter();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [activePlaylistId, setActivePlaylistId] = useState<string | null>(null);
+  const [showAllTracks, setShowAllTracks] = useState(false);
+
+  const { currentTrack, playing, toggle, setQueue } = usePlayer();
+
+  // Catálogo Louvores: lista TODAS as músicas (inclusive bônus com liberação
+  // programada / inativas) para exibir badge "Em breve" — a reprodução é
+  // bloqueada no TrackCard quando a faixa não está liberada.
+  const { data: tracksData, isLoading: tracksLoading, isError: tracksFailed } = useQuery({
+    queryKey: ["music-library-tracks", area?.id],
+    queryFn: () => listAllTracks({ data: { areaId: area?.id } }),
+    staleTime: 30_000,
+    retry: 2,
+    enabled: !!area?.id,
   });
 
+  const categoriesLoading = false;
+  const categoriesFailed = false;
 
-  const { data: profileData } = useQuery({
-    queryKey: ["my-profile"],
-    queryFn: () => getMyProfile(),
+  const { data: playlistsData, isError: playlistsFailed } = useQuery({
+    queryKey: ["music-library-playlists", area?.id],
+    queryFn: () => listPlaylistsWithCounts({ data: { areaId: area?.id } }),
     staleTime: 60_000,
+    enabled: !!area?.id,
   });
 
-  const { data: favData } = useQuery({
-    queryKey: ["user-favorites"],
-    queryFn: () => listFavorites(),
+  const { data: playlistTracksData, isLoading: playlistLoading } = useQuery({
+    queryKey: ["music-library-playlist", activePlaylistId],
+    queryFn: () => getPlaylistWithTracks({ data: { playlistId: activePlaylistId! } }),
+    enabled: Boolean(activePlaylistId),
     staleTime: 30_000,
   });
 
-  const favoriteIds = useMemo(() => new Set(favData?.favoriteIds || []), [favData]);
+  const { data: accessData } = useQuery({
+    queryKey: ["music-library-access"],
+    queryFn: () => checkBuyerAccess(),
+    staleTime: 5 * 60_000,
+  });
 
-  const handleToggleFavorite = useCallback((contentId: string, currentlyFav: boolean) => {
-    toggleFavorite({ data: { contentId, isFavorite: currentlyFav } }).then(() => {
-      queryClient.invalidateQueries({ queryKey: ["user-favorites"] });
-    });
-  }, [queryClient]);
+  const tracks = Array.isArray(tracksData?.tracks) ? tracksData.tracks : [];
+  const playlists = Array.isArray(playlistsData?.playlists) ? playlistsData.playlists : [];
+  const shouldShowPlaylistsSection = playlists.length > 0;
 
-  const displayName =
-    profileData?.profile?.display_name ||
-    user?.user_metadata?.full_name ||
-    user?.email?.split("@")[0] ||
-    "";
-  const firstName = displayName.split(" ")[0];
-
-  const hasAccess = data?.hasFullAccess ?? false;
-  const allItems = data?.items || [];
-  const progressMap: Record<string, any> = data?.progressMap || {};
-  const dbCategories = data?.categories || [];
-  const dbJourneys = data?.journeys || [];
-
-  // CRITICAL: Only show items that are active AND (unlocked OR free OR user has full access)
-  // This ensures "published ≠ released" — only truly accessible content appears
-  const popMap = data?.popularityMap || {};
-  const items = useMemo(() => {
-    return allItems.filter((item: any) => {
-      if (!item.is_active) return false;
-      if (item.show_as_card === false) return false;
-      return true;
-    }).map((item: any) => {
-      const pop = popMap[item.id];
-      return { ...item, _popularity: pop ? pop.plays + pop.downloads : 0 };
-    });
-  }, [allItems, popMap]);
-
-  // Compute stats for the library
-  const stats = useMemo(() => {
-    let unlocked = 0;
-    let inProgress = 0;
-    let completed = 0;
-
-    for (const item of items) {
-      if (!item.unlocked) continue;
-      unlocked++;
-      const p = progressMap[item.id];
-      if (p?.completed_at) completed++;
-      else if (p?.viewed_at) inProgress++;
-    }
-    return { unlocked, inProgress, completed };
-  }, [items, progressMap]);
-
-  // Find last accessed content
-  const lastAccessedId = useMemo(() => {
-    let latest: { id: string; time: number } | null = null;
-    for (const [contentId, p] of Object.entries(progressMap)) {
-      if (!p) continue;
-      const times = [p.viewed_at, p.completed_at, p.downloaded_at].filter(Boolean).map((t: string) => new Date(t).getTime());
-      const maxTime = Math.max(0, ...times);
-      if (maxTime > 0 && (!latest || maxTime > latest.time)) {
-        latest = { id: contentId, time: maxTime };
+  // Categorias dinâmicas: derivadas das próprias faixas, sem whitelist.
+  // Slug é normalizado (sem emojis) para que filtros funcionem mesmo
+  // quando o nome no banco contém ícones.
+  const categories = useMemo(() => {
+    const seen = new Map<string, { id: string; name: string; slug: string }>();
+    for (const t of tracks as any[]) {
+      const name = String(t?.category || "").trim();
+      const slug = normalizeCategorySlug(name);
+      if (!slug) continue;
+      if (!seen.has(slug)) {
+        seen.set(slug, { id: slug, name, slug });
       }
     }
-    return latest?.id || null;
-  }, [progressMap]);
+    return Array.from(seen.values()).sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+  }, [tracks]);
+  const playlistTracks = Array.isArray(playlistTracksData?.tracks) ? playlistTracksData.tracks : [];
 
-  // Build category lookup from DB
-  const categoryLookup = useMemo(() => {
-    const map: Record<
-      string,
-      { name: string; icon: string; sortOrder: number; isFeatured: boolean }
-    > = {};
-    for (const c of dbCategories) {
-      map[c.slug] = {
-        name: c.icon
-          ? `${c.icon} ${c.name.replace(/^[\p{Emoji}\s]+/u, "")}`
-          : c.name,
-        icon: c.icon || "",
-        sortOrder: c.sortOrder,
-        isFeatured: c.isFeatured,
-      };
-    }
-    return map;
-  }, [dbCategories]);
+  const rawCategoryFilter = typeof search?.categoria === "string" ? search.categoria : "";
+  const requestedSlug = normalizeCategorySlug(rawCategoryFilter);
+  const isRequestedValid = categories.some((c) => c.slug === requestedSlug);
+  const categoryFilter = isRequestedValid ? requestedSlug : "";
 
-  // Build journey labels from DB
-  const journeyLabels = useMemo(() => {
-    const map: Record<string, string> = {};
-    for (const j of dbJourneys) {
-      map[j.slug] = j.icon ? `${j.icon} ${j.name}` : j.name;
-    }
-    return map;
-  }, [dbJourneys]);
+  const isLocked = accessData?.trialExpired === true || accessData?.isBlocked === true;
+  const canDownload = accessData?.canDownload !== false;
 
-  // Track shown items to avoid duplication
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const shownIds = useMemo(() => new Set<string>(), [items]);
 
-  // "Continuar de onde parou"
-  const continueItems = useMemo(() => {
-    const result = items
-      .filter((item: any) => {
-        const p = progressMap[item.id];
-        return p?.viewed_at && !p?.completed_at && item.unlocked;
-      })
-      .sort((a: any, b: any) => {
-        // Sort by most recently accessed first
-        const aTime = progressMap[a.id]?.viewed_at ? new Date(progressMap[a.id].viewed_at).getTime() : 0;
-        const bTime = progressMap[b.id]?.viewed_at ? new Date(progressMap[b.id].viewed_at).getTime() : 0;
-        return bTime - aTime;
-      })
-      .slice(0, 5);
-    result.forEach((i: any) => shownIds.add(i.id));
-    return result;
-  }, [items, progressMap, shownIds]);
+  const filteredTracks = useMemo(() => {
+    return tracks.filter((track: any) => {
+      const matchesCategory =
+        !categoryFilter || normalizeCategorySlug(track?.category) === categoryFilter;
+      const term = searchTerm.trim().toLowerCase();
+      const matchesSearch =
+        !term ||
+        String(track?.title || "").toLowerCase().includes(term) ||
+        String(track?.description || "").toLowerCase().includes(term);
 
-  // "Conteúdos em destaque"
-  const featuredItems = useMemo(() => {
-    const result = items
-      .filter(
-        (item: any) =>
-          item.is_featured &&
-          !shownIds.has(item.id)
-      )
-      .sort(
-        (a: any, b: any) =>
-          (b.featured_priority || 0) - (a.featured_priority || 0)
-      )
-      .slice(0, 4);
-    result.forEach((i: any) => shownIds.add(i.id));
-    return result;
-  }, [items, shownIds]);
-
-  // "Novos conteúdos"
-  const newItems = useMemo(() => {
-    const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
-    const result = items
-      .filter(
-        (item: any) =>
-          !shownIds.has(item.id) &&
-          new Date(item.created_at).getTime() > thirtyDaysAgo
-      )
-      .sort(
-        (a: any, b: any) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      )
-      .slice(0, 4);
-    result.forEach((i: any) => shownIds.add(i.id));
-    return result;
-  }, [items, shownIds]);
-
-  // RC1: registra ids de "Lançamentos" para excluir do "Recomendado"
-  useEffect(() => {
-    setNewItemsIds(newItems.map((i: any) => i.id));
-  }, [newItems]);
-
-  // Group remaining items
-  const categoryGroups: Record<string, any[]> = {};
-  const typeGroups: Record<string, any[]> = {};
-  const journeyGroups: Record<string, any[]> = {};
-
-  for (const item of items) {
-    if (item.journey_group) {
-      const jg = item.journey_group;
-      if (!journeyGroups[jg]) journeyGroups[jg] = [];
-      journeyGroups[jg].push(item);
-    }
-    if (item.display_category) {
-      const cat = item.display_category;
-      if (!categoryGroups[cat]) categoryGroups[cat] = [];
-      categoryGroups[cat].push(item);
-    } else if (!shownIds.has(item.id)) {
-      const type = item.content_type || "material";
-      if (!typeGroups[type]) typeGroups[type] = [];
-      typeGroups[type].push(item);
-    }
-  }
-
-  const sortItems = (a: any, b: any) => {
-    if (a.sort_order !== b.sort_order) return a.sort_order - b.sort_order;
-    return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-  };
-  const sortJourneyItems = (a: any, b: any) => {
-    if ((a.journey_order || 0) !== (b.journey_order || 0))
-      return (a.journey_order || 0) - (b.journey_order || 0);
-    return a.sort_order - b.sort_order;
-  };
-  for (const arr of [
-    ...Object.values(categoryGroups),
-    ...Object.values(typeGroups),
-  ]) {
-    arr.sort(sortItems);
-  }
-  for (const arr of Object.values(journeyGroups)) {
-    arr.sort(sortJourneyItems);
-  }
-
-  // Sort categories by DB sort_order
-  const sortedCategories = useMemo(() => {
-    const entries = Object.entries(categoryGroups);
-    return entries.sort(([a], [b]) => {
-      const ao = categoryLookup[a]?.sortOrder ?? 999;
-      const bo = categoryLookup[b]?.sortOrder ?? 999;
-      return ao - bo;
+      return matchesCategory && matchesSearch;
     });
-  }, [categoryGroups, categoryLookup]);
+  }, [tracks, categoryFilter, searchTerm]);
 
-  const featuredCategories = sortedCategories.filter(
-    ([cat]) => categoryLookup[cat]?.isFeatured
+  // Bloco de bônus DENTRO da categoria: respeita o filtro de categoria/busca
+  // e separa o que é bônus do catálogo regular para que apareçam em destaque
+  // sem se confundir com os louvores normais. Quando não há categoria ativa,
+  // mantemos a lista única (catálogo geral exibe tudo no grid principal).
+  const regularTracks = useMemo(
+    () => (categoryFilter ? filteredTracks.filter((t: any) => !t?.is_bonus) : filteredTracks),
+    [filteredTracks, categoryFilter],
   );
-  const otherCategories = sortedCategories.filter(
-    ([cat]) => !categoryLookup[cat]?.isFeatured
+  const bonusTracks = useMemo(
+    () => (categoryFilter ? filteredTracks.filter((t: any) => Boolean(t?.is_bonus)) : []),
+    [filteredTracks, categoryFilter],
   );
+
+  const handleTrackPlay = (track: any, trackList: any[]) => {
+    const playerTracks = trackList.map(dbTrackToPlayerTrack).filter((item) => item.audioUrl);
+    const selectedTrack = dbTrackToPlayerTrack(track);
+
+    if (!selectedTrack.audioUrl) return;
+
+    const selectedIndex = playerTracks.findIndex((item) => item.id === selectedTrack.id);
+
+    if (selectedIndex >= 0) {
+      setQueue(playerTracks, selectedIndex);
+      return;
+    }
+
+    toggle(selectedTrack);
+  };
+
+  const handlePlaylistPlay = () => {
+    if (!playlistTracks.length) return;
+    handleTrackPlay(playlistTracks[0], playlistTracks);
+  };
+
+  const handlePlayAll = () => {
+    if (!filteredTracks.length) return;
+    handleTrackPlay(filteredTracks[0], filteredTracks);
+  };
+
+  const handleOpenAllTracks = () => {
+    setShowAllTracks(true);
+    window.setTimeout(() => {
+      document.getElementById("all-tracks-section")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+  };
+
+  const activeCategoryName = useMemo(() => {
+    if (!categoryFilter) return "";
+    const found = categories.find((c: any) => safeSlug(c?.slug || c?.name) === safeSlug(categoryFilter));
+    return found?.name || "";
+  }, [categories, categoryFilter]);
+
+  const handleDownload = (track: any) => {
+    if (isLocked || !canDownload) return;
+
+    const playerTrack = dbTrackToPlayerTrack(track);
+    if (!playerTrack.downloadUrl) return;
+
+    logDownload({ data: { trackId: String(track.id) } }).catch(() => undefined);
+
+    const link = document.createElement("a");
+    link.href = playerTrack.downloadUrl;
+    link.download = `${playerTrack.title}.mp3`;
+    link.click();
+  };
+
+  if (tracksLoading || categoriesLoading) {
+    return <MusicLibraryState message="Carregando músicas..." />;
+  }
+
+  if (tracksFailed || categoriesFailed || playlistsFailed) {
+    return (
+      <MusicLibraryState
+        message="Erro ao carregar músicas."
+        onRetry={() => router.invalidate()}
+      />
+    );
+  }
+
+  if (tracks.length === 0) {
+    return <MusicLibraryState message="Nenhuma música encontrada" />;
+  }
+
 
   return (
-    <StudentLayout>
-      <div className="min-h-screen bg-background text-foreground">
-        <div className="mx-auto max-w-6xl px-5 sm:px-8 py-8 sm:py-12 space-y-12 sm:space-y-16">
-          {/* Greeting + Stats */}
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-6">
-              <div className="space-y-1">
-                <h1 className="font-display text-2xl sm:text-3xl font-bold text-foreground/85 tracking-tight">
-                  {getGreeting()}
-                  {firstName ? `, ${firstName}` : ""}
-                </h1>
-                 <p className="text-[13px] text-muted-foreground/45 font-light leading-relaxed italic">
-                   {getInspirationPhrase()}
-                 </p>
-              </div>
-              <button 
-                onClick={() => toast.info("Em breve: Reprodução contínua de todos os louvores")}
-                className="flex items-center gap-2.5 px-6 py-3 rounded-full bg-gold/15 text-gold border border-gold/20 hover:bg-gold/20 transition-all group w-fit"
-              >
-                <PlayCircle className="h-5 w-5 fill-current" />
-                <span className="text-xs font-bold uppercase tracking-[0.2em]">Tocar todos</span>
-              </button>
-            </div>
-
-            {/* Stats bar with progress */}
-            {stats.unlocked > 0 && (
-              <div
-                className="space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-500"
-              >
-                <div className="flex flex-wrap gap-4 sm:gap-6">
-                  <StatPill icon={Library} label="Para você" value={stats.unlocked} color="text-gold/60" />
-                  <StatPill icon={TrendingUp} label="Caminhando" value={stats.inProgress} color="text-primary/60" />
-                  <StatPill icon={CheckCircle2} label="Vivenciados" value={stats.completed} color="text-player-completed/60" />
-                </div>
-                {/* Overall progress bar */}
-                {(stats.completed > 0 || stats.inProgress > 0) && (
-                  <div className="flex items-center gap-3 max-w-sm">
-                    <Progress
-                      value={Math.round((stats.completed / stats.unlocked) * 100)}
-                      className="h-1.5 bg-muted/10 flex-1"
-                    />
-                    <span className="text-[10px] font-medium text-muted-foreground/40 tabular-nums">
-                      {Math.round((stats.completed / stats.unlocked) * 100)}%
+    <ModuleGuard moduleKey="louvores">
+      <StudentLayout>
+        <div className="min-h-screen bg-background">
+          <SafeBoundary fallbackTitle="Erro ao carregar músicas">
+          <div className="mx-auto flex w-full max-w-[1600px] flex-col gap-8 px-4 py-6 sm:px-6 lg:px-10 lg:py-10">
+            <section className="relative overflow-hidden rounded-2xl border border-border/40 bg-gradient-to-br from-card/60 via-card/30 to-background/60 px-5 py-4 shadow-[0_4px_30px_-10px_rgba(0,0,0,0.5)] sm:px-6 sm:py-5">
+              <div className="pointer-events-none absolute -right-20 -top-20 h-48 w-48 rounded-full bg-primary/10 blur-3xl" />
+              <div className="relative flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div className="flex flex-col gap-1.5 lg:flex-row lg:items-center lg:gap-4">
+                  <div className="flex items-center gap-2 text-primary/80">
+                    <Headphones className="h-3.5 w-3.5" />
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.28em]">
+                      {activeCategoryName ? "Categoria" : "Visão geral"}
                     </span>
                   </div>
-                )}
-              </div>
-            )}
-          </div>
-
-          {isLoading ? (
-            <div className="text-center py-16">
-              <p className="text-xs uppercase tracking-[0.4em] text-muted-foreground/60 animate-pulse">
-                Preparando seu momento de paz...
-              </p>
-            </div>
-          ) : !items.length ? (
-            <EmptyState
-              icon={BookOpen}
-              title="Seu espaço está sendo preparado"
-              description="Em breve novos conteúdos chegarão para abençoar sua jornada. Volte com o coração aberto!"
-            />
-          ) : (
-            <>
-              {/* Continue de onde parou */}
-              {continueItems.length > 0 && (
-                <ContentShelf
-                  icon={<PlayCircle className="h-4 w-4 text-primary/70" />}
-                  title="Continue sua caminhada"
-                  subtitle="Retome de onde você parou com calma"
-                  items={continueItems}
-                  hasAccess={hasAccess}
-                  progressMap={progressMap}
-                  lastAccessedId={lastAccessedId}
-                  onTrackView={handleTrackView}
-                  onTrackDownload={handleTrackDownload}
-                  favoriteIds={favoriteIds}
-                  onToggleFavorite={handleToggleFavorite}
-                />
-              )}
-
-              {/* Seus favoritos */}
-              {(() => {
-                const favItems = items.filter((i: any) => favoriteIds.has(i.id));
-                if (favItems.length === 0) return null;
-                return (
-                  <ContentShelf
-                    icon={<Heart className="h-4 w-4 text-red-400/70" />}
-                    title="Guardados no coração"
-                    subtitle="Conteúdos que tocaram você"
-                    items={favItems}
-                    hasAccess={hasAccess}
-                    progressMap={progressMap}
-                    lastAccessedId={lastAccessedId}
-                    onTrackView={handleTrackView}
-                    onTrackDownload={handleTrackDownload}
-                    favoriteIds={favoriteIds}
-                    onToggleFavorite={handleToggleFavorite}
-                  />
-                );
-              })()}
-
-              {/* Conteúdos em destaque */}
-              {featuredItems.length > 0 && (
-                <ContentShelf
-                  icon={<Sparkles className="h-4 w-4 text-gold/70" />}
-                  title="Escolhidos para você"
-                  subtitle="Preparados com carinho para este momento"
-                  items={featuredItems}
-                  hasAccess={hasAccess}
-                  progressMap={progressMap}
-                  lastAccessedId={lastAccessedId}
-                  onTrackView={handleTrackView}
-                  onTrackDownload={handleTrackDownload}
-                  favoriteIds={favoriteIds}
-                  onToggleFavorite={handleToggleFavorite}
-                />
-              )}
-
-              {/* Novos conteúdos */}
-              {newItems.length > 0 && (
-                <ContentShelf
-                  icon={<Clock className="h-4 w-4 text-emerald-400/70" />}
-                  title="Chegou para abençoar"
-                  subtitle="Conteúdos fresquinhos para sua alma"
-                  items={newItems}
-                  hasAccess={hasAccess}
-                  progressMap={progressMap}
-                  lastAccessedId={lastAccessedId}
-                  onTrackView={handleTrackView}
-                  onTrackDownload={handleTrackDownload}
-                  favoriteIds={favoriteIds}
-                  onToggleFavorite={handleToggleFavorite}
-                />
-              )}
-
-              {/* Top da semana */}
-              <TopRankingSection
-                items={items}
-                hasAccess={hasAccess}
-                popularityMap={data?.weeklyPopularityMap || {}}
-                progressMap={progressMap}
-                lastAccessedId={lastAccessedId}
-                mode="weekly"
-                onItemsResolved={setWeeklyTopIds}
-              />
-
-              {/* Mais acessados (all time) */}
-              <TopRankingSection
-                items={items}
-                hasAccess={hasAccess}
-                popularityMap={data?.popularityMap || {}}
-                progressMap={progressMap}
-                lastAccessedId={lastAccessedId}
-                mode="all_time"
-                excludeIds={weeklyTopSet}
-                onItemsResolved={setAllTimeTopIds}
-              />
-
-              {/* Categorias em Destaque */}
-              {featuredCategories.map(([cat, catItems]: [string, any[]]) => {
-                const label =
-                  categoryLookup[cat]?.name ||
-                  cat.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
-                const config =
-                  typeConfig[catItems[0]?.content_type] || typeConfig.material;
-                return (
-                  <section key={`cat-${cat}`} className="space-y-4">
-                    <SectionHeader title={label} count={catItems.length} />
-                    <ContentGrid
-                      items={catItems}
-                      hasAccess={hasAccess}
-                      config={config}
-                      progressMap={progressMap}
-                      lastAccessedId={lastAccessedId}
-                      onTrackView={handleTrackView}
-                      onTrackDownload={handleTrackDownload}
-                      favoriteIds={favoriteIds}
-                      onToggleFavorite={handleToggleFavorite}
-                    />
-                  </section>
-                );
-              })}
-
-              {/* Jornadas */}
-              {Object.keys(journeyGroups).length > 0 && (
-                <section className="space-y-8">
-                  <div>
-                    <h2 className="font-display text-xl font-bold text-foreground/85 tracking-tight">
-                      ✨ Sua Jornada Espiritual
-                    </h2>
-                    <p className="mt-1 text-xs text-muted-foreground/60 italic">
-                      Trilhas guiadas para nutrir sua alma, no seu ritmo
+                  <div className="flex flex-col">
+                    <h1 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                      {activeCategoryName || "Louvores"}
+                    </h1>
+                    <p className="text-xs text-muted-foreground/75 sm:text-sm">
+                      {activeCategoryName
+                        ? `Selecionados da categoria ${activeCategoryName}.`
+                        : "Todos os louvores disponíveis."}
                     </p>
                   </div>
-                  {Object.entries(journeyGroups).map(([jg, jgItems]) => {
-                    const label =
-                      journeyLabels[jg] ||
-                      jg.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-                    return (
-                      <div key={`journey-${jg}`} className="space-y-4">
-                        <SectionHeader title={label} count={jgItems.length} />
-                        <div className={POSTER_GRID}>
-                          {jgItems.map((item: any, idx: number) => {
-                            const itemConfig =
-                              typeConfig[item.content_type] || typeConfig.material;
-                            return (
-                              <ContentCard
-                                key={`j-${item.id}`}
-                                item={item}
-                                index={idx}
-                                hasAccess={item.is_free || hasAccess}
-                                gradient={itemConfig.gradient}
-                                TypeIcon={itemConfig.icon}
-                                progress={progressMap[item.id]}
-                                isLastAccessed={item.id === lastAccessedId}
-                                isFavorite={favoriteIds.has(item.id)}
-                                onToggleFavorite={handleToggleFavorite}
-                              />
-                            );
-                          })}
+                </div>
+
+                <div className="flex flex-col-reverse items-stretch gap-2 sm:flex-row sm:items-center">
+                  <div className="relative w-full sm:w-72">
+                    <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
+                    <Input
+                      value={searchTerm}
+                      onChange={(event) => setSearchTerm(event.target.value)}
+                      placeholder="Buscar músicas..."
+                      className="h-10 rounded-xl border-border/50 bg-background/60 pl-10 text-sm shadow-inner backdrop-blur-md focus-visible:ring-primary/40"
+                    />
+                  </div>
+                  <Button
+                    variant="premium"
+                    size="sm"
+                    onClick={handlePlayAll}
+                    disabled={!filteredTracks.length}
+                    className="h-10 gap-2 px-4"
+                  >
+                    <Play className="h-4 w-4" />
+                    {activeCategoryName ? "Tocar categoria" : "Tocar todos"}
+                  </Button>
+                </div>
+              </div>
+            </section>
+
+            <InspirationalBlock />
+
+            <section>
+              <div className="mb-4 flex items-center gap-2">
+                <ListMusic className="h-4 w-4 text-primary/70" />
+                <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">Categorias</h2>
+              </div>
+
+
+              <div className="flex flex-wrap gap-2.5">
+                <Link
+                  to="/musicas"
+                  search={{}}
+                  className={`rounded-full border px-5 py-2.5 text-xs font-semibold tracking-wide transition-all duration-300 ${
+                    !categoryFilter
+                      ? "border-primary/50 bg-primary/15 text-foreground shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.4)]"
+                      : "border-border/40 bg-card/30 text-muted-foreground hover:-translate-y-0.5 hover:border-primary/30 hover:text-foreground"
+                  }`}
+                >
+                  Todas
+                </Link>
+                {categories.map((category) => {
+                  const slug = safeSlug(category.slug || category.name);
+                  const active = slug === categoryFilter;
+                  return (
+                    <Link
+                      key={category.id}
+                      to="/musicas"
+                      search={{ categoria: slug }}
+                      className={`rounded-full border px-5 py-2.5 text-xs font-semibold tracking-wide transition-all duration-300 ${
+                        active
+                          ? "border-primary/50 bg-primary/15 text-foreground shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.4)]"
+                          : "border-border/40 bg-card/30 text-muted-foreground hover:-translate-y-0.5 hover:border-primary/30 hover:text-foreground"
+                      }`}
+                    >
+                      {category.name}
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
+
+            <section className="space-y-4">
+              <div className="flex items-end justify-between gap-3">
+                <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">
+                  {activeCategoryName || "Todas as músicas"}
+                </h2>
+                <span className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary">
+                  {filteredTracks.length} {filteredTracks.length === 1 ? "música" : "músicas"}
+                </span>
+              </div>
+
+              {tracksLoading ? (
+                <div className="rounded-2xl border border-dashed border-border/40 px-4 py-10 text-center text-sm text-muted-foreground/70">
+                  Carregando músicas...
+                </div>
+              ) : tracksFailed ? (
+                <div className="rounded-2xl border border-dashed border-border/40 px-4 py-10 text-center text-sm text-muted-foreground/70">
+                  Erro ao carregar músicas
+                </div>
+              ) : filteredTracks.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-border/40 px-4 py-10 text-center text-sm text-muted-foreground/70">
+                  Nenhuma música encontrada
+                </div>
+              ) : categoryFilter ? (
+                // Categoria selecionada → carrossel horizontal com setas.
+                // Mostramos APENAS os louvores regulares aqui; os bônus dessa
+                // mesma categoria aparecem logo abaixo num bloco em destaque.
+                regularTracks.length > 0 ? (
+                  <PosterShelfRow>
+                    {(() => {
+                      const list = regularTracks.map(dbTrackToPlayerTrack);
+                      return list.map((pt, idx) => (
+                        <PosterShelfItem key={pt.id}>
+                          <TrackCard track={pt} index={idx} queue={list} />
+                        </PosterShelfItem>
+                      ));
+                    })()}
+                  </PosterShelfRow>
+                ) : (
+                  <div className="rounded-2xl border border-dashed border-border/40 px-4 py-8 text-center text-sm text-muted-foreground/70">
+                    Esta categoria ainda não possui louvores regulares.
+                  </div>
+                )
+              ) : (
+                // Visão geral → uma prateleira horizontal por categoria
+                // (Destaques, Soldado Ferido, Ansiedade, Cura da Alma, etc).
+                // Substitui o grid vertical infinito por carrosséis premium.
+                <div className="space-y-10">
+                  {(() => {
+                    const term = searchTerm.trim().toLowerCase();
+                    const groups: Array<{ key: string; name: string; slug: string; items: any[] }> = [];
+
+                    // Destaques: top por sort_order entre todas as faixas filtradas
+                    const highlights = [...filteredTracks]
+                      .sort((a: any, b: any) => (a?.sort_order ?? 0) - (b?.sort_order ?? 0))
+                      .slice(0, 8);
+                    if (highlights.length) {
+                      groups.push({ key: "__destaques", name: "Destaques", slug: "", items: highlights });
+                    }
+                    // Visão geral / Todos: exibimos APENAS Destaques + bloco
+                    // "Liberação em 7 dias". As demais categorias ficam acessíveis
+                    // via chips no topo (não duplicamos como prateleiras aqui).
+
+                    if (!groups.length) {
+                      return (
+                        <div className="rounded-2xl border border-dashed border-border/40 px-4 py-10 text-center text-sm text-muted-foreground/70">
+                          {term ? "Nenhuma música encontrada" : "Nenhum louvor disponível"}
                         </div>
-                      </div>
+                      );
+                    }
+
+                    const highlightIds = new Set(
+                      (groups.find((g) => g.key === "__destaques")?.items || []).map((t: any) => String(t?.id)),
                     );
-                  })}
-                </section>
+                    return groups.map((group) => (
+                      <div key={group.key} className="space-y-3">
+                        <div className="flex items-end justify-between gap-3">
+                          <h3 className="font-display text-xl font-bold tracking-tight text-foreground">
+                            {group.name}
+                          </h3>
+                          {group.slug ? (
+                            <Link
+                              to="/musicas"
+                              search={{ categoria: group.slug }}
+                              className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/80 hover:text-primary"
+                            >
+                              Ver tudo
+                            </Link>
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={handleOpenAllTracks}
+                              className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/80 transition hover:text-primary"
+                            >
+                              Ver todos
+                            </button>
+                          )}
+                        </div>
+                        <PosterShelfRow>
+                          {(() => {
+                            const list = group.items.map(dbTrackToPlayerTrack);
+                            return list.map((pt, idx) => (
+                              <PosterShelfItem key={`${group.key}-${pt.id}`}>
+                                {group.key === "__destaques" ? (
+                                  <HighlightTrackCard track={pt} queue={list} />
+                                ) : (
+                                  <TrackCard track={pt} index={idx} queue={list} />
+                                )}
+                              </PosterShelfItem>
+                            ));
+                          })()}
+                        </PosterShelfRow>
+                        {group.key === "__destaques" && (
+                          <div className="pt-4">
+                            <UpcomingReleaseBlock
+                              tracks={tracks}
+                              excludeIds={Array.from(highlightIds)}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    ));
+                  })()}
+                </div>
               )}
 
-              {/* Demais Categorias */}
-              {otherCategories.map(([cat, catItems]: [string, any[]]) => {
-                const label =
-                  categoryLookup[cat]?.name ||
-                  cat.replace(/_/g, " ").replace(/\b\w/g, (c: string) => c.toUpperCase());
-                const config =
-                  typeConfig[catItems[0]?.content_type] || typeConfig.material;
-                return (
-                  <section key={`cat-${cat}`} className="space-y-4">
-                    <SectionHeader title={label} count={catItems.length} />
-                    <ContentGrid
-                      items={catItems}
-                      hasAccess={hasAccess}
-                      config={config}
-                      progressMap={progressMap}
-                      lastAccessedId={lastAccessedId}
-                      onTrackView={handleTrackView}
-                      onTrackDownload={handleTrackDownload}
-                      favoriteIds={favoriteIds}
-                      onToggleFavorite={handleToggleFavorite}
-                    />
-                  </section>
-                );
-              })}
+              {!categoryFilter && showAllTracks && (
+                <section id="all-tracks-section" className="space-y-4 scroll-mt-20">
+                  <div className="flex items-end justify-between gap-3">
+                    <h2 className="font-display text-xl font-bold tracking-tight text-foreground">
+                      Todos os louvores
+                    </h2>
+                    <span className="rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-semibold text-primary">
+                      {filteredTracks.length} {filteredTracks.length === 1 ? "música" : "músicas"}
+                    </span>
+                  </div>
 
-              {/* Seções por tipo (sem categoria) */}
-              {Object.entries(typeGroups).map(([type, typeItems]) => {
-                const config = typeConfig[type] || typeConfig.material;
-                const TypeIcon = config.icon;
-                return (
-                  <section key={type} className="space-y-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-muted/10">
-                        <TypeIcon className="h-4 w-4 text-gold/60" />
-                      </div>
-                      <div>
-                        <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
-                          {config.label}
-                        </h2>
-                        <p className="text-xs text-muted-foreground/50">
-                          {typeItems.length} conteúdo{typeItems.length > 1 ? "s" : ""}
-                        </p>
-                      </div>
+                  <div className={POSTER_GRID}>
+                    {(() => {
+                      const list = filteredTracks.map(dbTrackToPlayerTrack);
+                      return list.map((pt, idx) => (
+                        <TrackCard key={`all-${pt.id}`} track={pt} index={idx} queue={list} />
+                      ));
+                    })()}
+                  </div>
+                </section>
+              )}
+            </section>
+
+            {/* Bônus DENTRO da categoria — bloco visualmente distinto, com
+                destaque dourado. Respeita data de liberação porque o próprio
+                TrackCard já exibe o badge "Em breve" quando aplicável. */}
+            {categoryFilter && bonusTracks.length > 0 && (
+              <section className="space-y-4">
+                <div className="rounded-3xl border border-gold/20 bg-gradient-to-br from-gold/[0.06] via-background to-background p-5 sm:p-6">
+                  <div className="mb-4 flex items-end justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <Gift className="h-4 w-4 text-gold/80" />
+                      <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-gold/80">
+                        Bônus de {activeCategoryName}
+                      </h2>
                     </div>
-                    <ContentGrid
-                      items={typeItems}
-                      hasAccess={hasAccess}
-                      config={config}
-                      progressMap={progressMap}
-                      lastAccessedId={lastAccessedId}
-                      onTrackView={handleTrackView}
-                      onTrackDownload={handleTrackDownload}
-                      favoriteIds={favoriteIds}
-                      onToggleFavorite={handleToggleFavorite}
-                    />
-                  </section>
-                );
-              })}
+                    <span className="rounded-full border border-gold/30 bg-gold/10 px-3 py-1 text-[11px] font-semibold text-gold/90">
+                      {bonusTracks.length} {bonusTracks.length === 1 ? "bônus" : "bônus"}
+                    </span>
+                  </div>
+                  <PosterShelfRow>
+                    {(() => {
+                      const list = bonusTracks.map(dbTrackToPlayerTrack);
+                      return list.map((pt, idx) => (
+                        <PosterShelfItem key={`bonus-${pt.id}`}>
+                          <TrackCard track={pt} index={idx} queue={list} />
+                        </PosterShelfItem>
+                      ));
+                    })()}
+                  </PosterShelfRow>
+                </div>
+              </section>
+            )}
 
-              {/* Recomendado */}
-              <RecommendedSection
-                items={items}
-                hasAccess={hasAccess}
-                viewedIds={data?.viewedIds || []}
-                downloadedIds={data?.downloadedIds || []}
-                progressMap={progressMap}
-                popularityMap={data?.popularityMap || {}}
-                excludeIds={recommendedExcludeSet}
-              />
-            </>
-          )}
+            {!categoryFilter && null}
+
+            {shouldShowPlaylistsSection && (
+            <section id="playlists-section" className="space-y-4 scroll-mt-20">
+              <div className="flex items-end justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <Disc3 className="h-4 w-4 text-primary/70" />
+                  <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-muted-foreground/80">
+                    Playlists <span className="text-muted-foreground/50 normal-case tracking-normal">(Playbacks)</span>
+                  </h2>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setActivePlaylistId(playlists[0]?.id ?? null)}
+                  className="text-xs font-semibold uppercase tracking-[0.2em] text-primary/80 transition hover:text-primary"
+                >
+                  Ver todas
+                </button>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+                {playlists.map((playlist: any) => {
+                  const isActive = playlist.id === activePlaylistId;
+                  return (
+                    <button
+                      key={playlist.id}
+                      type="button"
+                      onClick={() => setActivePlaylistId(isActive ? null : playlist.id)}
+                      className={`group relative flex h-32 items-center gap-4 overflow-hidden rounded-2xl border p-3 text-left transition-all duration-300 hover:-translate-y-0.5 ${
+                        isActive
+                          ? "border-gold/50 bg-gradient-to-r from-gold/15 via-card/40 to-background shadow-[0_10px_30px_-10px_hsl(var(--primary)/0.5)]"
+                          : "border-gold/20 bg-gradient-to-r from-card/60 via-card/30 to-background/60 hover:border-gold/40"
+                      }`}
+                    >
+                      <div className="relative h-full w-28 shrink-0 overflow-hidden rounded-xl">
+                        {playlist?.cover_url ? (
+                          <img
+                            src={playlist.cover_url}
+                            alt={playlist?.name || "Playlist"}
+                            loading="lazy"
+                            className="h-full w-full object-cover transition group-hover:scale-105"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/30 to-primary/5">
+                            <Disc3 className="h-9 w-9 text-primary" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex min-w-0 flex-1 flex-col justify-center gap-1.5">
+                        <h3 className="line-clamp-2 text-sm font-bold tracking-tight text-foreground">
+                          {playlist?.name || "Playlist"}
+                        </h3>
+                        <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground/70">
+                          <ListMusic className="h-3 w-3 text-gold/70" />
+                          <span>{playlist?.track_count || 0} faixas</span>
+                        </div>
+                      </div>
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gold/40 bg-gold/10 text-gold transition group-hover:bg-gold/20">
+                        <Play className="h-4 w-4 fill-current" />
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {activePlaylistId ? (
+                <div className="mt-2 rounded-2xl border border-primary/30 bg-gradient-to-r from-primary/10 to-transparent p-5">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <h3 className="font-bold text-foreground">{playlistTracksData?.playlist?.name || "Playlist selecionada"}</h3>
+                      <p className="text-sm text-muted-foreground/70">
+                        {playlistLoading ? "Carregando músicas da playlist..." : `${playlistTracks.length} música(s) nesta playlist`}
+                      </p>
+                    </div>
+                    <Button variant="premium" size="sm" onClick={handlePlaylistPlay} disabled={!playlistTracks.length || playlistLoading}>
+                      <Play className="h-3.5 w-3.5" />
+                      Ouvir playlist
+                    </Button>
+                  </div>
+                </div>
+              ) : null}
+            </section>
+            )}
+
+            {!categoryFilter && shouldShowPlaylistsSection && (
+              <section>
+                <div className="flex flex-col items-start gap-4 rounded-3xl border border-gold/30 bg-gradient-to-r from-gold/[0.06] via-background to-background p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+                  <div className="flex items-center gap-4">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-gold/40 bg-gold/10 text-gold">
+                      <ListMusic className="h-5 w-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-display text-lg font-bold tracking-tight text-foreground">
+                        Novos playbacks toda semana
+                      </h3>
+                      <p className="text-sm text-muted-foreground/75">
+                        Atualizamos nossas playlists com novos playbacks para te ajudar a adorar com excelência.
+                      </p>
+                    </div>
+                  </div>
+                  <Button variant="premium" size="lg" className="gap-2">
+                    Explorar novas playlists
+                  </Button>
+                </div>
+              </section>
+            )}
+          </div>
+          </SafeBoundary>
         </div>
-
-        {/* Invisible funnel shelves */}
-        <div className="max-w-6xl mx-auto px-5 sm:px-8 mt-10 mb-8">
-          <InvisibleFunnelShelves context="musicas" />
-        </div>
-
-        <FooterLinks />
-      </div>
-    </StudentLayout>
-  )
-}
-
-/* ── Reusable sub-components ── */
-
-function SectionHeader({ title, count }: { title: string; count: number }) {
-  return (
-    <div className="flex items-center gap-3">
-      <h2 className="font-display text-lg font-bold text-foreground/75 tracking-tight">
-        {title}
-      </h2>
-      <div className="flex-1 h-px bg-gradient-to-r from-border/10 to-transparent" />
-      <span className="text-[11px] text-muted-foreground/35 tracking-wider">
-        {count} conteúdo{count > 1 ? "s" : ""}
-      </span>
-    </div>
-  );
-}
-
-function ContentShelf({
-  icon,
-  title,
-  subtitle,
-  items,
-  hasAccess,
-  progressMap,
-  lastAccessedId,
-  onTrackView,
-  onTrackDownload,
-  favoriteIds,
-  onToggleFavorite,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  subtitle: string;
-  items: any[];
-  hasAccess: boolean;
-  progressMap: Record<string, any>;
-  lastAccessedId: string | null;
-  onTrackView?: (contentId: string) => void;
-  onTrackDownload?: (contentId: string) => void;
-  favoriteIds?: Set<string>;
-  onToggleFavorite?: (contentId: string, isFav: boolean) => void;
-}) {
-  return (
-    <section className="space-y-5">
-      <div className="flex items-center gap-3">
-        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gold/[0.06] border border-gold/8">
-          {icon}
-        </div>
-        <div className="flex-1">
-          <h2 className="font-display text-lg font-bold text-foreground/80 tracking-tight">
-            {title}
-          </h2>
-          <p className="text-[11px] text-muted-foreground/40 mt-0.5">{subtitle}</p>
-        </div>
-      </div>
-      <div className={POSTER_GRID}>
-        {items.map((item: any, idx: number) => {
-          const config = typeConfig[item.content_type] || typeConfig.material;
-          return (
-            <ContentCard
-              key={`shelf-${item.id}`}
-              item={item}
-              index={idx}
-              hasAccess={item.is_free || hasAccess}
-              gradient={config.gradient}
-              TypeIcon={config.icon}
-              progress={progressMap[item.id]}
-              isLastAccessed={item.id === lastAccessedId}
-              onTrackView={onTrackView}
-              onTrackDownload={onTrackDownload}
-              isFavorite={favoriteIds?.has(item.id)}
-              onToggleFavorite={onToggleFavorite}
-            />
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-function ContentGrid({
-  items,
-  hasAccess,
-  config,
-  progressMap,
-  lastAccessedId,
-  onTrackView,
-  onTrackDownload,
-  favoriteIds,
-  onToggleFavorite,
-}: {
-  items: any[];
-  hasAccess: boolean;
-  config: { gradient: string; icon: any };
-  progressMap: Record<string, any>;
-  lastAccessedId: string | null;
-  onTrackView?: (contentId: string) => void;
-  onTrackDownload?: (contentId: string) => void;
-  favoriteIds?: Set<string>;
-  onToggleFavorite?: (contentId: string, isFav: boolean) => void;
-}) {
-  return (
-    <div className={POSTER_GRID}>
-      {items.map((item: any, idx: number) => (
-        <ContentCard
-          key={item.id}
-          item={item}
-          index={idx}
-          hasAccess={item.is_free || hasAccess}
-          gradient={config.gradient}
-          TypeIcon={config.icon}
-          progress={progressMap[item.id]}
-          isLastAccessed={item.id === lastAccessedId}
-          onTrackView={onTrackView}
-          onTrackDownload={onTrackDownload}
-          isFavorite={favoriteIds?.has(item.id)}
-          onToggleFavorite={onToggleFavorite}
-        />
-      ))}
-    </div>
-  );
-}
-
-function StatPill({ icon: Icon, label, value, color }: { icon: any; label: string; value: number; color: string }) {
-  return (
-    <div className="flex items-center gap-2.5 rounded-xl bg-card/20 border border-border/8 px-4 py-2.5">
-      <Icon className={`h-3.5 w-3.5 ${color}`} />
-      <div className="flex items-baseline gap-1.5">
-        <span className="text-sm font-bold text-foreground/75 tabular-nums">{value}</span>
-        <span className="text-[11px] text-muted-foreground/40 tracking-wide">{label}</span>
-      </div>
-    </div>
+      </StudentLayout>
+    </ModuleGuard>
   );
 }

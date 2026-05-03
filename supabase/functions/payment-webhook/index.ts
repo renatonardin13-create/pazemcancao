@@ -16,6 +16,13 @@ const redactPayload = (body: any) => {
     if (key in redacted) redacted[key] = '[REDACTED]';
   }
   
+  // Recursively redact
+  for (const key in redacted) {
+    if (redacted[key] && typeof redacted[key] === 'object') {
+      redacted[redacted] = redactPayload(redacted[key]);
+    }
+  }
+  
   return redacted;
 };
 
@@ -47,6 +54,7 @@ async function validateKiwifySignature(payload: string, signature: string, secre
 }
 
 serve(async (req) => {
+  // 1. Handle CORS
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -62,14 +70,15 @@ serve(async (req) => {
 
   try {
     const url = new URL(req.url)
-    const urlProvider = url.searchParams.get('gateway') || url.searchParams.get('provider')
+    const provider = url.searchParams.get('provider') || 'perfectpay'
     
-    // 1. Read Body
+    // 2. Read Body
     const contentType = req.headers.get('content-type') || ''
     if (contentType.includes('application/json')) {
       rawBody = await req.text()
       body = JSON.parse(rawBody)
     } else {
+      // Fallback for form-data (PerfectPay often uses this)
       const formData = await req.formData()
       const obj: any = {}
       formData.forEach((value, key) => {
@@ -79,18 +88,10 @@ serve(async (req) => {
       rawBody = JSON.stringify(obj)
     }
     
-    // Detect provider if not in URL
-    let provider = urlProvider
-    if (!provider) {
-      if (body.product_id && body.sale_id && body.customer_email) provider = 'perfect_pay'
-      if (body.order_id || body.order_status) provider = 'kiwify'
-    }
-    provider = provider || 'unknown'
+    console.log(`[Webhook] Received from ${provider}. IP: ${req.headers.get('x-forwarded-for') || 'unknown'}`)
 
-    console.log(`[Webhook] Received from ${provider}.`)
-
-    // 2. Extract common fields
-    let externalProductCode = ''
+    // 3. Extract common fields
+    let externalProductId = ''
     let uniqueEventId = ''
     let saleStatus = ''
     let receivedToken = ''
@@ -98,22 +99,22 @@ serve(async (req) => {
     let customerName = ''
 
     if (provider === 'perfectpay') {
-      externalProductCode = String(body.product_id || '')
+      externalProductId = String(body.product_id || '')
       uniqueEventId = String(body.sale_id || '')
       saleStatus = String(body.sale_status || '')
       receivedToken = String(body.token || '')
       customerEmail = String(body.customer_email || '').trim().toLowerCase()
       customerName = String(body.customer_name || '')
     } else if (provider === 'kiwify') {
-      externalProductCode = String(body.product?.id || body.product_id || '')
+      externalProductId = String(body.product_id || '')
       uniqueEventId = String(body.order_id || body.sale_id || '')
       saleStatus = String(body.order_status || body.status || '')
-      receivedToken = req.headers.get('x-kiwify-signature') || ''
+      receivedToken = req.headers.get('x-kiwify-signature') || url.searchParams.get('signature') || body.signature || ''
       customerEmail = String(body.customer?.email || body.email || '').trim().toLowerCase()
       customerName = String(body.customer?.name || body.name || '')
     }
 
-    // 3. Initial Logging
+    // 4. Initial Logging (Audit)
     const { data: log, error: logError } = await supabaseAdmin
       .from('webhook_logs')
       .insert({
@@ -121,7 +122,7 @@ serve(async (req) => {
         payload: redactPayload(body),
         event_type: saleStatus || 'webhook_received',
         email: customerEmail,
-        external_product_id: externalProductCode,
+        external_product_id: externalProductId,
         order_id: uniqueEventId
       })
       .select()
@@ -130,49 +131,53 @@ serve(async (req) => {
     if (logError) console.error('Error logging webhook:', logError)
     logId = log?.id
 
-    // 4. Validation
-    if (!externalProductCode || !uniqueEventId || !customerEmail) {
-      const msg = `Validation Failed: ${!externalProductCode ? 'Missing product code' : !uniqueEventId ? 'Missing event id' : 'Missing email'}`
+    // 5. Hard Validation: Mandatory Fields
+    if (!externalProductId || !uniqueEventId || !customerEmail) {
+      const msg = `Validation Failed: ${!externalProductId ? 'Missing product_id' : !uniqueEventId ? 'Missing sale_id' : 'Missing email'}`
       await updateLog(logId, 400, msg)
       return new Response(JSON.stringify({ error: msg }), { status: 400, headers: corsHeaders })
     }
 
-    // 5. Find Offer
-    // Search for offer where external_product_code matches (handle multiple codes separated by comma)
-    const { data: offers, error: offerError } = await supabaseAdmin
-      .from('ofertas')
-      .select('*, ofertas_produtos(produto_id, produtos(*))')
-      .eq('gateway', provider)
-      .eq('status', 'ativa')
-
-    if (offerError) throw offerError
-
-    const offer = offers?.find(o => {
-      const codes = o.codigo_externo.split(',').map((c: string) => c.trim())
-      return codes.includes(externalProductCode)
-    })
-
-    if (!offer) {
-      const msg = `Config Error: Active offer not found for product ${externalProductCode} on ${provider}`
-      await updateLog(logId, 404, msg)
-      return new Response(JSON.stringify({ error: 'Offer not configured' }), { status: 404, headers: corsHeaders })
+    // 6. Security: Token/Signature Check
+    if (!receivedToken) {
+      const msg = 'Security Error: Missing authentication token/signature'
+      await updateLog(logId, 401, msg)
+      return new Response(JSON.stringify({ error: msg }), { status: 401, headers: corsHeaders })
     }
 
-    // 6. Security Validation
+    // Fetch integration settings
+    const { data: offer, error: offerError } = await supabaseAdmin
+      .from('course_integrations')
+      .select('*, courses(area_id)')
+      .eq('external_product_id', externalProductId)
+      .eq('platform', provider)
+      .eq('is_enabled', true)
+      .maybeSingle()
+
+    if (offerError || !offer) {
+      const msg = `Config Error: Offer not found/enabled for product ${externalProductId} on ${provider}`
+      await updateLog(logId, 404, msg)
+      return new Response(JSON.stringify({ error: 'Product not configured' }), { status: 404, headers: corsHeaders })
+    }
+
+    // Provider specific security validation
     let isAuthorized = false
     if (provider === 'perfectpay') {
-      isAuthorized = offer.token === receivedToken
+      isAuthorized = offer.integration_token === receivedToken
     } else if (provider === 'kiwify') {
-      isAuthorized = await validateKiwifySignature(rawBody, receivedToken, offer.token)
+      // Kiwify uses HMAC-SHA1 of the body
+      isAuthorized = await validateKiwifySignature(rawBody, receivedToken, offer.integration_token)
+    } else {
+      isAuthorized = offer.integration_token === receivedToken
     }
 
-    if (!isAuthorized && offer.token) {
+    if (!isAuthorized) {
       const msg = 'Security Error: Invalid authentication token/signature'
       await updateLog(logId, 401, msg)
       return new Response(JSON.stringify({ error: msg }), { status: 401, headers: corsHeaders })
     }
 
-    // 7. Idempotency Check
+    // 7. Idempotency Check (Prevent Multiple Access)
     const { error: insertProcessError } = await supabaseAdmin
       .from('processed_webhooks')
       .insert({
@@ -184,69 +189,91 @@ serve(async (req) => {
         payload: redactPayload(body)
       })
 
-    if (insertProcessError && insertProcessError.code === '23505') {
-      await updateLog(logId, 200, 'Duplicate event ignored.', true)
-      return new Response(JSON.stringify({ success: true, message: 'Already processed' }), { status: 200, headers: corsHeaders })
+    if (insertProcessError) {
+      if (insertProcessError.code === '23505') { // Unique violation
+        console.log(`[Webhook] Duplicate event ${uniqueEventId} detected.`)
+        await updateLog(logId, 200, 'Duplicate event ignored.', true)
+        return new Response(JSON.stringify({ success: true, message: 'Already processed' }), { status: 200, headers: corsHeaders })
+      }
+      throw insertProcessError
     }
 
-    // 8. Process Status
+    // 8. Business Logic: Status Check
     const isApproved = (provider === 'perfectpay' && (saleStatus === 'approved' || saleStatus === 'paid')) || 
                        (provider === 'kiwify' && (saleStatus === 'paid' || saleStatus === 'approved'))
-    
-    const isRefunded = (provider === 'perfectpay' && (saleStatus === 'refunded' || saleStatus === 'chargeback')) ||
-                       (provider === 'kiwify' && (saleStatus === 'refunded' || saleStatus === 'charged_back'))
 
-    if (isApproved) {
-      // Grant Access
-      const products = offer.ofertas_produtos.map((op: any) => op.produtos)
-      
-      for (const product of products) {
-        // Record in acessos_usuario
-        await supabaseAdmin
-          .from('acessos_usuario')
-          .upsert({
-            usuario_email: customerEmail,
-            produto_id: product.id,
-            origem: provider,
-            status: 'ativo'
-          }, { onConflict: 'usuario_email, produto_id' })
-
-        // If it's a course, also create enrollment
-        if (product.tipo === 'curso') {
-          // Find user ID if exists
-          const { data: { users } } = await supabaseAdmin.auth.admin.listUsers()
-          const user = users.find(u => u.email?.toLowerCase() === customerEmail)
-          
-          if (user) {
-            // Find course linked to this product (might need a link table or naming convention)
-            // For now, let's assume the product.nome matches a course name or we have a mapping
-            // In a real scenario, we'd have a column `course_id` in `produtos`
-          }
-        }
-      }
-
-      await updateLog(logId, 200, 'Success: Access Granted', true)
-    } else if (isRefunded) {
-      // Revoke Access
-      const products = offer.ofertas_produtos.map((op: any) => op.produtos)
-      for (const product of products) {
-        await supabaseAdmin
-          .from('acessos_usuario')
-          .update({ status: 'cancelado' })
-          .eq('usuario_email', customerEmail)
-          .eq('produto_id', product.id)
-      }
-      await updateLog(logId, 200, 'Success: Access Revoked', true)
-    } else {
-      await updateLog(logId, 200, `Status ${saleStatus} ignored`, true)
+    if (!isApproved) {
+      const msg = `Status: ${saleStatus} (Ignored)`
+      await updateLog(logId, 200, msg)
+      await updateProcess(uniqueEventId, provider, 'completed', msg)
+      return new Response(JSON.stringify({ success: true, message: msg }), { status: 200, headers: corsHeaders })
     }
 
-    return new Response(JSON.stringify({ success: true }), { status: 200, headers: corsHeaders })
+    // 9. Grant Access
+    console.log(`[Webhook] Granting access to ${customerEmail} for Course ${offer.course_id}`)
+    
+    // Find or Create Auth User (Backend logic)
+    // We use a safe approach to finding users to avoid leaks
+    const { data: { users }, error: listError } = await supabaseAdmin.auth.admin.listUsers()
+    if (listError) throw listError
+
+    let user = users.find(u => u.email?.toLowerCase() === customerEmail)
+    let userId = user?.id
+
+    if (!userId) {
+      const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
+        email: customerEmail,
+        email_confirm: true,
+        user_metadata: { full_name: customerName, origin: 'webhook_automation' },
+        password: Math.random().toString(36).slice(-12) + 'A1!'
+      })
+      
+      if (createError) {
+        // Handle race condition where user was created between list and create
+        if (createError.message.includes('already registered')) {
+          const { data: { users: retryUsers } } = await supabaseAdmin.auth.admin.listUsers()
+          userId = retryUsers.find(u => u.email?.toLowerCase() === customerEmail)?.id
+        } else {
+          throw createError
+        }
+      } else {
+        userId = newUser.user?.id
+      }
+    }
+
+    if (!userId) throw new Error('Could not resolve User ID')
+
+    // Create Enrollment
+    const { error: enrollError } = await supabaseAdmin
+      .from('enrollments')
+      .upsert({
+        user_id: userId,
+        course_id: offer.course_id,
+        area_id: offer.courses?.area_id,
+        status: 'active',
+        email: customerEmail,
+        access_origin: 'webhook',
+        granted_at: new Date().toISOString()
+      }, { onConflict: 'user_id, course_id' })
+
+    if (enrollError) throw enrollError
+
+    // 10. Finalize
+    await updateProcess(uniqueEventId, provider, 'completed')
+    await updateLog(logId, 200, 'Success: Access Granted', true)
+
+    return new Response(JSON.stringify({ success: true }), { 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200 
+    })
 
   } catch (error) {
-    console.error('[Webhook] Error:', error)
+    console.error('[Webhook] Critical Error:', error)
     if (logId) await updateLog(logId, 500, error.message)
-    return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: corsHeaders })
+    return new Response(JSON.stringify({ error: 'Internal Server Error' }), { 
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 500 
+    })
   }
 
   async function updateLog(id: string | null, status: number, message: string, success: boolean = false) {
@@ -260,5 +287,17 @@ serve(async (req) => {
         processed_at: new Date().toISOString()
       })
       .eq('id', id)
+  }
+
+  async function updateProcess(eventId: string, provider: string, status: string, error?: string) {
+    await supabaseAdmin
+      .from('processed_webhooks')
+      .update({
+        status,
+        error_message: error,
+        processed_at: new Date().toISOString()
+      })
+      .eq('unique_event_id', eventId)
+      .eq('provider', provider)
   }
 })

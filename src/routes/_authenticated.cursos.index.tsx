@@ -96,10 +96,9 @@ function MeusCursosPage() {
 
   const { data: myData, isLoading } = useQuery({
     queryKey: ["my-courses-library", "v2", undefined],
-    queryFn: () => getMyCoursesData(),
+    queryFn: () => getMyCoursesData({ data: { areaId: undefined } }),
     staleTime: 30_000,
   });
-
 
   const { data: continueData } = useQuery({
     queryKey: ["my-courses-library", "continue-watching"],

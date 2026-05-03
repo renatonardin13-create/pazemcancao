@@ -119,7 +119,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
   // ─── Mutations ───
   const createModM = useMutation({
     mutationFn: (input: { title: string; description?: string; status?: string; thumbnail_url?: string }) =>
-      createModule({ data: { courseId, ...input } }),
+      createModule({ data: { courseId, ...input } } as any),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
       toast.success("Módulo criado com sucesso");
@@ -130,7 +130,7 @@ export function CourseModulesTab({ courseId }: CourseModulesTabProps) {
 
   const updateModM = useMutation({
     mutationFn: (input: { id: string; title?: string; description?: string; status?: string; thumbnail_url?: string }) =>
-      updateModule({ data: input }),
+      updateModule({ data: input } as any),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey });
       toast.success("Módulo atualizado");

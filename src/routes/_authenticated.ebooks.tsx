@@ -20,10 +20,9 @@ function EbooksPage() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["content-items", undefined],
-    queryFn: () => listContentItems(),
+    queryFn: () => listContentItems({ data: { areaId: undefined } }),
     staleTime: 60_000,
   });
-
 
   const { data: favData } = useQuery({
     queryKey: ["user-favorites"],
@@ -44,18 +43,16 @@ function EbooksPage() {
   }, [allItems]);
 
   const handleTrackView = useCallback((contentId: string) => {
-    trackContentView({ data: { contentId } }).then(() => {
+    trackContentView({ data: { contentId, areaId: undefined } }).then(() => {
       queryClient.invalidateQueries({ queryKey: ["content-items"] });
     });
-  }, [queryClient]);
-
+  }, [queryClient, undefined]);
 
   const handleTrackDownload = useCallback((contentId: string) => {
-    trackContentDownload({ data: { contentId } }).then(() => {
+    trackContentDownload({ data: { contentId, areaId: undefined } }).then(() => {
       queryClient.invalidateQueries({ queryKey: ["content-items"] });
     });
-  }, [queryClient]);
-
+  }, [queryClient, undefined]);
 
   const handleToggleFavorite = useCallback((contentId: string, currentlyFav: boolean) => {
     toggleFavorite({ data: { contentId, isFavorite: currentlyFav } }).then(() => {

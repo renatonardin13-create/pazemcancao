@@ -15,7 +15,7 @@ export const Route = createFileRoute("/_authenticated/cursos/$courseId")({
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3 text-center p-6">
       <p className="text-foreground">Não foi possível carregar este curso.</p>
       <p className="text-sm text-muted-foreground">{error.message}</p>
-      <Link to="/home" className="text-gold underline">Ver vitrine</Link>
+      <Link to="/vitrine" className="text-gold underline">Ver vitrine</Link>
     </div>
   ),
 });

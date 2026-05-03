@@ -122,11 +122,8 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
 
   const centerAction = isReleased
     ? (
-        <div className="flex h-full flex-col items-center justify-center bg-black/40 backdrop-blur-[2px] opacity-0 group-hover/card:opacity-100 transition-opacity duration-300">
-          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-gold shadow-2xl shadow-gold/40 transition-transform duration-300 group-hover/card:scale-110">
-            <Play className="h-5 w-5 fill-current text-black" />
-          </div>
-          <span className="mt-4 text-[10px] font-black uppercase tracking-[0.2em] text-white">Assistir agora</span>
+        <div className="scale-[0.5] rounded-full bg-gold/95 px-5 py-2.5 opacity-0 shadow-[0_4px_24px_rgba(0,0,0,0.4)] md:transition-all md:duration-500 md:ease-[cubic-bezier(0.22,1,0.36,1)] md:group-hover/card:scale-100 md:group-hover/card:opacity-100 sm:px-6 sm:py-3">
+          <Play className="h-4 w-4 fill-gold-foreground text-gold-foreground sm:h-5 sm:w-5" />
         </div>
       )
     : undefined;
@@ -155,21 +152,13 @@ export const VitrineCourseCard = memo(function VitrineCourseCard({
           overlay={overlay}
           centerAction={centerAction}
           title={course.title}
-          subtitle={course.category_name}
+          subtitle=""
           meta={
-            <div className="flex items-center gap-3">
-              {course.total_duration && (
-                <span className="flex items-center gap-1">
-                  <Clock3 className="h-3 w-3" />
-                  {course.total_duration}
-                </span>
-              )}
-              {!isLocked && progress > 0 && (
-                <span className="text-gold font-black">
-                  {progress}%
-                </span>
-              )}
-            </div>
+            !isLocked && progress > 0 ? (
+              <span className="text-[9px] font-semibold uppercase tracking-[0.15em] text-gold/55 sm:text-[10px]">
+                {progress}%
+              </span>
+            ) : null
           }
           progress={!isLocked && progress > 0 ? progress : null}
           progressColorClass={isCompleted ? "bg-emerald-400" : "bg-gold"}

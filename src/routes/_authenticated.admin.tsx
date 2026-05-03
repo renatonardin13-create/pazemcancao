@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, Link } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AdminSidebar } from "@/components/AdminSidebar";
+import { AreaSelector } from "@/components/admin/AreaSelector";
 import { LogOut, ShieldAlert, ArrowLeft, RefreshCw } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect, useRef } from "react";
@@ -105,6 +106,9 @@ function AdminLayout() {
             <span className="text-xs font-semibold uppercase tracking-[0.25em] text-muted-foreground/60 hidden lg:inline">
               Painel Administrativo
             </span>
+            <div className="mx-2 hidden sm:block">
+              <AreaSelector />
+            </div>
             <div className="ml-auto flex items-center gap-3">
               <button
                 onClick={handleRefresh}

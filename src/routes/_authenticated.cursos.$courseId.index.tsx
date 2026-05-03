@@ -56,27 +56,26 @@ function CourseDetailPage() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["course-detail", courseId],
-    queryFn: () => getCourseDetail({ data: { courseId } }),
-  });
-
   // Auto-redirect to the appropriate lesson
-  const { data: resolvedLesson } = useQuery({
+  const { data: resolvedLesson, isLoading: isResolving } = useQuery({
     queryKey: ["resolve-course-lesson", courseId],
     queryFn: () => resolveCourseLesson({ data: { courseId } }),
-    enabled: !!data && data.course?.course_type !== "louvores",
   });
 
   useEffect(() => {
-    if (resolvedLesson?.lessonId && data?.course?.course_type !== "louvores") {
+    if (resolvedLesson?.lessonId) {
       navigate({
         to: "/cursos/$courseId/aula/$lessonId",
         params: { courseId, lessonId: resolvedLesson.lessonId },
         replace: true,
       });
     }
-  }, [resolvedLesson, data?.course?.course_type, courseId, navigate]);
+  }, [resolvedLesson, courseId, navigate]);
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["course-detail", courseId],
+    queryFn: () => getCourseDetail({ data: { courseId } }),
+  });
 
   const progressMutation = useMutation({
     mutationFn: (input: {
@@ -147,8 +146,6 @@ function CourseDetailPage() {
   const totalLessons = lessons.length;
   const progressPercent =
     totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
-
-  const isLouvoresPack = course?.course_type === "louvores";
 
   const isLessonCompleted = (lessonId: string) =>
     progress.some((p: any) => p.lesson_id === lessonId && p.completed);
@@ -310,21 +307,6 @@ function CourseDetailPage() {
       </div>
     );
   };
-
-  if (isLouvoresPack) {
-    return (
-      <StudentLayout>
-        <div className="flex min-h-screen items-center justify-center p-8 text-center">
-          <div className="max-w-md space-y-4">
-            <h2 className="text-2xl font-bold">Pacote de Louvores</h2>
-            <p className="text-muted-foreground">Você pode acessar todos os louvores diretamente na seção de Músicas.</p>
-            <Link to="/home" className="inline-block px-6 py-2 bg-gold text-background rounded-full font-bold">Voltar ao Início</Link>
-          </div>
-        </div>
-      </StudentLayout>
-    );
-  }
-
 
   return (
     <StudentLayout>

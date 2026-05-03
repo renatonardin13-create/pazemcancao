@@ -17,13 +17,22 @@ async function verifyAdmin(supabase: any, userId: string) {
 
 export const listAdminContentItems = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { areaId?: string } | void) => input)
+  .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
-    const { data: items, error } = await supabaseAdmin
+    let query = supabaseAdmin
       .from('content_items')
       .select('*')
       .order('sort_order', { ascending: true });
+
+    if (data?.areaId) {
+      query = query.eq('area_id', data.areaId);
+    } else {
+      return { items: [] };
+    }
+
+    const { data: items, error } = await query;
 
     if (error) throw new Error(error.message);
     return { items: items || [] };
@@ -35,6 +44,7 @@ export const createContentItem = createServerFn({ method: 'POST' })
     title: string;
     description?: string;
     content_type: string;
+    area_id?: string;
     cover_url?: string;
     file_url?: string;
     video_url?: string;
@@ -62,12 +72,16 @@ export const createContentItem = createServerFn({ method: 'POST' })
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
 
+    if (!data.area_id) {
+      throw new Error('O campo área de membros é obrigatório.');
+    }
+
     const { data: maxOrder } = await supabaseAdmin
       .from('content_items')
       .select('sort_order')
       .order('sort_order', { ascending: false })
       .limit(1)
-      .maybeSingle();
+      .single();
 
     const accessMode = data.access_mode || (data.is_free ? 'gratuito' : (data.release_days && data.release_days > 0 ? 'liberar_em_dias' : 'pago'));
 
@@ -77,6 +91,7 @@ export const createContentItem = createServerFn({ method: 'POST' })
         title: data.title,
         description: data.description || null,
         content_type: data.content_type,
+        area_id: data.area_id || null,
         cover_url: data.cover_url || null,
         file_url: data.file_url || null,
         video_url: data.video_url || null,
@@ -101,7 +116,7 @@ export const createContentItem = createServerFn({ method: 'POST' })
         locked_final_count: data.locked_final_count ?? 0,
         locked_label: data.locked_label || null,
         launch_mode: data.launch_mode || 'none',
-      })
+      } as any)
       .select()
       .single();
 
@@ -116,6 +131,7 @@ export const updateContentItem = createServerFn({ method: 'POST' })
     title?: string;
     description?: string;
     content_type?: string;
+    area_id?: string;
     cover_url?: string;
     file_url?: string;
     video_url?: string;
@@ -143,6 +159,10 @@ export const updateContentItem = createServerFn({ method: 'POST' })
   }) => input)
   .handler(async ({ data, context }) => {
     await verifyAdmin(context.supabase, context.userId);
+
+    if ('area_id' in data && !data.area_id) {
+      throw new Error('O campo área de membros é obrigatório.');
+    }
 
     const { id, ...updates } = data;
     const { error } = await supabaseAdmin

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Play, ArrowRight, X } from "lucide-react";
+import { useArea } from "@/hooks/use-area";
 import type { VitrineCourse } from "./types";
 import {
   fallbackHeroContent,
@@ -29,7 +30,7 @@ interface Props {
 }
 
 export function HeroBanner({ banners, fallbackCourse }: Props) {
-  const area: any = null;
+  const { area } = useArea();
   const list: HeroBannerModel[] = (() => {
     const fromTable = getActiveHeroBanners(banners as any[] | undefined).filter(
       (b) => b && typeof b.image_url === "string" && b.image_url.trim().length > 0,
@@ -338,32 +339,29 @@ function BannerSlide({
         />
       )}
 
-      {/* Camada 3 — Conteúdo textual + CTAs — Estilo Premium Streaming */}
+      {/* Camada 3 — Conteúdo textual + CTAs */}
       {(hasTextOverlay || hasPrimary || hasSecondary) && (
-        <div className="pointer-events-none absolute inset-0 z-30 flex items-center">
-          <div className="w-full h-full bg-gradient-to-t from-[#0b0b0b] via-transparent to-transparent sm:bg-gradient-to-r sm:from-[#0b0b0b] sm:via-[#0b0b0b]/60 sm:to-transparent flex flex-col justify-end sm:justify-center px-6 pb-12 sm:pb-0 sm:px-12 lg:px-20">
-            <div className="max-w-2xl space-y-6 sm:space-y-8">
-              <div className="space-y-3 sm:space-y-4">
-                {banner.subtitle && (
-                  <div className="inline-flex items-center gap-2 rounded-full bg-gold/10 border border-gold/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-gold animate-in fade-in slide-in-from-left-4 duration-700">
-                    {banner.subtitle}
-                  </div>
-                )}
-                {banner.title && (
-                  <h2 className="font-display text-4xl font-black leading-[1.1] tracking-tighter text-white sm:text-5xl lg:text-7xl animate-in fade-in slide-in-from-left-8 duration-700 delay-100">
-                    {banner.title}
-                  </h2>
-                )}
-                {banner.description && (
-                  <p className="max-w-lg text-sm leading-relaxed text-white/60 sm:text-lg animate-in fade-in slide-in-from-left-12 duration-700 delay-200 line-clamp-2 sm:line-clamp-3">
-                    {banner.description}
-                  </p>
-                )}
-              </div>
-
+        <div className="pointer-events-none absolute inset-0 z-30 flex items-end sm:items-center">
+          <div className="w-full bg-gradient-to-t from-black/85 via-black/40 to-transparent px-6 pb-6 pt-16 sm:bg-gradient-to-r sm:from-black/80 sm:via-black/40 sm:to-transparent sm:px-10 sm:py-8 lg:px-14">
+            <div className="max-w-xl space-y-3">
+              {banner.subtitle && (
+                <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-gold/90">
+                  {banner.subtitle}
+                </p>
+              )}
+              {banner.title && (
+                <h2 className="font-display text-2xl font-bold leading-tight tracking-tight text-white sm:text-3xl lg:text-4xl">
+                  {banner.title}
+                </h2>
+              )}
+              {banner.description && (
+                <p className="hidden max-w-md text-sm leading-relaxed text-white/80 sm:block sm:text-base">
+                  {banner.description}
+                </p>
+              )}
               {(hasPrimary || hasSecondary) && (
                 <div
-                  className="pointer-events-auto flex flex-wrap gap-4 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300"
+                  className="pointer-events-auto mt-4 flex flex-wrap gap-3"
                   style={{ zIndex: 40 }}
                 >
                   {hasPrimary && (
@@ -373,23 +371,26 @@ function BannerSlide({
                         e.stopPropagation();
                         onPrimary();
                       }}
-                      className="group inline-flex items-center gap-3 rounded-2xl bg-[#D4AF37] px-8 py-4 text-sm font-black text-black shadow-2xl shadow-[#D4AF37]/20 transition-all hover:scale-105 active:scale-95 sm:px-10 sm:py-5 sm:text-base"
+                      className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-amber-300 via-gold to-amber-500 px-6 py-3 text-sm font-bold text-black shadow-[0_8px_30px_-8px_rgba(212,175,55,0.6)] transition hover:scale-[1.02]"
                     >
-                      <Play className="h-5 w-5 fill-current" />
-                      Continuar assistindo
+                      {banner.primary_cta_type === "video" && <Play className="h-4 w-4" />}
+                      {banner.primary_cta_label}
+                      {banner.primary_cta_type !== "video" && <ArrowRight className="h-4 w-4" />}
                     </button>
                   )}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      // Redirect to course details or similar
-                      onPrimary(); 
-                    }}
-                    className="inline-flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl px-8 py-4 text-sm font-black text-white transition-all hover:bg-white/10 hover:border-white/20 active:scale-95 sm:px-10 sm:py-5 sm:text-base"
-                  >
-                    Ver detalhes
-                  </button>
+                  {hasSecondary && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSecondary();
+                      }}
+                      className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-white/20"
+                    >
+                      {banner.secondary_cta_type === "video" && <Play className="h-4 w-4" />}
+                      {banner.secondary_cta_label}
+                    </button>
+                  )}
                 </div>
               )}
             </div>

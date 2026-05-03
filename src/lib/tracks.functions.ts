@@ -4,12 +4,16 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 export const listActiveTracks = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
+  .inputValidator((input: { areaId?: string }) => input)
   .handler(async ({ data: inputData, context }) => {
     let query = context.supabase
       .from('tracks')
       .select('*')
       .eq('is_active', true);
 
+    if (inputData?.areaId) {
+      query = query.eq('area_id', inputData.areaId);
+    }
 
     const { data: tracks, error } = await query.order('sort_order', { ascending: true });
 
@@ -20,11 +24,15 @@ export const listActiveTracks = createServerFn({ method: 'POST' })
 /** Returns ALL tracks regardless of is_active — used for the full catalog view */
 export const listAllTracks = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
+  .inputValidator((input: { areaId?: string }) => input)
   .handler(async ({ data: inputData, context }) => {
     let query = context.supabase
       .from('tracks')
       .select('*');
 
+    if (inputData?.areaId) {
+      query = query.eq('area_id', inputData.areaId);
+    }
 
     const { data: tracks, error } = await query.order('sort_order', { ascending: true });
 
@@ -34,11 +42,15 @@ export const listAllTracks = createServerFn({ method: 'POST' })
 
 export const listCategories = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
+  .inputValidator((input: { areaId?: string }) => input)
   .handler(async ({ data: inputData, context }) => {
     let query = context.supabase
       .from('categories')
       .select('id, name, slug, icon, sort_order');
 
+    if (inputData?.areaId) {
+      query = query.eq('area_id', inputData.areaId);
+    }
 
     const { data: categories, error } = await query.order('sort_order', { ascending: true });
 

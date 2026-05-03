@@ -1,47 +1,64 @@
-import React, { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
-/**
- * Lightweight music note particles for the background.
- * Optimized for performance by using few elements and CSS animations.
- */
+const NOTES = ["♪", "♫", "♩", "♬"];
+
+interface Particle {
+  id: number;
+  note: string;
+  left: string;
+  top: string;
+  delay: string;
+  duration: string;
+  size: number;
+  opacity: number;
+}
+
+function seededRandom(seed: number): number {
+  const x = Math.sin(seed * 9301 + 49297) * 233280;
+  return x - Math.floor(x);
+}
+
+function generateParticles(count: number): Particle[] {
+  return Array.from({ length: count }, (_, i) => ({
+    id: i,
+    note: NOTES[i % NOTES.length],
+    left: `${seededRandom(i * 7 + 1) * 100}%`,
+    top: `${seededRandom(i * 7 + 2) * 100}%`,
+    delay: `${seededRandom(i * 7 + 3) * 8}s`,
+    duration: `${12 + seededRandom(i * 7 + 4) * 10}s`,
+    size: 14 + seededRandom(i * 7 + 5) * 12,
+    opacity: 0.06 + seededRandom(i * 7 + 6) * 0.12,
+  }));
+}
+
+const PARTICLES = generateParticles(12);
+
 export function MusicNoteParticles() {
-  const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; size: number; duration: number; delay: number; opacity: number; note: string }>>([]);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const notes = ["♪", "♫", "♬", "♩", "♭", "♯"];
-    const count = 15; // Kept low for performance
-    const newParticles = Array.from({ length: count }).map((_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 15 + 10,
-      duration: Math.random() * 15 + 15, // Slow movement
-      delay: Math.random() * 10,
-      opacity: Math.random() * 0.2 + 0.05, // Very subtle
-      note: notes[Math.floor(Math.random() * notes.length)],
-    }));
-    setParticles(newParticles);
+    setMounted(true);
   }, []);
 
+  if (!mounted) return null;
+
   return (
-    <div className="absolute inset-0 pointer-events-none overflow-hidden z-0 select-none">
-      {particles.map((p) => (
-        <div
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+      {PARTICLES.map((p) => (
+        <span
           key={p.id}
-          className="absolute text-gold animate-float"
+          className="absolute text-gold select-none animate-[float_var(--dur)_ease-in-out_var(--delay)_infinite]"
           style={{
-            left: `${p.x}%`,
-            top: `${p.y}%`,
-            fontSize: `${p.size}px`,
+            left: p.left,
+            top: p.top,
+            fontSize: p.size,
             opacity: p.opacity,
-            animationDuration: `${p.duration}s`,
-            animationDelay: `${p.delay}s`,
-            animationIterationCount: "infinite",
-            animationTimingFunction: "ease-in-out",
-          }}
+            "--dur": p.duration,
+            "--delay": p.delay,
+          } as React.CSSProperties}
         >
           {p.note}
-        </div>
+        </span>
       ))}
     </div>
   );

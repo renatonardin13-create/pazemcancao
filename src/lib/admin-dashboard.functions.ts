@@ -4,7 +4,8 @@ import { supabaseAdmin } from '@/integrations/supabase/client.server';
 
 export const getDashboardStats = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .inputValidator((input: { areaId?: string }) => input)
+  .handler(async ({ data: inputData, context }) => {
     const { supabase, userId } = context;
 
     // Verify caller is admin
@@ -22,6 +23,7 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
     }
 
     const [
+      { count: totalAreas },
       { count: totalCategories },
       { count: totalTracks },
       { count: activeTracks },
@@ -34,24 +36,76 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
       { data: webhookSettings },
       { count: totalIntegrations },
     ] = await Promise.all([
-      supabaseAdmin.from('categories').select('*', { count: 'exact', head: true }),
-      supabaseAdmin.from('tracks').select('*', { count: 'exact', head: true }),
-      supabaseAdmin.from('tracks').select('*', { count: 'exact', head: true }).eq('is_active', true),
-      supabaseAdmin.from('approved_buyers').select('*', { count: 'exact', head: true }),
-      supabaseAdmin.from('active_sessions').select('*', { count: 'exact', head: true }).eq('is_valid', true),
-      supabaseAdmin.from('courses').select('*', { count: 'exact', head: true }),
-      supabaseAdmin.from('courses').select('*', { count: 'exact', head: true }).eq('status', 'published'),
-      supabaseAdmin.from('enrollments').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
-      supabaseAdmin.from('transactions').select('amount').eq('status', 'paid'),
+      supabaseAdmin.from('areas').select('*', { count: 'exact', head: true }),
+      (() => {
+        let q = supabaseAdmin.from('categories').select('*', { count: 'exact', head: true });
+        if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null); // Force empty if no area
+        return q;
+      })(),
+      (() => {
+        let q = supabaseAdmin.from('tracks').select('*', { count: 'exact', head: true });
+        if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null);
+        return q;
+      })(),
+      (() => {
+        let q = supabaseAdmin.from('tracks').select('*', { count: 'exact', head: true }).eq('is_active', true);
+        if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null);
+        return q;
+      })(),
+      (() => {
+        let q = supabaseAdmin.from('approved_buyers').select('*', { count: 'exact', head: true });
+        if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null);
+        return q;
+      })(),
+      (() => {
+        let q = supabaseAdmin.from('active_sessions').select('*', { count: 'exact', head: true }).eq('is_valid', true);
+        if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null);
+        return q;
+      })(),
+      (() => {
+        let q = supabaseAdmin.from('courses').select('*', { count: 'exact', head: true });
+        if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null);
+        return q;
+      })(),
+      (() => {
+        let q = supabaseAdmin.from('courses').select('*', { count: 'exact', head: true }).eq('status', 'published');
+        if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null);
+        return q;
+      })(),
+      (() => {
+        let q = supabaseAdmin.from('enrollments').select('*', { count: 'exact', head: true }).eq('status', 'pending');
+        if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null);
+        return q;
+      })(),
+      (() => {
+        let q = supabaseAdmin.from('transactions').select('amount').eq('status', 'paid');
+        if (inputData?.areaId) q = q.eq('area_id', inputData.areaId);
+        else q = q.is('id', null);
+        return q;
+      })(),
       supabaseAdmin.from('webhook_settings').select('*').limit(1),
       supabaseAdmin.from('course_integrations').select('*', { count: 'exact', head: true }),
     ]);
 
     // Fetch top courses by enrollment count
-    const { data: topCoursesRaw } = await supabaseAdmin
+    let topCoursesQuery = supabaseAdmin
       .from('courses')
       .select('id, title, cover_image_url, price')
-      .eq('status', 'published')
+      .eq('status', 'published');
+    
+    if (inputData?.areaId) {
+      topCoursesQuery = topCoursesQuery.eq('area_id', inputData.areaId);
+    }
+
+    const { data: topCoursesRaw } = await topCoursesQuery
       .order('sort_order', { ascending: true })
       .limit(5);
 
@@ -80,6 +134,7 @@ export const getDashboardStats = createServerFn({ method: 'POST' })
     const totalRevenue = (revenueData || []).reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
     return {
+      totalAreas: totalAreas || 0,
       totalCategories: totalCategories || 0,
       totalTracks: totalTracks || 0,
       activeTracks: activeTracks || 0,

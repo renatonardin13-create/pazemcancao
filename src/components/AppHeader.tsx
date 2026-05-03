@@ -1,12 +1,11 @@
-import { LogOut, Settings, UserCircle, Headphones, GraduationCap, Menu, X, Home } from "lucide-react";
+import { LogoBrand } from "./LogoBrand";
+import { LogOut, Settings, UserCircle, Headphones, GraduationCap, Menu, X } from "lucide-react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { useAuth } from "@/hooks/use-auth";
 import { useProjectMode } from "@/hooks/use-project-mode";
 import { NotificationBell } from "./NotificationBell";
 import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
-import logo from "@/assets/logo-paz-em-cancao.png";
-
 
 interface AppHeaderProps {
   showLogout?: boolean;
@@ -19,16 +18,14 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
   const location = useLocation();
 
   const navItems = useMemo(() => {
-    const items: { to: string; icon: any; label: string }[] = [
-      { to: "/home", icon: Home, label: "Dashboard" }
-    ];
+    const items: { to: string; icon: typeof Headphones; label: string }[] = [];
+    const prefix = "";
     
     if (showMusicInMenu) items.push({ to: "/musicas", icon: Headphones, label: "Músicas" });
     if (showCoursesInMenu) items.push({ to: "/cursos", icon: GraduationCap, label: "Cursos" });
     if (showPerfilInMenu) items.push({ to: "/perfil", icon: UserCircle, label: "Perfil" });
     return items;
   }, [showMusicInMenu, showCoursesInMenu, showPerfilInMenu]);
-
 
   const isActive = (path: string) => location.pathname === path || location.pathname.startsWith(path + "/");
 
@@ -42,11 +39,8 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
 
   return (
     <header className="sticky top-0 z-40 bg-background/90 backdrop-blur-3xl border-b border-border/10 shadow-premium">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 h-14 sm:h-16">
-        <Link to="/home" className="flex items-center gap-3">
-          <img src={logo} alt="Paz em Canção" className="h-7 sm:h-9 w-auto object-contain" />
-        </Link>
-
+      <div className="mx-auto flex max-w-5xl items-center justify-between px-4 sm:px-6 h-14 sm:h-16">
+        <LogoBrand size="md" showSubtitle linkTo="/home" />
 
         {/* Desktop nav */}
         <div className="hidden sm:flex items-center gap-1">
@@ -62,7 +56,7 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
           ))}
 
           {!adminLoading && isAdmin && (
-            <Link to="/admin/dashboard" className={navLinkClass(location.pathname.startsWith("/admin"))}>
+            <Link to="/admin" className={navLinkClass(location.pathname.startsWith("/admin"))}>
               <Settings className="h-4 w-4" />
               <span className="hidden md:inline tracking-wide uppercase">
                 Admin
@@ -118,7 +112,7 @@ export function AppHeader({ showLogout = true }: AppHeaderProps) {
 
             {!adminLoading && isAdmin && (
               <Link
-                to="/admin/dashboard"
+                to="/admin"
                 onClick={() => setMobileMenuOpen(false)}
                 className={cn(
                   "flex items-center gap-3 rounded-xl px-4 py-3 text-[13px] font-semibold transition-all duration-200",

@@ -4,6 +4,7 @@ import { buildEntitlements, deriveProductVisualAccessState, resolveProductAccess
 
 export const getMyCoursesData = createServerFn({ method: 'POST' })
   .middleware([requireSupabaseAuth])
+  .inputValidator((input: { areaId?: string }) => input)
   .handler(async ({ data: inputData, context }) => {
     const { supabase, userId } = context;
 
@@ -48,6 +49,11 @@ export const getMyCoursesData = createServerFn({ method: 'POST' })
       .in('id', courseIds)
       .eq('status', 'published');
 
+    if (inputData?.areaId) {
+      coursesQuery = coursesQuery.eq('area_id', inputData.areaId);
+    } else {
+      return { courses: [], stats: { total: 0, inProgress: 0, completed: 0 } };
+    }
 
     const { data: courses } = await coursesQuery;
 

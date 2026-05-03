@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft, Download, Play, Pause, Music, Heart, ChevronLeft, ChevronRight } from "lucide-react";
 import { sampleTracks } from "@/lib/sample-tracks";
-// removed player hook
+import { usePlayer } from "@/hooks/use-player";
 import { motion } from "framer-motion";
 import { StudentLayout } from "@/components/StudentLayout";
 import { Progress } from "@/components/ui/progress";
@@ -46,10 +46,7 @@ function TrackDetailPage() {
   const { trackId } = Route.useParams();
   const id = parseInt(trackId, 10);
   const track = sampleTracks.find((t) => t.id === id);
-  const currentTrack = null;
-  const playing = false;
-  const progress = 0;
-  const toggle = () => {};
+  const { currentTrack, playing, progress, toggle } = usePlayer();
 
   if (!track) {
     return (
@@ -67,7 +64,8 @@ function TrackDetailPage() {
     );
   }
 
-  const isPlaying = false;
+  const isThis = currentTrack?.id === track.id;
+  const isPlaying = isThis && playing;
   const emotionalMessage = emotionalMessages[track.category] || emotionalMessages["Paz"];
 
   const currentIndex = sampleTracks.findIndex((t) => t.id === id);
@@ -168,7 +166,7 @@ function TrackDetailPage() {
             {/* Play controls */}
             <motion.div variants={fadeIn} custom={0.45} className="mt-10 w-full max-w-xs space-y-3">
               <button
-                onClick={() => {}}
+                onClick={() => toggle(track)}
                 className={`group w-full flex items-center justify-center gap-3 rounded-full py-4 text-[11px] font-bold tracking-[0.2em] uppercase transition-all duration-500 active:scale-[0.97] ${
                   isPlaying
                     ? "bg-gold/20 text-gold border border-gold/25 shadow-[0_0_40px_-15px] shadow-gold/15"

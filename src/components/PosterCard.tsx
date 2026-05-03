@@ -1,6 +1,5 @@
 import { memo, useState, type ReactNode } from "react";
 import { OptimizedImage } from "@/components/OptimizedImage";
-import { Play } from "lucide-react";
 import { getCardsConfigSync, useCardScope, getCardSizingFor } from "@/hooks/use-cards-config";
 
 /**
@@ -66,7 +65,7 @@ export interface PosterCardProps {
   aboveCard?: ReactNode;
 }
 
-const DEFAULT_GRADIENT = "from-[#111] via-[#111] to-[#0b0b0b]";
+const DEFAULT_GRADIENT = "from-stone-900/50 via-zinc-950/40 to-neutral-950/60";
 
 export const PosterCard = memo(function PosterCard({
   cover,
@@ -123,16 +122,16 @@ export const PosterCard = memo(function PosterCard({
       />
 
       <div
-        className={`relative overflow-hidden bg-card/5 shadow-md shadow-black/25 ring-1 transition-all duration-300 ease-out group-hover/card:scale-[1.05] group-hover/card:shadow-[0_30px_60px_rgba(0,0,0,0.6)] ${
-          cfg.hoverGold ? "hover:ring-gold/40" : ""
+        className={`relative overflow-hidden bg-card/5 shadow-md shadow-black/25 ring-1 md:transition-all md:duration-500 md:ease-out md:group-hover/card:scale-[1.05] md:group-hover/card:shadow-[0_18px_48px_-10px_rgba(212,175,55,0.28)] ${
+          cfg.hoverGold ? "md:group-hover/card:ring-gold/40" : ""
         } ${
           highlight ? "ring-gold/30 shadow-[0_2px_32px_-8px] shadow-gold/15" : cfg.showBorder ? "ring-white/[0.04]" : "ring-transparent"
         }`}
         style={{ borderRadius: radius }}
       >
         <div
-          className={`relative overflow-hidden bg-gradient-to-br ${gradientClass} aspect-video`}
-          style={{ borderRadius: radius }}
+          className={`relative overflow-hidden bg-gradient-to-br ${gradientClass}`}
+          style={{ aspectRatio, borderRadius: radius }}
         >
           {/* Capa */}
           {showImage ? (
@@ -141,34 +140,25 @@ export const PosterCard = memo(function PosterCard({
               alt={coverAlt}
               context="card"
               onError={() => setImgFailed(true)}
-              className={`h-full w-full object-cover transition-transform duration-700 ease-out group-hover/card:scale-110 ${
+              className={`h-full w-full object-cover md:transition-transform md:duration-[900ms] md:ease-out md:group-hover/card:scale-[1.08] ${
                 locked ? "saturate-[0.45] brightness-[0.6]" : ""
               }`}
             />
           ) : cover && typeof cover !== "string" ? (
             cover
           ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-[#111]">{fallback}</div>
+            <div className="absolute inset-0 flex items-center justify-center">{fallback}</div>
           )}
 
           {/* Gradiente inferior (legibilidade do título) */}
           <div className="absolute inset-x-0 bottom-0 h-[72%] bg-gradient-to-t from-black/95 via-black/55 to-transparent" style={{ opacity: 0.5 + gradientOpacity * 0.5 }} />
 
-          {/* Escurecimento de hover + Assistir Button */}
+          {/* Escurecimento de hover */}
           <div
-            className={`absolute inset-0 transition-all duration-500 flex items-center justify-center ${
-              locked ? "bg-black/20" : "bg-black/0 group-hover/card:bg-black/60"
+            className={`absolute inset-0 md:transition-all md:duration-500 ${
+              locked ? "bg-black/20" : "bg-black/0 md:group-hover/card:bg-black/30"
             }`}
-          >
-            {!locked && (
-              <div className="opacity-0 group-hover/card:opacity-100 transition-all duration-500 translate-y-4 group-hover/card:translate-y-0">
-                <div className="bg-gold text-black rounded-full px-6 py-2 text-xs font-black uppercase tracking-widest shadow-2xl shadow-gold/40 flex items-center gap-2">
-                  <Play className="h-3 w-3 fill-current" />
-                  Assistir
-                </div>
-              </div>
-            )}
-          </div>
+          />
 
           {/* Vinheta interna */}
           <div className="absolute inset-0 shadow-[inset_0_0_30px_rgba(0,0,0,0.25)] pointer-events-none" />
@@ -178,29 +168,35 @@ export const PosterCard = memo(function PosterCard({
 
           {overlay && <div className="absolute inset-0 z-10">{overlay}</div>}
 
-          {/* Info Block - Netflix Style (Bottom layer for legibility) */}
-          <div className="absolute inset-x-0 bottom-0 z-10 p-4 pt-10 bg-gradient-to-t from-[#0b0b0b] via-[#0b0b0b]/80 to-transparent">
-            <h3 className="text-sm font-black text-white leading-tight truncate">{title}</h3>
-            <div className="flex items-center gap-2 mt-1">
-              {subtitle && <span className="text-[10px] font-black text-gold uppercase tracking-widest">{subtitle}</span>}
-              {meta && <div className="text-[10px] font-bold text-white/40">{meta}</div>}
-            </div>
-          </div>
-
-          {overlay && <div className="absolute inset-0 z-20">{overlay}</div>}
-
           {centerAction && (
-            <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none">
+            <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
               {centerAction}
             </div>
           )}
 
-          {actionTopRight && <div className="absolute top-2.5 right-2.5 z-40">{actionTopRight}</div>}
+          {actionTopRight && <div className="absolute top-2.5 right-2.5 z-20">{actionTopRight}</div>}
+
+          {/*
+            Bloco inferior padronizado.
+            Regras anti-irregularidade:
+            - posicionamento absoluto (não empurra a capa)
+            - title: SEMPRE 2 linhas reservadas (min-h)
+            - subtitle: SEMPRE 1 linha (line-clamp-1)
+            - meta: altura reservada mesmo quando some no hover
+          */}
+          {/* Acessibilidade: título disponível para SR mas oculto visualmente */}
+          <h3 className="sr-only">{title}</h3>
+
+          {meta && (
+            <div className="absolute inset-x-0 bottom-0 z-10 px-3.5 pb-3 sm:px-4 sm:pb-4 flex h-4 items-center gap-3 opacity-0 md:group-hover/card:opacity-100 md:transition-opacity md:duration-400">
+              {meta}
+            </div>
+          )}
 
           {hasProgress && (
-            <div className="absolute bottom-0 left-0 right-0 z-50 h-[3px] bg-white/10">
+            <div className="absolute bottom-0 left-0 right-0 z-20 h-[2.5px] bg-white/[0.06]">
               <div
-                className={`h-full rounded-r-full ease-linear transition-all duration-300 ${progressColorClass}`}
+                className={`h-full rounded-r-full ease-linear md:transition-all md:duration-200 ${progressColorClass}`}
                 style={{ width: `${Math.min(progress!, 100)}%` }}
               />
             </div>
