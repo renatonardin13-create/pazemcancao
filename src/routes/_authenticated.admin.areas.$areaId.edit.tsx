@@ -115,8 +115,8 @@ function EditAreaPage() {
     mutationFn: (vars: any) => updateAreaMembro({ data: vars }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["areas-membros"] });
+      queryClient.invalidateQueries({ queryKey: ["area-membro", areaId] });
       toast.success("Área atualizada com sucesso!");
-      navigate({ to: "/admin/areas-membros" });
     },
     onError: (err: any) => {
       toast.error(err.message || "Erro ao atualizar área");
