@@ -152,6 +152,15 @@ function EditAreaPage() {
       setTextPrimary(area.text_primary || "#FFFFFF");
       setTextSecondary(area.text_secondary || "#94A3B8");
       setElevatedSurface(area.elevated_surface || "#1E293B");
+      setIdiomasAtivos(area.idiomas_ativos || ["pt-BR"]);
+      setFormatoData(area.formato_data || "DD/MM/AAAA");
+      setBoasVindas(area.boas_vindas || "");
+      setBotaoContinuar(area.botao_continuar || "");
+      setProdutoBloqueado(area.produto_bloqueado || "");
+      setConclusao(area.conclusao || "");
+      setParabens(area.parabens || "");
+      setBotaoEntrar(area.botao_entrar || "");
+      setSuporteTexto(area.suporte_texto || "");
     }
   }, [area]);
 
