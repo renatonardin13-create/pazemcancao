@@ -31,6 +31,7 @@ import {
   List,
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import { MusicPackPlayer } from "@/components/MusicPackPlayer";
 import { motion, AnimatePresence } from "framer-motion";
 import { Progress } from "@/components/ui/progress";
 
@@ -146,6 +147,8 @@ function CourseDetailPage() {
   const totalLessons = lessons.length;
   const progressPercent =
     totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0;
+
+  const isLouvoresPack = course?.course_type === "louvores";
 
   const isLessonCompleted = (lessonId: string) =>
     progress.some((p: any) => p.lesson_id === lessonId && p.completed);
@@ -307,6 +310,14 @@ function CourseDetailPage() {
       </div>
     );
   };
+
+  if (isLouvoresPack) {
+    return (
+      <StudentLayout>
+        <MusicPackPlayer courseId={courseId} courseTitle={course.title} />
+      </StudentLayout>
+    );
+  }
 
   return (
     <StudentLayout>
