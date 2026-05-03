@@ -123,6 +123,7 @@ export const createAreaMembro = createServerFn({ method: 'POST' })
         surface_color: data.surface_color,
         tipo: data.tipo || 'misto',
         rotulo_curto: data.rotulo_curto,
+        descricao: data.descricao,
       })
       .select('id')
       .single();
